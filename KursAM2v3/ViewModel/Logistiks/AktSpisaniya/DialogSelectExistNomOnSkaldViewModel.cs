@@ -5,22 +5,23 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Calculates.Materials;
-using Core;
 using Core.ViewModel.Base;
 using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks.AktSpisaniya;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
     public sealed class DialogSelectExistNomOnSkaldViewModel : RSWindowViewModelBase
     {
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+
         #region Constructors
 
-        public DialogSelectExistNomOnSkaldViewModel(KursDomain.Documents.NomenklManagement.Warehouse sklad,
+        public DialogSelectExistNomOnSkaldViewModel(KursDomain.References.Warehouse sklad,
             DateTime date)
         {
             warehouse = sklad;
@@ -34,7 +35,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         private NomenklRemainsOnSkladWithPrice myCurrentNomenkl;
         private NomenklRemainsOnSkladWithPrice myCurrentSelectedNomenkl;
-        private readonly KursDomain.Documents.NomenklManagement.Warehouse warehouse;
+        private readonly KursDomain.References.Warehouse warehouse;
         private readonly DateTime Date;
 
         #endregion
@@ -238,7 +239,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                     var summaOut = item.SummaOut;
                     var newitem = new NomenklMoveOnSkladViewModel
                     {
-                        Nomenkl = MainReferences.GetNomenkl(item.NomDC),
+                        Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(item.NomDC) as Nomenkl,
                         PriceStart = item.LastOp.StartPrice,
                         PriceEnd = item.LastOp.Price,
                         QuantityEnd = item.LastOp.Ostatok,

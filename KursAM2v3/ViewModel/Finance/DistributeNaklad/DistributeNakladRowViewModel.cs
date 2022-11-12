@@ -5,6 +5,7 @@ using Core;
 using Core.ViewModel.Base;
 using Data;
 using JetBrains.Annotations;
+using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
@@ -45,7 +46,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         [DisplayName("ConvertNomenkl")]
         [Display(AutoGenerateField = false)]
-        public Nomenkl ConvertNomenkl => Convert != null ? MainReferences.GetNomenkl(Convert.NomenklId) : null;
+        public Nomenkl ConvertNomenkl =>
+            Convert != null ? GlobalOptions.ReferencesCache.GetNomenkl(Convert.NomenklId) as Nomenkl : null;
 
         [DisplayName("Entity")]
         [Display(AutoGenerateField = false)]
@@ -122,7 +124,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [Display(AutoGenerateField = true)]
         [ReadOnly(true)]
         public string ProviderName => Invoice != null
-            ? MainReferences.GetKontragent(Invoice.Entity.SF_POST_DC).Name
+            ? ((IName)GlobalOptions.ReferencesCache.GetKontragent(Invoice.Entity.SF_POST_DC)).Name
             : null;
 
         [Display(AutoGenerateField = false)]

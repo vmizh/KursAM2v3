@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
-using Core;
 using Core.EntityViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -117,7 +116,7 @@ namespace KursAM2.Repositories
         public List<DistributeNakladRow> GetTovarFromInvoiceProviders(DistributeNaklad ent)
         {
             var ret = new List<DistributeNakladRow>();
-            var rows = GetAllForNakladDistribute(MainReferences.GetCurrency(ent.CurrencyDC),
+            var rows = GetAllForNakladDistribute(GlobalOptions.ReferencesCache.GetCurrency(ent.CurrencyDC) as Currency,
                 DateTime.MinValue, DateTime.MaxValue);
             foreach (var inv in rows)
             foreach (var r in inv.Rows)
@@ -139,7 +138,7 @@ namespace KursAM2.Repositories
             DateTime end)
         {
             var ret = new List<DistributeNakladRow>();
-            var rows = GetAllForNakladDistribute(MainReferences.GetCurrency(ent.CurrencyDC),
+            var rows = GetAllForNakladDistribute(GlobalOptions.ReferencesCache.GetCurrency(ent.CurrencyDC) as Currency,
                 start, end);
             foreach (var inv in rows)
             foreach (var r in inv.Rows)

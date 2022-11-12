@@ -107,9 +107,7 @@
     <Compile Include="Documents\CommonReferences\CrossCurrencyRate.cs" />
     <Compile Include="Documents\CommonReferences\CurrencyRate.cs" />
     <Compile Include="Documents\CommonReferences\DocumentType.cs" />
-    <Compile Include="Documents\CommonReferences\Kontragent\KontragentViewModel.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KontragentBank.cs" />
-    <Compile Include="Documents\CommonReferences\Kontragent\KontragentClientCategory.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KontragentGruzoRequisite.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KontragentTypeEnum.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KONTRAGENT_REF_OUTViewModel.cs" />
@@ -164,7 +162,6 @@
     <Compile Include="Documents\NomenklManagement\TD_24ViewModel.cs" />
     <Compile Include="Documents\NomenklManagement\Unit.cs" />
     <Compile Include="Documents\NomenklManagement\Waibill2.cs" />
-    <Compile Include="Documents\NomenklManagement\Warehouse.cs" />
     <Compile Include="Documents\NomenklManagement\WarehouseOrderIn.cs" />
     <Compile Include="Documents\NomenklManagement\WarehouseOrderInRow.cs" />
     <Compile Include="Documents\NomenklManagement\WarehouseOrderOut.cs" />
@@ -280,6 +277,7 @@
     <Compile Include="References\BankAccount.cs" />
     <Compile Include="References\CashBox.cs" />
     <Compile Include="References\CentrResponsibility.cs" />
+    <Compile Include="References\AccessRight.cs" />
     <Compile Include="References\ClientCategory.cs" />
     <Compile Include="References\ContractType.cs" />
     <Compile Include="References\Country.cs" />

@@ -81,10 +81,10 @@ public class StockHolderViewModel : RSViewModelBase, IDataErrorInfo, IEntity<Sto
 
     public References.Employee Employee
     {
-        get => MainReferences.GetEmployee(Entity.EmployeeDC);
+        get => GlobalOptions.ReferencesCache.GetEmployee(Entity.EmployeeDC) as References.Employee;
         set
         {
-            if (MainReferences.GetEmployee(Entity.EmployeeDC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetEmployee(Entity.EmployeeDC) == value) return;
             Entity.EmployeeDC = value?.DocCode;
             RaisePropertyChanged();
         }

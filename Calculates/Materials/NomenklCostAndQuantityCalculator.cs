@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Transactions;
-using Core;
-using Data;
 using KursDomain;
 using KursDomain.Documents.Currency;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.References;
 
 //using Core.ViewModel.Common;
@@ -33,33 +29,33 @@ namespace Calculates.Materials
                 {
                     LoadfOperations =
                         new List<LoaderOperation>(ctx.Database.SqlQuery<LoaderOperation>("SELECT " +
-                                                                                         "NEWID() AS Id, " +
-                                                                                         "T24.DOC_CODE AS DOC_CODE, " +
-                                                                                         "T24.Code AS Code, " +
-                                                                                         "S24.DD_DATE as Date, " +
-                                                                                         "S24.DD_TYPE_DC as OperType, " +
-                                                                                         "T24.DDT_NOMENKL_DC AS NomenklDC, " +
-                                                                                         "T24.DDT_KOL_PRIHOD AS Receipt, " +
-                                                                                         "T24.DDT_KOL_RASHOD AS Expense, " +
-                                                                                         "S24.DD_SKLAD_POL_DC AS SkladPolDC, " +
-                                                                                         "S24.DD_SKLAD_OTPR_DC AS SkladOtprDC, " +
-                                                                                         "S24.DD_KONTR_POL_DC AS KontrPolDC, " +
-                                                                                         "S24.DD_KONTR_OTPR_DC AS KontrOtpravDC, " +
-                                                                                         "T26.SFT_SUMMA_K_OPLATE_KONTR_CRS AS SummaIn " +
-                                                                                         "FROM TD_24 T24 " +
-                                                                                         "INNER JOIN SD_24 S24 " +
-                                                                                         "  ON S24.DOC_CODE = T24.DOC_CODE AND S24.DD_TYPE_DC IN (2010000001,2010000003, 2010000005, 2010000008, 2010000009, 2010000010, 2010000012, 2010000014) " +
-                                                                                         "LEFT OUTER JOIN TD_26 t26 " +
-                                                                                         "  ON t26.DOC_CODE = T24.DDT_SPOST_DC " +
-                                                                                         "  AND t26.Code = T24.DDT_SPOST_ROW_CODE " +
-                                                                                         "LEFT OUTER JOIN SD_26 s26 " +
-                                                                                         "  ON s26.DOC_CODE = t26.DOC_CODE " +
-                                                                                         "LEFT OUTER JOIN TD_84 t84 " +
-                                                                                         "  ON t84.DOC_CODE = T24.DDT_SFACT_DC " +
-                                                                                         " AND t84.Code = T24.DDT_SFACT_ROW_CODE " +
-                                                                                         "LEFT OUTER JOIN SD_84 s84 " +
-                                                                                         " ON s84.DOC_CODE = t84.DOC_CODE " +
-                                                                                         "where T24.DDT_KOL_PRIHOD > 0 OR T24.DDT_KOL_RASHOD > 0")
+                                "NEWID() AS Id, " +
+                                "T24.DOC_CODE AS DOC_CODE, " +
+                                "T24.Code AS Code, " +
+                                "S24.DD_DATE as Date, " +
+                                "S24.DD_TYPE_DC as OperType, " +
+                                "T24.DDT_NOMENKL_DC AS NomenklDC, " +
+                                "T24.DDT_KOL_PRIHOD AS Receipt, " +
+                                "T24.DDT_KOL_RASHOD AS Expense, " +
+                                "S24.DD_SKLAD_POL_DC AS SkladPolDC, " +
+                                "S24.DD_SKLAD_OTPR_DC AS SkladOtprDC, " +
+                                "S24.DD_KONTR_POL_DC AS KontrPolDC, " +
+                                "S24.DD_KONTR_OTPR_DC AS KontrOtpravDC, " +
+                                "T26.SFT_SUMMA_K_OPLATE_KONTR_CRS AS SummaIn " +
+                                "FROM TD_24 T24 " +
+                                "INNER JOIN SD_24 S24 " +
+                                "  ON S24.DOC_CODE = T24.DOC_CODE AND S24.DD_TYPE_DC IN (2010000001,2010000003, 2010000005, 2010000008, 2010000009, 2010000010, 2010000012, 2010000014) " +
+                                "LEFT OUTER JOIN TD_26 t26 " +
+                                "  ON t26.DOC_CODE = T24.DDT_SPOST_DC " +
+                                "  AND t26.Code = T24.DDT_SPOST_ROW_CODE " +
+                                "LEFT OUTER JOIN SD_26 s26 " +
+                                "  ON s26.DOC_CODE = t26.DOC_CODE " +
+                                "LEFT OUTER JOIN TD_84 t84 " +
+                                "  ON t84.DOC_CODE = T24.DDT_SFACT_DC " +
+                                " AND t84.Code = T24.DDT_SFACT_ROW_CODE " +
+                                "LEFT OUTER JOIN SD_84 s84 " +
+                                " ON s84.DOC_CODE = t84.DOC_CODE " +
+                                "where T24.DDT_KOL_PRIHOD > 0 OR T24.DDT_KOL_RASHOD > 0")
                             .ToList()
                             .OrderBy(_ => _.Date)
                             .ThenBy(_ => _.OperType)
@@ -94,8 +90,8 @@ namespace Calculates.Materials
         {
             // ReSharper disable once CollectionNeverQueried.Local
             var start = new List<NomenklCosts>();
-            foreach (var store in MainReferences.Warehouses.Values)
-            foreach (var crs in MainReferences.Currencies.Values)
+            foreach (var store in GlobalOptions.ReferencesCache.GetWarehousesAll().Cast<Warehouse>())
+            foreach (var crs in GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>())
                 if (!CalculateCosts.Any(_ => _.Nomenkl.DocCode == nom.DocCode
                                              && _.Warehouse.DocCode == store.DocCode &&
                                              _.Currency.DocCode == crs.DocCode && _.Date < date))
@@ -254,6 +250,7 @@ namespace Calculates.Materials
                     ret.Quantity = ret.Quantity - operInner.Prihod;
                     return ret;
                 }
+
                 var costs2 =
                     CalculateCosts.Where(
                         _ =>
@@ -270,8 +267,10 @@ namespace Calculates.Materials
                                  (cnt > 0 ? cst.Quantity : cst.Quantity - cnt)) /
                                 (ret.Quantity + (cnt > 0 ? cst.Quantity : cst.Quantity - cnt));
                 }
+
                 return ret;
             }
+
             if (operInner != null)
             {
                 var costs =
@@ -287,10 +286,10 @@ namespace Calculates.Materials
                         .ToList();
                 var nomCost = new NomenklCosts
                 {
-                    Nomenkl = MainReferences.GetNomenkl(nomDC),
-                    Warehouse = MainReferences.Warehouses[sklDC],
+                    Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(nomDC) as Nomenkl,
+                    Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(sklDC) as Warehouse,
                     Date = date,
-                    Currency = MainReferences.Currencies[operInner.CurrencyDC],
+                    Currency = GlobalOptions.ReferencesCache.GetCurrency(operInner.CurrencyDC) as Currency,
                     Price = 0,
                     Quantity = operInner.Prihod
                 };
@@ -305,8 +304,10 @@ namespace Calculates.Materials
                                      (cnt > 0 ? cst.Quantity : cst.Quantity - cnt)) /
                                     (nomCost.Quantity + (cnt > 0 ? cst.Quantity : cst.Quantity - cnt));
                 }
+
                 CalculateCosts.Add(nomCost);
             }
+
             var oper =
                 PrihodData.Where(
                     _ => _.NomenklDC == nomDC && _.SkladDC == sklDC && _.CurrencyDC == crsDC
@@ -317,6 +318,7 @@ namespace Calculates.Materials
                     var d = CalcOne(nomDC, item.SklaOtprDC, crsDC, date, item);
                     item.Price = d.Price;
                 }
+
             var last = CalculateCosts.SingleOrDefault(
                 _ =>
                     _.Warehouse.DocCode == sklDC && _.Nomenkl.DocCode == nomDC && _.Currency.DocCode == crsDC &&
@@ -332,9 +334,9 @@ namespace Calculates.Materials
                 _.DocDate < date).Sum(_ => _.Rashod);
             ret = new NomenklCosts
             {
-                Nomenkl = MainReferences.GetNomenkl(nomDC),
-                Warehouse = MainReferences.Warehouses[sklDC],
-                Currency = MainReferences.Currencies[crsDC],
+                Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(nomDC) as Nomenkl,
+                Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(sklDC) as Warehouse,
+                Currency = GlobalOptions.ReferencesCache.GetCurrency(crsDC) as Currency,
                 Date = date,
                 Price =
                     // ReSharper disable once PossibleNullReferenceException
@@ -359,64 +361,8 @@ namespace Calculates.Materials
             {
                 CalculateCosts.Add(ret);
             }
+
             return ret;
-        }
-
-        public void CalcAllPrice(DateTime? date)
-        {
-            if (date == null || date == DateTime.MinValue)
-                foreach (var nom in MainReferences.ALLNomenkls.Values)
-                foreach (var skl in MainReferences.Warehouses.Values)
-                foreach (var crs in MainReferences.Currencies.Values)
-                    CalculateCosts.Add(new NomenklCosts
-                    {
-                        Currency = crs,
-                        Date = DateTime.MinValue,
-                        Nomenkl = nom,
-                        Warehouse = skl,
-                        Price = 0,
-                        Quantity = 0
-                    });
-            LoadOperation2();
-            //foreach (var item in PrihodData)
-            //    CalcOne(item);
-
-            //SaveResult();
-        }
-
-        private void SaveResult()
-        {
-            using (var tnx = new TransactionScope())
-            {
-                try
-                {
-                    using (var ctx = GlobalOptions.GetTestEntities())
-                    {
-                        var d = ctx.NOM_SKLAD_CURRENCY_PRICE.ToList();
-                        foreach (var item in d)
-                            ctx.NOM_SKLAD_CURRENCY_PRICE.Remove(item);
-                        ctx.SaveChanges();
-                        foreach (var item in CalculateCosts.Where(_ => _.Date != DateTime.MinValue))
-                            ctx.NOM_SKLAD_CURRENCY_PRICE.Add(new NOM_SKLAD_CURRENCY_PRICE
-                            {
-                                Quantity = item.Quantity,
-                                Id = Guid.NewGuid(),
-                                Cost = item.Price,
-                                CostDate = item.Date,
-                                CurrencyId = item.Currency.Id,
-                                NomenklId = item.Nomenkl.Id,
-                                SkladId = item.Warehouse.Id,
-                                Note = $"Расчет произведен {DateTime.Now}"
-                            });
-                        ctx.SaveChanges();
-                        tnx.Complete();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
         }
 
         private class NomenklPirhod

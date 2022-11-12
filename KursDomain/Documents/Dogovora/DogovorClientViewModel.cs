@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Input;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -227,10 +226,10 @@ public sealed class DogovorClientViewModel : RSWindowViewModelBase, IDataErrorIn
 
     public PayForm FormOfPayment
     {
-        get => MainReferences.GetPayForm(Entity.FormOfPayment);
+        get => GlobalOptions.ReferencesCache.GetPayForm(Entity.FormOfPayment) as PayForm;
         set
         {
-            if (MainReferences.GetPayForm(Entity.FormOfPayment) == value) return;
+            if (GlobalOptions.ReferencesCache.GetPayForm(Entity.FormOfPayment) == value) return;
             Entity.FormOfPayment = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }
@@ -238,10 +237,10 @@ public sealed class DogovorClientViewModel : RSWindowViewModelBase, IDataErrorIn
 
     public PayCondition PayCondition
     {
-        get => MainReferences.GetPayCondition(Entity.PayCondition);
+        get => GlobalOptions.ReferencesCache.GetPayCondition(Entity.PayCondition) as PayCondition;
         set
         {
-            if (MainReferences.GetPayCondition(Entity.PayCondition) == value) return;
+            if (GlobalOptions.ReferencesCache.GetPayCondition(Entity.PayCondition) == value) return;
             Entity.PayCondition = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }
@@ -249,10 +248,10 @@ public sealed class DogovorClientViewModel : RSWindowViewModelBase, IDataErrorIn
 
     public ContractType DogType
     {
-        get => MainReferences.GetContractType(Entity.DogType);
+        get => GlobalOptions.ReferencesCache.GetContractType(Entity.DogType) as ContractType;
         set
         {
-            if (MainReferences.GetContractType(Entity.DogType) == value) return;
+            if (GlobalOptions.ReferencesCache.GetContractType(Entity.DogType) == value) return;
             Entity.DogType = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }

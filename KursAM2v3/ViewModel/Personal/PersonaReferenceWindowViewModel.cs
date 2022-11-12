@@ -5,7 +5,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -28,7 +27,7 @@ namespace KursAM2.ViewModel.Personal
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
-            CurenciesCollection = MainReferences.Currencies.Values.ToList();
+            CurenciesCollection = GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>().ToList();
             RefreshData(null);
         }
 
@@ -191,7 +190,6 @@ namespace KursAM2.ViewModel.Personal
 
                         ctxsave.SaveChanges();
                         tnx.Commit();
-                        MainReferences.Refresh();
                         RefreshData(null);
                     }
                     catch (Exception ex)
@@ -217,7 +215,8 @@ namespace KursAM2.ViewModel.Personal
             {
                 IsDeleted = false,
                 CHANGE_DATE = DateTime.Now,
-                Currency = MainReferences.Currencies[GlobalOptions.SystemProfile.EmployeeDefaultCurrency.DocCode],
+                Currency = GlobalOptions.ReferencesCache.GetCurrency(GlobalOptions.SystemProfile.EmployeeDefaultCurrency
+                    .DocCode) as Currency,
                 State = RowStatus.NewRow,
                 Id = Guid.NewGuid()
             };

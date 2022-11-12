@@ -6,8 +6,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Calculates.Materials;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -27,6 +25,7 @@ using KursDomain.Documents.AktSpisaniya;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 using Newtonsoft.Json;
 
 // ReSharper disable IdentifierTypo
@@ -36,6 +35,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
     public sealed class AktSpisaniyaNomenklTitleWIndowViewModel : RSWindowViewModelBase
     {
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+
         #region Constructors
 
         public AktSpisaniyaNomenklTitleWIndowViewModel(Guid? id = null)
@@ -67,20 +67,19 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                     var q = nomenklManager.GetNomenklQuantity(Document.Warehouse.DocCode, r.Nomenkl.DocCode,
                         Document.DocDate,
                         Document.DocDate);
-                    decimal quan = q.Count > 0 ? q.First().OstatokQuantity : 0;
+                    var quan = q.Count > 0 ? q.First().OstatokQuantity : 0;
                     r.Prices = nomenklManager.GetNomenklPrice(r.Nomenkl.DocCode, Document.DocDate);
                     r.MaxQuantity = r.Quantity + quan;
                     r.RaisePropertyAllChanged();
                     r.myState = RowStatus.NotEdited;
                 }
-
             }
 
             AktSpisaniyaNomenklTitleRepository.AktSpisaniya = Document.Entity;
             var signs = SignatureRepository.CreateSignes(72, Document.Id, out var issign, out var isSignNew);
             IsSigned = issign;
             foreach (var s in signs) SignatureRows.Add(s);
-            if(Document.myState != RowStatus.NewRow) 
+            if (Document.myState != RowStatus.NewRow)
                 Document.myState = isSignNew ? RowStatus.Edited : RowStatus.NotEdited;
         }
 
@@ -180,6 +179,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         #endregion
 
         #region Properties
+
         public override string MenuInfoString => "Акцептован";
         public override string LayoutName => "AktSpisaniyaNomenklTitleView";
 
@@ -196,7 +196,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             new ObservableCollection<SignatureViewModel>();
 
         public override Visibility IsMenuInfoVisibility => IsSigned ? Visibility.Visible : Visibility.Hidden;
-        
+
         public bool IsSigned
         {
             get => myIsSigned;
@@ -210,12 +210,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 if (Form is AktSpisaniyaView view)
                 {
                     var col = view.gridRows.Columns.FirstOrDefault(_ => _.FieldName == "Quantity");
-                    if (col != null)
-                    {
-                        col.ReadOnly = !IsSigned;
-                    }
+                    if (col != null) col.ReadOnly = !IsSigned;
                 }
-
             }
         }
 
@@ -232,8 +228,9 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             }
         }
 
-        public List<KursDomain.Documents.NomenklManagement.Warehouse> WarehouseList { set; get; }
-            = MainReferences.Warehouses.Values.OrderBy(_ => _.Name).ToList();
+        public List<KursDomain.References.Warehouse> WarehouseList { set; get; }
+            = GlobalOptions.ReferencesCache.GetWarehousesAll().Cast<KursDomain.References.Warehouse>()
+                .OrderBy(_ => _.Name).ToList();
 
         public AktSpisaniyaNomenklTitleViewModel Document
         {
@@ -300,7 +297,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                         AktSpisaniyaNomenklTitleRepository.Delete();
                         unitOfWork.Save();
                         unitOfWork.Commit();
-                        DocumentsOpenManager.DeleteFromLastDocument(Document.Id,null);
+                        DocumentsOpenManager.DeleteFromLastDocument(Document.Id, null);
                         Form?.Close();
                         return;
                 }
@@ -324,7 +321,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             }
 
             foreach (var id in Document.Rows.Where(_ => _.State == RowStatus.NewRow).Select(_ => _.Id)
-                .ToList())
+                         .ToList())
                 Document.Rows.Remove(Document.Rows.Single(_ => _.Id == id));
             EntityManager.EntityReload(unitOfWork.Context);
             foreach (var r in Document.Rows)
@@ -332,16 +329,17 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 var q = nomenklManager.GetNomenklQuantity(Document.Warehouse.DocCode, r.Nomenkl.DocCode,
                     Document.DocDate,
                     Document.DocDate);
-                decimal quan = q.Count > 0 ? q.First().OstatokQuantity : 0;
+                var quan = q.Count > 0 ? q.First().OstatokQuantity : 0;
                 r.Prices = nomenklManager.GetNomenklPrice(r.Nomenkl.DocCode, Document.DocDate);
                 r.MaxQuantity = r.Quantity + quan;
                 r.myState = RowStatus.NotEdited;
                 r.RaisePropertyAllChanged();
             }
+
             SignatureRows.Clear();
             // ReSharper disable once UnusedVariable
             var signs = SignatureRepository.CreateSignes(72, Document.Id, out var issign, out var isSignNew);
-            foreach (var s in signs) 
+            foreach (var s in signs)
                 SignatureRows.Add(s);
             IsSigned = SignatureRows.Where(_ => _.IsRequired).All(x => x.UserId != null);
             RaiseAll();
@@ -387,7 +385,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 if (c < 0)
                 {
                     unitOfWork.Rollback();
-                    var nom = MainReferences.GetNomenkl(n);
+                    var nom = GlobalOptions.ReferencesCache.GetNomenkl(n) as Nomenkl;
                     WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
                                               // ReSharper disable once PossibleInvalidOperationException
                                               $"склад {Document.Warehouse} в кол-ве {c} ",
@@ -404,11 +402,11 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             // ReSharper disable once UseNameofExpression
             Document.RaisePropertyChanged("State");
         }
-        
+
         public override void ShowHistory(object data)
         {
             // ReSharper disable once RedundantArgumentDefaultValue
-            DocumentHistoryManager.LoadHistory(DocumentType.AktSpisaniya, Document.Id, 0, null );
+            DocumentHistoryManager.LoadHistory(DocumentType.AktSpisaniya, Document.Id, 0, null);
         }
 
         public ICommand SignedCommand
@@ -424,8 +422,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         {
             var isUser = CurrentSignature.UsersCanSigned.Any(_ => _.Id == GlobalOptions.UserInfo.KursId);
 
-            return SignatureRows.All(_ => _.ParentId != CurrentSignature.Id) || SignatureRows
-                .Where(_ => _.ParentId == CurrentSignature.Id).All(x => x.UserId != null) && isUser;
+            return SignatureRows.All(_ => _.ParentId != CurrentSignature.Id) || (SignatureRows
+                .Where(_ => _.ParentId == CurrentSignature.Id).All(x => x.UserId != null) && isUser);
         }
 
         private void Signed(object obj)
@@ -467,7 +465,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             var ctx = new DialogSelectExistNomOnSkaldViewModel(Document.Warehouse, Document.DocDate);
             var service = this.GetService<IDialogService>("DialogServiceUI");
-            if (service.ShowDialog(MessageButton.OKCancel, $"Запрос для склада: {Document.Warehouse}", ctx) == MessageResult.Cancel) return;
+            if (service.ShowDialog(MessageButton.OKCancel, $"Запрос для склада: {Document.Warehouse}", ctx) ==
+                MessageResult.Cancel) return;
             if (ctx.NomenklSelectedList.Count == 0) return;
             foreach (var n in ctx.NomenklSelectedList)
             {
@@ -501,7 +500,10 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public ICommand DeleteNomenklCommand
         {
-            get { return new Command(DeleteRow, _ => (CurrentRow != null || SelectedRows.Count > 1) && IsSigned==false); }
+            get
+            {
+                return new Command(DeleteRow, _ => (CurrentRow != null || SelectedRows.Count > 1) && IsSigned == false);
+            }
         }
 
         private void DeleteRow(object obj)
@@ -535,7 +537,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             IsSigned = false;
             SignatureRows.Clear();
             foreach (var s in signs) SignatureRows.Add(s);
-            if(Document.myState != RowStatus.NewRow) 
+            if (Document.myState != RowStatus.NewRow)
                 Document.myState = RowStatus.Edited;
         }
 

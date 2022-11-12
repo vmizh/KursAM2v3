@@ -64,7 +64,7 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IPayCondition> GetPayConditionAll()
     {
-        throw new NotImplementedException();
+        return PayConditions.Values.ToList();
     }
 
     #endregion
@@ -428,9 +428,14 @@ public class ReferencesKursCache : IReferencesCache
     public ICurrency GetCurrency(decimal? dc)
     {
         if (dc == null) return null;
-        if (Currencies.ContainsKey(dc.Value))
-            return Currencies[dc.Value];
-        var data = Context.SD_301.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
+        return GetCurrency(dc.Value);
+    }
+
+    public ICurrency GetCurrency(decimal dc)
+    {
+        if (Currencies.ContainsKey(dc))
+            return Currencies[dc];
+        var data = Context.SD_301.FirstOrDefault(_ => _.DOC_CODE == dc);
         if (data == null) return null;
         var newItem = new Currency();
         newItem.LoadFromEntity(data);
@@ -584,10 +589,15 @@ public class ReferencesKursCache : IReferencesCache
 
     public IWarehouse GetWarehouse(decimal? dc)
     {
-        if (dc == null) return null;
-        if (Warehouses.ContainsKey(dc.Value))
-            return Warehouses[dc.Value];
-        var data = Context.SD_27.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
+        return dc == null ? null : GetWarehouse(dc.Value);
+    }
+
+    public IWarehouse GetWarehouse(decimal dc)
+    {
+        
+        if (Warehouses.ContainsKey(dc))
+            return Warehouses[dc];
+        var data = Context.SD_27.FirstOrDefault(_ => _.DOC_CODE == dc);
         if (data == null) return null;
         var newItem = new Warehouse();
         newItem.LoadFromEntity(data, this);
@@ -649,18 +659,23 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Nomenkl
 
-    public INomenkl GetNomenkl(Guid? id)
+    public INomenkl GetNomenkl(Guid id)
     {
-        if (id == null) return null;
-        var k = Nomenkls.Values.Cast<Nomenkl>().FirstOrDefault(_ => _.Id == id.Value);
+        var k = Nomenkls.Values.Cast<Nomenkl>().FirstOrDefault(_ => _.Id == id);
         if (k != null)
             return k;
-        var data = Context.SD_83.FirstOrDefault(_ => _.Id == id.Value);
+        var data = Context.SD_83.FirstOrDefault(_ => _.Id == id);
         if (data == null) return null;
         var newItem = new Nomenkl();
         newItem.LoadFromEntity(data, this);
         Nomenkls.Add(data.DOC_CODE, newItem);
         return Nomenkls[data.DOC_CODE];
+    }
+
+    public INomenkl GetNomenkl(Guid? id)
+    {
+        if (id == null) return null;
+        return GetNomenkl(id.Value);
     }
 
     public INomenkl GetNomenkl(decimal? dc)
@@ -771,17 +786,21 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Тип продукции
 
-    public IProductType GetProductType(decimal? dc)
+    public IProductType GetProductType(decimal dc)
     {
-        if (dc == null) return null;
-        if (ProductTypes.ContainsKey(dc.Value))
-            return ProductTypes[dc.Value];
-        var data = Context.SD_50.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
+        if (ProductTypes.ContainsKey(dc))
+            return ProductTypes[dc];
+        var data = Context.SD_50.FirstOrDefault(_ => _.DOC_CODE == dc);
         if (data == null) return null;
         var newItem = new ProductType();
         newItem.LoadFromEntity(data);
         ProductTypes.Add(data.DOC_CODE, newItem);
         return ProductTypes[data.DOC_CODE];
+    }
+
+    public IProductType GetProductType(decimal? dc)
+    {
+        return dc == null ? null : GetProductType(dc.Value);
     }
 
     public IEnumerable<IProductType> GetProductTypeAll()
@@ -835,10 +854,41 @@ public class ReferencesKursCache : IReferencesCache
 
     #endregion
 
+    #region Условия поставки sd_103
+
+    public IDeliveryCondition GetDeliveryCondition(decimal dc)
+    {
+        if (DeliveryConditions.ContainsKey(dc))
+            return DeliveryConditions[dc];
+        var data = Context.SD_103.FirstOrDefault(_ => _.DOC_CODE == dc);
+        if (data == null) return null;
+        var newItem = new DeliveryCondition();
+        newItem.LoadFromEntity(data);
+        DeliveryConditions.Add(data.DOC_CODE, newItem);
+        return DeliveryConditions[data.DOC_CODE];
+    }
+
+    public IDeliveryCondition GetDeliveryCondition(decimal? dc)
+    {
+        if(dc == null) return null;
+        return GetDeliveryCondition(dc.Value);
+    }
+
+    public IEnumerable<IDeliveryCondition> GetDeliveryConditionAll()
+    {
+        return DeliveryConditions.Values.ToList();
+    }
+
+
+    #endregion
+
     #region Dictionaries
 
     private readonly Dictionary<int, IKontragentGroup> KontragentGroups =
         new Dictionary<int, IKontragentGroup>();
+
+    private readonly Dictionary<decimal, IDeliveryCondition> DeliveryConditions =
+        new Dictionary<decimal, IDeliveryCondition>();
 
     private readonly Dictionary<decimal, IKontragent> Kontragents = new Dictionary<decimal, IKontragent>();
     private readonly Dictionary<decimal, INomenkl> Nomenkls = new Dictionary<decimal, INomenkl>();

@@ -204,11 +204,6 @@ public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseCon
         }
     }
 
-    public virtual void RefreshData(object obj)
-    {
-        MainReferences.Refresh();
-    }
-
     public virtual bool CanLoad(object o)
     {
         return true;
@@ -583,4 +578,6 @@ public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseCon
     }
 
     #endregion
+
+    public abstract void RefreshData(object obj);
 }

@@ -405,7 +405,7 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
         DateStart = ent.DateStart;
         DateEnd = ent.DateEnd;
         ManagerDC = ent.ManagerDC;
-        Responsible = MainReferences.Employees.Values.FirstOrDefault(_ => _.DocCode == ManagerDC);
+        Responsible = GlobalOptions.ReferencesCache.GetEmployee(ManagerDC) as Employee;
         if (ent.ProjectsDocs != null)
             ProjectsDocs = new ObservableCollection<ProjectsDocs>(ent.ProjectsDocs);
     }

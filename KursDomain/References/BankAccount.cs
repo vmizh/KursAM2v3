@@ -169,7 +169,7 @@ public sealed class BankAccountViewModel : RSViewModelBase, IEntity<SD_114>
 
         Name = $"{Bank?.Name} Сч.№ {Entity.BA_RASH_ACC} " +
                // ReSharper disable once PossibleInvalidOperationException
-               $"{MainReferences.Currencies[(decimal) Entity.CurrencyDC]}";
+               $"{GlobalOptions.ReferencesCache.GetCurrency(Entity.CurrencyDC) as Currency}";
     }
 
     public Currency Currency

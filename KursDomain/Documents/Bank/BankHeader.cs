@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core;
 using Core.ViewModel.Base;
 using Data;
 
@@ -120,7 +119,8 @@ public class SD_101ViewModel : RSViewModelBase, IEntity<SD_101>
     public override string ToString()
     {
         if (Entity.SD_114 == null) return null;
-        return $"Банк {MainReferences.BankAccounts[Entity.VV_ACC_DC]} от {VV_START_DATE.ToShortDateString()}";
+        return
+            $"Банк {GlobalOptions.ReferencesCache.GetBankAccount(Entity.VV_ACC_DC)} от {VV_START_DATE.ToShortDateString()}";
     }
 
     public List<SD_101> LoadList()

@@ -4,16 +4,14 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Calculates.Materials;
-using Core;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.Managers
 {
@@ -29,7 +27,8 @@ namespace KursAM2.Managers
 
         #region Справочник складов
 
-        public static List<Warehouse> GetWarehouses(List<Warehouse> excludeList = null, string searchText = null)
+        public static List<Warehouse> GetWarehouses(List<WarehouseViewModel> excludeList = null,
+            string searchText = null)
         {
             var result = new List<Warehouse>();
             try
@@ -41,11 +40,19 @@ namespace KursAM2.Managers
                         : ctx.SD_27.Where(_ => _.SKL_NAME.ToUpper().Contains(searchText.ToUpper())).ToList();
                     if (excludeList == null || excludeList.Count == 0)
                         foreach (var d in data)
-                            result.Add(new Warehouse(d));
+                        {
+                            var newItem = new Warehouse();
+                            newItem.LoadFromEntity(d, GlobalOptions.ReferencesCache);
+                            result.Add(newItem);
+                        }
                     else
                         foreach (var d in data)
                             if (excludeList.All(_ => _.DocCode != d.DOC_CODE))
-                                result.Add(new Warehouse(d));
+                            {
+                                var newItem = new Warehouse();
+                                newItem.LoadFromEntity(d, GlobalOptions.ReferencesCache);
+                                result.Add(newItem);
+                            }
                 }
             }
             catch (Exception e)
@@ -112,7 +119,7 @@ namespace KursAM2.Managers
             }
             catch (Exception e)
             {
-                myErrorMessager.WriteErrorMessage(e, "Ошибка", "$WarehouseManager.GetOrderIn {dc}");
+                myErrorMessager.WriteErrorMessage(e, "Ошибка", "$WarehouseViewModelManager.GetOrderIn {dc}");
                 return null;
             }
 
@@ -308,16 +315,16 @@ namespace KursAM2.Managers
                                         DDT_KOL_PRIHOD = item.DDT_KOL_PRIHOD,
                                         DDT_KOL_ZATREBOVANO = item.DDT_KOL_ZATREBOVANO,
                                         DDT_KOL_RASHOD = item.DDT_KOL_RASHOD,
-                                        DDT_KOL_PODTVERZHDENO = (double?) item.DDT_KOL_PODTVERZHDENO,
-                                        DDT_KOL_SHAB_PRIHOD = (double?) item.DDT_KOL_SHAB_PRIHOD,
+                                        DDT_KOL_PODTVERZHDENO = (double?)item.DDT_KOL_PODTVERZHDENO,
+                                        DDT_KOL_SHAB_PRIHOD = (double?)item.DDT_KOL_SHAB_PRIHOD,
                                         DDT_ED_IZM_DC = item.DDT_ED_IZM_DC,
                                         DDT_SPOST_DC = item.DDT_SPOST_DC,
                                         DDT_SPOST_ROW_CODE = item.DDT_SPOST_ROW_CODE,
                                         DDT_CRS_DC = item.DDT_CRS_DC,
                                         DDT_SFACT_DC = item.DDT_SFACT_DC,
                                         DDT_SFACT_ROW_CODE = item.DDT_SFACT_ROW_CODE,
-                                        DDT_OSTAT_STAR = (double?) item.DDT_OSTAT_STAR,
-                                        DDT_OSTAT_NOV = (double?) item.DDT_OSTAT_NOV,
+                                        DDT_OSTAT_STAR = (double?)item.DDT_OSTAT_STAR,
+                                        DDT_OSTAT_NOV = (double?)item.DDT_OSTAT_NOV,
                                         DDT_TAX_CRS_CENA = item.DDT_TAX_CRS_CENA,
                                         DDT_TAX_CENA = item.DDT_TAX_CENA,
                                         DDT_TAX_EXECUTED = item.DDT_TAX_EXECUTED,
@@ -330,7 +337,7 @@ namespace KursAM2.Managers
                                         DDT_NOSZATR_DC = item.DDT_NOSZATR_DC,
                                         DDT_NOSZATR_ROW_CODE = item.DDT_NOSZATR_ROW_CODE,
                                         DDT_POST_ED_IZM_DC = item.DDT_POST_ED_IZM_DC,
-                                        DDT_KOL_POST_PRIHOD = (double?) item.DDT_KOL_POST_PRIHOD,
+                                        DDT_KOL_POST_PRIHOD = (double?)item.DDT_KOL_POST_PRIHOD,
                                         DDT_PRICHINA_SPISANIA = item.DDT_PRICHINA_SPISANIA,
                                         DDT_VOZVRAT_TREBOVINIA = item.DDT_VOZVRAT_TREBOVINIA,
                                         DDT_VOZVRAT_PRICHINA = item.DDT_VOZVRAT_PRICHINA,
@@ -342,21 +349,21 @@ namespace KursAM2.Managers
                                         DDT_SUMMA_V_UCHET_VALUTE = item.DDT_SUMMA_V_UCHET_VALUTE,
                                         DDT_CENA_V_UCHET_VALUTE = item.DDT_CENA_V_UCHET_VALUTE,
                                         DDT_SKLAD_OTPR_DC = item.DDT_SKLAD_OTPR_DC,
-                                        DDT_NOM_CRS_RATE = (double?) item.DDT_NOM_CRS_RATE,
+                                        DDT_NOM_CRS_RATE = (double?)item.DDT_NOM_CRS_RATE,
                                         DDT_PROIZV_PLAN_DC = item.DDT_PROIZV_PLAN_DC,
                                         DDT_RASH_ORD_DC = item.DDT_RASH_ORD_DC,
                                         DDT_RASH_ORD_CODE = item.DDT_RASH_ORD_CODE,
                                         DDT_VOZVR_OTGR_CSR_DC = item.DDT_VOZVR_OTGR_CSR_DC,
-                                        DDT_VOZVR_UCH_CRS_RATE = (double?) item.DDT_VOZVR_UCH_CRS_RATE,
+                                        DDT_VOZVR_UCH_CRS_RATE = (double?)item.DDT_VOZVR_UCH_CRS_RATE,
                                         DDT_VOZVR_OTGR_CRS_TAX_CENA = item.DDT_VOZVR_OTGR_CRS_TAX_CENA,
                                         DDT_SBORSCHIK_TN = item.DDT_SBORSCHIK_TN,
-                                        DDT_KOL_IN_ONE = (double?) item.DDT_KOL_IN_ONE,
+                                        DDT_KOL_IN_ONE = (double?)item.DDT_KOL_IN_ONE,
                                         DDT_OS_DC = item.DDT_OS_DC,
                                         DDT_GARANT_DC = item.DDT_GARANT_DC,
                                         DDT_GARANT_ROW_CODE = item.DDT_GARANT_ROW_CODE,
-                                        DDT_ACT_RAZ_PROC_STOIM = (double?) item.DDT_ACT_RAZ_PROC_STOIM,
+                                        DDT_ACT_RAZ_PROC_STOIM = (double?)item.DDT_ACT_RAZ_PROC_STOIM,
                                         DDT_PROIZV_PLAN_ROW_CODE = item.DDT_PROIZV_PLAN_ROW_CODE,
-                                        DDT_APGP_TO_EXECUTE = (double?) item.DDT_APGP_TO_EXECUTE,
+                                        DDT_APGP_TO_EXECUTE = (double?)item.DDT_APGP_TO_EXECUTE,
                                         DDT_APGP_NOT_EXECUTE = item.DDT_APGP_NOT_EXECUTE,
                                         DDT_DILER_DC = item.DDT_DILER_DC,
                                         DDT_DILER_SUM = item.DDT_DILER_SUM,
@@ -374,7 +381,7 @@ namespace KursAM2.Managers
                                         DDT_PROIZV_PARTIA_DC = item.DDT_PROIZV_PARTIA_DC,
                                         DDT_PROIZV_PARTIA_CODE = item.DDT_PROIZV_PARTIA_CODE,
                                         DDT_DAVAL_SIRIE = item.DDT_DAVAL_SIRIE,
-                                        DDT_MEST_TARA = (double?) item.DDT_MEST_TARA,
+                                        DDT_MEST_TARA = (double?)item.DDT_MEST_TARA,
                                         DDT_TARA_DC = item.DDT_TARA_DC,
                                         DDT_TARA_FLAG = item.DDT_TARA_FLAG,
                                         DDT_PART_NUMBER = item.DDT_PART_NUMBER,
@@ -476,16 +483,16 @@ namespace KursAM2.Managers
                                         DDT_KOL_PRIHOD = r.DDT_KOL_PRIHOD,
                                         DDT_KOL_ZATREBOVANO = r.DDT_KOL_ZATREBOVANO,
                                         DDT_KOL_RASHOD = r.DDT_KOL_RASHOD,
-                                        DDT_KOL_PODTVERZHDENO = (double?) r.DDT_KOL_PODTVERZHDENO,
-                                        DDT_KOL_SHAB_PRIHOD = (double?) r.DDT_KOL_SHAB_PRIHOD,
+                                        DDT_KOL_PODTVERZHDENO = (double?)r.DDT_KOL_PODTVERZHDENO,
+                                        DDT_KOL_SHAB_PRIHOD = (double?)r.DDT_KOL_SHAB_PRIHOD,
                                         DDT_ED_IZM_DC = r.DDT_ED_IZM_DC,
                                         DDT_SPOST_DC = r.DDT_SPOST_DC,
                                         DDT_SPOST_ROW_CODE = r.DDT_SPOST_ROW_CODE,
                                         DDT_CRS_DC = r.DDT_CRS_DC,
                                         DDT_SFACT_DC = r.DDT_SFACT_DC,
                                         DDT_SFACT_ROW_CODE = r.DDT_SFACT_ROW_CODE,
-                                        DDT_OSTAT_STAR = (double?) r.DDT_OSTAT_STAR,
-                                        DDT_OSTAT_NOV = (double?) r.DDT_OSTAT_NOV,
+                                        DDT_OSTAT_STAR = (double?)r.DDT_OSTAT_STAR,
+                                        DDT_OSTAT_NOV = (double?)r.DDT_OSTAT_NOV,
                                         DDT_TAX_CRS_CENA = r.DDT_TAX_CRS_CENA,
                                         DDT_TAX_CENA = r.DDT_TAX_CENA,
                                         DDT_TAX_EXECUTED = r.DDT_TAX_EXECUTED,
@@ -498,7 +505,7 @@ namespace KursAM2.Managers
                                         DDT_NOSZATR_DC = r.DDT_NOSZATR_DC,
                                         DDT_NOSZATR_ROW_CODE = r.DDT_NOSZATR_ROW_CODE,
                                         DDT_POST_ED_IZM_DC = r.DDT_POST_ED_IZM_DC,
-                                        DDT_KOL_POST_PRIHOD = (double?) r.DDT_KOL_POST_PRIHOD,
+                                        DDT_KOL_POST_PRIHOD = (double?)r.DDT_KOL_POST_PRIHOD,
                                         DDT_PRICHINA_SPISANIA = r.DDT_PRICHINA_SPISANIA,
                                         DDT_VOZVRAT_TREBOVINIA = r.DDT_VOZVRAT_TREBOVINIA,
                                         DDT_VOZVRAT_PRICHINA = r.DDT_VOZVRAT_PRICHINA,
@@ -510,21 +517,21 @@ namespace KursAM2.Managers
                                         DDT_SUMMA_V_UCHET_VALUTE = r.DDT_SUMMA_V_UCHET_VALUTE,
                                         DDT_CENA_V_UCHET_VALUTE = r.DDT_CENA_V_UCHET_VALUTE,
                                         DDT_SKLAD_OTPR_DC = r.DDT_SKLAD_OTPR_DC,
-                                        DDT_NOM_CRS_RATE = (double?) r.DDT_NOM_CRS_RATE,
+                                        DDT_NOM_CRS_RATE = (double?)r.DDT_NOM_CRS_RATE,
                                         DDT_PROIZV_PLAN_DC = r.DDT_PROIZV_PLAN_DC,
                                         DDT_RASH_ORD_DC = r.DDT_RASH_ORD_DC,
                                         DDT_RASH_ORD_CODE = r.DDT_RASH_ORD_CODE,
                                         DDT_VOZVR_OTGR_CSR_DC = r.DDT_VOZVR_OTGR_CSR_DC,
-                                        DDT_VOZVR_UCH_CRS_RATE = (double?) r.DDT_VOZVR_UCH_CRS_RATE,
+                                        DDT_VOZVR_UCH_CRS_RATE = (double?)r.DDT_VOZVR_UCH_CRS_RATE,
                                         DDT_VOZVR_OTGR_CRS_TAX_CENA = r.DDT_VOZVR_OTGR_CRS_TAX_CENA,
                                         DDT_SBORSCHIK_TN = r.DDT_SBORSCHIK_TN,
-                                        DDT_KOL_IN_ONE = (double?) r.DDT_KOL_IN_ONE,
+                                        DDT_KOL_IN_ONE = (double?)r.DDT_KOL_IN_ONE,
                                         DDT_OS_DC = r.DDT_OS_DC,
                                         DDT_GARANT_DC = r.DDT_GARANT_DC,
                                         DDT_GARANT_ROW_CODE = r.DDT_GARANT_ROW_CODE,
-                                        DDT_ACT_RAZ_PROC_STOIM = (double?) r.DDT_ACT_RAZ_PROC_STOIM,
+                                        DDT_ACT_RAZ_PROC_STOIM = (double?)r.DDT_ACT_RAZ_PROC_STOIM,
                                         DDT_PROIZV_PLAN_ROW_CODE = r.DDT_PROIZV_PLAN_ROW_CODE,
-                                        DDT_APGP_TO_EXECUTE = (double?) r.DDT_APGP_TO_EXECUTE,
+                                        DDT_APGP_TO_EXECUTE = (double?)r.DDT_APGP_TO_EXECUTE,
                                         DDT_APGP_NOT_EXECUTE = r.DDT_APGP_NOT_EXECUTE,
                                         DDT_DILER_DC = r.DDT_DILER_DC,
                                         DDT_DILER_SUM = r.DDT_DILER_SUM,
@@ -542,7 +549,7 @@ namespace KursAM2.Managers
                                         DDT_PROIZV_PARTIA_DC = r.DDT_PROIZV_PARTIA_DC,
                                         DDT_PROIZV_PARTIA_CODE = r.DDT_PROIZV_PARTIA_CODE,
                                         DDT_DAVAL_SIRIE = r.DDT_DAVAL_SIRIE,
-                                        DDT_MEST_TARA = (double?) r.DDT_MEST_TARA,
+                                        DDT_MEST_TARA = (double?)r.DDT_MEST_TARA,
                                         DDT_TARA_DC = r.DDT_TARA_DC,
                                         DDT_TARA_FLAG = r.DDT_TARA_FLAG,
                                         DDT_PART_NUMBER = r.DDT_PART_NUMBER,
@@ -559,16 +566,16 @@ namespace KursAM2.Managers
                                     oldrow.DDT_KOL_PRIHOD = r.DDT_KOL_PRIHOD;
                                     oldrow.DDT_KOL_ZATREBOVANO = r.DDT_KOL_ZATREBOVANO;
                                     oldrow.DDT_KOL_RASHOD = r.DDT_KOL_RASHOD;
-                                    oldrow.DDT_KOL_PODTVERZHDENO = (double?) r.DDT_KOL_PODTVERZHDENO;
-                                    oldrow.DDT_KOL_SHAB_PRIHOD = (double?) r.DDT_KOL_SHAB_PRIHOD;
+                                    oldrow.DDT_KOL_PODTVERZHDENO = (double?)r.DDT_KOL_PODTVERZHDENO;
+                                    oldrow.DDT_KOL_SHAB_PRIHOD = (double?)r.DDT_KOL_SHAB_PRIHOD;
                                     oldrow.DDT_ED_IZM_DC = r.DDT_ED_IZM_DC;
                                     oldrow.DDT_SPOST_DC = r.DDT_SPOST_DC;
                                     oldrow.DDT_SPOST_ROW_CODE = r.DDT_SPOST_ROW_CODE;
                                     oldrow.DDT_CRS_DC = r.DDT_CRS_DC;
                                     oldrow.DDT_SFACT_DC = r.DDT_SFACT_DC;
                                     oldrow.DDT_SFACT_ROW_CODE = r.DDT_SFACT_ROW_CODE;
-                                    oldrow.DDT_OSTAT_STAR = (double?) r.DDT_OSTAT_STAR;
-                                    oldrow.DDT_OSTAT_NOV = (double?) r.DDT_OSTAT_NOV;
+                                    oldrow.DDT_OSTAT_STAR = (double?)r.DDT_OSTAT_STAR;
+                                    oldrow.DDT_OSTAT_NOV = (double?)r.DDT_OSTAT_NOV;
                                     oldrow.DDT_TAX_CRS_CENA = r.DDT_TAX_CRS_CENA;
                                     oldrow.DDT_TAX_CENA = r.DDT_TAX_CENA;
                                     oldrow.DDT_TAX_EXECUTED = r.DDT_TAX_EXECUTED;
@@ -581,7 +588,7 @@ namespace KursAM2.Managers
                                     oldrow.DDT_NOSZATR_DC = r.DDT_NOSZATR_DC;
                                     oldrow.DDT_NOSZATR_ROW_CODE = r.DDT_NOSZATR_ROW_CODE;
                                     oldrow.DDT_POST_ED_IZM_DC = r.DDT_POST_ED_IZM_DC;
-                                    oldrow.DDT_KOL_POST_PRIHOD = (double?) r.DDT_KOL_POST_PRIHOD;
+                                    oldrow.DDT_KOL_POST_PRIHOD = (double?)r.DDT_KOL_POST_PRIHOD;
                                     oldrow.DDT_PRICHINA_SPISANIA = r.DDT_PRICHINA_SPISANIA;
                                     oldrow.DDT_VOZVRAT_TREBOVINIA = r.DDT_VOZVRAT_TREBOVINIA;
                                     oldrow.DDT_VOZVRAT_PRICHINA = r.DDT_VOZVRAT_PRICHINA;
@@ -593,21 +600,21 @@ namespace KursAM2.Managers
                                     oldrow.DDT_SUMMA_V_UCHET_VALUTE = r.DDT_SUMMA_V_UCHET_VALUTE;
                                     oldrow.DDT_CENA_V_UCHET_VALUTE = r.DDT_CENA_V_UCHET_VALUTE;
                                     oldrow.DDT_SKLAD_OTPR_DC = r.DDT_SKLAD_OTPR_DC;
-                                    oldrow.DDT_NOM_CRS_RATE = (double?) r.DDT_NOM_CRS_RATE;
+                                    oldrow.DDT_NOM_CRS_RATE = (double?)r.DDT_NOM_CRS_RATE;
                                     oldrow.DDT_PROIZV_PLAN_DC = r.DDT_PROIZV_PLAN_DC;
                                     oldrow.DDT_RASH_ORD_DC = r.DDT_RASH_ORD_DC;
                                     oldrow.DDT_RASH_ORD_CODE = r.DDT_RASH_ORD_CODE;
                                     oldrow.DDT_VOZVR_OTGR_CSR_DC = r.DDT_VOZVR_OTGR_CSR_DC;
-                                    oldrow.DDT_VOZVR_UCH_CRS_RATE = (double?) r.DDT_VOZVR_UCH_CRS_RATE;
+                                    oldrow.DDT_VOZVR_UCH_CRS_RATE = (double?)r.DDT_VOZVR_UCH_CRS_RATE;
                                     oldrow.DDT_VOZVR_OTGR_CRS_TAX_CENA = r.DDT_VOZVR_OTGR_CRS_TAX_CENA;
                                     oldrow.DDT_SBORSCHIK_TN = r.DDT_SBORSCHIK_TN;
-                                    oldrow.DDT_KOL_IN_ONE = (double?) r.DDT_KOL_IN_ONE;
+                                    oldrow.DDT_KOL_IN_ONE = (double?)r.DDT_KOL_IN_ONE;
                                     oldrow.DDT_OS_DC = r.DDT_OS_DC;
                                     oldrow.DDT_GARANT_DC = r.DDT_GARANT_DC;
                                     oldrow.DDT_GARANT_ROW_CODE = r.DDT_GARANT_ROW_CODE;
-                                    oldrow.DDT_ACT_RAZ_PROC_STOIM = (double?) r.DDT_ACT_RAZ_PROC_STOIM;
+                                    oldrow.DDT_ACT_RAZ_PROC_STOIM = (double?)r.DDT_ACT_RAZ_PROC_STOIM;
                                     oldrow.DDT_PROIZV_PLAN_ROW_CODE = r.DDT_PROIZV_PLAN_ROW_CODE;
-                                    oldrow.DDT_APGP_TO_EXECUTE = (double?) r.DDT_APGP_TO_EXECUTE;
+                                    oldrow.DDT_APGP_TO_EXECUTE = (double?)r.DDT_APGP_TO_EXECUTE;
                                     oldrow.DDT_APGP_NOT_EXECUTE = r.DDT_APGP_NOT_EXECUTE;
                                     oldrow.DDT_DILER_DC = r.DDT_DILER_DC;
                                     oldrow.DDT_DILER_SUM = r.DDT_DILER_SUM;
@@ -625,7 +632,7 @@ namespace KursAM2.Managers
                                     oldrow.DDT_PROIZV_PARTIA_DC = r.DDT_PROIZV_PARTIA_DC;
                                     oldrow.DDT_PROIZV_PARTIA_CODE = r.DDT_PROIZV_PARTIA_CODE;
                                     oldrow.DDT_DAVAL_SIRIE = r.DDT_DAVAL_SIRIE;
-                                    oldrow.DDT_MEST_TARA = (double?) r.DDT_MEST_TARA;
+                                    oldrow.DDT_MEST_TARA = (double?)r.DDT_MEST_TARA;
                                     oldrow.DDT_TARA_DC = r.DDT_TARA_DC;
                                     oldrow.DDT_TARA_FLAG = r.DDT_TARA_FLAG;
                                     oldrow.DDT_PART_NUMBER = r.DDT_PART_NUMBER;
@@ -668,12 +675,12 @@ namespace KursAM2.Managers
                                 calc.Save(ops);
                             var c = NomenklCalculationManager.NomenklRemain(ctx, DateTime.Today, n,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                (decimal) doc.Entity.DD_SKLAD_POL_DC);
+                                (decimal)doc.Entity.DD_SKLAD_POL_DC);
                             if (c < 0)
                             {
-                                var nom = MainReferences.GetNomenkl(n);
+                                var nom = GlobalOptions.ReferencesCache.GetNomenkl(n) as KursDomain.References.Nomenkl;
                                 var res = wManager.ShowWinUIMessageBox($"По товару {nom.NomenklNumber} {nom.Name} " +
-                                                                       $"склад {MainReferences.Warehouses[(decimal) doc.Entity.DD_SKLAD_POL_DC]} в кол-ве {c}." +
+                                                                       $"склад {GlobalOptions.ReferencesCache.GetWarehouse(doc.Entity.DD_SKLAD_POL_DC)} в кол-ве {c}." +
                                                                        "Все равно сохранить?",
                                     "Отрицательные остатки", MessageBoxButton.YesNo,
                                     MessageBoxImage.Warning);
@@ -735,13 +742,13 @@ namespace KursAM2.Managers
                                 calc.Save(ops);
                             var c = NomenklCalculationManager.GetNomenklStoreRemain(ctx, DateTime.Today, n,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                (decimal) doc.Entity.DD_SKLAD_POL_DC);
+                                (decimal)doc.Entity.DD_SKLAD_POL_DC);
                             if (c < 0)
                             {
                                 transaction.Rollback();
-                                var nom = MainReferences.GetNomenkl(n);
+                                var nom = GlobalOptions.ReferencesCache.GetNomenkl(n) as KursDomain.References.Nomenkl;
                                 WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
-                                                          $"склад {MainReferences.Warehouses[(decimal) doc.Entity.DD_SKLAD_POL_DC]} в кол-ве {c} ",
+                                                          $"склад {GlobalOptions.ReferencesCache.GetWarehouse(doc.Entity.DD_SKLAD_POL_DC)} в кол-ве {c} ",
                                     "Отрицательные остатки", MessageBoxImage.Error);
                                 return;
                             }
@@ -850,7 +857,7 @@ namespace KursAM2.Managers
                 r.State = RowStatus.NewRow;
             }
 
-            var doc = new WarehouseOrderOut(old.Entity) {State = RowStatus.NewRow};
+            var doc = new WarehouseOrderOut(old.Entity) { State = RowStatus.NewRow };
             return doc;
         }
 
@@ -869,7 +876,7 @@ namespace KursAM2.Managers
             old.CREATOR = GlobalOptions.UserInfo.Name;
             old.Rows.Clear();
             old.Entity.TD_24.Clear();
-            var doc = new WarehouseOrderOut(old.Entity) {State = RowStatus.NewRow};
+            var doc = new WarehouseOrderOut(old.Entity) { State = RowStatus.NewRow };
             return doc;
         }
 
@@ -978,16 +985,16 @@ namespace KursAM2.Managers
                                         DDT_KOL_PRIHOD = item.DDT_KOL_PRIHOD,
                                         DDT_KOL_ZATREBOVANO = item.DDT_KOL_ZATREBOVANO,
                                         DDT_KOL_RASHOD = item.DDT_KOL_RASHOD,
-                                        DDT_KOL_PODTVERZHDENO = (double?) item.DDT_KOL_PODTVERZHDENO,
-                                        DDT_KOL_SHAB_PRIHOD = (double?) item.DDT_KOL_SHAB_PRIHOD,
+                                        DDT_KOL_PODTVERZHDENO = (double?)item.DDT_KOL_PODTVERZHDENO,
+                                        DDT_KOL_SHAB_PRIHOD = (double?)item.DDT_KOL_SHAB_PRIHOD,
                                         DDT_ED_IZM_DC = item.DDT_ED_IZM_DC,
                                         DDT_SPOST_DC = item.DDT_SPOST_DC,
                                         DDT_SPOST_ROW_CODE = item.DDT_SPOST_ROW_CODE,
                                         DDT_CRS_DC = item.DDT_CRS_DC,
                                         DDT_SFACT_DC = item.DDT_SFACT_DC,
                                         DDT_SFACT_ROW_CODE = item.DDT_SFACT_ROW_CODE,
-                                        DDT_OSTAT_STAR = (double?) item.DDT_OSTAT_STAR,
-                                        DDT_OSTAT_NOV = (double?) item.DDT_OSTAT_NOV,
+                                        DDT_OSTAT_STAR = (double?)item.DDT_OSTAT_STAR,
+                                        DDT_OSTAT_NOV = (double?)item.DDT_OSTAT_NOV,
                                         DDT_TAX_CRS_CENA = item.DDT_TAX_CRS_CENA,
                                         DDT_TAX_CENA = item.DDT_TAX_CENA,
                                         DDT_TAX_EXECUTED = item.DDT_TAX_EXECUTED,
@@ -1000,7 +1007,7 @@ namespace KursAM2.Managers
                                         DDT_NOSZATR_DC = item.DDT_NOSZATR_DC,
                                         DDT_NOSZATR_ROW_CODE = item.DDT_NOSZATR_ROW_CODE,
                                         DDT_POST_ED_IZM_DC = item.DDT_POST_ED_IZM_DC,
-                                        DDT_KOL_POST_PRIHOD = (double?) item.DDT_KOL_POST_PRIHOD,
+                                        DDT_KOL_POST_PRIHOD = (double?)item.DDT_KOL_POST_PRIHOD,
                                         DDT_PRICHINA_SPISANIA = item.DDT_PRICHINA_SPISANIA,
                                         DDT_VOZVRAT_TREBOVINIA = item.DDT_VOZVRAT_TREBOVINIA,
                                         DDT_VOZVRAT_PRICHINA = item.DDT_VOZVRAT_PRICHINA,
@@ -1012,21 +1019,21 @@ namespace KursAM2.Managers
                                         DDT_SUMMA_V_UCHET_VALUTE = item.DDT_SUMMA_V_UCHET_VALUTE,
                                         DDT_CENA_V_UCHET_VALUTE = item.DDT_CENA_V_UCHET_VALUTE,
                                         DDT_SKLAD_OTPR_DC = item.DDT_SKLAD_OTPR_DC,
-                                        DDT_NOM_CRS_RATE = (double?) item.DDT_NOM_CRS_RATE,
+                                        DDT_NOM_CRS_RATE = (double?)item.DDT_NOM_CRS_RATE,
                                         DDT_PROIZV_PLAN_DC = item.DDT_PROIZV_PLAN_DC,
                                         DDT_RASH_ORD_DC = item.DDT_RASH_ORD_DC,
                                         DDT_RASH_ORD_CODE = item.DDT_RASH_ORD_CODE,
                                         DDT_VOZVR_OTGR_CSR_DC = item.DDT_VOZVR_OTGR_CSR_DC,
-                                        DDT_VOZVR_UCH_CRS_RATE = (double?) item.DDT_VOZVR_UCH_CRS_RATE,
+                                        DDT_VOZVR_UCH_CRS_RATE = (double?)item.DDT_VOZVR_UCH_CRS_RATE,
                                         DDT_VOZVR_OTGR_CRS_TAX_CENA = item.DDT_VOZVR_OTGR_CRS_TAX_CENA,
                                         DDT_SBORSCHIK_TN = item.DDT_SBORSCHIK_TN,
-                                        DDT_KOL_IN_ONE = (double?) item.DDT_KOL_IN_ONE,
+                                        DDT_KOL_IN_ONE = (double?)item.DDT_KOL_IN_ONE,
                                         DDT_OS_DC = item.DDT_OS_DC,
                                         DDT_GARANT_DC = item.DDT_GARANT_DC,
                                         DDT_GARANT_ROW_CODE = item.DDT_GARANT_ROW_CODE,
-                                        DDT_ACT_RAZ_PROC_STOIM = (double?) item.DDT_ACT_RAZ_PROC_STOIM,
+                                        DDT_ACT_RAZ_PROC_STOIM = (double?)item.DDT_ACT_RAZ_PROC_STOIM,
                                         DDT_PROIZV_PLAN_ROW_CODE = item.DDT_PROIZV_PLAN_ROW_CODE,
-                                        DDT_APGP_TO_EXECUTE = (double?) item.DDT_APGP_TO_EXECUTE,
+                                        DDT_APGP_TO_EXECUTE = (double?)item.DDT_APGP_TO_EXECUTE,
                                         DDT_APGP_NOT_EXECUTE = item.DDT_APGP_NOT_EXECUTE,
                                         DDT_DILER_DC = item.DDT_DILER_DC,
                                         DDT_DILER_SUM = item.DDT_DILER_SUM,
@@ -1044,7 +1051,7 @@ namespace KursAM2.Managers
                                         DDT_PROIZV_PARTIA_DC = item.DDT_PROIZV_PARTIA_DC,
                                         DDT_PROIZV_PARTIA_CODE = item.DDT_PROIZV_PARTIA_CODE,
                                         DDT_DAVAL_SIRIE = item.DDT_DAVAL_SIRIE,
-                                        DDT_MEST_TARA = (double?) item.DDT_MEST_TARA,
+                                        DDT_MEST_TARA = (double?)item.DDT_MEST_TARA,
                                         DDT_TARA_DC = item.DDT_TARA_DC,
                                         DDT_TARA_FLAG = item.DDT_TARA_FLAG,
                                         DDT_PART_NUMBER = item.DDT_PART_NUMBER,
@@ -1146,16 +1153,16 @@ namespace KursAM2.Managers
                                         DDT_KOL_PRIHOD = r.DDT_KOL_PRIHOD,
                                         DDT_KOL_ZATREBOVANO = r.DDT_KOL_ZATREBOVANO,
                                         DDT_KOL_RASHOD = r.DDT_KOL_RASHOD,
-                                        DDT_KOL_PODTVERZHDENO = (double?) r.DDT_KOL_PODTVERZHDENO,
-                                        DDT_KOL_SHAB_PRIHOD = (double?) r.DDT_KOL_SHAB_PRIHOD,
+                                        DDT_KOL_PODTVERZHDENO = (double?)r.DDT_KOL_PODTVERZHDENO,
+                                        DDT_KOL_SHAB_PRIHOD = (double?)r.DDT_KOL_SHAB_PRIHOD,
                                         DDT_ED_IZM_DC = r.DDT_ED_IZM_DC,
                                         DDT_SPOST_DC = r.DDT_SPOST_DC,
                                         DDT_SPOST_ROW_CODE = r.DDT_SPOST_ROW_CODE,
                                         DDT_CRS_DC = r.DDT_CRS_DC,
                                         DDT_SFACT_DC = r.DDT_SFACT_DC,
                                         DDT_SFACT_ROW_CODE = r.DDT_SFACT_ROW_CODE,
-                                        DDT_OSTAT_STAR = (double?) r.DDT_OSTAT_STAR,
-                                        DDT_OSTAT_NOV = (double?) r.DDT_OSTAT_NOV,
+                                        DDT_OSTAT_STAR = (double?)r.DDT_OSTAT_STAR,
+                                        DDT_OSTAT_NOV = (double?)r.DDT_OSTAT_NOV,
                                         DDT_TAX_CRS_CENA = r.DDT_TAX_CRS_CENA,
                                         DDT_TAX_CENA = r.DDT_TAX_CENA,
                                         DDT_TAX_EXECUTED = r.DDT_TAX_EXECUTED,
@@ -1168,7 +1175,7 @@ namespace KursAM2.Managers
                                         DDT_NOSZATR_DC = r.DDT_NOSZATR_DC,
                                         DDT_NOSZATR_ROW_CODE = r.DDT_NOSZATR_ROW_CODE,
                                         DDT_POST_ED_IZM_DC = r.DDT_POST_ED_IZM_DC,
-                                        DDT_KOL_POST_PRIHOD = (double?) r.DDT_KOL_POST_PRIHOD,
+                                        DDT_KOL_POST_PRIHOD = (double?)r.DDT_KOL_POST_PRIHOD,
                                         DDT_PRICHINA_SPISANIA = r.DDT_PRICHINA_SPISANIA,
                                         DDT_VOZVRAT_TREBOVINIA = r.DDT_VOZVRAT_TREBOVINIA,
                                         DDT_VOZVRAT_PRICHINA = r.DDT_VOZVRAT_PRICHINA,
@@ -1180,21 +1187,21 @@ namespace KursAM2.Managers
                                         DDT_SUMMA_V_UCHET_VALUTE = r.DDT_SUMMA_V_UCHET_VALUTE,
                                         DDT_CENA_V_UCHET_VALUTE = r.DDT_CENA_V_UCHET_VALUTE,
                                         DDT_SKLAD_OTPR_DC = r.DDT_SKLAD_OTPR_DC,
-                                        DDT_NOM_CRS_RATE = (double?) r.DDT_NOM_CRS_RATE,
+                                        DDT_NOM_CRS_RATE = (double?)r.DDT_NOM_CRS_RATE,
                                         DDT_PROIZV_PLAN_DC = r.DDT_PROIZV_PLAN_DC,
                                         DDT_RASH_ORD_DC = r.DDT_RASH_ORD_DC,
                                         DDT_RASH_ORD_CODE = r.DDT_RASH_ORD_CODE,
                                         DDT_VOZVR_OTGR_CSR_DC = r.DDT_VOZVR_OTGR_CSR_DC,
-                                        DDT_VOZVR_UCH_CRS_RATE = (double?) r.DDT_VOZVR_UCH_CRS_RATE,
+                                        DDT_VOZVR_UCH_CRS_RATE = (double?)r.DDT_VOZVR_UCH_CRS_RATE,
                                         DDT_VOZVR_OTGR_CRS_TAX_CENA = r.DDT_VOZVR_OTGR_CRS_TAX_CENA,
                                         DDT_SBORSCHIK_TN = r.DDT_SBORSCHIK_TN,
-                                        DDT_KOL_IN_ONE = (double?) r.DDT_KOL_IN_ONE,
+                                        DDT_KOL_IN_ONE = (double?)r.DDT_KOL_IN_ONE,
                                         DDT_OS_DC = r.DDT_OS_DC,
                                         DDT_GARANT_DC = r.DDT_GARANT_DC,
                                         DDT_GARANT_ROW_CODE = r.DDT_GARANT_ROW_CODE,
-                                        DDT_ACT_RAZ_PROC_STOIM = (double?) r.DDT_ACT_RAZ_PROC_STOIM,
+                                        DDT_ACT_RAZ_PROC_STOIM = (double?)r.DDT_ACT_RAZ_PROC_STOIM,
                                         DDT_PROIZV_PLAN_ROW_CODE = r.DDT_PROIZV_PLAN_ROW_CODE,
-                                        DDT_APGP_TO_EXECUTE = (double?) r.DDT_APGP_TO_EXECUTE,
+                                        DDT_APGP_TO_EXECUTE = (double?)r.DDT_APGP_TO_EXECUTE,
                                         DDT_APGP_NOT_EXECUTE = r.DDT_APGP_NOT_EXECUTE,
                                         DDT_DILER_DC = r.DDT_DILER_DC,
                                         DDT_DILER_SUM = r.DDT_DILER_SUM,
@@ -1212,7 +1219,7 @@ namespace KursAM2.Managers
                                         DDT_PROIZV_PARTIA_DC = r.DDT_PROIZV_PARTIA_DC,
                                         DDT_PROIZV_PARTIA_CODE = r.DDT_PROIZV_PARTIA_CODE,
                                         DDT_DAVAL_SIRIE = r.DDT_DAVAL_SIRIE,
-                                        DDT_MEST_TARA = (double?) r.DDT_MEST_TARA,
+                                        DDT_MEST_TARA = (double?)r.DDT_MEST_TARA,
                                         DDT_TARA_DC = r.DDT_TARA_DC,
                                         DDT_TARA_FLAG = r.DDT_TARA_FLAG,
                                         DDT_PART_NUMBER = r.DDT_PART_NUMBER,
@@ -1229,16 +1236,16 @@ namespace KursAM2.Managers
                                     oldrow.DDT_KOL_PRIHOD = r.DDT_KOL_PRIHOD;
                                     oldrow.DDT_KOL_ZATREBOVANO = r.DDT_KOL_ZATREBOVANO;
                                     oldrow.DDT_KOL_RASHOD = r.DDT_KOL_RASHOD;
-                                    oldrow.DDT_KOL_PODTVERZHDENO = (double?) r.DDT_KOL_PODTVERZHDENO;
-                                    oldrow.DDT_KOL_SHAB_PRIHOD = (double?) r.DDT_KOL_SHAB_PRIHOD;
+                                    oldrow.DDT_KOL_PODTVERZHDENO = (double?)r.DDT_KOL_PODTVERZHDENO;
+                                    oldrow.DDT_KOL_SHAB_PRIHOD = (double?)r.DDT_KOL_SHAB_PRIHOD;
                                     oldrow.DDT_ED_IZM_DC = r.DDT_ED_IZM_DC;
                                     oldrow.DDT_SPOST_DC = r.DDT_SPOST_DC;
                                     oldrow.DDT_SPOST_ROW_CODE = r.DDT_SPOST_ROW_CODE;
                                     oldrow.DDT_CRS_DC = r.DDT_CRS_DC;
                                     oldrow.DDT_SFACT_DC = r.DDT_SFACT_DC;
                                     oldrow.DDT_SFACT_ROW_CODE = r.DDT_SFACT_ROW_CODE;
-                                    oldrow.DDT_OSTAT_STAR = (double?) r.DDT_OSTAT_STAR;
-                                    oldrow.DDT_OSTAT_NOV = (double?) r.DDT_OSTAT_NOV;
+                                    oldrow.DDT_OSTAT_STAR = (double?)r.DDT_OSTAT_STAR;
+                                    oldrow.DDT_OSTAT_NOV = (double?)r.DDT_OSTAT_NOV;
                                     oldrow.DDT_TAX_CRS_CENA = r.DDT_TAX_CRS_CENA;
                                     oldrow.DDT_TAX_CENA = r.DDT_TAX_CENA;
                                     oldrow.DDT_TAX_EXECUTED = r.DDT_TAX_EXECUTED;
@@ -1251,7 +1258,7 @@ namespace KursAM2.Managers
                                     oldrow.DDT_NOSZATR_DC = r.DDT_NOSZATR_DC;
                                     oldrow.DDT_NOSZATR_ROW_CODE = r.DDT_NOSZATR_ROW_CODE;
                                     oldrow.DDT_POST_ED_IZM_DC = r.DDT_POST_ED_IZM_DC;
-                                    oldrow.DDT_KOL_POST_PRIHOD = (double?) r.DDT_KOL_POST_PRIHOD;
+                                    oldrow.DDT_KOL_POST_PRIHOD = (double?)r.DDT_KOL_POST_PRIHOD;
                                     oldrow.DDT_PRICHINA_SPISANIA = r.DDT_PRICHINA_SPISANIA;
                                     oldrow.DDT_VOZVRAT_TREBOVINIA = r.DDT_VOZVRAT_TREBOVINIA;
                                     oldrow.DDT_VOZVRAT_PRICHINA = r.DDT_VOZVRAT_PRICHINA;
@@ -1263,21 +1270,21 @@ namespace KursAM2.Managers
                                     oldrow.DDT_SUMMA_V_UCHET_VALUTE = r.DDT_SUMMA_V_UCHET_VALUTE;
                                     oldrow.DDT_CENA_V_UCHET_VALUTE = r.DDT_CENA_V_UCHET_VALUTE;
                                     oldrow.DDT_SKLAD_OTPR_DC = r.DDT_SKLAD_OTPR_DC;
-                                    oldrow.DDT_NOM_CRS_RATE = (double?) r.DDT_NOM_CRS_RATE;
+                                    oldrow.DDT_NOM_CRS_RATE = (double?)r.DDT_NOM_CRS_RATE;
                                     oldrow.DDT_PROIZV_PLAN_DC = r.DDT_PROIZV_PLAN_DC;
                                     oldrow.DDT_RASH_ORD_DC = r.DDT_RASH_ORD_DC;
                                     oldrow.DDT_RASH_ORD_CODE = r.DDT_RASH_ORD_CODE;
                                     oldrow.DDT_VOZVR_OTGR_CSR_DC = r.DDT_VOZVR_OTGR_CSR_DC;
-                                    oldrow.DDT_VOZVR_UCH_CRS_RATE = (double?) r.DDT_VOZVR_UCH_CRS_RATE;
+                                    oldrow.DDT_VOZVR_UCH_CRS_RATE = (double?)r.DDT_VOZVR_UCH_CRS_RATE;
                                     oldrow.DDT_VOZVR_OTGR_CRS_TAX_CENA = r.DDT_VOZVR_OTGR_CRS_TAX_CENA;
                                     oldrow.DDT_SBORSCHIK_TN = r.DDT_SBORSCHIK_TN;
-                                    oldrow.DDT_KOL_IN_ONE = (double?) r.DDT_KOL_IN_ONE;
+                                    oldrow.DDT_KOL_IN_ONE = (double?)r.DDT_KOL_IN_ONE;
                                     oldrow.DDT_OS_DC = r.DDT_OS_DC;
                                     oldrow.DDT_GARANT_DC = r.DDT_GARANT_DC;
                                     oldrow.DDT_GARANT_ROW_CODE = r.DDT_GARANT_ROW_CODE;
-                                    oldrow.DDT_ACT_RAZ_PROC_STOIM = (double?) r.DDT_ACT_RAZ_PROC_STOIM;
+                                    oldrow.DDT_ACT_RAZ_PROC_STOIM = (double?)r.DDT_ACT_RAZ_PROC_STOIM;
                                     oldrow.DDT_PROIZV_PLAN_ROW_CODE = r.DDT_PROIZV_PLAN_ROW_CODE;
-                                    oldrow.DDT_APGP_TO_EXECUTE = (double?) r.DDT_APGP_TO_EXECUTE;
+                                    oldrow.DDT_APGP_TO_EXECUTE = (double?)r.DDT_APGP_TO_EXECUTE;
                                     oldrow.DDT_APGP_NOT_EXECUTE = r.DDT_APGP_NOT_EXECUTE;
                                     oldrow.DDT_DILER_DC = r.DDT_DILER_DC;
                                     oldrow.DDT_DILER_SUM = r.DDT_DILER_SUM;
@@ -1295,7 +1302,7 @@ namespace KursAM2.Managers
                                     oldrow.DDT_PROIZV_PARTIA_DC = r.DDT_PROIZV_PARTIA_DC;
                                     oldrow.DDT_PROIZV_PARTIA_CODE = r.DDT_PROIZV_PARTIA_CODE;
                                     oldrow.DDT_DAVAL_SIRIE = r.DDT_DAVAL_SIRIE;
-                                    oldrow.DDT_MEST_TARA = (double?) r.DDT_MEST_TARA;
+                                    oldrow.DDT_MEST_TARA = (double?)r.DDT_MEST_TARA;
                                     oldrow.DDT_TARA_DC = r.DDT_TARA_DC;
                                     oldrow.DDT_TARA_FLAG = r.DDT_TARA_FLAG;
                                     oldrow.DDT_PART_NUMBER = r.DDT_PART_NUMBER;
@@ -1316,14 +1323,14 @@ namespace KursAM2.Managers
                                 calc.Save(ops);
                             var c = NomenklCalculationManager.NomenklRemain(ctx, doc.Date, n,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                (decimal) doc.Entity.DD_SKLAD_OTPR_DC);
+                                (decimal)doc.Entity.DD_SKLAD_OTPR_DC);
                             if (c < 0)
                             {
                                 transaction.Rollback();
-                                var nom = MainReferences.GetNomenkl(n);
+                                var nom = GlobalOptions.ReferencesCache.GetNomenkl(n) as KursDomain.References.Nomenkl;
                                 WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
                                                           // ReSharper disable once PossibleInvalidOperationException
-                                                          $"склад {MainReferences.Warehouses[(decimal) doc.Entity.DD_SKLAD_OTPR_DC]} в кол-ве {c} ",
+                                                          $"склад {GlobalOptions.ReferencesCache.GetWarehouse(doc.Entity.DD_SKLAD_OTPR_DC)} в кол-ве {c} ",
                                     "Отрицательные остатки", MessageBoxImage.Error);
                                 return -1;
                             }
@@ -1437,7 +1444,7 @@ namespace KursAM2.Managers
                         .Include("TD_24.TD_26")
                         .Include("TD_24.TD_241")
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
-                    result = new Waybill(data) {myState = RowStatus.NotEdited};
+                    result = new Waybill(data) { myState = RowStatus.NotEdited };
                     foreach (var r in result.Rows)
                         r.myState = RowStatus.NotEdited;
                 }
@@ -1494,7 +1501,7 @@ namespace KursAM2.Managers
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
                 Date = DateTime.Today,
-                CREATOR = GlobalOptions.UserInfo.Name,
+                CREATOR = GlobalOptions.UserInfo.Name
             };
             foreach (var r in res.Rows)
             {
@@ -1639,16 +1646,16 @@ namespace KursAM2.Managers
                                         DDT_KOL_PRIHOD = item.DDT_KOL_PRIHOD,
                                         DDT_KOL_ZATREBOVANO = item.DDT_KOL_ZATREBOVANO,
                                         DDT_KOL_RASHOD = item.DDT_KOL_RASHOD,
-                                        DDT_KOL_PODTVERZHDENO = (double?) item.DDT_KOL_PODTVERZHDENO,
-                                        DDT_KOL_SHAB_PRIHOD = (double?) item.DDT_KOL_SHAB_PRIHOD,
+                                        DDT_KOL_PODTVERZHDENO = (double?)item.DDT_KOL_PODTVERZHDENO,
+                                        DDT_KOL_SHAB_PRIHOD = (double?)item.DDT_KOL_SHAB_PRIHOD,
                                         DDT_ED_IZM_DC = item.DDT_ED_IZM_DC,
                                         DDT_SPOST_DC = item.DDT_SPOST_DC,
                                         DDT_SPOST_ROW_CODE = item.DDT_SPOST_ROW_CODE,
                                         DDT_CRS_DC = item.DDT_CRS_DC,
                                         DDT_SFACT_DC = item.DDT_SFACT_DC,
                                         DDT_SFACT_ROW_CODE = item.DDT_SFACT_ROW_CODE,
-                                        DDT_OSTAT_STAR = (double?) item.DDT_OSTAT_STAR,
-                                        DDT_OSTAT_NOV = (double?) item.DDT_OSTAT_NOV,
+                                        DDT_OSTAT_STAR = (double?)item.DDT_OSTAT_STAR,
+                                        DDT_OSTAT_NOV = (double?)item.DDT_OSTAT_NOV,
                                         DDT_TAX_CRS_CENA = item.DDT_TAX_CRS_CENA,
                                         DDT_TAX_CENA = item.DDT_TAX_CENA,
                                         DDT_TAX_EXECUTED = item.DDT_TAX_EXECUTED,
@@ -1661,7 +1668,7 @@ namespace KursAM2.Managers
                                         DDT_NOSZATR_DC = item.DDT_NOSZATR_DC,
                                         DDT_NOSZATR_ROW_CODE = item.DDT_NOSZATR_ROW_CODE,
                                         DDT_POST_ED_IZM_DC = item.DDT_POST_ED_IZM_DC,
-                                        DDT_KOL_POST_PRIHOD = (double?) item.DDT_KOL_POST_PRIHOD,
+                                        DDT_KOL_POST_PRIHOD = (double?)item.DDT_KOL_POST_PRIHOD,
                                         DDT_PRICHINA_SPISANIA = item.DDT_PRICHINA_SPISANIA,
                                         DDT_VOZVRAT_TREBOVINIA = item.DDT_VOZVRAT_TREBOVINIA,
                                         DDT_VOZVRAT_PRICHINA = item.DDT_VOZVRAT_PRICHINA,
@@ -1673,21 +1680,21 @@ namespace KursAM2.Managers
                                         DDT_SUMMA_V_UCHET_VALUTE = item.DDT_SUMMA_V_UCHET_VALUTE,
                                         DDT_CENA_V_UCHET_VALUTE = item.DDT_CENA_V_UCHET_VALUTE,
                                         DDT_SKLAD_OTPR_DC = item.DDT_SKLAD_OTPR_DC,
-                                        DDT_NOM_CRS_RATE = (double?) item.DDT_NOM_CRS_RATE,
+                                        DDT_NOM_CRS_RATE = (double?)item.DDT_NOM_CRS_RATE,
                                         DDT_PROIZV_PLAN_DC = item.DDT_PROIZV_PLAN_DC,
                                         DDT_RASH_ORD_DC = item.DDT_RASH_ORD_DC,
                                         DDT_RASH_ORD_CODE = item.DDT_RASH_ORD_CODE,
                                         DDT_VOZVR_OTGR_CSR_DC = item.DDT_VOZVR_OTGR_CSR_DC,
-                                        DDT_VOZVR_UCH_CRS_RATE = (double?) item.DDT_VOZVR_UCH_CRS_RATE,
+                                        DDT_VOZVR_UCH_CRS_RATE = (double?)item.DDT_VOZVR_UCH_CRS_RATE,
                                         DDT_VOZVR_OTGR_CRS_TAX_CENA = item.DDT_VOZVR_OTGR_CRS_TAX_CENA,
                                         DDT_SBORSCHIK_TN = item.DDT_SBORSCHIK_TN,
-                                        DDT_KOL_IN_ONE = (double?) item.DDT_KOL_IN_ONE,
+                                        DDT_KOL_IN_ONE = (double?)item.DDT_KOL_IN_ONE,
                                         DDT_OS_DC = item.DDT_OS_DC,
                                         DDT_GARANT_DC = item.DDT_GARANT_DC,
                                         DDT_GARANT_ROW_CODE = item.DDT_GARANT_ROW_CODE,
-                                        DDT_ACT_RAZ_PROC_STOIM = (double?) item.DDT_ACT_RAZ_PROC_STOIM,
+                                        DDT_ACT_RAZ_PROC_STOIM = (double?)item.DDT_ACT_RAZ_PROC_STOIM,
                                         DDT_PROIZV_PLAN_ROW_CODE = item.DDT_PROIZV_PLAN_ROW_CODE,
-                                        DDT_APGP_TO_EXECUTE = (double?) item.DDT_APGP_TO_EXECUTE,
+                                        DDT_APGP_TO_EXECUTE = (double?)item.DDT_APGP_TO_EXECUTE,
                                         DDT_APGP_NOT_EXECUTE = item.DDT_APGP_NOT_EXECUTE,
                                         DDT_DILER_DC = item.DDT_DILER_DC,
                                         DDT_DILER_SUM = item.DDT_DILER_SUM,
@@ -1705,7 +1712,7 @@ namespace KursAM2.Managers
                                         DDT_PROIZV_PARTIA_DC = item.DDT_PROIZV_PARTIA_DC,
                                         DDT_PROIZV_PARTIA_CODE = item.DDT_PROIZV_PARTIA_CODE,
                                         DDT_DAVAL_SIRIE = item.DDT_DAVAL_SIRIE,
-                                        DDT_MEST_TARA = (double?) item.DDT_MEST_TARA,
+                                        DDT_MEST_TARA = (double?)item.DDT_MEST_TARA,
                                         DDT_TARA_DC = item.DDT_TARA_DC,
                                         DDT_TARA_FLAG = item.DDT_TARA_FLAG,
                                         DDT_PART_NUMBER = item.DDT_PART_NUMBER,
@@ -1807,16 +1814,16 @@ namespace KursAM2.Managers
                                         DDT_KOL_PRIHOD = r.DDT_KOL_PRIHOD,
                                         DDT_KOL_ZATREBOVANO = r.DDT_KOL_ZATREBOVANO,
                                         DDT_KOL_RASHOD = r.DDT_KOL_RASHOD,
-                                        DDT_KOL_PODTVERZHDENO = (double?) r.DDT_KOL_PODTVERZHDENO,
-                                        DDT_KOL_SHAB_PRIHOD = (double?) r.DDT_KOL_SHAB_PRIHOD,
+                                        DDT_KOL_PODTVERZHDENO = (double?)r.DDT_KOL_PODTVERZHDENO,
+                                        DDT_KOL_SHAB_PRIHOD = (double?)r.DDT_KOL_SHAB_PRIHOD,
                                         DDT_ED_IZM_DC = r.DDT_ED_IZM_DC,
                                         DDT_SPOST_DC = r.DDT_SPOST_DC,
                                         DDT_SPOST_ROW_CODE = r.DDT_SPOST_ROW_CODE,
                                         DDT_CRS_DC = r.DDT_CRS_DC,
                                         DDT_SFACT_DC = r.DDT_SFACT_DC,
                                         DDT_SFACT_ROW_CODE = r.DDT_SFACT_ROW_CODE,
-                                        DDT_OSTAT_STAR = (double?) r.DDT_OSTAT_STAR,
-                                        DDT_OSTAT_NOV = (double?) r.DDT_OSTAT_NOV,
+                                        DDT_OSTAT_STAR = (double?)r.DDT_OSTAT_STAR,
+                                        DDT_OSTAT_NOV = (double?)r.DDT_OSTAT_NOV,
                                         DDT_TAX_CRS_CENA = r.DDT_TAX_CRS_CENA,
                                         DDT_TAX_CENA = r.DDT_TAX_CENA,
                                         DDT_TAX_EXECUTED = r.DDT_TAX_EXECUTED,
@@ -1829,7 +1836,7 @@ namespace KursAM2.Managers
                                         DDT_NOSZATR_DC = r.DDT_NOSZATR_DC,
                                         DDT_NOSZATR_ROW_CODE = r.DDT_NOSZATR_ROW_CODE,
                                         DDT_POST_ED_IZM_DC = r.DDT_POST_ED_IZM_DC,
-                                        DDT_KOL_POST_PRIHOD = (double?) r.DDT_KOL_POST_PRIHOD,
+                                        DDT_KOL_POST_PRIHOD = (double?)r.DDT_KOL_POST_PRIHOD,
                                         DDT_PRICHINA_SPISANIA = r.DDT_PRICHINA_SPISANIA,
                                         DDT_VOZVRAT_TREBOVINIA = r.DDT_VOZVRAT_TREBOVINIA,
                                         DDT_VOZVRAT_PRICHINA = r.DDT_VOZVRAT_PRICHINA,
@@ -1841,21 +1848,21 @@ namespace KursAM2.Managers
                                         DDT_SUMMA_V_UCHET_VALUTE = r.DDT_SUMMA_V_UCHET_VALUTE,
                                         DDT_CENA_V_UCHET_VALUTE = r.DDT_CENA_V_UCHET_VALUTE,
                                         DDT_SKLAD_OTPR_DC = r.DDT_SKLAD_OTPR_DC,
-                                        DDT_NOM_CRS_RATE = (double?) r.DDT_NOM_CRS_RATE,
+                                        DDT_NOM_CRS_RATE = (double?)r.DDT_NOM_CRS_RATE,
                                         DDT_PROIZV_PLAN_DC = r.DDT_PROIZV_PLAN_DC,
                                         DDT_RASH_ORD_DC = r.DDT_RASH_ORD_DC,
                                         DDT_RASH_ORD_CODE = r.DDT_RASH_ORD_CODE,
                                         DDT_VOZVR_OTGR_CSR_DC = r.DDT_VOZVR_OTGR_CSR_DC,
-                                        DDT_VOZVR_UCH_CRS_RATE = (double?) r.DDT_VOZVR_UCH_CRS_RATE,
+                                        DDT_VOZVR_UCH_CRS_RATE = (double?)r.DDT_VOZVR_UCH_CRS_RATE,
                                         DDT_VOZVR_OTGR_CRS_TAX_CENA = r.DDT_VOZVR_OTGR_CRS_TAX_CENA,
                                         DDT_SBORSCHIK_TN = r.DDT_SBORSCHIK_TN,
-                                        DDT_KOL_IN_ONE = (double?) r.DDT_KOL_IN_ONE,
+                                        DDT_KOL_IN_ONE = (double?)r.DDT_KOL_IN_ONE,
                                         DDT_OS_DC = r.DDT_OS_DC,
                                         DDT_GARANT_DC = r.DDT_GARANT_DC,
                                         DDT_GARANT_ROW_CODE = r.DDT_GARANT_ROW_CODE,
-                                        DDT_ACT_RAZ_PROC_STOIM = (double?) r.DDT_ACT_RAZ_PROC_STOIM,
+                                        DDT_ACT_RAZ_PROC_STOIM = (double?)r.DDT_ACT_RAZ_PROC_STOIM,
                                         DDT_PROIZV_PLAN_ROW_CODE = r.DDT_PROIZV_PLAN_ROW_CODE,
-                                        DDT_APGP_TO_EXECUTE = (double?) r.DDT_APGP_TO_EXECUTE,
+                                        DDT_APGP_TO_EXECUTE = (double?)r.DDT_APGP_TO_EXECUTE,
                                         DDT_APGP_NOT_EXECUTE = r.DDT_APGP_NOT_EXECUTE,
                                         DDT_DILER_DC = r.DDT_DILER_DC,
                                         DDT_DILER_SUM = r.DDT_DILER_SUM,
@@ -1873,7 +1880,7 @@ namespace KursAM2.Managers
                                         DDT_PROIZV_PARTIA_DC = r.DDT_PROIZV_PARTIA_DC,
                                         DDT_PROIZV_PARTIA_CODE = r.DDT_PROIZV_PARTIA_CODE,
                                         DDT_DAVAL_SIRIE = r.DDT_DAVAL_SIRIE,
-                                        DDT_MEST_TARA = (double?) r.DDT_MEST_TARA,
+                                        DDT_MEST_TARA = (double?)r.DDT_MEST_TARA,
                                         DDT_TARA_DC = r.DDT_TARA_DC,
                                         DDT_TARA_FLAG = r.DDT_TARA_FLAG,
                                         DDT_PART_NUMBER = r.DDT_PART_NUMBER,
@@ -1890,16 +1897,16 @@ namespace KursAM2.Managers
                                     oldrow.DDT_KOL_PRIHOD = r.DDT_KOL_PRIHOD;
                                     oldrow.DDT_KOL_ZATREBOVANO = r.DDT_KOL_ZATREBOVANO;
                                     oldrow.DDT_KOL_RASHOD = r.DDT_KOL_RASHOD;
-                                    oldrow.DDT_KOL_PODTVERZHDENO = (double?) r.DDT_KOL_PODTVERZHDENO;
-                                    oldrow.DDT_KOL_SHAB_PRIHOD = (double?) r.DDT_KOL_SHAB_PRIHOD;
+                                    oldrow.DDT_KOL_PODTVERZHDENO = (double?)r.DDT_KOL_PODTVERZHDENO;
+                                    oldrow.DDT_KOL_SHAB_PRIHOD = (double?)r.DDT_KOL_SHAB_PRIHOD;
                                     oldrow.DDT_ED_IZM_DC = r.DDT_ED_IZM_DC;
                                     oldrow.DDT_SPOST_DC = r.DDT_SPOST_DC;
                                     oldrow.DDT_SPOST_ROW_CODE = r.DDT_SPOST_ROW_CODE;
                                     oldrow.DDT_CRS_DC = r.DDT_CRS_DC;
                                     oldrow.DDT_SFACT_DC = r.DDT_SFACT_DC;
                                     oldrow.DDT_SFACT_ROW_CODE = r.DDT_SFACT_ROW_CODE;
-                                    oldrow.DDT_OSTAT_STAR = (double?) r.DDT_OSTAT_STAR;
-                                    oldrow.DDT_OSTAT_NOV = (double?) r.DDT_OSTAT_NOV;
+                                    oldrow.DDT_OSTAT_STAR = (double?)r.DDT_OSTAT_STAR;
+                                    oldrow.DDT_OSTAT_NOV = (double?)r.DDT_OSTAT_NOV;
                                     oldrow.DDT_TAX_CRS_CENA = r.DDT_TAX_CRS_CENA;
                                     oldrow.DDT_TAX_CENA = r.DDT_TAX_CENA;
                                     oldrow.DDT_TAX_EXECUTED = r.DDT_TAX_EXECUTED;
@@ -1912,7 +1919,7 @@ namespace KursAM2.Managers
                                     oldrow.DDT_NOSZATR_DC = r.DDT_NOSZATR_DC;
                                     oldrow.DDT_NOSZATR_ROW_CODE = r.DDT_NOSZATR_ROW_CODE;
                                     oldrow.DDT_POST_ED_IZM_DC = r.DDT_POST_ED_IZM_DC;
-                                    oldrow.DDT_KOL_POST_PRIHOD = (double?) r.DDT_KOL_POST_PRIHOD;
+                                    oldrow.DDT_KOL_POST_PRIHOD = (double?)r.DDT_KOL_POST_PRIHOD;
                                     oldrow.DDT_PRICHINA_SPISANIA = r.DDT_PRICHINA_SPISANIA;
                                     oldrow.DDT_VOZVRAT_TREBOVINIA = r.DDT_VOZVRAT_TREBOVINIA;
                                     oldrow.DDT_VOZVRAT_PRICHINA = r.DDT_VOZVRAT_PRICHINA;
@@ -1924,21 +1931,21 @@ namespace KursAM2.Managers
                                     oldrow.DDT_SUMMA_V_UCHET_VALUTE = r.DDT_SUMMA_V_UCHET_VALUTE;
                                     oldrow.DDT_CENA_V_UCHET_VALUTE = r.DDT_CENA_V_UCHET_VALUTE;
                                     oldrow.DDT_SKLAD_OTPR_DC = r.DDT_SKLAD_OTPR_DC;
-                                    oldrow.DDT_NOM_CRS_RATE = (double?) r.DDT_NOM_CRS_RATE;
+                                    oldrow.DDT_NOM_CRS_RATE = (double?)r.DDT_NOM_CRS_RATE;
                                     oldrow.DDT_PROIZV_PLAN_DC = r.DDT_PROIZV_PLAN_DC;
                                     oldrow.DDT_RASH_ORD_DC = r.DDT_RASH_ORD_DC;
                                     oldrow.DDT_RASH_ORD_CODE = r.DDT_RASH_ORD_CODE;
                                     oldrow.DDT_VOZVR_OTGR_CSR_DC = r.DDT_VOZVR_OTGR_CSR_DC;
-                                    oldrow.DDT_VOZVR_UCH_CRS_RATE = (double?) r.DDT_VOZVR_UCH_CRS_RATE;
+                                    oldrow.DDT_VOZVR_UCH_CRS_RATE = (double?)r.DDT_VOZVR_UCH_CRS_RATE;
                                     oldrow.DDT_VOZVR_OTGR_CRS_TAX_CENA = r.DDT_VOZVR_OTGR_CRS_TAX_CENA;
                                     oldrow.DDT_SBORSCHIK_TN = r.DDT_SBORSCHIK_TN;
-                                    oldrow.DDT_KOL_IN_ONE = (double?) r.DDT_KOL_IN_ONE;
+                                    oldrow.DDT_KOL_IN_ONE = (double?)r.DDT_KOL_IN_ONE;
                                     oldrow.DDT_OS_DC = r.DDT_OS_DC;
                                     oldrow.DDT_GARANT_DC = r.DDT_GARANT_DC;
                                     oldrow.DDT_GARANT_ROW_CODE = r.DDT_GARANT_ROW_CODE;
-                                    oldrow.DDT_ACT_RAZ_PROC_STOIM = (double?) r.DDT_ACT_RAZ_PROC_STOIM;
+                                    oldrow.DDT_ACT_RAZ_PROC_STOIM = (double?)r.DDT_ACT_RAZ_PROC_STOIM;
                                     oldrow.DDT_PROIZV_PLAN_ROW_CODE = r.DDT_PROIZV_PLAN_ROW_CODE;
-                                    oldrow.DDT_APGP_TO_EXECUTE = (double?) r.DDT_APGP_TO_EXECUTE;
+                                    oldrow.DDT_APGP_TO_EXECUTE = (double?)r.DDT_APGP_TO_EXECUTE;
                                     oldrow.DDT_APGP_NOT_EXECUTE = r.DDT_APGP_NOT_EXECUTE;
                                     oldrow.DDT_DILER_DC = r.DDT_DILER_DC;
                                     oldrow.DDT_DILER_SUM = r.DDT_DILER_SUM;
@@ -1956,7 +1963,7 @@ namespace KursAM2.Managers
                                     oldrow.DDT_PROIZV_PARTIA_DC = r.DDT_PROIZV_PARTIA_DC;
                                     oldrow.DDT_PROIZV_PARTIA_CODE = r.DDT_PROIZV_PARTIA_CODE;
                                     oldrow.DDT_DAVAL_SIRIE = r.DDT_DAVAL_SIRIE;
-                                    oldrow.DDT_MEST_TARA = (double?) r.DDT_MEST_TARA;
+                                    oldrow.DDT_MEST_TARA = (double?)r.DDT_MEST_TARA;
                                     oldrow.DDT_TARA_DC = r.DDT_TARA_DC;
                                     oldrow.DDT_TARA_FLAG = r.DDT_TARA_FLAG;
                                     oldrow.DDT_PART_NUMBER = r.DDT_PART_NUMBER;

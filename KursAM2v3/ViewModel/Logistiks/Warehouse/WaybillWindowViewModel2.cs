@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -129,9 +128,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         // ReSharper disable once MemberCanBePrivate.Global
         public ObservableCollection<string> ByWhomLicoList { set; get; } = new ObservableCollection<string>();
 
-        public List<KursDomain.Documents.NomenklManagement.Warehouse> Sklads =>
-            MainReferences.Warehouses.Values.Where(_ => _.IsOutBalans != true && _.IsDeleted == false)
-                .OrderBy(_ => _.Name).ToList();
+        public List<KursDomain.References.Warehouse> Sklads =>
+            GlobalOptions.ReferencesCache.GetWarehousesAll().Where(_ => _.IsOutBalans != true && _.IsDeleted == false)
+                .Cast<KursDomain.References.Warehouse>().OrderBy(_ => _.Name).ToList();
 
         // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<WaybillRow> SelectedRows { set; get; } = new ObservableCollection<WaybillRow>();
@@ -215,12 +214,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 nomenklManager.RecalcPrice(UnitOfWork.Context);
                 foreach (var n in Document.Rows.Select(_ => _.Nomenkl.DocCode))
                 {
-                    var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n,
+                    var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DocCode, n,
                         Document.Date, Document.Date);
                     var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                     if (m < 0)
                     {
-                        var nom = MainReferences.GetNomenkl(n);
+                        var nom = GlobalOptions.ReferencesCache.GetNomenkl(n) as Nomenkl;
                         WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
                                                   // ReSharper disable once PossibleInvalidOperationException
                                                   $"склад {Document.WarehouseOut} в кол-ве {q.First().OstatokQuantity} ",
@@ -395,7 +394,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         var kol = otgr.Sum(_ => _.DDT_KOL_RASHOD);
                         if (kol < r.Quantity)
                         {
-                            var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
+                            var n = GlobalOptions.ReferencesCache.GetNomenkl(r.Entity.SFT_NEMENKL_DC) as Nomenkl;
                             var newItem = new WaybillRow
                             {
                                 DocCode = Document.DocCode,
@@ -417,15 +416,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     }
                     else
                     {
-                        var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
-                        var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
+                        var n = GlobalOptions.ReferencesCache.GetNomenkl(r.Entity.SFT_NEMENKL_DC) as Nomenkl;
+                        var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DocCode, n.DocCode,
                             Document.Date, Document.Date);
                         var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                         if (m <= 0)
                         {
                             winManager.ShowWinUIMessageBox(
                                 $"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
-                                $"{MainReferences.Warehouses[Document.WarehouseOut.DocCode]}" +
+                                $"{GlobalOptions.ReferencesCache.GetWarehouse(Document.WarehouseOut.DocCode)}" +
                                 $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
                                 "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                             continue;
@@ -465,13 +464,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (nomenkls == null || nomenkls.Count <= 0) return;
             foreach (var n in nomenkls)
             {
-                var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
+                var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DocCode, n.DocCode,
                     Document.Date, Document.Date);
                 var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                 if (m <= 0)
                 {
                     winManager.ShowWinUIMessageBox($"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
-                                                   $"{MainReferences.Warehouses[Document.WarehouseOut.DocCode]}" +
+                                                   $"{GlobalOptions.ReferencesCache.GetWarehouse(Document.WarehouseOut.DocCode)}" +
                                                    $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
                         "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                     continue;
@@ -580,7 +579,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     var kol = otgr.Sum(_ => _.DDT_KOL_RASHOD);
                     if (kol < r.Quantity)
                     {
-                        var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
+                        var n = GlobalOptions.ReferencesCache.GetNomenkl(r.Entity.SFT_NEMENKL_DC) as Nomenkl;
                         var newItem = new WaybillRow
                         {
                             DocCode = Document.DocCode,
@@ -600,15 +599,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 }
                 else
                 {
-                    var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
-                    var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
+                    var n = GlobalOptions.ReferencesCache.GetNomenkl(r.Entity.SFT_NEMENKL_DC) as Nomenkl;
+                    var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DocCode, n.DocCode,
                         Document.Date, Document.Date);
                     var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                     if (m <= 0)
                     {
                         winManager.ShowWinUIMessageBox(
                             $"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
-                            $"{MainReferences.Warehouses[Document.WarehouseOut.DocCode]}" +
+                            $"{GlobalOptions.ReferencesCache.GetWarehouse(Document.WarehouseOut.DocCode)}" +
                             $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
                             "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                         continue;
@@ -654,27 +653,29 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 if (Document.Client == null && dtx.SelectedItems.Count > 0)
                 {
-                    Document.InvoiceClientViewModel = InvoicesManager.GetInvoiceClient(dtx.SelectedItems.First().DocCode);
+                    Document.InvoiceClientViewModel =
+                        InvoicesManager.GetInvoiceClient(dtx.SelectedItems.First().DocCode);
                     Document.Client = Document.InvoiceClientViewModel.Client;
                     addFromOneSchet(Document.InvoiceClientViewModel);
                 }
 
                 if (Document.Client != null && dtx.SelectedItems.Count > 0)
                 {
-                    Document.InvoiceClientViewModel = InvoicesManager.GetInvoiceClient(dtx.SelectedItems.First().DocCode);
+                    Document.InvoiceClientViewModel =
+                        InvoicesManager.GetInvoiceClient(dtx.SelectedItems.First().DocCode);
                     Document.Client = Document.InvoiceClientViewModel.Client;
                     var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                     foreach (var item in dtx.SelectedItems)
                     {
-                        var n = MainReferences.GetNomenkl(item.NomenklDC);
-                        var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
+                        var n = GlobalOptions.ReferencesCache.GetNomenkl(item.NomenklDC) as Nomenkl;
+                        var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DocCode, n.DocCode,
                             Document.Date, Document.Date);
                         var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                         if (m <= 0)
                         {
                             winManager.ShowWinUIMessageBox(
                                 $"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
-                                $"{MainReferences.Warehouses[Document.WarehouseOut.DocCode]}" +
+                                $"{GlobalOptions.ReferencesCache.GetWarehouse(Document.WarehouseOut.DocCode)}" +
                                 $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
                                 "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                             continue;

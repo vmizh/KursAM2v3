@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Calculates.Materials;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -103,8 +102,10 @@ namespace KursAM2.ViewModel.Logistiks
 
         public override string LayoutName => "InventorySheetWindowViewModel";
 
-        public List<KursDomain.Documents.NomenklManagement.Warehouse> StoreCollection { set; get; } =
-            new List<KursDomain.Documents.NomenklManagement.Warehouse>(MainReferences.Warehouses.Values);
+        public List<KursDomain.References.Warehouse> StoreCollection { set; get; } =
+            new List<KursDomain.References.Warehouse>(GlobalOptions.ReferencesCache.GetWarehousesAll()
+                .Cast<KursDomain.References.Warehouse>().OrderBy(_ => _.Name));
+
 
         public bool IsCannotChangeStore => Document.State == RowStatus.NewRow;
 
@@ -113,7 +114,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myDocument;
             set
             {
-                if (Equals(myDocument ,value)) return;
+                if (Equals(myDocument, value)) return;
                 myDocument = value;
                 RaisePropertyChanged();
             }
@@ -157,7 +158,7 @@ namespace KursAM2.ViewModel.Logistiks
                 var ret = new ObservableCollection<InventorySheetRowViewModel>();
                 foreach (var n in from dc in listDC
                          from n in Document.Rows
-                         where ((IDocCode) n.Nomenkl.Group).DocCode == dc
+                         where ((IDocCode)n.Nomenkl.Group).DocCode == dc
                          select n
                         )
                     ret.Add(n);
@@ -170,14 +171,15 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public ObservableCollection<NomenklGroup2> NomenklGroups { set; get; } = new ObservableCollection<NomenklGroup2>();
+        public ObservableCollection<NomenklGroup2> NomenklGroups { set; get; } =
+            new ObservableCollection<NomenklGroup2>();
 
         public InventorySheetRowViewModel CurrentNomenkl
         {
             get => myCurrentNomenkl;
             set
             {
-                if (Equals(myCurrentNomenkl,value)) return;
+                if (Equals(myCurrentNomenkl, value)) return;
                 myCurrentNomenkl = value;
                 RaisePropertyChanged();
             }
@@ -203,8 +205,8 @@ namespace KursAM2.ViewModel.Logistiks
         {
             var ret = new List<decimal>();
             ret.AddRange(
-                Document.Rows.Where(_ => ((IDocCode) _.Nomenkl.Group).DocCode == grp.DocCode)
-                    .Select(_ => ((IDocCode) _.Nomenkl.Group).DocCode));
+                Document.Rows.Where(_ => ((IDocCode)_.Nomenkl.Group).DocCode == grp.DocCode)
+                    .Select(_ => ((IDocCode)_.Nomenkl.Group).DocCode));
             if (NomenklGroups.Count(_ => _.ParentDC == grp.DocCode) == 0) return ret;
             foreach (var g in NomenklGroups.Where(_ => _.ParentDC == grp.DocCode))
             {
@@ -243,7 +245,7 @@ namespace KursAM2.ViewModel.Logistiks
                 ng.IsNomenklContains = false;
             foreach (
                 var ng in
-                Document.Rows.Select(_ => ((IDocCode) _.Nomenkl.Group).DocCode)
+                Document.Rows.Select(_ => ((IDocCode)_.Nomenkl.Group).DocCode)
                     .Distinct()
                     .ToList()
                     .Select(ngDC => NomenklGroups.FirstOrDefault(_ => _.DocCode == ngDC))
@@ -300,7 +302,7 @@ namespace KursAM2.ViewModel.Logistiks
                 DataContext = new InventorySheetWindowViewModel(Document.DocCode),
                 Owner = Application.Current.MainWindow
             };
-            ((InventorySheetWindowViewModel) f.DataContext).Form = f;
+            ((InventorySheetWindowViewModel)f.DataContext).Form = f;
             f.Show();
         }
 
@@ -359,7 +361,7 @@ namespace KursAM2.ViewModel.Logistiks
                     if (c < 0)
                     {
                         UnitOfWork.Rollback();
-                        var nom = MainReferences.GetNomenkl(n);
+                        var nom = GlobalOptions.ReferencesCache.GetNomenkl(n) as Nomenkl;
                         WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
                                                   // ReSharper disable once PossibleInvalidOperationException
                                                   $"склад {Document.Warehouse} в кол-ве {c} ",
@@ -370,7 +372,7 @@ namespace KursAM2.ViewModel.Logistiks
 
                 UnitOfWork.Commit();
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InventoryList), Document.Id,
-                    0, null, (string) Document.ToJson());
+                    0, null, (string)Document.ToJson());
                 foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
                 Document.myState = RowStatus.NotEdited;
             }
@@ -484,7 +486,7 @@ namespace KursAM2.ViewModel.Logistiks
                 var newItem = new InventorySheetRowViewModel(null)
                 {
                     DocCode = Document.DocCode,
-                    Nomenkl = MainReferences.GetNomenkl(nom.NomenklDC),
+                    Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(nom.NomenklDC) as Nomenkl,
                     QuantityFact = nom.Remain,
                     QuantityCalc = nom.Remain,
                     Price = nom.PriceWithNaklad != 0 ? nom.PriceWithNaklad : nom.Price,
@@ -519,7 +521,7 @@ namespace KursAM2.ViewModel.Logistiks
                 {
                     DocCode = Document.DocCode,
                     Code = code,
-                    Nomenkl = MainReferences.GetNomenkl(nom.DocCode),
+                    Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(nom.DocCode) as Nomenkl,
                     QuantityFact = quan,
                     QuantityCalc = quan,
                     State = RowStatus.NewRow,

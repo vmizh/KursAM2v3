@@ -2,6 +2,8 @@
 using System.Linq;
 using Helper;
 using KursDomain;
+using KursDomain.ICommon;
+using KursDomain.References;
 using NUnit.Framework;
 
 namespace Core.Tests
@@ -25,10 +27,10 @@ namespace Core.Tests
                 Name = "sysadm",
                 NickName = "sysadm"
             };
-            MainReferences.Reset(LoadReferenceStrategy.WithoutKontragentAndNomenkl);
             GlobalOptions.SystemProfile = new SystemProfile
             {
-                NationalCurrency = MainReferences.Currencies.Values.Single(_ => _.Name == "RUR")
+                NationalCurrency =
+                    GlobalOptions.ReferencesCache.GetCurrenciesAll().Single(_ => ((IName) _).Name == "RUR") as Currency
             };
         }
     }

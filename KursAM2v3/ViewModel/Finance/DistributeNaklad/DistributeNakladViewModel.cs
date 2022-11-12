@@ -8,7 +8,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -285,11 +284,11 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         // ReSharper disable once PossibleInvalidOperationException
         public Currency Currency
         {
-            get => MainReferences.GetCurrency(Entity.CurrencyDC);
+            get => GlobalOptions.ReferencesCache.GetCurrency(Entity.CurrencyDC) as Currency;
 
             set
             {
-                if (MainReferences.GetCurrency(Entity.CurrencyDC) == value) return;
+                if (Equals(GlobalOptions.ReferencesCache.GetCurrency(Entity.CurrencyDC), value)) return;
                 Entity.CurrencyDC = value?.DocCode;
                 RaisePropertyChanged();
             }
@@ -349,8 +348,9 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     var crsDC = (decimal)(inv.Invoice != null
                         ? inv.Invoice.SF_CRS_DC
                         // ReSharper disable once PossibleNullReferenceException
-                        : MainReferences.GetKontragent(inv.AccruedAmountRow.AccruedAmountOfSupplier.KontrDC)
-                            .BalansCurrency.DocCode);
+                        : ((IDocCode)GlobalOptions.ReferencesCache
+                            .GetKontragent(inv.AccruedAmountRow.AccruedAmountOfSupplier.KontrDC)
+                            .Currency).DocCode);
                     var newInfo = new DistributeNakladInfo
                     {
                         Id = Guid.NewGuid(),
@@ -1150,7 +1150,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     NakladInvoices.Add(new DistributeNakladInvoiceViewModel(ent)
                     {
                         Invoice = s,
-                        Currency = MainReferences.GetCurrency(item.CurrencyDC)
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(item.CurrencyDC) as Currency
                     });
                 }
         }

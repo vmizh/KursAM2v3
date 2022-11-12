@@ -19,7 +19,7 @@ public interface IInvoiceClient
     CentrResponsibility CO { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Тип продукции")]
-    VzaimoraschetType VzaimoraschetType { set; get; }
+    MutualSettlementType VzaimoraschetType { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Форма расчетов")]
     PayForm FormRaschet { set; get; }

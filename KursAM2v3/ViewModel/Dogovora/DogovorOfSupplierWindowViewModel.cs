@@ -6,7 +6,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -24,7 +23,6 @@ using KursAM2.ViewModel.Management.Calculations;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Dogovora;
-using KursDomain.Documents.Employee;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 using KursDomain.Menu;
@@ -48,7 +46,7 @@ namespace KursAM2.ViewModel.Dogovora
             var doc = id != null ? GenericRepository.GetById(id.Value) : null;
             if (doc == null)
             {
-                Document = new DogovorOfSupplierViewModel {State = RowStatus.NewRow};
+                Document = new DogovorOfSupplierViewModel { State = RowStatus.NewRow };
                 UnitOfWork.Context.DogovorOfSupplier.Add(Document.Entity);
             }
             else
@@ -139,7 +137,7 @@ namespace KursAM2.ViewModel.Dogovora
                         : $"{sf.SF_IN_NUM}/{sf.SF_POSTAV_NUM}",
                     DocInfo =
                         $"С/ф поставщика №{sf.SF_IN_NUM}/{sf.SF_POSTAV_NUM} от {sf.SF_POSTAV_DATE.ToShortDateString()} " +
-                        $"на {sf.SF_KONTR_CRS_SUMMA} {MainReferences.GetCurrency(sf.SF_CRS_DC)} " +
+                        $"на {sf.SF_KONTR_CRS_SUMMA} {GlobalOptions.ReferencesCache.GetCurrency(sf.SF_CRS_DC)} " +
                         $"{Note}"
                 };
                 Documents.Add(newItem);
@@ -164,7 +162,7 @@ namespace KursAM2.ViewModel.Dogovora
                             DocCode = pp.DOC_CODE,
                             Code = pp.CODE,
                             Quantity = pp.DDT_KOL_PRIHOD,
-                            Nomenkl = MainReferences.GetNomenkl(pp.DDT_NOMENKL_DC),
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(pp.DDT_NOMENKL_DC) as Nomenkl,
                             OrderInDC = pp.DOC_CODE,
                             OrderInInfo =
                                 $"Приходный складской ордер №{p.DD_IN_NUM} от {p.DD_DATE.ToShortDateString()} " +
@@ -173,7 +171,7 @@ namespace KursAM2.ViewModel.Dogovora
                             SPostDC = pp.DDT_SPOST_DC ?? 0,
                             SPostInfo =
                                 $"С/ф поставщика №{sf.SF_IN_NUM}/{sf.SF_POSTAV_NUM} от {sf.SF_POSTAV_DATE.ToShortDateString()} " +
-                                $"на {sf.SF_KONTR_CRS_SUMMA} {MainReferences.GetCurrency(sf.SF_CRS_DC)} " +
+                                $"на {sf.SF_KONTR_CRS_SUMMA} {GlobalOptions.ReferencesCache.GetCurrency(sf.SF_CRS_DC)} " +
                                 $"{Note}"
                         };
                         FactsAll.Add(newFact);
@@ -189,7 +187,7 @@ namespace KursAM2.ViewModel.Dogovora
                         if (pay.TD_101 != null)
                         {
                             // ReSharper disable once PossibleInvalidOperationException
-                            newPay.DocSumma = (decimal) pay.TD_101.VVT_VAL_RASHOD;
+                            newPay.DocSumma = (decimal)pay.TD_101.VVT_VAL_RASHOD;
                             newPay.DocDate = pay.TD_101.SD_101.VV_START_DATE;
                             newPay.DocName = "Банковский платеж";
                             newPay.DocExtName = $"{pay.TD_101.SD_101.SD_114.BA_BANK_NAME} " +
@@ -199,22 +197,23 @@ namespace KursAM2.ViewModel.Dogovora
                         if (pay.SD_34 != null)
                         {
                             // ReSharper disable once PossibleInvalidOperationException
-                            newPay.DocSumma = (decimal) pay.SD_34.SUMM_ORD;
+                            newPay.DocSumma = (decimal)pay.SD_34.SUMM_ORD;
                             newPay.DocName = "Расходный кассовый ордер";
                             newPay.DocNum = pay.SD_34.NUM_ORD.ToString();
                             // ReSharper disable once PossibleInvalidOperationException
-                            newPay.DocDate = (DateTime) pay.SD_34.DATE_ORD;
+                            newPay.DocDate = (DateTime)pay.SD_34.DATE_ORD;
                             if (pay.SD_34.SD_22 != null)
                                 newPay.DocExtName = $"Касса {pay.SD_34.SD_22.CA_NAME}";
                             else
                                 // ReSharper disable once PossibleInvalidOperationException
-                                newPay.DocExtName = $"Касса {MainReferences.CashsAll[(decimal) pay.SD_34.CA_DC].Name}";
+                                newPay.DocExtName =
+                                    $"Касса {((IName)GlobalOptions.ReferencesCache.GetCashBox(pay.SD_34.CA_DC)).Name}";
                         }
 
                         if (pay.TD_110 != null)
                         {
                             // ReSharper disable once PossibleInvalidOperationException
-                            newPay.DocSumma = (decimal) pay.TD_110.VZT_CRS_SUMMA;
+                            newPay.DocSumma = (decimal)pay.TD_110.VZT_CRS_SUMMA;
                             newPay.DocName = "Акт взаимозачета";
                             newPay.DocNum = pay.TD_110.SD_110.VZ_NUM.ToString();
                             newPay.DocDate = pay.TD_110.SD_110.VZ_DATE;
@@ -268,7 +267,7 @@ namespace KursAM2.ViewModel.Dogovora
             new ObservableCollection<ProviderInvoicePayViewModel>();
 
         public List<ContractType> ContractTypeList =>
-            MainReferences.ContractTypes.Values.Where(_ => !_.IsSale).ToList();
+            GlobalOptions.ReferencesCache.GetContractsTypeAll().Cast<ContractType>().Where(_ => !_.IsSale).ToList();
 
         public List<Employee> EmployeeList => GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>().ToList();
 
@@ -393,7 +392,7 @@ namespace KursAM2.ViewModel.Dogovora
         {
             if (CurrentPayment.BankCode != null)
             {
-                DocumentsOpenManager.Open(DocumentType.Bank, (decimal) CurrentPayment.BankCode);
+                DocumentsOpenManager.Open(DocumentType.Bank, (decimal)CurrentPayment.BankCode);
                 return;
             }
 
@@ -647,7 +646,7 @@ namespace KursAM2.ViewModel.Dogovora
             {
                 UnitOfWork.CreateTransaction();
                 DocumentHistoryHelper.SaveHistory(Document.DogType.ToString(), Document.Id,
-                    null, null, (string) Document.ToJson());
+                    null, null, (string)Document.ToJson());
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
                 RecalcKontragentBalans.CalcBalans(Document.Kontragent.DocCode, Document.DocDate);

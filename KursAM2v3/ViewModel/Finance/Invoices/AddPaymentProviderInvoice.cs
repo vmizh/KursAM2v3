@@ -3,10 +3,10 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Core;
 using Core.ViewModel.Base;
 using KursAM2.View.DialogUserControl;
 using KursDomain;
+using KursDomain.ICommon;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -57,7 +57,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     {
                         DocCode = d.DOC_CODE,
                         Code = d.CODE,
-                        CurrencyName = MainReferences.Currencies[d.VVT_CRS_DC].Name,
+                        CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.VVT_CRS_DC)).Name,
                         DocDate = d.SD_101.VV_START_DATE,
                         // ReSharper disable once PossibleInvalidOperationException
                         Summa = (decimal)d.VVT_VAL_RASHOD,
@@ -78,7 +78,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     {
                         DocCode = item.DOC_CODE,
                         Code = item.CODE,
-                        CurrencyName = MainReferences.Currencies[item.VVT_CRS_DC].Name,
+                        CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(item.VVT_CRS_DC)).Name,
                         DocDate = item.SD_101.VV_START_DATE,
                         // ReSharper disable once PossibleInvalidOperationException
                         Summa = d.Summa,
@@ -191,10 +191,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     ItemsCollection.Add(new CashPaymentRow
                     {
                         DocCode = d.DOC_CODE,
-                        Name = MainReferences.Cashs[Convert.ToDecimal(d.CA_DC)].Name,
+                        Name = ((IName)GlobalOptions.ReferencesCache.GetCashBox(Convert.ToDecimal(d.CA_DC))).Name,
                         DocNum = d.NUM_ORD.ToString(),
                         DocDate = Convert.ToDateTime(d.DATE_ORD),
-                        CurrencyName = MainReferences.Currencies[Convert.ToDecimal(d.CRS_DC)].Name,
+                        CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(Convert.ToDecimal(d.CRS_DC)))
+                            .Name,
                         Summa = Convert.ToDecimal(d.SUMM_ORD),
                         Note = d.NOTES_ORD
                     });
@@ -287,7 +288,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Code = d.CODE,
                         DocNum = d.SD_110.VZ_NUM + "/" + d.VZT_DOC_NUM,
                         DocDate = Convert.ToDateTime(d.SD_110.VZ_DATE),
-                        CurrencyName = MainReferences.Currencies[Convert.ToDecimal(d.VZT_CRS_DC)].Name,
+                        CurrencyName =
+                            ((IName)GlobalOptions.ReferencesCache.GetCurrency(Convert.ToDecimal(d.VZT_CRS_DC))).Name,
                         Summa = Convert.ToDecimal(d.VZT_CRS_SUMMA),
                         Note = d.SD_110.VZ_NOTES + " " + d.VZT_DOC_NOTES
                     });

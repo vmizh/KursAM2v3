@@ -4,8 +4,8 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.ICommon;
 using KursDomain.References;
-using static Core.MainReferences;
 
 namespace KursDomain.Documents.Cash;
 
@@ -22,7 +22,7 @@ public class CashOrder : RSViewModelBase
     {
         DocCode = order.DOC_CODE;
         NumOrder = order.NUM_ORD.ToString();
-        Currency = Currencies[(decimal)order.CRS_DC];
+        Currency = GlobalOptions.ReferencesCache.GetCurrency(order.CRS_DC) as References.Currency;
         Cash = GlobalOptions.ReferencesCache.GetCashBox(order.CA_DC) as CashBox;
         Creator = order.CREATOR;
         DateOrder = (DateTime)order.DATE_ORD;
@@ -32,11 +32,11 @@ public class CashOrder : RSViewModelBase
         SummaOrder = (decimal)order.SUMM_ORD;
         TypeOrder = "Приходный кассовый ордер";
         Kontragent = order.KONTRAGENT_DC != null
-            ? GetKontragent(order.KONTRAGENT_DC).Name
+            ? ((IName)GlobalOptions.ReferencesCache.GetKontragent(order.KONTRAGENT_DC)).Name
             : order.RASH_ORDER_FROM_DC != null && order.SD_34 != null
-                ? Cashs[(decimal)order.SD_34.CA_DC].Name
+                ? ((IName)GlobalOptions.ReferencesCache.GetCashBox(order.SD_34.CA_DC)).Name
                 : order.BANK_RASCH_SCHET_DC != null
-                    ? BankAccounts[(decimal)order.BANK_RASCH_SCHET_DC].Name
+                    ? ((IName)GlobalOptions.ReferencesCache.GetBankAccount(order.BANK_RASCH_SCHET_DC)).Name
                     : null;
     }
 
@@ -49,7 +49,7 @@ public class CashOrder : RSViewModelBase
     {
         DocCode = order.DOC_CODE;
         NumOrder = order.NUM_ORD.ToString();
-        Currency = Currencies[(decimal)order.CRS_DC];
+        Currency = GlobalOptions.ReferencesCache.GetCurrency(order.CRS_DC) as References.Currency;
         Cash = GlobalOptions.ReferencesCache.GetCashBox(order.CA_DC) as CashBox;
         Creator = order.CREATOR;
         DateOrder = (DateTime)order.DATE_ORD;
@@ -59,11 +59,11 @@ public class CashOrder : RSViewModelBase
         SummaOrder = (decimal)order.SUMM_ORD;
         TypeOrder = "Расходный кассовый ордер";
         Kontragent = order.KONTRAGENT_DC != null
-            ? GetKontragent(order.KONTRAGENT_DC).Name
+            ? ((IName)GlobalOptions.ReferencesCache.GetKontragent(order.KONTRAGENT_DC)).Name
             : order.CASH_TO_DC != null
-                ? Cashs[(decimal)order.CASH_TO_DC].Name
+                ? ((IName)GlobalOptions.ReferencesCache.GetCashBox(order.CASH_TO_DC)).Name
                 : order.BANK_RASCH_SCHET_DC != null
-                    ? BankAccounts[(decimal)order.BANK_RASCH_SCHET_DC].Name
+                    ? ((IName)GlobalOptions.ReferencesCache.GetBankAccount(order.BANK_RASCH_SCHET_DC)).Name
                     : null;
     }
 

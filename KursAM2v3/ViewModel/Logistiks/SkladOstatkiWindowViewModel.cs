@@ -2,19 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using Calculates.Materials;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
@@ -27,10 +23,10 @@ namespace KursAM2.ViewModel.Logistiks
         private NomenklOstatkiForSklad myCurrentNomenklForSklad;
         private NomenklOstatkiWithPrice myCurrentNomenklStore;
         private NomenklCalcCostOperation myCurrentOperation;
-        private KursDomain.Documents.NomenklManagement.Warehouse myCurrentWarehouse;
+        private KursDomain.References.Warehouse myCurrentWarehouse;
         private bool myIsPeriodSet;
         private DateTime myOstatokDate;
-        private NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         public SkladOstatkiWindowViewModel()
         {
@@ -38,13 +34,12 @@ namespace KursAM2.ViewModel.Logistiks
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             myIsPeriodSet = false;
             myOstatokDate = DateTime.Today;
-            while (!MainReferences.IsReferenceLoadComplete) Thread.Sleep(5000);
             RefreshReferences();
         }
 
         // ReSharper disable once CollectionNeverQueried.Global
-        public ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse> Sklads { set; get; } =
-            new ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse>();
+        public ObservableCollection<KursDomain.References.Warehouse> Sklads { set; get; } =
+            new ObservableCollection<KursDomain.References.Warehouse>();
 
         // ReSharper disable once CollectionNeverUpdated.Global
         public List<NomPrice> Prices { set; get; } = new List<NomPrice>();
@@ -96,12 +91,12 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public KursDomain.Documents.NomenklManagement.Warehouse CurrentWarehouse
+        public KursDomain.References.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set
             {
-                if (Equals(myCurrentWarehouse,value)) return;
+                if (Equals(myCurrentWarehouse, value)) return;
                 myCurrentWarehouse = value;
                 if (myCurrentWarehouse != null)
                 {
@@ -198,7 +193,8 @@ namespace KursAM2.ViewModel.Logistiks
                           "INNER JOIN  EXT_USERS U ON U.USR_ID = H.USR_ID " +
                           $"AND UPPER(U.USR_NICKNAME) = UPPER('{GlobalOptions.UserInfo.NickName}')";
                 var skls = ctx.Database.SqlQuery<decimal>(sql);
-                foreach (var s in skls) Sklads.Add(MainReferences.Warehouses[s]);
+                foreach (var s in skls)
+                    Sklads.Add(GlobalOptions.ReferencesCache.GetWarehouse(s) as KursDomain.References.Warehouse);
             }
         }
 
@@ -214,24 +210,23 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void LoadNomForSklad()
         {
-            var data = nomenklManager.GetNomenklStoreQuantity(CurrentWarehouse.DocCode, new DateTime(2000,1,1),
+            var data = nomenklManager.GetNomenklStoreQuantity(CurrentWarehouse.DocCode, new DateTime(2000, 1, 1),
                 DateTime.Today);
-            if(data != null)  {
+            if (data != null)
                 foreach (var d in data.Where(_ => _.OstatokQuantity > 0))
-                {
                     NomenklsForSklad.Add(new NomenklOstatkiWithPrice
                     {
-                        Nomenkl = MainReferences.GetNomenkl(d.NomDC),
-                        Warehouse = MainReferences.GetWarehouse(CurrentWarehouse.DocCode),
+                        Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(d.NomDC) as Nomenkl,
+                        Warehouse =
+                            GlobalOptions.ReferencesCache.GetWarehouse(CurrentWarehouse.DocCode) as
+                                KursDomain.References.Warehouse,
                         Quantity = d.OstatokQuantity,
-                        CurrencyName = MainReferences.GetCurrency(((IDocCode)MainReferences.GetNomenkl(d.NomDC).Currency).DocCode).Name,
+                        CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetNomenkl(d.NomDC).Currency).Name,
                         Price = d.OstatokQuantity != 0 ? Math.Round(d.OstatokNaklSumma / d.OstatokQuantity, 2) : 0,
-                        PriceWONaklad =  d.OstatokQuantity != 0 ? Math.Round(d.OstatokSumma / d.OstatokQuantity, 2) : 0,
+                        PriceWONaklad = d.OstatokQuantity != 0 ? Math.Round(d.OstatokSumma / d.OstatokQuantity, 2) : 0,
                         Summa = d.OstatokNaklSumma,
                         SummaWONaklad = d.OstatokSumma
                     });
-                }
-            }
         }
 
         private void DocumentTovarOpen(object obj)
@@ -289,7 +284,7 @@ namespace KursAM2.ViewModel.Logistiks
                 var clc = new NomenklCostMediumSliding(ctx);
                 NomenklOperations.Clear();
                 var data = clc.GetOperations(CurrentNomenklStore.Nomenkl.DocCode, false);
-                if(data != null && data.Count > 0)
+                if (data != null && data.Count > 0)
                     foreach (var op in data)
                         NomenklOperations.Add(op);
             }
@@ -349,7 +344,7 @@ namespace KursAM2.ViewModel.Logistiks
 
     public class SkladQuantity
     {
-        public KursDomain.Documents.NomenklManagement.Warehouse Warehouse { set; get; }
+        public KursDomain.References.Warehouse Warehouse { set; get; }
         public string Name => Warehouse?.Name;
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
@@ -360,7 +355,7 @@ namespace KursAM2.ViewModel.Logistiks
     {
         public Nomenkl Nomenkl { set; get; }
         public string NomenklName => Nomenkl?.Name;
-        public KursDomain.Documents.NomenklManagement.Warehouse Warehouse { set; get; }
+        public KursDomain.References.Warehouse Warehouse { set; get; }
         public string StoreName => Warehouse?.Name;
         public string NomenklNumber => Nomenkl?.NomenklNumber;
         public string Name => Nomenkl?.Name;

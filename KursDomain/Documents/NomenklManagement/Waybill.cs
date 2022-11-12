@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Controls;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -53,7 +52,10 @@ public class WayBillShort : RSViewModelBase, IEntity<SD_24>
     public int DD_IN_NUM => Entity.DD_IN_NUM;
     public DateTime Date => Entity.DD_DATE;
     public string CREATOR => Entity.CREATOR;
-    public Warehouse WarehouseOut => MainReferences.GetWarehouse(Entity.DD_SKLAD_OTPR_DC);
+
+    public References.Warehouse WarehouseOut =>
+        GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_OTPR_DC) as References.Warehouse;
+
     public Kontragent Client => GlobalOptions.ReferencesCache.GetKontragent(Entity.DD_KONTR_POL_DC) as Kontragent;
     public override string Note => Entity.DD_NOTES;
     public string DD_KOMU_PEREDANO => Entity.DD_KOMU_PEREDANO;
@@ -78,7 +80,7 @@ public class Waybill : SD_24ViewModel, IDocument<Waybill>
 {
     private Kontragent myClient;
 
-    private Warehouse myStore;
+    private References.Warehouse myStore;
 
     public Waybill()
     {
@@ -94,23 +96,20 @@ public class Waybill : SD_24ViewModel, IDocument<Waybill>
         Rows = new ObservableCollection<WaybillRow>();
         Rows.CollectionChanged += (o, args) => State = RowStatus.Edited;
         DeletedRows = new List<WaybillRow>();
-        if (entity != null)
-        {
-            InvoiceClientViewModel = entity.SD_84 != null ? new InvoiceClientViewModel(entity.SD_84) : null;
-            Client = GlobalOptions.ReferencesCache.GetKontragent(Entity.DD_KONTR_POL_DC) as Kontragent;
-            if (entity.DD_SKLAD_OTPR_DC != null)
-                Store = MainReferences.Warehouses[entity.DD_SKLAD_OTPR_DC.Value];
-            if (entity.TD_24.Count > 0)
-                foreach (var row in entity.TD_24)
-                    Rows.Add(new WaybillRow(row));
-        }
+        if (entity == null) return;
+        InvoiceClientViewModel = entity.SD_84 != null ? new InvoiceClientViewModel(entity.SD_84) : null;
+        Client = GlobalOptions.ReferencesCache.GetKontragent(Entity.DD_KONTR_POL_DC) as Kontragent;
+        Store = GlobalOptions.ReferencesCache.GetWarehouse(entity.DD_SKLAD_OTPR_DC) as References.Warehouse;
+        if (entity.TD_24.Count <= 0) return;
+        foreach (var row in entity.TD_24)
+            Rows.Add(new WaybillRow(row));
     }
 
     public override string Description =>
         $"Расходная накладная №{DD_IN_NUM}/{DD_EXT_NUM} от {Date.ToShortDateString()} " +
         $"со склада {WarehouseOut} контрагенту {Client} {Note}";
 
-    public Warehouse Store
+    public References.Warehouse Store
     {
         get => myStore;
         set

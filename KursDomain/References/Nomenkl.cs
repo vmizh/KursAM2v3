@@ -5,14 +5,12 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
 using KursDomain.IReferences.Nomenkl;
@@ -173,7 +171,7 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
     private Currency myCurrency;
     private SD_83 myEntity;
     private NomenklGroup myGroup;
-    private NomenklProductType myNomenklType;
+    private ProductType myNomenklType;
     private Unit myUnit;
 
     public NomenklViewModel()
@@ -325,7 +323,7 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
 
     //sd_119
     [GridColumnView("Полное имя (доп)", SettingsType.Default)]
-    public NomenklProductType NomenklType
+    public ProductType NomenklType
     {
         get => myNomenklType;
         set
@@ -1279,18 +1277,9 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
     private void LoadReference()
     {
         // ReSharper disable once PossibleNullReferenceException
-        Unit = MainReferences.Units.ContainsKey(Entity.NOM_ED_IZM_DC)
-            ? MainReferences.Units[Entity.NOM_ED_IZM_DC]
-            : null;
-        Group = MainReferences.NomenklGroups.ContainsKey(Entity.NOM_CATEG_DC)
-            ? MainReferences.NomenklGroups[Entity.NOM_CATEG_DC]
-            : null;
-        //Currency = MainReferences.GetNomenkl(Entity.DOC_CODE).Currency as Currency;
-        if (Entity.NOM_TYPE_DC != null)
-            NomenklType =
-                MainReferences.NomenklTypes.ContainsKey(Entity.NOM_TYPE_DC ?? 0)
-                    ? MainReferences.NomenklTypes[Entity.NOM_TYPE_DC.Value]
-                    : null;
+        Unit = GlobalOptions.ReferencesCache.GetUnit(Entity.NOM_ED_IZM_DC) as Unit;
+        Group = GlobalOptions.ReferencesCache.GetNomenklGroup(Entity.NOM_CATEG_DC) as NomenklGroup;
+        NomenklType = GlobalOptions.ReferencesCache.GetProductType(Entity.NOM_TYPE_DC) as ProductType;
     }
 
     public override string ToString()
@@ -1632,7 +1621,7 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
     public static List<NomenklMoveWithPrice> GetMoveWithNakopit(decimal nomDC)
     {
         var ret = new List<NomenklMoveWithPrice>();
-        var nom = MainReferences.GetNomenkl(nomDC);
+        var nom = GlobalOptions.ReferencesCache.GetNomenkl(nomDC);
         try
         {
             using (var ctx = GlobalOptions.GetEntities())
@@ -1656,7 +1645,7 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
                         Nakopit = nak,
                         NomDC = nomDC,
                         NomCrsDC = ((IDocCode) nom.Currency).DocCode,
-                        NomName = nom.Name,
+                        NomName = ((IName) nom).Name,
                         NomNomenkl = nom.NomenklNumber
                     });
                 }

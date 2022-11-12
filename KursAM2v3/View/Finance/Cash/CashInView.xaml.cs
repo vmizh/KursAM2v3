@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using Core;
 using Core.WindowsManager;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
@@ -111,7 +110,7 @@ namespace KursAM2.View.Finance.Cash
                             ctx.CurrencyList.Clear();
                             foreach (var dc in crslst)
                                 ctx.CurrencyList.Add(
-                                    MainReferences.Currencies.Values.FirstOrDefault(_ => _.DocCode == dc));
+                                    GlobalOptions.ReferencesCache.GetCurrency(dc) as Currency);
                         }
                     }
                     catch (Exception ex)
@@ -297,7 +296,7 @@ namespace KursAM2.View.Finance.Cash
                         .ToList();
                     ctx.CurrencyList.Clear();
                     foreach (var dc in crslst)
-                        ctx.CurrencyList.Add(MainReferences.Currencies.Values.FirstOrDefault(_ => _.DocCode == dc));
+                        ctx.CurrencyList.Add(GlobalOptions.ReferencesCache.GetCurrency(dc) as Currency);
                 }
             }
             catch (Exception ex)
@@ -327,7 +326,7 @@ namespace KursAM2.View.Finance.Cash
                     doc.DATE_ORD = item.DocDate;
                     doc.SUMM_ORD = item.Summa - item.PaySumma;
                     doc.KONTR_CRS_DC = item.Entity.SF_CRS_DC;
-                    doc.Currency = MainReferences.Currencies[item.Entity.SF_CRS_DC];
+                    doc.Currency = GlobalOptions.ReferencesCache.GetCurrency(item.Entity.SF_CRS_DC) as Currency;
                     doc.SFactName = item.ToString();
                     doc.SFACT_DC = item.DocCode;
                     doc.NOTES_ORD = item.Note;
@@ -338,7 +337,7 @@ namespace KursAM2.View.Finance.Cash
                     doc.KONTRAGENT_DC = item.Entity.SF_CLIENT_DC;
                     doc.SUMM_ORD = item.Summa;
                     doc.KONTR_CRS_DC = item.Entity.SF_CRS_DC;
-                    doc.Currency = MainReferences.Currencies[item.Entity.SF_CRS_DC];
+                    doc.Currency = GlobalOptions.ReferencesCache.GetCurrency(item.Entity.SF_CRS_DC) as Currency;
                     doc.SUMM_ORD = item.Summa - item.PaySumma;
                     doc.SFactName = item.ToString();
                     doc.SFACT_DC = item.DocCode;
@@ -351,7 +350,7 @@ namespace KursAM2.View.Finance.Cash
                 doc.KONTRAGENT_DC = item.Entity.SF_CLIENT_DC;
                 doc.SUMM_ORD = item.Summa;
                 doc.KONTR_CRS_DC = item.Entity.SF_CRS_DC;
-                doc.Currency = MainReferences.Currencies[item.Entity.SF_CRS_DC];
+                doc.Currency = GlobalOptions.ReferencesCache.GetCurrency(item.Entity.SF_CRS_DC) as Currency;
                 doc.SUMM_ORD = item.Summa - item.PaySumma;
                 doc.SFactName = item.ToString();
                 doc.SFACT_DC = item.DocCode;

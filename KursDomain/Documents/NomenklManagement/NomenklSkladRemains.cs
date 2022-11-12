@@ -11,7 +11,7 @@ public class NomenklSkladRemains
     public string NomenklUchetCurrencyName { set; get; }
     public References.Currency NomenklCurrency { set; get; }
     public string NomenklCurrencyNmae { set; get; }
-    public Warehouse Store { set; get; }
+    public References.Warehouse Store { set; get; }
     public string StoreName { set; get; }
     public DateTime LastOperDate { set; get; }
     public decimal QuantityAll { set; get; }

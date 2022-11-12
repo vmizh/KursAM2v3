@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using Core;
 using Core.WindowsManager;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
@@ -13,7 +12,6 @@ using KursAM2.Dialogs;
 using KursAM2.ViewModel.Reference;
 using KursDomain;
 using KursDomain.Documents.Bank;
-using KursDomain.Documents.Cash;
 using KursDomain.References;
 using LayoutManager;
 
@@ -77,7 +75,7 @@ namespace KursAM2.View.KursReferences
                 case nameof(row.DefaultCurrency):
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
-                        ItemsSource = MainReferences.Currencies.Values.ToList(),
+                        ItemsSource = GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>().ToList(),
                         DisplayMember = "Name",
                         AutoComplete = true
                     };
@@ -85,7 +83,8 @@ namespace KursAM2.View.KursReferences
                 case nameof(row.CO):
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
-                        ItemsSource = MainReferences.COList.Values.ToList(),
+                        ItemsSource = GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
+                            .Cast<CentrResponsibility>().ToList(),
                         DisplayMember = "Name",
                         AutoComplete = true
                     };
@@ -122,7 +121,7 @@ namespace KursAM2.View.KursReferences
                 case nameof(row.CO):
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
-                        ItemsSource = MainReferences.COList.Values.ToList(),
+                        ItemsSource = GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll().ToList(),
                         DisplayMember = "Name",
                         AutoComplete = true
                     };
@@ -130,7 +129,7 @@ namespace KursAM2.View.KursReferences
                 case nameof(row.Currency):
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
-                        ItemsSource = MainReferences.Currencies.Values.ToList(),
+                        ItemsSource = GlobalOptions.ReferencesCache.GetCurrenciesAll().ToList(),
                         DisplayMember = "Name",
                         AutoComplete = true
                     };

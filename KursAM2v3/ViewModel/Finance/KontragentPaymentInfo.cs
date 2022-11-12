@@ -1,6 +1,7 @@
-﻿using Core;
-using Data;
+﻿using Data;
+using KursDomain;
 using KursDomain.Documents.CommonReferences.Kontragent;
+using KursDomain.ICommon;
 
 namespace KursAM2.ViewModel.Finance
 {
@@ -11,12 +12,10 @@ namespace KursAM2.ViewModel.Finance
         {
         }
 
-        public string KontragentCrsName => MainReferences.GetKontragent(KONTR_DC).BalansCurrency.Name;
+        public string KontragentCrsName => ((IName)GlobalOptions.ReferencesCache.GetKontragent(KONTR_DC).Currency).Name;
 
         public string OperationCrsName
             =>
-                MainReferences.Currencies.ContainsKey(OPER_CRS_DC)
-                    ? MainReferences.Currencies[OPER_CRS_DC].Name
-                    : "не укзана";
+                ((IName)GlobalOptions.ReferencesCache.GetCurrency(OPER_CRS_DC))?.Name ?? "не укзана";
     }
 }

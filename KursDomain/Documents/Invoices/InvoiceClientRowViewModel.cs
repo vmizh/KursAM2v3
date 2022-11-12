@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -46,7 +45,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
 
     public bool IsNDSInPrice
     {
-        get => ((InvoiceClientViewModel) Parent)?.IsNDSIncludeInPrice ?? myIsNDSInPrice;
+        get => ((InvoiceClientViewModel)Parent)?.IsNDSIncludeInPrice ?? myIsNDSInPrice;
         set
         {
             if (myIsNDSInPrice == value) return;
@@ -448,7 +447,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         get => GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC) as Nomenkl;
         set
         {
-            if (Equals(GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC),value)) return;
+            if (Equals(GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC), value)) return;
             Entity.SFT_NEMENKL_DC = value.DocCode;
             RaisePropertyChanged();
         }
@@ -456,7 +455,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
 
     public decimal Quantity
     {
-        get => (decimal) Entity.SFT_KOL;
+        get => (decimal)Entity.SFT_KOL;
         set
         {
             if (value <= 0)
@@ -464,13 +463,13 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
                 //    MessageBoxImage.Error);
                 return;
 
-            if (Math.Abs(Entity.SFT_KOL - (double) value) < 0.00001) return;
+            if (Math.Abs(Entity.SFT_KOL - (double)value) < 0.00001) return;
             if (value < Shipped)
                 //WindowManager.ShowMessage($"Отгружено {Shipped}. Уменьшить кол-во в счете нельзя", "Ошибка",
                 //    MessageBoxImage.Error);
                 return;
 
-            Entity.SFT_KOL = (double) value;
+            Entity.SFT_KOL = (double)value;
             CalcRow();
             RaisePropertyChanged();
         }
@@ -495,7 +494,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
 
     public decimal NDSPercent
     {
-        get => (decimal) Entity.SFT_NDS_PERCENT;
+        get => (decimal)Entity.SFT_NDS_PERCENT;
         set
         {
             if (value < 0)
@@ -504,8 +503,8 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
                 return;
 
             // ReSharper disable once CompareOfFloatsByEqualityOperator
-            if (Entity.SFT_NDS_PERCENT == (double) value) return;
-            Entity.SFT_NDS_PERCENT = (double) value;
+            if (Entity.SFT_NDS_PERCENT == (double)value) return;
+            Entity.SFT_NDS_PERCENT = (double)value;
             CalcRow();
             RaisePropertyChanged();
         }
@@ -532,8 +531,8 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
             Entity.SFT_NACENKA_DILERA = value;
             if (Parent is InvoiceClientViewModel doc)
                 // ReSharper disable once PossibleInvalidOperationException
-                doc.SF_DILER_SUMMA = (decimal?) doc.Rows.Cast<InvoiceClientRowViewModel>()
-                    .Sum(_ => _.Entity.SFT_KOL * (double) (_.SFT_NACENKA_DILERA ?? 0));
+                doc.SF_DILER_SUMMA = (decimal?)doc.Rows.Cast<InvoiceClientRowViewModel>()
+                    .Sum(_ => _.Entity.SFT_KOL * (double)(_.SFT_NACENKA_DILERA ?? 0));
             RaisePropertyChanged();
         }
     }
@@ -543,7 +542,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         get => GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC) as SDRSchet;
         set
         {
-            if (Equals(GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC),value)) return;
+            if (Equals(GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC), value)) return;
             Entity.SFT_SHPZ_DC = value?.DocCode;
             RaisePropertyChanged();
         }
@@ -576,7 +575,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         {
             if (myShipped == value) return;
             myShipped = value;
-            myRest = (decimal) (Entity.SFT_KOL - (double) myShipped);
+            myRest = (decimal)(Entity.SFT_KOL - (double)myShipped);
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Rest));
         }
@@ -616,18 +615,18 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
     {
         if (IsNDSInPrice)
         {
-            var s = (decimal) Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0;
-            Entity.SFT_SUMMA_NDS = Math.Round(s - s * 100 / (100 + (decimal) Entity.SFT_NDS_PERCENT), 2);
+            var s = (decimal)Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0;
+            Entity.SFT_SUMMA_NDS = Math.Round(s - s * 100 / (100 + (decimal)Entity.SFT_NDS_PERCENT), 2);
             Entity.SFT_SUMMA_K_OPLATE = s;
             Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = s;
         }
         else
         {
             Entity.SFT_SUMMA_NDS =
-                (decimal) Math.Round(
-                    Entity.SFT_KOL * (double) (Entity.SFT_ED_CENA ?? 0) * Entity.SFT_NDS_PERCENT / 100, 2);
+                (decimal)Math.Round(
+                    Entity.SFT_KOL * (double)(Entity.SFT_ED_CENA ?? 0) * Entity.SFT_NDS_PERCENT / 100, 2);
             Entity.SFT_SUMMA_K_OPLATE =
-                Math.Round((decimal) (Entity.SFT_KOL * (double) (Entity.SFT_ED_CENA ?? 0)), 2)
+                Math.Round((decimal)(Entity.SFT_KOL * (double)(Entity.SFT_ED_CENA ?? 0)), 2)
                 + Entity.SFT_SUMMA_NDS;
             Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
         }
@@ -639,7 +638,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
 
     private void LoadReference()
     {
-        Nomenkl = MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC);
+        Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC) as Nomenkl;
         if (Entity.SFT_SHPZ_DC != null)
             SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC.Value) as SDRSchet;
     }

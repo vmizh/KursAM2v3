@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -72,7 +71,7 @@ public interface IInvoiceProviderRow
     [Display(AutoGenerateField = false)] decimal? SFT_SUMMA_K_OPLATE_KONTR_CRS { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Счет дох/расх")]
-    References.SDRSchet SDRSchet { set; get; }
+    SDRSchet SDRSchet { set; get; }
 }
 
 /// <summary>
@@ -697,7 +696,7 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
         set
         {
             if (Entity.SFT_NEMENKL_DC != default &&
-                MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC) == value) return;
+                GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC) == value) return;
             myNomenkl = value;
             if (myNomenkl != null)
             {
@@ -926,33 +925,11 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
 
     private void LoadReference()
     {
-        myNomenkl = MainReferences.GetNomenkl(Entity.SFT_NEMENKL_DC);
-        RaisePropertyChanged(nameof(Nomenkl));
-        if (MainReferences.Units.ContainsKey(Entity.SFT_POST_ED_IZM_DC))
-        {
-            myPostUnit = MainReferences.Units[Entity.SFT_POST_ED_IZM_DC];
-            RaisePropertyChanged(nameof(PostUnit));
-        }
-
-        if (MainReferences.Units.ContainsKey(Entity.SFT_UCHET_ED_IZM_DC))
-        {
-            myUchUnit = MainReferences.Units[Entity.SFT_UCHET_ED_IZM_DC];
-            RaisePropertyChanged(nameof(UchUnit));
-        }
-
-        if (Entity.SFT_SHPZ_DC != null && MainReferences.SDRSchets.ContainsKey(Entity.SFT_SHPZ_DC.Value))
-        {
-            mySDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC.Value) as SDRSchet;
-            RaisePropertyChanged(nameof(SDRSchet));
-        }
-
-        if (Entity.SFT_NAKLAD_KONTR_DC != null)
-        {
-            myKontragentForNaklad =
-                GlobalOptions.ReferencesCache.GetKontragent(Entity.SFT_NAKLAD_KONTR_DC) as Kontragent;
-            RaisePropertyChanged(nameof(KontragentForNaklad));
-        }
-
+        myNomenkl = GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC) as Nomenkl;
+        myPostUnit = GlobalOptions.ReferencesCache.GetUnit(Entity.SFT_POST_ED_IZM_DC) as Unit;
+        myUchUnit = GlobalOptions.ReferencesCache.GetUnit(Entity.SFT_UCHET_ED_IZM_DC) as Unit;
+        mySDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC) as SDRSchet;
+        myKontragentForNaklad = GlobalOptions.ReferencesCache.GetKontragent(Entity.SFT_NAKLAD_KONTR_DC) as Kontragent;
         if (Entity.TD_26_CurrencyConvert?.Count > 0)
             foreach (var d in Entity.TD_26_CurrencyConvert)
             {
@@ -967,6 +944,8 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
                 };
                 CurrencyConvertRows.Add(newItem);
             }
+
+        RaisePropertyAllChanged();
     }
 
     public override string ToString()

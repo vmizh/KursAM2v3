@@ -133,13 +133,13 @@ namespace KursAM2.ViewModel.Shop
                     {
                         Kontragent = GlobalOptions.ReferencesCache.GetKontragent(10430001717) as Kontragent,
                         KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(10430000001) as Kontragent,
-                        CO = MainReferences.GetCO(10400000012),
-                        PayCondition = MainReferences.GetPayCondition(11790000001),
-                        VzaimoraschetType = MainReferences.GetVzaimoraschetType(10770000005),
+                        CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(10400000012) as CentrResponsibility,
+                        PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(11790000001) as PayCondition,
+                        VzaimoraschetType = GlobalOptions.ReferencesCache.GetMutualSettlementType(10770000005) as MutualSettlementType,
                         FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(11890000001) as PayForm,
                         IsNDSInPrice = true,
                         CREATOR = GlobalOptions.UserInfo.NickName,
-                        PersonaResponsible = MainReferences.GetEmployee((int?)104),
+                        PersonaResponsible = (Employee)GlobalOptions.ReferencesCache.GetEmployee((int?)104),
                         Currency = GlobalOptions.SystemProfile.NationalCurrency,
                         State = RowStatus.NewRow,
                         DocCode = -1,
@@ -155,7 +155,7 @@ namespace KursAM2.ViewModel.Shop
                         _.MainId == n.Id && _.NOM_SALE_CRS_DC == GlobalOptions.SystemProfile.NationalCurrency.DocCode);
                     if (nom != null)
                     {
-                        var nomenkl = MainReferences.GetNomenkl(nom.DOC_CODE);
+                        var nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(nom.DOC_CODE) as Nomenkl;
                         var r = new InvoiceProviderRow
                         {
                             DocCode = invoice.Document.DocCode,
@@ -224,9 +224,9 @@ namespace KursAM2.ViewModel.Shop
                         Name = item.Name.Replace("\"", "'")
                             .Substring(0, item.Name.Length > 500 ? 500 : item.Name.Length - 1),
                         NomenklNumber = item.OfferId,
-                        Unit = MainReferences.GetUnit(1750000001),
-                        Category = MainReferences.GetNomenklGroup(10820000053),
-                        NomType = MainReferences.GetNomenklProductType(11190000034),
+                        Unit = (Unit)GlobalOptions.ReferencesCache.GetUnit(1750000001),
+                        Category = GlobalOptions.ReferencesCache.GetNomenklGroup(10820000053) as NomenklGroup,
+                        NomType = GlobalOptions.ReferencesCache.GetProductType(11190000034) as ProductType,
                         IsInDataBase = isInBase,
                         Count = item.Count,
                         Price = item.Price

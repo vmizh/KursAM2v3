@@ -33,7 +33,7 @@ namespace KursAM2.ViewModel.Shop
         public bool IsCurrencyTransfer { set; get; } = false;
         public NomenklGroup Category { set; get; }
         public Unit Unit { set; get; }
-        public NomenklProductType NomType { set; get; }
+        public ProductType NomType { set; get; }
         public decimal Count { set; get; }
         public decimal Price { set; get; }
         public decimal Summa => Count * Price;

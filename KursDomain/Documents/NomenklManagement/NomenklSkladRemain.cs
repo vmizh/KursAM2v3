@@ -12,7 +12,7 @@ public class NomenklSkladRemain : RSViewModelData
     private decimal myPriceNaklad;
     private decimal myQuantity;
     private DateTime myRemainDate;
-    private Warehouse mySklad;
+    private References.Warehouse mySklad;
     private decimal mySumma;
     private decimal mySummaWithNaklad;
 
@@ -27,7 +27,7 @@ public class NomenklSkladRemain : RSViewModelData
         }
     }
 
-    public Warehouse Sklad
+    public References.Warehouse Sklad
     {
         get => mySklad;
         set

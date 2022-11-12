@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
@@ -18,10 +17,10 @@ namespace KursAM2.View.DialogUserControl
     public sealed class BankAccountSelectedDialog : RSWindowViewModelBase, IDataUserControl
     {
         private readonly decimal? excludeAccountDC;
+        private readonly Currency currency;
         private BankAccount myCurrentChildItem;
         private Bank myCurrentItem;
         private StandartDialogSelectTwoTableUC myDataUserControl;
-        private Currency currency;
 
         //public BankAccountSelectedDialog()
         //{
@@ -42,14 +41,14 @@ namespace KursAM2.View.DialogUserControl
             if (currency == null)
             {
                 foreach (var b in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<Bank>())
-                    if (ItemsCollection.All(_ => _.DocCode != ((IDocCode) b).DocCode))
+                    if (ItemsCollection.All(_ => _.DocCode != ((IDocCode)b).DocCode))
                         ItemsCollection.Add(b);
             }
             else
             {
                 foreach (var b in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>()
                              .Where(_ => Equals(_.Currency, crs)))
-                    if (ItemsCollection.All(_ => _.DocCode != ((IDocCode) b).DocCode))
+                    if (ItemsCollection.All(_ => _.DocCode != ((IDocCode)b).DocCode))
                         ItemsCollection.Add(b.Bank as Bank);
             }
         }
@@ -60,7 +59,8 @@ namespace KursAM2.View.DialogUserControl
             LayoutControl = myDataUserControl = new StandartDialogSelectTwoTableUC(GetType().Name);
             WindowName = "Выбор банковского счета";
             ItemsCollection = new ObservableCollection<Bank>();
-            foreach (var b in MainReferences.BankAccounts.Values.Where(_ => _.DocCode != dcOut))
+            foreach (var b in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>()
+                         .Where(_ => _.DocCode != dcOut))
                 if (ItemsCollection.All(_ => _.DocCode != b.DocCode))
                     ItemsCollection.Add(b.Bank as Bank);
 
@@ -85,28 +85,31 @@ namespace KursAM2.View.DialogUserControl
                 ChildItemsCollection.Clear();
                 if (myCurrentItem == null) return;
                 if (excludeAccountDC != null)
+                {
                     foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(_ =>
-                                 ((IDocCode)_.Bank).DocCode  == myCurrentItem?.DocCode
-                                 && ((IDocCode)_.Bank).DocCode  != excludeAccountDC))
+                                 ((IDocCode)_.Bank).DocCode == myCurrentItem?.DocCode
+                                 && ((IDocCode)_.Bank).DocCode != excludeAccountDC))
                         ChildItemsCollection.Add(acc);
+                }
                 else
                 {
-                    if(currency == null)
-                        foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(_ =>
-                                     ((IDocCode) _.Bank).DocCode == myCurrentItem.DocCode))
+                    if (currency == null)
+                        foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(
+                                     _ =>
+                                         ((IDocCode)_.Bank).DocCode == myCurrentItem.DocCode))
                             ChildItemsCollection.Add(acc);
-                    else 
-                        foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(_ =>
-                                     ((IDocCode) _.Bank).DocCode == myCurrentItem.DocCode && Equals(currency,_.Currency)))
+                    else
+                        foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(
+                                     _ =>
+                                         ((IDocCode)_.Bank).DocCode == myCurrentItem.DocCode &&
+                                         Equals(currency, _.Currency)))
                             ChildItemsCollection.Add(acc);
                 }
+
                 RaisePropertyChanged();
             }
         }
-        public override bool IsOkAllow()
-        {
-            return CurrentChildItem != null;
-        }
+
         public BankAccount CurrentChildItem
         {
             get => myCurrentChildItem;
@@ -130,6 +133,11 @@ namespace KursAM2.View.DialogUserControl
         }
 
         public DependencyObject LayoutControl { get; }
+
+        public override bool IsOkAllow()
+        {
+            return CurrentChildItem != null;
+        }
     }
 
     public sealed class BankAccountSelectedDialog2 : RSWindowViewModelBase, IDataUserControl
@@ -171,11 +179,6 @@ namespace KursAM2.View.DialogUserControl
             }
         }
 
-        public override bool IsOkAllow()
-        {
-            return CurrentChildItem != null;
-        }
-
         public StandartDialogSelectUC DataUserControl
         {
             get => myDataUserControl;
@@ -188,6 +191,11 @@ namespace KursAM2.View.DialogUserControl
         }
 
         public DependencyObject LayoutControl { get; }
+
+        public override bool IsOkAllow()
+        {
+            return CurrentChildItem != null;
+        }
     }
 
     public class BankAccountOperationSelectedDialog : RSWindowViewModelBase, IDataUserControl
@@ -236,7 +244,6 @@ namespace KursAM2.View.DialogUserControl
 
         public DependencyObject LayoutControl { get; }
 
-       
 
         public override void RefreshData(object obj)
         {
@@ -256,9 +263,9 @@ namespace KursAM2.View.DialogUserControl
                             Code = r.CODE,
                             Summa = (decimal)r.VVT_VAL_RASHOD,
                             Note = r.VVT_DOC_NUM,
-                            Bank = MainReferences.BankAccounts[r.SD_101.VV_ACC_DC],
+                            Bank = GlobalOptions.ReferencesCache.GetBankAccount(r.SD_101.VV_ACC_DC) as BankAccount,
                             Date = r.SD_101.VV_STOP_DATE,
-                            Currency = MainReferences.Currencies[r.VVT_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(r.VVT_CRS_DC) as Currency,
                             SHPZ = r.VVT_SHPZ_DC != null
                                 ? GlobalOptions.ReferencesCache.GetSDRSchet(r.VVT_SHPZ_DC.Value) as SDRSchet
                                 : null

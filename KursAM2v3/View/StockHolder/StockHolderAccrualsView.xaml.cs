@@ -1,11 +1,12 @@
 ﻿using System.Linq;
-using Core;
-using Core.ViewModel.Base;
 using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.StockHolder;
+using KursDomain;
 using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.View.StockHolder
 {
@@ -16,7 +17,7 @@ namespace KursAM2.View.StockHolder
     {
         public StockHolderAccrualsView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
@@ -30,18 +31,17 @@ namespace KursAM2.View.StockHolder
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
                         IsTextEditable = false,
-                        ItemsSource = MainReferences.Currencies.Values.ToList()
+                        ItemsSource = GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>()
+                            .OrderBy(_ => _.Name).ToList()
                     };
                     break;
                 case "AccrualType":
                     if (dtx != null)
-                    {
                         e.Column.EditSettings = new ComboBoxEditSettings
                         {
                             IsTextEditable = false,
                             ItemsSource = dtx.StockHolderAccruelTypes
                         };
-                    }
                     break;
                 case "StockHolder":
                     e.Column.Visible = false;
@@ -59,10 +59,7 @@ namespace KursAM2.View.StockHolder
         {
             if (DataContext is StockHolderAccrualWindowViewModel dtx)
             {
-                foreach (var sh in dtx.StockHolders)
-                {
-                    sh.RaisePropertyAllChanged();
-                }
+                foreach (var sh in dtx.StockHolders) sh.RaisePropertyAllChanged();
                 dtx.SetVisibleColums();
                 if (dtx.State != RowStatus.NewRow)
                 {
@@ -70,22 +67,18 @@ namespace KursAM2.View.StockHolder
                     dtx.Document.RaisePropertyChanged("State");
                     GridControlStockHolder.UpdateTotalSummary();
                 }
-            } 
+            }
         }
 
         private void TableViewControlStockAccruals_OnCellValueChanged(object sender, CellValueChangedEventArgs e)
         {
             GridControlStockHolder.UpdateTotalSummary();
             if (DataContext is StockHolderAccrualWindowViewModel ctx)
-            {
                 foreach (var sh in ctx.StockHolders)
-                {
                     sh.RaisePropertyAllChanged();
-                }
-            }
         }
 
-        private void DateEdit_EditValueChanging(object sender, DevExpress.Xpf.Editors.EditValueChangingEventArgs e)
+        private void DateEdit_EditValueChanging(object sender, EditValueChangingEventArgs e)
         {
             if (DataContext is StockHolderAccrualWindowViewModel dtx)
             {
@@ -97,7 +90,7 @@ namespace KursAM2.View.StockHolder
                 //    dtx.Document.RaisePropertyChanged("State");
                 //    
                 //}
-            } 
+            }
         }
     }
 }

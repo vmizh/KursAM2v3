@@ -1,10 +1,11 @@
 ﻿using System.Data.SqlClient;
 using System.Linq;
-using Core;
 using Data;
 using Data.Repository;
 using Helper;
 using KursDomain;
+using KursDomain.ICommon;
+using KursDomain.References;
 using NUnit.Framework;
 
 namespace KursAM2.Tests
@@ -28,11 +29,12 @@ namespace KursAM2.Tests
                 Name = "sysadm",
                 NickName = "sysadm"
             };
-            MainReferences.Reset();
             GlobalOptions.SystemProfile = new SystemProfile
             {
-                NationalCurrency = MainReferences.Currencies.Values.Single(_ => _.Name == "RUR"),
-                MainCurrency = MainReferences.Currencies.Values.Single(_ => _.Name == "RUR")
+                NationalCurrency =
+                    GlobalOptions.ReferencesCache.GetCurrenciesAll().Single(_ => ((IName) _).Name == "RUR") as Currency,
+                MainCurrency =
+                    GlobalOptions.ReferencesCache.GetCurrenciesAll().Single(_ => ((IName) _).Name == "RUR") as Currency,
             };
             entities = GlobalOptions.GetEntities();
             UnitOfWork = new UnitOfWork<ALFAMEDIAEntities>(entities);

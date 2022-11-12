@@ -1,10 +1,8 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Core;
 using Core.ViewModel.Base;
 using Data;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.References;
 
 namespace KursDomain.Documents.Dogovora;
@@ -63,10 +61,10 @@ public sealed class DogovorOfSupplierRowViewModel : RSViewModelBase, IDataErrorI
     [Display(AutoGenerateField = true, Name = "Номенклатура")]
     public Nomenkl Nomenkl
     {
-        get => Entity.NomenklDC == 0 ? null : MainReferences.GetNomenkl(Entity.NomenklDC);
+        get => GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) as Nomenkl;
         set
         {
-            if (MainReferences.GetNomenkl(Entity.NomenklDC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) == value) return;
             Entity.NomenklDC = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }

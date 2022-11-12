@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Core;
 using Core.ViewModel.Base;
 using Data;
 using FinanceAnalitic;
@@ -57,7 +56,7 @@ namespace KursAM2.Managers
             get => myProject;
             set
             {
-                if (Equals(myProject,value)) return;
+                if (Equals(myProject, value)) return;
                 myProject = value;
                 if (myProject != null)
                     ProjectIds = getProjectIdsRecursively(myProject.Id);
@@ -75,7 +74,8 @@ namespace KursAM2.Managers
         private List<Guid> getProjectIdsRecursively(Guid mainId)
         {
             var ret = new List<Guid> { mainId };
-            var childs = MainReferences.Projects.Values.Where(_ => _.ParentId == mainId).Select(_ => _.Id).ToList();
+            var childs = GlobalOptions.ReferencesCache.GetProjectsAll().Where(_ => _.ParentId == mainId).Cast<Project>()
+                .Select(_ => _.Id).ToList();
             if (childs.Count == 0)
                 return ret;
             //ret.AddRange(childs);
@@ -151,12 +151,12 @@ namespace KursAM2.Managers
                     {
                         GroupId = Guid.Parse("{52EA160E-27DC-47E1-9006-70DF349943F6}"),
                         // ReSharper disable once PossibleNullReferenceException
-                        Name = MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER).Name,
+                        Name = ((IName)GlobalOptions.ReferencesCache.GetEmployee(d.TABELNUMBER)).Name,
                         DocCode = d.DOC_CODE,
                         Quantity = 0,
                         Kontragent =
                             // ReSharper disable once PossibleNullReferenceException
-                            MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER).Name,
+                            ((IName)GlobalOptions.ReferencesCache.GetEmployee(d.TABELNUMBER)).Name,
                         // ReSharper disable once PossibleInvalidOperationException
                         Date = (DateTime)d.DATE_ORD,
                         Note = null,
@@ -313,13 +313,14 @@ namespace KursAM2.Managers
                     .Distinct()
                     .ToDictionary(d => d, _ => Guid.NewGuid());
                 foreach (var e in from d in data
-                         let nom = MainReferences.GetNomenkl(d.NomenklDC)
-                         let kontr = MainReferences.GetKontragent(d.KontragentDC)
+                         let nom =
+                             GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl
+                         let kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent
                          // ReSharper disable once PossibleInvalidOperationException
                          let nomRate = GetRate(MyRates, ((IDocCode)nom.Currency).DocCode,
                              GlobalOptions.SystemProfile.MainCurrency.DocCode, d.DATE)
                          // ReSharper disable once PossibleInvalidOperationException
-                         let kontrRate = GetRate(MyRates, (decimal)kontr.VALUTA_DC,
+                         let kontrRate = GetRate(MyRates, ((IDocCode)kontr.Currency).DocCode,
                              GlobalOptions.SystemProfile.MainCurrency.DocCode, d.DATE)
                          select new
                          {
@@ -349,13 +350,13 @@ namespace KursAM2.Managers
                         Price = e.Price,
                         Date = e.Date,
                         Kontragent = e.Kontragent,
-                        CurrencyName = e.Kontr.BalansCurrency.Name,
+                        CurrencyName = ((IName)e.Kontr.Currency).Name,
                         Nomenkl = e.Nomenkl,
                         DocTypeCode = DocumentType.Waybill
                     };
-                    SetCurrenciesValue(newOp, e.Kontr.BalansCurrency.DocCode, e.Profit,
+                    SetCurrenciesValue(newOp, ((IDocCode)e.Kontr.Currency).DocCode, e.Profit,
                         e.Loss * GetRate(MyRates, ((IDocCode)e.Nomenkl.Currency).DocCode,
-                            e.Kontr.BalansCurrency.DocCode, newOp.Date));
+                            ((IDocCode)e.Kontr.Currency).DocCode, newOp.Date));
 
                     newOp.DocumentDC = ent.TD_24.Include(_ => _.SD_24)
                         .FirstOrDefault(_ => _.DDT_NOMENKL_DC == e.DocCode && _.SD_24.DD_DATE == e.Date)?.DOC_CODE;
@@ -364,13 +365,14 @@ namespace KursAM2.Managers
                 }
 
                 foreach (var e in from d in data
-                         let nom = MainReferences.GetNomenkl(d.NomenklDC)
-                         let kontr = MainReferences.GetKontragent(d.KontragentDC)
+                         let nom =
+                             GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl
+                         let kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent
                          // ReSharper disable once PossibleInvalidOperationException
                          let nomRate = GetRate(MyRates, ((IDocCode)nom.Currency).DocCode,
                              GlobalOptions.SystemProfile.MainCurrency.DocCode, d.DATE)
                          // ReSharper disable once PossibleInvalidOperationException
-                         let kontrRate = GetRate(MyRates, (decimal)kontr.VALUTA_DC,
+                         let kontrRate = GetRate(MyRates, ((IDocCode)kontr.Currency).DocCode,
                              GlobalOptions.SystemProfile.MainCurrency.DocCode, d.DATE)
                          select new
                          {
@@ -399,13 +401,13 @@ namespace KursAM2.Managers
                         Price = e.Price,
                         Date = e.Date,
                         Kontragent = e.Kontragent,
-                        CurrencyName = e.Kontr.BalansCurrency.Name,
+                        CurrencyName = ((IName)e.Kontr.Currency).Name,
                         Nomenkl = e.Nomenkl,
                         DocTypeCode = DocumentType.Waybill
                     };
-                    SetCurrenciesValue(newOp, e.Kontr.BalansCurrency.DocCode, e.Profit,
+                    SetCurrenciesValue(newOp, ((IDocCode)e.Kontr.Currency).DocCode, e.Profit,
                         e.Loss * GetRate(MyRates, ((IDocCode)e.Nomenkl.Currency).DocCode,
-                            e.Kontr.BalansCurrency.DocCode, newOp.Date));
+                            ((IDocCode)e.Kontr.Currency).DocCode, newOp.Date));
 
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
@@ -497,7 +499,8 @@ namespace KursAM2.Managers
                 spisanieTovara = Guid.NewGuid();
                 foreach (var d in nomPrihod)
                 {
-                    var nom = MainReferences.GetNomenkl(d.DDT_NOMENKL_DC);
+                    var nom =
+                        GlobalOptions.ReferencesCache.GetNomenkl(d.DDT_NOMENKL_DC) as KursDomain.References.Nomenkl;
                     var e = new
                     {
                         GroupId = newPrihodId,
@@ -643,10 +646,10 @@ namespace KursAM2.Managers
                     if (d.START_SUMMA < 0)
                     {
                         newOp.GroupId = Guid.Parse("{15DF4D79-D608-412A-87A8-1560714A706A}");
-                        newOp.Name = MainReferences.GetKontragent(d.DOC_CODE).Name;
+                        newOp.Name = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.DOC_CODE)).Name;
                         newOp.DocCode = d.DOC_CODE;
                         newOp.Quantity = 0;
-                        newOp.Kontragent = MainReferences.GetKontragent(d.DOC_CODE).Name;
+                        newOp.Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.DOC_CODE)).Name;
                         // ReSharper disable once PossibleInvalidOperationException
                         newOp.Date = (DateTime)d.START_BALANS;
                         newOp.Note = d.NOTES;
@@ -655,10 +658,10 @@ namespace KursAM2.Managers
                     else
                     {
                         newOp.GroupId = Guid.Parse("{2D07127B-72A8-4018-B9A8-62C7A78CB9C3}");
-                        newOp.Name = MainReferences.GetKontragent(d.DOC_CODE).Name;
+                        newOp.Name = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.DOC_CODE)).Name;
                         newOp.DocCode = d.DOC_CODE;
                         newOp.Quantity = 0;
-                        newOp.Kontragent = MainReferences.GetKontragent(d.DOC_CODE).Name;
+                        newOp.Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.DOC_CODE)).Name;
                         // ReSharper disable once PossibleInvalidOperationException
                         newOp.Date = (DateTime)d.START_BALANS;
                         newOp.Note = d.NOTES;
@@ -684,8 +687,8 @@ namespace KursAM2.Managers
                     .Where(_ => _.Date >= DateStart && _.Date <= DateEnd && _.DOC_CODE != null).ToList();
                 foreach (var n in nomChanged)
                 {
-                    var nom = MainReferences.GetNomenkl(n.NomenklId);
-                    var kontr = MainReferences.GetKontragent(n.TD_26.SD_26.SF_POST_DC);
+                    var nom = GlobalOptions.ReferencesCache.GetNomenkl(n.NomenklId) as KursDomain.References.Nomenkl;
+                    var kontr = GlobalOptions.ReferencesCache.GetKontragent(n.TD_26.SD_26.SF_POST_DC) as Kontragent;
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = ProfitAndLossesMainRowViewModel.NomenklCurrencyChanges,
@@ -699,14 +702,18 @@ namespace KursAM2.Managers
                         DocTypeCode = 0,
                         Nomenkl = nom,
                         KontragentName = kontr.Name,
-                        Currency = MainReferences.GetCurrency(((IDocCode)nom.Currency).DocCode),
-                        CurrencyName = MainReferences.GetCurrency(((IDocCode)nom.Currency).DocCode).Name
+                        Currency =
+                            GlobalOptions.ReferencesCache.GetCurrency(((IDocCode)nom.Currency).DocCode) as Currency,
+                        CurrencyName =
+                            ((IName)GlobalOptions.ReferencesCache.GetCurrency(((IDocCode)nom.Currency).DocCode)).Name
                     };
                     SetCurrenciesValue(newOp, ((IDocCode)nom.Currency).DocCode, n.Summa, 0m);
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
 
-                    var nom1 = MainReferences.GetNomenkl(n.TD_26.SFT_NEMENKL_DC);
+                    var nom1 =
+                        GlobalOptions.ReferencesCache.GetNomenkl(n.TD_26.SFT_NEMENKL_DC) as
+                            KursDomain.References.Nomenkl;
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = ProfitAndLossesMainRowViewModel.NomenklCurrencyChanges,
@@ -720,8 +727,10 @@ namespace KursAM2.Managers
                         DocTypeCode = 0,
                         Nomenkl = nom1,
                         KontragentName = kontr.Name,
-                        Currency = MainReferences.GetCurrency(((IDocCode)nom1.Currency).DocCode),
-                        CurrencyName = MainReferences.GetCurrency(((IDocCode)nom1.Currency).DocCode).Name
+                        Currency =
+                            GlobalOptions.ReferencesCache.GetCurrency(((IDocCode)nom1.Currency).DocCode) as Currency,
+                        CurrencyName =
+                            ((IName)GlobalOptions.ReferencesCache.GetCurrency(((IDocCode)nom1.Currency).DocCode)).Name
                     };
                     SetCurrenciesValue(newOp1, ((IDocCode)nom1.Currency).DocCode, 0m, n.TD_26.SFT_ED_CENA * n.Quantity);
                     Extend.Add(newOp1);
@@ -917,7 +926,8 @@ namespace KursAM2.Managers
                     var nomPrice =
                         NomenklViewModel.PriceWithOutNaklad(d.DDT_NOMENKL_DC,
                             d.SD_24.DD_DATE);
-                    var nom = MainReferences.GetNomenkl(d.DDT_NOMENKL_DC);
+                    var nom =
+                        GlobalOptions.ReferencesCache.GetNomenkl(d.DDT_NOMENKL_DC) as KursDomain.References.Nomenkl;
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = spisanieTovara,
@@ -926,7 +936,7 @@ namespace KursAM2.Managers
                         Quantity = d.DDT_KOL_PRIHOD,
                         // ReSharper disable once AssignNullToNotNullAttribute
                         // ReSharper disable once PossibleInvalidOperationException
-                        Kontragent = MainReferences.Warehouses[d.SD_24.DD_SKLAD_OTPR_DC.Value].Name,
+                        Kontragent = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_OTPR_DC)).Name,
                         Date = d.SD_24.DD_DATE,
                         Note = $"ном № - {nom.NomenklNumber}",
                         Nomenkl = nom,
@@ -954,8 +964,9 @@ namespace KursAM2.Managers
                 //{04A7B6BB-7B3C-49F1-8E10-F1AE5F5582E4}
                 foreach (var d in vozvratTovara)
                 {
-                    var kontr = MainReferences.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC);
-                    var nom = MainReferences.GetNomenkl(d.DDT_NOMENKL_DC);
+                    var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC) as Kontragent;
+                    var nom =
+                        GlobalOptions.ReferencesCache.GetNomenkl(d.DDT_NOMENKL_DC) as KursDomain.References.Nomenkl;
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = Guid.Parse("{C5C36299-FDEF-4251-B525-3DF10C0E8CB9}"),
@@ -1013,8 +1024,8 @@ namespace KursAM2.Managers
                         Quantity = 1,
                         Kontragent = null,
                         DocTypeCode = DocumentType.StockHolderAccrual,
-                        Currency = MainReferences.GetCurrency(d.CurrencyDC),
-                        CurrencyName = MainReferences.GetCurrency(d.CurrencyDC).Name,
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC) as Currency,
+                        CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC)).Name,
                         DocNum = d.StockHolderAccrual.Num.ToString(),
                         Price = d.Summa ?? 0
                     };
@@ -1049,8 +1060,9 @@ namespace KursAM2.Managers
                         .ToList();
                 foreach (var d in data)
                 {
-                    var kontr = MainReferences.GetKontragent(d.TD_84.SD_84.SF_DILER_DC);
-                    var nom = MainReferences.GetNomenkl(d.DDT_NOMENKL_DC);
+                    var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.TD_84.SD_84.SF_DILER_DC) as Kontragent;
+                    var nom =
+                        GlobalOptions.ReferencesCache.GetNomenkl(d.DDT_NOMENKL_DC) as KursDomain.References.Nomenkl;
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         Date = d.SD_24.DD_DATE,
@@ -1062,7 +1074,7 @@ namespace KursAM2.Managers
                         DocTypeCode = (DocumentType)84
                     };
                     if (d.TD_84 != null)
-                        SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode, 0m,
+                        SetCurrenciesValue(newOp, ((IDocCode)kontr.Currency).DocCode, 0m,
                             d.TD_84.SFT_NACENKA_DILERA * d.DDT_KOL_RASHOD);
 
                     Extend.Add(newOp);
@@ -1095,8 +1107,9 @@ namespace KursAM2.Managers
                         .ToList();
                 foreach (var d in data)
                 {
-                    var kontr = MainReferences.GetKontragent(d.SD_84.SF_DILER_DC);
-                    var nom = MainReferences.GetNomenkl(d.SD_83.DOC_CODE);
+                    var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.SD_84.SF_DILER_DC) as Kontragent;
+                    var nom =
+                        GlobalOptions.ReferencesCache.GetNomenkl(d.SD_83.DOC_CODE) as KursDomain.References.Nomenkl;
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = Guid.Parse("{BA628F86-6AE4-4CF3-832B-C6F7388DD01B}"),
@@ -1107,7 +1120,7 @@ namespace KursAM2.Managers
                         Kontragent = kontr.Name,
                         DocTypeCode = (DocumentType)84
                     };
-                    SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode, 0,
+                    SetCurrenciesValue(newOp, ((IDocCode)kontr.Currency).DocCode, 0,
                         d.SFT_NACENKA_DILERA * (decimal)d.SFT_KOL);
 
                     Extend.Add(newOp);
@@ -1144,10 +1157,12 @@ namespace KursAM2.Managers
                         Name = emps.Single(_ => _.TABELNUMBER == d.TabelNumber).NAME,
                         Date = d.Date ?? DateTime.MinValue,
                         DocTypeCode = (DocumentType)903,
-                        SDRSchet = d.SDRSchetDC != null ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet : null,
+                        SDRSchet = d.SDRSchetDC != null
+                            ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                            : null,
                         SDRState = d.SDRSchetDC == null
                             ? null
-                            : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState,
+                            : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
                     };
                     SetCurrenciesValue(newOp, d.OperCrsDC, 0, d.Summa);
 
@@ -1266,10 +1281,10 @@ namespace KursAM2.Managers
                 {
                     // ReSharper disable once AssignNullToNotNullAttribute
                     // ReSharper disable once PossibleInvalidOperationException
-                    var crs = MainReferences.Currencies[row.SD_831.NOM_SALE_CRS_DC.Value];
+                    var crs = GlobalOptions.ReferencesCache.GetCurrency(row.SD_831.NOM_SALE_CRS_DC) as Currency;
                     // ReSharper disable once AssignNullToNotNullAttribute
                     // ReSharper disable once PossibleInvalidOperationException
-                    var crs1 = MainReferences.Currencies[row.SD_83.NOM_SALE_CRS_DC.Value];
+                    var crs1 = GlobalOptions.ReferencesCache.GetCurrency(row.SD_83.NOM_SALE_CRS_DC) as Currency;
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = Guid.Parse("{564DB69C-6DAD-4B16-8BF5-118F5AF2D07F}"),
@@ -1282,7 +1297,9 @@ namespace KursAM2.Managers
                         Date = row.NomenklTransfer.Date,
                         Kontragent = null,
                         CurrencyName = crs.Name,
-                        Nomenkl = MainReferences.GetNomenkl(row.SD_83.DOC_CODE)
+                        Nomenkl =
+                            GlobalOptions.ReferencesCache.GetNomenkl(row.SD_83.DOC_CODE) as
+                                KursDomain.References.Nomenkl
                     };
                     SetCurrenciesValue(newOp, crs.DocCode, row.PriceIn * row.Quantity, 0m);
                     var price = NomenklViewModel.PriceWithOutNaklad(row.SD_83.DOC_CODE,
@@ -1299,7 +1316,9 @@ namespace KursAM2.Managers
                         Date = row.NomenklTransfer.Date,
                         Kontragent = null,
                         CurrencyName = crs1.Name,
-                        Nomenkl = MainReferences.GetNomenkl(row.SD_83.DOC_CODE)
+                        Nomenkl =
+                            GlobalOptions.ReferencesCache.GetNomenkl(row.SD_83.DOC_CODE) as
+                                KursDomain.References.Nomenkl
                     };
                     SetCurrenciesValue(newOp1, crs1.DocCode, 0m, price * row.Quantity);
                     Extend.Add(newOp);
@@ -1370,7 +1389,7 @@ namespace KursAM2.Managers
                             _.TD_26.SFT_ED_CENA.Value != _.TD_26.SFT_ED_CENA.Value);
                 foreach (var d in dataTemp)
                 {
-                    var kontr = MainReferences.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC);
+                    var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC) as Kontragent;
                     // ReSharper disable once EqualExpressionComparison
                     // ReSharper disable once PossibleInvalidOperationException
                     if (d.TD_26.SFT_ED_CENA.Value < d.TD_26.SFT_ED_CENA.Value)
@@ -1385,10 +1404,10 @@ namespace KursAM2.Managers
                             Price = d.TD_26.SFT_ED_CENA.Value - d.TD_26.SFT_ED_CENA.Value,
                             Date = d.SD_24.DD_DATE,
                             Kontragent = kontr.Name,
-                            CurrencyName = kontr.BalansCurrency.Name,
+                            CurrencyName = ((IName)kontr.Currency).Name,
                             DocTypeCode = DocumentType.StoreOrderIn
                         };
-                        SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, 0m,
+                        SetCurrenciesValue(e, ((IDocCode)kontr.Currency).DocCode, 0m,
                             Convert.ToDecimal(d.TD_26.SFT_ED_CENA.Value - d.TD_26.SFT_ED_CENA.Value) *
                             d.DDT_KOL_PRIHOD);
 
@@ -1407,10 +1426,10 @@ namespace KursAM2.Managers
                             Price = d.TD_26.SFT_ED_CENA.Value - d.TD_26.SFT_ED_CENA.Value,
                             Date = d.SD_24.DD_DATE,
                             Kontragent = kontr.Name,
-                            CurrencyName = kontr.BalansCurrency.Name,
+                            CurrencyName = ((IName)kontr.Currency).Name,
                             DocTypeCode = DocumentType.StoreOrderIn
                         };
-                        SetCurrenciesValue(e, kontr.BalansCurrency.DocCode,
+                        SetCurrenciesValue(e, ((IDocCode)kontr.Currency).DocCode,
                             Convert.ToDecimal(d.TD_26.SFT_ED_CENA.Value - d.TD_26.SFT_ED_CENA.Value) * d.DDT_KOL_PRIHOD,
                             0m);
 
@@ -1433,7 +1452,7 @@ namespace KursAM2.Managers
             foreach (
                 var c
                 in
-                MainReferences.COList.Values
+                GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll().Cast<CentrResponsibility>()
             )
                 co.Add(c.DocCode, c.Name);
             using (
@@ -1510,7 +1529,8 @@ namespace KursAM2.Managers
                         SDRSchetDC = td26.SFT_SHPZ_DC,
                         IsNaklad = td26.SFT_IS_NAKLAD == 1 || (sd26.IsInvoiceNakald ?? false)
                     }).ToList();
-                foreach (var c in dataOut) c.COName = MainReferences.COList[c.CODC ?? 0].Name;
+                foreach (var c in dataOut)
+                    c.COName = ((IName)GlobalOptions.ReferencesCache.GetCentrResponsibility(c.CODC)).Name;
                 //var naklad = ent.KONTR_BALANS_OPER_ARC.Where(_ => _.DOC_DATE >= DateStart && _.DOC_DATE <= DateEnd
                 //                                                                          && _.DOC_NAME ==
                 //                                                                          "С/ф от поставщика (накладные расходы как услуги)")
@@ -1550,8 +1570,9 @@ namespace KursAM2.Managers
                 {
                     foreach (var d in dataIn)
                     {
-                        var nom = MainReferences.GetNomenkl(d.NomenklDC);
-                        var kontr = MainReferences.GetKontragent(d.KontragentDC);
+                        var nom =
+                            GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl;
+                        var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent;
                         //var kontrRate = GetRate(myRates, (decimal) d.KontrCrsDC,
                         //    GlobalOptions.SystemProfile.MainCurrency.DocCode, d.Date);
                         SDRSchet sdrSchet = null;
@@ -1573,7 +1594,7 @@ namespace KursAM2.Managers
                             SDRSchet = sdrSchet,
                             SDRState = GetSdrState(sdrSchet)
                         };
-                        SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, d.Summa, 0m);
+                        SetCurrenciesValue(e, ((IDocCode)kontr.Currency).DocCode, d.Summa, 0m);
 
                         Extend.Add(e);
                         ExtendNach.Add(e);
@@ -1581,8 +1602,9 @@ namespace KursAM2.Managers
 
                     foreach (var d in dataOut)
                     {
-                        var nom = MainReferences.GetNomenkl(d.NomenklDC);
-                        var kontr = MainReferences.GetKontragent(d.KontragentDC);
+                        var nom =
+                            GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl;
+                        var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent;
                         //var kontrRate = GetRate(myRates, (decimal) d.KontrCrsDC,
                         //    GlobalOptions.SystemProfile.MainCurrency.DocCode, d.Date);
                         SDRSchet sdrSchet = null;
@@ -1604,44 +1626,19 @@ namespace KursAM2.Managers
                             SDRSchet = sdrSchet,
                             SDRState = GetSdrState(sdrSchet)
                         };
-                        SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, 0m, d.Summa);
+                        SetCurrenciesValue(e, ((IDocCode)kontr.Currency).DocCode, 0m, d.Summa);
 
                         Extend.Add(e);
                         ExtendNach.Add(e);
                     }
-
-                    //foreach (var nak in naklad)
-                    //{
-                    //    var kontr = MainReferences.GetKontragent(nak.KONTR_DC);
-                    //    var sd26 = ent.SD_26.Include(_ => _.SD_40).FirstOrDefault(_ => _.DOC_CODE == nak.DOC_DC);
-                    //    if (sd26 == null) continue;
-                    //    if (!dictCOOuts.ContainsKey(sd26.SD_40 == null ? MainReferences.COList[0].Name : sd26.SD_40.CENT_NAME))
-                    //        dictCOOuts.Add(sd26.SD_40 == null ? MainReferences.COList[0].Name : sd26.SD_40.CENT_NAME, Guid.NewGuid());
-
-                    //    var e = new ProfitAndLossesExtendRowViewModel
-                    //    {
-                    //        GroupId = dictCOOuts[sd26.SD_40 == null ? MainReferences.COList[0].Name : sd26.SD_40.CENT_NAME],
-                    //        Name = "Накладные расходы как услуги",
-                    //        Note = string.Empty,
-                    //        DocCode = sd26.DOC_CODE,
-                    //        Quantity = 1,
-                    //        Price = (decimal) nak.CRS_KONTR_IN,
-                    //        Date = nak.DOC_DATE,
-                    //        Kontragent = kontr.Name,
-                    //        DocTypeCode = DocumentType.InvoiceProvider
-                    //    };
-                    //    SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, 0m, Convert.ToDecimal(nak.CRS_KONTR_IN));
-
-                    //    Extend.Add(e);
-                    //    ExtendNach.Add(e);
-                    //}
                 }
                 else
                 {
                     foreach (var d in dataIn.Where(_ => ProjectDocDC.Contains(_.DocCode)))
                     {
-                        var nom = MainReferences.GetNomenkl(d.NomenklDC);
-                        var kontr = MainReferences.GetKontragent(d.KontragentDC);
+                        var nom =
+                            GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl;
+                        var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent;
                         SDRSchet sdrSchet = null;
                         if (d.SDRSchetDC != null)
                             // ReSharper disable once PossibleInvalidOperationException
@@ -1660,7 +1657,7 @@ namespace KursAM2.Managers
                             SDRSchet = sdrSchet,
                             SDRState = GetSdrState(sdrSchet)
                         };
-                        SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, d.Summa, 0m);
+                        SetCurrenciesValue(e, ((IDocCode)kontr.Currency).DocCode, d.Summa, 0m);
 
                         Extend.Add(e);
                         ExtendNach.Add(e);
@@ -1668,8 +1665,9 @@ namespace KursAM2.Managers
 
                     foreach (var d in dataOut.Where(_ => ProjectDocDC.Contains(_.DocCode)))
                     {
-                        var nom = MainReferences.GetNomenkl(d.NomenklDC);
-                        var kontr = MainReferences.GetKontragent(d.KontragentDC);
+                        var nom =
+                            GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl;
+                        var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent;
                         SDRSchet sdrSchet = null;
                         if (d.SDRSchetDC != null)
                             // ReSharper disable once PossibleInvalidOperationException
@@ -1688,7 +1686,7 @@ namespace KursAM2.Managers
                             SDRSchet = sdrSchet,
                             SDRState = GetSdrState(sdrSchet)
                         };
-                        SetCurrenciesValue(e, kontr.BalansCurrency.DocCode, 0m, d.Summa);
+                        SetCurrenciesValue(e, ((IDocCode)kontr.Currency).DocCode, 0m, d.Summa);
 
                         Extend.Add(e);
                         ExtendNach.Add(e);
@@ -1820,7 +1818,7 @@ namespace KursAM2.Managers
                     }).ToList();
                 foreach (var d in dataTovarPoluchen)
                 {
-                    var nom = MainReferences.GetNomenkl(d.NomenklDC);
+                    var nom = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl;
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = Guid.Parse("{D89B1E18-074E-4A7D-A0EE-9537DC1585D8}"),
@@ -2033,7 +2031,8 @@ namespace KursAM2.Managers
                 {
                     foreach (var d in dataTovarPoluchen)
                     {
-                        var nom = MainReferences.GetNomenkl(d.NomenklDC);
+                        var nom =
+                            GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl;
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = Guid.Parse("{297D2727-5161-48ED-969E-651811906526}"),
@@ -2089,7 +2088,7 @@ namespace KursAM2.Managers
 
                     foreach (var d in dataBankIn)
                     {
-                        var kontr = MainReferences.GetKontragent(d.KontrDc);
+                        var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDc) as Kontragent;
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = Guid.Parse("{297D2727-5161-48ED-969E-651811906526}"),
@@ -2116,7 +2115,7 @@ namespace KursAM2.Managers
 
                     foreach (var d in dataBankOut)
                     {
-                        var kontr = MainReferences.GetKontragent(d.KontrDc);
+                        var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDc) as Kontragent;
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = Guid.Parse("{E47B2338-C42F-4B2A-8865-1024FC84F020}"),
@@ -2151,7 +2150,7 @@ namespace KursAM2.Managers
                             DocCode = d.DocCode,
                             Quantity = d.Quantity,
                             Price = (decimal)d.Price,
-                            Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                            Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC)).Name,
                             Date = (DateTime)d.Date,
                             DocTypeCode = DocumentType.CashIn,
                             SDRSchet = d.SDRSchetDC != null
@@ -2177,7 +2176,7 @@ namespace KursAM2.Managers
                             Quantity = d.Quantity,
                             Price = (decimal)d.Price,
                             Date = (DateTime)d.Date,
-                            Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                            Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC)).Name,
                             DocTypeCode = DocumentType.CashOut,
                             SDRSchet = d.SDRSchetDC != null
                                 ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
@@ -2196,7 +2195,8 @@ namespace KursAM2.Managers
                 {
                     foreach (var d in dataTovarPoluchen.Where(_ => ProjectDocDC.Contains(_.DocDC)))
                     {
-                        var nom = MainReferences.GetNomenkl(d.NomenklDC);
+                        var nom =
+                            GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl;
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = Guid.Parse("{297D2727-5161-48ED-969E-651811906526}"),
@@ -2223,7 +2223,8 @@ namespace KursAM2.Managers
 
                     foreach (var d in dataTovarOtgr.Where(_ => ProjectDocDC.Contains(_.DocDC)))
                     {
-                        var nom = MainReferences.GetNomenkl(d.NomenklDC);
+                        var nom =
+                            GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl;
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = Guid.Parse("{E47B2338-C42F-4B2A-8865-1024FC84F020}"),
@@ -2249,7 +2250,7 @@ namespace KursAM2.Managers
 
                     foreach (var d in dataBankIn.Where(_ => ProjectDocDC.Contains(_.DocDC)))
                     {
-                        var kontr = MainReferences.GetKontragent(d.KontrDc);
+                        var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDc) as Kontragent;
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = Guid.Parse("{297D2727-5161-48ED-969E-651811906526}"),
@@ -2275,7 +2276,7 @@ namespace KursAM2.Managers
 
                     foreach (var d in dataBankOut.Where(_ => ProjectDocDC.Contains(_.DocDC)))
                     {
-                        var kontr = MainReferences.GetKontragent(d.KontrDc);
+                        var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDc) as Kontragent;
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
                             GroupId = Guid.Parse("{E47B2338-C42F-4B2A-8865-1024FC84F020}"),
@@ -2310,7 +2311,7 @@ namespace KursAM2.Managers
                             DocCode = d.DocCode,
                             Quantity = d.Quantity,
                             Price = (decimal)d.Price,
-                            Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                            Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC)).Name,
                             Date = (DateTime)d.Date,
                             DocTypeCode = DocumentType.CashIn,
                             SDRSchet = d.SDRSchetDC != null
@@ -2336,7 +2337,7 @@ namespace KursAM2.Managers
                             Quantity = d.Quantity,
                             Price = (decimal)d.Price,
                             Date = (DateTime)d.Date,
-                            Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                            Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC)).Name,
                             DocTypeCode = DocumentType.CashOut,
                             SDRSchet = d.SDRSchetDC != null
                                 ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
@@ -2363,11 +2364,13 @@ namespace KursAM2.Managers
                                 _.AktSpisaniyaNomenkl_Title.Date_Doc <= DateEnd);
                 foreach (var d in data)
                 {
-                    var nom = MainReferences.GetNomenkl(d.Nomenkl_DC);
+                    var nom = GlobalOptions.ReferencesCache.GetNomenkl(d.Nomenkl_DC) as KursDomain.References.Nomenkl;
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = ProfitAndLossesMainRowViewModel.AktSpisaniaNomenkl,
-                        Kontragent = MainReferences.GetWarehouse(d.AktSpisaniyaNomenkl_Title.Warehouse_DC).Name,
+                        Kontragent =
+                            ((IName)GlobalOptions.ReferencesCache.GetWarehouse(d.AktSpisaniyaNomenkl_Title
+                                .Warehouse_DC)).Name,
                         Name = $"({nom.NomenklNumber}) {nom.Name}",
                         Note = d.Note,
                         DocCode = 0,
@@ -2412,19 +2415,20 @@ namespace KursAM2.Managers
                         DocCode = 0,
                         Quantity = 1,
                         Price = d.AccuredAmountForClientRow?.Sum(_ => _.Summa) ?? 0,
-                        Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                        Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC)).Name,
                         KontragentBase = null,
                         Date = d.DocDate,
                         DocTypeCode = DocumentType.AccruedAmountForClient,
                         SDRSchet = null,
                         AktZachet = null,
                         AktZachetResult = 0,
-                        CurrencyName = MainReferences.GetKontragent(d.KontrDC).BalansCurrency.Name,
+                        CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC).Currency).Name,
                         DocNum = $"{d.DocInNum}/{d.DocExtNum}",
                         StringId = d.Id.ToString()
                         //CalcType = TypeProfitAndLossCalc.IsProfit
                     };
-                    SetCurrenciesValue(newOp1, MainReferences.GetKontragent(d.KontrDC).BalansCurrency.DocCode,
+                    SetCurrenciesValue(newOp1,
+                        ((IDocCode)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC).Currency).DocCode,
                         newOp1.Price, 0m);
                     Extend.Add(newOp1);
                     ExtendNach.Add(newOp1);
@@ -2442,23 +2446,29 @@ namespace KursAM2.Managers
                         DocCode = 0,
                         Quantity = 1,
                         Price = d.Summa,
-                        Kontragent = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC).Name,
+                        Kontragent =
+                            ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.AccruedAmountOfSupplier.KontrDC))
+                            .Name,
                         KontragentBase = null,
                         Date = d.AccruedAmountOfSupplier.DocDate,
                         DocTypeCode = DocumentType.AccruedAmountOfSupplier,
                         SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(d.SHPZ_DC) as SDRSchet,
                         SDRState =
-                            d.SHPZ_DC != null ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SHPZ_DC.Value).SDRState as SDRState  : null,
+                            d.SHPZ_DC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SHPZ_DC.Value).SDRState as SDRState
+                                : null,
                         AktZachet = null,
                         AktZachetResult = 0,
-                        CurrencyName = MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC).BalansCurrency
+                        CurrencyName = ((IName)GlobalOptions.ReferencesCache
+                                .GetKontragent(d.AccruedAmountOfSupplier.KontrDC).Currency)
                             .Name,
                         DocNum = $"{d.AccruedAmountOfSupplier.DocInNum}/{d.AccruedAmountOfSupplier.DocExtNum}",
                         StringId = d.Id.ToString()
                         //CalcType = TypeProfitAndLossCalc.IsProfit
                     };
                     SetCurrenciesValue(newOp1,
-                        MainReferences.GetKontragent(d.AccruedAmountOfSupplier.KontrDC).BalansCurrency.DocCode, 0m,
+                        ((IDocCode)GlobalOptions.ReferencesCache.GetKontragent(d.AccruedAmountOfSupplier.KontrDC)
+                            .Currency).DocCode, 0m,
                         newOp1.Price);
                     Extend.Add(newOp1);
                     ExtendNach.Add(newOp1);
@@ -2471,10 +2481,10 @@ namespace KursAM2.Managers
         {
             decimal sumLeft = 0, sumRight = 0;
             foreach (var l in rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0))
-                if (MainReferences.GetKontragent(l.VZT_KONTR_DC).IsBalans)
+                if (GlobalOptions.ReferencesCache.GetKontragent(l.VZT_KONTR_DC).IsBalans)
                     sumLeft += Math.Abs(l.VZT_KONTR_CRS_SUMMA ?? 0m);
             foreach (var l in rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1))
-                if (MainReferences.GetKontragent(l.VZT_KONTR_DC).IsBalans)
+                if (GlobalOptions.ReferencesCache.GetKontragent(l.VZT_KONTR_DC).IsBalans)
                     sumRight += l.VZT_KONTR_CRS_SUMMA ?? 0m;
             return sumRight - sumLeft;
         }
@@ -2520,10 +2530,10 @@ namespace KursAM2.Managers
                     {
                         decimal sumLeft = 0, sumRight = 0;
                         foreach (var l in data.Where(_ => _.DocCode == d.DocCode && !_.IsProfit))
-                            if (MainReferences.GetKontragent(l.KontrDC).IsBalans)
+                            if (GlobalOptions.ReferencesCache.GetKontragent(l.KontrDC).IsBalans)
                                 sumLeft += Math.Abs((decimal)l.Summa);
                         foreach (var l in data.Where(_ => _.DocCode == d.DocCode && _.IsProfit))
-                            if (MainReferences.GetKontragent(l.KontrDC).IsBalans)
+                            if (GlobalOptions.ReferencesCache.GetKontragent(l.KontrDC).IsBalans)
                                 sumRight += (decimal)l.Summa;
                         var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC);
                         var newOp = new ProfitAndLossesExtendRowViewModel
@@ -2544,7 +2554,9 @@ namespace KursAM2.Managers
                                 d.IsCurrencyConvert
                                     ? DocumentType.CurrencyConvertAccounting
                                     : DocumentType.MutualAccounting,
-                            SDRSchet = d.sdrSchetDC != null ? GlobalOptions.ReferencesCache.GetSDRSchet(d.sdrSchetDC.Value) as SDRSchet : null,
+                            SDRSchet = d.sdrSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.sdrSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.sdrSchetDC == null
                                 ? null
                                 : GlobalOptions.ReferencesCache.GetSDRSchet(d.sdrSchetDC.Value).SDRState as SDRState,
@@ -2556,7 +2568,7 @@ namespace KursAM2.Managers
                                         ? "green"
                                         : "red",
                             AktZachetResult = sumRight - sumLeft,
-                            CurrencyName = MainReferences.Currencies[d.CurrencyDC].Name,
+                            CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC)).Name,
                             DocNum = d.DocNum.ToString(),
                             CalcType = d.IsProfit ? TypeProfitAndLossCalc.IsProfit : TypeProfitAndLossCalc.IsLoss
                         };
@@ -2596,7 +2608,7 @@ namespace KursAM2.Managers
                                             ? "green"
                                             : "red",
                                 AktZachetResult = sumRight - sumLeft,
-                                CurrencyName = MainReferences.Currencies[d.CurrencyDC].Name,
+                                CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC)).Name,
                                 DocNum = d.DocNum.ToString(),
                                 CalcType = d.IsProfit ? TypeProfitAndLossCalc.IsProfit : TypeProfitAndLossCalc.IsLoss
                             };
@@ -2634,7 +2646,7 @@ namespace KursAM2.Managers
                                             ? "green"
                                             : "red",
                                 AktZachetResult = sumRight - sumLeft,
-                                CurrencyName = MainReferences.Currencies[d.CurrencyDC].Name,
+                                CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC)).Name,
                                 DocNum = d.DocNum.ToString(),
                                 CalcType = !d.IsProfit ? TypeProfitAndLossCalc.IsProfit : TypeProfitAndLossCalc.IsLoss
                             };
@@ -2667,7 +2679,9 @@ namespace KursAM2.Managers
                                 d.IsCurrencyConvert
                                     ? DocumentType.CurrencyConvertAccounting
                                     : DocumentType.MutualAccounting,
-                            SDRSchet = d.sdrSchetDC != null ? GlobalOptions.ReferencesCache.GetSDRSchet(d.sdrSchetDC.Value) as SDRSchet : null,
+                            SDRSchet = d.sdrSchetDC != null
+                                ? GlobalOptions.ReferencesCache.GetSDRSchet(d.sdrSchetDC.Value) as SDRSchet
+                                : null,
                             SDRState = d.sdrSchetDC == null
                                 ? null
                                 : GlobalOptions.ReferencesCache.GetSDRSchet(d.sdrSchetDC.Value).SDRState as SDRState,
@@ -2679,7 +2693,7 @@ namespace KursAM2.Managers
                                         ? "green"
                                         : "red",
                             AktZachetResult = d.Result,
-                            CurrencyName = MainReferences.Currencies[d.CurrencyDC].Name,
+                            CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC)).Name,
                             DocNum = d.DocNum.ToString()
                         };
                         SetCurrenciesValue(newOp, d.CurrencyDC, d.IsProfit ? (decimal)d.Summa : 0,
@@ -2763,7 +2777,7 @@ namespace KursAM2.Managers
                 {
                     //var crsRate = GetRate(MyRates, (decimal) d.CrsDC,
                     //    GlobalOptions.SystemProfile.MainCurrency.DocCode, (DateTime) d.Date);
-                    var kontr = MainReferences.GetKontragent(d.KontrDC);
+                    var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC) as Kontragent;
                     if (d.Percent == null) continue;
                     if (d.Percent > 0)
                     {
@@ -2776,12 +2790,12 @@ namespace KursAM2.Managers
                             Quantity = d.Quantity,
                             // ReSharper disable once PossibleInvalidOperationException
                             Price = (decimal)d.Price * (decimal)d.Percent / (100 - (decimal)d.Percent),
-                            Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                            Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC)).Name,
                             // ReSharper disable once PossibleInvalidOperationException
                             Date = (DateTime)d.Date,
                             DocTypeCode = DocumentType.CashIn
                         };
-                        SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode, 0m,
+                        SetCurrenciesValue(newOp, ((IDocCode)kontr.Currency).DocCode, 0m,
                             (d.Profit ?? 0) * (decimal)d.Percent / (100 - (decimal)d.Percent));
 
                         Extend.Add(newOp);
@@ -2798,12 +2812,12 @@ namespace KursAM2.Managers
                             Quantity = d.Quantity,
                             // ReSharper disable once PossibleInvalidOperationException
                             Price = (decimal)d.Price * (decimal)d.Percent / (100 - (decimal)d.Percent),
-                            Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                            Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC)).Name,
                             // ReSharper disable once PossibleInvalidOperationException
                             Date = (DateTime)d.Date,
                             DocTypeCode = DocumentType.CashIn
                         };
-                        SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode,
+                        SetCurrenciesValue(newOp, ((IDocCode)kontr.Currency).DocCode,
                             (d.Profit ?? 0) * (decimal)d.Percent / (100 - (decimal)d.Percent), 0m);
 
                         Extend.Add(newOp);
@@ -2815,7 +2829,7 @@ namespace KursAM2.Managers
                 {
                     //var crsRate = GetRate(MyRates, (decimal) d.CrsDC,
                     //    GlobalOptions.SystemProfile.MainCurrency.DocCode, (DateTime) d.Date);
-                    var kontr = MainReferences.GetKontragent(d.KontrDC);
+                    var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC) as Kontragent;
                     if (d.Percent == null) continue;
                     if (d.Percent > 0)
                     {
@@ -2827,11 +2841,11 @@ namespace KursAM2.Managers
                             DocCode = d.DocCode,
                             Quantity = d.Quantity,
                             Price = (decimal)d.Price * (decimal)d.Percent / (100 - (decimal)d.Percent),
-                            Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                            Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC)).Name,
                             Date = (DateTime)d.Date,
                             DocTypeCode = DocumentType.CashOut
                         };
-                        SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode,
+                        SetCurrenciesValue(newOp, ((IDocCode)kontr.Currency).DocCode,
                             (d.Loss ?? 0) * (decimal)d.Percent / (100 - (decimal)d.Percent), 0m);
 
                         Extend.Add(newOp);
@@ -2847,11 +2861,11 @@ namespace KursAM2.Managers
                             DocCode = d.DocCode,
                             Quantity = d.Quantity,
                             Price = (decimal)d.Price * (decimal)d.Percent / (100 - (decimal)d.Percent),
-                            Kontragent = MainReferences.GetKontragent(d.KontrDC).Name,
+                            Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC)).Name,
                             Date = (DateTime)d.Date,
                             DocTypeCode = DocumentType.CashOut
                         };
-                        SetCurrenciesValue(newOp, kontr.BalansCurrency.DocCode, 0m,
+                        SetCurrenciesValue(newOp, ((IDocCode)kontr.Currency).DocCode, 0m,
                             (d.Loss ?? 0) * (decimal)d.Percent / (100 - (decimal)d.Percent));
 
                         Extend.Add(newOp);
@@ -2892,9 +2906,9 @@ namespace KursAM2.Managers
                     if (d.CRS_DC != null)
                     {
                         var kontrName = d.CASH_TO_DC != null
-                            ? MainReferences.Cashs[d.CASH_TO_DC.Value].Name
+                            ? ((IName)GlobalOptions.ReferencesCache.GetCashBox(d.CASH_TO_DC)).Name
                             : d.BANK_RASCH_SCHET_DC != null
-                                ? MainReferences.BankAccounts[d.BANK_RASCH_SCHET_DC.Value].Name
+                                ? ((IName)GlobalOptions.ReferencesCache.GetBankAccount(d.BANK_RASCH_SCHET_DC)).Name
                                 : null;
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
@@ -2922,9 +2936,7 @@ namespace KursAM2.Managers
                     //var ord = ent.SD_34.FirstOrDefault(_ => _.DOC_CODE == d.RASH_ORDER_FROM_DC.Value);
                     //if (ord != null)
                     //    KontrName = MainReferences.Cashs[ord.CA_DC.Value].Name;
-                    var kontrName = d.BANK_RASCH_SCHET_DC != null
-                        ? MainReferences.BankAccounts[d.BANK_RASCH_SCHET_DC.Value].Name
-                        : null;
+                    var kontrName = ((IName)GlobalOptions.ReferencesCache.GetBankAccount(d.BANK_RASCH_SCHET_DC)).Name;
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = Guid.Parse("{32F2AD21-7501-4C03-93A7-3C84E96CA671}"),
@@ -2952,19 +2964,19 @@ namespace KursAM2.Managers
                         var ord = ent.SD_33.FirstOrDefault(_ => _.DOC_CODE == d.VVT_KASS_PRIH_ORDER_DC.Value);
                         if (ord != null)
                             // ReSharper disable once PossibleInvalidOperationException
-                            kontrName = MainReferences.Cashs[ord.CA_DC.Value].Name;
+                            kontrName = ((IName)GlobalOptions.ReferencesCache.GetCashBox(ord.CA_DC.Value)).Name;
                     }
                     else
                     {
                         if (d.BankAccountDC != null)
-                            kontrName = MainReferences.BankAccounts[d.BankAccountDC.Value].Name;
+                            kontrName = ((IName)GlobalOptions.ReferencesCache.GetBankAccount(d.BankAccountDC)).Name;
                     }
 
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = Guid.Parse("{2D543CB3-7C79-4454-9EF3-E64F1A1FFA78}"),
                         Name =
-                            $"Банковская транзакция. Перевод из {MainReferences.BankAccounts[d.SD_101.VV_ACC_DC].Name} в {kontrName}",
+                            $"Банковская транзакция. Перевод из {((IName)GlobalOptions.ReferencesCache.GetBankAccount(d.SD_101.VV_ACC_DC)).Name} в {kontrName}",
                         Note = d.VVT_DOC_NUM,
                         DocCode = d.CODE,
                         Quantity = 1,
@@ -2985,12 +2997,12 @@ namespace KursAM2.Managers
                     var b = ent.TD_101.Include(_ => _.SD_101)
                         .FirstOrDefault(_ => _.CODE == d.BankFromTransactionCode);
                     if (b != null)
-                        kontrName = MainReferences.BankAccounts[b.SD_101.VV_ACC_DC].Name;
+                        kontrName = ((IName)GlobalOptions.ReferencesCache.GetBankAccount(b.SD_101.VV_ACC_DC)).Name;
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = Guid.Parse("{32F2AD21-7501-4C03-93A7-3C84E96CA671}"),
                         Name =
-                            $"Банковская транзакция. Перевод из {kontrName} в {MainReferences.BankAccounts[d.SD_101.VV_ACC_DC].Name}",
+                            $"Банковская транзакция. Перевод из {kontrName} в {((IName)GlobalOptions.ReferencesCache.GetBankAccount(d.SD_101.VV_ACC_DC)).Name}",
                         Note = d.VVT_DOC_NUM,
                         DocCode = d.CODE,
                         Quantity = 1,
@@ -3008,6 +3020,10 @@ namespace KursAM2.Managers
         }
 
         public void CalcProviderNaklad()
+        {
+        }
+
+        public override void RefreshData(object obj)
         {
         }
     }

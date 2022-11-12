@@ -116,10 +116,10 @@ public class AccruedAmountOfSupplierRowViewModel : RSViewModelBase, IDataErrorIn
 
     public Nomenkl Nomenkl
     {
-        get => MainReferences.GetNomenkl(Entity.NomenklDC);
+        get => GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) as Nomenkl;
         set
         {
-            if (MainReferences.GetNomenkl(Entity.NomenklDC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) == value) return;
             if (value != null)
             {
                 Entity.NomenklDC = value.DocCode;

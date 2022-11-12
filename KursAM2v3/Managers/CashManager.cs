@@ -195,7 +195,7 @@ namespace KursAM2.Managers
                         var snum = string.IsNullOrWhiteSpace(doc.AcrruedAmountRow.AccruedAmountForClient.DocExtNum)
                             ? doc.AcrruedAmountRow.AccruedAmountForClient.DocInNum.ToString()
                             : $"{doc.AcrruedAmountRow.AccruedAmountForClient.DocInNum}/{doc.AcrruedAmountRow.AccruedAmountForClient.DocExtNum}";
-                        var nom = MainReferences.GetNomenkl(doc.AcrruedAmountRow.NomenklDC);
+                        var nom = GlobalOptions.ReferencesCache.GetNomenkl(doc.AcrruedAmountRow.NomenklDC);
                         var snom = $"{nom}({nom.NomenklNumber})";
                         doc.AccuredInfo =
                             $"Прямой расход №{snum} от {doc.AcrruedAmountRow.AccruedAmountForClient.DocDate.ToShortDateString()} " +
@@ -215,10 +215,10 @@ namespace KursAM2.Managers
                                 DocumentType = DocumentType.CashIn,
                                 DocumentName =
                                     // ReSharper disable once PossibleInvalidOperationException
-                                    $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
+                                    $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC)} ({c.CREATOR})",
                                 // ReSharper disable once PossibleInvalidOperationException
                                 Summa = (decimal) c.SUMM_ORD,
-                                Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                                Currency = GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC) as Currency,
                                 Note = c.NOTES_ORD
                             });
                         foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
@@ -230,9 +230,9 @@ namespace KursAM2.Managers
                                 DocumentType = DocumentType.Bank,
                                 DocumentName =
                                     // ReSharper disable once PossibleInvalidOperationException
-                                    $"{c.SD_101.VV_START_DATE} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                                    $"{c.SD_101.VV_START_DATE} на {(decimal) c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
                                 Summa = (decimal) c.VVT_VAL_PRIHOD,
-                                Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                                Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as Currency,
                                 Note = c.VVT_DOC_NUM
                             });
                         // ReSharper disable once PossibleInvalidOperationException
@@ -680,7 +680,7 @@ namespace KursAM2.Managers
                             foreach (var r in daterems)
                                 if (GetCashCurrencyRemains(ctx, cashDC, docCRS, r) < 0)
                                 {
-                                    winManager.ShowWinUIMessageBox("В кассе возникли отрицательные остатки. " +
+                                    winManager.ShowWinUIMessageBox($"В кассе возникли отрицательные остатки на {r.ToShortDateString()}. " +
                                                                    "Сохранение не возможно", "Ошибка",
                                         MessageBoxButton.OK, MessageBoxImage.Error);
                                     transaction.Rollback();
@@ -1092,7 +1092,7 @@ namespace KursAM2.Managers
                         var snum = string.IsNullOrWhiteSpace(acc.AccruedAmountOfSupplier.DocExtNum)
                             ? acc.AccruedAmountOfSupplier.DocInNum.ToString()
                             : $"{acc.AccruedAmountOfSupplier.DocInNum}/{acc.AccruedAmountOfSupplier.DocExtNum}";
-                        var nom = MainReferences.GetNomenkl(acc.NomenklDC);
+                        var nom = GlobalOptions.ReferencesCache.GetNomenkl(acc.NomenklDC);
                         var snom = $"{nom}({nom.NomenklNumber})";
                         doc.AccuredInfo =
                             $"Прямой расход №{snum} от {acc.AccruedAmountOfSupplier.DocDate.ToShortDateString()} " +
@@ -1296,7 +1296,7 @@ namespace KursAM2.Managers
                             DocDate = (DateTime) d.DATE_ORD,
                             SummaIn = (decimal) d.SUMM_ORD,
                             SummaOut = 0,
-                            CurrencyName = MainReferences.Currencies[(decimal) d.CRS_DC].Name,
+                            CurrencyName = ((IName) GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC)).Name,
                             DocNum = d.NUM_ORD.ToString(),
                             Note = d.NOTES_ORD,
                             IsSalary = d.NCODE == 100,
@@ -1306,14 +1306,15 @@ namespace KursAM2.Managers
                         if (d.KONTRAGENT_DC != null)
                         {
                             doc.KontragnetTypeName = "Контрагент";
-                            doc.KontragnetName = MainReferences.GetKontragent(d.KONTRAGENT_DC).Name;
+                            doc.KontragnetName = ((IName) GlobalOptions.ReferencesCache.GetKontragent(d.KONTRAGENT_DC))
+                                .Name;
                         }
 
                         if (d.TABELNUMBER != null)
                         {
                             doc.KontragnetTypeName = "Сотрудник";
-                            doc.KontragnetName = MainReferences.Employees.Values
-                                .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)?.Name;
+                            doc.KontragnetName = ((IName) GlobalOptions.ReferencesCache.GetEmployees()
+                                .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER))?.Name;
                         }
 
                         if (d.BANK_RASCH_SCHET_DC != null)
@@ -1328,7 +1329,8 @@ namespace KursAM2.Managers
                         {
                             doc.KontragnetTypeName = "Расходный кассовый ордер";
                             var c = ctx.SD_34.FirstOrDefault(_ => _.DOC_CODE == d.RASH_ORDER_FROM_DC);
-                            if (c != null) doc.KontragnetName = MainReferences.CashsAll[(decimal) c.CA_DC].Name;
+                            if (c != null)
+                                doc.KontragnetName = ((IName) GlobalOptions.ReferencesCache.GetCashBox(c.CA_DC)).Name;
                         }
 
                         if (d.StockHolderId != null)
@@ -1395,7 +1397,7 @@ namespace KursAM2.Managers
                             DocDate = (DateTime) d.DATE_ORD,
                             SummaIn = 0,
                             SummaOut = (decimal) d.SUMM_ORD,
-                            CurrencyName = MainReferences.Currencies[(decimal) d.CRS_DC].Name,
+                            CurrencyName = ((IName) GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC)).Name,
                             DocNum = d.NUM_ORD.ToString(),
                             Note = d.NOTES_ORD,
                             IsSalary = d.NCODE == 100,
@@ -1405,14 +1407,15 @@ namespace KursAM2.Managers
                         if (d.KONTRAGENT_DC != null)
                         {
                             doc.KontragnetTypeName = "Контрагент";
-                            doc.KontragnetName = MainReferences.GetKontragent(d.KONTRAGENT_DC).Name;
+                            doc.KontragnetName = ((IName) GlobalOptions.ReferencesCache.GetKontragent(d.KONTRAGENT_DC))
+                                .Name;
                         }
 
                         if (d.TABELNUMBER != null)
                         {
                             doc.KontragnetTypeName = "Сотрудник";
-                            doc.KontragnetName = MainReferences.Employees.Values
-                                .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)?.Name;
+                            doc.KontragnetName = ((IName) GlobalOptions.ReferencesCache.GetEmployees()
+                                .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER))?.Name;
                         }
 
                         if (d.BANK_RASCH_SCHET_DC != null)
@@ -1428,7 +1431,8 @@ namespace KursAM2.Managers
                             doc.KontragnetTypeName = "Касса";
                             var prihOrder = ctx.SD_33.FirstOrDefault(_ => _.RASH_ORDER_FROM_DC == d.DOC_CODE);
                             if (prihOrder != null)
-                                doc.KontragnetName = MainReferences.CashsAll[(decimal) prihOrder.CA_DC].Name;
+                                doc.KontragnetName = ((IName) GlobalOptions.ReferencesCache.GetCashBox(prihOrder.CA_DC))
+                                    .Name;
                         }
 
                         if (d.StockHolders != null)
@@ -1481,7 +1485,7 @@ namespace KursAM2.Managers
                                 DocDate = (DateTime) d.CH_DATE_IN,
                                 SummaIn = d.CH_CRS_IN_SUM ?? 0,
                                 SummaOut = 0,
-                                CurrencyName = MainReferences.Currencies[(decimal) d.CH_CRS_IN_DC].Name,
+                                CurrencyName = ((IName) GlobalOptions.ReferencesCache.GetCurrency(d.CH_CRS_IN_DC)).Name,
                                 DocNum = d.CH_NUM_ORD.ToString(),
                                 Note = d.CH_NOTE,
                                 IsSalary = false
@@ -1489,14 +1493,15 @@ namespace KursAM2.Managers
                             if (d.CH_KONTRAGENT_DC != null)
                             {
                                 doc.KontragnetTypeName = "Контрагент";
-                                doc.KontragnetName = MainReferences.GetKontragent(d.CH_KONTRAGENT_DC).Name;
+                                doc.KontragnetName =
+                                    ((IName) GlobalOptions.ReferencesCache.GetKontragent(d.CH_KONTRAGENT_DC)).Name;
                             }
 
                             if (d.TABELNUMBER != null)
                             {
                                 doc.KontragnetTypeName = "Сотрудник";
-                                doc.KontragnetName = MainReferences.Employees.Values
-                                    .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)?.Name;
+                                doc.KontragnetName = ((IName) GlobalOptions.ReferencesCache.GetEmployees()
+                                    .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER))?.Name;
                             }
 
                             ret.Add(doc);
@@ -1511,7 +1516,8 @@ namespace KursAM2.Managers
                                 DocDate = d.CH_DATE,
                                 SummaIn = 0,
                                 SummaOut = d.CH_CRS_OUT_SUM,
-                                CurrencyName = MainReferences.Currencies[(decimal) d.CH_CRS_OUT_DC].Name,
+                                CurrencyName =
+                                    ((IName) GlobalOptions.ReferencesCache.GetCurrency(d.CH_CRS_OUT_DC)).Name,
                                 DocNum = d.CH_NUM_ORD.ToString(),
                                 Note = d.CH_NOTE,
                                 IsSalary = false
@@ -1519,14 +1525,15 @@ namespace KursAM2.Managers
                             if (d.CH_KONTRAGENT_DC != null)
                             {
                                 doc.KontragnetTypeName = "Контрагент";
-                                doc.KontragnetName = MainReferences.GetKontragent(d.CH_KONTRAGENT_DC).Name;
+                                doc.KontragnetName =
+                                    ((IName) GlobalOptions.ReferencesCache.GetKontragent(d.CH_KONTRAGENT_DC)).Name;
                             }
 
                             if (d.TABELNUMBER != null)
                             {
                                 doc.KontragnetTypeName = "Сотрудник";
-                                doc.KontragnetName = MainReferences.Employees.Values
-                                    .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)?.Name;
+                                doc.KontragnetName = ((IName) GlobalOptions.ReferencesCache.GetEmployees()
+                                    .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER))?.Name;
                             }
 
                             ret.Add(doc);
@@ -1552,7 +1559,7 @@ namespace KursAM2.Managers
                                 DocDate = (DateTime) d.CH_DATE_IN,
                                 SummaIn = d.CH_CRS_IN_SUM ?? 0,
                                 SummaOut = 0,
-                                CurrencyName = MainReferences.Currencies[(decimal) d.CH_CRS_IN_DC].Name,
+                                CurrencyName = ((IName) GlobalOptions.ReferencesCache.GetCurrency(d.CH_CRS_IN_DC)).Name,
                                 DocNum = d.CH_NUM_ORD.ToString(),
                                 Note = d.CH_NOTE,
                                 IsSalary = false
@@ -1560,14 +1567,15 @@ namespace KursAM2.Managers
                             if (d.CH_KONTRAGENT_DC != null)
                             {
                                 doc.KontragnetTypeName = "Контрагент";
-                                doc.KontragnetName = MainReferences.GetKontragent(d.CH_KONTRAGENT_DC).Name;
+                                doc.KontragnetName =
+                                    ((IName) GlobalOptions.ReferencesCache.GetKontragent(d.CH_KONTRAGENT_DC)).Name;
                             }
 
                             if (d.TABELNUMBER != null)
                             {
                                 doc.KontragnetTypeName = "Сотрудник";
-                                doc.KontragnetName = MainReferences.Employees.Values
-                                    .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)?.Name;
+                                doc.KontragnetName = ((IName) GlobalOptions.ReferencesCache.GetEmployees()
+                                    .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER))?.Name;
                             }
 
                             ret.Add(doc);
@@ -1578,7 +1586,7 @@ namespace KursAM2.Managers
                                 DocDate = (DateTime) d.CH_DATE_OUT,
                                 SummaIn = 0,
                                 SummaOut = d.CH_CRS_OUT_SUM,
-                                CurrencyName = MainReferences.Currencies[(decimal) d.CH_CRS_IN_DC].Name,
+                                CurrencyName = ((IName) GlobalOptions.ReferencesCache.GetCurrency(d.CH_CRS_IN_DC)).Name,
                                 DocNum = d.CH_NUM_ORD.ToString(),
                                 Note = d.CH_NOTE,
                                 IsSalary = false
@@ -1586,14 +1594,15 @@ namespace KursAM2.Managers
                             if (d.CH_KONTRAGENT_DC != null)
                             {
                                 doc.KontragnetTypeName = "Контрагент";
-                                doc.KontragnetName = MainReferences.GetKontragent(d.CH_KONTRAGENT_DC).Name;
+                                doc.KontragnetName =
+                                    ((IName) GlobalOptions.ReferencesCache.GetKontragent(d.CH_KONTRAGENT_DC)).Name;
                             }
 
                             if (d.TABELNUMBER != null)
                             {
                                 doc.KontragnetTypeName = "Сотрудник";
-                                doc.KontragnetName = MainReferences.Employees.Values
-                                    .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)?.Name;
+                                doc.KontragnetName = ((IName) GlobalOptions.ReferencesCache.GetEmployees()
+                                    .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER))?.Name;
                             }
 
                             ret.Add(doc1);
@@ -1642,7 +1651,7 @@ namespace KursAM2.Managers
                         .ToList();
                     foreach (var d in startrems)
                     {
-                        var crsName = MainReferences.Currencies[(decimal) d.CRS_DC].Name;
+                        var crsName = ((IName) GlobalOptions.ReferencesCache.GetCashBox(d.CRS_DC)).Name;
                         ret.Add(new MoneyRemains
                         {
                             CurrencyName = crsName,
@@ -1659,7 +1668,8 @@ namespace KursAM2.Managers
                             SD_39 first = null;
                             foreach (var d in endrems)
                             {
-                                if (MainReferences.Currencies[(decimal) d.CRS_DC].Name != m.CurrencyName) continue;
+                                if (((IName) GlobalOptions.ReferencesCache.GetCashBox(d.CRS_DC)).Name != m.CurrencyName)
+                                    continue;
                                 first = d;
                                 break;
                             }

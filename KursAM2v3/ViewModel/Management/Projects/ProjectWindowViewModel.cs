@@ -126,21 +126,18 @@ namespace KursAM2.ViewModel.Management.Projects
                         var doc = new ProjectDocumentViewModel
                         {
                             CurrencyDC = (decimal)d.CurrencyDC,
-                            Currency = MainReferences.Currencies[(decimal)d.CurrencyDC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC) as Currency,
                             DocCode = d.DocDC,
                             DocRowId = d.DocRowId,
                             DocInNum = d.DocInNum,
                             DocName = d.DocName,
                             DocNum = d.DocNum,
-                            Employee = d.EmployeeTN != null
-                                ? MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == d.EmployeeTN)
-                                : null,
+                            Employee = GlobalOptions.ReferencesCache.GetEmployee(d.EmployeeTN) as Employee,
                             EmployeeTN = d.EmployeeTN,
                             KontragentDC = d.KontragentDC,
-                            KontragentViewModel =
-                                d.KontragentDC != null ? MainReferences.GetKontragent(d.KontragentDC) : null,
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent,
                             NomenklDC = d.NomenklDC,
-                            Nomenkl = d.NomenklDC != null ? MainReferences.GetNomenkl(d.NomenklDC) : null,
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as Nomenkl,
                             DocType = (DocumentType)d.DocType,
                             ProjectId = d.ProjectId,
                             DocDate = (DateTime)d.DocDate,
@@ -260,7 +257,7 @@ namespace KursAM2.ViewModel.Management.Projects
             get => myCurrentProject;
             set
             {
-                if (Equals(myCurrentProject,value)) return;
+                if (Equals(myCurrentProject, value)) return;
                 myCurrentProject = value;
                 Periods.Clear();
                 Documents.Clear();
@@ -351,7 +348,7 @@ namespace KursAM2.ViewModel.Management.Projects
             get => myCurrentDocument;
             set
             {
-                if (Equals(myCurrentDocument,value)) return;
+                if (Equals(myCurrentDocument, value)) return;
                 myCurrentDocument = value;
                 if (myCurrentDocument != null)
                 {
@@ -370,7 +367,7 @@ namespace KursAM2.ViewModel.Management.Projects
             get => myCurrentPeriod;
             set
             {
-                if (Equals(myCurrentPeriod,value)) return;
+                if (Equals(myCurrentPeriod, value)) return;
                 PrihodDocuments.Clear();
                 myCurrentPeriod = value;
                 if (myCurrentPeriod == null) return;
@@ -577,21 +574,18 @@ namespace KursAM2.ViewModel.Management.Projects
                         {
                             Id = d.Id,
                             CurrencyDC = d.CurrencyDC,
-                            Currency = MainReferences.Currencies[d.CurrencyDC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC) as Currency,
                             DocCode = d.DocDC,
                             DocRowId = d.DocRowId,
                             DocInNum = d.DocInNum,
                             DocName = d.DocName,
                             DocNum = d.DocNum,
-                            Employee = d.EmployeeTN != null
-                                ? MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == d.EmployeeTN)
-                                : null,
+                            Employee = GlobalOptions.ReferencesCache.GetEmployee(d.EmployeeTN) as Employee,
                             EmployeeTN = d.EmployeeTN,
                             KontragentDC = d.KontragentDC,
-                            KontragentViewModel =
-                                d.KontragentDC != null ? MainReferences.GetKontragent(d.KontragentDC) : null,
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent,
                             NomenklDC = d.NomenklDC,
-                            Nomenkl = d.NomenklDC != null ? MainReferences.GetNomenkl(d.NomenklDC) : null,
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as Nomenkl,
                             DocType = d.DocType,
                             ProjectId = d.ProjectId,
                             DocDate = d.DocDate,
@@ -722,21 +716,18 @@ namespace KursAM2.ViewModel.Management.Projects
                         {
                             Id = d.Id,
                             CurrencyDC = d.CurrencyDC,
-                            Currency = MainReferences.Currencies[d.CurrencyDC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC) as Currency,
                             DocCode = d.DocDC,
                             DocRowId = d.DocRowId,
                             DocInNum = d.DocInNum,
                             DocName = d.DocName,
                             DocNum = d.DocNum,
-                            Employee = d.EmployeeTN != null
-                                ? MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == d.EmployeeTN)
-                                : null,
+                            Employee = GlobalOptions.ReferencesCache.GetEmployee(d.EmployeeTN) as Employee,
                             EmployeeTN = d.EmployeeTN,
                             KontragentDC = d.KontragentDC,
-                            KontragentViewModel =
-                                d.KontragentDC != null ? MainReferences.GetKontragent(d.KontragentDC) : null,
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent,
                             NomenklDC = d.NomenklDC,
-                            Nomenkl = d.NomenklDC != null ? MainReferences.GetNomenkl(d.NomenklDC) : null,
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as Nomenkl,
                             DocType = d.DocType,
                             ProjectId = d.ProjectId,
                             DocDate = d.DocDate,
@@ -930,15 +921,12 @@ namespace KursAM2.ViewModel.Management.Projects
                             DocInNum = d.DocInNum,
                             DocName = d.DocName,
                             DocNum = d.DocNum,
-                            Employee = d.EmployeeTN != null
-                                ? MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == d.EmployeeTN)
-                                : null,
+                            Employee = GlobalOptions.ReferencesCache.GetEmployee(d.EmployeeTN) as Employee,
                             EmployeeTN = d.EmployeeTN,
                             KontragentDC = d.KontragentDC,
-                            KontragentViewModel =
-                                d.KontragentDC != null ? MainReferences.GetKontragent(d.KontragentDC) : null,
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent,
                             NomenklDC = d.NomenklDC,
-                            Nomenkl = d.NomenklDC != null ? MainReferences.GetNomenkl(d.NomenklDC) : null,
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as Nomenkl,
                             DocType = d.DocType,
                             ProjectId = d.ProjectId,
                             DocDate = d.DocDate,

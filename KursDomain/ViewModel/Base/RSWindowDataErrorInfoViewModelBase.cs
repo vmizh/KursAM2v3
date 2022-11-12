@@ -85,5 +85,9 @@ namespace Core.ViewModel.Base
         string IDataErrorInfo.this[string propertyName] => OnValidate(propertyName);
 
         #endregion
+
+        public override void RefreshData(object obj)
+        {
+        }
     }
 }

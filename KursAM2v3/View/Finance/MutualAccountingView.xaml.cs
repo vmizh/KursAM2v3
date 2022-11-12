@@ -1,12 +1,13 @@
 ﻿using System.Linq;
 using System.Windows;
-using Core;
 using DevExpress.Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Finance;
+using KursDomain;
+using KursDomain.References;
 using LayoutManager;
 
 namespace KursAM2.View.Finance
@@ -16,22 +17,24 @@ namespace KursAM2.View.Finance
     /// </summary>
     public partial class MutualAccountingView : ILayout
     {
-        public ButtonEditSettings KontrButtonEditSettings; 
+        public ButtonEditSettings KontrButtonEditSettings;
+
         public MutualAccountingView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += MutualAccountingView_Loaded;
             Unloaded += MutualAccountingView_Unloaded;
             DataContextChanged += MutualAccountingView_DataContextChanged;
             typeVzaimozachetComboBoxEdit.DisplayMember = "Name";
-            creditorCrscomboBoxEdit.ItemsSource = MainReferences.Currencies.Values;
-            debitorCrscomboBoxEdit.ItemsSource = MainReferences.Currencies.Values;
+            creditorCrscomboBoxEdit.ItemsSource = GlobalOptions.ReferencesCache.GetCurrenciesAll().ToList();
+            debitorCrscomboBoxEdit.ItemsSource = GlobalOptions.ReferencesCache.GetCurrenciesAll().ToList();
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -44,12 +47,13 @@ namespace KursAM2.View.Finance
                 Close();
                 return;
             }
+
             var l = ctx.IsCurrencyConvert
-                ? MainReferences.MutualTypes.Values.Where(_ => _.IsCurrencyConvert).ToList()
-                : MainReferences.MutualTypes.Values.Where(_ => !_.IsCurrencyConvert).ToList();
+                ? GlobalOptions.ReferencesCache.GetMutualSettlementTypeAll().Where(_ => _.IsCurrencyConvert).ToList()
+                : GlobalOptions.ReferencesCache.GetMutualSettlementTypeAll().Where(_ => !_.IsCurrencyConvert).ToList();
             typeVzaimozachetComboBoxEdit.ItemsSource = l;
             if (ctx.IsCurrencyConvert)
-                ctx.Document.MutualAccountingOldType = l[0];
+                ctx.Document.MutualAccountingOldType = l[0] as MutualSettlementType;
         }
 
         private void MutualAccountingView_Loaded(object sender, RoutedEventArgs e)
@@ -88,8 +92,8 @@ namespace KursAM2.View.Finance
                     };
                     gridControlCreditor.TotalSummary.Add(summary);
                 }
+
                 if (col.FieldName == "Kontragent")
-                {
                     col.EditSettings = new ButtonEditSettings
                     {
                         IsTextEditable = false,
@@ -99,13 +103,11 @@ namespace KursAM2.View.Finance
                             new ButtonInfo
                             {
                                 GlyphKind = GlyphKind.Regular,
-                                Command = ((MutualAcountingWindowViewModel) DataContext)
+                                Command = ((MutualAcountingWindowViewModel)DataContext)
                                     ?.ChangeCreditorKontragentCommand
                             }
-                        },
-                        
+                        }
                     };
-                }
                 if (col.FieldName == "VZT_DOC_NOTES")
                     col.EditSettings = new MemoEditSettings
                     {
@@ -119,14 +121,15 @@ namespace KursAM2.View.Finance
                     {
                         DisplayMember = "Name",
                         //ValueMember = "DocCode",
-                        ItemsSource = MainReferences.VzaimoraschetTypes.Values.ToList()
+                        ItemsSource = GlobalOptions.ReferencesCache.GetMutualSettlementTypeAll()
+                            .Cast<MutualSettlementType>().ToList()
                     };
                 if (col.FieldName == "SHPZ")
                     col.EditSettings = new ComboBoxEditSettings
                     {
                         DisplayMember = "Name",
                         //ValueMember = "DocCode",
-                        ItemsSource = MainReferences.SDRSchets.Values.ToList()
+                        ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList()
                     };
             }
         }
@@ -157,6 +160,7 @@ namespace KursAM2.View.Finance
                     };
                     gridControlDebitor.TotalSummary.Add(summary);
                 }
+
                 switch (col.FieldName)
                 {
                     case "SfClient":
@@ -170,7 +174,7 @@ namespace KursAM2.View.Finance
                                 new ButtonInfo
                                 {
                                     GlyphKind = GlyphKind.Cancel,
-                                    Command = ((MutualAcountingWindowViewModel) DataContext).RemoveDebitorSFCommand
+                                    Command = ((MutualAcountingWindowViewModel)DataContext).RemoveDebitorSFCommand
                                 }
                             }
                         };
@@ -187,7 +191,8 @@ namespace KursAM2.View.Finance
                                 new ButtonInfo
                                 {
                                     GlyphKind = GlyphKind.Regular,
-                                    Command = ((MutualAcountingWindowViewModel) DataContext).ChangeDebitorKontragentCommand
+                                    Command = ((MutualAcountingWindowViewModel)DataContext)
+                                        .ChangeDebitorKontragentCommand
                                 }
                             }
                         };
@@ -209,7 +214,8 @@ namespace KursAM2.View.Finance
                         {
                             DisplayMember = "Name",
                             //ValueMember = "DocCode",
-                            ItemsSource = MainReferences.VzaimoraschetTypes.Values.ToList()
+                            ItemsSource = GlobalOptions.ReferencesCache.GetMutualSettlementTypeAll()
+                                .Cast<MutualSettlementType>().ToList()
                         };
                         break;
                     case "SHPZ":
@@ -217,13 +223,11 @@ namespace KursAM2.View.Finance
                         {
                             DisplayMember = "Name",
                             //ValueMember = "DocCode",
-                            ItemsSource = MainReferences.SDRSchets.Values.ToList()
+                            ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList()
                         };
                         break;
                 }
             }
         }
-
-
     }
 }

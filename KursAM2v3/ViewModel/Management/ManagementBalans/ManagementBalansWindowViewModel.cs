@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Calculates.Materials;
-using Core;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using Core.WindowsManager;
@@ -56,11 +55,11 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 myCashs = ent.SD_22.ToList();
             }
 
-            CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.RUB]);
-            CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.USD]);
-            CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.EUR]);
-            CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.GBP]);
-            CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.CNY]);
+            CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.RUB) as Currency);
+            CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD) as Currency);
+            CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as Currency);
+            CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as Currency);
+            CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as Currency);
             var crsrate = new CrossCurrencyRate();
             crsrate.SetRates(DateTime.Today);
             foreach (var c in crsrate.CurrencyList)
@@ -143,43 +142,53 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     {
                         b.PriceCalc = decimal.Round(b.PriceEUR *
                                                     CurrentCurrencyRate.GetRate(
-                                                        MainReferences.Currencies[CurrencyCode.EUR],
+                                                        GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as
+                                                            Currency,
                                                         RecalcCurrency) +
                                                     b.PriceUSD *
                                                     CurrentCurrencyRate.GetRate(
-                                                        MainReferences.Currencies[CurrencyCode.USD],
+                                                        GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD) as
+                                                            Currency,
                                                         RecalcCurrency) +
                                                     b.PriceGBP *
                                                     CurrentCurrencyRate.GetRate(
-                                                        MainReferences.Currencies[CurrencyCode.GBP],
+                                                        GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as
+                                                            Currency,
                                                         RecalcCurrency) +
                                                     b.PriceRUB *
                                                     CurrentCurrencyRate.GetRate(
-                                                        MainReferences.Currencies[CurrencyCode.RUB],
+                                                        GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.RUB) as
+                                                            Currency,
                                                         RecalcCurrency) +
                                                     b.PriceCNY *
                                                     CurrentCurrencyRate.GetRate(
-                                                        MainReferences.Currencies[CurrencyCode.CNY],
+                                                        GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as
+                                                            Currency,
                                                         RecalcCurrency), 2);
                         b.SummaCalc = decimal.Round(b.SummaEUR *
                                                     CurrentCurrencyRate.GetRate(
-                                                        MainReferences.Currencies[CurrencyCode.EUR],
+                                                        GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as
+                                                            Currency,
                                                         RecalcCurrency) +
                                                     b.SummaUSD *
                                                     CurrentCurrencyRate.GetRate(
-                                                        MainReferences.Currencies[CurrencyCode.USD],
+                                                        GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD) as
+                                                            Currency,
                                                         RecalcCurrency) +
                                                     b.SummaGBP *
                                                     CurrentCurrencyRate.GetRate(
-                                                        MainReferences.Currencies[CurrencyCode.GBP],
+                                                        GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as
+                                                            Currency,
                                                         RecalcCurrency) +
                                                     b.SummaCNY *
                                                     CurrentCurrencyRate.GetRate(
-                                                        MainReferences.Currencies[CurrencyCode.CNY],
+                                                        GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as
+                                                            Currency,
                                                         RecalcCurrency) +
                                                     b.SummaRUB *
                                                     CurrentCurrencyRate.GetRate(
-                                                        MainReferences.Currencies[CurrencyCode.RUB],
+                                                        GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.RUB) as
+                                                            Currency,
                                                         RecalcCurrency), 2);
                     }
 
@@ -624,7 +633,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     foreach (var p in inPanth)
                     {
                         var prc = NomenklViewModel.Price(p.DDT_NOMENKL_DC, p.SD_24.DD_DATE);
-                        var nom = MainReferences.GetNomenkl(p.DDT_NOMENKL_DC);
+                        var nom = GlobalOptions.ReferencesCache.GetNomenkl(p.DDT_NOMENKL_DC) as Nomenkl;
                         var newItem = new ManagementBalanceExtendRowViewModel
                         {
                             GroupId = newId,
@@ -737,9 +746,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         .FirstOrDefault(_ =>
                             _.VVT_RASH_KASS_ORDER_DC == d.DOC_CODE && _.SD_101.VV_STOP_DATE <= CurrentDate);
                     var name = d.CASH_TO_DC != null
-                        ? MainReferences.CashsAll[d.CASH_TO_DC.Value].Name
+                        ? ((IName)GlobalOptions.ReferencesCache.GetCashBox(d.CASH_TO_DC)).Name
                         // ReSharper disable once PossibleInvalidOperationException
-                        : MainReferences.BankAccounts[d.BANK_RASCH_SCHET_DC.Value].Name;
+                        : ((IName)GlobalOptions.ReferencesCache.GetBankAccount(d.BANK_RASCH_SCHET_DC)).Name;
                     if (pay != null || bankpay != null) continue;
                     ExtendRows.Add(new ManagementBalanceExtendRowViewModel
                     {
@@ -758,8 +767,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         Summa = (decimal)d.SUMM_ORD,
                         Nom = null,
                         Nomenkl = null,
-                        CurrencyName = MainReferences.GetCurrency(d.CRS_DC)?.Name,
-                        Currency = MainReferences.GetCurrency(d.CRS_DC),
+                        CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC))?.Name,
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC) as Currency,
                         // ReSharper disable PossibleInvalidOperationException
                         SummaEUR = d.CRS_DC.Value == CurrencyCode.EUR ? (decimal)d.SUMM_ORD : 0,
                         // ReSharper restore PossibleInvalidOperationException
@@ -775,7 +784,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     if (ent.TD_101.Any(_ =>
                             _.VVT_KASS_PRIH_ORDER_DC == d.DOC_CODE && _.SD_101.VV_START_DATE <= CurrentDate)) continue;
                     // ReSharper disable once PossibleInvalidOperationException
-                    var kontrName = MainReferences.BankAccounts[d.BANK_RASCH_SCHET_DC.Value].Name;
+                    var kontrName = ((IName)GlobalOptions.ReferencesCache.GetBankAccount(d.BANK_RASCH_SCHET_DC)).Name;
                     ExtendRows.Add(new ManagementBalanceExtendRowViewModel
                     {
                         DocCode = d.DOC_CODE,
@@ -794,8 +803,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         Nom = null,
                         Nomenkl = null,
                         // ReSharper disable once PossibleInvalidOperationException
-                        CurrencyName = MainReferences.Currencies[d.CRS_DC.Value].Name,
-                        Currency = MainReferences.Currencies[d.CRS_DC.Value],
+                        CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC)).Name,
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC) as Currency,
                         SummaEUR = d.CRS_DC.Value == CurrencyCode.EUR ? (decimal)d.SUMM_ORD : 0,
                         SummaUSD = d.CRS_DC.Value == CurrencyCode.USD ? (decimal)d.SUMM_ORD : 0,
                         SummaRUB = d.CRS_DC.Value == CurrencyCode.RUB ? (decimal)d.SUMM_ORD : 0,
@@ -808,7 +817,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     var tr = ent.TD_101.FirstOrDefault(_ => _.BankFromTransactionCode == d.CODE);
                     if (tr != null) continue;
                     // ReSharper disable once PossibleInvalidOperationException
-                    var name = MainReferences.BankAccounts[d.BankAccountDC.Value].Name;
+                    var name = ((IName)GlobalOptions.ReferencesCache.GetBankAccount(d.BankAccountDC)).Name;
                     ExtendRows.Add(new ManagementBalanceExtendRowViewModel
                     {
                         DocCode = d.DOC_CODE,
@@ -825,8 +834,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         Summa = (decimal)d.VVT_VAL_RASHOD,
                         Nom = null,
                         Nomenkl = null,
-                        CurrencyName = MainReferences.Currencies[d.VVT_CRS_DC].Name,
-                        Currency = MainReferences.Currencies[d.VVT_CRS_DC],
+                        CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.VVT_CRS_DC)).Name,
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(d.VVT_CRS_DC) as Currency,
                         SummaEUR = d.VVT_CRS_DC == CurrencyCode.EUR ? (decimal)d.VVT_VAL_RASHOD : 0,
                         SummaUSD = d.VVT_CRS_DC == CurrencyCode.USD ? (decimal)d.VVT_VAL_RASHOD : 0,
                         SummaRUB = d.VVT_CRS_DC == CurrencyCode.RUB ? (decimal)d.VVT_VAL_RASHOD : 0,
@@ -859,48 +868,63 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             if (RecalcCurrency == null || CurrentCurrencyRate == null) return;
             foreach (var b in BalansStructure)
                 b.RecalcCurrency = b.SummaEUR *
-                                   CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.EUR],
+                                   CurrentCurrencyRate.GetRate(
+                                       GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as Currency,
                                        RecalcCurrency) +
-                                   b.SummaUSD * CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.USD],
+                                   b.SummaUSD * CurrentCurrencyRate.GetRate(
+                                       GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD) as Currency,
                                        RecalcCurrency) +
-                                   b.SummaGBP * CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.GBP],
+                                   b.SummaGBP * CurrentCurrencyRate.GetRate(
+                                       GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as Currency,
                                        RecalcCurrency) +
-                                   b.SummaRUB * CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.RUB],
+                                   b.SummaRUB * CurrentCurrencyRate.GetRate(
+                                       GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.RUB) as Currency,
                                        RecalcCurrency) +
-                                   b.SummaCNY * CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
+                                   b.SummaCNY * CurrentCurrencyRate.GetRate(
+                                       GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as Currency,
                                        RecalcCurrency);
             if (ExtendRowsActual.Count > 0 && RecalcCurrency != null && CurrentCurrencyRate != null)
                 foreach (var b in ExtendRowsActual)
                 {
                     b.PriceCalc = b.PriceEUR *
-                                  CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.EUR],
+                                  CurrentCurrencyRate.GetRate(
+                                      GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as Currency,
                                       RecalcCurrency) +
                                   b.PriceUSD *
-                                  CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.USD],
+                                  CurrentCurrencyRate.GetRate(
+                                      GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD) as Currency,
                                       RecalcCurrency) +
                                   b.PriceGBP *
-                                  CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.GBP],
+                                  CurrentCurrencyRate.GetRate(
+                                      GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as Currency,
                                       RecalcCurrency) +
                                   b.PriceRUB *
-                                  CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.RUB],
+                                  CurrentCurrencyRate.GetRate(
+                                      GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.RUB) as Currency,
                                       RecalcCurrency) +
                                   b.PriceCNY *
-                                  CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
+                                  CurrentCurrencyRate.GetRate(
+                                      GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as Currency,
                                       RecalcCurrency);
                     b.SummaCalc = b.SummaEUR *
-                                  CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.EUR],
+                                  CurrentCurrencyRate.GetRate(
+                                      GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as Currency,
                                       RecalcCurrency) +
                                   b.SummaUSD *
-                                  CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.USD],
+                                  CurrentCurrencyRate.GetRate(
+                                      GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD) as Currency,
                                       RecalcCurrency) +
                                   b.SummaGBP *
-                                  CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.GBP],
+                                  CurrentCurrencyRate.GetRate(
+                                      GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as Currency,
                                       RecalcCurrency) +
                                   b.SummaRUB *
-                                  CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.RUB],
+                                  CurrentCurrencyRate.GetRate(
+                                      GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.RUB) as Currency,
                                       RecalcCurrency) +
                                   b.SummaCNY *
-                                  CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
+                                  CurrentCurrencyRate.GetRate(
+                                      GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as Currency,
                                       RecalcCurrency);
                 }
 
@@ -1013,9 +1037,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 var r in nn)
                 BalansStructure.Remove(r);
             var bankManager = new BankOperationsManager();
-            foreach (var d in MainReferences.BankAccounts.Values.Select(_ => _.DocCode).Distinct())
+            foreach (var d in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>()
+                         .Select(_ => _.DocCode).Distinct())
             {
-                var bank = MainReferences.BankAccounts[d];
+                var bank = GlobalOptions.ReferencesCache.GetBankAccount(d);
                 var rem = bankManager.GetRemains2(d, CurrentDate, CurrentDate);
                 if (rem.SummaEnd != 0)
                     BalansStructure.Add(new ManagementBalanceGroupViewModel
@@ -1184,13 +1209,13 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             var skl = data.Select(_ => _.StoreDC).Distinct().ToList();
             foreach (var s in skl)
             {
-                var n = MainReferences.Warehouses[s];
+                var n = GlobalOptions.ReferencesCache.GetWarehouse(s) as Warehouse;
                 var newId = Guid.NewGuid();
                 BalansStructure.Add(new ManagementBalanceGroupViewModel
                 {
                     Id = newId,
                     ParentId = ch.Id,
-                    Name = n.SKL_NAME,
+                    Name = n.Name,
                     Order = 1,
                     SummaRUB =
                         data.Where(_ => _.NomCurrencyDC == CurrencyCode.RUB && _.StoreDC == s)
@@ -1232,9 +1257,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         Quantity = dd.Prihod - dd.Rashod,
                         Price = dd.Summa / (dd.Prihod - dd.Rashod),
                         Summa = dd.Summa,
-                        Nom = MainReferences.GetNomenkl(dd.NomenklDC),
-                        Nomenkl = MainReferences.GetNomenkl(dd.NomenklDC).NomenklNumber,
-                        CurrencyName = MainReferences.Currencies[dd.NomCurrencyDC].Name,
+                        Nom = GlobalOptions.ReferencesCache.GetNomenkl(dd.NomenklDC) as Nomenkl,
+                        Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(dd.NomenklDC).NomenklNumber,
+                        CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(dd.NomCurrencyDC)).Name,
                         SummaEUR = dd.NomCurrencyDC == CurrencyCode.EUR ? dd.Summa : 0,
                         SummaUSD = dd.NomCurrencyDC == CurrencyCode.USD ? dd.Summa : 0,
                         SummaRUB = dd.NomCurrencyDC == CurrencyCode.RUB ? dd.Summa : 0,

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using KursAM2.View.DialogUserControl;
-using KursDomain.Documents.CommonReferences;
-using KursDomain.ICommon;
+using KursDomain;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -28,7 +28,8 @@ namespace KursAM2.ViewModel.Reference
 
         public override void RefreshData(object o)
         {
-            ItemsCollection = new ObservableCollection<Region>(MainReferences.Regions.Values);
+            ItemsCollection = new ObservableCollection<Region>(GlobalOptions.ReferencesCache.GetRegionsAll()
+                .Cast<Region>().OrderBy(_ => _.Name));
             RaisePropertyChanged(nameof(ItemsCollection));
         }
 
@@ -43,8 +44,7 @@ namespace KursAM2.ViewModel.Reference
         {
             var newRow = new Region
             {
-                State = RowStatus.NewRow,
-                DOC_CODE = -1
+                DocCode = -1
             };
             ItemsCollection.Add(newRow);
             CurrentItem = newRow;
@@ -59,8 +59,7 @@ namespace KursAM2.ViewModel.Reference
         {
             var dList = new List<Region>();
             foreach (var d in SelectedItems)
-                if (d.State == RowStatus.NewRow)
-                    dList.Add(d);
+                dList.Add(d);
             foreach (var r in dList) ItemsCollection.Remove(r);
             var drows = new ObservableCollection<Region>(SelectedItems);
             foreach (var d in drows)
@@ -98,7 +97,7 @@ namespace KursAM2.ViewModel.Reference
         {
             set
             {
-                if (Equals(myCurrentItem,value)) return;
+                if (Equals(myCurrentItem, value)) return;
                 myCurrentItem = value;
                 RaisePropertyChanged();
             }

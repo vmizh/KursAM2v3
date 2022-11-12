@@ -1,22 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Core;
 using Core.ViewModel.Base;
+using KursDomain;
 using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks
 {
     public class NomenklCostResetSearchWindowViewModel : RSWindowSearchViewModelBase
     {
-        private KursDomain.Documents.NomenklManagement.Warehouse myCurrentWarehouse;
+        private KursDomain.References.Warehouse myCurrentWarehouse;
         private Nomenkl mySelectedNomenkl;
 
-        public KursDomain.Documents.NomenklManagement.Warehouse CurrentWarehouse
+        public KursDomain.References.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set
             {
-                if (Equals(myCurrentWarehouse,value)) return;
+                if (Equals(myCurrentWarehouse, value)) return;
                 myCurrentWarehouse = value;
                 RaisePropertyChanged();
             }
@@ -27,15 +27,16 @@ namespace KursAM2.ViewModel.Logistiks
             get => mySelectedNomenkl;
             set
             {
-                if (Equals(mySelectedNomenkl,value)) return;
+                if (Equals(mySelectedNomenkl, value)) return;
                 mySelectedNomenkl = value;
                 RaisePropertyChanged();
             }
         }
 
-        public List<KursDomain.Documents.NomenklManagement.Warehouse> Sklads { set; get; } =
-            new List<KursDomain.Documents.NomenklManagement.Warehouse>();
+        public List<KursDomain.References.Warehouse> Sklads { set; get; } =
+            new List<KursDomain.References.Warehouse>();
 
-        public List<Nomenkl> Nomenkls => MainReferences.ALLNomenkls.Values.ToList();
+        public List<Nomenkl> Nomenkls => GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>()
+            .OrderBy(_ => _.Name).ToList();
     }
 }

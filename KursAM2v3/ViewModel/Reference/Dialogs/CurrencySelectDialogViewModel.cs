@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Core;
 using Core.ViewModel.Base;
 using KursAM2.View.DialogUserControl;
+using KursDomain;
 using KursDomain.Menu;
 using KursDomain.References;
 
@@ -21,7 +21,7 @@ namespace KursAM2.ViewModel.Reference.Dialogs
             if (withoutCrs != null && withoutCrs.Any())
             {
                 ItemsCollection = new ObservableCollection<Currency>();
-                foreach (var c in MainReferences.Currencies.Values)
+                foreach (var c in GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>())
                 {
                     if (withoutCrs.Any(_ => _.DocCode == c.DocCode)) continue;
                     ItemsCollection.Add(c);
@@ -29,7 +29,9 @@ namespace KursAM2.ViewModel.Reference.Dialogs
             }
             else
             {
-                ItemsCollection = new ObservableCollection<Currency>(MainReferences.Currencies.Values);
+                ItemsCollection =
+                    new ObservableCollection<Currency>(
+                        GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>());
             }
         }
 

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows;
-using Core;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using JetBrains.Annotations;
@@ -38,14 +35,14 @@ namespace KursAM2.ViewModel.Logistiks
         private string mySchetInfo;
         private decimal mySummaIn;
         private decimal mySummaOut;
-        private KursDomain.Documents.NomenklManagement.Warehouse myWarehouse;
+        private KursDomain.References.Warehouse myWarehouse;
 
         public NomenklTransferRowViewModelExt(NomenklTransferRow entity) : base(entity)
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                myNomenklIn = MainReferences.GetNomenkl(Entity.NomenklInDC);
-                myNomenklOut = MainReferences.GetNomenkl(Entity.NomenklOutDC);
+                myNomenklIn = GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklInDC) as Nomenkl;
+                myNomenklOut = GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklOutDC) as Nomenkl;
             }
         }
 
@@ -64,12 +61,12 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public KursDomain.Documents.NomenklManagement.Warehouse Warehouse
+        public KursDomain.References.Warehouse Warehouse
         {
             get => myWarehouse;
             set
             {
-                if (Equals(myWarehouse,value)) return;
+                if (Equals(myWarehouse, value)) return;
                 myWarehouse = value;
                 if (myWarehouse != null)
                     Entity.StoreDC = myWarehouse.DocCode;
@@ -93,7 +90,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myNomenklOut;
             set
             {
-                if (Equals(myNomenklOut,value)) return;
+                if (Equals(myNomenklOut, value)) return;
                 myNomenklOut = value;
                 if (myNomenklOut != null)
                     Entity.NomenklOutDC = myNomenklOut.DocCode;
@@ -106,7 +103,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myNomenklIn;
             set
             {
-                if (Equals(myNomenklIn,value)) return;
+                if (Equals(myNomenklIn, value)) return;
                 myNomenklIn = value;
                 if (myNomenklIn != null)
                     Entity.NomenklInDC = myNomenklIn.DocCode;

@@ -9,7 +9,6 @@ using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.References;
-using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace KursAM2.ViewModel.Management.ManagementBalans
 {
@@ -928,7 +927,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             get => mySkladOut;
             set
             {
-                if (Equals(mySkladOut,value)) return;
+                if (Equals(mySkladOut, value)) return;
                 mySkladOut = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(SkladOutName));
@@ -942,7 +941,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             get => mySkladIn;
             set
             {
-                if (Equals(mySkladIn,value)) return;
+                if (Equals(mySkladIn, value)) return;
                 mySkladIn = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(SkladInName));
@@ -956,7 +955,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             get => myKontragentIn;
             set
             {
-                if (Equals(myKontragentIn,value)) return;
+                if (Equals(myKontragentIn, value)) return;
                 myKontragentIn = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(KontrInName));
@@ -970,7 +969,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             get => myKontragentOut;
             set
             {
-                if (Equals(myKontragentOut,value)) return;
+                if (Equals(myKontragentOut, value)) return;
                 myKontragentOut = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(KontrOutName));

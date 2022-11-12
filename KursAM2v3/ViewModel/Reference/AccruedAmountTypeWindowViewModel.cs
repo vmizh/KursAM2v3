@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -40,8 +39,18 @@ namespace KursAM2.ViewModel.Reference
 
         public string this[string columnName] => null;
 
-        [Display(AutoGenerateField = false)]
-        public string Error => GetError();
+        [Display(AutoGenerateField = false)] public string Error => GetError();
+
+        #region Methods
+
+        private string GetError()
+        {
+            if (Types.Any(_ => string.IsNullOrWhiteSpace(_.Name)))
+                return "Наименование типа не может быть пустым";
+            return null;
+        }
+
+        #endregion
 
         #region Fields
 
@@ -95,13 +104,11 @@ namespace KursAM2.ViewModel.Reference
             UnitOfWork.Context.AccruedAmountType.Add(d.Entity);
             Types.Add(d);
         }
+
         [Display(AutoGenerateField = false)]
         public ICommand DeleteCommand
         {
-            get
-            {
-                return new Command(Delete, _ => CurrentType != null);
-            }
+            get { return new Command(Delete, _ => CurrentType != null); }
         }
 
         private void Delete(object obj)
@@ -124,7 +131,6 @@ namespace KursAM2.ViewModel.Reference
                 UnitOfWork.Commit();
                 DeletedTypes.Clear();
                 foreach (var t in Types) t.myState = RowStatus.NotEdited;
-                MainReferences.Refresh();
             }
             catch (Exception ex)
             {
@@ -158,12 +164,10 @@ namespace KursAM2.ViewModel.Reference
                 DeletedTypes.Clear();
                 Types.Clear();
                 foreach (var d in GenericRepository.GetAll())
-                {
                     Types.Add(new AccruedAmountTypeViewModel(d)
                     {
                         State = RowStatus.NotEdited
                     });
-                }
             }
         }
 
@@ -174,17 +178,6 @@ namespace KursAM2.ViewModel.Reference
                 RaisePropertyChanged(nameof(ToolTipForSave));
                 return (Types.Any(_ => _.State != RowStatus.NotEdited) || DeletedTypes.Count > 0) && Error == null;
             }
-        }
-
-        #endregion
-
-        #region Methods
- 
-        private string GetError()
-        {
-            if (Types.Any(_ => string.IsNullOrWhiteSpace(_.Name)))
-                return "Наименование типа не может быть пустым";
-            return null;
         }
 
         #endregion

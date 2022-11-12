@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -38,10 +37,10 @@ public interface ITD_24
 
 public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 {
+    private InvoiceClientViewModel _myInvoiceClient;
     private References.Currency myCurrency;
     private KontragentViewModel myDiler;
     private TD_24 myEntity;
-    private InvoiceClientViewModel _myInvoiceClient;
     private InvoiceProvider myInvoiceProvider;
     private InvoiceProviderRow myInvoiceProviderRow;
     private Nomenkl myNomenkl;
@@ -124,8 +123,8 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
             if (myNomenkl != null)
             {
                 DDT_NOMENKL_DC = myNomenkl.DocCode;
-                DDT_ED_IZM_DC = ((IDocCode) myNomenkl.Unit).DocCode;
-                DDT_POST_ED_IZM_DC = ((IDocCode) myNomenkl.Unit).DocCode;
+                DDT_ED_IZM_DC = ((IDocCode)myNomenkl.Unit).DocCode;
+                DDT_POST_ED_IZM_DC = ((IDocCode)myNomenkl.Unit).DocCode;
             }
 
             RaisePropertyChanged();
@@ -171,8 +170,8 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         get => Convert.ToDecimal(Entity.DDT_KOL_PODTVERZHDENO);
         set
         {
-            if (Entity.DDT_KOL_PODTVERZHDENO == (double?) value) return;
-            Entity.DDT_KOL_PODTVERZHDENO = (double?) value;
+            if (Entity.DDT_KOL_PODTVERZHDENO == (double?)value) return;
+            Entity.DDT_KOL_PODTVERZHDENO = (double?)value;
             RaisePropertyChanged();
         }
     }
@@ -182,8 +181,8 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         get => Convert.ToDecimal(Entity.DDT_KOL_SHAB_PRIHOD);
         set
         {
-            if (Entity.DDT_KOL_SHAB_PRIHOD == (double?) value) return;
-            Entity.DDT_KOL_SHAB_PRIHOD = (double?) value;
+            if (Entity.DDT_KOL_SHAB_PRIHOD == (double?)value) return;
+            Entity.DDT_KOL_SHAB_PRIHOD = (double?)value;
             RaisePropertyChanged();
         }
     }
@@ -326,22 +325,22 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public decimal? DDT_OSTAT_STAR
     {
-        get => (decimal?) Entity.DDT_OSTAT_STAR;
+        get => (decimal?)Entity.DDT_OSTAT_STAR;
         set
         {
-            if (Entity.DDT_OSTAT_STAR == (double?) value) return;
-            Entity.DDT_OSTAT_STAR = (double?) value;
+            if (Entity.DDT_OSTAT_STAR == (double?)value) return;
+            Entity.DDT_OSTAT_STAR = (double?)value;
             RaisePropertyChanged();
         }
     }
 
     public decimal? DDT_OSTAT_NOV
     {
-        get => (decimal?) Entity.DDT_OSTAT_NOV;
+        get => (decimal?)Entity.DDT_OSTAT_NOV;
         set
         {
-            if (Entity.DDT_OSTAT_NOV == (double?) value) return;
-            Entity.DDT_OSTAT_NOV = (double?) value;
+            if (Entity.DDT_OSTAT_NOV == (double?)value) return;
+            Entity.DDT_OSTAT_NOV = (double?)value;
             RaisePropertyChanged();
         }
     }
@@ -385,7 +384,7 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         set
         {
             if (Entity.DDT_TAX_EXECUTED == 1 == value) return;
-            DDT_TAX_EXECUTED = (short) (value ? 1 : 0);
+            DDT_TAX_EXECUTED = (short)(value ? 1 : 0);
             RaisePropertyChanged();
         }
     }
@@ -407,7 +406,7 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         set
         {
             if (Entity.DDT_TAX_IN_SFACT == 1 == value) return;
-            DDT_TAX_IN_SFACT = (short) (Entity.DDT_TAX_IN_SFACT == 1 ? 1 : 0);
+            DDT_TAX_IN_SFACT = (short)(Entity.DDT_TAX_IN_SFACT == 1 ? 1 : 0);
             RaisePropertyChanged();
         }
     }
@@ -451,7 +450,7 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         set
         {
             if (Entity.DDT_FACT_EXECUTED == 1 == value) return;
-            Entity.DDT_FACT_EXECUTED = (short) (Entity.DDT_TAX_IN_SFACT == 1 ? 1 : 0);
+            Entity.DDT_FACT_EXECUTED = (short)(Entity.DDT_TAX_IN_SFACT == 1 ? 1 : 0);
             RaisePropertyChanged();
         }
     }
@@ -513,11 +512,11 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public decimal? DDT_KOL_POST_PRIHOD
     {
-        get => (decimal?) Entity.DDT_KOL_POST_PRIHOD;
+        get => (decimal?)Entity.DDT_KOL_POST_PRIHOD;
         set
         {
-            if (Entity.DDT_KOL_POST_PRIHOD == (double?) value) return;
-            Entity.DDT_KOL_POST_PRIHOD = (double?) value;
+            if (Entity.DDT_KOL_POST_PRIHOD == (double?)value) return;
+            Entity.DDT_KOL_POST_PRIHOD = (double?)value;
             RaisePropertyChanged();
         }
     }
@@ -658,11 +657,11 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public decimal? DDT_NOM_CRS_RATE
     {
-        get => (decimal?) Entity.DDT_NOM_CRS_RATE;
+        get => (decimal?)Entity.DDT_NOM_CRS_RATE;
         set
         {
-            if (Entity.DDT_NOM_CRS_RATE == (double?) value) return;
-            Entity.DDT_NOM_CRS_RATE = (double?) value;
+            if (Entity.DDT_NOM_CRS_RATE == (double?)value) return;
+            Entity.DDT_NOM_CRS_RATE = (double?)value;
             RaisePropertyChanged();
         }
     }
@@ -713,11 +712,11 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public decimal? DDT_VOZVR_UCH_CRS_RATE
     {
-        get => (decimal?) Entity.DDT_VOZVR_UCH_CRS_RATE;
+        get => (decimal?)Entity.DDT_VOZVR_UCH_CRS_RATE;
         set
         {
-            if (Entity.DDT_VOZVR_UCH_CRS_RATE == (double?) value) return;
-            Entity.DDT_VOZVR_UCH_CRS_RATE = (double?) value;
+            if (Entity.DDT_VOZVR_UCH_CRS_RATE == (double?)value) return;
+            Entity.DDT_VOZVR_UCH_CRS_RATE = (double?)value;
             RaisePropertyChanged();
         }
     }
@@ -746,11 +745,11 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public decimal? DDT_KOL_IN_ONE
     {
-        get => (decimal?) Entity.DDT_KOL_IN_ONE;
+        get => (decimal?)Entity.DDT_KOL_IN_ONE;
         set
         {
-            if (Entity.DDT_KOL_IN_ONE == (double?) value) return;
-            Entity.DDT_KOL_IN_ONE = (double?) value;
+            if (Entity.DDT_KOL_IN_ONE == (double?)value) return;
+            Entity.DDT_KOL_IN_ONE = (double?)value;
             RaisePropertyChanged();
         }
     }
@@ -790,11 +789,11 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public decimal? DDT_ACT_RAZ_PROC_STOIM
     {
-        get => (decimal?) Entity.DDT_ACT_RAZ_PROC_STOIM;
+        get => (decimal?)Entity.DDT_ACT_RAZ_PROC_STOIM;
         set
         {
-            if (Entity.DDT_ACT_RAZ_PROC_STOIM == (double?) value) return;
-            Entity.DDT_ACT_RAZ_PROC_STOIM = (double?) value;
+            if (Entity.DDT_ACT_RAZ_PROC_STOIM == (double?)value) return;
+            Entity.DDT_ACT_RAZ_PROC_STOIM = (double?)value;
             RaisePropertyChanged();
         }
     }
@@ -812,11 +811,11 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public decimal? DDT_APGP_TO_EXECUTE
     {
-        get => (decimal?) Entity.DDT_APGP_TO_EXECUTE;
+        get => (decimal?)Entity.DDT_APGP_TO_EXECUTE;
         set
         {
-            if (Entity.DDT_APGP_TO_EXECUTE == (double?) value) return;
-            Entity.DDT_APGP_TO_EXECUTE = (double?) value;
+            if (Entity.DDT_APGP_TO_EXECUTE == (double?)value) return;
+            Entity.DDT_APGP_TO_EXECUTE = (double?)value;
             RaisePropertyChanged();
         }
     }
@@ -1023,11 +1022,11 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public decimal? DDT_MEST_TARA
     {
-        get => (decimal?) Entity.DDT_MEST_TARA;
+        get => (decimal?)Entity.DDT_MEST_TARA;
         set
         {
-            if (Entity.DDT_MEST_TARA == (double?) value) return;
-            Entity.DDT_MEST_TARA = (double?) value;
+            if (Entity.DDT_MEST_TARA == (double?)value) return;
+            Entity.DDT_MEST_TARA = (double?)value;
             RaisePropertyChanged();
         }
     }
@@ -1516,16 +1515,11 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     private void LoadReference()
     {
-        myNomenkl = MainReferences.GetNomenkl(DDT_NOMENKL_DC);
-        Unit = (Unit) Nomenkl.Unit;
-        //if (DDT_SPOST_ROW_CODE != null && TD_26 != null) InvoiceProviderRow = new InvoiceProviderRow(TD_26);
-        //if (DDT_SPOST_DC != null && TD_26 != null && TD_26.SD_26 != null)
-        //    InvoiceProvider = new InvoiceProvider(TD_26.SD_26);
-        if (MainReferences.Currencies.ContainsKey(DDT_CRS_DC)) Currency = MainReferences.Currencies[DDT_CRS_DC];
-        if (DDT_SHPZ_DC != null)
-            SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(DDT_SHPZ_DC.Value) as SDRSchet;
-        if (MainReferences.Currencies.ContainsKey(Entity.DDT_CRS_DC))
-            Currency = MainReferences.Currencies[Entity.DDT_CRS_DC];
+        myNomenkl = GlobalOptions.ReferencesCache.GetNomenkl(DDT_NOMENKL_DC) as Nomenkl;
+        Unit = (Unit)Nomenkl.Unit;
+        Currency = GlobalOptions.ReferencesCache.GetCurrency(DDT_CRS_DC) as References.Currency;
+        SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(DDT_SHPZ_DC) as SDRSchet;
+        Currency = GlobalOptions.ReferencesCache.GetCurrency(Entity.DDT_CRS_DC) as References.Currency;
     }
 
     public virtual void Save(TD_24 doc)
@@ -1560,16 +1554,16 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         DDT_KOL_PRIHOD = ent.DDT_KOL_PRIHOD;
         DDT_KOL_ZATREBOVANO = ent.DDT_KOL_ZATREBOVANO;
         DDT_KOL_RASHOD = ent.DDT_KOL_RASHOD;
-        DDT_KOL_PODTVERZHDENO = (decimal?) ent.DDT_KOL_PODTVERZHDENO;
-        DDT_KOL_SHAB_PRIHOD = (decimal?) ent.DDT_KOL_SHAB_PRIHOD;
+        DDT_KOL_PODTVERZHDENO = (decimal?)ent.DDT_KOL_PODTVERZHDENO;
+        DDT_KOL_SHAB_PRIHOD = (decimal?)ent.DDT_KOL_SHAB_PRIHOD;
         DDT_ED_IZM_DC = ent.DDT_ED_IZM_DC;
         DDT_SPOST_DC = ent.DDT_SPOST_DC;
         DDT_SPOST_ROW_CODE = ent.DDT_SPOST_ROW_CODE;
         DDT_CRS_DC = ent.DDT_CRS_DC;
         DDT_SFACT_DC = ent.DDT_SFACT_DC;
         DDT_SFACT_ROW_CODE = ent.DDT_SFACT_ROW_CODE;
-        DDT_OSTAT_STAR = (decimal?) ent.DDT_OSTAT_STAR;
-        DDT_OSTAT_NOV = (decimal?) ent.DDT_OSTAT_NOV;
+        DDT_OSTAT_STAR = (decimal?)ent.DDT_OSTAT_STAR;
+        DDT_OSTAT_NOV = (decimal?)ent.DDT_OSTAT_NOV;
         DDT_TAX_CRS_CENA = ent.DDT_TAX_CRS_CENA;
         DDT_TAX_CENA = ent.DDT_TAX_CENA;
         DDT_TAX_EXECUTED = ent.DDT_TAX_EXECUTED;
@@ -1582,7 +1576,7 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         DDT_NOSZATR_DC = ent.DDT_NOSZATR_DC;
         DDT_NOSZATR_ROW_CODE = ent.DDT_NOSZATR_ROW_CODE;
         DDT_POST_ED_IZM_DC = ent.DDT_POST_ED_IZM_DC;
-        DDT_KOL_POST_PRIHOD = (decimal?) ent.DDT_KOL_POST_PRIHOD;
+        DDT_KOL_POST_PRIHOD = (decimal?)ent.DDT_KOL_POST_PRIHOD;
         DDT_PRICHINA_SPISANIA = ent.DDT_PRICHINA_SPISANIA;
         DDT_VOZVRAT_TREBOVINIA = ent.DDT_VOZVRAT_TREBOVINIA;
         DDT_VOZVRAT_PRICHINA = ent.DDT_VOZVRAT_PRICHINA;
@@ -1594,21 +1588,21 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         DDT_SUMMA_V_UCHET_VALUTE = ent.DDT_SUMMA_V_UCHET_VALUTE;
         DDT_CENA_V_UCHET_VALUTE = ent.DDT_CENA_V_UCHET_VALUTE;
         DDT_SKLAD_OTPR_DC = ent.DDT_SKLAD_OTPR_DC;
-        DDT_NOM_CRS_RATE = (decimal?) ent.DDT_NOM_CRS_RATE;
+        DDT_NOM_CRS_RATE = (decimal?)ent.DDT_NOM_CRS_RATE;
         DDT_PROIZV_PLAN_DC = ent.DDT_PROIZV_PLAN_DC;
         DDT_RASH_ORD_DC = ent.DDT_RASH_ORD_DC;
         DDT_RASH_ORD_CODE = ent.DDT_RASH_ORD_CODE;
         DDT_VOZVR_OTGR_CSR_DC = ent.DDT_VOZVR_OTGR_CSR_DC;
-        DDT_VOZVR_UCH_CRS_RATE = (decimal?) ent.DDT_VOZVR_UCH_CRS_RATE;
+        DDT_VOZVR_UCH_CRS_RATE = (decimal?)ent.DDT_VOZVR_UCH_CRS_RATE;
         DDT_VOZVR_OTGR_CRS_TAX_CENA = ent.DDT_VOZVR_OTGR_CRS_TAX_CENA;
         DDT_SBORSCHIK_TN = ent.DDT_SBORSCHIK_TN;
-        DDT_KOL_IN_ONE = (decimal?) ent.DDT_KOL_IN_ONE;
+        DDT_KOL_IN_ONE = (decimal?)ent.DDT_KOL_IN_ONE;
         DDT_OS_DC = ent.DDT_OS_DC;
         DDT_GARANT_DC = ent.DDT_GARANT_DC;
         DDT_GARANT_ROW_CODE = ent.DDT_GARANT_ROW_CODE;
-        DDT_ACT_RAZ_PROC_STOIM = (decimal?) ent.DDT_ACT_RAZ_PROC_STOIM;
+        DDT_ACT_RAZ_PROC_STOIM = (decimal?)ent.DDT_ACT_RAZ_PROC_STOIM;
         DDT_PROIZV_PLAN_ROW_CODE = ent.DDT_PROIZV_PLAN_ROW_CODE;
-        DDT_APGP_TO_EXECUTE = (decimal?) ent.DDT_APGP_TO_EXECUTE;
+        DDT_APGP_TO_EXECUTE = (decimal?)ent.DDT_APGP_TO_EXECUTE;
         DDT_APGP_NOT_EXECUTE = ent.DDT_APGP_NOT_EXECUTE;
         DDT_DILER_DC = ent.DDT_DILER_DC;
         DDT_DILER_SUM = ent.DDT_DILER_SUM;
@@ -1626,7 +1620,7 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         DDT_PROIZV_PARTIA_DC = ent.DDT_PROIZV_PARTIA_DC;
         DDT_PROIZV_PARTIA_CODE = ent.DDT_PROIZV_PARTIA_CODE;
         DDT_DAVAL_SIRIE = ent.DDT_DAVAL_SIRIE;
-        DDT_MEST_TARA = (decimal?) ent.DDT_MEST_TARA;
+        DDT_MEST_TARA = (decimal?)ent.DDT_MEST_TARA;
         DDT_TARA_DC = ent.DDT_TARA_DC;
         DDT_TARA_FLAG = ent.DDT_TARA_FLAG;
         DDT_PART_NUMBER = ent.DDT_PART_NUMBER;
@@ -1678,16 +1672,16 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         ent.DDT_KOL_PRIHOD = DDT_KOL_PRIHOD;
         ent.DDT_KOL_ZATREBOVANO = DDT_KOL_ZATREBOVANO;
         ent.DDT_KOL_RASHOD = DDT_KOL_RASHOD;
-        ent.DDT_KOL_PODTVERZHDENO = (double?) DDT_KOL_PODTVERZHDENO;
-        ent.DDT_KOL_SHAB_PRIHOD = (double?) DDT_KOL_SHAB_PRIHOD;
+        ent.DDT_KOL_PODTVERZHDENO = (double?)DDT_KOL_PODTVERZHDENO;
+        ent.DDT_KOL_SHAB_PRIHOD = (double?)DDT_KOL_SHAB_PRIHOD;
         ent.DDT_ED_IZM_DC = DDT_ED_IZM_DC;
         ent.DDT_SPOST_DC = DDT_SPOST_DC;
         ent.DDT_SPOST_ROW_CODE = DDT_SPOST_ROW_CODE;
         ent.DDT_CRS_DC = DDT_CRS_DC;
         ent.DDT_SFACT_DC = DDT_SFACT_DC;
         ent.DDT_SFACT_ROW_CODE = DDT_SFACT_ROW_CODE;
-        ent.DDT_OSTAT_STAR = (double?) DDT_OSTAT_STAR;
-        ent.DDT_OSTAT_NOV = (double?) DDT_OSTAT_NOV;
+        ent.DDT_OSTAT_STAR = (double?)DDT_OSTAT_STAR;
+        ent.DDT_OSTAT_NOV = (double?)DDT_OSTAT_NOV;
         ent.DDT_TAX_CRS_CENA = DDT_TAX_CRS_CENA;
         ent.DDT_TAX_CENA = DDT_TAX_CENA;
         ent.DDT_TAX_EXECUTED = DDT_TAX_EXECUTED;
@@ -1700,7 +1694,7 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         ent.DDT_NOSZATR_DC = DDT_NOSZATR_DC;
         ent.DDT_NOSZATR_ROW_CODE = DDT_NOSZATR_ROW_CODE;
         ent.DDT_POST_ED_IZM_DC = DDT_POST_ED_IZM_DC;
-        ent.DDT_KOL_POST_PRIHOD = (double?) DDT_KOL_POST_PRIHOD;
+        ent.DDT_KOL_POST_PRIHOD = (double?)DDT_KOL_POST_PRIHOD;
         ent.DDT_PRICHINA_SPISANIA = DDT_PRICHINA_SPISANIA;
         ent.DDT_VOZVRAT_TREBOVINIA = DDT_VOZVRAT_TREBOVINIA;
         ent.DDT_VOZVRAT_PRICHINA = DDT_VOZVRAT_PRICHINA;
@@ -1712,21 +1706,21 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         ent.DDT_SUMMA_V_UCHET_VALUTE = DDT_SUMMA_V_UCHET_VALUTE;
         ent.DDT_CENA_V_UCHET_VALUTE = DDT_CENA_V_UCHET_VALUTE;
         ent.DDT_SKLAD_OTPR_DC = DDT_SKLAD_OTPR_DC;
-        ent.DDT_NOM_CRS_RATE = (double?) DDT_NOM_CRS_RATE;
+        ent.DDT_NOM_CRS_RATE = (double?)DDT_NOM_CRS_RATE;
         ent.DDT_PROIZV_PLAN_DC = DDT_PROIZV_PLAN_DC;
         ent.DDT_RASH_ORD_DC = DDT_RASH_ORD_DC;
         ent.DDT_RASH_ORD_CODE = DDT_RASH_ORD_CODE;
         ent.DDT_VOZVR_OTGR_CSR_DC = DDT_VOZVR_OTGR_CSR_DC;
-        ent.DDT_VOZVR_UCH_CRS_RATE = (double?) DDT_VOZVR_UCH_CRS_RATE;
+        ent.DDT_VOZVR_UCH_CRS_RATE = (double?)DDT_VOZVR_UCH_CRS_RATE;
         ent.DDT_VOZVR_OTGR_CRS_TAX_CENA = DDT_VOZVR_OTGR_CRS_TAX_CENA;
         ent.DDT_SBORSCHIK_TN = DDT_SBORSCHIK_TN;
-        ent.DDT_KOL_IN_ONE = (double?) DDT_KOL_IN_ONE;
+        ent.DDT_KOL_IN_ONE = (double?)DDT_KOL_IN_ONE;
         ent.DDT_OS_DC = DDT_OS_DC;
         ent.DDT_GARANT_DC = DDT_GARANT_DC;
         ent.DDT_GARANT_ROW_CODE = DDT_GARANT_ROW_CODE;
-        ent.DDT_ACT_RAZ_PROC_STOIM = (double?) DDT_ACT_RAZ_PROC_STOIM;
+        ent.DDT_ACT_RAZ_PROC_STOIM = (double?)DDT_ACT_RAZ_PROC_STOIM;
         ent.DDT_PROIZV_PLAN_ROW_CODE = DDT_PROIZV_PLAN_ROW_CODE;
-        ent.DDT_APGP_TO_EXECUTE = (double?) DDT_APGP_TO_EXECUTE;
+        ent.DDT_APGP_TO_EXECUTE = (double?)DDT_APGP_TO_EXECUTE;
         ent.DDT_APGP_NOT_EXECUTE = DDT_APGP_NOT_EXECUTE;
         ent.DDT_DILER_DC = DDT_DILER_DC;
         ent.DDT_DILER_SUM = DDT_DILER_SUM;
@@ -1744,7 +1738,7 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         ent.DDT_PROIZV_PARTIA_DC = DDT_PROIZV_PARTIA_DC;
         ent.DDT_PROIZV_PARTIA_CODE = DDT_PROIZV_PARTIA_CODE;
         ent.DDT_DAVAL_SIRIE = DDT_DAVAL_SIRIE;
-        ent.DDT_MEST_TARA = (double?) DDT_MEST_TARA;
+        ent.DDT_MEST_TARA = (double?)DDT_MEST_TARA;
         ent.DDT_TARA_DC = DDT_TARA_DC;
         ent.DDT_TARA_FLAG = DDT_TARA_FLAG;
         ent.DDT_PART_NUMBER = DDT_PART_NUMBER;

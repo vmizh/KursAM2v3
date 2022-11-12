@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Core;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
 using KursDomain;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.Managers
 {
-    public class StoreManager : BaseItemManager<Warehouse>
+    public class StoreManager : BaseItemManager<WarehouseViewModel>
     {
         private readonly StandartErrorManager errorManager;
 
@@ -21,9 +19,9 @@ namespace KursAM2.Managers
             errorManager = errManager;
         }
 
-        public List<Warehouse> Load()
+        public List<WarehouseViewModel> Load()
         {
-            var ret = new List<Warehouse>();
+            var ret = new List<WarehouseViewModel>();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -31,7 +29,7 @@ namespace KursAM2.Managers
                     // ReSharper disable once LoopCanBeConvertedToQuery
                     foreach (var u in ctx.SD_27)
                     {
-                        var n = new Warehouse(u) { State = RowStatus.NotEdited };
+                        var n = new WarehouseViewModel(u) { myState = RowStatus.NotEdited };
                         ret.Add(n);
                     }
                 }
@@ -44,9 +42,9 @@ namespace KursAM2.Managers
             return ret;
         }
 
-        public override Warehouse New(Warehouse parent = null)
+        public override WarehouseViewModel New(WarehouseViewModel parent = null)
         {
-            return new Warehouse
+            return new WarehouseViewModel
             {
                 DocCode = -1,
                 Id = Guid.NewGuid(),
@@ -55,9 +53,9 @@ namespace KursAM2.Managers
             };
         }
 
-        public override Warehouse New()
+        public override WarehouseViewModel New()
         {
-            return new Warehouse
+            return new WarehouseViewModel
             {
                 DocCode = -1,
                 Id = Guid.NewGuid(),
@@ -65,9 +63,9 @@ namespace KursAM2.Managers
             };
         }
 
-        public override Warehouse NewCopy(Warehouse u)
+        public override WarehouseViewModel NewCopy(WarehouseViewModel u)
         {
-            return new Warehouse
+            return new WarehouseViewModel
             {
                 DOC_CODE = -1,
                 Id = Guid.NewGuid(),
@@ -77,7 +75,7 @@ namespace KursAM2.Managers
             };
         }
 
-        public override bool Save(IEnumerable<Warehouse> listProds)
+        public override bool Save(IEnumerable<WarehouseViewModel> listProds)
         {
             if (listProds == null || !listProds.Any()) return true;
             using (var ctx = GlobalOptions.GetEntities())
@@ -138,7 +136,7 @@ namespace KursAM2.Managers
             }
         }
 
-        public override bool Delete(IEnumerable<Warehouse> listUnits)
+        public override bool Delete(IEnumerable<WarehouseViewModel> listUnits)
         {
             if (listUnits == null || !listUnits.Any()) return true;
             using (var ctx = GlobalOptions.GetEntities())

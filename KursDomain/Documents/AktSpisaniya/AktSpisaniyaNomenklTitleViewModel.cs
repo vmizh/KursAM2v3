@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -167,12 +166,12 @@ public class AktSpisaniyaNomenklTitleViewModel : RSWindowViewModelBase, IEntity<
         }
     }
 
-    public NomenklManagement.Warehouse Warehouse
+    public References.Warehouse Warehouse
     {
-        get => MainReferences.GetWarehouse(Entity.Warehouse_DC);
+        get => GlobalOptions.ReferencesCache.GetWarehouse(Entity.Warehouse_DC) as References.Warehouse;
         set
         {
-            if (MainReferences.GetWarehouse(Entity.Warehouse_DC) == value)
+            if (GlobalOptions.ReferencesCache.GetWarehouse(Entity.Warehouse_DC) == value)
                 return;
             Entity.Warehouse_DC = value.DocCode;
             RaisePropertyChanged();

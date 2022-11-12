@@ -5,7 +5,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -13,7 +12,6 @@ using KursAM2.Managers;
 using KursAM2.View.Logistiks;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.Menu;
 using KursDomain.References;
 
@@ -77,7 +75,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => mySelectedTransferNomenkl;
             set
             {
-                if (Equals(mySelectedTransferNomenkl,value)) return;
+                if (Equals(mySelectedTransferNomenkl, value)) return;
                 mySelectedTransferNomenkl = value;
                 RaisePropertyChanged();
             }
@@ -127,7 +125,7 @@ namespace KursAM2.ViewModel.Logistiks
                         var n in
                         ctx.NomenklTransferRow)
                         if (TransferNomenkls.All(_ => _.DocCode != n.NomenklInDC))
-                            TransferNomenkls.Add(MainReferences.GetNomenkl(n.NomenklInDC));
+                            TransferNomenkls.Add(GlobalOptions.ReferencesCache.GetNomenkl(n.NomenklInDC) as Nomenkl);
                 }
             }
             catch (Exception ex)
@@ -193,8 +191,8 @@ namespace KursAM2.ViewModel.Logistiks
                                 Date = d.NomenklTransfer.Date,
                                 StoreName = d.NomenklTransfer.SD_27.SKL_NAME,
                                 IsAccepted = d.IsAccepted,
-                                NomenklIn = MainReferences.GetNomenkl(d.NomenklInDC),
-                                NomenklOut = MainReferences.GetNomenkl(d.NomenklOutDC),
+                                NomenklIn = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklInDC) as Nomenkl,
+                                NomenklOut = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklOutDC) as Nomenkl,
                                 MaxQuantity =
                                     GetMaxQuantity(d.NomenklTransfer.SkladDC, d.NomenklOutDC, d.NomenklTransfer.Date),
                                 Rate = d.Rate,

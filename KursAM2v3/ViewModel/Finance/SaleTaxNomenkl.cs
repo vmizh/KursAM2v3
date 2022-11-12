@@ -1,5 +1,4 @@
 ﻿using System;
-using Core;
 using Data;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
@@ -32,13 +31,19 @@ namespace KursAM2.ViewModel.Finance
         public string AccountCreator => TD_84.SD_84.CREATOR;
 
         // ReSharper disable once PossibleInvalidOperationException
-        public string SkladName => MainReferences.Warehouses[(decimal)SD_24.DD_SKLAD_OTPR_DC].Name;
-        public string KontragentName => MainReferences.GetKontragent(SD_24.DD_KONTR_POL_DC).Name;
-        public string NomenklName => MainReferences.GetNomenkl(DDT_NOMENKL_DC).Name;
-        public string NomenklNomNumber => MainReferences.GetNomenkl(DDT_NOMENKL_DC).NomenklNumber;
-        public string NomenklCurrencyName => ((IName)MainReferences.GetNomenkl(DDT_NOMENKL_DC).Currency).Name;
+        public string SkladName => ((IName)GlobalOptions.ReferencesCache.GetWarehouse(SD_24.DD_SKLAD_OTPR_DC)).Name;
+
+        public string KontragentName =>
+            ((IName)GlobalOptions.ReferencesCache.GetKontragent(SD_24.DD_KONTR_POL_DC)).Name;
+
+        public string NomenklName => ((IName)GlobalOptions.ReferencesCache.GetNomenkl(DDT_NOMENKL_DC)).Name;
+        public string NomenklNomNumber => GlobalOptions.ReferencesCache.GetNomenkl(DDT_NOMENKL_DC).NomenklNumber;
+
+        public string NomenklCurrencyName =>
+            ((IName)GlobalOptions.ReferencesCache.GetNomenkl(DDT_NOMENKL_DC).Currency).Name;
+
         public decimal Quantity => DDT_KOL_RASHOD;
-        public string SaleCurrency => MainReferences.Currencies[TD_84.SD_84.SF_CRS_DC].Name;
+        public string SaleCurrency => ((IName)GlobalOptions.ReferencesCache.GetCurrency(TD_84.SD_84.SF_CRS_DC)).Name;
         public decimal CostPrice { set; get; }
         public decimal CostSumma { set; get; }
 

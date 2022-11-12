@@ -5,7 +5,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -283,7 +282,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                                 .ToList().Where(_ => _.TD_26 != null && _.DistributeNakladRow.Count == 0);
                             foreach (var d in data)
                             {
-                                var n = MainReferences.GetNomenkl(d.NomenklId);
+                                var n = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklId);
                                 if (((IDocCode)n.Currency).DocCode != myCurrency.DocCode) continue;
                                 convData.Add(d);
                             }
@@ -291,7 +290,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 
                         foreach (var c in convData)
                         {
-                            var nom = MainReferences.GetNomenkl(c.NomenklId);
+                            var nom = GlobalOptions.ReferencesCache.GetNomenkl(c.NomenklId) as Nomenkl;
                             Data.Add(new InvoicePostQueryConvertCurrency
                             {
                                 Currency = ((IName)nom.Currency)?.Name,
@@ -316,7 +315,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                                 Nomenkl = nom.Name,
                                 NomenklDC = nom.DocCode,
                                 PostDC = c.TD_26.SD_26.SF_POST_DC,
-                                Post = MainReferences.GetKontragent(c.TD_26.SD_26.SF_POST_DC)?.Name
+                                Post = ((IName)GlobalOptions.ReferencesCache.GetKontragent(c.TD_26.SD_26.SF_POST_DC))
+                                    ?.Name
                             });
                         }
                     }

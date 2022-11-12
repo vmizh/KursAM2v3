@@ -5,9 +5,9 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Transactions;
-using Core;
 using Data;
 using KursDomain;
+using KursDomain.ICommon;
 using KursDomain.References;
 
 namespace Calculates.Materials
@@ -27,9 +27,10 @@ namespace Calculates.Materials
             {
                 var nomDCs = ctx.NOMENKL_RECALC.Select(_ => _.NOM_DC).Distinct()
                     .ToList();
-                var noms = nomDCs.Select(MainReferences.GetNomenkl).Where(newNom => !newNom.IsUsluga).ToList();
+                var noms = nomDCs.Select(GlobalOptions.ReferencesCache.GetNomenkl).Where(newNom => !newNom.IsUsluga)
+                    .ToList();
                 if (!noms.Any()) return;
-                foreach (var op in noms.Select(_ => _.DocCode).Select(GetOperations)) Save(op);
+                foreach (var op in noms.Select(_ => ((IDocCode) _).DocCode).Select(GetOperations)) Save(op);
             }
         }
 
@@ -44,7 +45,7 @@ namespace Calculates.Materials
 
             var ret = new NomenklCost
             {
-                Nomenkl = MainReferences.GetNomenkl(nomDC)
+                Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(nomDC) as Nomenkl
             };
             if (ret.Nomenkl.IsUsluga) return null;
             try
@@ -130,8 +131,12 @@ namespace Calculates.Materials
                                 // ReSharper disable once PossibleInvalidOperationException
                                 DocPrice = (decimal) d.DocPrice,
                                 Naklad = 0,
-                                SkladIn = d.SkladInDC != null ? MainReferences.Warehouses[d.SkladInDC.Value] : null,
-                                SkladOut = d.SkladOutDC != null ? MainReferences.Warehouses[d.SkladOutDC.Value] : null,
+                                SkladIn = (d.SkladInDC != null
+                                    ? GlobalOptions.ReferencesCache.GetWarehouse(d.SkladInDC)
+                                    : null) as Warehouse,
+                                SkladOut = (d.SkladOutDC != null
+                                    ? GlobalOptions.ReferencesCache.GetWarehouse(d.SkladOutDC)
+                                    : null) as Warehouse,
                                 SummaIn = (decimal) (d.OperCode == 13 ? d.Price * d.QuantityIn : d.SummaIn),
                                 SummaInWithNaklad = (decimal) d.SummaInWithNaklad,
                                 SummaOut = d.Price * d.QuantityOut,
@@ -222,8 +227,10 @@ namespace Calculates.Materials
                                 DocPrice = d.PriceIn,
                                 Naklad = 0,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                SkladIn = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
-                                SkladOut = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
+                                SkladIn =
+                                    GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as Warehouse,
+                                SkladOut =
+                                    GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as Warehouse,
                                 SummaIn = d.PriceIn * d.Quantity,
                                 SummaInWithNaklad = d.PriceIn * d.Quantity,
                                 SummaOut = d.PriceOut * d.Quantity,
@@ -254,8 +261,12 @@ namespace Calculates.Materials
                                     DocPrice = d.PriceIn,
                                     Naklad = 0,
                                     // ReSharper disable once PossibleInvalidOperationException
-                                    SkladIn = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
-                                    SkladOut = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
+                                    SkladIn =
+                                        GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as
+                                            Warehouse,
+                                    SkladOut =
+                                        GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as
+                                            Warehouse,
                                     SummaIn = d.PriceIn * d.Quantity,
                                     SummaInWithNaklad = d.PriceIn * d.Quantity,
                                     SummaOut = 0,
@@ -284,8 +295,12 @@ namespace Calculates.Materials
                                     QuantityOut = d.Quantity,
                                     DocPrice = d.PriceOut,
                                     Naklad = 0,
-                                    SkladIn = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
-                                    SkladOut = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
+                                    SkladIn =
+                                        GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as
+                                            Warehouse,
+                                    SkladOut =
+                                        GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as
+                                            Warehouse,
                                     SummaIn = 0,
                                     SummaInWithNaklad = 0,
                                     SummaOut = d.PriceOut * d.Quantity,
@@ -317,7 +332,7 @@ namespace Calculates.Materials
             var currentRowNumber = 0;
             var ret = new NomenklCost
             {
-                Nomenkl = MainReferences.GetNomenkl(nomDC)
+                Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(nomDC) as Nomenkl
             };
 
             if (ret.Nomenkl.IsUsluga) return null;
@@ -354,14 +369,8 @@ namespace Calculates.Materials
                         QuantityOut = d.DDT_KOL_RASHOD,
                         DocPrice = 0,
                         Naklad = 0,
-                        SkladIn =
-                            d.SD_24.DD_SKLAD_POL_DC != null
-                                ? MainReferences.Warehouses[d.SD_24.DD_SKLAD_POL_DC.Value]
-                                : null,
-                        SkladOut =
-                            d.SD_24.DD_SKLAD_OTPR_DC != null
-                                ? MainReferences.Warehouses[d.SD_24.DD_SKLAD_OTPR_DC.Value]
-                                : null,
+                        SkladIn = GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_POL_DC) as Warehouse,
+                        SkladOut = GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_OTPR_DC) as Warehouse,
                         SummaIn = 0,
                         SummaInWithNaklad = 0,
                         SummaOut = 0,
@@ -444,7 +453,7 @@ namespace Calculates.Materials
                         QuantityOut = 0,
                         DocPrice = d.PriceIn,
                         Naklad = 0,
-                        SkladIn = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
+                        SkladIn = GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as Warehouse,
                         SkladOut = null,
                         SummaIn = 0,
                         SummaInWithNaklad = 0,
@@ -474,7 +483,7 @@ namespace Calculates.Materials
                         DocPrice = 0,
                         Naklad = 0,
                         SkladIn = null,
-                        SkladOut = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
+                        SkladOut = GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as Warehouse,
                         SummaIn = 0,
                         SummaInWithNaklad = 0,
                         SummaOut = 0,

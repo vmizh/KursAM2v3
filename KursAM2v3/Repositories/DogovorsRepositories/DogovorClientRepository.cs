@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Data;
 using Data.Repository;
 using KursAM2.ViewModel.Dogovora;
@@ -11,6 +9,7 @@ using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Dogovora;
 using KursDomain.Documents.Invoices;
+using KursDomain.References;
 
 namespace KursAM2.Repositories.DogovorsRepositories
 {
@@ -37,7 +36,7 @@ namespace KursAM2.Repositories.DogovorsRepositories
 
         public DogovorClientRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)
         {
-            UnitOfWork = (UnitOfWork<ALFAMEDIAEntities>) unitOfWork;
+            UnitOfWork = (UnitOfWork<ALFAMEDIAEntities>)unitOfWork;
         }
 
         public DogovorClientRepository(ALFAMEDIAEntities context) : base(context)
@@ -106,13 +105,13 @@ namespace KursAM2.Repositories.DogovorsRepositories
                 var newFact = new DogovorClientFactViewModel
                 {
                     SFactDC = s.DOC_CODE,
-                    Nomenkl = MainReferences.GetNomenkl(t.SFT_NEMENKL_DC),
-                    Price = (t.SFT_SUMMA_K_OPLATE ?? 0) / (decimal) t.SFT_KOL,
+                    Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(t.SFT_NEMENKL_DC) as Nomenkl,
+                    Price = (t.SFT_SUMMA_K_OPLATE ?? 0) / (decimal)t.SFT_KOL,
                     SFactNote = t.SFT_TEXT,
                     WayBillDC = r.DOC_CODE,
                     WayBillNote = r.SD_24.DD_NOTES,
                     Quantity = r.DDT_KOL_RASHOD,
-                    Summa = (t.SFT_SUMMA_K_OPLATE ?? 0) * r.DDT_KOL_RASHOD / (decimal) t.SFT_KOL
+                    Summa = (t.SFT_SUMMA_K_OPLATE ?? 0) * r.DDT_KOL_RASHOD / (decimal)t.SFT_KOL
                 };
                 ret.Add(newFact);
             }
@@ -148,7 +147,7 @@ namespace KursAM2.Repositories.DogovorsRepositories
                         Note = c.NOTES_ORD
                     });
                 foreach (var c in Context.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_CLIENT_DC == sf.DOC_CODE)
-                    .ToList())
+                             .ToList())
                     ret.Add(new LinkDocumentInfo
                     {
                         DocCode = c.DOC_CODE,
@@ -160,7 +159,7 @@ namespace KursAM2.Repositories.DogovorsRepositories
                         Note = c.VVT_DOC_NUM
                     });
                 foreach (var c in Context.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SFACT_DC == sf.DOC_CODE)
-                    .ToList())
+                             .ToList())
                     ret.Add(new LinkDocumentInfo
                     {
                         DocCode = c.DOC_CODE,
@@ -192,15 +191,15 @@ namespace KursAM2.Repositories.DogovorsRepositories
                         DocumentName =
                             $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{MainReferences.Currencies[(decimal) c.CRS_DC]} ({c.CREATOR})",
+                            $"{GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC)} ({c.CREATOR})",
                         // ReSharper disable once PossibleInvalidOperationException
-                        Summa = (decimal) c.SUMM_ORD,
-                        Currency = MainReferences.Currencies[(decimal) c.CRS_DC],
+                        Summa = (decimal)c.SUMM_ORD,
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC) as Currency,
                         Note = c.NOTES_ORD
                     });
 
                 foreach (var c in Context.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_CLIENT_DC == sf.DOC_CODE)
-                    .ToList())
+                             .ToList())
                     ret.Add(new InvoicePaymentDocument
                     {
                         DocCode = c.DOC_CODE,
@@ -208,14 +207,14 @@ namespace KursAM2.Repositories.DogovorsRepositories
                         DocumentType = DocumentType.Bank,
                         DocumentName =
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
-                        Summa = (decimal) c.VVT_VAL_PRIHOD,
-                        Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
+                        Summa = (decimal)c.VVT_VAL_PRIHOD,
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as Currency,
                         Note = c.VVT_DOC_NUM
                     });
 
                 foreach (var c in Context.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SFACT_DC == sf.DOC_CODE)
-                    .ToList())
+                             .ToList())
                     ret.Add(new InvoicePaymentDocument
                     {
                         DocCode = c.DOC_CODE,
@@ -225,8 +224,8 @@ namespace KursAM2.Repositories.DogovorsRepositories
                             // ReSharper disable once PossibleInvalidOperationException
                             $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
                         // ReSharper disable once PossibleInvalidOperationException
-                        Summa = (decimal) c.VZT_CRS_SUMMA,
-                        Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
+                        Summa = (decimal)c.VZT_CRS_SUMMA,
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(c.SD_110.CurrencyFromDC) as Currency,
                         Note = c.VZT_DOC_NOTES
                     });
             }

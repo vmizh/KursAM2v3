@@ -4,22 +4,21 @@ using System.Data.Entity;
 using System.Linq;
 using System.Transactions;
 using Calculates.Materials;
-using Core;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
 using KursAM2.ViewModel.Logistiks;
 using KursDomain;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
-
+using KursDomain.References;
 
 namespace KursAM2.Managers
 {
     public class InventorySheetManager : DocumentManager<InventorySheetViewModel>
     {
         //private readonly WindowManager myWindowManager = new WindowManager();
-        public List<Warehouse> StoreCollection => MainReferences.Warehouses.Values.ToList();
+        public List<Warehouse> StoreCollection =>
+            GlobalOptions.ReferencesCache.GetWarehousesAll().Cast<Warehouse>().ToList();
 
         public override List<InventorySheetViewModel> GetDocuments()
         {
@@ -32,6 +31,7 @@ namespace KursAM2.Managers
                         .Where(_ => _.DD_TYPE_DC == 2010000005)
                         .ToList();
             }
+
             ret.Clear();
             ret.AddRange(docs.Select(d => new InventorySheetViewModel(d)));
             return ret;
@@ -50,10 +50,7 @@ namespace KursAM2.Managers
                         .ToList();
             }
 
-            foreach (var d in docs)
-            {
-                ret.Add(new InventorySheetViewModel(d));
-            }
+            foreach (var d in docs) ret.Add(new InventorySheetViewModel(d));
             return ret;
         }
 
@@ -72,18 +69,21 @@ namespace KursAM2.Managers
                 docs.AddRange(heads.Where(_ => _.SD_271.SKL_NAME.ToUpper().Contains(searchText.ToUpper())));
                 var noms = new List<SD_24>();
                 foreach (
-                    var h in heads.Where(h => h.TD_24.Select(item => MainReferences.GetNomenkl(item.DDT_NOMENKL_DC))
+                    var h in heads.Where(h => h.TD_24
+                        .Select(item => GlobalOptions.ReferencesCache.GetNomenkl(item.DDT_NOMENKL_DC))
                         .Any(nom => nom.NomenklNumber.ToUpper().Contains(searchText.ToUpper())
-                                    || nom.Name.ToUpper().Contains(searchText.ToUpper()))))
+                                    || ((IName)nom).Name.ToUpper().Contains(searchText.ToUpper()))))
                 {
                     noms.Add(h);
                     break;
                 }
+
                 foreach (
                     var n in
                     from n in noms let dcs = docs.Where(_ => _.DOC_CODE == n.DOC_CODE) where !dcs.Any() select n)
                     docs.Add(n);
             }
+
             return docs.Select(d => new InventorySheetViewModel(d)).ToList();
         }
 
@@ -103,7 +103,7 @@ namespace KursAM2.Managers
                                 dh.DD_SKLAD_OTPR_DC = doc.Warehouse.DocCode;
                                 dh.DD_SKLAD_POL_DC = doc.Warehouse.DocCode;
                                 dh.DD_DATE = doc.Date;
-                                dh.DD_EXECUTED = (short) (doc.IsClosed ? 1 : 0);
+                                dh.DD_EXECUTED = (short)(doc.IsClosed ? 1 : 0);
                                 dh.DD_POLUCH_NAME = doc.Warehouse.Name;
                                 dh.DD_OTRPAV_NAME = doc.Warehouse.Name;
                                 dh.DD_NOTES = doc.Note;
@@ -132,8 +132,8 @@ namespace KursAM2.Managers
                                                     DOC_CODE = doc.DocCode,
                                                     CODE = code,
                                                     DDT_NOMENKL_DC = dr.Nomenkl.DocCode,
-                                                    DDT_OSTAT_NOV = (double?) dr.QuantityFact,
-                                                    DDT_OSTAT_STAR = (double?) dr.QuantityCalc,
+                                                    DDT_OSTAT_NOV = (double?)dr.QuantityFact,
+                                                    DDT_OSTAT_STAR = (double?)dr.QuantityCalc,
                                                     DDT_KOL_PRIHOD = dr.Difference >= 0 ? dr.Difference : 0,
                                                     DDT_KOL_RASHOD = dr.Difference < 0 ? -dr.Difference : 0,
                                                     DDT_ED_IZM_DC = ((IDocCode)dr.Nomenkl.Unit).DocCode,
@@ -142,12 +142,12 @@ namespace KursAM2.Managers
                                                     DDT_TAX_CRS_CENA = dr.Price,
                                                     DDT_FACT_CENA = dr.Price,
                                                     DDT_FACT_CRS_CENA = dr.Price,
-                                                    DDT_TAX_EXECUTED = (short) (dr.IsTaxExecuted ? 1 : 0),
+                                                    DDT_TAX_EXECUTED = (short)(dr.IsTaxExecuted ? 1 : 0),
                                                     DDT_SHPZ_DC = 13030000006,
                                                     DocId = doc.Id,
                                                     Id = Guid.NewGuid(),
                                                     DDT_CENA_V_UCHET_VALUTE = 0,
-                                                    DDT_SUMMA_V_UCHET_VALUTE = 0,
+                                                    DDT_SUMMA_V_UCHET_VALUTE = 0
                                                 }
                                             ));
                                             code++;
@@ -158,20 +158,21 @@ namespace KursAM2.Managers
                                             row.DDT_NOMENKL_DC = dr.Nomenkl.DocCode;
                                             row.DDT_KOL_PRIHOD = dr.Difference >= 0 ? dr.Difference : 0;
                                             row.DDT_KOL_RASHOD = dr.Difference < 0 ? -dr.Difference : 0;
-                                            row.DDT_OSTAT_NOV = (double?) dr.QuantityFact;
-                                            row.DDT_OSTAT_STAR = (double?) dr.QuantityCalc;
+                                            row.DDT_OSTAT_NOV = (double?)dr.QuantityFact;
+                                            row.DDT_OSTAT_STAR = (double?)dr.QuantityCalc;
                                             row.DDT_ED_IZM_DC = ((IDocCode)dr.Nomenkl.Unit).DocCode;
-                                            row.DDT_CRS_DC =  ((IDocCode)dr.Nomenkl.Currency).DocCode;
+                                            row.DDT_CRS_DC = ((IDocCode)dr.Nomenkl.Currency).DocCode;
                                             row.DDT_TAX_CENA = dr.Price;
                                             row.DDT_TAX_CRS_CENA = dr.Price;
                                             row.DDT_FACT_CENA = dr.Price;
                                             row.DDT_FACT_CRS_CENA = dr.Price;
-                                            row.DDT_TAX_EXECUTED = (short) (dr.IsTaxExecuted ? 1 : 0);
+                                            row.DDT_TAX_EXECUTED = (short)(dr.IsTaxExecuted ? 1 : 0);
                                             row.DDT_SHPZ_DC = 13030000006;
                                             row.DDT_CENA_V_UCHET_VALUTE = 0;
                                             row.DDT_SUMMA_V_UCHET_VALUTE = 0;
                                             break;
                                     }
+
                                 break;
                             case RowStatus.NewRow:
                                 var dc = ctx.SD_24.Any() ? ctx.SD_24.Max(_ => _.DOC_CODE) + 1 : 10240000001;
@@ -181,7 +182,7 @@ namespace KursAM2.Managers
                                 {
                                     DOC_CODE = dc,
                                     DD_DATE = doc.Date,
-                                    DD_EXECUTED = (short) (doc.IsClosed ? 1 : 0),
+                                    DD_EXECUTED = (short)(doc.IsClosed ? 1 : 0),
                                     DD_TYPE_DC = 2010000005,
                                     DD_NOTES = doc.Note,
                                     Id = id,
@@ -200,17 +201,17 @@ namespace KursAM2.Managers
                                         DOC_CODE = dc,
                                         CODE = rowNum,
                                         DDT_NOMENKL_DC = dr.Nomenkl.DocCode,
-                                        DDT_OSTAT_NOV = (double?) dr.QuantityFact,
-                                        DDT_OSTAT_STAR = (double?) dr.QuantityCalc,
+                                        DDT_OSTAT_NOV = (double?)dr.QuantityFact,
+                                        DDT_OSTAT_STAR = (double?)dr.QuantityCalc,
                                         DDT_KOL_PRIHOD = dr.Difference >= 0 ? dr.Difference : 0,
                                         DDT_KOL_RASHOD = dr.Difference < 0 ? -dr.Difference : 0,
-                                        DDT_ED_IZM_DC =  ((IDocCode)dr.Nomenkl.Unit).DocCode,
-                                        DDT_CRS_DC =  ((IDocCode)dr.Nomenkl.Currency).DocCode,
+                                        DDT_ED_IZM_DC = ((IDocCode)dr.Nomenkl.Unit).DocCode,
+                                        DDT_CRS_DC = ((IDocCode)dr.Nomenkl.Currency).DocCode,
                                         DDT_TAX_CENA = dr.Price,
                                         DDT_TAX_CRS_CENA = dr.Price,
                                         DDT_FACT_CENA = dr.Price,
                                         DDT_FACT_CRS_CENA = dr.Price,
-                                        DDT_TAX_EXECUTED = (short) (dr.IsTaxExecuted ? 1 : 0),
+                                        DDT_TAX_EXECUTED = (short)(dr.IsTaxExecuted ? 1 : 0),
                                         DDT_SHPZ_DC = 13030000006,
                                         DocId = id,
                                         Id = dr.Id,
@@ -219,8 +220,10 @@ namespace KursAM2.Managers
                                     });
                                     rowNum++;
                                 }
+
                                 break;
                         }
+
                         if (GlobalOptions.SystemProfile.NomenklCalcType == NomenklCalcType.NakladSeparately)
                         {
                             var calc = new NomenklCostMediumSliding(ctx);
@@ -235,6 +238,7 @@ namespace KursAM2.Managers
                                 calc.Save(ops);
                             }
                         }
+
                         ctx.SaveChanges();
                         tnx.Commit();
                         return null;
@@ -363,6 +367,7 @@ namespace KursAM2.Managers
                 else
                     num = n.Max(_ => _.DD_IN_NUM) + 1;
             }
+
             var ret = new InventorySheetViewModel(null)
             {
                 Date = DateTime.Today,
@@ -397,6 +402,7 @@ namespace KursAM2.Managers
                     };
                     break;
             }
+
             return ret;
         }
 

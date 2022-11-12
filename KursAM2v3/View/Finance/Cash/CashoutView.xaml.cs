@@ -114,7 +114,7 @@ namespace KursAM2.View.Finance.Cash
                             ctx.CurrencyList.Clear();
                             foreach (var dc in crslst)
                                 ctx.CurrencyList.Add(
-                                    MainReferences.Currencies.Values.FirstOrDefault(_ => _.DocCode == dc));
+                                    GlobalOptions.ReferencesCache.GetCurrency(dc) as Currency);
                         }
                     }
                     catch (Exception ex)
@@ -472,7 +472,7 @@ namespace KursAM2.View.Finance.Cash
                         .ToList();
                     ctx.CurrencyList.Clear();
                     foreach (var dc in crslst)
-                        ctx.CurrencyList.Add(MainReferences.Currencies.Values.FirstOrDefault(_ => _.DocCode == dc));
+                        ctx.CurrencyList.Add(GlobalOptions.ReferencesCache.GetCurrency(dc) as Currency);
                 }
             }
             catch (Exception ex)

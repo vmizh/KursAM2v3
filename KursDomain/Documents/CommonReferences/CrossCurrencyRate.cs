@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
@@ -226,17 +225,16 @@ public class CrossCurrencyRate : RSViewModelBase
     {
         CurrencyList.Clear();
         var rates = CurrencyRate.GetRate(date);
-        foreach (var c in MainReferences.Currencies.Values.Where(_ => _.DocCode == CurrencyCode.RUB))
+        foreach (var c in GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<References.Currency>()
+                     .Where(_ => _.DocCode == CurrencyCode.RUB))
             CurrencyList.Add(new CrossCurrencyRate
             {
                 Currency = c,
                 CurrencyRUB = 1,
-                CurrencyEUR = rates[MainReferences.Currencies[CurrencyCode.EUR]],
-                CurrencyGBP = rates[MainReferences.Currencies[CurrencyCode.GBP]],
-                CurrencyUSD = rates[MainReferences.Currencies[CurrencyCode.USD]],
-                CurrencyCNY = rates.ContainsKey(MainReferences.Currencies[CurrencyCode.CNY])
-                    ? rates[MainReferences.Currencies[CurrencyCode.CNY]]
-                    : 0
+                CurrencyEUR = rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR)],
+                CurrencyGBP = rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP)],
+                CurrencyUSD = rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD)],
+                CurrencyCNY = rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY)]
             });
     }
 }

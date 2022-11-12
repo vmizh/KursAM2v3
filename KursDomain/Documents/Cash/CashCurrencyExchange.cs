@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Windows.Controls;
-using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
@@ -45,15 +43,12 @@ public class CashCurrencyExchange : RSViewModelBase, IEntity<SD_251>
 
     public CashCurrencyExchange(SD_251 entity)
     {
-        Entity = entity ?? new SD_251 {DOC_CODE = -1};
+        Entity = entity ?? new SD_251 { DOC_CODE = -1 };
         if (Entity.DOC_CODE < 0) myKontragentType = CashCurrencyExchangeKontragentType.NotChoice;
-        if (CH_CASH_DC != 0) Cash = GlobalOptions.ReferencesCache.GetCashBox(CH_CASH_DC) as CashBox;
-        if (CH_SHPZ_DC != null)
-            SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(CH_SHPZ_DC) as SDRSchet;
-        if (TABELNUMBER != null)
-            Employee = MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == TABELNUMBER.Value);
-        if (CH_KONTRAGENT_DC != null)
-            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(CH_KONTRAGENT_DC) as Kontragent;
+        Cash = GlobalOptions.ReferencesCache.GetCashBox(CH_CASH_DC) as CashBox;
+        SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(CH_SHPZ_DC) as SDRSchet;
+        Employee = GlobalOptions.ReferencesCache.GetEmployee(TABELNUMBER) as References.Employee;
+        Kontragent = GlobalOptions.ReferencesCache.GetKontragent(CH_KONTRAGENT_DC) as Kontragent;
         myKontragentType = Kontragent != null ? CashCurrencyExchangeKontragentType.Kontragent :
             Employee != null ? CashCurrencyExchangeKontragentType.Employee :
             CashCurrencyExchangeKontragentType.NotChoice;
@@ -183,7 +178,7 @@ public class CashCurrencyExchange : RSViewModelBase, IEntity<SD_251>
 
     public References.Currency CurrencyOut
     {
-        get => myCurrencyOut ?? (CH_CRS_OUT_DC != null ? MainReferences.Currencies[CH_CRS_OUT_DC.Value] : null);
+        get => (myCurrencyOut ?? GlobalOptions.ReferencesCache.GetCurrency(CH_CRS_OUT_DC)) as References.Currency;
         set
         {
             if (Equals(myCurrencyOut, value)) return;
@@ -215,11 +210,11 @@ public class CashCurrencyExchange : RSViewModelBase, IEntity<SD_251>
             else if (CH_CRS_IN_DC == GlobalOptions.SystemProfile.NationalCurrency.DocCode)
                 Entity.CH_CRS_IN_SUM =
                     // ReSharper disable once PossibleInvalidOperationException
-                    CrossRate == 0 ? 0 : decimal.Round((decimal) (Entity.CH_CRS_OUT_SUM * CrossRate), 2);
+                    CrossRate == 0 ? 0 : decimal.Round((decimal)(Entity.CH_CRS_OUT_SUM * CrossRate), 2);
             else
                 Entity.CH_CRS_IN_SUM =
                     // ReSharper disable once PossibleInvalidOperationException
-                    CrossRate == 0 ? 0 : decimal.Round((decimal) (Entity.CH_CRS_OUT_SUM / CrossRate), 2);
+                    CrossRate == 0 ? 0 : decimal.Round((decimal)(Entity.CH_CRS_OUT_SUM / CrossRate), 2);
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(CH_CRS_IN_SUM));
             RaisePropertyChanged();
@@ -250,7 +245,7 @@ public class CashCurrencyExchange : RSViewModelBase, IEntity<SD_251>
 
     public References.Currency CurrencyIn
     {
-        get => myCurrencyIn ?? (CH_CRS_IN_DC != null ? MainReferences.Currencies[CH_CRS_IN_DC.Value] : null);
+        get => (myCurrencyIn ?? GlobalOptions.ReferencesCache.GetCurrency(CH_CRS_IN_DC)) as References.Currency;
         set
         {
             if (Equals(myCurrencyIn, value)) return;
@@ -284,8 +279,8 @@ public class CashCurrencyExchange : RSViewModelBase, IEntity<SD_251>
                 Entity.CH_CRS_OUT_SUM =
                     decimal.Round(
                         // ReSharper disable once PossibleInvalidOperationException
-                        (decimal) (Entity.CH_CRS_IN_SUM *
-                                   (CurrencyIn.DocCode == CurrencyCode.RUB ? 1m / CrossRate : CrossRate)), 2);
+                        (decimal)(Entity.CH_CRS_IN_SUM *
+                                  (CurrencyIn.DocCode == CurrencyCode.RUB ? 1m / CrossRate : CrossRate)), 2);
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(CH_CRS_OUT_SUM));
         }
@@ -349,11 +344,11 @@ public class CashCurrencyExchange : RSViewModelBase, IEntity<SD_251>
 
     public decimal? CrossRate
     {
-        get => (decimal?) Entity.CH_CROSS_RATE;
+        get => (decimal?)Entity.CH_CROSS_RATE;
         set
         {
             if (Convert.ToDecimal(CH_CROSS_RATE) == value) return;
-            Entity.CH_CROSS_RATE = (double?) value;
+            Entity.CH_CROSS_RATE = (double?)value;
             if (IsBackCalc)
             {
                 if ((Entity.CH_CROSS_RATE ?? 0) == 0)
@@ -362,7 +357,7 @@ public class CashCurrencyExchange : RSViewModelBase, IEntity<SD_251>
                 {
                     Entity.CH_CRS_IN_SUM =
                         // ReSharper disable once PossibleInvalidOperationException
-                        CrossRate == 0 ? 0 : decimal.Round((decimal) (Entity.CH_CRS_OUT_SUM / CrossRate), 2);
+                        CrossRate == 0 ? 0 : decimal.Round((decimal)(Entity.CH_CRS_OUT_SUM / CrossRate), 2);
                 }
             }
             else
@@ -376,7 +371,7 @@ public class CashCurrencyExchange : RSViewModelBase, IEntity<SD_251>
                             ? 0
                             : decimal.Round(
                                 // ReSharper disable once PossibleInvalidOperationException
-                                (decimal) (Entity.CH_CRS_IN_SUM * (CurrencyIn.DocCode == CurrencyCode.RUB
+                                (decimal)(Entity.CH_CRS_IN_SUM * (CurrencyIn.DocCode == CurrencyCode.RUB
                                     ? 1m / CrossRate
                                     : CrossRate)), 2);
                 }
@@ -405,7 +400,7 @@ public class CashCurrencyExchange : RSViewModelBase, IEntity<SD_251>
         set
         {
             if (CH_DIRECTION == 1 == value) return;
-            CH_DIRECTION = (short?) (value ? 1 : 0);
+            CH_DIRECTION = (short?)(value ? 1 : 0);
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(IsSummaInEnabled));
             RaisePropertyChanged(nameof(IsSummaOutEnabled));
@@ -602,7 +597,7 @@ public class CashCurrencyExchange : RSViewModelBase, IEntity<SD_251>
 
     public SD_251 DefaultValue()
     {
-        return new SD_251 {DOC_CODE = -1};
+        return new SD_251 { DOC_CODE = -1 };
     }
 
     public decimal DOC_CODE
@@ -652,12 +647,15 @@ public class CashCurrencyExchange : RSViewModelBase, IEntity<SD_251>
             {
                 var rates = CurrencyRate.GetRate(CH_DATE);
                 if (CH_CRS_IN_DC != null)
-                    CrsInCBRate = rates[MainReferences.Currencies[CH_CRS_IN_DC.Value]];
+                    CrsInCBRate =
+                        rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CH_CRS_IN_DC.Value)];
                 if (CH_CRS_OUT_DC != null)
-                    CrsOutCBRate = rates[MainReferences.Currencies[CH_CRS_OUT_DC.Value]];
+                    CrsOutCBRate =
+                        rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CH_CRS_OUT_DC.Value)];
                 if (CH_CRS_IN_DC != null && CH_CRS_OUT_DC != null)
-                    CrossRate = CurrencyRate.GetCBSummaRate(MainReferences.Currencies[CH_CRS_IN_DC.Value],
-                        MainReferences.Currencies[CH_CRS_OUT_DC.Value], rates);
+                    CrossRate = CurrencyRate.GetCBSummaRate(
+                        (References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CH_CRS_IN_DC.Value),
+                        (References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CH_CRS_OUT_DC.Value), rates);
                 else
                     CrossRate = 0;
             }
@@ -685,7 +683,7 @@ public class CashCurrencyExchange : RSViewModelBase, IEntity<SD_251>
             {
                 case CashCurrencyExchangeKontragentType.Kontragent:
                     return CH_KONTRAGENT_DC != null
-                        ? MainReferences.GetKontragent(CH_KONTRAGENT_DC).Name
+                        ? ((IName)GlobalOptions.ReferencesCache.GetKontragent(CH_KONTRAGENT_DC)).Name
                         : null;
                 case CashCurrencyExchangeKontragentType.Employee:
                     return TABELNUMBER != null

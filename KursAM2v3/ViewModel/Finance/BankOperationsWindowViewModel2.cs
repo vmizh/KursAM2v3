@@ -82,20 +82,19 @@ namespace KursAM2.ViewModel.Finance
                 if (CurrentBankOperations.CurrencyRateForReference == 0)
                 {
                     decimal rate = 1;
-                    if (((IDocCode)CurrentBankAccount.Currency).DocCode != GlobalOptions.SystemProfile.NationalCurrency.DocCode)
+                    if (((IDocCode)CurrentBankAccount.Currency).DocCode !=
+                        GlobalOptions.SystemProfile.NationalCurrency.DocCode)
                     {
                         var rates = CurrencyRate.GetRate(DateTime.Today);
                         if (rates.ContainsKey(CurrentBankAccount.Currency as Currency))
-                        {
                             rate = rates[CurrentBankAccount.Currency as Currency];
-                        }
                         CurrentBankOperations.CurrencyRateForReference = rate;
                     }
-
                 }
+
                 var k = StandartDialogs.OpenBankOperation(CurrentBankAccount.DocCode,
                     CurrentBankOperations,
-                    MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
+                    GlobalOptions.ReferencesCache.GetBankAccount(CurrentBankAccount.DocCode) as BankAccount);
                 if (k != null)
                 {
                     k.State = RowStatus.Edited;
@@ -128,7 +127,7 @@ namespace KursAM2.ViewModel.Finance
                 //    CurrencyRateForReference = rate
                 //};
                 var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode, new BankOperationsViewModel(),
-                    MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
+                    GlobalOptions.ReferencesCache.GetBankAccount(CurrentBankAccount.DocCode) as BankAccount);
                 if (k != null)
                 {
                     k.State = RowStatus.NewRow;
@@ -153,7 +152,6 @@ namespace KursAM2.ViewModel.Finance
 
         public override void RefreshData(object obj)
         {
-
             base.RefreshData(obj);
             decimal bs = 0;
             if (CurrentBankAccount != null)
@@ -161,16 +159,15 @@ namespace KursAM2.ViewModel.Finance
             BankOperationsCollection.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var cashAcc = ctx.Database.SqlQuery<MainReferences.AccessRight>(
+                var cashAcc = ctx.Database.SqlQuery<AccessRight>(
                         $"SELECT DOC_CODE AS DocCode, USR_ID as UserId FROM HD_114 WHERE USR_ID = {GlobalOptions.UserInfo.Id}")
                     .ToList();
-                ObservableCollection<BankAccount> temp = new ObservableCollection<BankAccount>();
-                foreach (var b in MainReferences.BankAccounts.Values)
+                var temp = new ObservableCollection<BankAccount>();
+                foreach (var b in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>())
                     if (cashAcc.Any(_ => _.DocCode == b.DocCode))
                     {
-                        
-                        var sql = $"SELECT COUNT(*) FROM TD_101 " +
-                                  $"INNER JOIN SD_101 ON SD_101.DOC_CODE = TD_101.DOC_CODE " +
+                        var sql = "SELECT COUNT(*) FROM TD_101 " +
+                                  "INNER JOIN SD_101 ON SD_101.DOC_CODE = TD_101.DOC_CODE " +
                                   // ReSharper disable once PossibleNullReferenceException
                                   $"AND VV_ACC_DC = {b.DocCode}" +
                                   $"AND VV_STOP_DATE >= '{CustomFormat.DateToString(DateTime.Today.AddDays(-180))}'";
@@ -180,9 +177,7 @@ namespace KursAM2.ViewModel.Finance
                     }
 
                 foreach (var t in temp.OrderByDescending(_ => _.LastYearOperationsCount).ThenBy(_ => _.Name))
-                {
                     BankAccountCollection.Add(t);
-                }
             }
 
             RaisePropertyChanged(nameof(BankAccountCollection));
@@ -238,7 +233,7 @@ namespace KursAM2.ViewModel.Finance
             {
                 Document =
                 {
-                    BankFrom = MainReferences.BankAccounts[CurrentBankAccount.DocCode]
+                    BankFrom = GlobalOptions.ReferencesCache.GetBankAccount(CurrentBankAccount.DocCode) as BankAccount
                 },
                 ParentForm = this
             };
@@ -250,7 +245,8 @@ namespace KursAM2.ViewModel.Finance
                         .Include(_ => _.SD_101)
                         .Where(_ => _.SD_101.VV_ACC_DC == CurrentBankAccount.DocCode).Select(_ => _.VVT_CRS_DC)
                         .Distinct().ToList();
-                    if (data.Count > 0) ctx.Document.CurrencyFrom = MainReferences.Currencies[data.First()];
+                    if (data.Count > 0)
+                        ctx.Document.CurrencyFrom = GlobalOptions.ReferencesCache.GetCurrency(data.First()) as Currency;
                 }
                 catch (Exception e)
                 {
@@ -298,7 +294,7 @@ namespace KursAM2.ViewModel.Finance
             if (CurrentBankAccount != null)
             {
                 var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode, CurrentBankOperations,
-                    MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
+                    GlobalOptions.ReferencesCache.GetBankAccount(CurrentBankAccount.DocCode) as BankAccount);
                 if (k != null)
                 {
                     k.State = RowStatus.NewRow;
@@ -370,7 +366,8 @@ namespace KursAM2.ViewModel.Finance
                 myCurrentBankAccount = value;
                 if (myCurrentBankAccount != null)
                 {
-                    Currency =GlobalOptions.ReferencesCache.GetBankAccount(myCurrentBankAccount.DocCode).Currency as Currency;
+                    Currency =
+                        GlobalOptions.ReferencesCache.GetBankAccount(myCurrentBankAccount.DocCode).Currency as Currency;
                     GetPeriods();
                 }
 
@@ -386,7 +383,7 @@ namespace KursAM2.ViewModel.Finance
         {
             set
             {
-                if (Equals(myCurrentPeriods,value)) return;
+                if (Equals(myCurrentPeriods, value)) return;
                 myCurrentPeriods = value;
                 if (myCurrentPeriods != null)
                     GetBankOperation();
@@ -401,7 +398,7 @@ namespace KursAM2.ViewModel.Finance
         {
             set
             {
-                if (Equals(myCurrentBankOperations,value)) return;
+                if (Equals(myCurrentBankOperations, value)) return;
                 if (myCurrentBankOperations != null && myCurrentBankOperations.State == RowStatus.Edited
                                                     && CurrentBankAccount != null &&
                                                     myCurrentBankOperations.IsCurrencyChange == false)
@@ -418,9 +415,9 @@ namespace KursAM2.ViewModel.Finance
             get => myCurrentBankOperations;
         }
 
-        private KursDomain.References.Currency myCurrency;
+        private Currency myCurrency;
 
-        public KursDomain.References.Currency Currency
+        public Currency Currency
         {
             get => myCurrency;
             set

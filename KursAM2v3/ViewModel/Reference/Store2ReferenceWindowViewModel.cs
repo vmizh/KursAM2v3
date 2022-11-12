@@ -15,6 +15,7 @@ using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -44,7 +45,7 @@ namespace KursAM2.ViewModel.Reference
 
         #region Properties
 
-        public new List<Warehouse> Rows { set; get; } = new List<Warehouse>();
+        public new List<WarehouseViewModel> Rows { set; get; } = new List<WarehouseViewModel>();
 
         #endregion
 
@@ -75,7 +76,7 @@ namespace KursAM2.ViewModel.Reference
                     regionEdit.DefaultButtonClick += RegionEdit_DefaultButtonClick;
                     col.EditSettings = regionEdit;
                     break;
-                case nameof(Warehouse.Employee):
+                case nameof(Warehouse.StoreKeeper):
                     var empEdit = new ButtonEditSettings
                     {
                         TextWrapping = TextWrapping.Wrap,
@@ -94,14 +95,14 @@ namespace KursAM2.ViewModel.Reference
 
         private void EmpEdit_DefaultButtonClick(object sender, RoutedEventArgs e)
         {
-            if (!(CurrentRow is Warehouse cur)) return;
+            if (!(CurrentRow is WarehouseViewModel cur)) return;
             var emp = StandartDialogs.SelectEmployee();
             cur.Employee = emp;
         }
 
         private void RegionEdit_DefaultButtonClick(object sender, RoutedEventArgs e)
         {
-            if (!(CurrentRow is Warehouse cur)) return;
+            if (!(CurrentRow is WarehouseViewModel cur)) return;
             var reg = StandartDialogs.SelectRegion();
             cur.Region = reg;
         }
@@ -110,12 +111,12 @@ namespace KursAM2.ViewModel.Reference
 
         public override void SaveData(object data)
         {
-            var lst = new List<Warehouse>();
+            var lst = new List<WarehouseViewModel>();
             foreach (var row in Rows)
                 if (row.State != RowStatus.NotEdited)
                     lst.Add(row);
             foreach (var row in DeletedRows)
-                lst.Add((Warehouse)row);
+                lst.Add((WarehouseViewModel)row);
             if (lst.Count <= 0) return;
             if (!Manager.Save(lst)) return;
             foreach (var r in Rows)
@@ -128,7 +129,7 @@ namespace KursAM2.ViewModel.Reference
         {
             if (CurrentRow != null)
             {
-                var newItem = Manager.New((Warehouse)CurrentRow);
+                var newItem = Manager.New((WarehouseViewModel)CurrentRow);
                 newItem.Parent = CurrentRow;
                 Rows.Add(newItem);
                 SetNewItemInControl(newItem);
@@ -143,14 +144,14 @@ namespace KursAM2.ViewModel.Reference
 
         public override void ItemNewChildEmpty(object obj)
         {
-            var newItem = Manager.New((Warehouse)CurrentRow);
+            var newItem = Manager.New((WarehouseViewModel)CurrentRow);
             Rows.Add(newItem);
             SetNewItemInControl(newItem);
         }
 
         public override void ItemNewCopy(object obj)
         {
-            var newItem = Manager.NewCopy((Warehouse)CurrentRow);
+            var newItem = Manager.NewCopy((WarehouseViewModel)CurrentRow);
             Rows.Add(newItem);
             SetNewItemInControl(newItem);
         }

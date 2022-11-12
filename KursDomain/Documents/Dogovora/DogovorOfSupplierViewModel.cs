@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -49,7 +48,8 @@ public class DogovorOfSupplierViewModel : RSWindowViewModelBase, IDataErrorInfo,
 
     #region Properties
 
-    public ObservableCollection<DogovorOfSupplierRowViewModel> Rows { set; get; } = new();
+    public ObservableCollection<DogovorOfSupplierRowViewModel> Rows { set; get; } =
+        new ObservableCollection<DogovorOfSupplierRowViewModel>();
 
     public DogovorOfSupplier Entity
     {
@@ -171,10 +171,10 @@ public class DogovorOfSupplierViewModel : RSWindowViewModelBase, IDataErrorInfo,
 
     public References.Employee OtvetstvenLico
     {
-        get => MainReferences.GetEmployee((int?) Entity.OtvetstvenTN);
+        get => GlobalOptions.ReferencesCache.GetEmployee(Entity.OtvetstvenTN) as References.Employee;
         set
         {
-            if (MainReferences.GetEmployee(Entity.OtvetstvenTN as int?) == value) return;
+            if (GlobalOptions.ReferencesCache.GetEmployee(Entity.OtvetstvenTN) == value) return;
             Entity.OtvetstvenTN = value?.TabelNumber ?? 0;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Entity.OtvetstvenTN));
@@ -183,10 +183,10 @@ public class DogovorOfSupplierViewModel : RSWindowViewModelBase, IDataErrorInfo,
 
     public ContractType DogType
     {
-        get => MainReferences.GetContractType(Entity.DogType);
+        get => GlobalOptions.ReferencesCache.GetContractType(Entity.DogType) as ContractType;
         set
         {
-            if (MainReferences.GetContractType(Entity.DogType) == value) return;
+            if (GlobalOptions.ReferencesCache.GetContractType(Entity.DogType) == value) return;
             Entity.DogType = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }

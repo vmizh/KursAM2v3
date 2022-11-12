@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Calculates.Materials;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursDomain;
@@ -16,7 +15,7 @@ namespace KursAM2.ViewModel.Logistiks
     public class NomenklMoveWindowViewModel : RSWindowViewModelBase
     {
         private NomenklCalcCostOperation myCurrentOperation;
-        private KursDomain.Documents.NomenklManagement.Warehouse myCurrentWarehouse;
+        private KursDomain.References.Warehouse myCurrentWarehouse;
         private DateTime myDateForSklad;
         private Nomenkl mySelectedNomenkl;
 
@@ -30,20 +29,21 @@ namespace KursAM2.ViewModel.Logistiks
         }
 
         // ReSharper disable once CollectionNeverQueried.Global
-        public ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse> StoreCollection { set; get; } =
-            new ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse>();
+        public ObservableCollection<KursDomain.References.Warehouse> StoreCollection { set; get; } =
+            new ObservableCollection<KursDomain.References.Warehouse>();
 
         public List<Nomenkl> Nomenkls =>
-            MainReferences.ALLNomenkls.Values.Where(_ => _.IsUsluga == false).ToList();
+            GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>().Where(_ => _.IsUsluga == false)
+                .OrderBy(_ => _.Name).ToList();
 
         public List<NomenklCalcCostOperation> Operations { set; get; }
 
-        public KursDomain.Documents.NomenklManagement.Warehouse CurrentWarehouse
+        public KursDomain.References.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set
             {
-                if (Equals(myCurrentWarehouse,value)) return;
+                if (Equals(myCurrentWarehouse, value)) return;
                 myCurrentWarehouse = value;
                 LoadOstatki();
                 RaisePropertyChanged();
@@ -67,7 +67,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentOperation;
             set
             {
-                if (Equals(myCurrentOperation,value)) return;
+                if (Equals(myCurrentOperation, value)) return;
                 myCurrentOperation = value;
                 if (myCurrentOperation != null)
                     CalcOstatki(myCurrentOperation);
@@ -82,7 +82,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => mySelectedNomenkl;
             set
             {
-                if (Equals(mySelectedNomenkl,value)) return;
+                if (Equals(mySelectedNomenkl, value)) return;
                 mySelectedNomenkl = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(NomenklNumber));
@@ -168,7 +168,11 @@ namespace KursAM2.ViewModel.Logistiks
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     foreach (var c in ctx.SD_27)
-                        StoreCollection.Add(new KursDomain.Documents.NomenklManagement.Warehouse(c));
+                    {
+                        var newItem = new KursDomain.References.Warehouse();
+                        newItem.LoadFromEntity(c, GlobalOptions.ReferencesCache);
+                        StoreCollection.Add(newItem);
+                    }
                 }
             }
             catch (Exception ex)
@@ -194,7 +198,7 @@ namespace KursAM2.ViewModel.Logistiks
                 NomenklRemains.Add(
                     new NomenklRemainWithPrice
                     {
-                        Nomenkl = MainReferences.GetNomenkl(nom.NomenklDC),
+                        Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(nom.NomenklDC) as Nomenkl,
                         IsSelected = false,
                         Quantity = nom.Remain,
                         Price = nom.Price

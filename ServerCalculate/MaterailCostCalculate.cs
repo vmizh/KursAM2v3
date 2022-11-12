@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using Calculates.Materials;
-using Core;
 using KursDomain;
 using KursDomain.References;
 
@@ -83,9 +82,6 @@ namespace ServerCalculate
                         GlobalOptions.SystemProfile.NomenklCalcType = NomenklCalcType.NakladSeparately;
                         break;
                 }
-
-                MainReferences.Reset();
-                
             }
             catch (Exception ex)
             {
@@ -107,7 +103,8 @@ namespace ServerCalculate
                     .ToList();
                 //nomDCs.Clear();
                 //nomDCs.Add(10830000041);
-                var noms = nomDCs.Select(MainReferences.GetNomenkl).Where(newNom => !newNom.IsUsluga).ToList();
+                var noms = nomDCs.Select(GlobalOptions.ReferencesCache.GetNomenkl).Where(newNom => !newNom.IsUsluga)
+                    .Cast<Nomenkl>().ToList();
                 Console.WriteLine("Кол-во = {0}", noms.Count);
                 if (!noms.Any()) return;
                 foreach (var op in noms.Select(_ => _.DocCode))

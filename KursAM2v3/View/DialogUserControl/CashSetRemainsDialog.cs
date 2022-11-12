@@ -2,17 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursDomain;
 using KursDomain.Documents.Cash;
 using KursDomain.ICommon;
 using KursDomain.References;
-using Enumerable = System.Linq.Enumerable;
-using Queryable = System.Linq.Queryable;
 
 namespace KursAM2.View.DialogUserControl
 {
@@ -35,14 +33,14 @@ namespace KursAM2.View.DialogUserControl
             new ObservableCollection<CashStartRemains>();
 
         public ObservableCollection<Currency> CurrencyList { set; get; } =
-            new ObservableCollection<Currency>(MainReferences.Currencies.Values);
+            new ObservableCollection<Currency>(GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>());
 
         public CashStartRemains CurrentRemain
         {
             get => myCurrentRemain;
             set
             {
-                if (Equals(myCurrentRemain,value)) return;
+                if (Equals(myCurrentRemain, value)) return;
                 myCurrentRemain = value;
                 RaisePropertyChanged();
             }
@@ -68,10 +66,10 @@ namespace KursAM2.View.DialogUserControl
             CashCurrencies.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                foreach (var d in Enumerable.ToList(Queryable.Where(ctx.TD_22
-                             .Include(_ => _.SD_22), _ => _.DOC_CODE == Cash.DocCode).AsNoTracking()))
+                foreach (var d in ctx.TD_22
+                             .Include(_ => _.SD_22).Where(_ => _.DOC_CODE == Cash.DocCode).AsNoTracking().ToList())
                 {
-                    CashCurrencies.Add(MainReferences.Currencies[d.CRS_DC]);
+                    CashCurrencies.Add(GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC) as Currency);
                     // ReSharper disable once UseObjectOrCollectionInitializer
                     var item = new CashStartRemains(d);
                     CashRemainsCollection.Add(item);
@@ -80,7 +78,7 @@ namespace KursAM2.View.DialogUserControl
                 foreach (var d in CashRemainsCollection)
                 {
                     d.CurrencyList = new ObservableCollection<Currency>();
-                    foreach (var crs in MainReferences.Currencies.Values)
+                    foreach (var crs in GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>())
                         if (!CashCurrencies.Contains(crs))
                             d.CurrencyList.Add(crs);
                     d.CurrencyList.Add(d.Currency);
@@ -111,7 +109,7 @@ namespace KursAM2.View.DialogUserControl
                 CurrencyList = new ObservableCollection<Currency>()
             };
             //foreach (var d in CashRemainsCollection)
-            foreach (var crs in MainReferences.Currencies.Values)
+            foreach (var crs in GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>())
                 if (!CashCurrencies.Contains(crs))
                     newItem.CurrencyList.Add(crs);
             CashRemainsCollection.Add(newItem);
@@ -126,34 +124,31 @@ namespace KursAM2.View.DialogUserControl
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                if (Queryable.Any(ctx.SD_33, _ => _.CA_DC == Cash.DocCode && _.CRS_DC == CurrentRemain.CRS_DC))
+                if (ctx.SD_33.Any(_ => _.CA_DC == Cash.DocCode && _.CRS_DC == CurrentRemain.CRS_DC))
                 {
                     ShowMsg();
                     return;
                 }
 
-                if (Queryable.Any(ctx.SD_34, _ => _.CA_DC == Cash.DocCode && _.CRS_DC == CurrentRemain.CRS_DC))
+                if (ctx.SD_34.Any(_ => _.CA_DC == Cash.DocCode && _.CRS_DC == CurrentRemain.CRS_DC))
                 {
                     ShowMsg();
                     return;
                 }
 
-                if (Queryable.Any(ctx.SD_251,
-                        _ => _.CH_CASH_DC == Cash.DocCode && _.CH_CRS_IN_DC == CurrentRemain.CRS_DC))
+                if (ctx.SD_251.Any(_ => _.CH_CASH_DC == Cash.DocCode && _.CH_CRS_IN_DC == CurrentRemain.CRS_DC))
                 {
                     ShowMsg();
                     return;
                 }
 
-                if (Queryable.Any(ctx.SD_251,
-                        _ => _.CH_CASH_DC == Cash.DocCode && _.CH_CRS_OUT_DC == CurrentRemain.CRS_DC))
+                if (ctx.SD_251.Any(_ => _.CH_CASH_DC == Cash.DocCode && _.CH_CRS_OUT_DC == CurrentRemain.CRS_DC))
                 {
                     ShowMsg();
                     return;
                 }
 
-                var old = Queryable.FirstOrDefault(ctx.TD_22,
-                    _ => _.DOC_CODE == Cash.DocCode && _.CRS_DC == CurrentRemain.CRS_DC);
+                var old = ctx.TD_22.FirstOrDefault(_ => _.DOC_CODE == Cash.DocCode && _.CRS_DC == CurrentRemain.CRS_DC);
                 if (old != null)
                 {
                     ctx.TD_22.Remove(old);

@@ -9,8 +9,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -20,7 +18,6 @@ using KursAM2.View.KursReferences;
 using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
@@ -141,7 +138,7 @@ namespace KursAM2.ViewModel.Reference
             }
         }
 
-        public List<Currency> Currencies => MainReferences.Currencies.Values.ToList();
+        public List<Currency> Currencies => GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>().ToList();
         private CashStartRemains myCurrentRemain;
 
         public CashStartRemains CurrentRemain
@@ -149,7 +146,7 @@ namespace KursAM2.ViewModel.Reference
             get => myCurrentRemain;
             set
             {
-                if (Equals(myCurrentRemain,value)) return;
+                if (Equals(myCurrentRemain, value)) return;
                 myCurrentRemain = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Currencies));
@@ -163,7 +160,7 @@ namespace KursAM2.ViewModel.Reference
             get => myCurrentCash;
             set
             {
-                if (Equals(myCurrentCash,value)) return;
+                if (Equals(myCurrentCash, value)) return;
                 myCurrentCash = value;
                 RaisePropertyChanged();
             }
@@ -176,7 +173,7 @@ namespace KursAM2.ViewModel.Reference
             get => myCurrentBank;
             set
             {
-                if (Equals(myCurrentBank,value)) return;
+                if (Equals(myCurrentBank, value)) return;
                 myCurrentBank = value;
                 RaisePropertyChanged();
             }
@@ -279,7 +276,9 @@ namespace KursAM2.ViewModel.Reference
                 State = RowStatus.NewRow,
                 Name = bank.NickName,
                 BA_BANK_ACCOUNT = 1,
-                CO = MainReferences.COList.Count == 1 ? MainReferences.COList.Values.First() : null,
+                CO = GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll().Count() == 1
+                    ? GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll().First() as CentrResponsibility
+                    : null,
                 BA_CURRENCY = 1,
                 IsNegative = false,
                 BA_BANK_NAME = bank.Name,
@@ -386,10 +385,12 @@ namespace KursAM2.ViewModel.Reference
                 DefaultCurrency = GlobalOptions.SystemProfile.MainCurrency,
                 IsCanNegative = false,
                 StartRemains = new ObservableCollection<CashStartRemains>(),
-                CO = MainReferences.COList.Values.Count == 1 ? MainReferences.COList.Values.First() : null,
+                CO = GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll().Count() == 1
+                    ? GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll().First() as CentrResponsibility
+                    : null,
                 State = RowStatus.NewRow
             };
-            foreach (var c in MainReferences.Currencies.Values.ToList())
+            foreach (var c in GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>().ToList())
                 newCash.StartRemains.Add(new CashStartRemains
                 {
                     Currency = c,
@@ -515,7 +516,6 @@ namespace KursAM2.ViewModel.Reference
                         }
 
                         foreach (var b in Banks) b.myState = RowStatus.NotEdited;
-                        MainReferences.Refresh();
                         RaisePropertyChanged(nameof(IsCanSaveData));
                     }
                     catch (Exception ex)
@@ -681,12 +681,14 @@ namespace KursAM2.ViewModel.Reference
                                         "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Stop);
                                     return;
                                 }
+
                             oldTD22.CASH_DATE_DC = null;
                             oldTD22.SUMMA_START = r.SUMMA_START;
                             oldTD22.DATE_START = r.DATE_START;
-                        } 
+                        }
+
                         break;
-                    case RowStatus.NewRow:                        // ReSharper disable once TooWideLocalVariableScope
+                    case RowStatus.NewRow: // ReSharper disable once TooWideLocalVariableScope
                         var code = ctx.TD_22.Any(_ => _.DOC_CODE == cash.DocCode)
                             ? (int)ctx.TD_22.Where(_ => _.DOC_CODE == cash.DocCode).Max(_ => _.CODE) + 1
                             : 1;

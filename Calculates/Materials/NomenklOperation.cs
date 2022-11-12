@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Core;
+using KursDomain;
 using KursDomain.IReferences;
 using KursDomain.References;
-using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace Calculates.Materials
 {
@@ -38,9 +37,9 @@ namespace Calculates.Materials
                             OperationType = NomenklMoveOperationType.ExpenseInnerMove,
                             Date = oper.Date,
                             Quantity = oper.Expense,
-                            Currency = MainReferences.GetNomenkl(oper.NomenklDC)?.Currency,
-                            Nomenkl = MainReferences.GetNomenkl(oper.NomenklDC),
-                            Warehouse = MainReferences.Warehouses[oper.SkladOtprDC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC)?.Currency,
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC) as Nomenkl,
+                            Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(oper.SkladOtprDC) as Warehouse,
                             Price = null
                         });
                         ret.Add(new NomenklOperation
@@ -51,9 +50,9 @@ namespace Calculates.Materials
                             OperationType = NomenklMoveOperationType.ReceiptInnerMove,
                             Date = oper.Date,
                             Quantity = oper.Receipt,
-                            Currency = MainReferences.GetNomenkl(oper.NomenklDC)?.Currency,
-                            Nomenkl = MainReferences.GetNomenkl(oper.NomenklDC),
-                            Warehouse = MainReferences.Warehouses[oper.SkladPolDC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC)?.Currency,
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC) as Nomenkl,
+                            Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(oper.SkladPolDC) as Warehouse,
                             Price = null
                         });
                         break;
@@ -64,14 +63,14 @@ namespace Calculates.Materials
                             OperId = oper.Id,
                             LinkId = null,
                             OperationType =
-                                MainReferences.GetKontragent(oper.KontrOtpravDC)?.IsBalans == true
+                                GlobalOptions.ReferencesCache.GetKontragent(oper.KontrOtpravDC)?.IsBalans == true
                                     ? NomenklMoveOperationType.ReceiptKontragent
                                     : NomenklMoveOperationType.ReceiptOutBalansKontragent,
                             Date = oper.Date,
                             Quantity = oper.Receipt,
-                            Currency = MainReferences.GetKontragent(oper.KontrOtpravDC)?.BalansCurrency,
-                            Nomenkl = MainReferences.GetNomenkl(oper.NomenklDC),
-                            Warehouse = MainReferences.Warehouses[oper.SkladPolDC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetKontragent(oper.KontrOtpravDC)?.Currency,
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC) as Nomenkl,
+                            Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(oper.SkladPolDC.Value) as Warehouse,
                             Price = oper.SummaIn / oper.Receipt
                         });
                         break;
@@ -87,9 +86,9 @@ namespace Calculates.Materials
                                     : NomenklMoveOperationType.ExpenseInventory,
                             Date = oper.Date,
                             Quantity = oper.Receipt > 0 ? oper.Receipt : oper.Expense,
-                            Currency = MainReferences.GetNomenkl(oper.NomenklDC)?.Currency,
-                            Nomenkl = MainReferences.GetNomenkl(oper.NomenklDC),
-                            Warehouse = MainReferences.Warehouses[oper.SkladPolDC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC)?.Currency,
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC) as Nomenkl,
+                            Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(oper.SkladPolDC) as Warehouse,
                             Price = null
                         });
                         break;
@@ -105,9 +104,9 @@ namespace Calculates.Materials
                                     : NomenklMoveOperationType.ExpenseAssemblyProduct,
                             Date = oper.Date,
                             Quantity = oper.Receipt > 0 ? oper.Receipt : oper.Expense,
-                            Currency = MainReferences.GetNomenkl(oper.NomenklDC)?.Currency,
-                            Nomenkl = MainReferences.GetNomenkl(oper.NomenklDC),
-                            Warehouse = MainReferences.Warehouses[oper.SkladPolDC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC)?.Currency,
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC) as Nomenkl,
+                            Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(oper.SkladPolDC) as Warehouse,
                             Price = null
                         });
                         break;
@@ -123,9 +122,9 @@ namespace Calculates.Materials
                                     : NomenklMoveOperationType.ExpenseDisassemblyProduct,
                             Date = oper.Date,
                             Quantity = oper.Receipt > 0 ? oper.Receipt : oper.Expense,
-                            Currency = MainReferences.GetNomenkl(oper.NomenklDC)?.Currency,
-                            Nomenkl = MainReferences.GetNomenkl(oper.NomenklDC),
-                            Warehouse = MainReferences.Warehouses[oper.SkladPolDC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC)?.Currency,
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC) as Nomenkl,
+                            Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(oper.SkladPolDC) as Warehouse,
                             Price = null
                         });
                         break;
@@ -138,9 +137,9 @@ namespace Calculates.Materials
                             OperationType = NomenklMoveOperationType.ExpenseWriteOff,
                             Date = oper.Date,
                             Quantity = oper.Expense,
-                            Currency = MainReferences.GetNomenkl(oper.NomenklDC)?.Currency,
-                            Nomenkl = MainReferences.GetNomenkl(oper.NomenklDC),
-                            Warehouse = MainReferences.Warehouses[oper.SkladOtprDC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC)?.Currency,
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC) as Nomenkl,
+                            Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(oper.SkladOtprDC) as Warehouse,
                             Price = null
                         });
                         break;
@@ -152,14 +151,14 @@ namespace Calculates.Materials
                             OperId = oper.Id,
                             LinkId = null,
                             OperationType =
-                                MainReferences.GetKontragent(oper.KontrPolDC).IsBalans
+                                GlobalOptions.ReferencesCache.GetKontragent(oper.KontrPolDC).IsBalans
                                     ? NomenklMoveOperationType.ExpenseKontragent
                                     : NomenklMoveOperationType.ExpenseOutBalansKontragent,
                             Date = oper.Date,
                             Quantity = oper.Expense,
-                            Currency = MainReferences.GetKontragent(oper.KontrPolDC)?.BalansCurrency,
-                            Nomenkl = MainReferences.GetNomenkl(oper.NomenklDC),
-                            Warehouse = MainReferences.Warehouses[oper.SkladOtprDC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetKontragent(oper.KontrPolDC)?.Currency,
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(oper.NomenklDC) as Nomenkl,
+                            Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(oper.SkladOtprDC) as Warehouse,
                             Price = null
                         });
                         break;

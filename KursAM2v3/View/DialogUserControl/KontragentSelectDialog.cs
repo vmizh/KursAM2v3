@@ -59,10 +59,6 @@ namespace KursAM2.View.DialogUserControl
             this.kontrDC = kontrDC;
             LayoutControl =
                 myDataUserControl = new KontragentSelectDialogUC();
-            while (!MainReferences.IsReferenceLoadComplete)
-            {
-            }
-
             // ReSharper disable once VirtualMemberCallInConstructor
             WindowName = "Выбор контрагента";
             LoadKontragentFromReference();

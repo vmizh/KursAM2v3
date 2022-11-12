@@ -91,9 +91,6 @@ public static class GlobalOptions
         }.ConnectionString;
         ret.Database.Connection.ConnectionString = SqlConnectionString;
         ret.Database.CommandTimeout = 0;
-        if (MainReferences.IsReferenceLoadComplete)
-            return ret;
-        MainReferences.Reset();
         return ret;
     }
 

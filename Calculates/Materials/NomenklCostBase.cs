@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using Core;
 using JetBrains.Annotations;
 using KursDomain;
 using KursDomain.References;
-using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace Calculates.Materials
 {
@@ -35,7 +33,7 @@ namespace Calculates.Materials
             var currentRowNumber = 0;
             var ret = new NomenklCost
             {
-                Nomenkl = MainReferences.GetNomenkl(nomDC)
+                Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(nomDC) as Nomenkl
             };
             if (ret.Nomenkl.IsUsluga) return null;
             try
@@ -71,14 +69,14 @@ namespace Calculates.Materials
                                 KontrOtprDC = td24.SD_24.DD_KONTR_OTPR_DC,
                                 OperName = td24.SD_24.SD_201.D_NAME,
                                 OperCode = (td24.SD_24.DD_VOZVRAT ?? 0) == 1 ? 25 : td24.SD_24.SD_201.D_OP_CODE,
-                                DocPrice = (decimal) (td24.SD_24.DD_TYPE_DC == 2010000005 ? td24.DDT_TAX_CENA : 0),
+                                DocPrice = (decimal)(td24.SD_24.DD_TYPE_DC == 2010000005 ? td24.DDT_TAX_CENA : 0),
                                 SkladIn = td24.SD_24.DD_SKLAD_POL_DC,
                                 SkladOut = td24.SD_24.DD_SKLAD_OTPR_DC,
                                 SummaIn = (decimal)
                                     (td24.SD_24.DD_TYPE_DC == 2010000005
                                         ? td24.DDT_TAX_CENA * td24.DDT_KOL_PRIHOD
                                         : (td24.TD_26 != null ? td24.TD_26.SFT_ED_CENA ?? 0 : 0) * td24.DDT_KOL_PRIHOD),
-                                SummaInWithNaklad = (decimal) (td24.SD_24.DD_TYPE_DC == 2010000005
+                                SummaInWithNaklad = (decimal)(td24.SD_24.DD_TYPE_DC == 2010000005
                                     ? td24.DDT_TAX_CENA * td24.DDT_KOL_PRIHOD
                                     : (td24.TD_26 != null
                                         ? td24.TD_26.SFT_ED_CENA + td24.TD_26.SFT_SUMMA_NAKLAD / td24.TD_26.SFT_KOL
@@ -106,8 +104,8 @@ namespace Calculates.Materials
                                 CalcPrice = d.Price,
                                 CalcPriceNaklad = d.PriceWONaklad,
                                 DocDate = d.Date,
-                                KontragentIn = (Kontragent) GlobalOptions.ReferencesCache.GetKontragent(d.KontrPolDC),
-                                KontragentOut = (Kontragent) GlobalOptions.ReferencesCache.GetKontragent(d.KontrOtprDC),
+                                KontragentIn = (Kontragent)GlobalOptions.ReferencesCache.GetKontragent(d.KontrPolDC),
+                                KontragentOut = (Kontragent)GlobalOptions.ReferencesCache.GetKontragent(d.KontrOtprDC),
                                 OperationName = d.OperName,
                                 OperCode = d.OperCode,
                                 QuantityIn = d.QuantityIn,
@@ -115,8 +113,12 @@ namespace Calculates.Materials
                                 // ReSharper disable once PossibleInvalidOperationException
                                 DocPrice = d.DocPrice,
                                 Naklad = 0,
-                                SkladIn = d.SkladIn != null ? MainReferences.Warehouses[d.SkladIn.Value] : null,
-                                SkladOut = d.SkladOut != null ? MainReferences.Warehouses[d.SkladOut.Value] : null,
+                                SkladIn = (d.SkladIn != null
+                                    ? GlobalOptions.ReferencesCache.GetWarehouse(d.SkladIn)
+                                    : null) as Warehouse,
+                                SkladOut = (Warehouse)(d.SkladOut != null
+                                    ? GlobalOptions.ReferencesCache.GetWarehouse(d.SkladOut.Value)
+                                    : null),
                                 SummaIn = d.OperCode == 13 ? d.PriceWONaklad * d.QuantityIn : d.SummaIn,
                                 SummaInWithNaklad = d.OperCode == 13 ? d.Price * d.QuantityIn : d.SummaInWithNaklad,
                                 SummaOut = d.Price * d.QuantityOut,
@@ -131,7 +133,7 @@ namespace Calculates.Materials
                                     $"С/ф поставщика №{d.SFPrihodRow.SD_26.SF_IN_NUM}/{d.SFPrihodRow.SD_26.SF_POSTAV_NUM} от {d.SFPrihodRow.SD_26.SF_POSTAV_DATE.ToShortDateString()}";
                                 oper.Naklad = (d.SFPrihodRow.SFT_SUMMA_NAKLAD ?? 0) / d.SFPrihodRow.SFT_KOL;
                                 // ReSharper disable once PossibleInvalidOperationException
-                                oper.DocPrice = (decimal) d.SFPrihodRow.SFT_ED_CENA;
+                                oper.DocPrice = (decimal)d.SFPrihodRow.SFT_ED_CENA;
                             }
 
                             if (d.SFRashodRow != null)
@@ -204,8 +206,12 @@ namespace Calculates.Materials
                                 DocPrice = d.PriceIn,
                                 Naklad = 0,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                SkladIn = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
-                                SkladOut = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
+                                SkladIn =
+                                    GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as
+                                        Warehouse,
+                                SkladOut =
+                                    GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as
+                                        Warehouse,
                                 SummaIn = d.PriceIn * d.Quantity,
                                 SummaInWithNaklad = d.PriceIn * d.Quantity,
                                 SummaOut = d.PriceOut * d.Quantity,
@@ -236,8 +242,12 @@ namespace Calculates.Materials
                                     DocPrice = d.PriceIn,
                                     Naklad = 0,
                                     // ReSharper disable once PossibleInvalidOperationException
-                                    SkladIn = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
-                                    SkladOut = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
+                                    SkladIn =
+                                        GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as
+                                            Warehouse,
+                                    SkladOut =
+                                        GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as
+                                            Warehouse,
                                     SummaIn = d.PriceIn * d.Quantity,
                                     SummaInWithNaklad = d.PriceIn * d.Quantity,
                                     SummaOut = 0,
@@ -266,8 +276,12 @@ namespace Calculates.Materials
                                     QuantityOut = d.Quantity,
                                     DocPrice = d.PriceOut,
                                     Naklad = 0,
-                                    SkladIn = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
-                                    SkladOut = MainReferences.Warehouses[d.NomenklTransfer.SkladDC.Value],
+                                    SkladIn =
+                                        GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as
+                                            Warehouse,
+                                    SkladOut =
+                                        GlobalOptions.ReferencesCache.GetWarehouse(d.NomenklTransfer.SkladDC) as
+                                            Warehouse,
                                     SummaIn = 0,
                                     SummaInWithNaklad = 0,
                                     SummaOut = d.PriceOut * d.Quantity,

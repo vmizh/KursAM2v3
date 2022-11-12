@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core;
 using Core.ViewModel.Base;
 using Data;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.References;
 
 namespace KursDomain.Documents.Dogovora.Old;
@@ -57,10 +55,10 @@ public class TD_9ViewModel : RSViewModelBase, IEntity<TD_9>
 
     public Nomenkl Nomenkl
     {
-        get => MainReferences.GetNomenkl(Entity.ZAKT_NOMENKL_DC);
+        get => GlobalOptions.ReferencesCache.GetNomenkl(Entity.ZAKT_NOMENKL_DC) as Nomenkl;
         set
         {
-            if (MainReferences.GetNomenkl(Entity.ZAKT_NOMENKL_DC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetNomenkl(Entity.ZAKT_NOMENKL_DC) == value) return;
             Entity.ZAKT_NOMENKL_DC = value.DocCode;
             RaisePropertyChanged();
         }

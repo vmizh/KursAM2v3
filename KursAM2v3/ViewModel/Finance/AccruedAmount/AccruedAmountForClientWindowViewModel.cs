@@ -6,7 +6,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -46,7 +45,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             var doc = id != null ? GenericRepository.GetById(id.Value) : null;
             if (doc == null)
             {
-                Document = new AccruedAmountForClientViewModel {State = RowStatus.NewRow};
+                Document = new AccruedAmountForClientViewModel { State = RowStatus.NewRow };
                 UnitOfWork.Context.AccruedAmountForClient.Add(Document.Entity);
             }
             else
@@ -199,7 +198,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             vm.Document.Cash = GlobalOptions.ReferencesCache.GetCashBox(cash.DocCode) as CashBox;
 
 
-            vm.Document.Cash = MainReferences.Cashs[cash.DocCode];
+            vm.Document.Cash = GlobalOptions.ReferencesCache.GetCashBox(cash.DocCode) as CashBox;
             vm.Document.KontragentType = CashKontragentType.Kontragent;
             vm.Document.KONTRAGENT_DC = Document.Kontragent.DocCode;
             vm.Document.Currency = Document.Kontragent.Currency as Currency;
@@ -232,7 +231,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 var CurrentBankAccount = CurrentAccrual.BankDoc.BankAccount;
                 var k = StandartDialogs.OpenBankOperation(CurrentBankAccount.DocCode,
                     CurrentAccrual.BankDoc,
-                    MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
+                    GlobalOptions.ReferencesCache.GetBankAccount(CurrentBankAccount.DocCode) as BankAccount);
                 if (k != null)
                 {
                     var manager = new BankOperationsManager();
@@ -317,7 +316,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                         VVT_DOC_NUM = CurrentAccrual.Note,
                         State = RowStatus.NewRow
                     },
-                    MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
+                    GlobalOptions.ReferencesCache.GetBankAccount(CurrentBankAccount.DocCode) as BankAccount);
+
                 if (k != null)
                 {
                     k.State = RowStatus.NewRow;

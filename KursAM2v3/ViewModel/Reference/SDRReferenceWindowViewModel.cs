@@ -327,7 +327,6 @@ namespace KursAM2.ViewModel.Reference
 
                         ctx.SaveChanges();
                         tnx.Commit();
-                        MainReferences.Refresh();
                         RefreshData(null);
                     }
                     catch (Exception ex)

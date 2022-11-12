@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Core;
 using Core.ViewModel.Base;
 using Data;
 using Helper;
+using KursDomain;
 using KursDomain.ICommon;
 using Newtonsoft.Json;
 
@@ -15,7 +15,7 @@ namespace KursAM2.ViewModel.Logistiks
         public InventorySheetViewModel(SD_24 entity)
         {
             Entity = entity ?? DefaultValue();
-            
+
             LoadReference();
         }
 
@@ -59,41 +59,46 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public KursDomain.Documents.NomenklManagement.Warehouse Warehouse
+        public KursDomain.References.Warehouse Warehouse
         {
-            get => MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC);
+            get =>
+                GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC) as KursDomain.References.Warehouse;
             set
             {
-                if (MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC) == value) return;
-                Entity.DD_SKLAD_POL_DC = value?.DOC_CODE;
-                Entity.DD_SKLAD_OTPR_DC = value?.DOC_CODE;
-                Entity.DD_POLUCH_NAME = MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC).Name.Length > 50 ?
-                        MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC) .Name.Substring(0,50) :
-                        MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC).Name;
+                if (GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC) == value) return;
+                Entity.DD_SKLAD_POL_DC = value?.DocCode;
+                Entity.DD_SKLAD_OTPR_DC = value?.DocCode;
+                Entity.DD_POLUCH_NAME =
+                    ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC)).Name.Length > 50
+                        ? ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC)).Name.Substring(0,
+                            50)
+                        : ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC)).Name;
                 RaisePropertyChanged();
             }
         }
 
-        public KursDomain.Documents.NomenklManagement.Warehouse WarehouseIn
+        public KursDomain.References.Warehouse WarehouseIn
         {
-            get => MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC);
+            get =>
+                GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC) as KursDomain.References.Warehouse;
             set
             {
-                if (MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC) == value) return;
-                Entity.DD_SKLAD_POL_DC = value?.DOC_CODE;
-                Entity.DD_SKLAD_OTPR_DC = value?.DOC_CODE;
+                if (GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC) == value) return;
+                Entity.DD_SKLAD_POL_DC = value?.DocCode;
+                Entity.DD_SKLAD_OTPR_DC = value?.DocCode;
                 RaisePropertyChanged();
             }
         }
 
-        public KursDomain.Documents.NomenklManagement.Warehouse WarehouseOut
+        public KursDomain.References.Warehouse WarehouseOut
         {
-            get => MainReferences.GetWarehouse(Entity.DD_SKLAD_OTPR_DC);
+            get =>
+                GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_OTPR_DC) as KursDomain.References.Warehouse;
             set
             {
-                if (MainReferences.GetWarehouse(Entity.DD_SKLAD_OTPR_DC) == value) return;
-                Entity.DD_SKLAD_POL_DC = value?.DOC_CODE;
-                Entity.DD_SKLAD_OTPR_DC = value?.DOC_CODE;
+                if (GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_OTPR_DC) == value) return;
+                Entity.DD_SKLAD_POL_DC = value?.DocCode;
+                Entity.DD_SKLAD_OTPR_DC = value?.DocCode;
                 RaisePropertyChanged();
             }
         }
@@ -135,7 +140,7 @@ namespace KursAM2.ViewModel.Logistiks
         {
             return new SD_24
             {
-                DOC_CODE = -1,
+                DOC_CODE = -1
             };
         }
 
@@ -151,6 +156,7 @@ namespace KursAM2.ViewModel.Logistiks
                         myState = RowStatus.NotEdited
                     });
         }
+
         public override object ToJson()
         {
             var res = new

@@ -3,10 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Data;
-using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Data;
 using DevExpress.Xpf.Core;
@@ -17,6 +13,7 @@ using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Logistiks.Warehouse;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
@@ -35,7 +32,7 @@ namespace KursAM2.View.Logistiks.Warehouse
 
         public WaybillView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             gridRowsLayout = new LayoutManagerGridAutoGenerationColumns(GetType().Name, gridRows);
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, null);
@@ -229,12 +226,13 @@ namespace KursAM2.View.Logistiks.Warehouse
                     break;
                 case nameof(doc.WarehouseOut):
                     ViewFluentHelper.SetComboBoxEdit(e.Item, doc.WarehouseOut, "WarehouseOut",
-                        MainReferences.Warehouses.Values.ToList().OrderBy(_ => _.Name));
+                        GlobalOptions.ReferencesCache.GetWarehousesAll().Cast<KursDomain.References.Warehouse>()
+                            .OrderBy(_ => _.Name).ToList());
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
                     break;
                 case nameof(doc.DD_KOMU_PEREDANO):
-                    var cbp =ViewFluentHelper.SetComboBoxEdit(e.Item, doc.DD_KOMU_PEREDANO, "DD_KOMU_PEREDANO",
+                    var cbp = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.DD_KOMU_PEREDANO, "DD_KOMU_PEREDANO",
                         ctx.ByWhomLicoList);
                     cbp.IsReadOnly = false;
                     cbp.EditValueChanging += Cbp_EditValueChanging;
@@ -258,7 +256,6 @@ namespace KursAM2.View.Logistiks.Warehouse
 
         private void Cbp_EditValueChanging(object sender, EditValueChangingEventArgs e)
         {
-           
         }
 
         private void Client_DefaultButtonClick(object sender, RoutedEventArgs e)

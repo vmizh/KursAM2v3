@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Transactions;
-using Core;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursDomain;
@@ -19,7 +17,7 @@ namespace KursAM2.ViewModel.Logistiks
     {
         private string mySchetFactura;
         private SD_26 mySchetFacturaBase;
-        private KursDomain.Documents.NomenklManagement.Warehouse myWarehouse;
+        private KursDomain.References.Warehouse myWarehouse;
 
         public NomenklTransferViewModelExt(NomenklTransfer entity) : base(entity)
         {
@@ -51,7 +49,11 @@ namespace KursAM2.ViewModel.Logistiks
             }
 
             if (entity.SD_27 != null)
-                myWarehouse = new KursDomain.Documents.NomenklManagement.Warehouse(entity.SD_27);
+            {
+                var newItem = new KursDomain.References.Warehouse();
+                newItem.LoadFromEntity(entity.SD_27, GlobalOptions.ReferencesCache);
+                myWarehouse = newItem;
+            }
         }
 
         private NomenklTransferViewModelExt()
@@ -64,12 +66,12 @@ namespace KursAM2.ViewModel.Logistiks
         public override string Description => $"Акт валютной таксировки номенклатур {Entity.DucNum} от {Entity.Date} " +
                                               $"{Warehouse} {Entity.Note}";
 
-        public KursDomain.Documents.NomenklManagement.Warehouse Warehouse
+        public KursDomain.References.Warehouse Warehouse
         {
             get => myWarehouse;
             set
             {
-                if (Equals(myWarehouse,value)) return;
+                if (Equals(myWarehouse, value)) return;
                 myWarehouse = value;
                 Entity.SkladDC = myWarehouse?.DocCode ?? decimal.MinusOne;
                 RaisePropertyChanged();

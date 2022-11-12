@@ -5,14 +5,13 @@ using System.Linq;
 using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursDomain;
-using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference.Kontragent
 {
@@ -93,7 +92,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             using (var ctx = GlobalOptions.GetEntities())
             {
                 foreach (var item in ctx.SD_148.ToList())
-                    CategoryCollection.Add(new KontragentClientCategory(item) { myState = RowStatus.NotEdited });
+                    CategoryCollection.Add(new KontragentClientCategory(item) {myState = RowStatus.NotEdited});
             }
         }
 

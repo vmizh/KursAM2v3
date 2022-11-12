@@ -114,10 +114,10 @@ public class StockHolderAccrualRowViewModel : RSViewModelBase, IDataErrorInfo,
 
     public References.Currency Currency
     {
-        get => MainReferences.GetCurrency(Entity.CurrencyDC);
+        get => GlobalOptions.ReferencesCache.GetCurrency(Entity.CurrencyDC) as References.Currency;
         set
         {
-            if (MainReferences.GetCurrency(Entity.CurrencyDC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetCurrency(Entity.CurrencyDC) as References.Currency == value) return;
             Entity.CurrencyDC = value?.DocCode;
             RaisePropertyChanged();
         }

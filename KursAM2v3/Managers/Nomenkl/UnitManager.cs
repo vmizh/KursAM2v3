@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Core;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
@@ -121,14 +119,6 @@ namespace KursAM2.Managers.Nomenkl
 
                         ctx.SaveChanges();
                         tn.Commit();
-                        MainReferences.Units.Clear();
-                        foreach (var item in ctx.SD_175.AsNoTracking().ToList())
-                        {
-                            var newUnit = new Unit();
-                            newUnit.LoadFromEntity(item);
-                            MainReferences.Units.Add(item.DOC_CODE, newUnit);
-                        }
-
                         return true;
                     }
                     catch (Exception ex)

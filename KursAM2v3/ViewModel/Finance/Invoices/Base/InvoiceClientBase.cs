@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Core;
 using Data;
 using KursDomain;
 using KursDomain.Documents.Invoices;
-using KursDomain.Documents.Vzaimozachet;
 using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance.Invoices.Base
@@ -30,13 +28,14 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             Id = doc.Id;
             DocDate = doc.DocDate;
             Receiver = GlobalOptions.ReferencesCache.GetKontragent(doc.ReceiverDC) as Kontragent;
-            CO = MainReferences.GetCO(doc.CentOtvetstDC);
-            VzaimoraschetType = MainReferences.GetVzaimoraschetType(doc.VzaimoraschetTypeDC);
-            PayCondition = MainReferences.GetPayCondition(doc.PayConditionDC);
+            CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(doc.CentOtvetstDC) as CentrResponsibility;
+            VzaimoraschetType =
+                GlobalOptions.ReferencesCache.GetMutualSettlementType(doc.VzaimoraschetTypeDC) as MutualSettlementType;
+            PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(doc.PayConditionDC) as PayCondition;
             InnerNumber = doc.InnerNumber;
             OuterNumber = doc.OuterNumber;
             Client = GlobalOptions.ReferencesCache.GetKontragent(doc.ClientDC) as Kontragent;
-            Currency = MainReferences.GetCurrency(doc.CurrencyDC);
+            Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CurrencyDC) as Currency;
             SummaOtgruz = Math.Round(doc.SummaOtgruz ?? 0, 2);
             DilerSumma = Math.Round(doc.DilerSumma, 2);
             Note = doc.Note;
@@ -60,7 +59,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public decimal DocCode { get; set; }
         public Guid Id { get; set; }
         public CentrResponsibility CO { get; set; }
-        public VzaimoraschetType VzaimoraschetType { get; set; }
+        public MutualSettlementType VzaimoraschetType { get; set; }
         public PayForm FormRaschet { get; set; }
         public DateTime DocDate { get; set; }
         public int InnerNumber { get; set; }
@@ -86,9 +85,9 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             Code = row.RowCode;
             Id = row.Row2d;
             DocId = DocId;
-            Nomenkl = MainReferences.GetNomenkl(row.NomenklDC);
-            NomNomenkl = Nomenkl.NomenklNumber;
-            IsUsluga = Nomenkl.IsUsluga;
+            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.NomenklDC) as Nomenkl;
+            NomNomenkl = Nomenkl?.NomenklNumber;
+            IsUsluga = Nomenkl?.IsUsluga ?? false;
             Quantity = row.Quantity ?? 0;
             Price = row.Price ?? 0;
             Summa = Quantity * Price;

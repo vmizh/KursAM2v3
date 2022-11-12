@@ -4,9 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
-using Core.EntityViewModel.CommonReferences;
-using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.View.Management.Controls;
@@ -29,13 +26,13 @@ namespace KursAM2.View.DialogUserControl
         private bool myClientSkladDocumentType;
         private bool myClientUslugiDocumentType;
         private ProjectDocumentSelectViewModel myCurrentDocument;
+
+        private ProjectResultInfo myCurrentProject;
         private ProjectSelectDialogUI myDataUserControl;
         private DateTime myDateEnd;
         private DateTime myDateStart;
         private bool myProviderSkladDocumentType;
         private bool myProviderUslugiDocumentType;
-
-        public string ProjectName { set; get; }
 
         public ProjectDocumentSelect()
         {
@@ -45,18 +42,19 @@ namespace KursAM2.View.DialogUserControl
             WindowName = "Связь документов с проектом";
         }
 
-        public ProjectDocumentSelect(ProjectResultInfo project):this()
+        public ProjectDocumentSelect(ProjectResultInfo project) : this()
         {
             CurrentProject = project;
         }
-        
-        private ProjectResultInfo myCurrentProject;
+
+        public string ProjectName { set; get; }
+
         public ProjectResultInfo CurrentProject
         {
             get => myCurrentProject;
             set
             {
-                if (Equals(myCurrentProject,value)) return;
+                if (Equals(myCurrentProject, value)) return;
                 myCurrentProject = value;
                 RaisePropertyChanged();
             }
@@ -64,6 +62,7 @@ namespace KursAM2.View.DialogUserControl
 
         public ObservableCollection<ProjectDocumentSelectViewModel> SelectedDocs { set; get; } =
             new ObservableCollection<ProjectDocumentSelectViewModel>();
+
         public DateTime DateEnd
         {
             get => myDateEnd;
@@ -76,9 +75,11 @@ namespace KursAM2.View.DialogUserControl
                     myDateStart = myDateEnd;
                     RaisePropertyChanged(nameof(DateStart));
                 }
+
                 RaisePropertyChanged();
             }
         }
+
         public DateTime DateStart
         {
             get => myDateStart;
@@ -91,9 +92,11 @@ namespace KursAM2.View.DialogUserControl
                     myDateEnd = myDateStart;
                     RaisePropertyChanged(nameof(DateEnd));
                 }
+
                 RaisePropertyChanged();
             }
         }
+
         public bool AktConvertDocumentType
         {
             get => myAktConvertDocumentType;
@@ -106,6 +109,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public bool AktVzaimozachetDocumentType
         {
             get => myAktVzaimozachetDocumentType;
@@ -118,6 +122,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public bool ProviderUslugiDocumentType
         {
             get => myProviderUslugiDocumentType;
@@ -130,6 +135,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public bool ClientUslugiDocumentType
         {
             get => myClientUslugiDocumentType;
@@ -142,6 +148,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public bool ProviderSkladDocumentType
         {
             get => myProviderSkladDocumentType;
@@ -154,6 +161,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public bool CashDocumentType
         {
             get => myCashDocumentType;
@@ -166,6 +174,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public bool BankDocumentType
         {
             get => myBankDocumentType;
@@ -176,6 +185,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public bool ClientSkladDocumentType
         {
             get => myClientSkladDocumentType;
@@ -188,6 +198,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public bool AllDocumentType
         {
             get => myAllDocumentType;
@@ -214,6 +225,7 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public ProjectSelectDialogUI DataUserControl
         {
             get => myDataUserControl;
@@ -225,18 +237,21 @@ namespace KursAM2.View.DialogUserControl
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<ProjectDocumentSelectViewModel> DocumentList { set; get; } =
             new ObservableCollection<ProjectDocumentSelectViewModel>();
+
         public ProjectDocumentSelectViewModel CurrentDocument
         {
             get => myCurrentDocument;
             set
             {
-                if (Equals(myCurrentDocument,value)) return;
+                if (Equals(myCurrentDocument, value)) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }
         }
+
         public DependencyObject LayoutControl { get; }
 
         #region Command
@@ -245,6 +260,7 @@ namespace KursAM2.View.DialogUserControl
         {
             get { return new Command(LoadDocument, _ => isCanDocumentLoad()); }
         }
+
         public ICommand RefrashDocumentCommand
         {
             get { return new Command(RefrashDocument, _ => true); }
@@ -292,7 +308,7 @@ namespace KursAM2.View.DialogUserControl
                 LoadAktVzaimozachet();
             if (AktConvertDocumentType)
                 LoadAktVzaimozachetConvert();
-            if(DataUserControl?.gridDocument != null)
+            if (DataUserControl?.gridDocument != null)
                 MultyCurrencyHelper.VisibilityCurrencyWithDilerColumns(DataUserControl.gridDocument, DocumentList);
         }
 
@@ -326,10 +342,10 @@ namespace KursAM2.View.DialogUserControl
                     {
                         var newdoc = new ProjectDocumentSelectViewModel
                         {
-                            Currency = MainReferences.Currencies[d.VZT_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.VZT_CRS_DC) as Currency,
                             Name = "Акт взаимозачета",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = MainReferences.GetKontragent(d.VZT_KONTR_DC),
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.VZT_KONTR_DC) as Kontragent,
                             DocDate = d.SD_110.VZ_DATE,
                             DocName = "Акт взаимозачета",
                             DocNum = d.VZT_DOC_NUM,
@@ -342,8 +358,8 @@ namespace KursAM2.View.DialogUserControl
                             ConfirmedSum = (decimal)d.VZT_CRS_SUMMA,
                             AnotherDocConfirmedSum = 0
                         };
-                        MultyCurrencyHelper.SetCurrencyValue((decimal) d.VZT_CRS_SUMMA,
-                            MainReferences.Currencies[d.VZT_CRS_DC], newdoc,
+                        MultyCurrencyHelper.SetCurrencyValue((decimal)d.VZT_CRS_SUMMA,
+                            GlobalOptions.ReferencesCache.GetCurrency(d.VZT_CRS_DC) as Currency, newdoc,
                             d.VZT_1MYDOLZH_0NAMDOLZH == 1
                                 ? TypeProfitAndLossCalc.IsLoss
                                 : TypeProfitAndLossCalc.IsProfit);
@@ -395,10 +411,10 @@ namespace KursAM2.View.DialogUserControl
                     {
                         var newdoc = new ProjectDocumentSelectViewModel
                         {
-                            Currency = MainReferences.Currencies[d.CrsDc],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CrsDc) as Currency,
                             Name = "Акт конвертации",
                             DocCode = d.DocCode,
-                            KontragentViewModel = MainReferences.GetKontragent(d.KontrDc),
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDc) as Kontragent,
                             DocDate = d.Date,
                             DocName = "Акт конвертации",
                             DocNum = d.InNum.ToString(),
@@ -413,10 +429,12 @@ namespace KursAM2.View.DialogUserControl
                         };
                         if (d.MYDOLZH_0NAMDOLZH == 1)
                             MultyCurrencyHelper.SetCurrencyValue(d.Summa,
-                                MainReferences.Currencies[d.CrsDc], newdoc, TypeProfitAndLossCalc.IsLoss);
+                                GlobalOptions.ReferencesCache.GetCurrency(d.CrsDc) as Currency, newdoc,
+                                TypeProfitAndLossCalc.IsLoss);
                         else
                             MultyCurrencyHelper.SetCurrencyValue(d.Summa,
-                                MainReferences.Currencies[d.CrsDc], newdoc, TypeProfitAndLossCalc.IsProfit);
+                                GlobalOptions.ReferencesCache.GetCurrency(d.CrsDc) as Currency, newdoc,
+                                TypeProfitAndLossCalc.IsProfit);
                         DocumentList.Add(newdoc);
                     }
                 }
@@ -467,8 +485,9 @@ namespace KursAM2.View.DialogUserControl
                                 code = p.DocRowId ?? 0
                             }
                             into pd
-                        where pd.All(_ => _.DocDC == d.DOC_CODE && _.DocRowId == d.CODE && _.ProjectId != CurrentProject.Id) &&
-                              pd.Sum(_ => Math.Abs(_.FactCRSSumma ?? 0)) < (decimal) d.VVT_VAL_PRIHOD + d.VVT_VAL_RASHOD
+                        where pd.All(_ => _.DocDC == d.DOC_CODE && _.DocRowId == d.CODE &&
+                                          _.ProjectId != CurrentProject.Id) &&
+                              pd.Sum(_ => Math.Abs(_.FactCRSSumma ?? 0)) < (decimal)d.VVT_VAL_PRIHOD + d.VVT_VAL_RASHOD
                         select new
                         {
                             Row = d,
@@ -479,10 +498,10 @@ namespace KursAM2.View.DialogUserControl
                         var d = d1.Row;
                         var newdoc = new ProjectDocumentSelectViewModel
                         {
-                            Currency = MainReferences.Currencies[d.VVT_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.VVT_CRS_DC) as Currency,
                             Name = "Банковская выписка",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = MainReferences.GetKontragent(d.VVT_KONTRAGENT),
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.VVT_KONTRAGENT) as Kontragent,
                             DocDate = d.SD_101.VV_STOP_DATE,
                             DocName = "Банковская выписка" + "(" + (d.VVT_VAL_PRIHOD > 0 ? "поступление)" : "выплата)"),
                             DocNum = d.VVT_DOC_NUM,
@@ -491,25 +510,29 @@ namespace KursAM2.View.DialogUserControl
                             Employee = null,
                             IsSelected = false,
                             Note = null,
-                            SDRSchet = d.VVT_SHPZ_DC != null ? MainReferences.SDRSchets[d.VVT_SHPZ_DC.Value] : null,
-                            Sum =  d.VVT_VAL_PRIHOD + d.VVT_VAL_RASHOD,
-                            ConfirmedSum = (decimal) (d.VVT_VAL_PRIHOD + d.VVT_VAL_RASHOD - d1.ConfirmedSum),
-                            AnotherDocConfirmedSum = (decimal) d1.ConfirmedSum,
-                            ProfitOrLossType = d.VVT_VAL_PRIHOD > 0 ? TypeProfitAndLossCalc.IsProfit : TypeProfitAndLossCalc.IsLoss
+                            SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(d.VVT_SHPZ_DC.Value) as SDRSchet,
+                            Sum = d.VVT_VAL_PRIHOD + d.VVT_VAL_RASHOD,
+                            ConfirmedSum = (decimal)(d.VVT_VAL_PRIHOD + d.VVT_VAL_RASHOD - d1.ConfirmedSum),
+                            AnotherDocConfirmedSum = (decimal)d1.ConfirmedSum,
+                            ProfitOrLossType = d.VVT_VAL_PRIHOD > 0
+                                ? TypeProfitAndLossCalc.IsProfit
+                                : TypeProfitAndLossCalc.IsLoss
                         };
                         MultyCurrencyHelper.SetCurrencyValue(d.VVT_VAL_PRIHOD + d.VVT_VAL_RASHOD,
-                                MainReferences.Currencies[d.VVT_CRS_DC], newdoc, newdoc.ProfitOrLossType);
+                            GlobalOptions.ReferencesCache.GetCurrency(d.VVT_CRS_DC) as Currency, newdoc,
+                            newdoc.ProfitOrLossType);
 
                         DocumentList.Add(newdoc);
                     }
+
                     foreach (var d in data)
                     {
                         var newdoc = new ProjectDocumentSelectViewModel
                         {
-                            Currency = MainReferences.Currencies[d.VVT_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.VVT_CRS_DC) as Currency,
                             Name = "Банковская выписка",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = MainReferences.GetKontragent(d.VVT_KONTRAGENT),
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.VVT_KONTRAGENT) as Kontragent,
                             DocDate = d.SD_101.VV_STOP_DATE,
                             DocName = "Банковская выписка" + "(" + (d.VVT_VAL_PRIHOD > 0 ? "поступление)" : "выплата)"),
                             DocNum = d.VVT_DOC_NUM,
@@ -518,14 +541,17 @@ namespace KursAM2.View.DialogUserControl
                             Employee = null,
                             IsSelected = false,
                             Note = null,
-                            SDRSchet = d.VVT_SHPZ_DC != null ? MainReferences.SDRSchets[d.VVT_SHPZ_DC.Value] : null,
+                            SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(d.VVT_SHPZ_DC.Value) as SDRSchet,
                             Sum = d.VVT_VAL_PRIHOD + d.VVT_VAL_RASHOD,
-                            ConfirmedSum = (decimal) (d.VVT_VAL_PRIHOD + d.VVT_VAL_RASHOD),
+                            ConfirmedSum = (decimal)(d.VVT_VAL_PRIHOD + d.VVT_VAL_RASHOD),
                             AnotherDocConfirmedSum = 0,
-                            ProfitOrLossType = d.VVT_VAL_PRIHOD > 0 ? TypeProfitAndLossCalc.IsProfit : TypeProfitAndLossCalc.IsLoss
+                            ProfitOrLossType = d.VVT_VAL_PRIHOD > 0
+                                ? TypeProfitAndLossCalc.IsProfit
+                                : TypeProfitAndLossCalc.IsLoss
                         };
                         MultyCurrencyHelper.SetCurrencyValue(d.VVT_VAL_PRIHOD + d.VVT_VAL_RASHOD,
-                            MainReferences.Currencies[d.VVT_CRS_DC], newdoc, newdoc.ProfitOrLossType);
+                            GlobalOptions.ReferencesCache.GetCurrency(d.VVT_CRS_DC) as Currency, newdoc,
+                            newdoc.ProfitOrLossType);
                         DocumentList.Add(newdoc);
                     }
                 }
@@ -566,10 +592,11 @@ namespace KursAM2.View.DialogUserControl
                     {
                         var newdoc = new ProjectDocumentSelectViewModel
                         {
-                            Currency = MainReferences.Currencies[d.SD_84.SF_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.SD_84.SF_CRS_DC) as Currency,
                             Name = "Услуги клиентам",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = MainReferences.GetKontragent(d.SD_84.SF_CLIENT_DC),
+                            Kontragent =
+                                GlobalOptions.ReferencesCache.GetKontragent(d.SD_84.SF_CLIENT_DC) as Kontragent,
                             DocDate = d.SD_84.SF_DATE,
                             DocName = "Услуги клиентам",
                             DocNum = Convert.ToString(d.SD_84.SF_IN_NUM) + "/" + d.SD_84.SF_OUT_NUM,
@@ -582,7 +609,8 @@ namespace KursAM2.View.DialogUserControl
                             AnotherDocConfirmedSum = 0
                         };
                         MultyCurrencyHelper.SetCurrencyValue(d.SFT_SUMMA_K_OPLATE,
-                            MainReferences.Currencies[d.SD_84.SF_CRS_DC], newdoc, TypeProfitAndLossCalc.IsLoss);
+                            GlobalOptions.ReferencesCache.GetCurrency(d.SD_84.SF_CRS_DC) as Currency, newdoc,
+                            TypeProfitAndLossCalc.IsLoss);
                         DocumentList.Add(newdoc);
                     }
                 }
@@ -623,10 +651,10 @@ namespace KursAM2.View.DialogUserControl
                     {
                         var newdoc = new ProjectDocumentSelectViewModel
                         {
-                            Currency = MainReferences.Currencies[d.SD_26.SF_CRS_DC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.SD_26.SF_CRS_DC.Value) as Currency,
                             Name = "Услуги поставщиков",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = MainReferences.GetKontragent(d.SD_26.SF_POST_DC),
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.SD_26.SF_POST_DC) as Kontragent,
                             DocDate = d.SD_26.SF_POSTAV_DATE,
                             DocName = "Услуги поставщиков",
                             DocNum = Convert.ToString(d.SD_26.SF_IN_NUM) + "/" + d.SD_26.SF_POSTAV_NUM,
@@ -639,7 +667,8 @@ namespace KursAM2.View.DialogUserControl
                             AnotherDocConfirmedSum = 0
                         };
                         MultyCurrencyHelper.SetCurrencyValue(newdoc.Sum,
-                            MainReferences.Currencies[d.SD_26.SF_CRS_DC.Value], newdoc, TypeProfitAndLossCalc.IsLoss);
+                            GlobalOptions.ReferencesCache.GetCurrency(d.SD_26.SF_CRS_DC.Value) as Currency, newdoc,
+                            TypeProfitAndLossCalc.IsLoss);
                         DocumentList.Add(newdoc);
                     }
                 }
@@ -677,13 +706,11 @@ namespace KursAM2.View.DialogUserControl
                         if (DocumentList.Any(_ => _.DocCode == item.DOC_CODE)) continue;
                         var newdoc = new ProjectDocumentSelectViewModel
                         {
-                            Currency = MainReferences.Currencies[item.SF_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(item.SF_CRS_DC) as Currency,
                             Name = "Отгрузка товара",
                             // ReSharper disable once PossibleInvalidOperationException
                             DocCode = item.DOC_CODE,
-                            KontragentViewModel = item.SF_CLIENT_DC != null
-                                ? MainReferences.GetKontragent(item.SF_CLIENT_DC)
-                                : null,
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(item.SF_CLIENT_DC) as Kontragent,
                             DocDate = item.SF_DATE,
                             DocName = "С/фактура клиенту",
                             DocNum = item.SF_IN_NUM + "/" + item.SF_OUT_NUM,
@@ -693,12 +720,13 @@ namespace KursAM2.View.DialogUserControl
                             Note = item.SF_NOTE,
                             AnotherDocConfirmedSum = 0
                         };
-                        var summ = item.TD_84.Sum(s => (decimal) (s.SFT_KOL + (double) s.SFT_ED_CENA));
+                        var summ = item.TD_84.Sum(s => (decimal)(s.SFT_KOL + (double)s.SFT_ED_CENA));
                         newdoc.Sum = summ;
                         newdoc.ConfirmedSum = summ;
 
                         MultyCurrencyHelper.SetCurrencyValue(summ,
-                            MainReferences.Currencies[item.SF_CRS_DC], newdoc, TypeProfitAndLossCalc.IsProfit);
+                            GlobalOptions.ReferencesCache.GetCurrency(item.SF_CRS_DC) as Currency, newdoc,
+                            TypeProfitAndLossCalc.IsProfit);
                         DocumentList.Add(newdoc);
                     }
                 }
@@ -716,8 +744,8 @@ namespace KursAM2.View.DialogUserControl
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var cashInRasp = (from d in ctx.SD_33.Where(_ => _.DATE_ORD >= DateStart && _.DATE_ORD <= DateEnd
-                                                                                         && (_.KONTRAGENT_DC != null ||
-                                                                                             _.TABELNUMBER != null))
+                            && (_.KONTRAGENT_DC != null ||
+                                _.TABELNUMBER != null))
                         join p in ctx.ProjectsDocs on
                             new
                             {
@@ -729,15 +757,15 @@ namespace KursAM2.View.DialogUserControl
                             }
                             into pd
                         where pd.All(_ => _.DocDC == d.DOC_CODE && _.ProjectId != CurrentProject.Id)
-                        && pd.Sum(_ => Math.Abs(_.FactCRSSumma ?? 0)) < d.SUMM_ORD
+                              && pd.Sum(_ => Math.Abs(_.FactCRSSumma ?? 0)) < d.SUMM_ORD
                         select new
                         {
                             Row = d,
                             ConfirmedSum = pd.Sum(_ => _.FactCRSSumma)
                         }).ToList();
                     var cashIn = (from d in ctx.SD_33.Where(_ => _.DATE_ORD >= DateStart && _.DATE_ORD <= DateEnd
-                                                                                         && (_.KONTRAGENT_DC != null ||
-                                                                                             _.TABELNUMBER != null))
+                            && (_.KONTRAGENT_DC != null ||
+                                _.TABELNUMBER != null))
                         join p in ctx.ProjectsDocs on
                             new
                             {
@@ -752,8 +780,8 @@ namespace KursAM2.View.DialogUserControl
                         select d).ToList();
 
                     var cashOutRasp = (from d in ctx.SD_34.Where(_ => _.DATE_ORD >= DateStart && _.DATE_ORD <= DateEnd
-                                                                                          && (_.KONTRAGENT_DC != null ||
-                                                                                              _.TABELNUMBER != null))
+                            && (_.KONTRAGENT_DC != null ||
+                                _.TABELNUMBER != null))
                         join p in ctx.ProjectsDocs on
                             new
                             {
@@ -773,8 +801,8 @@ namespace KursAM2.View.DialogUserControl
                         }).ToList();
 
                     var cashOut = (from d in ctx.SD_34.Where(_ => _.DATE_ORD >= DateStart && _.DATE_ORD <= DateEnd
-                                                                                          && (_.KONTRAGENT_DC != null ||
-                                                                                              _.TABELNUMBER != null))
+                            && (_.KONTRAGENT_DC != null ||
+                                _.TABELNUMBER != null))
                         join p in ctx.ProjectsDocs on
                             new
                             {
@@ -792,49 +820,48 @@ namespace KursAM2.View.DialogUserControl
                         var d = d1.Row;
                         var newdoc = new ProjectDocumentSelectViewModel
                         {
-                            Currency = MainReferences.Currencies[d.CRS_DC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC.Value) as Currency,
                             Name = "Приходный кассовый ордер",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = d.KONTRAGENT_DC != null ? MainReferences.GetKontragent(d.KONTRAGENT_DC) : null,
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KONTRAGENT_DC) as Kontragent,
                             DocDate = d.DATE_ORD.Value,
                             DocName = "Приходный кассовый ордер",
                             DocNum = Convert.ToString(d.NUM_ORD),
                             DocType = DocumentType.CashIn,
-                            Employee = d.TABELNUMBER != null
-                                ? MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)
-                                : null,
+                            Employee = GlobalOptions.ReferencesCache.GetEmployee(d.TABELNUMBER) as Employee,
                             IsSelected = false,
                             Note = d.NOTES_ORD,
                             Sum = d.SUMM_ORD,
                             ConfirmedSum = (decimal)d.SUMM_ORD - (decimal)d1.ConfirmedSum,
-                            AnotherDocConfirmedSum = (decimal) d1.ConfirmedSum
+                            AnotherDocConfirmedSum = (decimal)d1.ConfirmedSum
                         };
-                        MultyCurrencyHelper.SetCurrencyValue(d.SUMM_ORD, MainReferences.Currencies[d.CRS_DC.Value], newdoc,
+                        MultyCurrencyHelper.SetCurrencyValue(d.SUMM_ORD,
+                            GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC.Value) as Currency, newdoc,
                             TypeProfitAndLossCalc.IsProfit);
                         DocumentList.Add(newdoc);
                     }
+
                     foreach (var d in cashIn)
                     {
                         var newdoc = new ProjectDocumentSelectViewModel
                         {
-                            Currency = MainReferences.Currencies[d.CRS_DC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC.Value) as Currency,
                             Name = "Приходный кассовый ордер",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = d.KONTRAGENT_DC != null ? MainReferences.GetKontragent(d.KONTRAGENT_DC) : null,
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KONTRAGENT_DC) as Kontragent,
                             DocDate = d.DATE_ORD.Value,
                             DocName = "Приходный кассовый ордер",
                             DocNum = Convert.ToString(d.NUM_ORD),
                             DocType = DocumentType.CashIn,
-                            Employee = d.TABELNUMBER != null
-                                ? MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)
-                                : null,
+                            Employee = GlobalOptions.ReferencesCache.GetEmployee(d.TABELNUMBER) as Employee,
                             IsSelected = false,
                             Note = d.NOTES_ORD,
                             Sum = d.SUMM_ORD,
-                            ConfirmedSum = (decimal) d.SUMM_ORD,
+                            ConfirmedSum = (decimal)d.SUMM_ORD,
                             AnotherDocConfirmedSum = 0
                         };
-                        MultyCurrencyHelper.SetCurrencyValue(d.SUMM_ORD, MainReferences.Currencies[d.CRS_DC.Value], newdoc,
+                        MultyCurrencyHelper.SetCurrencyValue(d.SUMM_ORD,
+                            GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC.Value) as Currency, newdoc,
                             TypeProfitAndLossCalc.IsProfit);
                         DocumentList.Add(newdoc);
                     }
@@ -844,25 +871,23 @@ namespace KursAM2.View.DialogUserControl
                         var d = d1.Row;
                         var newdoc = new ProjectDocumentSelectViewModel
                         {
-                            Currency = MainReferences.Currencies[d.CRS_DC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC.Value) as Currency,
                             Name = "Расходный кассовый ордер",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = d.KONTRAGENT_DC != null ? MainReferences.GetKontragent(d.KONTRAGENT_DC) : null,
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KONTRAGENT_DC) as Kontragent,
                             DocDate = d.DATE_ORD.Value,
                             DocName = "Расходный кассовый ордер",
                             DocNum = Convert.ToString(d.NUM_ORD),
                             DocType = DocumentType.CashOut,
-                            Employee = d.TABELNUMBER != null
-                                ? MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)
-                                : null,
+                            Employee = GlobalOptions.ReferencesCache.GetEmployee(d.TABELNUMBER) as Employee,
                             IsSelected = false,
                             Note = d.NOTES_ORD,
                             Sum = d.SUMM_ORD,
                             ConfirmedSum = (decimal)d.SUMM_ORD - (decimal)d1.ConfirmedSum,
-                            AnotherDocConfirmedSum = (decimal) d1.ConfirmedSum
-
+                            AnotherDocConfirmedSum = (decimal)d1.ConfirmedSum
                         };
-                        MultyCurrencyHelper.SetCurrencyValue(d.SUMM_ORD, MainReferences.Currencies[d.CRS_DC.Value], newdoc,
+                        MultyCurrencyHelper.SetCurrencyValue(d.SUMM_ORD,
+                            GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC.Value) as Currency, newdoc,
                             TypeProfitAndLossCalc.IsLoss);
                         DocumentList.Add(newdoc);
                     }
@@ -871,24 +896,23 @@ namespace KursAM2.View.DialogUserControl
                     {
                         var newdoc = new ProjectDocumentSelectViewModel
                         {
-                            Currency = MainReferences.Currencies[d.CRS_DC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC.Value) as Currency,
                             Name = "Расходный кассовый ордер",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = d.KONTRAGENT_DC != null ? MainReferences.GetKontragent(d.KONTRAGENT_DC) : null,
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KONTRAGENT_DC) as Kontragent,
                             DocDate = d.DATE_ORD.Value,
                             DocName = "Расходный кассовый ордер",
                             DocNum = Convert.ToString(d.NUM_ORD),
                             DocType = DocumentType.CashOut,
-                            Employee = d.TABELNUMBER != null
-                                ? MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)
-                                : null,
+                            Employee = GlobalOptions.ReferencesCache.GetEmployee(d.TABELNUMBER) as Employee,
                             IsSelected = false,
                             Note = d.NOTES_ORD,
                             Sum = d.SUMM_ORD,
                             ConfirmedSum = (decimal)d.SUMM_ORD,
                             AnotherDocConfirmedSum = 0
                         };
-                        MultyCurrencyHelper.SetCurrencyValue(d.SUMM_ORD, MainReferences.Currencies[d.CRS_DC.Value], newdoc,
+                        MultyCurrencyHelper.SetCurrencyValue(d.SUMM_ORD,
+                            GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC.Value) as Currency, newdoc,
                             TypeProfitAndLossCalc.IsLoss);
                         DocumentList.Add(newdoc);
                     }
@@ -929,12 +953,11 @@ namespace KursAM2.View.DialogUserControl
                         if (DocumentList.Any(_ => _.DocCode == d.TD_26.SD_26.DOC_CODE)) continue;
                         var newdoc = new ProjectDocumentSelectViewModel
                         {
-                            Currency = MainReferences.Currencies[d.TD_26.SD_26.SF_CRS_DC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.TD_26.SD_26.SF_CRS_DC) as Currency,
                             Name = "Приход товара",
                             DocCode = d.TD_26.SD_26.DOC_CODE,
-                            KontragentViewModel = d.SD_24.DD_KONTR_OTPR_DC != null
-                                ? MainReferences.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC)
-                                : null,
+                            Kontragent =
+                                GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC) as Kontragent,
                             DocDate = d.SD_24.DD_DATE,
                             DocName = "Приход товара",
                             DocNum = Convert.ToString(d.SD_24.DD_IN_NUM) + "/" + d.SD_24.DD_EXT_NUM + "С/ф №" +
@@ -948,7 +971,7 @@ namespace KursAM2.View.DialogUserControl
                             AnotherDocConfirmedSum = 0
                         };
                         MultyCurrencyHelper.SetCurrencyValue(d.DDT_FACT_CRS_CENA * d.DDT_KOL_PRIHOD,
-                            MainReferences.Currencies[d.TD_26.SD_26.SF_CRS_DC.Value], newdoc,
+                            GlobalOptions.ReferencesCache.GetCurrency(d.TD_26.SD_26.SF_CRS_DC) as Currency, newdoc,
                             TypeProfitAndLossCalc.IsLoss);
                         DocumentList.Add(newdoc);
                     }

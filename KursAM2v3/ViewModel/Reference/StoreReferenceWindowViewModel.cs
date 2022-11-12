@@ -4,21 +4,20 @@ using System.Data.Entity;
 using System.Linq;
 using System.Transactions;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursDomain;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference
 {
     public class StoreReferenceWindowViewModel : RSWindowViewModelBase
     {
         private readonly StandartErrorManager errorManager;
-        private Warehouse myCurrentWarehouse;
+        private WarehouseViewModel myCurrentWarehouse;
 
         public StoreReferenceWindowViewModel()
         {
@@ -29,7 +28,10 @@ namespace KursAM2.ViewModel.Reference
         }
 
         public override string LayoutName => "StoreReferenceWindowViewModel";
-        public ObservableCollection<Warehouse> StoreCollection { set; get; } = new ObservableCollection<Warehouse>();
+
+        public ObservableCollection<WarehouseViewModel> StoreCollection { set; get; }
+            = new ObservableCollection<WarehouseViewModel>();
+
         public override bool IsCanSaveData => StoreCollection.Any(_ => _.State != RowStatus.NotEdited);
         public ObservableCollection<SelectUser> SelectedUsers { set; get; } = new ObservableCollection<SelectUser>();
 
@@ -38,12 +40,12 @@ namespace KursAM2.ViewModel.Reference
             get { return new Command(addNewStore, _ => true); }
         }
 
-        public Warehouse CurrentWarehouse
+        public WarehouseViewModel CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set
             {
-                if (Equals(myCurrentWarehouse,value)) return;
+                if (Equals(myCurrentWarehouse, value)) return;
                 myCurrentWarehouse = value;
                 RaisePropertyChanged();
             }
@@ -57,7 +59,7 @@ namespace KursAM2.ViewModel.Reference
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     foreach (var s in ctx.SD_27.Include(_ => _.SD_23).ToList())
-                        StoreCollection.Add(new Warehouse(s) {State = RowStatus.NotEdited});
+                        StoreCollection.Add(new WarehouseViewModel(s) { State = RowStatus.NotEdited });
                 }
             }
             catch (Exception ex)
@@ -69,7 +71,7 @@ namespace KursAM2.ViewModel.Reference
         // ReSharper disable once InconsistentNaming
         private void addNewStore(object obj)
         {
-            var newStore = new Warehouse
+            var newStore = new WarehouseViewModel
             {
                 IsDeleted = false,
                 IsCanNegativeRest = false,

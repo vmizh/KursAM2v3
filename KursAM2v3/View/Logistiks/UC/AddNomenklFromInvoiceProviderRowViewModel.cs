@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Helper;
@@ -21,7 +20,7 @@ namespace KursAM2.View.Logistiks.UC
 
         #region Constructors
 
-        public AddNomenklFromInvoiceProviderRowViewModel(KursDomain.Documents.NomenklManagement.Warehouse warehouse,
+        public AddNomenklFromInvoiceProviderRowViewModel(KursDomain.References.Warehouse warehouse,
             Kontragent kontr = null)
         {
             Warehouse = warehouse;
@@ -59,12 +58,12 @@ namespace KursAM2.View.Logistiks.UC
                         var doc = new InvoiceShort
                         {
                             Id = d.Id,
-                            KontragentViewModel = MainReferences.GetKontragent(d.SF_POST_DC),
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.SF_POST_DC) as Kontragent,
                             Date = d.SF_POSTAV_DATE,
                             DocCode = d.DOC_CODE,
                             Num = d.SF_POSTAV_NUM,
                             // ReSharper disable once PossibleInvalidOperationException
-                            Currency = MainReferences.Currencies[(decimal) d.SF_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.SF_CRS_DC) as Currency,
                             Rows = new List<InvoiceShortRow>()
                         };
                         var rows = ctx.TD_26.Where(_ => _.DOC_CODE == dc).ToList();
@@ -80,21 +79,21 @@ namespace KursAM2.View.Logistiks.UC
                                 Id = r.Id,
                                 DocCode = r.DOC_CODE,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                DocId = (Guid) r.DocId,
+                                DocId = (Guid)r.DocId,
                                 InvoiceQuantity = r.SFT_KOL,
-                                Nomenkl = MainReferences.GetNomenkl(r.SFT_NEMENKL_DC),
+                                Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(r.SFT_NEMENKL_DC) as Nomenkl,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                AlreadyShippedQuantity = (decimal) s.Shipped,
+                                AlreadyShippedQuantity = (decimal)s.Shipped,
                                 Code = r.CODE,
                                 Note = r.SFT_TEXT,
                                 // ReSharper disable once PossibleInvalidOperationException
-                                Price = (decimal) (r.SFT_SUMMA_K_OPLATE / r.SFT_KOL),
+                                Price = (decimal)(r.SFT_SUMMA_K_OPLATE / r.SFT_KOL),
                                 AlreadyShippedSumma =
                                     // ReSharper disable once PossibleInvalidOperationException
-                                    (decimal) (r.SFT_SUMMA_K_OPLATE / r.SFT_KOL) * (decimal) s.Shipped,
+                                    (decimal)(r.SFT_SUMMA_K_OPLATE / r.SFT_KOL) * (decimal)s.Shipped,
                                 IsChecked = false,
                                 QuantityOnSklad = quan,
-                                Quantity = r.SFT_KOL - (decimal) s.Shipped,
+                                Quantity = r.SFT_KOL - (decimal)s.Shipped,
                                 Invoice = doc
                             };
                             Nomenkls.Add(newRow);
@@ -114,7 +113,7 @@ namespace KursAM2.View.Logistiks.UC
 
         private InvoiceShort myCurrentInvoice;
         private InvoiceShortRow myCurrentNomenkl;
-        private readonly KursDomain.Documents.NomenklManagement.Warehouse Warehouse;
+        private readonly KursDomain.References.Warehouse Warehouse;
         private AddNomenklFromInvoiceProviderRowUC myDataUserControl;
 
         #endregion

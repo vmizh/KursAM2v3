@@ -4,11 +4,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
-using Core;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
+using KursDomain.References;
 using Newtonsoft.Json;
 
 // ReSharper disable InconsistentNaming
@@ -23,7 +23,7 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
     private References.Currency myDebitorCurrency;
     private SD_110 myEntity;
     private bool myIsOld;
-    private SD_111ViewModel myMutualAccountingOldType;
+    private MutualSettlementType myMutualAccountingOldType;
 
     //private UD_110ViewModel myMutualAccountingType;
 
@@ -49,9 +49,12 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
         tstamp = Entity.tstamp;
         ActType = Entity.ActType;
         SD_111 = Entity.SD_111;
-        MutualAccountingOldType = MainReferences.MutualTypes[Entity.SD_111.DOC_CODE];
-        DebitorCurrency = Entity.CurrencyFromDC != 0 ? MainReferences.Currencies[Entity.CurrencyFromDC] : null;
-        CreditorCurrency = Entity.CurrencyToDC != 0 ? MainReferences.Currencies[Entity.CurrencyToDC] : null;
+        MutualAccountingOldType =
+            GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.SD_111.DOC_CODE) as MutualSettlementType;
+        DebitorCurrency = GlobalOptions.ReferencesCache.GetCurrency(Entity.CurrencyFromDC) as References.Currency;
+        ;
+        CreditorCurrency = GlobalOptions.ReferencesCache.GetCurrency(Entity.CurrencyToDC) as References.Currency;
+        ;
         Rows.Clear();
         if (Entity.TD_110 == null) return;
         foreach (var r in Entity.TD_110)
@@ -192,7 +195,7 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
         }
     }
 
-    public SD_111ViewModel MutualAccountingOldType
+    public MutualSettlementType MutualAccountingOldType
     {
         get => myMutualAccountingOldType;
         set
@@ -300,7 +303,8 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
         {
             if (Entity.SD_111 == value) return;
             Entity.SD_111 = value;
-            myMutualAccountingOldType = Entity.SD_111 != null ? new SD_111ViewModel(Entity.SD_111) : null;
+            myMutualAccountingOldType =
+                GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.SD_111?.DOC_CODE) as MutualSettlementType;
             RaisePropertyChanged();
         }
     }
@@ -538,9 +542,10 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
         ActType = ent.ActType;
         SD_111 = ent.SD_111;
         UD_110 = ent.UD_110;
-        myMutualAccountingOldType = SD_111 != null ? MainReferences.MutualTypes[SD_111.DOC_CODE] : null;
-        DebitorCurrency = ent.CurrencyFromDC != 0 ? MainReferences.Currencies[ent.CurrencyFromDC] : null;
-        CreditorCurrency = ent.CurrencyToDC != 0 ? MainReferences.Currencies[ent.CurrencyToDC] : null;
+        myMutualAccountingOldType =
+            GlobalOptions.ReferencesCache.GetMutualSettlementType(SD_111.DOC_CODE) as MutualSettlementType;
+        DebitorCurrency = GlobalOptions.ReferencesCache.GetCurrency(ent.CurrencyFromDC) as References.Currency;
+        CreditorCurrency = GlobalOptions.ReferencesCache.GetCurrency(ent.CurrencyToDC) as References.Currency;
         Rows.Clear();
         if (ent.TD_110 == null) return;
         foreach (var r in ent.TD_110)

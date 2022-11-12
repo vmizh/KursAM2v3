@@ -30,7 +30,7 @@ public class BankAccountReference : RSViewModelBase, IEntity<SD_114>
     {
         Entity = entity ?? new SD_114 { DOC_CODE = -1 };
         myIsNegative = Entity.BA_NEGATIVE_RESTS == 1;
-        myCO = MainReferences.GetCO(Entity.BA_CENTR_OTV_DC);
+        myCO = GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.BA_CENTR_OTV_DC) as CentrResponsibility;
         if (Entity.SD_44 != null)
         {
 
@@ -236,7 +236,7 @@ public class BankAccountReference : RSViewModelBase, IEntity<SD_114>
 
     public References.Currency Currency
     {
-        get => Entity.CurrencyDC != null ? MainReferences.Currencies[(decimal)Entity.CurrencyDC] : null;
+        get => GlobalOptions.ReferencesCache.GetCurrency(Entity.CurrencyDC) as References.Currency;
         set
         {
             Entity.CurrencyDC = value?.DocCode;

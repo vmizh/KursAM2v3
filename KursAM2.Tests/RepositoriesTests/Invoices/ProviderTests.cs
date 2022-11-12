@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using Core;
 using Data;
 using Data.Repository;
 using KursAM2.Repositories.InvoicesRepositories;
@@ -50,7 +49,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 SF_CRS_DC = GlobalOptions.SystemProfile.NationalCurrency.DocCode,
                 SF_POSTAV_NUM = null,
                 Id = Guid.NewGuid(),
-                SF_POST_DC = MainReferences.ActiveKontragents.First().Key,
+                SF_POST_DC = ((IDocCode) GlobalOptions.ReferencesCache.GetKontragentsAll().First()).DocCode,
                 SF_RUB_SUMMA = 1000,
                 SF_CRS_SUMMA = 1000,
                 SF_PAY_FLAG = 0,
@@ -78,10 +77,11 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 Note = "test"
             };
 
-            newRow.Entity.SFT_UCHET_ED_IZM_DC = MainReferences.Units.First().Key;
-            newRow.Entity.SFT_NEMENKL_DC = MainReferences.ALLNomenkls.Values
-                .FirstOrDefault(_ => (((IDocCode)_.Currency).DocCode == newDoc.Currency.DocCode)).DocCode;
-            newRow.Entity.SFT_POST_ED_IZM_DC = MainReferences.Units.First().Key;
+            newRow.Entity.SFT_UCHET_ED_IZM_DC =
+                ((IDocCode) GlobalOptions.ReferencesCache.GetUnitsAll().First()).DocCode;
+            newRow.Entity.SFT_NEMENKL_DC = ((IDocCode) GlobalOptions.ReferencesCache.GetNomenklsAll()
+                .FirstOrDefault(_ => (((IDocCode) _.Currency).DocCode == newDoc.Currency.DocCode))).DocCode;
+            newRow.Entity.SFT_POST_ED_IZM_DC = ((IDocCode) GlobalOptions.ReferencesCache.GetUnitsAll().First()).DocCode;
             newDoc.Rows.Add(newRow);
             newDoc.Entity.TD_26.Add(newRow.Entity);
             UnitOfWork.CreateTransaction();
@@ -118,12 +118,12 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 NomenklId = row.Nomenkl.Id,
                 Date = DateTime.Today,
                 // ReSharper disable once PossibleInvalidOperationException
-                OLdPrice = (decimal)row.Price,
+                OLdPrice = (decimal) row.Price,
                 OLdNakladPrice = (row.SFT_SUMMA_NAKLAD ?? 0) != 0
-                    ? Math.Round((decimal)row.Price +
+                    ? Math.Round((decimal) row.Price +
                                  // ReSharper disable once PossibleInvalidOperationException
-                                 (decimal)row.Price / (row.SFT_SUMMA_NAKLAD ?? 0), 2)
-                    : Math.Round((decimal)row.Price, 2),
+                                 (decimal) row.Price / (row.SFT_SUMMA_NAKLAD ?? 0), 2)
+                    : Math.Round((decimal) row.Price, 2),
                 Quantity = row.Quantity,
                 Rate = 1
             };

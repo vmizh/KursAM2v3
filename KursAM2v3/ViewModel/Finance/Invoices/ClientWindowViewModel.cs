@@ -122,13 +122,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Properties
 
-        public List<Currency> CurrencyList => MainReferences.Currencies.Values.ToList();
-        public List<CentrResponsibility> COList => MainReferences.COList.Values.Where(_ => _.DocCode > 1).ToList();
-        public List<Employee> EmployeeList => MainReferences.Employees.Values.ToList();
-        public List<PayForm> FormRaschets => MainReferences.FormRaschets.Values.ToList();
-        public List<VzaimoraschetType> VzaimoraschetTypes => MainReferences.VzaimoraschetTypes.Values.ToList();
-        public List<PayCondition> PayConditions => MainReferences.PayConditions.Values.ToList();
-        public List<CountriesViewModel> Countries => MainReferences.Countries.Values.ToList();
+        public List<Currency> CurrencyList => GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>()
+            .OrderBy(_ => _.Name).ToList();
+
+        public List<CentrResponsibility> COList => GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
+            .Cast<CentrResponsibility>().OrderBy(_ => _.Name).ToList();
+        public List<Employee> EmployeeList => GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>()
+            .OrderBy(_ => _.Name).ToList();
+        public List<PayForm> FormRaschets => GlobalOptions.ReferencesCache.GetPayFormAll().Cast<PayForm>()
+            .OrderBy(_ => _.Name).ToList();
+        public List<MutualSettlementType> VzaimoraschetTypes => GlobalOptions.ReferencesCache.GetMutualSettlementTypeAll().Cast<MutualSettlementType>()
+            .OrderBy(_ => _.Name).ToList();
+        public List<PayCondition> PayConditions => GlobalOptions.ReferencesCache.GetPayConditionAll().Cast<PayCondition>()
+            .OrderBy(_ => _.Name).ToList();
+        public List<Country> Countries => GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Country>()
+            .OrderBy(_ => _.Name).ToList();
 
         public override string LayoutName => "InvoiceClientView2";
 
@@ -573,8 +581,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private IEnumerable<Nomenkl> LoadNomenkl(string srchText)
         {
-            return MainReferences.ALLNomenkls.Values.Where(_ =>
-                (_.Name + _.NomenklNumber + _.FullName).ToUpper().Contains(srchText.ToUpper()));
+            return GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>().Where(_ =>
+                (_.Name + _.NomenklNumber + _.FullName).ToUpper().Contains(srchText.ToUpper())).OrderBy(_ => _.Name);
         }
 
 
@@ -746,9 +754,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         DocumentType = DocumentType.Bank,
                         DocumentName =
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
                         Summa = (decimal)c.VVT_VAL_PRIHOD,
-                        Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as Currency,
                         Note = c.VVT_DOC_NUM
                     });
                 Document.ShipmentRows.Clear();
@@ -1251,10 +1259,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     DocumentName =
                         $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
                         // ReSharper disable once PossibleInvalidOperationException
-                        $"{MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
+                        $"{GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC)} ({c.CREATOR})",
                     // ReSharper disable once PossibleInvalidOperationException
                     Summa = (decimal)c.SUMM_ORD,
-                    Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
+                    Currency = GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC) as Currency,
                     Note = c.NOTES_ORD
                 });
             foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
@@ -1267,9 +1275,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     DocumentType = DocumentType.Bank,
                     DocumentName =
                         // ReSharper disable once PossibleInvalidOperationException
-                        $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                        $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
                     Summa = (decimal)c.VVT_VAL_PRIHOD,
-                    Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                    Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as Currency,
                     Note = c.VVT_DOC_NUM
                 });
             foreach (var c in ctx.TD_110.Include(_ => _.SD_110)
@@ -1284,7 +1292,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
                     // ReSharper disable once PossibleInvalidOperationException
                     Summa = (decimal)c.VZT_CRS_SUMMA,
-                    Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
+                    Currency = GlobalOptions.ReferencesCache.GetCurrency(c.SD_110.CurrencyFromDC) as Currency,
                     Note = c.VZT_DOC_NOTES
                 });
         }

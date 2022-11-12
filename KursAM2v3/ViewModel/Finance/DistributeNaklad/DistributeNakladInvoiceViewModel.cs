@@ -1,12 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.Repositories;
-using KursDomain.Documents.CommonReferences;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
 
@@ -132,9 +130,11 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         {
             get
             {
-                if (Invoice != null) return MainReferences.GetKontragent(Invoice.SF_POST_DC).Name;
+                if (Invoice != null)
+                    return ((IName)GlobalOptions.ReferencesCache.GetKontragent(Invoice.SF_POST_DC)).Name;
                 if (AccruedAmountRow?.AccruedAmountOfSupplier != null)
-                    return MainReferences.GetKontragent(AccruedAmountRow.AccruedAmountOfSupplier.KontrDC).Name;
+                    return ((IName)GlobalOptions.ReferencesCache.GetKontragent(AccruedAmountRow.AccruedAmountOfSupplier
+                        .KontrDC)).Name;
                 return null;
             }
         }
@@ -181,7 +181,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         // ReSharper disable once PossibleInvalidOperationException
         public Currency Currency
         {
-            get => MainReferences.GetCurrency(Entity.CrsDC);
+            get => GlobalOptions.ReferencesCache.GetCurrency(Entity.CrsDC) as Currency;
             set
             {
                 if (value == null) return;

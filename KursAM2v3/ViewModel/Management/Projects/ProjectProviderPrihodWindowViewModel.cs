@@ -4,15 +4,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Grid;
 using KursAM2.View.Management;
 using KursDomain;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
@@ -41,7 +38,7 @@ namespace KursAM2.ViewModel.Management.Projects
             StartDate = EndDate.AddDays(-30);
             SelectionMode = true;
             IsAll = false;
-            ProjectList = new List<Project>(MainReferences.Projects.Values.ToList());
+            ProjectList = new List<Project>(GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>().ToList());
         }
 
         public ProjectProviderPrihodWindowViewModel(Window form)
@@ -70,7 +67,7 @@ namespace KursAM2.ViewModel.Management.Projects
             get => myCurrentDistRow;
             set
             {
-                if (Equals(myCurrentDistRow,value)) return;
+                if (Equals(myCurrentDistRow, value)) return;
                 myCurrentDistRow = value;
                 IsUsluga = !myCurrentDistRow?.IsUsluga ?? false;
                 IsNotUsluga = myCurrentDistRow?.IsUsluga ?? false;
@@ -163,7 +160,7 @@ namespace KursAM2.ViewModel.Management.Projects
                     }
                 }
 
-                if (Equals(myCurrentRowDocument,value)) return;
+                if (Equals(myCurrentRowDocument, value)) return;
                 myCurrentRowDocument = value;
                 if (myCurrentRowDocument == null) return;
                 if (!CurrentRowDocument.IsUsluga)
@@ -172,9 +169,9 @@ namespace KursAM2.ViewModel.Management.Projects
                     using (var ctx = GlobalOptions.GetEntities())
                     {
                         foreach (var d in ctx.ProjectProviderPrihod.Where(_ => _.RowId == myCurrentRowDocument.Id)
-                            .ToList())
+                                     .ToList())
                         {
-                            var prj = MainReferences.Projects[d.ProjectId];
+                            var prj = GlobalOptions.ReferencesCache.GetProject(d.ProjectId) as Project;
                             DistributeRows.Add(new ProjectPrihodDistributeRow
                             {
                                 Id = d.Id,
@@ -202,9 +199,9 @@ namespace KursAM2.ViewModel.Management.Projects
                     using (var ctx = GlobalOptions.GetEntities())
                     {
                         foreach (var d in ctx.ProjectProviderUslugi.Where(_ => _.RowId == myCurrentRowDocument.Id)
-                            .ToList())
+                                     .ToList())
                         {
-                            var prj = MainReferences.Projects[d.ProjectId];
+                            var prj = GlobalOptions.ReferencesCache.GetProject(d.ProjectId) as Project;
                             DistributeRows.Add(new ProjectPrihodDistributeRow
                             {
                                 Id = d.Id,
@@ -271,7 +268,7 @@ namespace KursAM2.ViewModel.Management.Projects
             get => myDefaultProject;
             set
             {
-                if (Equals(myDefaultProject,value)) return;
+                if (Equals(myDefaultProject, value)) return;
                 myDefaultProject = value;
                 RaisePropertyChanged();
             }
@@ -281,8 +278,8 @@ namespace KursAM2.ViewModel.Management.Projects
         {
             if (DistributeRows.Count == 0) return DeletedDistributeRows.Count != 0;
             return DistributeRows.Any(_ => _.State == RowStatus.Edited) ||
-                   DistributeRows.Any(_ => _.State == RowStatus.NewRow)
-                   && DistributeRows.All(_ => _.Project != null);
+                   (DistributeRows.Any(_ => _.State == RowStatus.NewRow)
+                    && DistributeRows.All(_ => _.Project != null));
         }
 
         public override void SaveData(object data)
@@ -397,7 +394,7 @@ namespace KursAM2.ViewModel.Management.Projects
                         Date = sd24.DD_DATE,
                         NumAccount = sd26.SF_IN_NUM + "/" + sd26.SF_POSTAV_NUM,
                         NumNaklad = sd24.DD_IN_NUM + "/" + sd24.DD_EXT_NUM,
-                        Price = (decimal) td26.SFT_ED_CENA,
+                        Price = (decimal)td26.SFT_ED_CENA,
                         Quantity = td24.DDT_KOL_PRIHOD,
                         IsUsluga = false
                         //DistributeQuantity = prj.Sum(_ => _.Quantity),
@@ -425,7 +422,7 @@ namespace KursAM2.ViewModel.Management.Projects
                         Date = sd26.SF_POSTAV_DATE,
                         NumAccount = sd26.SF_IN_NUM + "/" + sd26.SF_POSTAV_NUM,
                         NumNaklad = null,
-                        Price = (decimal) td26.SFT_ED_CENA,
+                        Price = (decimal)td26.SFT_ED_CENA,
                         Quantity = td26.SFT_KOL,
                         IsUsluga = true
                     }).ToList();
@@ -504,9 +501,9 @@ namespace KursAM2.ViewModel.Management.Projects
                 CurrentDistRow.State = RowStatus.Edited;
             if (!(obj is CellValueChangedEventArgs arg)) return;
             if (arg.Column.FieldName != "Quantity" && arg.Column.FieldName != "Summa") return;
-            if ((decimal) arg.Value <= 0)
+            if ((decimal)arg.Value <= 0)
             {
-                CurrentDistRow.Quantity = (decimal) arg.OldValue;
+                CurrentDistRow.Quantity = (decimal)arg.OldValue;
                 return;
             }
 
@@ -514,10 +511,10 @@ namespace KursAM2.ViewModel.Management.Projects
             if (curdoc == null) return;
             if (!curdoc.IsUsluga)
             {
-                var c = curdoc.DistributeQuantity + ((decimal) arg.Value - (decimal) arg.OldValue);
+                var c = curdoc.DistributeQuantity + ((decimal)arg.Value - (decimal)arg.OldValue);
                 if (c > curdoc.Quantity)
                 {
-                    CurrentDistRow.Quantity = (decimal) arg.OldValue;
+                    CurrentDistRow.Quantity = (decimal)arg.OldValue;
                     CurrentDistRow.Summa = CurrentDistRow.Quantity * CurrentDistRow.Price;
                 }
                 else
@@ -529,7 +526,7 @@ namespace KursAM2.ViewModel.Management.Projects
             {
                 var c = DistributeRows.Where(_ => _.RowId == CurrentRowDocument.Id).Sum(s => s.Summa);
                 if (curdoc.Summa - c < 0)
-                    CurrentDistRow.Summa = (decimal) arg.OldValue;
+                    CurrentDistRow.Summa = (decimal)arg.OldValue;
                 else
                     curdoc.DistributeSumma =
                         DistributeRows.Where(_ => _.RowId == CurrentRowDocument.Id).Sum(s => s.Summa);

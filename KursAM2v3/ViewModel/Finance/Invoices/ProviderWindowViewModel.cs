@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -37,7 +36,6 @@ using KursDomain.Documents.Currency;
 using KursDomain.Documents.Dogovora;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.NomenklManagement;
-using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
@@ -342,12 +340,28 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Properties
 
-        public List<VzaimoraschetType> VzaimoraschetTypeList => MainReferences.VzaimoraschetTypes.Values.ToList();
-        public List<Currency> CurrencyList => MainReferences.Currencies.Values.ToList();
-        public List<CentrResponsibility> COList => MainReferences.COList.Values.Where(_ => _.DocCode > 0).ToList();
-        public List<PayCondition> PayConditionList => MainReferences.PayConditions.Values.ToList();
-        public List<PayForm> FormRaschetList => MainReferences.FormRaschets.Values.ToList();
-        public List<Employee> EmployeeList => MainReferences.Employees.Values.ToList();
+        public List<Currency> CurrencyList => GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>()
+            .OrderBy(_ => _.Name).ToList();
+
+        public List<CentrResponsibility> COList => GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
+            .Cast<CentrResponsibility>().OrderBy(_ => _.Name).ToList();
+
+        public List<Employee> EmployeeList => GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>()
+            .OrderBy(_ => _.Name).ToList();
+
+        public List<PayForm> FormRaschetList => GlobalOptions.ReferencesCache.GetPayFormAll().Cast<PayForm>()
+            .OrderBy(_ => _.Name).ToList();
+
+        public List<MutualSettlementType> VzaimoraschetTypeList => GlobalOptions.ReferencesCache
+            .GetMutualSettlementTypeAll().Cast<MutualSettlementType>()
+            .OrderBy(_ => _.Name).ToList();
+
+        public List<PayCondition> PayConditionList => GlobalOptions.ReferencesCache.GetPayConditionAll()
+            .Cast<PayCondition>()
+            .OrderBy(_ => _.Name).ToList();
+
+        public List<Country> Countries => GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Country>()
+            .OrderBy(_ => _.Name).ToList();
 
         public override string LayoutName => "InvoiceProviderView";
 
@@ -376,7 +390,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get => myDocument;
             set
             {
-                if (Equals(myDocument ,value)) return;
+                if (Equals(myDocument, value)) return;
                 myDocument = value;
                 RaisePropertyChanged();
             }
@@ -1031,10 +1045,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void AddNomenklCrsConvert(object obj)
         {
-            MainReferences.UpdateNomenklForMain(CurrentRow.Nomenkl.MainId);
-            var noms = MainReferences.ALLNomenkls.Values.Where(_ => _.MainId == CurrentRow.Nomenkl.MainId
-                                                                    && ((IDocCode)_.Currency).DocCode !=
-                                                                    ((IDocCode)CurrentRow.Nomenkl.Currency).DocCode)
+            //GlobalOptions.ReferencesCache.UpdateNomenklForMain(CurrentRow.Nomenkl.MainId);
+            var noms = GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>().Where(_ =>
+                    _.MainId == CurrentRow.Nomenkl.MainId
+                    && ((IDocCode)_.Currency).DocCode !=
+                    ((IDocCode)CurrentRow.Nomenkl.Currency).DocCode)
                 .ToList();
             if (noms.Count == 0) return;
             Nomenkl n;
@@ -1150,7 +1165,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private IEnumerable<Nomenkl> LoadNomenkl(string srchText)
         {
-            return MainReferences.ALLNomenkls.Values.Where(_ =>
+            return GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>().Where(_ =>
                 (_.Name + _.NomenklNumber + _.FullName).ToUpper().Contains(srchText.ToUpper()));
         }
 
@@ -1320,7 +1335,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     {
                         DocCode = Document.DocCode,
                         Code = newCode,
-                        Nomenkl = MainReferences.GetNomenkl(item.DocCode),
+                        Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(item.DocCode) as Nomenkl,
                         Id = Guid.NewGuid(),
                         DocId = Document.Id,
                         SFT_NDS_PERCENT = nds,
@@ -1767,7 +1782,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             Rate = 1,
                             DocName = "Расходный кассовый ордер",
                             // ReSharper disable once PossibleInvalidOperationException
-                            DocExtName = $"Касса: {MainReferences.Cashs[(decimal)old.CA_DC].Name} "
+                            DocExtName = $"Касса: {((IName)GlobalOptions.ReferencesCache.GetCashBox(old.CA_DC)).Name} "
                         };
                         Document.Entity.ProviderInvoicePay.Add(newItem.Entity);
                         Document.PaymentDocs.Add(newItem);
@@ -1918,7 +1933,7 @@ public class NomenklSlectForCurrencyConvertViewModel : RSWindowViewModelBase
     {
         set
         {
-            if (Equals(myCurrentItem,value)) return;
+            if (Equals(myCurrentItem, value)) return;
             myCurrentItem = value;
             RaisePropertyChanged();
         }

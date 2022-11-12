@@ -1,15 +1,16 @@
 ﻿using System.Linq;
 using System.Windows;
-using Core;
 using DevExpress.Data;
-using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.ViewModel.Logistiks.Warehouse;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
+using KursDomain.References;
 
 namespace KursAM2.View.Logistiks.Warehouse
 {
@@ -21,7 +22,7 @@ namespace KursAM2.View.Logistiks.Warehouse
         //private readonly LayoutManagerGridAutoGenerationColumns gridRowsLayout;
         public OrderInView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
@@ -69,7 +70,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                 case nameof(inv.SDRSchet):
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
-                        ItemsSource = MainReferences.SDRSchets.Values,
+                        ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList(),
                         DisplayMember = "Name",
                         AutoComplete = true
                     };
@@ -122,7 +123,7 @@ namespace KursAM2.View.Logistiks.Warehouse
             ctx.CurrentRow.Nomenkl = nomenkls.First();
         }
 
-        private void ComboBoxEdit_EditValueChanged(object sender, DevExpress.Xpf.Editors.EditValueChangedEventArgs e)
+        private void ComboBoxEdit_EditValueChanged(object sender, EditValueChangedEventArgs e)
         {
             if (DataContext is OrderInWindowViewModel dtx)
             {

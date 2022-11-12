@@ -2,10 +2,8 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using Calculates.Materials;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using DevExpress.Xpf.CodeView;
 using KursAM2.View.Logistiks;
 using KursDomain;
 using KursDomain.References;
@@ -17,9 +15,9 @@ namespace KursAM2.ViewModel.Logistiks
         private Currency myCurrency;
         private NomTransferAddForSkladUC myDataUserControl;
         private DateTime myDate;
-        private KursDomain.Documents.NomenklManagement.Warehouse myWarehouse;
+        private KursDomain.References.Warehouse myWarehouse;
 
-        public NomTransferAddForSklad(KursDomain.Documents.NomenklManagement.Warehouse warehouse)
+        public NomTransferAddForSklad(KursDomain.References.Warehouse warehouse)
         {
             myDataUserControl = new NomTransferAddForSkladUC();
             Warehouse = warehouse;
@@ -27,7 +25,7 @@ namespace KursAM2.ViewModel.Logistiks
             LoadReference();
         }
 
-        public NomTransferAddForSklad(KursDomain.Documents.NomenklManagement.Warehouse warehouse, DateTime date)
+        public NomTransferAddForSklad(KursDomain.References.Warehouse warehouse, DateTime date)
         {
             myDataUserControl = new NomTransferAddForSkladUC();
             Warehouse = warehouse;
@@ -38,12 +36,12 @@ namespace KursAM2.ViewModel.Logistiks
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<Currency> CurrencyCollection { set; get; } = new ObservableCollection<Currency>();
 
-        public KursDomain.Documents.NomenklManagement.Warehouse Warehouse
+        public KursDomain.References.Warehouse Warehouse
         {
             get => myWarehouse;
             set
             {
-                if (Equals(myWarehouse,value)) return;
+                if (Equals(myWarehouse, value)) return;
                 myWarehouse = value;
                 if (myWarehouse != null && Currency != null)
                     LoadOstatki(myWarehouse, Currency);
@@ -111,7 +109,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        private void LoadOstatki(KursDomain.Documents.NomenklManagement.Warehouse warehouse, Currency crs)
+        private void LoadOstatki(KursDomain.References.Warehouse warehouse, Currency crs)
         {
             Rows.Clear();
             foreach (
@@ -121,7 +119,7 @@ namespace KursAM2.ViewModel.Logistiks
                                 && _.Remain != 0))
                 Rows.Add(new NomenklRemainWithPrice
                 {
-                    Nomenkl = MainReferences.GetNomenkl(n.NomenklDC),
+                    Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(n.NomenklDC) as Nomenkl,
                     IsSelected = false,
                     Price = n.Price,
                     Quantity = n.Remain,

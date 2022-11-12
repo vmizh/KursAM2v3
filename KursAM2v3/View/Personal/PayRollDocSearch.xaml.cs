@@ -2,13 +2,12 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using Core;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Core;
 using KursAM2.ViewModel.Personal;
 using KursDomain;
 using KursDomain.ICommon;
+using KursDomain.References;
 using LayoutManager;
 
 namespace KursAM2.View.Personal
@@ -22,7 +21,8 @@ namespace KursAM2.View.Personal
 
         public PayRollDocSearch()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent();
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Loaded += PayRollDocSearch_Loaded;
             Closing += PayRollDocSearch_Closing;
@@ -30,6 +30,7 @@ namespace KursAM2.View.Personal
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -51,7 +52,7 @@ namespace KursAM2.View.Personal
             {
                 if (!(gridVedomost.CurrentItem is PayRollVedomostSearch row)) return;
                 var ctx = new PayRollVedomostWindowViewModel(row.Id);
-                var form = new PayRollVedomost {Owner = this};
+                var form = new PayRollVedomost { Owner = this };
                 form.Show();
                 form.DataContext = ctx;
             }
@@ -78,8 +79,9 @@ namespace KursAM2.View.Personal
                     if (r == null) return;
                     row = r;
                 }
+
                 var pr = new PayRollVedomostWindowViewModel(row.Id);
-                var form = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = pr};
+                var form = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = pr };
                 form.Show();
             }
             catch (Exception ex)
@@ -103,9 +105,10 @@ namespace KursAM2.View.Personal
                 if (r == null) return;
                 row = r;
             }
+
             var pr = new PayRollVedomostWindowViewModel(row.Id);
             var newVed = pr.Copy();
-            var form = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = newVed};
+            var form = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = newVed };
             form.Show();
         }
 
@@ -126,7 +129,7 @@ namespace KursAM2.View.Personal
                 if (row == null) return;
                 var pr = new PayRollVedomostWindowViewModel(row.Id);
                 var dtx = pr.Copy();
-                var frm = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = dtx};
+                var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = dtx };
                 frm.Show();
                 foreach (var emp in dtx.Employees)
                 {
@@ -138,7 +141,8 @@ namespace KursAM2.View.Personal
                         Name = emp.Name,
                         State = RowStatus.NewRow,
                         Employee = emp.Employee,
-                        Crs = MainReferences.Currencies[GlobalOptions.SystemProfile.MainCurrency.DocCode],
+                        Crs = GlobalOptions.ReferencesCache.GetCurrency(
+                            GlobalOptions.SystemProfile.MainCurrency.DocCode) as Currency,
                         PRType = dtx.PayrollTypeCollection.Single(_ =>
                             _.DocCode == GlobalOptions.SystemProfile.DafaultPayRollType.DocCode),
                         Summa = 0,

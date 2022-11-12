@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -391,15 +390,13 @@ public sealed class CashReference : CashViewModel
 
     public CashReference()
     {
-        if (MainReferences.Currencies.ContainsKey(CA_CRS_DC))
-            DefaultCurrency = MainReferences.Currencies[CA_CRS_DC];
+        DefaultCurrency = GlobalOptions.ReferencesCache.GetCurrency(CA_CRS_DC) as Currency;
     }
 
     public CashReference(SD_22 entity) : base(entity)
     {
-        if (MainReferences.Currencies.ContainsKey(CA_CRS_DC))
-            DefaultCurrency = MainReferences.Currencies[CA_CRS_DC];
-        CO = MainReferences.GetCO(CA_CENTR_OTV_DC);
+        DefaultCurrency = GlobalOptions.ReferencesCache.GetCurrency(CA_CRS_DC) as Currency;
+        CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(CA_CENTR_OTV_DC) as CentrResponsibility;
         if (Entity.TD_22 != null && Entity.TD_22.Count > 0)
             foreach (var r in Entity.TD_22)
             {

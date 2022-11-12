@@ -12,6 +12,7 @@ using KursAM2.View.Base;
 using KursAM2.ViewModel.Logistiks;
 using KursDomain;
 using KursDomain.Menu;
+using KursDomain.References;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -40,7 +41,7 @@ namespace KursAM2.ViewModel.Management
             }
 
             foreach (var mm in DatePeriod.GenerateIerarhy(d, PeriodIerarhy.YearMonth)
-                .Where(_ => _.PeriodType == PeriodType.Month))
+                         .Where(_ => _.PeriodType == PeriodType.Month))
                 Period.Add(new DatePeriod
                 {
                     Id = mm.Id,
@@ -97,8 +98,8 @@ namespace KursAM2.ViewModel.Management
         private void OpenCalcRentabelnost(object obj)
         {
             if (CurrentNomenklItem?.Nomenkl?.DocCode == null) return;
-            var ctx = new NomPriceWindowViewModel((decimal) CurrentNomenklItem?.Nomenkl?.DocCode);
-            var dlg = new SelectDialogView {DataContext = ctx};
+            var ctx = new NomPriceWindowViewModel((decimal)CurrentNomenklItem?.Nomenkl?.DocCode);
+            var dlg = new SelectDialogView { DataContext = ctx };
             dlg.ShowDialog();
         }
 
@@ -155,7 +156,7 @@ namespace KursAM2.ViewModel.Management
                     NomenklList.Clear();
                     foreach (var d in data)
                     {
-                        var nom = MainReferences.GetNomenkl(d.NomDC);
+                        var nom = GlobalOptions.ReferencesCache.GetNomenkl(d.NomDC) as Nomenkl;
                         var newItem = new ShopNomenklViewModel
                         {
                             Nomenkl = nom,
@@ -170,6 +171,7 @@ namespace KursAM2.ViewModel.Management
                         };
                         NomenklList.Add(newItem);
                     }
+
                     COList.Clear();
                     COList.Add(new ShopHeaderViewModel
                     {

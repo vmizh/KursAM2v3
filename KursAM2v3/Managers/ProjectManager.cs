@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -21,7 +20,7 @@ namespace KursAM2.Managers
         public List<ProjectResultInfo> LoadProjects()
         {
             var ret = new List<ProjectResultInfo>();
-            foreach (var p in MainReferences.Projects.Values)
+            foreach (var p in GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>())
                 ret.Add(new ProjectResultInfo(p));
             return ret;
         }
@@ -32,7 +31,8 @@ namespace KursAM2.Managers
         private List<Guid> getProjectTreeIds(Guid id)
         {
             var ret = new List<Guid> { id };
-            var d = MainReferences.Projects.Values.Where(_ => _.ParentId == id).Select(v => v.Id).ToList();
+            var d = GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>().Where(_ => _.ParentId == id)
+                .Select(v => v.Id).ToList();
             if (d.Count == 0) return ret;
             foreach (var pid in d) ret.AddRange(getProjectTreeIds(pid));
             return ret;
@@ -494,10 +494,10 @@ namespace KursAM2.Managers
                         var newdoc = new ProjectDocumentViewModel
                         {
                             ProjectId = prID,
-                            Currency = MainReferences.Currencies[d.VZT_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.VZT_CRS_DC) as Currency,
                             Name = "Акт взаимозачета",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = MainReferences.GetKontragent(d.VZT_KONTR_DC),
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.VZT_KONTR_DC) as Kontragent,
                             DocDate = d.SD_110.VZ_DATE,
                             DocName = "Акт взаимозачета",
                             DocNum = d.VZT_DOC_NUM,
@@ -510,13 +510,15 @@ namespace KursAM2.Managers
                         if (d.VZT_1MYDOLZH_0NAMDOLZH == 1)
                         {
                             setCurrencyValue(newdoc.Sum,
-                                MainReferences.Currencies[d.VZT_CRS_DC], newdoc, TypeProfitAndLossCalc.IsLoss);
+                                GlobalOptions.ReferencesCache.GetCurrency(d.VZT_CRS_DC) as Currency, newdoc,
+                                TypeProfitAndLossCalc.IsLoss);
                             result.Add(newdoc);
                         }
                         else
                         {
                             setCurrencyValue(newdoc.Sum,
-                                MainReferences.Currencies[d.VZT_CRS_DC], newdoc, TypeProfitAndLossCalc.IsProfit);
+                                GlobalOptions.ReferencesCache.GetCurrency(d.VZT_CRS_DC) as Currency, newdoc,
+                                TypeProfitAndLossCalc.IsProfit);
                             result.Add(newdoc);
                         }
                     }
@@ -555,11 +557,11 @@ namespace KursAM2.Managers
                         var newdoc = new ProjectDocumentViewModel
                         {
                             ProjectId = prID,
-                            Currency = MainReferences.Currencies[d.VZT_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.VZT_CRS_DC) as Currency,
                             Name = "Акт конвертации",
                             DocCode = d.DOC_CODE,
                             DocRowId = d.CODE,
-                            KontragentViewModel = MainReferences.GetKontragent(d.VZT_KONTR_DC),
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.VZT_KONTR_DC) as Kontragent,
                             DocDate = d.SD_110.VZ_DATE,
                             DocName = "Акт конвертации",
                             DocNum = d.VZT_DOC_NUM,
@@ -571,13 +573,15 @@ namespace KursAM2.Managers
                         if (d.VZT_1MYDOLZH_0NAMDOLZH == 1)
                         {
                             setCurrencyValue(newdoc.Sum,
-                                MainReferences.Currencies[d.VZT_CRS_DC], newdoc, TypeProfitAndLossCalc.IsLoss);
+                                GlobalOptions.ReferencesCache.GetCurrency(d.VZT_CRS_DC) as Currency, newdoc,
+                                TypeProfitAndLossCalc.IsLoss);
                             result.Add(newdoc);
                         }
                         else
                         {
                             setCurrencyValue(newdoc.Sum,
-                                MainReferences.Currencies[d.VZT_CRS_DC], newdoc, TypeProfitAndLossCalc.IsProfit);
+                                GlobalOptions.ReferencesCache.GetCurrency(d.VZT_CRS_DC) as Currency, newdoc,
+                                TypeProfitAndLossCalc.IsProfit);
                             result.Add(newdoc);
                         }
                     }
@@ -613,10 +617,10 @@ namespace KursAM2.Managers
                         var newdoc = new ProjectDocumentViewModel
                         {
                             ProjectId = prID,
-                            Currency = MainReferences.Currencies[d.VVT_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.VVT_CRS_DC) as Currency,
                             Name = "Банковская выписка",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = MainReferences.GetKontragent(d.VVT_KONTRAGENT),
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.VVT_KONTRAGENT) as Kontragent,
                             DocDate = d.SD_101.VV_STOP_DATE,
                             DocName = "Банковская выписка",
                             DocRowId = d.CODE,
@@ -627,10 +631,12 @@ namespace KursAM2.Managers
                         };
                         if (d.VVT_VAL_RASHOD == 0)
                             setCurrencyValue(d.VVT_VAL_PRIHOD,
-                                MainReferences.Currencies[d.VVT_CRS_DC], newdoc, TypeProfitAndLossCalc.IsProfit);
+                                GlobalOptions.ReferencesCache.GetCurrency(d.VVT_CRS_DC) as Currency, newdoc,
+                                TypeProfitAndLossCalc.IsProfit);
                         else
                             setCurrencyValue(d.VVT_VAL_RASHOD,
-                                MainReferences.Currencies[d.VVT_CRS_DC], newdoc, TypeProfitAndLossCalc.IsLoss);
+                                GlobalOptions.ReferencesCache.GetCurrency(d.VVT_CRS_DC) as Currency, newdoc,
+                                TypeProfitAndLossCalc.IsLoss);
                         result.Add(newdoc);
                     }
                 }
@@ -668,10 +674,11 @@ namespace KursAM2.Managers
                         var newdoc = new ProjectDocumentViewModel
                         {
                             ProjectId = prID,
-                            Currency = MainReferences.Currencies[d.SD_84.SF_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.SD_84.SF_CRS_DC) as Currency,
                             Name = "Услуги клиентам",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = MainReferences.GetKontragent(d.SD_84.SF_CLIENT_DC),
+                            Kontragent =
+                                GlobalOptions.ReferencesCache.GetKontragent(d.SD_84.SF_CLIENT_DC) as Kontragent,
                             DocDate = d.SD_84.SF_DATE,
                             DocName = "Услуги клиентам",
                             DocNum = Convert.ToString(d.SD_84.SF_IN_NUM) + "/" + d.SD_84.SF_OUT_NUM,
@@ -686,13 +693,15 @@ namespace KursAM2.Managers
                             // ReSharper disable once PossibleNullReferenceException
                             doc.Sum += newdoc.Sum;
                             setCurrencyValue(doc.Sum,
-                                MainReferences.Currencies[d.SD_84.SF_CRS_DC], doc, TypeProfitAndLossCalc.IsProfit,
+                                GlobalOptions.ReferencesCache.GetCurrency(d.SD_84.SF_CRS_DC) as Currency, doc,
+                                TypeProfitAndLossCalc.IsProfit,
                                 d.SFT_NACENKA_DILERA ?? 0);
                         }
                         else
                         {
                             setCurrencyValue(newdoc.Sum,
-                                MainReferences.Currencies[d.SD_84.SF_CRS_DC], newdoc, TypeProfitAndLossCalc.IsProfit,
+                                GlobalOptions.ReferencesCache.GetCurrency(d.SD_84.SF_CRS_DC) as Currency, newdoc,
+                                TypeProfitAndLossCalc.IsProfit,
                                 d.SFT_NACENKA_DILERA ?? 0);
                             result.Add(newdoc);
                         }
@@ -733,10 +742,10 @@ namespace KursAM2.Managers
                         {
                             Id = d.Id,
                             ProjectId = prID,
-                            Currency = MainReferences.Currencies[d.SD_26.SF_CRS_DC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.SD_26.SF_CRS_DC) as Currency,
                             Name = "Услуги поставщиков",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = MainReferences.GetKontragent(d.SD_26.SF_POST_DC),
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.SD_26.SF_POST_DC) as Kontragent,
                             DocDate = d.SD_26.SF_POSTAV_DATE,
                             DocName = "Услуги поставщиков",
                             DocNum = Convert.ToString(d.SD_26.SF_IN_NUM) + "/" + d.SD_26.SF_POSTAV_NUM,
@@ -751,12 +760,13 @@ namespace KursAM2.Managers
                             // ReSharper disable once PossibleNullReferenceException
                             doc.Sum += newdoc.Sum;
                             setCurrencyValue(doc.Sum,
-                                MainReferences.Currencies[d.SD_26.SF_CRS_DC.Value], doc, TypeProfitAndLossCalc.IsLoss);
+                                GlobalOptions.ReferencesCache.GetCurrency(d.SD_26.SF_CRS_DC) as Currency, doc,
+                                TypeProfitAndLossCalc.IsLoss);
                         }
                         else
                         {
                             setCurrencyValue(newdoc.Sum,
-                                MainReferences.Currencies[d.SD_26.SF_CRS_DC.Value], newdoc,
+                                GlobalOptions.ReferencesCache.GetCurrency(d.SD_26.SF_CRS_DC) as Currency, newdoc,
                                 TypeProfitAndLossCalc.IsLoss);
                             result.Add(newdoc);
                         }
@@ -796,12 +806,12 @@ namespace KursAM2.Managers
                         var newdoc = new ProjectDocumentViewModel
                         {
                             ProjectId = prID,
-                            Currency = MainReferences.Currencies[item.TD_84.SD_84.SF_CRS_DC],
+                            Currency =
+                                GlobalOptions.ReferencesCache.GetCurrency(item.TD_84.SD_84.SF_CRS_DC) as Currency,
                             Name = "С/Ф Клиенту",
                             DocCode = item.DDT_SFACT_DC.Value,
-                            KontragentViewModel = item.SD_24.DD_KONTR_OTPR_DC != null
-                                ? MainReferences.GetKontragent(item.SD_24.DD_KONTR_OTPR_DC)
-                                : null,
+                            Kontragent =
+                                GlobalOptions.ReferencesCache.GetKontragent(item.SD_24.DD_KONTR_OTPR_DC) as Kontragent,
                             DocInNum = Convert.ToString(item.TD_84.SD_84.SF_IN_NUM),
                             DocDate = item.SD_24.DD_DATE,
                             DocName = "С/Ф Клиенту",
@@ -817,13 +827,14 @@ namespace KursAM2.Managers
                             // ReSharper disable once PossibleNullReferenceException
                             doc.Sum += newdoc.Sum;
                             setCurrencyValue(doc.Sum,
-                                MainReferences.Currencies[item.TD_84.SD_84.SF_CRS_DC], doc,
+                                GlobalOptions.ReferencesCache.GetCurrency(item.TD_84.SD_84.SF_CRS_DC) as Currency, doc,
                                 TypeProfitAndLossCalc.IsProfit);
                         }
                         else
                         {
                             setCurrencyValue(newdoc.Sum,
-                                MainReferences.Currencies[item.TD_84.SD_84.SF_CRS_DC], newdoc,
+                                GlobalOptions.ReferencesCache.GetCurrency(item.TD_84.SD_84.SF_CRS_DC) as Currency,
+                                newdoc,
                                 TypeProfitAndLossCalc.IsProfit);
                             result.Add(newdoc);
                         }
@@ -861,20 +872,19 @@ namespace KursAM2.Managers
                         var newdoc = new ProjectDocumentViewModel
                         {
                             ProjectId = prID,
-                            Currency = MainReferences.Currencies[d.CRS_DC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC) as Currency,
                             Name = "Приходный кассовый ордер",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = d.KONTRAGENT_DC != null ? MainReferences.GetKontragent(d.KONTRAGENT_DC) : null,
-                            DocDate = d.DATE_ORD.Value,
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KONTRAGENT_DC) as Kontragent,
+                            DocDate = d.DATE_ORD ?? DateTime.MinValue,
                             DocName = "Приходный кассовый ордер",
                             DocNum = Convert.ToString(d.NUM_ORD),
                             DocType = DocumentType.CashIn,
-                            Employee = d.TABELNUMBER != null
-                                ? MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)
-                                : null,
+                            Employee = GlobalOptions.ReferencesCache.GetEmployee(d.TABELNUMBER) as Employee,
                             Note = d.NOTES_ORD
                         };
-                        setCurrencyValue(d.SUMM_ORD, MainReferences.Currencies[d.CRS_DC.Value], newdoc,
+                        setCurrencyValue(d.SUMM_ORD, GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC) as Currency,
+                            newdoc,
                             TypeProfitAndLossCalc.IsProfit);
                         result.Add(newdoc);
                     }
@@ -883,21 +893,20 @@ namespace KursAM2.Managers
                     {
                         var newdoc = new ProjectDocumentViewModel
                         {
-                            Currency = MainReferences.Currencies[d.CRS_DC.Value],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC) as Currency,
                             Name = "Расходный кассовый ордер",
                             DocCode = d.DOC_CODE,
-                            KontragentViewModel = d.KONTRAGENT_DC != null ? MainReferences.GetKontragent(d.KONTRAGENT_DC) : null,
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KONTRAGENT_DC) as Kontragent,
                             DocDate = d.DATE_ORD.Value,
                             DocName = "Расходный кассовый ордер",
                             DocNum = Convert.ToString(d.NUM_ORD),
                             DocType = DocumentType.CashOut,
-                            Employee = d.TABELNUMBER != null
-                                ? MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER)
-                                : null,
+                            Employee = GlobalOptions.ReferencesCache.GetEmployee(d.TABELNUMBER) as Employee,
                             Note = d.NOTES_ORD,
                             Sum = d.SUMM_ORD
                         };
-                        setCurrencyValue(d.SUMM_ORD, MainReferences.Currencies[d.CRS_DC.Value], newdoc,
+                        setCurrencyValue(d.SUMM_ORD, GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC) as Currency,
+                            newdoc,
                             TypeProfitAndLossCalc.IsLoss);
                         result.Add(newdoc);
                     }
@@ -976,12 +985,11 @@ namespace KursAM2.Managers
                             {
                                 Id = d.Id,
                                 ProjectId = prID,
-                                Currency = MainReferences.Currencies[d.CurrencyDC],
+                                Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC) as Currency,
                                 Name = "Приход товара",
                                 DocCode = d.DocDC,
-                                KontragentViewModel = d.KontragentDC != null
-                                    ? MainReferences.GetKontragent((decimal)d.KontragentOtpravDC)
-                                    : null,
+                                Kontragent =
+                                    GlobalOptions.ReferencesCache.GetKontragent(d.KontragentOtpravDC) as Kontragent,
                                 DocDate = d.Date,
                                 DocName = "Приход товара",
                                 DocNum = Convert.ToString(d.InNum) + "/" + d.OutNum + "С/ф №" +
@@ -990,7 +998,9 @@ namespace KursAM2.Managers
                                 Employee = null,
                                 Note = d.Note,
                                 Sum = d.Sum,
-                                Nomenkl = MainReferences.GetNomenkl(d.NomenklDC)
+                                Nomenkl =
+                                    GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as
+                                        KursDomain.References.Nomenkl
                             };
                             setCurrencyValue(newdoc.Sum,
                                 newdoc.Currency, newdoc,

@@ -318,7 +318,7 @@ namespace KursAM2.ViewModel.StockHolder
                     {
                         DocCode = d.DOC_CODE,
                         DocumentDate = d.DATE_ORD ?? DateTime.Today,
-                        Currency = MainReferences.GetCurrency(d.CRS_DC),
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC) as Currency,
                         DocumentName = "Приходный кассовый ордер",
                         DocumentNumber = d.NUM_ORD.ToString(),
                         SummaIn = d.SUMM_ORD ?? 0
@@ -332,7 +332,7 @@ namespace KursAM2.ViewModel.StockHolder
                     {
                         DocCode = d.DOC_CODE,
                         DocumentDate = d.DATE_ORD ?? DateTime.Today,
-                        Currency = MainReferences.GetCurrency(d.CRS_DC),
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC) as Currency,
                         DocumentName = "Расходный кассовый ордер",
                         DocumentNumber = d.NUM_ORD.ToString(),
                         SummaOut = d.SUMM_ORD ?? 0
@@ -346,7 +346,7 @@ namespace KursAM2.ViewModel.StockHolder
                     {
                         DocId = d.DocId,
                         DocumentDate = d.StockHolderAccrual.Date,
-                        Currency = MainReferences.GetCurrency(d.CurrencyDC),
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC) as Currency,
                         DocumentName = "Начисление акционеру",
                         DocumentNumber = d.StockHolderAccrual.Num.ToString(),
                         SummaNach = d.Summa ?? 0

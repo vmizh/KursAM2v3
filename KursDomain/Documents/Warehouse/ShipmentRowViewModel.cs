@@ -2,6 +2,7 @@
 using Core.Helper;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.References;
 
@@ -28,7 +29,7 @@ public class ShipmentRowViewModel : TD_24ViewModel
 
     public new Nomenkl Nomenkl
     {
-        get => MainReferences.GetNomenkl(Entity.DDT_NOMENKL_DC);
+        get => GlobalOptions.ReferencesCache.GetNomenkl(Entity.DDT_NOMENKL_DC) as Nomenkl;
         set
         {
             if (Entity.DDT_NOMENKL_DC == value.DocCode) return;

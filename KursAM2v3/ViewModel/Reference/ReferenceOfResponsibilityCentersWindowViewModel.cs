@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -136,7 +135,6 @@ namespace KursAM2.ViewModel.Reference
 
                         foreach (var с in CenterCollection)
                             с.myState = RowStatus.NotEdited;
-                        MainReferences.Refresh();
                         RaisePropertyChanged(nameof(IsCanSaveData));
                     }
                     catch (Exception ex)

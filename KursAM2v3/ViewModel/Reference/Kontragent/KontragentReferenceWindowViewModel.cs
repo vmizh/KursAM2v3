@@ -6,7 +6,6 @@ using System.Linq;
 using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -22,8 +21,8 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 {
     public class KontragentReferenceWindowViewModel : RSWindowViewModelBase
     {
-        private KontragentGroupViewModel myCurrentGroup;
         private KontragentViewModel _myCurrentKontragent;
+        private KontragentGroupViewModel myCurrentGroup;
         private bool myIsAllKontragent;
         private bool myIsGroupEnabled;
         private bool myIsShowDeleted;
@@ -53,7 +52,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             get => _myCurrentKontragent;
             set
             {
-                if (Equals(_myCurrentKontragent,value)) return;
+                if (Equals(_myCurrentKontragent, value)) return;
                 _myCurrentKontragent = value;
                 RaisePropertyChanged();
             }
@@ -518,11 +517,10 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                         if (firstOrDefault != null)
                             firstOrDefault.DELETED = 1;
                         ctx.SaveChanges();
-                        var orDefault = MainReferences.AllKontragents.Values
-                            .FirstOrDefault(_ => _.DOC_CODE == CurrentKontragent.DOC_CODE);
-                        if (orDefault != null)
+                        if (GlobalOptions.ReferencesCache.GetKontragent(CurrentKontragent.DOC_CODE) is
+                            KursDomain.References.Kontragent orDefault)
                             orDefault
-                                .DELETED = 1;
+                                .IsDeleted = true;
                         KontragentsInGroup.Remove(CurrentKontragent);
                         RaisePropertyChanged(nameof(KontragentsInGroup));
                     }

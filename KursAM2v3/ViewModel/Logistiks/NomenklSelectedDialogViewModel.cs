@@ -1,12 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks.UC;
 using KursDomain;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.Menu;
 using KursDomain.References;
 
@@ -44,7 +42,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentNomenklGroup;
             set
             {
-                if (Equals(myCurrentNomenklGroup,value)) return;
+                if (Equals(myCurrentNomenklGroup, value)) return;
                 myCurrentNomenklGroup = value;
                 LoadNomenklForGroup();
                 RaisePropertyChanged();
@@ -56,7 +54,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurretNomenklGroup;
             set
             {
-                if (Equals(myCurretNomenklGroup,value)) return;
+                if (Equals(myCurretNomenklGroup, value)) return;
                 myCurretNomenklGroup = value;
                 RaisePropertyChanged();
             }
@@ -112,7 +110,7 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 SelectedToRemoveNomenkls.Clear();
                 RaisePropertyChanged(nameof(SelectedToRemoveNomenkls));
-                if (Equals(myCurrentNomenkl,value)) return;
+                if (Equals(myCurrentNomenkl, value)) return;
                 myCurrentNomenkl = value;
                 RaisePropertyChanged();
             }
@@ -125,7 +123,7 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 SelectedToAddNomenkls.Clear();
                 RaisePropertyChanged(nameof(SelectedToAddNomenkls));
-                if (Equals(myCurrentSelectedNomenkl,value)) return;
+                if (Equals(myCurrentSelectedNomenkl, value)) return;
                 myCurrentSelectedNomenkl = value;
                 RaisePropertyChanged();
             }
@@ -146,7 +144,7 @@ namespace KursAM2.ViewModel.Logistiks
                         FullName = n.NOM_FULL_NAME,
                         Notes = n.NOM_NOTES,
                         NomenklNumber = n.NOM_NOMENKL,
-                        Currency = MainReferences.Currencies[n.NOM_SALE_CRS_DC.Value]
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(n.NOM_SALE_CRS_DC)
                     });
             }
         }

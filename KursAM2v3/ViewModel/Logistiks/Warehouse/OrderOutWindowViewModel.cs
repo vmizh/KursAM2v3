@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Dialogs;
@@ -23,12 +22,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public sealed class OrderOutWindowViewModel : RSWindowViewModelBase
     {
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+
         //private readonly NomenklManager nomManager = new NomenklManager();
         private readonly WarehouseManager orderManager;
         private readonly WindowManager winManager = new WindowManager();
         private WarehouseOrderOutRow myCurrentRow;
         private WarehouseOrderOut myDocument;
-        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         public OrderOutWindowViewModel(StandartErrorManager errManager)
@@ -69,7 +69,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             set
             {
-                if (Equals(myDocument ,value)) return;
+                if (Equals(myDocument, value)) return;
                 myDocument = value;
                 Rows.Clear();
                 if (myDocument != null)
@@ -86,7 +86,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             set
             {
-                if (Equals(myCurrentRow,value)) return;
+                if (Equals(myCurrentRow, value)) return;
                 myCurrentRow = value;
                 RaisePropertyChanged();
             }
@@ -98,10 +98,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         #region Справочники
 
-        public List<KontragentViewModel> Kontragents => MainReferences.ActiveKontragents.Values.ToList();
+        public List<Kontragent> Kontragents => GlobalOptions.ReferencesCache.GetKontragentsAll()
+            .Cast<Kontragent>().ToList();
 
-        public List<KursDomain.Documents.NomenklManagement.Warehouse> StoreDictionary =>
-            MainReferences.Warehouses.Values.ToList();
+        public List<KursDomain.References.Warehouse> StoreDictionary =>
+            GlobalOptions.ReferencesCache.GetWarehousesAll().Cast<KursDomain.References.Warehouse>()
+                .OrderBy(_ => _.Name).ToList();
 
         #endregion
 
@@ -178,9 +180,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 foreach (var r in Document.Rows)
                 {
-                    var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, r.DDT_NOMENKL_DC,
+                    var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DocCode, r.DDT_NOMENKL_DC,
                         Document.Date, Document.Date);
-                    decimal quan = q.Count == 0 ? 0 : q.First().OstatokQuantity;
+                    var quan = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                     r.MaxQuantity = quan + r.DDT_KOL_RASHOD;
                     r.myState = RowStatus.NotEdited;
                 }
@@ -213,13 +215,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             foreach (var n in nomenkls)
                 if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode && !n.IsUsluga))
                 {
-                    var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
+                    var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DocCode, n.DocCode,
                         Document.Date, Document.Date);
-                    decimal m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
+                    var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                     if (m <= 0)
                     {
                         winManager.ShowWinUIMessageBox($"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
-                                                       $"{MainReferences.Warehouses[Document.WarehouseOut.DOC_CODE]}" +
+                                                       $"{GlobalOptions.ReferencesCache.GetWarehouse(Document.WarehouseOut.DocCode)}" +
                                                        $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
                             "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                         continue;

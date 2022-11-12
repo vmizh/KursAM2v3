@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.References;
 
 namespace KursDomain.Documents.Dogovora.Old;
@@ -270,9 +268,7 @@ public class SD_9ViewModel : RSViewModelBase, IEntity<SD_9>
     /// </summary>
     public PayForm PayForm
     {
-        get => Entity.ZAK_FORM_RASCH_DC != null
-            ? MainReferences.FormRaschets[Entity.ZAK_FORM_RASCH_DC.Value]
-            : null;
+        get => GlobalOptions.ReferencesCache.GetPayForm(Entity.ZAK_FORM_RASCH_DC) as PayForm;
         set
         {
             if (value != null)
@@ -308,7 +304,7 @@ public class SD_9ViewModel : RSViewModelBase, IEntity<SD_9>
     /// </summary>
     public ContractType DogovorType
     {
-        get => Entity.ZAK_TYPE_DC != null ? MainReferences.GetContractType(Entity.ZAK_TYPE_DC.Value) : null;
+        get => GlobalOptions.ReferencesCache.GetContractType(Entity.ZAK_TYPE_DC) as ContractType;
         set
         {
             if (Entity.ZAK_TYPE_DC == value?.DocCode) return;
@@ -416,42 +412,23 @@ public class SD_9ViewModel : RSViewModelBase, IEntity<SD_9>
         }
     }
 
-    //public decimal? ZAK_KATEGORY_DC
-    //{
-    //    get => Entity.ZAK_KATEGORY_DC;
-    //    set
-    //    {
-    //        if (Entity.ZAK_KATEGORY_DC == value) return;
-    //        Entity.ZAK_KATEGORY_DC = value;
-    //        RaisePropertyChanged();
-    //    }
-    //}
-
-    public CategoryClientTypeViewModel ClientCategory
+    public ClientCategory ClientCategory
     {
-        get => Entity.ZAK_KATEGORY_DC != null ? MainReferences.ClientKategory[Entity.ZAK_KATEGORY_DC.Value] : null;
+        get => GlobalOptions.ReferencesCache.GetClientCategory(Entity.ZAK_KATEGORY_DC) as ClientCategory;
         set
         {
-            if (Entity.ZAK_KATEGORY_DC != null)
-            {
-                if (MainReferences.ClientKategory[Entity.ZAK_KATEGORY_DC.Value] == value) return;
-                Entity.ZAK_KATEGORY_DC = value.DocCode;
-            }
-            else
-            {
-                Entity.ZAK_KATEGORY_DC = value?.DocCode;
-            }
-
+            if (GlobalOptions.ReferencesCache.GetClientCategory(Entity.ZAK_KATEGORY_DC) == value) return;
+            Entity.ZAK_KATEGORY_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
 
-    public KontragentViewModel Diler
+    public Kontragent Diler
     {
-        get => MainReferences.GetKontragent(Entity.ZAK_DILER_DC);
+        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.ZAK_DILER_DC) as Kontragent;
         set
         {
-            if (MainReferences.GetKontragent(Entity.ZAK_DILER_DC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetKontragent(Entity.ZAK_DILER_DC) == value) return;
             if (value != null)
                 Entity.ZAK_DILER_DC = value.DocCode;
             else Entity.ZAK_DILER_DC = null;
@@ -470,39 +447,6 @@ public class SD_9ViewModel : RSViewModelBase, IEntity<SD_9>
         }
     }
 
-    //public decimal? ZAK_RUB_CRS_SUMMA
-    //{
-    //    get => Entity.ZAK_RUB_CRS_SUMMA;
-    //    set
-    //    {
-    //        if (Entity.ZAK_RUB_CRS_SUMMA == value) return;
-    //        Entity.ZAK_RUB_CRS_SUMMA = value;
-    //        RaisePropertyChanged();
-    //    }
-    //}
-
-    //public double? ZAK_RUB_CRS_RATE
-    //{
-    //    get => Entity.ZAK_RUB_CRS_RATE;
-    //    set
-    //    {
-    //        if (Entity.ZAK_RUB_CRS_RATE == value) return;
-    //        Entity.ZAK_RUB_CRS_RATE = value;
-    //        RaisePropertyChanged();
-    //    }
-    //}
-
-    //public short? ZAK_OBRAT_RASCHET
-    //{
-    //    get => Entity.ZAK_OBRAT_RASCHET;
-    //    set
-    //    {
-    //        if (Entity.ZAK_OBRAT_RASCHET == value) return;
-    //        Entity.ZAK_OBRAT_RASCHET = value;
-    //        RaisePropertyChanged();
-    //    }
-    //}
-
     public bool IsBackCalc
     {
         get => Entity.ZAK_OBRAT_RASCHET == 1;
@@ -514,56 +458,12 @@ public class SD_9ViewModel : RSViewModelBase, IEntity<SD_9>
         }
     }
 
-    //public DateTime? ZAK_CONTROL_DATE
-    //{
-    //    get => Entity.ZAK_CONTROL_DATE;
-    //    set
-    //    {
-    //        if (Entity.ZAK_CONTROL_DATE == value) return;
-    //        Entity.ZAK_CONTROL_DATE = value;
-    //        RaisePropertyChanged();
-    //    }
-    //}
-
-    //public string ZAK_CONTROL_NOTE
-    //{
-    //    get => Entity.ZAK_CONTROL_NOTE;
-    //    set
-    //    {
-    //        if (Entity.ZAK_CONTROL_NOTE == value) return;
-    //        Entity.ZAK_CONTROL_NOTE = value;
-    //        RaisePropertyChanged();
-    //    }
-    //}
-
-    //public string ZAK_CONTROL_FLAGS
-    //{
-    //    get => Entity.ZAK_CONTROL_FLAGS;
-    //    set
-    //    {
-    //        if (Entity.ZAK_CONTROL_FLAGS == value) return;
-    //        Entity.ZAK_CONTROL_FLAGS = value;
-    //        RaisePropertyChanged();
-    //    }
-    //}
-
-    //public decimal? ZAK_POSTAV_DC
-    //{
-    //    get => Entity.ZAK_POSTAV_DC;
-    //    set
-    //    {
-    //        if (Entity.ZAK_POSTAV_DC == value) return;
-    //        Entity.ZAK_POSTAV_DC = value;
-    //        RaisePropertyChanged();
-    //    }
-    //}
-
-    public KontragentViewModel Provider
+    public Kontragent Provider
     {
-        get => Entity.ZAK_POSTAV_DC != null ? MainReferences.GetKontragent(Entity.ZAK_POSTAV_DC) : null;
+        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.ZAK_POSTAV_DC) as Kontragent;
         set
         {
-            if (MainReferences.GetKontragent(Entity.ZAK_POSTAV_DC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetKontragent(Entity.ZAK_POSTAV_DC) == value) return;
             Entity.ZAK_POSTAV_DC = value?.DocCode;
             RaisePropertyChanged();
         }

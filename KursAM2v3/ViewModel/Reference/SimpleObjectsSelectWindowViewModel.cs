@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.View.KursReferences.UC;
 using KursDomain;
+using KursDomain.ICommon;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -60,13 +60,30 @@ namespace KursAM2.ViewModel.Reference
                               "INNER JOIN  EXT_USERS U ON U.USR_ID = H.USR_ID " +
                               $"AND UPPER(U.USR_NICKNAME) = UPPER('{GlobalOptions.UserInfo.NickName}')";
                     var skls = ctx.Database.SqlQuery<decimal>(sql);
-                    foreach (var s in skls) ObjectCollection.Add(MainReferences.Warehouses[s]);
+                    foreach (var s in skls)
+                    {
+                        var o = new ReferenceName();
+                        o.LoadFromIName((IName)GlobalOptions.ReferencesCache.GetWarehouse(s));
+                        ObjectCollection.Add(o);
+                    }
                 }
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(null, ex);
             }
+        }
+    }
+
+    public class ReferenceName : ISimpleObject
+    {
+        public string Name { get; set; }
+        public string Note { get; set; }
+
+        public void LoadFromIName(IName obj)
+        {
+            Name = obj.Name;
+            Note = obj.Notes;
         }
     }
 }

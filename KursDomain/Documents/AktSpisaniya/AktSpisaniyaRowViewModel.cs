@@ -426,10 +426,10 @@ public sealed class AktSpisaniyaRowViewModel : RSViewModelBase, IDataErrorInfo, 
 
     public Nomenkl Nomenkl
     {
-        get => MainReferences.GetNomenkl(Entity.Nomenkl_DC);
+        get => GlobalOptions.ReferencesCache.GetNomenkl(Entity.Nomenkl_DC) as Nomenkl;
         set
         {
-            if (Entity.Nomenkl_DC > 0 && MainReferences.GetNomenkl(Entity.Nomenkl_DC) == value)
+            if (Entity.Nomenkl_DC > 0 && GlobalOptions.ReferencesCache.GetNomenkl(Entity.Nomenkl_DC) == value)
                 return;
             Entity.Nomenkl_DC = value?.DocCode ?? 0;
             RaisePropertiesChanged();

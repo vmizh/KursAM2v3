@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Core;
@@ -16,6 +15,7 @@ using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
+using KursDomain.References;
 
 namespace KursAM2.View.Finance.UC
 {
@@ -328,7 +328,7 @@ namespace KursAM2.View.Finance.UC
             Kontragent.Text = null;
             var dtx = DataContext as AddBankOperionUC;
             if (dtx == null) return;
-            var t = (BankOperationType) TypeKontragent.EditValue;
+            var t = (BankOperationType)TypeKontragent.EditValue;
             switch (t)
             {
                 case BankOperationType.CashOut:
@@ -386,12 +386,12 @@ namespace KursAM2.View.Finance.UC
                     dtx.Payment = d2.Client;
                     dtx.SFName = d2.ToString();
                     Payment.Text = dtx.Payment.Name;
-                    dtx.Currency = MainReferences.Currencies[d2.Entity.SF_CRS_DC];
+                    dtx.Currency = GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency;
                     dtx.BankOperationType = BankOperationType.Kontragent;
                     dtx.KontragentViewModel = d2.Client;
                     Kontragent.Text = dtx.KontragentViewModel.Name;
                     dtx.CurrentBankOperations.SFName =
-                        $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa} {MainReferences.Currencies[d2.Entity.SF_CRS_DC]}";
+                        $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa} {GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency}";
                 }
 
                 if (dtx2 != null)
@@ -404,12 +404,12 @@ namespace KursAM2.View.Finance.UC
                     dtx2.Payment = d2.Client;
                     Payment.Text = dtx2.Payment.Name;
                     dtx2.SFName = d2.ToString();
-                    dtx2.Currency = MainReferences.Currencies[d2.Entity.SF_CRS_DC];
+                    dtx2.Currency = GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency;
                     dtx2.Kontragent = d2.Client;
                     Kontragent.Text = dtx2.Kontragent.Name;
                     dtx2.SFName =
                         $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa} " +
-                        $"{MainReferences.Currencies[d2.Entity.SF_CRS_DC]}";
+                        $"{GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency}";
                 }
             }
 

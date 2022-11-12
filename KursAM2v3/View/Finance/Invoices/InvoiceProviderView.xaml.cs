@@ -14,6 +14,7 @@ using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.ViewModel.Finance.Invoices;
+using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 
@@ -85,7 +86,7 @@ namespace KursAM2.View.Finance.Invoices
                 case nameof(row.SDRSchet):
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
-                        ItemsSource = MainReferences.SDRSchets.Values,
+                        ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().ToList(),
                         DisplayMember = "Name",
                         AutoComplete = true
                     };

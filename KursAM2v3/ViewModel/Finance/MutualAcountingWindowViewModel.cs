@@ -5,7 +5,6 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
@@ -184,11 +183,13 @@ namespace KursAM2.ViewModel.Finance
             {
                 var item = StandartDialogs.SelectInvoiceProvider(true, true, true);
                 if (item == null) return;
-                VzaimoraschetType vzdefault = null;
+                MutualSettlementType vzdefault = null;
                 var vzdefDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(_ =>
                     _.SECTION == "MUTUAL_ACCOUNTING" && _.ITEM == "DEFAULT_TYPE_PRODUCT");
                 if (vzdefDC != null)
-                    vzdefault = MainReferences.VzaimoraschetTypes[Convert.ToDecimal(vzdefDC.ITEM_VALUE)];
+                    vzdefault =
+                        GlobalOptions.ReferencesCache.GetMutualSettlementType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as
+                            MutualSettlementType;
 
                 var newcred = new MutualAccountingCreditorViewModel
                 {
@@ -278,11 +279,13 @@ namespace KursAM2.ViewModel.Finance
             {
                 var item = StandartDialogs.SelectInvoiceClient(true, true);
                 if (item == null) return;
-                VzaimoraschetType vzdefault = null;
+                MutualSettlementType vzdefault = null;
                 var vzdefDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(_ =>
                     _.SECTION == "MUTUAL_ACCOUNTING" && _.ITEM == "DEFAULT_TYPE_PRODUCT");
                 if (vzdefDC != null)
-                    vzdefault = MainReferences.VzaimoraschetTypes[Convert.ToDecimal(vzdefDC.ITEM_VALUE)];
+                    vzdefault =
+                        GlobalOptions.ReferencesCache.GetMutualSettlementType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as
+                            MutualSettlementType;
 
                 var newdeb = new MutualAccountingDebitorViewModel
                 {
@@ -603,11 +606,13 @@ namespace KursAM2.ViewModel.Finance
         {
             try
             {
-                VzaimoraschetType vzdefault = null;
+                MutualSettlementType vzdefault = null;
                 var vzdefDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(_ =>
                     _.SECTION == "MUTUAL_ACCOUNTING" && _.ITEM == "DEFAULT_TYPE_PRODUCT");
                 if (vzdefDC != null)
-                    vzdefault = MainReferences.VzaimoraschetTypes[Convert.ToDecimal(vzdefDC.ITEM_VALUE)];
+                    vzdefault =
+                        GlobalOptions.ReferencesCache.GetMutualSettlementType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as
+                            MutualSettlementType;
                 var k = StandartDialogs.SelectKontragent(Document.IsOld ? null : Document.DebitorCurrency);
                 if (k == null) return;
                 var newdeb = new MutualAccountingDebitorViewModel
@@ -645,11 +650,13 @@ namespace KursAM2.ViewModel.Finance
         {
             var k = StandartDialogs.SelectKontragent(Document.IsOld ? null : Document.CreditorCurrency);
             if (k == null) return;
-            VzaimoraschetType vzdefault = null;
+            MutualSettlementType vzdefault = null;
             var vzdefDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(_ =>
                 _.SECTION == "MUTUAL_ACCOUNTING" && _.ITEM == "DEFAULT_TYPE_PRODUCT");
             if (vzdefDC != null)
-                vzdefault = MainReferences.VzaimoraschetTypes[Convert.ToDecimal(vzdefDC.ITEM_VALUE)];
+                vzdefault =
+                    GlobalOptions.ReferencesCache.GetMutualSettlementType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as
+                        MutualSettlementType;
             var newcred = new MutualAccountingCreditorViewModel
             {
                 DocCode = Document.DocCode,

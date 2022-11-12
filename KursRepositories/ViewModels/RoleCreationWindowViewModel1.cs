@@ -168,6 +168,9 @@ namespace KursRepositories.ViewModels
             CloseWindow(Form);
         }
 
+        public override void RefreshData(object obj)
+        {
+        }
     }
         #endregion
 }

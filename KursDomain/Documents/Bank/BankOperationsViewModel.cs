@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows.Input;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -817,35 +816,33 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
             myCashOut = new CashOrder(Entity.SD_34);
         if (Entity.SD_33 != null)
             myCashIn = new CashOrder(Entity.SD_33);
-        if (Entity.SD_101 != null)
-            myBankAccount = MainReferences.BankAccounts[Entity.SD_101.VV_ACC_DC];
+        myBankAccount = GlobalOptions.ReferencesCache.GetBankAccount(Entity.SD_101.VV_ACC_DC) as BankAccount;
         if (Entity.VVT_KONTRAGENT != null)
             _myKontragent = GlobalOptions.ReferencesCache.GetKontragent(Entity.VVT_KONTRAGENT) as Kontragent;
         if (Entity.VVT_SHPZ_DC != null)
             mySHPZ = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.VVT_SHPZ_DC) as SDRSchet;
         if (Entity.VVT_PLATEL_POLUCH_DC != null)
             myPayment = GlobalOptions.ReferencesCache.GetKontragent(Entity.VVT_PLATEL_POLUCH_DC) as Kontragent;
-        if (MainReferences.Currencies.ContainsKey(Entity.VVT_CRS_DC))
-            myCurrency = MainReferences.Currencies[Entity.VVT_CRS_DC];
+        myCurrency = GlobalOptions.ReferencesCache.GetCurrency(Entity.VVT_CRS_DC) as References.Currency;
         if (Entity.VVT_SFACT_CLIENT_DC != null)
             if (Entity.SD_84 != null)
                 SFName =
                     $"С/ф №{Entity.SD_84.SF_IN_NUM}/{Entity.SD_84.SF_OUT_NUM} от " +
                     $"{Entity.SD_84.SF_DATE} на {Entity.SD_84.SF_CRS_SUMMA_K_OPLATE} " +
-                    $"{MainReferences.Currencies[Entity.SD_84.SF_CRS_DC]}";
+                    $"{GlobalOptions.ReferencesCache.GetCurrency(Entity.SD_84.SF_CRS_DC)}";
         if (Entity.VVT_SFACT_POSTAV_DC != null)
             SFName =
                 $"С/ф №{Entity.SD_26.SF_IN_NUM}/{Entity.SD_26.SF_POSTAV_NUM} от " +
                 $"{Entity.SD_26.SF_POSTAV_DATE} на {Entity.SD_26.SF_CRS_SUMMA} " +
                 // ReSharper disable once PossibleInvalidOperationException
-                $"{MainReferences.Currencies[(decimal)Entity.SD_26.SF_CRS_DC]}";
+                $"{GlobalOptions.ReferencesCache.GetBankAccount(Entity.SD_26.SF_CRS_DC) as BankAccount}";
         if (Entity.AccuredAmountOfSupplierRow != null)
         {
             var acc = Entity.AccuredAmountOfSupplierRow;
             var snum = string.IsNullOrWhiteSpace(acc.AccruedAmountOfSupplier.DocExtNum)
                 ? acc.AccruedAmountOfSupplier.DocInNum.ToString()
                 : $"{acc.AccruedAmountOfSupplier.DocInNum}/{acc.AccruedAmountOfSupplier.DocExtNum}";
-            var nom = MainReferences.GetNomenkl(acc.NomenklDC);
+            var nom = GlobalOptions.ReferencesCache.GetNomenkl(acc.NomenklDC);
             var snom = $"{nom}({nom.NomenklNumber})";
             AccuredInfo =
                 $"Прямой расход №{snum} от {acc.AccruedAmountOfSupplier.DocDate.ToShortDateString()} " +
@@ -865,14 +862,14 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
     private void updateBankInfo()
     {
         if (Entity.BankAccountDC != null)
-            BankAccountIn = MainReferences.BankAccounts[Entity.BankAccountDC.Value];
+            BankAccountIn = GlobalOptions.ReferencesCache.GetBankAccount(Entity.BankAccountDC) as BankAccount;
         if (Entity.BankFromTransactionCode != null)
             using (var dtx = GlobalOptions.GetEntities())
             {
                 var row = dtx.TD_101.Include(_ => _.SD_101)
                     .FirstOrDefault(_ => _.CODE == Entity.BankFromTransactionCode);
                 if (row == null) return;
-                BankAccountOut = MainReferences.BankAccounts[row.SD_101.VV_ACC_DC];
+                BankAccountOut = GlobalOptions.ReferencesCache.GetBankAccount(row.SD_101.VV_ACC_DC) as BankAccount;
             }
     }
 
@@ -1017,7 +1014,8 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
 
     #region compendiums
 
-    public List<References.Currency> CurrencysCompendium => MainReferences.Currencies.Values.ToList();
+    public List<References.Currency> CurrencysCompendium =>
+        GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<References.Currency>().ToList();
 
     public List<SDRSchet> SHPZList { set; get; } =
         GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList();

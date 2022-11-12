@@ -1,9 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
-using Core;
 using Core.ViewModel.Base;
 using KursAM2.View.DialogUserControl;
-using KursDomain.Documents.Employee;
+using KursDomain;
 using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference
@@ -25,7 +24,7 @@ namespace KursAM2.ViewModel.Reference
         public override void RefreshData(object o)
         {
             ItemsCollection = new ObservableCollection<DialogEmployee>();
-            foreach (var i in MainReferences.Employees.Values.ToList())
+            foreach (var i in GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>().ToList())
                 ItemsCollection.Add(new DialogEmployee
                 {
                     DocCode = i.DocCode,
@@ -61,7 +60,7 @@ namespace KursAM2.ViewModel.Reference
         {
             set
             {
-                if (Equals(myCurrentItem,value)) return;
+                if (Equals(myCurrentItem, value)) return;
                 myCurrentItem = value;
                 RaisePropertyChanged();
             }

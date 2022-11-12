@@ -8,6 +8,7 @@ using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Finance.AccruedAmount;
+using KursDomain;
 
 namespace KursAM2.View.Finance.AccruedAmount
 {
@@ -25,7 +26,7 @@ namespace KursAM2.View.Finance.AccruedAmount
 
         private void AccruedAmountForClientView_Loaded(object sender, RoutedEventArgs e)
         {
-            MainReferences.Refresh();
+            //MainReferences.Refresh();
         }
 
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
@@ -45,7 +46,7 @@ namespace KursAM2.View.Finance.AccruedAmount
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
                         IsTextEditable = false,
-                        ItemsSource = MainReferences.SDRSchets.Values.ToList()
+                        ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().ToList()
                     };
                     break;
                 case "Summa":

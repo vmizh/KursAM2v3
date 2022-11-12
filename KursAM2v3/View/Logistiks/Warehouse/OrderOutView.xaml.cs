@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using Core;
 using Core.WindowsManager;
 using DevExpress.Data;
 using DevExpress.Xpf.Core;
@@ -12,6 +11,8 @@ using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.ViewModel.Logistiks.Warehouse;
+using KursDomain;
+using KursDomain.References;
 using LayoutManager;
 
 namespace KursAM2.View.Logistiks.Warehouse
@@ -23,7 +24,7 @@ namespace KursAM2.View.Logistiks.Warehouse
     {
         public OrderOutView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Closing += OrderIn_Closing;
             Loaded += OrderIn_Loaded;
@@ -31,6 +32,7 @@ namespace KursAM2.View.Logistiks.Warehouse
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -65,7 +67,8 @@ namespace KursAM2.View.Logistiks.Warehouse
                 case "SDRSchet":
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
-                        ItemsSource = MainReferences.SDRSchets.Values,
+                        ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>()
+                            .OrderBy(_ => _.Name).ToList(),
                         DisplayMember = "Name",
                         AutoComplete = true
                     };
@@ -147,14 +150,16 @@ namespace KursAM2.View.Logistiks.Warehouse
                     break;
                 case nameof(doc.WarehouseIn):
                     var wInCB = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.WarehouseIn, "WarehouseIn",
-                        MainReferences.Warehouses.Values.ToList().OrderBy(_ => _.Name));
+                        GlobalOptions.ReferencesCache.GetWarehousesAll().Cast<KursDomain.References.Warehouse>()
+                            .OrderBy(_ => _.Name).ToList());
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
                     wInCB.EditValueChanged += WInCB_EditValueChanged;
                     break;
                 case nameof(doc.WarehouseOut):
                     var wOutCB = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.WarehouseOut, "WarehouseOut",
-                        MainReferences.Warehouses.Values.ToList().OrderBy(_ => _.Name));
+                        GlobalOptions.ReferencesCache.GetWarehousesAll().Cast<KursDomain.References.Warehouse>()
+                            .OrderBy(_ => _.Name).ToList());
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
                     wOutCB.EditValueChanged += WOutCB_EditValueChanged;
@@ -194,7 +199,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                 return;
             }
 
-            doc.Kladovshik = doc.WarehouseOut.Employee;
+            doc.Kladovshik = doc.WarehouseOut.StoreKeeper as Employee;
         }
 
         private void WInCB_EditValueChanged(object sender, EditValueChangedEventArgs e)
@@ -226,7 +231,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                 {
                     WindowManager.ShowMessage("Кол-во отгрузки первышает кол-ва на складе",
                         "Ошибка", MessageBoxImage.Stop);
-                    dtx.CurrentRow.Quantity = (decimal) e.OldValue;
+                    dtx.CurrentRow.Quantity = (decimal)e.OldValue;
                 }
         }
     }

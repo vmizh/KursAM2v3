@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using System.Windows;
 using System.Windows.Data;
-using Core;
 using DevExpress.Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
@@ -9,6 +8,7 @@ using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.ViewModel.Finance.AccruedAmount;
+using KursDomain;
 
 namespace KursAM2.View.Finance.AccruedAmount
 {
@@ -19,7 +19,8 @@ namespace KursAM2.View.Finance.AccruedAmount
     {
         public AccruedAmountOfSupplierView()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent();
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridCashRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
@@ -65,7 +66,7 @@ namespace KursAM2.View.Finance.AccruedAmount
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
                         IsTextEditable = false,
-                        ItemsSource = MainReferences.SDRSchets.Values.ToList()
+                        ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().ToList()
                     };
                     break;
                 case "Summa":

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using Core;
 using Core.ViewModel.Base;
 using Data;
 using KursDomain.Documents.Invoices;
@@ -15,13 +14,13 @@ namespace KursDomain.Documents.Vzaimozachet;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_110ViewModel>
 {
+    private InvoiceClientViewModel _mySfClient;
     public decimal MaxSumma = decimal.MaxValue;
     private TD_110 myEntity;
     private Kontragent myKontragent;
-    private InvoiceClientViewModel _mySfClient;
     private InvoiceProvider mySFProvider;
     private SDRSchet mySHPZ;
-    private VzaimoraschetType myVzaimoraschType;
+    private MutualSettlementType myVzaimoraschType;
 
     public TD_110ViewModel()
     {
@@ -277,7 +276,7 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
         }
     }
 
-    public VzaimoraschetType VzaimoraschType
+    public MutualSettlementType VzaimoraschType
     {
         get => myVzaimoraschType;
         set
@@ -345,7 +344,7 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
             if (Entity.VZT_SHPZ_DC == value) return;
             Entity.VZT_SHPZ_DC = value;
             if (Entity.VZT_SHPZ_DC != null)
-                mySHPZ =GlobalOptions.ReferencesCache.GetSDRSchet(Entity.VZT_SHPZ_DC) as SDRSchet;
+                mySHPZ = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.VZT_SHPZ_DC) as SDRSchet;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(SHPZ));
         }
@@ -562,11 +561,8 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
         VZT_UCH_CRS_POGASHENO = ent.VZT_UCH_CRS_POGASHENO;
         VZT_UCH_CRS_RATE = ent.VZT_UCH_CRS_RATE;
         VZT_VZAIMOR_TYPE_DC = ent.VZT_VZAIMOR_TYPE_DC;
-        VzaimoraschType = ent.SD_77 != null
-            ?
-            //new VzaimoraschetType(ent.SD_77) 
-            MainReferences.VzaimoraschetTypes[ent.SD_77.DOC_CODE]
-            : null;
+        VzaimoraschType =
+            GlobalOptions.ReferencesCache.GetMutualSettlementType(ent.SD_77.DOC_CODE) as MutualSettlementType;
         VZT_1MYDOLZH_0NAMDOLZH = ent.VZT_1MYDOLZH_0NAMDOLZH;
         VZT_KONTR_CRS_DC = ent.VZT_KONTR_CRS_DC;
         VZT_KONTR_CRS_RATE = ent.VZT_KONTR_CRS_RATE;

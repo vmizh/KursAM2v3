@@ -239,7 +239,6 @@ namespace KursAM2.ViewModel.StartLogin
             var refer = new ReferencesKursCache(new KursDBContext(GlobalOptions.SqlConnectionString).Context );
             refer.StartLoad();
             GlobalOptions.ReferencesCache = refer;
-            MainReferences.Reset();
             SetUserProfile(newUser.NickName.ToUpper());
             SetGlobalProfile();
             // ReSharper disable once PossibleNullReferenceException

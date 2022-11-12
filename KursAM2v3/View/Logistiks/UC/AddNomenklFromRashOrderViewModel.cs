@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -43,9 +42,9 @@ namespace KursAM2.View.Logistiks.UC
         private WarehouseOrderOutRowSelect myCurrentNomenkl;
         private WarehouseOrderOutRowSelect myCurrentSelectNomenkl;
         private StandartDialogSelectUC myDataUserControl;
-        private KursDomain.Documents.NomenklManagement.Warehouse myStore;
+        private KursDomain.References.Warehouse myStore;
 
-        public AddNomenklFromRashOrderViewModel(KursDomain.Documents.NomenklManagement.Warehouse store)
+        public AddNomenklFromRashOrderViewModel(KursDomain.References.Warehouse store)
         {
             myStore = store;
             myDataUserControl = new StandartDialogSelectUC("AddNomenklFromRashOrder");
@@ -76,14 +75,14 @@ namespace KursAM2.View.Logistiks.UC
         {
             set
             {
-                if (Equals(myCurrentNomenkl,value)) return;
+                if (Equals(myCurrentNomenkl, value)) return;
                 myCurrentNomenkl = value;
                 RaisePropertiesChanged();
             }
             get => myCurrentNomenkl;
         }
 
-        public KursDomain.Documents.NomenklManagement.Warehouse Store
+        public KursDomain.References.Warehouse Store
         {
             set
             {
@@ -124,12 +123,12 @@ namespace KursAM2.View.Logistiks.UC
                                 INNER JOIN SD_24 s 
                                   ON t.DOC_CODE = s.DOC_CODE 
                                     AND s.DD_TYPE_DC = 2010000003 
-                                    AND s.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(Store.DOC_CODE)}' 
+                                    AND s.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(Store.DocCode)}' 
                                 LEFT OUTER JOIN td_24 t1 ON t1.DDT_RASH_ORD_CODE = t.DOC_CODE AND t1.CODE = t.DDT_RASH_ORD_CODE 
                                 LEFT OUTER JOIN sd_24 s1 
                                     ON t1.DOC_CODE = s1.DOC_CODE 
                                     AND s1.DD_TYPE_DC = 2010000001 
-                                    AND s1.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(Store.DOC_CODE)}' 
+                                    AND s1.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(Store.DocCode)}' 
                                   WHERE t1.DOC_CODE IS null";
                     var rowslist = ctx.Database.SqlQuery<TempList>(sql).ToList();
                     foreach (var r in rowslist)

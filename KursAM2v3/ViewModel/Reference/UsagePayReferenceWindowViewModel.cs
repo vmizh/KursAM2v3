@@ -110,14 +110,6 @@ namespace KursAM2.ViewModel.Reference
 
                         ctx.SaveChanges();
                         tn.Commit();
-                        MainReferences.PayConditions.Clear();
-                        foreach (var item in ctx.SD_179.AsNoTracking().ToList())
-                        {
-                            var newItem = new PayCondition();
-                            newItem.LoadFromEntity(item);
-                            MainReferences.PayConditions.Add(item.DOC_CODE, newItem);
-                        }
-
                         foreach (var r in Rows)
                             r.myState = RowStatus.NotEdited;
                         DeletedRows.Clear();

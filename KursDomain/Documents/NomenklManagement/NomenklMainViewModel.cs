@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -16,9 +15,9 @@ namespace KursDomain.Documents.NomenklManagement;
 
 public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IDataErrorInfo
 {
+    private NomenklGroupViewModel _myNomenklGroup;
     private CountriesViewModel myCountry;
     private NomenklMain myEntity;
-    private NomenklGroupViewModel _myNomenklGroup;
     public NomenklProductType myNomenklType;
     public NomenklProductKind myProductType;
     private Unit myUnit;
@@ -34,7 +33,8 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
         LoadReference();
     }
 
-    public ObservableCollection<NomenklViewModel> NomenklCollection { set; get; } = new ObservableCollection<NomenklViewModel>();
+    public ObservableCollection<NomenklViewModel> NomenklCollection { set; get; } =
+        new ObservableCollection<NomenklViewModel>();
 
     public override Guid Id
     {
@@ -432,11 +432,11 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
         if (Entity.SD_83 != null && Entity.SD_83.Count > 0)
             foreach (var n in Entity.SD_83)
             {
-                var nom = new NomenklViewModel()
+                var nom = new NomenklViewModel
                 {
-                    Unit = MainReferences.GetUnit(n.NOM_ED_IZM_DC),
-                    Currency = MainReferences.GetCurrency(n.NOM_SALE_CRS_DC),
-                    Group =MainReferences.GetNomenklGroup(n.NOM_CATEG_DC)
+                    Unit = GlobalOptions.ReferencesCache.GetUnit(n.NOM_ED_IZM_DC) as Unit,
+                    Currency = GlobalOptions.ReferencesCache.GetCurrency(n.NOM_SALE_CRS_DC) as References.Currency,
+                    Group = GlobalOptions.ReferencesCache.GetNomenklGroup(n.NOM_CATEG_DC) as NomenklGroup
                 };
                 NomenklCollection.Add(nom);
             }

@@ -154,10 +154,10 @@ public sealed class DogovorClientRowViewModel : RSViewModelBase, IDataErrorInfo
 
     public Nomenkl Nomenkl
     {
-        get => MainReferences.GetNomenkl(Entity.NomenklDC);
+        get => GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) as Nomenkl;
         set
         {
-            if (Entity.NomenklDC > 0 && MainReferences.GetNomenkl(Entity.NomenklDC) == value) return;
+            if (Entity.NomenklDC > 0 && GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) == value) return;
             Entity.NomenklDC = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }

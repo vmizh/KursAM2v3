@@ -427,13 +427,6 @@ namespace Core.ViewModel.Base
             }
         }
 
-#pragma warning disable 1998
-        public virtual void RefreshData(object obj)
-#pragma warning restore 1998
-        {
-            MainReferences.Refresh();
-        }
-
         // ReSharper disable once ArrangeObjectCreationWhenTypeEvident
         [Display(AutoGenerateField = false)]
         public AsyncCommand AsyncRefreshDataCommand => new AsyncCommand(AsyncTaskRefresh, IsCanRefresh);
@@ -863,5 +856,9 @@ namespace Core.ViewModel.Base
             }
         }
         IServiceContainer ISupportServices.ServiceContainer { get { return ServiceContainer; } }
+        public virtual void RefreshData(object obj)
+        {
+            //throw new NotImplementedException();
+        }
     }
 }

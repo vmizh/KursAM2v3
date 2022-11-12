@@ -168,6 +168,11 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             LayoutManager.ResetLayout();
         }
 
+        public override void RefreshData(object obj)
+        {
+           
+        }
+
         public override bool IsCanRefresh { set; get; } = true;
 
         public override void DocNewEmpty(object form)

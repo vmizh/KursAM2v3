@@ -6,7 +6,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -48,7 +47,7 @@ namespace KursAM2.ViewModel.Personal
             var prType = GlobalOptions.GetEntities().EMP_PAYROLL_TYPE.ToList();
             foreach (var pr in prType)
                 PayrollTypeCollection.Add(new EMP_PAYROLL_TYPEViewModel(pr));
-            CurrencyCollection = MainReferences.Currencies.Values.ToList();
+            CurrencyCollection = GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>().ToList();
             isChange = false;
         }
 
@@ -147,7 +146,7 @@ namespace KursAM2.ViewModel.Personal
         {
             set
             {
-                if (Equals(myMyCurrentPayrollType,value)) return;
+                if (Equals(myMyCurrentPayrollType, value)) return;
                 myMyCurrentPayrollType = value;
                 RaisePropertyChanged();
             }
@@ -235,8 +234,8 @@ namespace KursAM2.ViewModel.Personal
                                          Name = item.Name,
                                          State = RowStatus.NewRow,
                                          Employee = item,
-                                         Crs = MainReferences.Currencies[
-                                             GlobalOptions.SystemProfile.EmployeeDefaultCurrency.DocCode],
+                                         Crs = GlobalOptions.ReferencesCache.GetCurrency(GlobalOptions.SystemProfile
+                                             .EmployeeDefaultCurrency.DocCode) as Currency,
                                          PRType = PayrollTypeCollection.Single(_ =>
                                              _.DocCode == GlobalOptions.SystemProfile.DafaultPayRollType.DocCode),
                                          Summa = 0,
@@ -392,7 +391,8 @@ namespace KursAM2.ViewModel.Personal
                     Name = e.Name,
                     State = RowStatus.NewRow,
                     Employee = e.Employee,
-                    Crs = MainReferences.Currencies[GlobalOptions.SystemProfile.MainCurrency.DocCode],
+                    Crs = GlobalOptions.ReferencesCache.GetCurrency(GlobalOptions.SystemProfile.MainCurrency.DocCode) as
+                        Currency,
                     PRType = dtx.PayrollTypeCollection.Single(_ =>
                         _.DocCode == GlobalOptions.SystemProfile.DafaultPayRollType.DocCode),
                     Summa = 0,
@@ -503,7 +503,7 @@ namespace KursAM2.ViewModel.Personal
                     foreach (var dd in docs.Where(dd => !emps.Exists(_ => _ == dd.EMP_DC)))
                         emps.Add(dd.EMP_DC);
                     foreach (var newEmp in from dc in emps
-                             select MainReferences.Employees[dc]
+                             select GlobalOptions.ReferencesCache.GetEmployee(dc) as Employee
                              into emp
                              where emp != null
                              select new PayRollVedomostEmployeeViewModel
@@ -517,7 +517,7 @@ namespace KursAM2.ViewModel.Personal
                              })
                     {
                         foreach (var row in from d in docs.Where(_ => _.EMP_DC == newEmp.Employee.DocCode)
-                                 let crs1 = MainReferences.Currencies[d.CRS_DC]
+                                 let crs1 = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC) as Currency
                                  select new PayRollVedomostEmployeeRowViewModel
                                  {
                                      Summa = d.SUMMA,
@@ -525,9 +525,11 @@ namespace KursAM2.ViewModel.Personal
                                      Crs = crs1,
                                      Note = d.NOTES,
                                      RowId = Guid.Parse(d.ROW_ID),
-                                     Rate = CurrencyRate.GetRate(crs1.DocCode, ((IDocCode)newEmp.Employee.Currency).DocCode, Date),
+                                     Rate = CurrencyRate.GetRate(crs1.DocCode,
+                                         ((IDocCode)newEmp.Employee.Currency).DocCode, Date),
                                      NachEmpRate =
-                                         CurrencyRate.GetSummaRate(crs1.DocCode, ((IDocCode)newEmp.Employee.Currency).DocCode, Date,
+                                         CurrencyRate.GetSummaRate(crs1.DocCode,
+                                             ((IDocCode)newEmp.Employee.Currency).DocCode, Date,
                                              d.SUMMA),
                                      Parent = newEmp,
                                      NachDate = d.NachDate ?? DateTime.Today
@@ -757,7 +759,8 @@ namespace KursAM2.ViewModel.Personal
                 Id = CurrentEmployee.Id,
                 RowId = Guid.NewGuid(),
                 Summa = 0,
-                Crs = MainReferences.Currencies[GlobalOptions.SystemProfile.EmployeeDefaultCurrency.DocCode],
+                Crs = GlobalOptions.ReferencesCache.GetCurrency(GlobalOptions.SystemProfile.EmployeeDefaultCurrency
+                    .DocCode) as Currency,
                 Parent = CurrentEmployee,
                 NachDate = DateTime.Today,
                 State = RowStatus.NewRow

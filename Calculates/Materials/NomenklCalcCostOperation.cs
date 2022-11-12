@@ -1,7 +1,6 @@
 using System;
 using Core.ViewModel.Base;
 using KursDomain.References;
-using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace Calculates.Materials
 {

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Windows.Input;
 using Calculates.Materials;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -10,7 +9,6 @@ using Helper;
 using KursAM2.Managers;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.Menu;
 using KursDomain.References;
 
@@ -27,7 +25,7 @@ namespace KursAM2.ViewModel.Logistiks
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             if (nomDC != 0)
-                SelectedNomenkl = MainReferences.GetNomenkl(nomDC);
+                SelectedNomenkl = GlobalOptions.ReferencesCache.GetNomenkl(nomDC) as Nomenkl;
             RefreshReferences();
         }
 
@@ -46,7 +44,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => mySelectedNomenkl;
             set
             {
-                if (Equals(mySelectedNomenkl,value)) return;
+                if (Equals(mySelectedNomenkl, value)) return;
                 SkladOstatki.Clear();
                 RaisePropertyChanged(nameof(SkladOstatki));
                 mySelectedNomenkl = value;
@@ -71,7 +69,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myNomenklCost;
             set
             {
-                if (Equals(myNomenklCost,value)) return;
+                if (Equals(myNomenklCost, value)) return;
                 myNomenklCost = value;
                 RaisePropertyChanged();
             }
@@ -184,7 +182,8 @@ namespace KursAM2.ViewModel.Logistiks
         private void RefreshReferences()
         {
             if (SelectedNomenkl == null)
-                foreach (var n in MainReferences.ALLNomenkls.Values.Where(_ => _.IsUsluga == false))
+                foreach (var n in GlobalOptions.ReferencesCache.GetWarehousesAll().Cast<Nomenkl>()
+                             .Where(_ => _.IsUsluga == false).OrderBy(_ => _.Name))
                     Nomenkls.Add(n);
             else
                 Nomenkls.Add(SelectedNomenkl);

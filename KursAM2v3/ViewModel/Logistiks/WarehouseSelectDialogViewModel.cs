@@ -1,17 +1,17 @@
 ﻿using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using KursAM2.Managers;
-using KursAM2.Managers.Invoices;
 using KursAM2.View.Logistiks.UC;
+using KursDomain;
 using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Logistiks
 {
     public class WarehouseSelectDialogViewModel : RSWindowViewModelBase
     {
-        private KursDomain.Documents.NomenklManagement.Warehouse myCurrentWarehouse;
+        private KursDomain.References.Warehouse myCurrentWarehouse;
         private SelectWarehouse myDataUserControl;
 
         public WarehouseSelectDialogViewModel()
@@ -19,7 +19,9 @@ namespace KursAM2.ViewModel.Logistiks
             myDataUserControl = new SelectWarehouse();
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
             WarehouseCollection =
-                new ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse>(MainReferences.Warehouses.Values);
+                new ObservableCollection<KursDomain.References.Warehouse>(GlobalOptions.ReferencesCache
+                    .GetWarehousesAll()
+                    .Cast<KursDomain.References.Warehouse>().OrderBy(_ => _.Name));
             WindowName = "Выбор склада";
         }
 
@@ -34,20 +36,20 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse> WarehouseCollection { set; get; } =
-            new ObservableCollection<KursDomain.Documents.NomenklManagement.Warehouse>();
+        public ObservableCollection<KursDomain.References.Warehouse> WarehouseCollection { set; get; } =
+            new ObservableCollection<KursDomain.References.Warehouse>();
 
         public ICommand SearchExecuteCommand
         {
             get { return new Command(SearchExecute, _ => !string.IsNullOrWhiteSpace(SearchText)); }
         }
 
-        public KursDomain.Documents.NomenklManagement.Warehouse CurrentWarehouse
+        public KursDomain.References.Warehouse CurrentWarehouse
         {
             get => myCurrentWarehouse;
             set
             {
-                if (Equals(myCurrentWarehouse,value)) return;
+                if (Equals(myCurrentWarehouse, value)) return;
                 myCurrentWarehouse = value;
                 RaisePropertyChanged();
             }

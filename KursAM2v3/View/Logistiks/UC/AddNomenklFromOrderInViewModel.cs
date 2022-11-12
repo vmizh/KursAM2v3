@@ -72,7 +72,7 @@ namespace KursAM2.View.Logistiks.UC
                             Code = r.Code,
                             DocNum = r.DocNum,
                             DocDate = r.DocDate,
-                            Nomenkl = MainReferences.GetNomenkl(r.NomDC),
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(r.NomDC) as Nomenkl,
                             QuantityIn = r.QuantityIn,
                             QuantityFact = r.QuantityFact,
                             Quantity = r.QuantityIn - r.QuantityFact,

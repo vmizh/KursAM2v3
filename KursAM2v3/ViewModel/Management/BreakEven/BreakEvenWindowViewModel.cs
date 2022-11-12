@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -309,19 +308,18 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                 foreach (var d in operList)
                                 {
                                     var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.SD_84.SF_CLIENT_DC);
-                                    var otvlico = d.SD_84.PersonalResponsibleDC != null
-                                        ? MainReferences.Employees[d.SD_84.PersonalResponsibleDC.Value].Name
-                                        : null;
-                                    if (otvlico == null && kontr.ResponsibleEmployee != null)
-                                        otvlico = MainReferences.Employees.Values
-                                            .FirstOrDefault(_ => _.TabelNumber == kontr.ResponsibleEmployee.TabelNumber)
-                                            ?.Name;
+                                    var otvlico =
+                                        ((IName)GlobalOptions.ReferencesCache.GetEmployee(d.SD_84.PersonalResponsibleDC
+                                            .Value))?.Name ??
+                                        ((IName)kontr.ResponsibleEmployee)?.Name;
                                     DataAll.Add(new BreakEvenRow
                                     {
                                         Kontragent = ((IName)kontr).Name,
                                         Kontr = kontr as Kontragent,
-                                        Nomenkl = MainReferences.GetNomenkl(d.SFT_NEMENKL_DC),
-                                        CentrOfResponsibility = MainReferences.GetCO(d.SD_84.SF_CENTR_OTV_DC),
+                                        Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(d.SFT_NEMENKL_DC) as Nomenkl,
+                                        CentrOfResponsibility =
+                                            GlobalOptions.ReferencesCache.GetCentrResponsibility(
+                                                d.SD_84.SF_CENTR_OTV_DC) as CentrResponsibility,
                                         Date = d.SD_84.SF_DATE,
                                         Diler = null, //diler != null ? diler.Name : "",
                                         //DilerSumma = 0, //Convert.ToDecimal(d.DilerSumma) * drate,
@@ -331,8 +329,10 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                         Manager = otvlico != null ? otvlico : "Менеджер не указан",
                                         Naklad = null,
                                         NomenklSumWOReval = 0,
-                                        OperCrsName = MainReferences.Currencies[d.SD_84.SF_CRS_DC].Name,
-                                        OperCurrency = MainReferences.Currencies[d.SD_84.SF_CRS_DC],
+                                        OperCrsName =
+                                            ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.SD_84.SF_CRS_DC)).Name,
+                                        OperCurrency =
+                                            GlobalOptions.ReferencesCache.GetCurrency(d.SD_84.SF_CRS_DC) as Currency,
                                         Schet =
                                             $"Счет №'{d.SD_84.SF_IN_NUM} от {d.SD_84.SF_DATE.ToShortDateString()} {d.SD_84.SF_NOTE}",
                                         Quantity = Convert.ToDecimal(d.SFT_KOL),
@@ -350,18 +350,15 @@ namespace KursAM2.ViewModel.Management.BreakEven
 
                     foreach (var d in ent.Database.SqlQuery<BreakEvenTemp>(sql))
                     {
-                        var nom = MainReferences.GetNomenkl(d.NomenklDC);
-                        var diler = MainReferences.AllKontragents.ContainsKey(d.Diler)
-                            ? MainReferences.AllKontragents[d.Diler]
-                            : null;
-                        var co = MainReferences.COList.ContainsKey(d.CO)
-                            ? MainReferences.COList[d.CO]
-                            : new CentrResponsibility { DocCode = 0, Name = "Не указан" };
+                        var nom = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as Nomenkl;
+                        var diler = GlobalOptions.ReferencesCache.GetKontragent(d.Diler) as Kontragent;
+                        var co = GlobalOptions.ReferencesCache.GetCentrResponsibility(d.CO) as CentrResponsibility
+                                 ?? new CentrResponsibility { DocCode = 0, Name = "Не указан" };
                         var emp = empls.FirstOrDefault(_ => _.DOC_CODE == d.Manager);
-                        var crs = MainReferences.Currencies[d.Currency];
+                        var crs = GlobalOptions.ReferencesCache.GetCurrency(d.Currency) as Currency;
                         DataAll.Add(new BreakEvenRow
                         {
-                            Kontragent = MainReferences.AllKontragents[d.KontragentDC].Name,
+                            Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC)).Name,
                             Kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent,
                             Nomenkl = nom,
                             CentrOfResponsibility = co,

@@ -58,7 +58,7 @@ namespace KursAM2.ViewModel.Dogovora
                                 ? d.InNum.ToString()
                                 : $"{d.InNum} / {d.OutNum}",
                             Date = d.DocDate,
-                            DogType = MainReferences.ContractTypes[d.DogType],
+                            DogType = GlobalOptions.ReferencesCache.GetContractType(d.DogType) as ContractType,
                             Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC) as Kontragent,
                             Creator = d.Creator,
                             Note = d.Note,
@@ -86,7 +86,7 @@ namespace KursAM2.ViewModel.Dogovora
                         Id = d.Id,
                         Quantity = d.Quantity,
                         IsSelected = false,
-                        Nomenkl = MainReferences.GetNomenkl(d.NomenklDC),
+                        Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as Nomenkl,
                         NDSPercent = d.NDSPercent,
                         Note = d.Note,
                         Price = d.Price

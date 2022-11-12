@@ -6,7 +6,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Core;
 using Core.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
@@ -16,7 +15,6 @@ using DevExpress.Mvvm.DataAnnotations;
 using Helper;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
-using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
 using KursDomain.References;
 using Newtonsoft.Json;
@@ -918,10 +916,10 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
     /// </summary>
     public References.Employee PersonaResponsible
     {
-        get => MainReferences.GetEmployee(Entity.PersonalResponsibleDC);
+        get => GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) as References.Employee;
         set
         {
-            if (MainReferences.GetEmployee(Entity.PersonalResponsibleDC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) == value) return;
             Entity.PersonalResponsibleDC = value?.DocCode;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(EmployeeTabelNumber));
@@ -933,18 +931,18 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         get => GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) as CentrResponsibility;
         set
         {
-            if (MainReferences.GetCO(Entity.SF_CENTR_OTV_DC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) == value) return;
             Entity.SF_CENTR_OTV_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
 
-    public VzaimoraschetType VzaimoraschetType
+    public MutualSettlementType VzaimoraschetType
     {
-        get => MainReferences.GetVzaimoraschetType(Entity.SF_VZAIMOR_TYPE_DC);
+        get => GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.SF_VZAIMOR_TYPE_DC) as MutualSettlementType;
         set
         {
-            if (MainReferences.GetVzaimoraschetType(Entity.SF_VZAIMOR_TYPE_DC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.SF_VZAIMOR_TYPE_DC) == value) return;
             Entity.SF_VZAIMOR_TYPE_DC = value?.DocCode;
             RaisePropertyChanged();
         }
@@ -963,10 +961,10 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
 
     public PayCondition PayCondition
     {
-        get => MainReferences.GetPayCondition(Entity.SF_PAY_COND_DC);
+        get => GlobalOptions.ReferencesCache.GetPayCondition(Entity.SF_PAY_COND_DC) as PayCondition;
         set
         {
-            if (MainReferences.GetPayCondition(Entity.SF_PAY_COND_DC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetPayCondition(Entity.SF_PAY_COND_DC) == value) return;
             if (value != null)
                 Entity.SF_PAY_COND_DC = value.DocCode;
             RaisePropertyChanged();
@@ -989,10 +987,10 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
 
     public References.Currency Currency
     {
-        get => MainReferences.GetCurrency(Entity.SF_CRS_DC);
+        get => GlobalOptions.ReferencesCache.GetCurrency(Entity.SF_CRS_DC) as References.Currency;
         set
         {
-            if (MainReferences.GetCurrency(Entity.SF_CRS_DC) == value) return;
+            if (GlobalOptions.ReferencesCache.GetCurrency(Entity.SF_CRS_DC) == value) return;
             if (value != null)
             {
                 Entity.SF_CRS_DC = value.DocCode;
@@ -1119,21 +1117,16 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
 
     public void LoadReferences()
     {
-        if (MainReferences.Currencies.ContainsKey(Entity.SF_CRS_DC))
-            Currency = MainReferences.Currencies[Entity.SF_CRS_DC];
-        if (Entity.SF_CLIENT_DC != null)
-            Client = GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_CLIENT_DC) as Kontragent;
-        if (Entity.SF_CENTR_OTV_DC != null) CO = MainReferences.COList[Entity.SF_CENTR_OTV_DC.Value];
-        if (Entity.SF_RECEIVER_KONTR_DC != null)
-            Receiver = GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_RECEIVER_KONTR_DC) as Kontragent;
-        if (Entity.SF_FORM_RASCH_DC != null)
-            FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) as PayForm;
-        if (Entity.SD_179 != null)
-            PayCondition = MainReferences.PayConditions[Entity.SD_179.DOC_CODE];
-        if (Entity.SD_77 != null)
-            VzaimoraschetType = MainReferences.VzaimoraschetTypes[Entity.SD_77.DOC_CODE];
-        if (Entity.PersonalResponsibleDC != null)
-            PersonaResponsible = MainReferences.Employees[Entity.PersonalResponsibleDC.Value];
+        Currency = GlobalOptions.ReferencesCache.GetCurrency(Entity.SF_CRS_DC) as References.Currency;
+        Client = GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_CLIENT_DC) as Kontragent;
+        CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) as CentrResponsibility;
+        Receiver = GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_RECEIVER_KONTR_DC) as Kontragent;
+        FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) as PayForm;
+        PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(Entity.SD_179.DOC_CODE) as PayCondition;
+        VzaimoraschetType =
+            GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.SD_77.DOC_CODE) as MutualSettlementType;
+        PersonaResponsible =
+            GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) as References.Employee;
         if (Rows == null)
             Rows = new ObservableCollection<IInvoiceClientRow>();
         else
@@ -1164,10 +1157,10 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                         DocumentName =
                             $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
+                            $"{GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC)} ({c.CREATOR})",
                         // ReSharper disable once PossibleInvalidOperationException
                         Summa = (decimal)c.SUMM_ORD,
-                        Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC) as References.Currency,
                         Note = c.NOTES_ORD
                     });
                 foreach (var c in Entity.TD_101)
@@ -1178,9 +1171,9 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                         DocumentType = DocumentType.Bank,
                         DocumentName =
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
                         Summa = (decimal)c.VVT_VAL_PRIHOD,
-                        Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as References.Currency,
                         Note = c.VVT_DOC_NUM
                     });
                 foreach (var c in Entity.TD_110)
@@ -1194,7 +1187,8 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                             $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
                         // ReSharper disable once PossibleInvalidOperationException
                         Summa = (decimal)c.VZT_CRS_SUMMA,
-                        Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
+                        Currency =
+                            GlobalOptions.ReferencesCache.GetCurrency(c.SD_110.CurrencyFromDC) as References.Currency,
                         Note = c.VZT_DOC_NOTES
                     });
             }
@@ -1220,10 +1214,10 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                             DocumentName =
                                 $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
                                 // ReSharper disable once PossibleInvalidOperationException
-                                $"{MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
+                                $"{GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC)} ({c.CREATOR})",
                             // ReSharper disable once PossibleInvalidOperationException
                             Summa = (decimal)c.SUMM_ORD,
-                            Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC) as References.Currency,
                             Note = c.NOTES_ORD
                         });
                     foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
@@ -1236,9 +1230,9 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                             DocumentType = DocumentType.Bank,
                             DocumentName =
                                 // ReSharper disable once PossibleInvalidOperationException
-                                $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                                $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
                             Summa = (decimal)c.VVT_VAL_PRIHOD,
-                            Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as References.Currency,
                             Note = c.VVT_DOC_NUM
                         });
                     foreach (var c in ctx.TD_110.Include(_ => _.SD_110)
@@ -1254,7 +1248,9 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                                 $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
                             // ReSharper disable once PossibleInvalidOperationException
                             Summa = (decimal)c.VZT_CRS_SUMMA,
-                            Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
+                            Currency =
+                                GlobalOptions.ReferencesCache.GetCurrency(c.SD_110.CurrencyFromDC) as
+                                    References.Currency,
                             Note = c.VZT_DOC_NOTES
                         });
                 }
@@ -1364,7 +1360,8 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
     }
 }
 
-public class DataAnnotationsSFClientViewModel : DataAnnotationForFluentApiBase, IMetadataProvider<InvoiceClientViewModel>
+public class DataAnnotationsSFClientViewModel : DataAnnotationForFluentApiBase,
+    IMetadataProvider<InvoiceClientViewModel>
 {
     void IMetadataProvider<InvoiceClientViewModel>.BuildMetadata(MetadataBuilder<InvoiceClientViewModel> builder)
     {

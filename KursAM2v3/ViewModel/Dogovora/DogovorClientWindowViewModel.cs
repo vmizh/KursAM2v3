@@ -7,7 +7,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -172,8 +171,12 @@ namespace KursAM2.ViewModel.Dogovora
         public ObservableCollection<DogovorClientRowViewModel> SelectedRows { set; get; }
             = new ObservableCollection<DogovorClientRowViewModel>();
 
-        public List<ContractType> ContractTypeList => MainReferences.ContractTypes.Values.Where(_ => _.IsSale).ToList();
-        public List<PayCondition> PayConditionList => GlobalOptions.ReferencesCache.GetPayConditionAll().Cast<PayCondition>().ToList();
+        public List<ContractType> ContractTypeList => GlobalOptions.ReferencesCache.GetContractsTypeAll()
+            .Cast<ContractType>().Where(_ => _.IsSale).ToList();
+
+        public List<PayCondition> PayConditionList =>
+            GlobalOptions.ReferencesCache.GetPayConditionAll().Cast<PayCondition>().ToList();
+
         public List<PayForm> FormPayList => GlobalOptions.ReferencesCache.GetPayFormAll() as List<PayForm>;
 
         public DogovorClientRowViewModel CurrentRow

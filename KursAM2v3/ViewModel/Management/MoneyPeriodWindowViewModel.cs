@@ -3,14 +3,13 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors;
 using KursAM2.Managers;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 
@@ -63,6 +62,7 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
+
         public int TimeOutIndex
         {
             get => myTimeOutIndex;
@@ -73,16 +73,21 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
+
         public ObservableCollection<MoneyRemainsRow> Remains { set; get; } =
             new ObservableCollection<MoneyRemainsRow>();
+
         public ObservableCollection<MoneyPeriodRowViewModel> Prihod { set; get; } =
             new ObservableCollection<MoneyPeriodRowViewModel>();
+
         public ObservableCollection<MoneyPeriodRowViewModel> Rashod { set; get; } =
             new ObservableCollection<MoneyPeriodRowViewModel>();
+
         public ObservableCollection<MoneyPeriodRowViewModel> AllOperations { set; get; }
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public ObservableCollection<MoneyPeriodRowViewModel> CommonOperations { set; get; }
+
         public MoneyPeriodRowViewModel CurrentItem
         {
             get => myCurrentItem;
@@ -94,6 +99,7 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
+
         public DateTime StartDate
         {
             get => myStartDate;
@@ -104,6 +110,7 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
+
         public ComboBoxEditItem TimeOut
         {
             get => myTimeOut;
@@ -115,6 +122,7 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
+
         public DateTime EndDate
         {
             get => myEndDate;
@@ -125,37 +133,36 @@ namespace KursAM2.ViewModel.Management
                 RaisePropertyChanged();
             }
         }
+
         public override bool IsDocumentOpenAllow =>
             CurrentItem != null && DocumentsOpenManager.IsDocumentOpen(CurrentItem.DocumentType);
 
         private string GetEmployeeName(int tn)
         {
-            var emp = MainReferences.Employees.Values.SingleOrDefault(_ => _.TabelNumber == tn);
-            return emp != null ? emp.Name : "Сотрудник не найден";
+            return GlobalOptions.ReferencesCache.GetEmployee(tn) is Employee emp ? emp.Name : "Сотрудник не найден";
         }
 
         private void LoadRemains()
         {
-            foreach (var ch in MainReferences.Cashs.Values)
+            foreach (var ch in GlobalOptions.ReferencesCache.GetCashBoxAll().Cast<CashBox>().OrderBy(_ => _.Name))
+            foreach (var c in GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>())
             {
-                foreach (var c in MainReferences.Currencies.Values)
-                {
-                    var start = CashManager.GetCashCurrencyRemains(ch.DocCode, c.DocCode, StartDate);
-                    var end = CashManager.GetCashCurrencyRemains(ch.DocCode, c.DocCode, EndDate);
-                    if (start != 0 || end != 0)
-                        Remains.Add(new MoneyRemainsRow
-                        {
-                            Name =
-                                ch.Name,
-                            RemainsType = "Касса",
-                            StartSumma = start,
-                            EndSumma = end,
-                            Currency = c
-                        });
-                }
+                var start = CashManager.GetCashCurrencyRemains(ch.DocCode, c.DocCode, StartDate);
+                var end = CashManager.GetCashCurrencyRemains(ch.DocCode, c.DocCode, EndDate);
+                if (start != 0 || end != 0)
+                    Remains.Add(new MoneyRemainsRow
+                    {
+                        Name =
+                            ch.Name,
+                        RemainsType = "Касса",
+                        StartSumma = start,
+                        EndSumma = end,
+                        Currency = c
+                    });
             }
+
             var bankManager = new BankOperationsManager();
-            foreach (var b in MainReferences.BankAccounts.Values)
+            foreach (var b in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>())
             {
                 var rem = bankManager.GetRemains2(b.DocCode, StartDate, EndDate);
                 if (rem.SummaStart != 0 || rem.SummaEnd != 0)
@@ -165,63 +172,63 @@ namespace KursAM2.ViewModel.Management
                         {
                             Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
-                            StartSumma = (decimal) rem.SummaStart,
-                            EndSumma = (decimal) rem.SummaEnd,
-                            Currency = MainReferences.Currencies[CurrencyCode.CHF]
+                            StartSumma = (decimal)rem.SummaStart,
+                            EndSumma = (decimal)rem.SummaEnd,
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CHF) as Currency
                         });
                     if (rem.Currency.DocCode == CurrencyCode.CNY)
                         Remains.Add(new MoneyRemainsRow
                         {
                             Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
-                            StartSumma = (decimal) rem.SummaStart,
-                            EndSumma = (decimal) rem.SummaEnd,
-                            Currency = MainReferences.Currencies[CurrencyCode.CNY]
+                            StartSumma = (decimal)rem.SummaStart,
+                            EndSumma = (decimal)rem.SummaEnd,
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as Currency
                         });
                     if (rem.Currency.DocCode == CurrencyCode.USD)
                         Remains.Add(new MoneyRemainsRow
                         {
                             Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
-                            StartSumma = (decimal) rem.SummaStart,
-                            EndSumma = (decimal) rem.SummaEnd,
-                            Currency = MainReferences.Currencies[CurrencyCode.USD]
+                            StartSumma = (decimal)rem.SummaStart,
+                            EndSumma = (decimal)rem.SummaEnd,
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD) as Currency
                         });
                     if (rem.Currency.DocCode == CurrencyCode.EUR)
                         Remains.Add(new MoneyRemainsRow
                         {
                             Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
-                            StartSumma = (decimal) rem.SummaStart,
-                            EndSumma = (decimal) rem.SummaEnd,
-                            Currency = MainReferences.Currencies[CurrencyCode.EUR]
+                            StartSumma = (decimal)rem.SummaStart,
+                            EndSumma = (decimal)rem.SummaEnd,
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as Currency
                         });
                     if (rem.Currency.DocCode == CurrencyCode.RUB)
                         Remains.Add(new MoneyRemainsRow
                         {
                             Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
-                            StartSumma = (decimal) rem.SummaStart,
-                            EndSumma = (decimal) rem.SummaEnd,
-                            Currency = MainReferences.Currencies[CurrencyCode.RUB]
+                            StartSumma = (decimal)rem.SummaStart,
+                            EndSumma = (decimal)rem.SummaEnd,
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.RUB) as Currency
                         });
                     if (rem.Currency.DocCode == CurrencyCode.GBP)
                         Remains.Add(new MoneyRemainsRow
                         {
                             Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
-                            StartSumma = (decimal) rem.SummaStart,
-                            EndSumma = (decimal) rem.SummaEnd,
-                            Currency = MainReferences.Currencies[CurrencyCode.GBP]
+                            StartSumma = (decimal)rem.SummaStart,
+                            EndSumma = (decimal)rem.SummaEnd,
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as Currency
                         });
                     if (rem.Currency.DocCode == CurrencyCode.SEK)
                         Remains.Add(new MoneyRemainsRow
                         {
                             Name = b.Name + " / " + b.RashAccount,
                             RemainsType = "Банк",
-                            StartSumma = (decimal) rem.SummaStart,
-                            EndSumma = (decimal) rem.SummaEnd,
-                            Currency = MainReferences.Currencies[CurrencyCode.SEK]
+                            StartSumma = (decimal)rem.SummaStart,
+                            EndSumma = (decimal)rem.SummaEnd,
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.SEK) as Currency
                         });
                 }
             }
@@ -277,7 +284,7 @@ namespace KursAM2.ViewModel.Management
                         var n = new MoneyPeriodRowViewModel
                         {
                             Date = ost.DATE_START,
-                            Currency = MainReferences.Currencies[ost.CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(ost.CRS_DC) as Currency,
                             DocName = "Остатки по кассе",
                             SummaPrihod = ost.SUMMA_START,
                             // ReSharper disable once PossibleInvalidOperationException
@@ -293,6 +300,7 @@ namespace KursAM2.ViewModel.Management
                         if (n.SummaRashod > 0)
                             Rashod.Add(n);
                     }
+
                     foreach (var d in dates)
                     {
                         var dc =
@@ -310,10 +318,10 @@ namespace KursAM2.ViewModel.Management
                                 {
                                     DocCode = c.SD_101.DOC_CODE,
                                     Date = c.SD_101.VV_START_DATE,
-                                    Currency = MainReferences.Currencies[c.VVU_CRS_DC],
+                                    Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVU_CRS_DC) as Currency,
                                     DocName = "Остатки по банку",
                                     // ReSharper disable once PossibleInvalidOperationException
-                                    SummaPrihod = (decimal) c.VVU_VAL_SUMMA,
+                                    SummaPrihod = (decimal)c.VVU_VAL_SUMMA,
                                     SummaRashod = 0,
                                     Kontragent = bankName,
                                     Note = "",
@@ -327,43 +335,45 @@ namespace KursAM2.ViewModel.Management
                                     Rashod.Add(n);
                             }
                     }
+
                     foreach (var newAv in vzaim.Select(av => new MoneyPeriodRowViewModel
-                        {
-                            DocCode = av.DOC_CODE,
-                            Date = av.VZT_DOC_DATE,
-                            Currency = MainReferences.Currencies[av.VZT_CRS_DC],
-                            DocName = "Акт взаимозачета",
-                            // ReSharper disable once PossibleInvalidOperationException
-                            SummaPrihod = av.VZT_1MYDOLZH_0NAMDOLZH == 0 ? av.VZT_CRS_SUMMA.Value : 0,
-                            // ReSharper disable once PossibleInvalidOperationException
-                            SummaRashod = av.VZT_1MYDOLZH_0NAMDOLZH == 1 ? av.VZT_CRS_SUMMA.Value : 0,
-                            Kontragent = MainReferences.GetKontragent(av.VZT_KONTR_DC).Name,
-                            Note = "",
-                            SDRSchet = av.SD_303 != null
-                                ? new SDRSchet
-                                {
-                                    DocCode = av.SD_303.DOC_CODE,
-                                    Name = av.SD_303.SHPZ_NAME
-                                }
-                                : new SDRSchet
-                                {
-                                    DocCode = -1,
-                                    Name = "Не указан"
-                                },
-                            SDRState = av.SD_303 != null && av.SD_303.SD_99 != null
-                                ? new SDRState
-                                {
-                                    DocCode = av.SD_303.SD_99.DOC_CODE,
-                                    Name = av.SD_303.SD_99.SZ_NAME
-                                }
-                                : new SDRState
-                                {
-                                    DocCode = -1,
-                                    Name = "Статья не указана"
-                                },
-                            DocumentType = DocumentType.MutualAccounting
-                        })
-                        .Where(newAv => IsIncludeVzaimozachet))
+                                 {
+                                     DocCode = av.DOC_CODE,
+                                     Date = av.VZT_DOC_DATE,
+                                     Currency = GlobalOptions.ReferencesCache.GetCurrency(av.VZT_CRS_DC) as Currency,
+                                     DocName = "Акт взаимозачета",
+                                     // ReSharper disable once PossibleInvalidOperationException
+                                     SummaPrihod = av.VZT_1MYDOLZH_0NAMDOLZH == 0 ? av.VZT_CRS_SUMMA.Value : 0,
+                                     // ReSharper disable once PossibleInvalidOperationException
+                                     SummaRashod = av.VZT_1MYDOLZH_0NAMDOLZH == 1 ? av.VZT_CRS_SUMMA.Value : 0,
+                                     Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(av.VZT_KONTR_DC))
+                                         .Name,
+                                     Note = "",
+                                     SDRSchet = av.SD_303 != null
+                                         ? new SDRSchet
+                                         {
+                                             DocCode = av.SD_303.DOC_CODE,
+                                             Name = av.SD_303.SHPZ_NAME
+                                         }
+                                         : new SDRSchet
+                                         {
+                                             DocCode = -1,
+                                             Name = "Не указан"
+                                         },
+                                     SDRState = av.SD_303 != null && av.SD_303.SD_99 != null
+                                         ? new SDRState
+                                         {
+                                             DocCode = av.SD_303.SD_99.DOC_CODE,
+                                             Name = av.SD_303.SD_99.SZ_NAME
+                                         }
+                                         : new SDRState
+                                         {
+                                             DocCode = -1,
+                                             Name = "Статья не указана"
+                                         },
+                                     DocumentType = DocumentType.MutualAccounting
+                                 })
+                                 .Where(newAv => IsIncludeVzaimozachet))
                     {
                         AllOperations.Add(newAv);
                         if (newAv.SummaPrihod > 0)
@@ -371,6 +381,7 @@ namespace KursAM2.ViewModel.Management
                         else
                             Rashod.Add(newAv);
                     }
+
                     foreach (
                         var op in
                         bankOper.Where(_ => _.VVT_KONTRAGENT != null)
@@ -379,13 +390,14 @@ namespace KursAM2.ViewModel.Management
                                 DocCode = d.DOC_CODE,
                                 Code = d.CODE,
                                 Date = d.SD_101.VV_STOP_DATE,
-                                Currency = MainReferences.Currencies[d.VVT_CRS_DC],
+                                Currency = GlobalOptions.ReferencesCache.GetCurrency(d.VVT_CRS_DC) as Currency,
                                 DocName = "Банковская выписка",
                                 // ReSharper disable once PossibleInvalidOperationException
                                 SummaPrihod = d.VVT_VAL_PRIHOD.Value,
                                 // ReSharper disable once PossibleInvalidOperationException
                                 SummaRashod = d.VVT_VAL_RASHOD.Value,
-                                Kontragent = MainReferences.GetKontragent(d.VVT_KONTRAGENT).Name,
+                                Kontragent =
+                                    ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.VVT_KONTRAGENT)).Name,
                                 Note = "",
                                 SDRSchet = d.SD_303 != null
                                     ? new SDRSchet
@@ -418,6 +430,7 @@ namespace KursAM2.ViewModel.Management
                             Rashod.Add(op);
                         AllOperations.Add(op);
                     }
+
                     foreach (
                         var prih in
                         cashIn.Where(_ => _.BANK_RASCH_SCHET_DC == null && _.RASH_ORDER_FROM_DC == null)
@@ -428,14 +441,14 @@ namespace KursAM2.ViewModel.Management
                                 Date = d.DATE_ORD.Value,
                                 // ReSharper disable once AssignNullToNotNullAttribute
                                 // ReSharper disable once PossibleInvalidOperationException
-                                Currency = MainReferences.Currencies[d.CRS_DC.Value],
+                                Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC.Value) as Currency,
                                 DocName = "Приходный кассовый ордер",
                                 // ReSharper disable once PossibleInvalidOperationException
                                 SummaPrihod = d.SUMM_ORD.Value,
                                 SummaRashod = 0,
                                 Kontragent =
                                     d.TABELNUMBER == null
-                                        ? MainReferences.GetKontragent(d.KONTRAGENT_DC).Name
+                                        ? ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KONTRAGENT_DC)).Name
                                         : GetEmployeeName(d.TABELNUMBER.Value),
                                 Note = d.NOTES_ORD,
                                 SDRSchet = d.SD_303 != null
@@ -466,6 +479,7 @@ namespace KursAM2.ViewModel.Management
                         Prihod.Add(prih);
                         AllOperations.Add(prih);
                     }
+
                     foreach (
                         var rash in
                         cashOut.Where(_ => _.BANK_RASCH_SCHET_DC == null && _.CASH_TO_DC == null)
@@ -476,14 +490,14 @@ namespace KursAM2.ViewModel.Management
                                 Date = d.DATE_ORD.Value,
                                 // ReSharper disable once AssignNullToNotNullAttribute
                                 // ReSharper disable once PossibleInvalidOperationException
-                                Currency = MainReferences.Currencies[d.CRS_DC.Value],
+                                Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC.Value) as Currency,
                                 DocName = "Расходный кассовый ордер",
                                 SummaPrihod = 0,
                                 // ReSharper disable once PossibleInvalidOperationException
                                 SummaRashod = d.SUMM_ORD.Value,
                                 Kontragent =
                                     d.TABELNUMBER == null
-                                        ? MainReferences.GetKontragent(d.KONTRAGENT_DC).Name
+                                        ? ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KONTRAGENT_DC)).Name
                                         : GetEmployeeName(d.TABELNUMBER.Value),
                                 Note = d.NOTES_ORD,
                                 SDRSchet = d.SD_303 != null
@@ -515,12 +529,14 @@ namespace KursAM2.ViewModel.Management
                         AllOperations.Add(rash);
                     }
                 }
+
                 LoadRemains();
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
             }
+
             RaisePropertyChanged(nameof(AllOperations));
             RaisePropertyChanged(nameof(Prihod));
             RaisePropertyChanged(nameof(Rashod));
@@ -533,6 +549,7 @@ namespace KursAM2.ViewModel.Management
                 DocumentsOpenManager.Open(CurrentItem.DocumentType, CurrentItem.Code);
                 return;
             }
+
             DocumentsOpenManager.Open(CurrentItem.DocumentType, CurrentItem.DocCode);
         }
     }

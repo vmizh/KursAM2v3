@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Core;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Grid;
@@ -71,7 +69,7 @@ namespace KursAM2.ViewModel.Reference
 
         public override void RefreshData(object o)
         {
-            Rows = new List<Region>(MainReferences.Regions.Values);
+            Rows = new List<Region>(GlobalOptions.ReferencesCache.GetRegionsAll().Cast<Region>());
             RaisePropertyChanged(nameof(Rows));
         }
 
@@ -204,7 +202,6 @@ namespace KursAM2.ViewModel.Reference
 
                         ctx.SaveChanges();
                         tn.Commit();
-                        MainReferences.Refresh();
                         DeletedRows.Clear();
                         return true;
                     }

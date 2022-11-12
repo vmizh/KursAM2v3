@@ -1,11 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
-using KursDomain.Documents.CommonReferences;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
 
@@ -139,7 +137,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         [DisplayName("Валюта")]
         [Display(AutoGenerateField = true)]
         // ReSharper disable once PossibleInvalidOperationException
-        public Currency Currency => MainReferences.Currencies[Entity.InvoiceCrsDC];
+        public Currency Currency => GlobalOptions.ReferencesCache.GetCurrency(Entity.InvoiceCrsDC) as Currency;
 
         [DisplayName("Курс")]
         [Display(AutoGenerateField = true)]

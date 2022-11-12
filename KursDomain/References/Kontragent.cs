@@ -6,7 +6,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -1094,9 +1093,7 @@ public class KontragentViewModel : RSViewModelBase, IEntity<SD_43>, IDataErrorIn
 
     private void LoadReference()
     {
-        if (MainReferences.Currencies == null) return;
-        if (Entity.VALUTA_DC != null && MainReferences.Currencies != null)
-            BalansCurrency = MainReferences.Currencies[Entity.VALUTA_DC.Value];
+        BalansCurrency = GlobalOptions.ReferencesCache.GetCurrency(Entity.VALUTA_DC) as Currency;
         Group = new KontragentGroupViewModel(Entity.UD_43);
         ClientCategory = GlobalOptions.ReferencesCache.GetClientCategory(Entity.SD_148?.DOC_CODE) as ClientCategory;
         var emp = GlobalOptions.ReferencesCache.GetEmployee(Entity.TABELNUMBER);

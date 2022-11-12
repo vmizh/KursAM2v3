@@ -281,7 +281,7 @@ namespace KursAM2.ViewModel.Management
                             default:
                                 var prj = prjcts.FirstOrDefault(_ => _.DocDC == o.DocDC);
                                 if (prj != null)
-                                    o.Project = MainReferences.Projects[prj.Projects.Id];
+                                    o.Project = GlobalOptions.ReferencesCache.GetProject(prj.Projects.Id) as Project;
                                 break;
                         }
                 }

@@ -5,7 +5,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -84,7 +83,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         public List<Region> Regions { set; get; } = new List<Region>();
 
         public List<Currency> Currencies
-            => MainReferences.Currencies.Values.Where(_ => _.IsActive).ToList();
+            => GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>().Where(_ => _.IsActive).ToList();
 
         #region Fields
 
@@ -127,7 +126,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         {
             set
             {
-                if (Equals(myOtvetstLico,value)) return;
+                if (Equals(myOtvetstLico, value)) return;
                 myOtvetstLico = value;
                 Kontragent.OtvetstLico = myOtvetstLico;
                 RaisePropertyChanged();
@@ -170,7 +169,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         {
             set
             {
-                if (Equals(myCurrentBankAndAccounts,value)) return;
+                if (Equals(myCurrentBankAndAccounts, value)) return;
                 myCurrentBankAndAccounts = value;
                 RaisePropertyChanged();
             }
@@ -412,7 +411,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             get => myEmployee;
             set
             {
-                if (Equals(myEmployee,value)) return;
+                if (Equals(myEmployee, value)) return;
                 myEmployee = value;
                 RaisePropertyChanged();
             }

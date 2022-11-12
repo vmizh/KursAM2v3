@@ -15,6 +15,7 @@ using KursAM2.View.Personal;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -188,8 +189,8 @@ namespace KursAM2.ViewModel.Personal
                     {
                         var newItem = new EmployeePayDocumentViewModel
                         {
-                            Employee = MainReferences.Employees[nach.EMP_DC],
-                            Crs = MainReferences.Currencies[nach.CRS_DC],
+                            Employee = GlobalOptions.ReferencesCache.GetEmployee(nach.EMP_DC) as Employee,
+                            Crs = GlobalOptions.ReferencesCache.GetCurrency(nach.CRS_DC) as Currency,
                             DocDate = nach.NachDate ?? nach.EMP_PR_DOC.Date,
                             Note = nach.NOTES,
                             Summa = nach.SUMMA,
@@ -200,12 +201,12 @@ namespace KursAM2.ViewModel.Personal
                             PlatDocName = "Платежная ведомость",
                             PayType = "Начисление",
                             NachRUB =
-                                MainReferences.Currencies[nach.CRS_DC].Name == "RUB" ||
-                                MainReferences.Currencies[nach.CRS_DC].Name == "RUR"
+                                ((IName)GlobalOptions.ReferencesCache.GetCurrency(nach.CRS_DC)).Name == "RUB" ||
+                                ((IName)GlobalOptions.ReferencesCache.GetCurrency(nach.CRS_DC)).Name == "RUR"
                                     ? nach.SUMMA
                                     : 0,
-                            NachUSD = MainReferences.Currencies[nach.CRS_DC].Name == "USD" ? nach.SUMMA : 0,
-                            NachEUR = MainReferences.Currencies[nach.CRS_DC].Name == "EUR" ? nach.SUMMA : 0,
+                            NachUSD = ((IName)GlobalOptions.ReferencesCache.GetCurrency(nach.CRS_DC)).Name == "USD" ? nach.SUMMA : 0,
+                            NachEUR = ((IName)GlobalOptions.ReferencesCache.GetCurrency(nach.CRS_DC)).Name == "EUR" ? nach.SUMMA : 0,
                             RUB = 0,
                             USD = 0,
                             EUR = 0,
@@ -222,16 +223,14 @@ namespace KursAM2.ViewModel.Personal
                         {
                             //if (p.CRS_KOEF == null) continue;
                             var per =
-                                MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == p.TABELNUMBER);
+                                GlobalOptions.ReferencesCache.GetEmployee(p.TABELNUMBER) as Employee;
                             if (p.CRS_DC == null) continue;
-                            var crs = MainReferences.Currencies[(decimal)p.CRS_DC];
+                            var crs = GlobalOptions.ReferencesCache.GetCurrency(p.CRS_DC) as Currency;
                             if (p.DATE_ORD == null) continue;
                             if (per == null) continue;
                             if (per.TabelNumber == 25 && (p.DOC_CODE == 10340051230 || p.DOC_CODE == 10340051240
                                                           || p.DOC_CODE == 10340051656
                                                           || p.DOC_CODE == 10340051674
-                                                          //|| p.DOC_CODE == 10340054355
-                                                          //|| p.DOC_CODE == 10340054410
                                                       )
                                                       && isPersonaItog)
                                 continue;

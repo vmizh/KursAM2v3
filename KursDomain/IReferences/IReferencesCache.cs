@@ -14,10 +14,15 @@ public interface IReferencesCache
     ICashBox GetCashBox(decimal dc);
     IEnumerable<ICashBox> GetCashBoxAll();
 
+    IDeliveryCondition GetDeliveryCondition(decimal dc);
+    IDeliveryCondition GetDeliveryCondition(decimal? dc);
+    IEnumerable<IDeliveryCondition> GetDeliveryConditionAll();
+
     INomenklType GetNomenklType(decimal? dc);
     IEnumerable<INomenklType> GetNomenklTypeAll();
 
     IProductType GetProductType(decimal? dc);
+    IProductType GetProductType(decimal dc);
     IEnumerable<IProductType> GetProductTypeAll();
 
     ICentrResponsibility GetCentrResponsibility(decimal? dc);
@@ -38,6 +43,7 @@ public interface IReferencesCache
     IEnumerable<IKontragent> GetKontragentsAll();
 
     INomenkl GetNomenkl(Guid? id);
+    INomenkl GetNomenkl(Guid id);
     INomenkl GetNomenkl(decimal? dc);
     INomenkl GetNomenkl(decimal dc);
     IEnumerable<INomenkl> GetNomenklsAll();
@@ -46,6 +52,7 @@ public interface IReferencesCache
     IEnumerable<INomenklGroup> GetNomenklGroupAll();
 
     IWarehouse GetWarehouse(decimal? dc);
+    IWarehouse GetWarehouse(decimal dc);
     IWarehouse GetWarehouse(Guid? id);
     IEnumerable<IWarehouse> GetWarehousesAll();
 
@@ -67,6 +74,7 @@ public interface IReferencesCache
     IEnumerable<IClientCategory> GetClientCategoriesAll();
 
     ICurrency GetCurrency(decimal? dc);
+    ICurrency GetCurrency(decimal dc);
     IEnumerable<ICurrency> GetCurrenciesAll();
 
     ICountry GetCountry(Guid? id);

@@ -521,5 +521,9 @@ namespace KursRepositories.ViewModels
         }
 
         #endregion
+
+        public override void RefreshData(object obj)
+        {
+        }
     }
 }

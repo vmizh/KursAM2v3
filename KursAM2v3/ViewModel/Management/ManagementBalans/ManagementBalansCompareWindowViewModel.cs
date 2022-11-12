@@ -623,7 +623,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     switch (newDoc.KontragentType)
                     {
                         case KontragentTypeEnum.Kontragent:
-                            newDoc.KontragentName = MainReferences.GetKontragent(op.VVT_KONTRAGENT).Name;
+                            newDoc.KontragentName =
+                                ((IName)GlobalOptions.ReferencesCache.GetKontragent(op.VVT_KONTRAGENT)).Name;
                             newDoc.KontragentDC = (decimal)op.VVT_KONTRAGENT;
                             break;
                         case KontragentTypeEnum.Cash:
@@ -656,9 +657,11 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     }
 
                     if (op.VVT_VAL_PRIHOD > 0)
-                        newDoc.SetSumma(MainReferences.Currencies[op.VVT_CRS_DC], (decimal)op.VVT_VAL_PRIHOD, 0);
+                        newDoc.SetSumma(GlobalOptions.ReferencesCache.GetCurrency(op.VVT_CRS_DC) as Currency,
+                            (decimal)op.VVT_VAL_PRIHOD, 0);
                     else
-                        newDoc.SetSumma(MainReferences.Currencies[op.VVT_CRS_DC], 0, op.VVT_VAL_RASHOD ?? 0);
+                        newDoc.SetSumma(GlobalOptions.ReferencesCache.GetCurrency(op.VVT_CRS_DC) as Currency, 0,
+                            op.VVT_VAL_RASHOD ?? 0);
                     FinanseOperations.Add(newDoc);
                 }
             }
@@ -699,12 +702,13 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     switch (newDoc.KontragentType)
                     {
                         case KontragentTypeEnum.Kontragent:
-                            newDoc.KontragentName = MainReferences.GetKontragent(op.KONTRAGENT_DC).Name;
+                            newDoc.KontragentName =
+                                ((IName)GlobalOptions.ReferencesCache.GetKontragent(op.KONTRAGENT_DC)).Name;
                             newDoc.KontragentDC = (decimal)op.KONTRAGENT_DC;
                             break;
                         case KontragentTypeEnum.Employee:
                             var emp =
-                                MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == op.TABELNUMBER);
+                                GlobalOptions.ReferencesCache.GetEmployee(op.TABELNUMBER) as Employee;
                             if (emp != null)
                             {
                                 newDoc.KontragentName = emp.Name;
@@ -733,7 +737,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                             break;
                     }
 
-                    newDoc.SetSumma(MainReferences.Currencies[(decimal)op.CRS_DC], (decimal)op.SUMM_ORD, 0);
+                    newDoc.SetSumma(GlobalOptions.ReferencesCache.GetCurrency(op.CRS_DC) as Currency,
+                        (decimal)op.SUMM_ORD, 0);
                     FinanseOperations.Add(newDoc);
                 }
 
@@ -757,12 +762,13 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     switch (newDoc.KontragentType)
                     {
                         case KontragentTypeEnum.Kontragent:
-                            newDoc.KontragentName = MainReferences.GetKontragent(op.KONTRAGENT_DC).Name;
+                            newDoc.KontragentName =
+                                ((IName)GlobalOptions.ReferencesCache.GetKontragent(op.KONTRAGENT_DC)).Name;
                             newDoc.KontragentDC = (decimal)op.KONTRAGENT_DC;
                             break;
                         case KontragentTypeEnum.Employee:
                             var emp =
-                                MainReferences.Employees.Values.FirstOrDefault(_ => _.TabelNumber == op.TABELNUMBER);
+                                GlobalOptions.ReferencesCache.GetEmployee(op.TABELNUMBER) as Employee;
                             if (emp != null)
                             {
                                 newDoc.KontragentName = emp.Name;
@@ -792,7 +798,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                             break;
                     }
 
-                    newDoc.SetSumma(MainReferences.Currencies[(decimal)op.CRS_DC], 0, (decimal)op.SUMM_ORD);
+                    newDoc.SetSumma(GlobalOptions.ReferencesCache.GetCurrency(op.CRS_DC) as Currency, 0,
+                        (decimal)op.SUMM_ORD);
                     FinanseOperations.Add(newDoc);
                 }
 
@@ -814,10 +821,12 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         DocumentType = DocumentType.CurrencyChange,
                         Note = op.CH_NOTE
                     };
-                    newDocIn.SetSumma(MainReferences.Currencies[(decimal)op.CH_CRS_IN_DC], (decimal)op.CH_CRS_IN_SUM,
+                    newDocIn.SetSumma(GlobalOptions.ReferencesCache.GetCurrency(op.CH_CRS_IN_DC) as Currency,
+                        (decimal)op.CH_CRS_IN_SUM,
                         0);
                     FinanseOperations.Add(newDocIn);
-                    newDocOut.SetSumma(MainReferences.Currencies[(decimal)op.CH_CRS_OUT_DC], 0, op.CH_CRS_OUT_SUM);
+                    newDocOut.SetSumma(GlobalOptions.ReferencesCache.GetCurrency(op.CH_CRS_OUT_DC) as Currency, 0,
+                        op.CH_CRS_OUT_SUM);
                     FinanseOperations.Add(newDocOut);
                 }
             }

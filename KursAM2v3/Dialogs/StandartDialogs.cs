@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Core;
 using Core.ViewModel.Base;
 using Data;
 using Data.Repository;
@@ -26,9 +25,8 @@ using KursDomain.Documents.NomenklManagement;
 using KursDomain.Documents.Periods;
 using KursDomain.Documents.StockHolder;
 using KursDomain.Documents.Systems;
+using KursDomain.ICommon;
 using KursDomain.References;
-using Region = KursDomain.Documents.CommonReferences.Region;
-using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace KursAM2.Dialogs
 {
@@ -47,7 +45,7 @@ namespace KursAM2.Dialogs
         {
             //MainReferences.CheckUpdateKontragentAndLoad();
             var ctx = new KontragentSelectDialog(crs, false, isBalans);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentKontragent;
@@ -62,7 +60,7 @@ namespace KursAM2.Dialogs
         {
             var ret = new List<CashOrder>();
             var ctx = new CashOrdersForBankSelectDialog(bankAcc, selectMethod);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;
@@ -75,7 +73,7 @@ namespace KursAM2.Dialogs
         {
             var ret = new List<BankAccount>();
             var ctx = new BankAccountSelectDialog();
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;
@@ -91,7 +89,7 @@ namespace KursAM2.Dialogs
             {
                 WindowName = "Выбор номенклатур"
             };
-            var dlg = new SelectDialogView2 { DataContext = ctx };
+            var dlg = new SelectDialogView2 {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;
@@ -105,7 +103,7 @@ namespace KursAM2.Dialogs
             {
                 WindowName = "Выбор номенклатур"
             };
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult
@@ -116,7 +114,7 @@ namespace KursAM2.Dialogs
         public static List<EXT_USERSViewModel> SelectUsers()
         {
             var ctx = new UserUCViewModel();
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.ListSelectedUsers;
@@ -125,7 +123,7 @@ namespace KursAM2.Dialogs
         public static Employee SelectEmployee()
         {
             var ctx = new EmployeesUCViewModel();
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -134,7 +132,7 @@ namespace KursAM2.Dialogs
         public static Region SelectRegion()
         {
             var ctx = new RegionUCViewModel();
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -143,7 +141,7 @@ namespace KursAM2.Dialogs
         public static List<PERIOD_GROUPSViewModel> SelectPeriodGroups()
         {
             var ctx = new PeriodGroupsUCViewModel();
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.ListSelectedUsers;
@@ -153,7 +151,7 @@ namespace KursAM2.Dialogs
             BankAccount bankAcc)
         {
             var ctx = new AddBankOperionUC(docCode, row, bankAcc, true);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentBankOperations;
@@ -163,7 +161,7 @@ namespace KursAM2.Dialogs
             BankAccount bankAcc)
         {
             var ctx = new AddBankOperionUC(docCode, row, bankAcc, false);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             ctx.SetBrushForPrihodRashod();
             dlg.ShowDialog();
@@ -174,9 +172,10 @@ namespace KursAM2.Dialogs
         {
             var ctx = new AddPaymentBankClientInvoice(kontrDC)
             {
-                WindowName = $"Выбор банковского платежа для {MainReferences.GetKontragent(kontrDC).Name}"
+                WindowName =
+                    $"Выбор банковского платежа для {((IName) GlobalOptions.ReferencesCache.GetKontragent(kontrDC)).Name}"
             };
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -186,9 +185,10 @@ namespace KursAM2.Dialogs
         {
             var ctx = new AddPaymentCashClientInvoice(kontrDC)
             {
-                WindowName = $"Выбор кассового прихода для {MainReferences.GetKontragent(kontrDC).Name}"
+                WindowName =
+                    $"Выбор кассового прихода для {((IName) GlobalOptions.ReferencesCache.GetKontragent(kontrDC)).Name}"
             };
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -198,9 +198,10 @@ namespace KursAM2.Dialogs
         {
             var ctx = new AddPaymentVZClientInvoice(kontrDC)
             {
-                WindowName = $"Выбор проводки акта вазимозачета для {MainReferences.GetKontragent(kontrDC).Name}"
+                WindowName =
+                    $"Выбор проводки акта вазимозачета для {((IName) GlobalOptions.ReferencesCache.GetKontragent(kontrDC)).Name}"
             };
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -210,9 +211,10 @@ namespace KursAM2.Dialogs
         {
             var ctx = new AddPaymentBankProviderInvoice(kontrDC)
             {
-                WindowName = $"Выбор банковского платежа для {MainReferences.GetKontragent(kontrDC).Name}"
+                WindowName =
+                    $"Выбор банковского платежа для {((IName) GlobalOptions.ReferencesCache.GetKontragent(kontrDC)).Name}"
             };
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -222,9 +224,10 @@ namespace KursAM2.Dialogs
         {
             var ctx = new AddPaymentCashProviderInvoice(kontrDC)
             {
-                WindowName = $"Выбор кассового расхода для {MainReferences.GetKontragent(kontrDC).Name}"
+                WindowName =
+                    $"Выбор кассового расхода для {((IName) GlobalOptions.ReferencesCache.GetKontragent(kontrDC)).Name}"
             };
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -234,9 +237,10 @@ namespace KursAM2.Dialogs
         {
             var ctx = new AddPaymentVZClientInvoice(kontrDC)
             {
-                WindowName = $"Выбор проводки акта вазимозачета для {MainReferences.GetKontragent(kontrDC).Name}"
+                WindowName =
+                    $"Выбор проводки акта вазимозачета для {((IName) GlobalOptions.ReferencesCache.GetKontragent(kontrDC)).Name}"
             };
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -245,7 +249,7 @@ namespace KursAM2.Dialogs
         public static Project SelectProject()
         {
             var ctx = new ProjectSelectReferenceWindowViewModel();
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentProject;
@@ -254,7 +258,7 @@ namespace KursAM2.Dialogs
         public static BankAccount SelectBankAccount(Currency crs)
         {
             var ctx = new BankAccountSelectedDialog(crs);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentChildItem;
@@ -267,7 +271,7 @@ namespace KursAM2.Dialogs
         public static BankAccountSelect SelectBankAccount2()
         {
             var ctx = new BankAccountSelectedDialog2();
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentChildItem;
@@ -276,7 +280,7 @@ namespace KursAM2.Dialogs
         public static BankAccount SelectBankAccount(decimal dcOut)
         {
             var ctx = new BankAccountSelectedDialog(dcOut);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentChildItem;
@@ -285,7 +289,7 @@ namespace KursAM2.Dialogs
         public static BankOperationForSelectDialog SelectBankStatement(decimal dcOut)
         {
             var ctx = new BankAccountOperationSelectedDialog(dcOut);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -304,7 +308,7 @@ namespace KursAM2.Dialogs
         public static CashBox SelectCash(List<CashBox> exclude)
         {
             var ctx = new CashSelectedDialog(exclude);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -318,7 +322,7 @@ namespace KursAM2.Dialogs
         public static CashOut SelectCashRashOrderForPrihod(CashInViewModel ord)
         {
             var ctx = new CashRashOrderSelectDialog(ord);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -332,7 +336,7 @@ namespace KursAM2.Dialogs
         public static CashOut SelectCashOrders(CashInViewModel ord)
         {
             var ctx = new CashRashOrderSelectDialog(ord);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -342,7 +346,7 @@ namespace KursAM2.Dialogs
         {
             var ret = new List<CashStartRemains>();
             var ctx = new CashSetRemainsDialog(cash);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             foreach (var d in ctx.CashRemainsCollection) ret.Add(d);
@@ -355,9 +359,9 @@ namespace KursAM2.Dialogs
             if (cashOut == null) return null;
             if (cashOut.Document.KONTRAGENT_DC != null)
             {
-                var ctx = new InvoiceProviderSearchDialog((decimal)cashOut.Document.KONTRAGENT_DC, isUsePayment,
+                var ctx = new InvoiceProviderSearchDialog((decimal) cashOut.Document.KONTRAGENT_DC, isUsePayment,
                     isUseAccepted, isOnlyLastYear);
-                var dlg = new SelectDialogView { DataContext = ctx };
+                var dlg = new SelectDialogView {DataContext = ctx};
                 ctx.Form = dlg;
                 dlg.ShowDialog();
                 return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -365,7 +369,7 @@ namespace KursAM2.Dialogs
             else
             {
                 var ctx = new InvoiceProviderSearchDialog(isUsePayment, isUseAccepted, isOnlyLastYear);
-                var dlg = new SelectDialogView { DataContext = ctx };
+                var dlg = new SelectDialogView {DataContext = ctx};
                 ctx.Form = dlg;
                 dlg.ShowDialog();
                 return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -376,7 +380,7 @@ namespace KursAM2.Dialogs
             bool isLastYearOnly = false)
         {
             var ctx = new InvoiceProviderSearchDialog(isUsePayment, isUseAccepted, isLastYearOnly);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -386,7 +390,7 @@ namespace KursAM2.Dialogs
             bool isLastYearOnly = false)
         {
             var ctx = new InvoiceProviderSearchDialog(kontrDC, isUsePayment, isUseAccepted, isLastYearOnly);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -397,7 +401,7 @@ namespace KursAM2.Dialogs
         {
             if (cashIn == null) return null;
             var ctx = new InvoiceClientSearchDialog(cashIn.Document.KONTRAGENT_DC ?? 0, isUsePayment, isUseAccepted);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -407,7 +411,7 @@ namespace KursAM2.Dialogs
         {
             if (waybill == null) return null;
             var ctx = new InvoiceClientSearchDialog(waybill);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -416,7 +420,7 @@ namespace KursAM2.Dialogs
         public static InvoiceClientViewModel SelectInvoiceClient(bool isUsePayment, bool isUseAccepted)
         {
             var ctx = new InvoiceClientSearchDialog(isUsePayment, isUseAccepted);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -425,7 +429,7 @@ namespace KursAM2.Dialogs
         public static InvoiceClientViewModel SelectInvoiceClient(decimal kontrDC, bool isUsePayment, bool isUseAccepted)
         {
             var ctx = new InvoiceClientSearchDialog(kontrDC, isUsePayment, isUseAccepted);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
@@ -434,7 +438,7 @@ namespace KursAM2.Dialogs
         public static RSViewModelBase SelectAllInvoiceClient(decimal kontrDc, bool isUsePayment, bool isUseAccepted)
         {
             var ctx = new InvoiceAllSearchDialog(kontrDc, isUsePayment, isUseAccepted);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (ctx.DialogResult)
@@ -463,7 +467,7 @@ namespace KursAM2.Dialogs
         public static RSViewModelBase SelectAllInvoiceClient(bool isUsePayment, bool isUseAccepted)
         {
             var ctx = new InvoiceAllSearchDialog(isUsePayment, isUseAccepted);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (ctx.DialogResult)
@@ -493,7 +497,7 @@ namespace KursAM2.Dialogs
         {
             //MainReferences.UpdateNomenkl();
             var ctx = new NomenklSelectedDialogViewModel();
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;
             return new List<Nomenkl>(ctx.SelectedNomenkls);
@@ -502,7 +506,7 @@ namespace KursAM2.Dialogs
         public static Warehouse SelectWarehouseDialog()
         {
             var ctx = new WarehouseSelectDialogViewModel();
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;
             return ctx.CurrentWarehouse;
@@ -511,7 +515,7 @@ namespace KursAM2.Dialogs
         public static Currency SelectCurrency(IEnumerable<Currency> withoutCrs = null)
         {
             var ctx = new CurrencySelectDialogViewModel(withoutCrs);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var dlg = new SelectDialogView {DataContext = ctx};
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;
             return ctx.CurrentItem;
@@ -520,7 +524,7 @@ namespace KursAM2.Dialogs
         public static Bank SelectBank()
         {
             var ctx = new BankSelectDialogViewModel();
-            var dlg = new SelectDialogView2 { DataContext = ctx };
+            var dlg = new SelectDialogView2 {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;

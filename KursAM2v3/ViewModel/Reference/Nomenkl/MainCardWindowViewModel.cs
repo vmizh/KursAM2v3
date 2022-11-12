@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -91,7 +89,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get => NomenklMain?.ProductType;
             set
             {
-                if (NomenklMain?.ProductType != null && Equals(NomenklMain.ProductType,value)) return;
+                if (NomenklMain?.ProductType != null && Equals(NomenklMain.ProductType, value)) return;
                 if (NomenklMain != null) NomenklMain.ProductType = value;
                 RaisePropertyChanged();
             }
@@ -102,7 +100,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get => myNomenklMain;
             set
             {
-                if (Equals(myNomenklMain,value)) return;
+                if (Equals(myNomenklMain, value)) return;
                 myNomenklMain = value;
                 RaisePropertyChanged();
             }
@@ -175,7 +173,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         .AsNoTracking()
                         .FirstOrDefault(_ => _.Id == myId);
                 if (d == null) return;
-                NomenklMain = new NomenklMainViewModel(d) {myState = RowStatus.NotEdited};
+                NomenklMain = new NomenklMainViewModel(d) { myState = RowStatus.NotEdited };
             }
         }
 
@@ -300,10 +298,6 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         tnx.Commit();
                         NomenklMain.myState = RowStatus.NotEdited;
                         RaisePropertyChanged(nameof(IsCanSaveData));
-                        ParentReference?.LoadNomMainForCategory(null);
-                        var dcs = new List<decimal>(MainReferences.ALLNomenkls.Values
-                            .Where(_ => _.MainId == NomenklMain.Id).Select(_ => _.DocCode));
-                        foreach (var n in dcs) MainReferences.LoadNomenkl(n);
                     }
                     catch (Exception ex)
                     {
@@ -314,7 +308,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 }
 
                 if (state == RowStatus.NewRow)
-                    MainReferences.GetNomenkl(newDC);
+                    GlobalOptions.ReferencesCache.GetNomenkl(newDC);
             }
         }
 
@@ -344,7 +338,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 NomenklMain = newNom
             };
             // ReSharper disable once UseObjectOrCollectionInitializer
-            var form = new NomenklMainCardView {Owner = Application.Current.MainWindow, DataContext = ctx};
+            var form = new NomenklMainCardView { Owner = Application.Current.MainWindow, DataContext = ctx };
             //form.DataContext = ctx;
             form.Show();
         }
@@ -379,7 +373,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 LayoutManagerName = "NomenklGroup",
                 Owner = Application.Current.MainWindow
             };
-            var dtx = new CategoryReferenceWindowViewModel {Form = frm};
+            var dtx = new CategoryReferenceWindowViewModel { Form = frm };
             dtx.RefreshData(null);
             frm.DataContext = dtx;
             frm.Closing += delegate { LoadReferences(); };
@@ -415,7 +409,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 LayoutManagerName = "NomenklProductKind",
                 Owner = Application.Current.MainWindow
             };
-            var dtx = new NomenklKindReferenceWindowViewModel {Form = frm};
+            var dtx = new NomenklKindReferenceWindowViewModel { Form = frm };
             dtx.RefreshData(null);
             frm.DataContext = dtx;
             frm.Closing += delegate { LoadReferences(); };

@@ -108,6 +108,11 @@ namespace KursRepozit.ViewModels
             }
         }
 
+        public override void RefreshData(object obj)
+        {
+            
+        }
+
         public override bool IsCanRefresh { set; get; } = true;
 
         public override bool CanSave()

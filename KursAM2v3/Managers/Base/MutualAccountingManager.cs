@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Text;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -45,7 +44,7 @@ namespace KursAM2.Managers.Base
                     .AsNoTracking()
                     .FirstOrDefault(_ => _.DOC_CODE == dc);
                 if (ent == null) return new SD_110ViewModel();
-                return new SD_110ViewModel(ent) { State = RowStatus.NotEdited };
+                return new SD_110ViewModel(ent) {State = RowStatus.NotEdited};
             }
         }
 
@@ -72,7 +71,8 @@ namespace KursAM2.Managers.Base
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
-                    var isConvert = MainReferences.MutualTypes[doc.VZ_TYPE_DC].IsCurrencyConvert;
+                    var isConvert = GlobalOptions.ReferencesCache.GetMutualSettlementType(doc.VZ_TYPE_DC)
+                        .IsCurrencyConvert;
                     switch (doc.State)
                     {
                         case RowStatus.NewRow:

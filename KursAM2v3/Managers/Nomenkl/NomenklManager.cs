@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
-using Core;
 using Core.WindowsManager;
 using Data;
 using KursAM2.View.Base;
@@ -11,7 +10,6 @@ using KursAM2.ViewModel.Logistiks;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
-using Warehouse = KursDomain.Documents.NomenklManagement.Warehouse;
 
 namespace KursAM2.Managers.Nomenkl
 {
@@ -37,7 +35,7 @@ namespace KursAM2.Managers.Nomenkl
             DateTime date)
         {
             var ctxTransf = new NomTransferAddForSklad(warehouse, date);
-            var dlg = new SelectDialogView {DataContext = ctxTransf};
+            var dlg = new SelectDialogView { DataContext = ctxTransf };
             dlg.ShowDialog();
             if (!ctxTransf.DialogResult) return null;
             var ret =
@@ -79,7 +77,7 @@ namespace KursAM2.Managers.Nomenkl
                         NomenklNumber = n.NOM_NOMENKL,
                         Group = GlobalOptions.ReferencesCache.GetNomenklGroup(n.NOM_CATEG_DC),
                         // ReSharper disable once PossibleInvalidOperationException
-                        Currency = MainReferences.Currencies[n.NOM_SALE_CRS_DC.Value]
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(n.NOM_SALE_CRS_DC) as Currency
                     });
             }
 
@@ -105,14 +103,6 @@ namespace KursAM2.Managers.Nomenkl
                         ctx.SD_82.Add(newCat);
                         ctx.SaveChanges();
                         tnx.Complete();
-                        if (!MainReferences.NomenklGroups.ContainsKey(newDC))
-                            MainReferences.NomenklGroups.Add(newDC, new NomenklGroup
-                            {
-                                DocCode = newDC,
-                                Name = newCat.CAT_NAME,
-                                ParentDC = newCat.CAT_PARENT_DC
-                            });
-
                         // ReSharper disable once InconsistentNaming
                         var newCatVM = new NomenklGroupViewModel(newCat)
                         {

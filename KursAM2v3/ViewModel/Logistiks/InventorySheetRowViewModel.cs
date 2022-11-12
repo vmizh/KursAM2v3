@@ -1,9 +1,8 @@
 using System;
-using Core;
 using Core.ViewModel.Base;
 using Data;
 using Helper;
-using KursDomain.Documents.NomenklManagement;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
 using Newtonsoft.Json;
@@ -62,28 +61,33 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public override int Code { 
+        public override int Code
+        {
             get => Entity.CODE;
             set
             {
                 if (Entity.CODE == value) return;
                 Entity.CODE = value;
                 RaisePropertyChanged();
-            } }
+            }
+        }
 
         public Nomenkl Nomenkl
         {
-            get => Entity.DDT_NOMENKL_DC != 0 ? MainReferences.GetNomenkl(Entity.DDT_NOMENKL_DC) : null;
+            get => Entity.DDT_NOMENKL_DC != 0
+                ? GlobalOptions.ReferencesCache.GetNomenkl(Entity.DDT_NOMENKL_DC) as Nomenkl
+                : null;
             set
             {
-                if (MainReferences.GetNomenkl(Entity.DDT_NOMENKL_DC) == value) return;
+                if (GlobalOptions.ReferencesCache.GetNomenkl(Entity.DDT_NOMENKL_DC) == value) return;
                 Entity.DDT_NOMENKL_DC = value?.DocCode ?? 0;
                 if (value != null)
                 {
                     Entity.DDT_ED_IZM_DC = ((IDocCode)value.Unit).DocCode;
                     Entity.DDT_POST_ED_IZM_DC = ((IDocCode)value.Unit).DocCode;
-                    Entity.DDT_CRS_DC =  ((IDocCode)value.Currency).DocCode;
+                    Entity.DDT_CRS_DC = ((IDocCode)value.Currency).DocCode;
                 }
+
                 RaisePropertyChanged();
             }
         }
@@ -113,13 +117,9 @@ namespace KursAM2.ViewModel.Logistiks
                 if ((decimal)(Entity.DDT_OSTAT_NOV ?? 0) == value) return;
                 Entity.DDT_OSTAT_NOV = (double?)value;
                 if (Difference > 0)
-                {
                     Entity.DDT_KOL_PRIHOD = Difference;
-                }
                 else
-                {
                     Entity.DDT_KOL_RASHOD = Difference;
-                }
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Difference));
                 RaisePropertyChanged(nameof(Summa));
@@ -128,7 +128,6 @@ namespace KursAM2.ViewModel.Logistiks
 
         public decimal Difference => QuantityFact - QuantityCalc;
 
-        
 
         public bool IsTaxExecuted
         {
@@ -193,11 +192,10 @@ namespace KursAM2.ViewModel.Logistiks
                 Кол_расчетное = QuantityCalc,
                 Кол_фактическое = QuantityFact,
                 Разница = Difference,
-                Таксировано =IsTaxExecuted,
+                Таксировано = IsTaxExecuted,
                 Цена = Price,
                 Сумма = Summa,
                 Примечание = Note
-
             };
             return JsonConvert.SerializeObject(res);
         }

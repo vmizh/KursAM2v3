@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Controls;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.Managers;
-using KursDomain.Documents.CommonReferences;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
@@ -31,13 +29,13 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         #endregion
 
         public class CashBankItem : ISimpleDialogItem
-        { 
-            [Display(AutoGenerateField = true, Name = "Наименование", Order = 1)]
-            public string Name { get; set; }
-
-            [Display(AutoGenerateField = true, Name = "Остаток",Order = 2)]
+        {
+            [Display(AutoGenerateField = true, Name = "Остаток", Order = 2)]
             [DisplayFormat(DataFormatString = "n2")]
             public decimal Summa { set; get; }
+
+            [Display(AutoGenerateField = true, Name = "Наименование", Order = 1)]
+            public string Name { get; set; }
 
             [Display(AutoGenerateField = false)] public decimal DocCode { get; set; }
 
@@ -45,7 +43,6 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
             [Display(AutoGenerateField = false)] public int Code { get; set; }
 
-           
 
             public override string ToString()
             {
@@ -58,8 +55,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         private ICurrentWindowService winCurrentService;
         private CashBankItem myCurrentObject;
         private readonly bool IsCash;
-        private Currency currency;
-        
+        private readonly Currency currency;
+
         #endregion
 
         #region Properties
@@ -79,10 +76,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             set
             {
                 if (myCurrentObject == value) return;
-                if (value?.Summa <= 0)
-                {
-                    return;
-                }
+                if (value?.Summa <= 0) return;
                 myCurrentObject = value;
                 RaisePropertyChanged();
             }
@@ -105,7 +99,6 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 DialogResult = MessageResult.OK;
                 winCurrentService.Close();
             }
-
         }
 
         public override void Cancel(object obj)
@@ -122,24 +115,28 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         public sealed override void RefreshData(object obj)
         {
             if (IsCash)
-                foreach (var c in MainReferences.Cashs.Values)
+            {
+                foreach (var c in GlobalOptions.ReferencesCache.GetCashBoxAll().Cast<CashBox>().OrderBy(_ => _.Name)
+                             .ToList())
                     ObjectList.Add(new CashBankItem
                     {
                         DocCode = c.DocCode,
                         Name = c.Name,
-                        Summa = CashManager.GetCashCurrencyRemains(c.DocCode,currency.DocCode, DateTime.Today)
+                        Summa = CashManager.GetCashCurrencyRemains(c.DocCode, currency.DocCode, DateTime.Today)
                     });
+            }
             else
             {
                 var manager = new BankOperationsManager();
-                foreach (var c in MainReferences.BankAccounts.Values.Where(_ => ((IDocCode)_.Currency).DocCode == currency.DocCode))
+                foreach (var c in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>()
+                             .Where(_ => ((IDocCode)_.Currency).DocCode == currency.DocCode))
                     ObjectList.Add(new CashBankItem
                     {
                         DocCode = c.DocCode,
                         Name = c.Name,
                         // ReSharper disable once PossibleInvalidOperationException
                         Summa = manager.GetRemains2(c.DocCode, DateTime.Today, DateTime.Today)?
-                            .SummaEnd ?? 0 
+                            .SummaEnd ?? 0
                     });
             }
         }

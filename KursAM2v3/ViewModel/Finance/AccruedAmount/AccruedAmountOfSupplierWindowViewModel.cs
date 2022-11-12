@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -49,7 +48,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             var doc = id != null ? GenericRepository.GetById(id.Value) : null;
             if (doc == null)
             {
-                Document = new AccruedAmountOfSupplierViewModel {State = RowStatus.NewRow};
+                Document = new AccruedAmountOfSupplierViewModel { State = RowStatus.NewRow };
                 UnitOfWork.Context.AccruedAmountOfSupplier.Add(Document.Entity);
             }
             else
@@ -332,11 +331,11 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                             Creator = d.CREATOR,
                             DocCode = d.DOC_CODE,
                             // ReSharper disable once PossibleInvalidOperationException
-                            DocDate = (DateTime) d.DATE_ORD,
+                            DocDate = (DateTime)d.DATE_ORD,
                             DocNumber = d.NUM_ORD.ToString(),
                             DocumentType = "Расходный кассовый ордер",
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal) d.CRS_SUMMA,
+                            Summa = (decimal)d.CRS_SUMMA,
                             Note = d.NAME_ORD + " " + d.NOTES_ORD
                         });
                 if (r.Entity.TD_101 != null && r.Entity.TD_101.Count > 0)
@@ -350,7 +349,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                             DocNumber = d.VVT_DOC_NUM,
                             DocumentType = "Банковская транзакция",
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal) d.VVT_VAL_RASHOD,
+                            Summa = (decimal)d.VVT_VAL_RASHOD,
                             Note = null
                         });
                 if (Form is AccruedAmountOfSupplierView frm)
@@ -430,7 +429,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             DocumentsOpenManager.DeleteFromLastDocument(Document.Id, null);
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.AccruedAmountOfSupplier),
                 Document.Id,
-                0, null, (string) Document.ToJson());
+                0, null, (string)Document.ToJson());
             DeletedRows.Clear();
             RecalcKontragentBalans.CalcBalans(Document.Kontragent.DocCode, Document.DocDate);
             foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
@@ -492,7 +491,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 {
                     Document = CashManager.NewCashOut()
                 };
-                vm.Document.Cash = MainReferences.Cashs[cash.DocCode];
+                vm.Document.Cash = GlobalOptions.ReferencesCache.GetCashBox(cash.DocCode) as CashBox;
                 vm.Document.KontragentType = CashKontragentType.Kontragent;
                 vm.Document.KONTRAGENT_DC = Document.Kontragent.DocCode;
                 vm.Document.Currency = Document.Kontragent.Currency as Currency;
@@ -507,11 +506,11 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                     Creator = vm.Document.CREATOR,
                     DocCode = vm.Document.DocCode,
                     // ReSharper disable once PossibleInvalidOperationException
-                    DocDate = (DateTime) vm.Document.DATE_ORD,
+                    DocDate = (DateTime)vm.Document.DATE_ORD,
                     DocNumber = vm.Document.NUM_ORD.ToString(),
                     DocumentType = "Расходный кассовый ордер",
                     // ReSharper disable once PossibleInvalidOperationException
-                    Summa = (decimal) vm.Document.SUMM_ORD,
+                    Summa = (decimal)vm.Document.SUMM_ORD,
                     Note = vm.Document.NAME_ORD + " " + vm.Document.NOTES_ORD
                 });
                 DocumentsOpenManager.Open(DocumentType.CashOut, vm, Form);
@@ -665,7 +664,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                             AccuredInfo = $"Прямой расход №{snum} от {Document.DocDate.ToShortDateString()} " +
                                           $"{CurrentAccrual.Nomenkl}({CurrentAccrual.Nomenkl.NomenklNumber})"
                         },
-                        MainReferences.BankAccounts[CurrentBankAccount.DocCode]);
+                        GlobalOptions.ReferencesCache.GetBankAccount(CurrentBankAccount.DocCode) as BankAccount);
                     if (k != null)
                     {
                         k.State = RowStatus.NewRow;
@@ -680,7 +679,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                             DocNumber = k.VVT_DOC_NUM,
                             DocumentType = "Банковская транзакция",
                             // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal) k.VVT_VAL_RASHOD,
+                            Summa = (decimal)k.VVT_VAL_RASHOD,
                             Note = null
                         });
                     }

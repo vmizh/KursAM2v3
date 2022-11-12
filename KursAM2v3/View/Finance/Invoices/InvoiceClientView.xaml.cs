@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Windows;
-using Core;
 using Core.WindowsManager;
 using DevExpress.Data;
 using DevExpress.Xpf.Core;
@@ -10,6 +9,7 @@ using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.ViewModel.Finance.Invoices;
+using KursDomain;
 using KursDomain.Documents.Invoices;
 
 namespace KursAM2.View.Finance.Invoices
@@ -23,16 +23,15 @@ namespace KursAM2.View.Finance.Invoices
 
         public InvoiceClientView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            
         }
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public ComboBoxEdit CurrencyItem { set; get; }
         private ClientWindowViewModel viewModel => DataContext as ClientWindowViewModel;
 
-       
+
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
             e.Column.Name = e.Column.FieldName;
@@ -71,7 +70,7 @@ namespace KursAM2.View.Finance.Invoices
                 case nameof(inv.SDRSchet):
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
-                        ItemsSource = MainReferences.SDRSchets.Values,
+                        ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().ToList(),
                         DisplayMember = "Name",
                         AutoComplete = true
                     };
@@ -164,29 +163,23 @@ namespace KursAM2.View.Finance.Invoices
                 DisplayFormat = "{0:n2}",
                 FieldName = "SFT_SUMMA_NDS"
             });
-
         }
 
 
         private void TableViewRows_OnCellValueChanged(object sender, CellValueChangedEventArgs e)
         {
             gridRows.UpdateTotalSummary();
-            if (DataContext is ClientWindowViewModel ctx)
-            {
-                ctx.Document.RaisePropertyChanged("DilerSumma");
-            }
+            if (DataContext is ClientWindowViewModel ctx) ctx.Document.RaisePropertyChanged("DilerSumma");
         }
 
         private void tableViewRows_ShownEditor(object sender, EditorEventArgs e)
         {
             if (e.Column.FieldName == "SFT_NACENKA_DILERA")
-            {
                 if (DataContext is ClientWindowViewModel ctx)
                 {
                     e.Editor.IsReadOnly = ctx.Document.Diler == null;
                     e.Column.ReadOnly = ctx.Document.Diler == null;
                 }
-            }
         }
     }
 }

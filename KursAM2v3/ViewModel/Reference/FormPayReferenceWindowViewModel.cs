@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -53,7 +52,7 @@ namespace KursAM2.ViewModel.Reference
             get => myCurrentRow;
             set
             {
-                if (Equals(myCurrentRow,value)) return;
+                if (Equals(myCurrentRow, value)) return;
                 myCurrentRow = value;
                 RaisePropertyChanged();
             }
@@ -111,14 +110,6 @@ namespace KursAM2.ViewModel.Reference
 
                         ctx.SaveChanges();
                         tn.Commit();
-                        MainReferences.FormRaschets.Clear();
-                        foreach (var item in ctx.SD_189.AsNoTracking().ToList())
-                        {
-                            var newItem = new PayForm();
-                            newItem.LoadFromEntity(item);
-                            MainReferences.FormRaschets.Add(item.DOC_CODE, newItem);
-                        }
-
                         foreach (var r in Rows)
                             r.myState = RowStatus.NotEdited;
                         DeletedRows.Clear();

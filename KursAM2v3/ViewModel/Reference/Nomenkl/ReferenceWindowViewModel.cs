@@ -6,7 +6,6 @@ using System.Linq;
 using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -76,7 +75,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             set
             {
                 //SaveData(CurrentNomenklMain.NomenklCollection);
-                if (myCurrentNomenkl != null && Equals(myCurrentNomenkl,value)) return;
+                if (myCurrentNomenkl != null && Equals(myCurrentNomenkl, value)) return;
                 myCurrentNomenkl = value;
                 if (myCurrentNomenkl != null)
                     if (myCurrentNomenkl.State == RowStatus.NewRow)
@@ -119,7 +118,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get => myCurrentNomenklMain;
             set
             {
-                if (myCurrentNomenklMain != null && Equals(myCurrentNomenklMain,value)) return;
+                if (myCurrentNomenklMain != null && Equals(myCurrentNomenklMain, value)) return;
                 myCurrentNomenklMain = value;
                 if (myCurrentNomenklMain != null)
                     LoadNomenklForMain(myCurrentNomenklMain);
@@ -290,13 +289,15 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             foreach (var node in lasts)
             {
                 node.NomenklCount =
-                    MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Group).DocCode == node.DocCode);
+                    GlobalOptions.ReferencesCache.GetNomenklsAll()
+                        .Count(_ => ((IDocCode)_.Group).DocCode == node.DocCode);
                 var prevn = node;
                 var n = CategoryCollection.FirstOrDefault(_ => _.DocCode == node.ParentDC);
                 if (n == null) continue;
                 while (n != null)
                 {
-                    var c = MainReferences.ALLNomenkls.Values.Count(_ => ((IDocCode)_.Group).DocCode == n.DocCode);
+                    var c = GlobalOptions.ReferencesCache.GetNomenklsAll()
+                        .Count(_ => ((IDocCode)_.Group).DocCode == n.DocCode);
                     n.NomenklCount = n.NomenklCount + prevn.NomenklCount + c;
                     prevn = n;
                     n = CategoryCollection.FirstOrDefault(_ => _.DocCode == n.ParentDC);
@@ -363,7 +364,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             }
 
             if (state == RowStatus.NewRow)
-                MainReferences.GetNomenkl(newDC);
+                GlobalOptions.ReferencesCache.GetNomenkl(newDC);
         }
 
         public override void SaveData(object data)
@@ -491,7 +492,9 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 MainId = CurrentNomenklMain.Id,
                 Id = Guid.NewGuid(),
                 IsDeleted = false,
-                Group = GlobalOptions.ReferencesCache.GetNomenklGroup(CurrentNomenklMain.NomenklGroup.DocCode) as NomenklGroup,
+                Group =
+                    GlobalOptions.ReferencesCache.GetNomenklGroup(CurrentNomenklMain.NomenklGroup.DocCode) as
+                        NomenklGroup,
                 IsUsluga = CurrentNomenklMain.IsUsluga,
                 IsNaklRashod = CurrentNomenklMain.IsNakladExpense,
                 IsRentabelnost = CurrentNomenklMain.IsRentabelnost,

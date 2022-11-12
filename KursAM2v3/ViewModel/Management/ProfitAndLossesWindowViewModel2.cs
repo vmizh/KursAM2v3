@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -48,11 +47,11 @@ namespace KursAM2.ViewModel.Management
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = GetRightMenu();
             RecalcCurrency = GlobalOptions.SystemProfile.NationalCurrency;
-            CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.RUB]);
-            CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.USD]);
-            CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.EUR]);
-            CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.GBP]);
-            CurrenciesForRecalc.Add(MainReferences.Currencies[CurrencyCode.CNY]);
+            CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.RUB) as Currency);
+            CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD) as Currency);
+            CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as Currency);
+            CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as Currency);
+            CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as Currency);
             StartDate = DateTime.Today;
             EndDate = DateTime.Today;
             var crsrate = new CrossCurrencyRate();
@@ -739,46 +738,60 @@ namespace KursAM2.ViewModel.Management
                 foreach (var b in Main)
                 {
                     b.RecalcProfit = Round(b.ProfitRUB *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.RUB],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.RUB) as Currency,
                                                RecalcCurrency) +
                                            b.ProfitUSD *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.USD],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD) as Currency,
                                                RecalcCurrency) +
                                            b.ProfitEUR *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.EUR],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as Currency,
                                                RecalcCurrency) +
                                            b.ProfitGBP *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.GBP],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as Currency,
                                                RecalcCurrency) +
                                            b.ProfitCHF *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CHF],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CHF) as Currency,
                                                RecalcCurrency) +
                                            b.ProfitSEK *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.SEK],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.SEK) as Currency,
                                                RecalcCurrency) +
                                            b.ProfitCNY *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as Currency,
                                                RecalcCurrency), 2);
                     b.RecalcLoss = Round(b.LossRUB *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.RUB],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.RUB) as Currency,
                                              RecalcCurrency) +
                                          b.LossUSD *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.USD],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD) as Currency,
                                              RecalcCurrency) +
                                          b.LossEUR *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.EUR],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as Currency,
                                              RecalcCurrency) +
                                          b.LossGBP *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.GBP],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as Currency,
                                              RecalcCurrency) +
                                          b.LossCHF *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CHF],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CHF) as Currency,
                                              RecalcCurrency) +
                                          b.LossCNY *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as Currency,
                                              RecalcCurrency) +
                                          b.LossSEK *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.SEK],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.SEK) as Currency,
                                              RecalcCurrency), 2);
                     b.RecalcResult = b.RecalcProfit - b.RecalcLoss;
                 }
@@ -786,46 +799,60 @@ namespace KursAM2.ViewModel.Management
                 foreach (var b in MainNach)
                 {
                     b.RecalcProfit = Round(b.ProfitRUB *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.RUB],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.RUB) as Currency,
                                                RecalcCurrency) +
                                            b.ProfitUSD *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.USD],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD) as Currency,
                                                RecalcCurrency) +
                                            b.ProfitEUR *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.EUR],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as Currency,
                                                RecalcCurrency) +
                                            b.ProfitGBP *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.GBP],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as Currency,
                                                RecalcCurrency) +
                                            b.ProfitCHF *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CHF],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CHF) as Currency,
                                                RecalcCurrency) +
                                            b.ProfitCNY *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as Currency,
                                                RecalcCurrency) +
                                            b.ProfitSEK *
-                                           CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.SEK],
+                                           CurrentCurrencyRate.GetRate(
+                                               GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.SEK) as Currency,
                                                RecalcCurrency), 2);
                     b.RecalcLoss = Round(b.LossRUB *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.RUB],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.RUB) as Currency,
                                              RecalcCurrency) +
                                          b.LossUSD *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.USD],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD) as Currency,
                                              RecalcCurrency) +
                                          b.LossEUR *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.EUR],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as Currency,
                                              RecalcCurrency) +
                                          b.LossGBP *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.GBP],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as Currency,
                                              RecalcCurrency) +
                                          b.LossCHF *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CHF],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CHF) as Currency,
                                              RecalcCurrency) +
                                          b.LossCNY *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.CNY],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as Currency,
                                              RecalcCurrency) +
                                          b.LossSEK *
-                                         CurrentCurrencyRate.GetRate(MainReferences.Currencies[CurrencyCode.SEK],
+                                         CurrentCurrencyRate.GetRate(
+                                             GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.SEK) as Currency,
                                              RecalcCurrency), 2);
                     b.RecalcResult = Round(b.RecalcProfit - b.RecalcLoss, 2);
                 }

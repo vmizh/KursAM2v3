@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.References;
 
 namespace KursDomain.Documents.Invoices;
@@ -89,7 +87,7 @@ public sealed class InvoiceProviderRowCurrencyConvertViewModel : RSViewModelBase
 
     public Nomenkl Nomenkl
     {
-        get => NomenklId == Guid.Empty ? null : MainReferences.GetNomenkl(NomenklId);
+        get => GlobalOptions.ReferencesCache.GetNomenkl(NomenklId) as Nomenkl;
         set
         {
             if (Entity.NomenklId == value.Id) return;
@@ -99,10 +97,8 @@ public sealed class InvoiceProviderRowCurrencyConvertViewModel : RSViewModelBase
         }
     }
 
-    public NomenklManagement.Warehouse Store =>
-        MainReferences.Warehouses.ContainsKey(Entity.StoreDC)
-            ? MainReferences.Warehouses[Entity.StoreDC]
-            : null;
+    public References.Warehouse Store =>
+        GlobalOptions.ReferencesCache.GetWarehouse(Entity.StoreDC) as References.Warehouse;
 
     public decimal StoreDC
     {

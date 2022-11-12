@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Core;
 using Core.ViewModel.Base;
 using Data;
 using KursDomain.Documents.Invoices;
@@ -21,8 +20,8 @@ public interface ISD_24
     DateTime Date { set; get; }
     int DD_IN_NUM { set; get; }
     string DD_EXT_NUM { set; get; }
-    Warehouse WarehouseOut { set; get; }
-    Warehouse WarehouseIn { set; get; }
+    References.Warehouse WarehouseOut { set; get; }
+    References.Warehouse WarehouseIn { set; get; }
     KontragentViewModel KontragentViewModelSender { set; get; }
     KontragentViewModel KontragentViewModelReceiver { set; get; }
     References.Employee Kladovshik { set; get; }
@@ -108,14 +107,14 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
     /// <summary>
     ///     Склад отправитель
     /// </summary>
-    public Warehouse WarehouseOut
+    public References.Warehouse WarehouseOut
     {
-        get => MainReferences.GetWarehouse(Entity.DD_SKLAD_OTPR_DC);
+        get => GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_OTPR_DC) as References.Warehouse;
         set
         {
             if (Entity.DD_SKLAD_OTPR_DC == value?.DocCode) return;
             Entity.DD_SKLAD_OTPR_DC = value?.DocCode;
-            Entity.DD_OTRPAV_NAME = MainReferences.GetWarehouse(Entity.DD_SKLAD_OTPR_DC)?.Name;
+            Entity.DD_OTRPAV_NAME = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_OTPR_DC))?.Name;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Sender));
         }
@@ -124,14 +123,14 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
     /// <summary>
     ///     Склад получатель
     /// </summary>
-    public Warehouse WarehouseIn
+    public References.Warehouse WarehouseIn
     {
-        get => MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC);
+        get => GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC) as References.Warehouse;
         set
         {
             if (Entity.DD_SKLAD_POL_DC == value?.DocCode) return;
             Entity.DD_SKLAD_POL_DC = value?.DocCode;
-            Entity.DD_POLUCH_NAME = MainReferences.GetWarehouse(Entity.DD_SKLAD_POL_DC).Name;
+            Entity.DD_POLUCH_NAME = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC)).Name;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Receiver));
         }
@@ -147,7 +146,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         {
             if (DD_KONTR_OTPR_DC == value?.DocCode) return;
             DD_KONTR_OTPR_DC = value?.DocCode;
-            Entity.DD_OTRPAV_NAME = ((IName) GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_OTPR_DC))?.Name;
+            Entity.DD_OTRPAV_NAME = ((IName)GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_OTPR_DC))?.Name;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Sender));
         }
@@ -163,7 +162,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         {
             if (DD_KONTR_POL_DC == value?.DocCode) return;
             DD_KONTR_POL_DC = value?.DocCode;
-            Entity.DD_POLUCH_NAME = ((IName) GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_POL_DC)).Name;
+            Entity.DD_POLUCH_NAME = ((IName)GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_POL_DC)).Name;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Sender));
         }
@@ -172,7 +171,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
     public References.Employee Kladovshik
     {
         // ReSharper disable once RedundantCast
-        get => MainReferences.GetEmployee(Entity.DD_KLADOV_TN as int?);
+        get => GlobalOptions.ReferencesCache.GetEmployee(Entity.DD_KLADOV_TN as int?) as References.Employee;
         set
         {
             if (Entity.DD_KLADOV_TN == value?.TabelNumber) return;
@@ -187,7 +186,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         set
         {
             if (Entity.DD_EXECUTED == 1 == value) return;
-            Entity.DD_EXECUTED = (short) (value ? 1 : 0);
+            Entity.DD_EXECUTED = (short)(value ? 1 : 0);
             RaisePropertyChanged();
         }
     }
@@ -599,8 +598,8 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         get => Entity.DD_VOZVRAT == 1;
         set
         {
-            if (Entity.DD_VOZVRAT == (short?) (value ? 1 : 0)) return;
-            Entity.DD_VOZVRAT = (short?) (value ? 1 : 0);
+            if (Entity.DD_VOZVRAT == (short?)(value ? 1 : 0)) return;
+            Entity.DD_VOZVRAT = (short?)(value ? 1 : 0);
             RaisePropertyChanged();
         }
     }

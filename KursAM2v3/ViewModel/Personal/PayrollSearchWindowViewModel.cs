@@ -12,6 +12,7 @@ using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -263,7 +264,7 @@ namespace KursAM2.ViewModel.Personal
                     Name = e.Name,
                     State = RowStatus.NewRow,
                     Employee = e.Employee,
-                    Crs = MainReferences.Currencies[GlobalOptions.SystemProfile.MainCurrency.DocCode],
+                    Crs = GlobalOptions.ReferencesCache.GetCurrency(GlobalOptions.SystemProfile.MainCurrency.DocCode) as Currency,
                     PRType = dtx.PayrollTypeCollection.Single(_ =>
                         _.DocCode == GlobalOptions.SystemProfile.DafaultPayRollType.DocCode),
                     Summa = 0,

@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -16,6 +15,7 @@ using KursDomain;
 using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
@@ -47,7 +47,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 case "SHPZ":
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
-                        ItemsSource = MainReferences.SDRSchets.Values,
+                        ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>()
+                            .OrderBy(_ => _.Name).ToList(),
                         DisplayMember = "Name",
                         AutoComplete = true
                     };
@@ -80,7 +81,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get => myCurrentRow;
             set
             {
-                if (Equals(myCurrentRow,value)) return;
+                if (Equals(myCurrentRow, value)) return;
                 myCurrentRow = value;
                 RaisePropertyChanged();
             }
@@ -136,7 +137,6 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
                         ctx.SaveChanges();
                         tn.Commit();
-                        MainReferences.Refresh();
                         DeletedRows.Clear();
                         RefreshData(null);
                     }

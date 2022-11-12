@@ -58,9 +58,7 @@ public class ContractProvider : RSViewModelBase, IEntity<SD_112>
         {
             if (Entity.DO_TYPE_DC == value) return;
             Entity.DO_TYPE_DC = value;
-            ContractType = MainReferences.ContractTypes.ContainsKey(Entity.DO_TYPE_DC)
-                ? MainReferences.ContractTypes[Entity.DO_TYPE_DC]
-                : null;
+            ContractType = GlobalOptions.ReferencesCache.GetContractType(Entity.DO_TYPE_DC) as ContractType;
             RaisePropertyChanged(nameof(ContractType));
             RaisePropertyChanged();
         }
@@ -178,8 +176,8 @@ public class ContractProvider : RSViewModelBase, IEntity<SD_112>
         {
             if (Entity.DO_USL_POST_DC == value) return;
             Entity.DO_USL_POST_DC = value;
-            if (MainReferences.DeliveryConditions.ContainsKey(Entity.DO_USL_POST_DC))
-                myDeliverCondidition = MainReferences.DeliveryConditions[Entity.DO_USL_POST_DC];
+            myDeliverCondidition =
+                GlobalOptions.ReferencesCache.GetDeliveryCondition(Entity.DO_USL_POST_DC) as DeliveryCondition;
             RaisePropertyChanged(nameof(DeliverCondidition));
             RaisePropertyChanged();
         }
@@ -205,8 +203,7 @@ public class ContractProvider : RSViewModelBase, IEntity<SD_112>
         {
             if (Entity.DO_CRS_DC == value) return;
             Entity.DO_CRS_DC = value;
-            if (MainReferences.Currencies.ContainsKey(Entity.DO_CRS_DC))
-                myCurrency = MainReferences.Currencies[Entity.DO_CRS_DC];
+            myCurrency = GlobalOptions.ReferencesCache.GetCurrency(Entity.DO_CRS_DC) as References.Currency;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Currency));
         }

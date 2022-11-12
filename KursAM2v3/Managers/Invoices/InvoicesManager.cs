@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using Core;
 using Core.EntityViewModel;
 using Core.WindowsManager;
 using Data;
@@ -20,6 +19,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursAM2.Managers.Invoices
 {
@@ -96,10 +96,10 @@ namespace KursAM2.Managers.Invoices
                             DocumentType = DocumentType.CashOut,
                             // ReSharper disable once PossibleInvalidOperationException
                             DocumentName =
-                                $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
+                                $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC)} ({c.CREATOR})",
                             // ReSharper disable once PossibleInvalidOperationException
                             Summa = (decimal)c.SUMM_ORD,
-                            Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC) as Currency,
                             Note = c.NOTES_ORD
                         });
                     foreach (var c in ctx.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_POSTAV_DC == dc)
@@ -111,10 +111,10 @@ namespace KursAM2.Managers.Invoices
                             DocumentType = DocumentType.Bank,
                             DocumentName =
                                 // ReSharper disable once PossibleInvalidOperationException
-                                $"{c.SD_101.VV_START_DATE} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                                $"{c.SD_101.VV_START_DATE} на {(decimal)c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
                             // ReSharper disable once PossibleInvalidOperationException
                             Summa = (decimal)c.VVT_VAL_RASHOD,
-                            Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as Currency,
                             Note = c.VVT_DOC_NUM
                         });
                     foreach (var c in ctx.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SPOST_DC == dc).ToList())
@@ -128,7 +128,7 @@ namespace KursAM2.Managers.Invoices
                                 $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE} на {c.VZT_CRS_SUMMA}",
                             // ReSharper disable once PossibleInvalidOperationException
                             Summa = (decimal)c.VZT_CRS_SUMMA,
-                            Currency = MainReferences.Currencies[c.SD_110.CurrencyToDC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(c.SD_110.CurrencyToDC) as Currency,
                             Note = c.VZT_DOC_NOTES
                         });
                     decimal sum = 0;
@@ -180,10 +180,10 @@ namespace KursAM2.Managers.Invoices
                     DocumentType = DocumentType.CashOut,
                     // ReSharper disable once PossibleInvalidOperationException
                     DocumentName =
-                        $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
+                        $"{c.NUM_ORD} от {c.DATE_ORD} на {c.SUMM_ORD} {GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC)} ({c.CREATOR})",
                     // ReSharper disable once PossibleInvalidOperationException
                     Summa = (decimal)c.SUMM_ORD,
-                    Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
+                    Currency = GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC) as Currency,
                     Note = c.NOTES_ORD
                 });
             foreach (var c in UnitOfWork.Context.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_POSTAV_DC == dc)
@@ -195,10 +195,10 @@ namespace KursAM2.Managers.Invoices
                     DocumentType = DocumentType.Bank,
                     DocumentName =
                         // ReSharper disable once PossibleInvalidOperationException
-                        $"{c.SD_101.VV_START_DATE} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                        $"{c.SD_101.VV_START_DATE} на {(decimal)c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
                     // ReSharper disable once PossibleInvalidOperationException
                     Summa = (decimal)c.VVT_VAL_RASHOD,
-                    Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                    Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as Currency,
                     Note = c.VVT_DOC_NUM
                 });
             foreach (var c in UnitOfWork.Context.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SPOST_DC == dc)
@@ -213,7 +213,7 @@ namespace KursAM2.Managers.Invoices
                         $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE} на {c.VZT_CRS_SUMMA}",
                     // ReSharper disable once PossibleInvalidOperationException
                     Summa = (decimal)c.VZT_CRS_SUMMA,
-                    Currency = MainReferences.Currencies[c.SD_110.CurrencyToDC],
+                    Currency = GlobalOptions.ReferencesCache.GetCurrency(c.SD_110.CurrencyToDC) as Currency,
                     Note = c.VZT_DOC_NOTES
                 });
             decimal sum = 0;
@@ -678,7 +678,7 @@ namespace KursAM2.Managers.Invoices
                                 foreach (var rc in r.CurrencyConvertRows)
                                 {
                                     var sql1 = "INSERT INTO NOMENKL_RECALC (NOM_DC,OPER_DATE)" +
-                                               $" VALUES({CustomFormat.DecimalToSqlDecimal( ((IDocCode)rc.Nomenkl).DocCode)},'20000101')";
+                                               $" VALUES({CustomFormat.DecimalToSqlDecimal(((IDocCode)rc.Nomenkl).DocCode)},'20000101')";
                                     ctx.Database.ExecuteSqlCommand(sql1);
                                 }
                         }
@@ -1255,10 +1255,10 @@ namespace KursAM2.Managers.Invoices
                             DocumentName =
                                 $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.SUMM_ORD} " +
                                 // ReSharper disable once PossibleInvalidOperationException
-                                $"{MainReferences.Currencies[(decimal)c.CRS_DC]} ({c.CREATOR})",
+                                $"{GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC)} ({c.CREATOR})",
                             // ReSharper disable once PossibleInvalidOperationException
                             Summa = (decimal)c.SUMM_ORD,
-                            Currency = MainReferences.Currencies[(decimal)c.CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC) as Currency,
                             Note = c.NOTES_ORD
                         });
                     foreach (var c in ctx.TD_101.Include(_ => _.SD_101).Where(_ => _.VVT_SFACT_CLIENT_DC == dc)
@@ -1270,9 +1270,9 @@ namespace KursAM2.Managers.Invoices
                             DocumentType = DocumentType.Bank,
                             DocumentName =
                                 // ReSharper disable once PossibleInvalidOperationException
-                                $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {MainReferences.BankAccounts[c.SD_101.VV_ACC_DC]}",
+                                $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
                             Summa = (decimal)c.VVT_VAL_PRIHOD,
-                            Currency = MainReferences.Currencies[c.VVT_CRS_DC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as Currency,
                             Note = c.VVT_DOC_NUM
                         });
                     foreach (var c in ctx.TD_110.Include(_ => _.SD_110).Where(_ => _.VZT_SFACT_DC == dc).ToList())
@@ -1286,7 +1286,7 @@ namespace KursAM2.Managers.Invoices
                                 $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
                             // ReSharper disable once PossibleInvalidOperationException
                             Summa = (decimal)c.VZT_CRS_SUMMA,
-                            Currency = MainReferences.Currencies[c.SD_110.CurrencyFromDC],
+                            Currency = GlobalOptions.ReferencesCache.GetCurrency(c.SD_110.CurrencyFromDC) as Currency,
                             Note = c.VZT_DOC_NOTES
                         });
                 }
@@ -1570,7 +1570,8 @@ namespace KursAM2.Managers.Invoices
         /// <param name="searchText"></param>
         /// <param name="isAccepted"></param>
         /// <returns></returns>
-        public static List<InvoiceClientViewModel> GetInvoicesClient(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
+        public static List<InvoiceClientViewModel> GetInvoicesClient(DateTime dateStart, DateTime dateEnd,
+            bool isUsePayment,
             UnitOfWork<ALFAMEDIAEntities> context = null,
             string searchText = null, bool isAccepted = false)
         {
@@ -1792,7 +1793,8 @@ namespace KursAM2.Managers.Invoices
             return ret.OrderByDescending(_ => _.DocDate).ToList();
         }
 
-        public static List<InvoiceClientViewModel> GetInvoicesClient(DateTime dateStart, DateTime dateEnd, bool isUsePayment,
+        public static List<InvoiceClientViewModel> GetInvoicesClient(DateTime dateStart, DateTime dateEnd,
+            bool isUsePayment,
             decimal kontragentDC, bool isAccepted = false)
         {
             //MainReferences.CheckUpdateKontragentAndLoad();

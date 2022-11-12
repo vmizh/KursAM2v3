@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -21,6 +20,7 @@ using KursAM2.View.Finance.Cash;
 using KursDomain;
 using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 
@@ -52,7 +52,7 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         public CashBookWindowViewModel(decimal cashDC) : this()
         {
-            CurrentCash = MainReferences.Cashs[cashDC];
+            CurrentCash = GlobalOptions.ReferencesCache.GetCashBox(cashDC) as CashBox;
             WindowName = WindowName + " " + CurrentCash.Name;
         }
 
@@ -84,7 +84,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             get => myCurrentDocument;
             set
             {
-                if (Equals(myCurrentDocument,value)) return;
+                if (Equals(myCurrentDocument, value)) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }
@@ -95,7 +95,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             get => myCurrentCash;
             set
             {
-                if (Equals(myCurrentCash,value)) return;
+                if (Equals(myCurrentCash, value)) return;
                 myCurrentCash = value;
                 WindowName = "Кассовая книга - " + CurrentCash?.Name;
                 RefreshData(null);
@@ -110,7 +110,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             get => myCurrentPeriod;
             set
             {
-                if (Equals(myCurrentPeriod,value)) return;
+                if (Equals(myCurrentPeriod, value)) return;
                 myCurrentPeriod = value;
                 if (CurrentPeriod != null)
                 {
@@ -129,7 +129,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             using (var ctx = GlobalOptions.GetEntities())
             {
                 foreach (var crs in ctx.TD_22.Where(_ => _.DOC_CODE == CurrentCash.DocCode).Select(_ => _.CRS_DC)
-                    .ToList())
+                             .ToList())
                 {
                     var d1 = ctx.TD_22.Where(_ => _.DOC_CODE == CurrentCash.DocCode && _.CRS_DC == crs)
                         .Select(_ => _.SUMMA_START).ToList();
@@ -189,7 +189,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                              + dCrs2.Sum();
                     MoneyRemains.Add(new MoneyRemains
                         {
-                            CurrencyName = MainReferences.Currencies[crs].Name,
+                            CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(crs)).Name,
                             // ReSharper disable PossibleInvalidOperationException
                             Start = (decimal)p1,
                             In = (decimal)p2,
@@ -213,7 +213,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             Documents.Clear();
             foreach (var d in CashManager.LoadDocuments(CurrentCash, CurrentPeriod.DateStart, CurrentPeriod.DateEnd,
-                searchtext))
+                         searchtext))
                 Documents.Add(d);
         }
 
@@ -408,8 +408,9 @@ namespace KursAM2.ViewModel.Finance.Cash
                                 _.DOC_CODE == d.DOC_CODE && _.CRS_DC == d.Currency.DocCode);
                             if (old == null)
                             {
-                                var newCode = ctx.TD_22.Any(_ => _.DOC_CODE == d.DOC_CODE) ?
-                                    (int)ctx.TD_22.Max(_ => _.CODE) + 1 : 1;
+                                var newCode = ctx.TD_22.Any(_ => _.DOC_CODE == d.DOC_CODE)
+                                    ? (int)ctx.TD_22.Max(_ => _.CODE) + 1
+                                    : 1;
                                 var newItem = new TD_22
                                 {
                                     DOC_CODE = CurrentCash.DocCode,

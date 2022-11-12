@@ -1,7 +1,8 @@
 using System;
-using Core;
 using Data;
+using KursDomain;
 using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
 
 namespace KursAM2.ViewModel.Finance
 {
@@ -13,10 +14,11 @@ namespace KursAM2.ViewModel.Finance
 
         public decimal AveragePrice { set; get; }
         public decimal CBRate { set; get; }
-        public string PostName => MainReferences.GetKontragent(TD_26.SD_26.SF_POST_DC).Name;
+        public string PostName => ((IName)GlobalOptions.ReferencesCache.GetKontragent(TD_26.SD_26.SF_POST_DC)).Name;
 
         // ReSharper disable once PossibleInvalidOperationException
-        public string CurrencyName => MainReferences.Currencies[TD_26.SD_26.SF_CRS_DC.Value].Name;
+        public string CurrencyName =>
+            ((IName)GlobalOptions.ReferencesCache.GetCurrency(TD_26.SD_26.SF_CRS_DC.Value)).Name;
 
         public decimal SummaPurchase
             => Math.Round(((TD_26.SFT_ED_CENA ?? 0) + (TD_26.SFT_SUMMA_NAKLAD ?? 0) / TD_26.SFT_KOL) * DDT_KOL_PRIHOD,

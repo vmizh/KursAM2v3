@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
@@ -56,13 +55,14 @@ namespace KursAM2.ViewModel.Personal
                                 t => t.USER.ToUpper() == GlobalOptions.UserInfo.Name.ToUpper())
                             .Select(d => d.EMP_DC)
                             .ToList();
-                    var pers = MainReferences.Employees.Values.Where(p => persRight.Any(t => t == p.DocCode)).ToList();
+                    var pers = GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>()
+                        .Where(p => persRight.Any(t => t == p.DocCode)).ToList();
                     foreach (var nach in ent.EMP_PR_ROWS.Include("EMP_PR_DOC")
                                  .Include("SD_301")
                                  .Where(d => d.EMP_PR_DOC.IS_TEMPLATE == 0)
                                  .Select(s => new NachForEmployeeRowModelOld
                                  {
-                                     Employee = MainReferences.Employees[s.EMP_DC],
+                                     Employee = GlobalOptions.ReferencesCache.GetEmployee(s.EMP_DC) as Employee,
                                      Crs = new Currency { DocCode = s.SD_301.DOC_CODE, Name = s.SD_301.CRS_SHORTNAME },
                                      DocDate = s.EMP_PR_DOC.Date,
                                      Notes = s.NOTES,
@@ -82,18 +82,16 @@ namespace KursAM2.ViewModel.Personal
                     {
                         var s = new NachForEmployeeRowModelOld
                         {
-                            Employee =
-                                MainReferences.Employees.Values.SingleOrDefault(_ => _.TabelNumber == p.TABELNUMBER),
-                            Crs = MainReferences.Currencies[p.SD_301.DOC_CODE],
+                            Employee = GlobalOptions.ReferencesCache.GetEmployee(p.TABELNUMBER) as Employee,
+                            Crs = GlobalOptions.ReferencesCache.GetCurrency(p.SD_301.DOC_CODE) as Currency,
                             DocDate = p.DATE_ORD.Value,
                             PlatSumma = p.SUMM_ORD ?? 0,
                             Rate = p.CRS_KOEF.Value,
                             PlatSummaEmp =
                                 CalcSummaWithRate(
                                     // ReSharper disable once PossibleNullReferenceException
-                                    MainReferences.Employees.Values.SingleOrDefault(
-                                            _ => _.TabelNumber == p.TABELNUMBER)
-                                        .DocCode, p.CRS_DC.Value,
+                                    ((IDocCode)GlobalOptions.ReferencesCache.GetEmployee(p.TABELNUMBER)).DocCode,
+                                    p.CRS_DC.Value,
                                     p.SUMM_ORD ?? 0,
                                     p.CRS_KOEF.Value),
                             PlatDocNotes = p.NOTES_ORD,
@@ -117,15 +115,18 @@ namespace KursAM2.ViewModel.Personal
                         row.Rate = CurrencyRate.GetSummaRate(row.Crs.DocCode, ((IDocCode)row.Employee.Currency).DocCode,
                             row.DocDate,
                             1);
-                        row.SummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, ((IDocCode)row.Employee.Currency).DocCode,
+                        row.SummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode,
+                            ((IDocCode)row.Employee.Currency).DocCode,
                             row.DocDate,
                             row.Summa);
                         if (row.DocDate <= new DateTime(2013, 7, 31)) continue;
-                        row.Rate = CurrencyRate.GetRate(row.Crs.DocCode, ((IDocCode)row.Employee.Currency).DocCode, row.DocDate);
+                        row.Rate = CurrencyRate.GetRate(row.Crs.DocCode, ((IDocCode)row.Employee.Currency).DocCode,
+                            row.DocDate);
                         if (row.Employee.TabelNumber == 38 && row.PlatSumma == 100000)
                             row.PlatSummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode,
                                 ((IDocCode)row.Employee.Currency).DocCode, row.DocDate, row.PlatSumma);
-                        row.PlatSummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode, ((IDocCode)row.Employee.Currency).DocCode,
+                        row.PlatSummaEmp = CurrencyRate.GetSummaRate(row.Crs.DocCode,
+                            ((IDocCode)row.Employee.Currency).DocCode,
                             row.DocDate, row.PlatSumma);
                     }
                 }

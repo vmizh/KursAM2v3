@@ -117,8 +117,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         #region Properties
 
-        public List<KursDomain.Documents.NomenklManagement.Warehouse>
-            WarehouseList { set; get; } = MainReferences.Warehouses.Values.OrderBy(_ => _.Name).ToList();
+        public List<KursDomain.References.Warehouse>
+            WarehouseList { set; get; } = GlobalOptions.ReferencesCache.GetWarehousesAll()
+            .Cast<KursDomain.References.Warehouse>().OrderBy(_ => _.Name).ToList();
 
         public WarehouseOrderIn Document
         {
@@ -248,7 +249,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         var invRow = dbctx.TD_26
                             .Include(_ => _.SD_26).FirstOrDefault(_ => _.DOC_CODE == row.DocCode && _.CODE == row.CODE);
                         var schetRow = invRow != null ? new InvoiceProviderRow(invRow) : null;
-                        var nom = MainReferences.GetNomenkl(row.NomenklDC);
+                        var nom = GlobalOptions.ReferencesCache.GetNomenkl(row.NomenklDC) as Nomenkl;
                         Document.Rows.Add(new WarehouseOrderInRow
                         {
                             DocCode = -1,
@@ -575,7 +576,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 foreach (var n in datarows)
                     if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DDT_NOMENKL_DC))
                     {
-                        var nom = MainReferences.GetNomenkl(n.DDT_NOMENKL_DC);
+                        var nom = GlobalOptions.ReferencesCache.GetNomenkl(n.DDT_NOMENKL_DC) as Nomenkl;
                         Document.Rows.Add(new WarehouseOrderInRow
                         {
                             DocCode = Document.DocCode,

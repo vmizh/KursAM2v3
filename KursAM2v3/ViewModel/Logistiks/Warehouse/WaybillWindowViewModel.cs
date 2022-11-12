@@ -3,8 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -31,6 +29,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private readonly WarehouseManager docManager = new WarehouseManager(new StandartErrorManager(
             GlobalOptions.GetEntities(),
             "WaybillViewModel"));
+
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         private readonly WindowManager winManager = new WindowManager();
@@ -95,14 +94,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<string> ByWhomLicoList { set; get; } = new ObservableCollection<string>();
 
-        public List<KursDomain.Documents.NomenklManagement.Warehouse> Sklads =>
-            MainReferences.Warehouses.Values.ToList();
+        public List<KursDomain.References.Warehouse> Sklads =>
+            GlobalOptions.ReferencesCache.GetWarehousesAll().Cast<KursDomain.References.Warehouse>()
+                .OrderBy(_ => _.Name).ToList();
 
         public Waybill Document
         {
             set
             {
-                if (Equals(myDocument ,value)) return;
+                if (Equals(myDocument, value)) return;
                 myDocument = value;
                 RaisePropertyChanged();
             }
@@ -110,15 +110,19 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         }
 
         public override string WindowName => Document?.Name;
-        public List<Nomenkl> Nomenkls => MainReferences.ALLNomenkls.Values.ToList();
-        public List<KontragentViewModel> Kontragents => MainReferences.AllKontragents.Values.ToList();
+
+        public List<Nomenkl> Nomenkls => GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>()
+            .OrderBy(_ => _.Name).ToList();
+
+        public List<Kontragent> Kontragents => GlobalOptions.ReferencesCache.GetKontragentsAll()
+            .Cast<Kontragent>().OrderBy(_ => _.Name).ToList();
 
         public WaybillRow CurrentNomenklRow
         {
             get => myCurrentNomenklRow;
             set
             {
-                if (Equals(myCurrentNomenklRow,value)) return;
+                if (Equals(myCurrentNomenklRow, value)) return;
                 myCurrentNomenklRow = value;
                 RaisePropertyChanged();
             }
@@ -151,9 +155,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             ByWhomLicoList.Clear();
             foreach (var item in GlobalOptions.GetEntities()
-                .Database.SqlQuery<string>("SELECT DISTINCT DD_KOMU_PEREDANO FROM sd_24 (nolock) " +
-                                           "WHERE DD_KOMU_PEREDANO IS NOT null")
-                .ToList())
+                         .Database.SqlQuery<string>("SELECT DISTINCT DD_KOMU_PEREDANO FROM sd_24 (nolock) " +
+                                                    "WHERE DD_KOMU_PEREDANO IS NOT null")
+                         .ToList())
                 ByWhomLicoList.Add(item);
         }
 
@@ -259,7 +263,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         var kol = otgr.Sum(_ => _.DDT_KOL_RASHOD);
                         if (kol < r.Quantity)
                         {
-                            var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
+                            var n = GlobalOptions.ReferencesCache.GetNomenkl(r.Entity.SFT_NEMENKL_DC) as Nomenkl;
                             var newItem = new WaybillRow
                             {
                                 DocCode = Document.DocCode,
@@ -278,15 +282,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     }
                     else
                     {
-                        var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
-                        var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
+                        var n = GlobalOptions.ReferencesCache.GetNomenkl(r.Entity.SFT_NEMENKL_DC) as Nomenkl;
+                        var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DocCode, n.DocCode,
                             Document.Date, Document.Date);
-                        decimal m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
+                        var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                         if (m <= 0)
                         {
                             winManager.ShowWinUIMessageBox(
                                 $"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
-                                $"{MainReferences.Warehouses[Document.WarehouseOut.DocCode]}" +
+                                $"{GlobalOptions.ReferencesCache.GetWarehouse(Document.WarehouseOut.DocCode)}" +
                                 $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
                                 "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                             continue;
@@ -323,13 +327,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (nomenkls == null || nomenkls.Count <= 0) return;
             foreach (var n in nomenkls)
             {
-                var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
+                var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DocCode, n.DocCode,
                     Document.Date, Document.Date);
-                decimal m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
+                var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
                 if (m <= 0)
                 {
                     winManager.ShowWinUIMessageBox($"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
-                                                   $"{MainReferences.Warehouses[Document.WarehouseOut.DocCode]}" +
+                                                   $"{GlobalOptions.ReferencesCache.GetWarehouse(Document.WarehouseOut.DocCode)}" +
                                                    $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
                         "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                     continue;
@@ -383,7 +387,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private void OpenSchet(object obj)
         {
             // ReSharper disable once PossibleInvalidOperationException
-            DocumentsOpenManager.Open(DocumentType.InvoiceClient, (decimal) CurrentNomenklRow.DDT_SFACT_DC);
+            DocumentsOpenManager.Open(DocumentType.InvoiceClient, (decimal)CurrentNomenklRow.DDT_SFACT_DC);
         }
 
         public override void RefreshData(object obj)
@@ -468,7 +472,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             var kol = otgr.Sum(_ => _.DDT_KOL_RASHOD);
                             if (kol < r.Quantity)
                             {
-                                var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
+                                var n = GlobalOptions.ReferencesCache.GetNomenkl(r.Entity.SFT_NEMENKL_DC) as Nomenkl;
                                 var newItem = new WaybillRow
                                 {
                                     DocCode = Document.DocCode,
@@ -487,15 +491,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         }
                         else
                         {
-                            var n = MainReferences.GetNomenkl(r.Entity.SFT_NEMENKL_DC);
-                            var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DOC_CODE, n.DocCode,
+                            var n = GlobalOptions.ReferencesCache.GetNomenkl(r.Entity.SFT_NEMENKL_DC) as Nomenkl;
+                            var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DocCode, n.DocCode,
                                 Document.Date, Document.Date);
-                            decimal m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
-                           if (m <= 0)
+                            var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
+                            if (m <= 0)
                             {
                                 winManager.ShowWinUIMessageBox(
                                     $"Остатки номенклатуры {n.NomenklNumber} {n.Name} на складе " +
-                                    $"{MainReferences.Warehouses[Document.WarehouseOut.DocCode]}" +
+                                    $"{GlobalOptions.ReferencesCache.GetWarehouse(Document.WarehouseOut.DocCode)}" +
                                     $"кол-во {m}. Операция по номенклатуре не может быть проведена.",
                                     "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                                 continue;

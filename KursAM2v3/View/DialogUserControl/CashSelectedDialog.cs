@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
-using Core;
 using Core.ViewModel.Base;
+using KursDomain;
 using KursDomain.References;
 
 namespace KursAM2.View.DialogUserControl
@@ -18,12 +19,13 @@ namespace KursAM2.View.DialogUserControl
             WindowName = "Выбор кассы";
             if (excludeList == null)
             {
-                ItemsCollection = new ObservableCollection<CashBox>(MainReferences.Cashs.Values);
+                ItemsCollection =
+                    new ObservableCollection<CashBox>(GlobalOptions.ReferencesCache.GetCashBoxAll().Cast<CashBox>());
             }
             else
             {
                 ItemsCollection = new ObservableCollection<CashBox>();
-                foreach (var c in MainReferences.Cashs.Values)
+                foreach (var c in GlobalOptions.ReferencesCache.GetCashBoxAll().Cast<CashBox>())
                     if (!excludeList.Contains(c))
                         ItemsCollection.Add(c);
             }

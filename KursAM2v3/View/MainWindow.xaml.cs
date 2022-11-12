@@ -1278,7 +1278,6 @@ namespace KursAM2.View
         private void BarButtonItem2_OnItemClick(object sender, ItemClickEventArgs e)
         {
             LoadTiles();
-            MainReferences.Refresh();
         }
 
         private void tileMainGroup_ItemPositionChanged(object sender, ValueChangedEventArgs<int> e)

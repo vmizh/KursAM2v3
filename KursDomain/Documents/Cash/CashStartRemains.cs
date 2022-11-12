@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -26,7 +25,7 @@ public class CashStartRemains : RSViewModelBase, IEntity<TD_22>
     public CashStartRemains(TD_22 entity)
     {
         Entity = entity ?? new TD_22 { DOC_CODE = -1 };
-        Currency = MainReferences.Currencies.ContainsKey(Entity.CRS_DC) ? MainReferences.Currencies[CRS_DC] : null;
+        Currency = GlobalOptions.ReferencesCache.GetCurrency(Entity.CRS_DC) as References.Currency;
     }
 
     public ObservableCollection<References.Currency> CurrencyList { set; get; }

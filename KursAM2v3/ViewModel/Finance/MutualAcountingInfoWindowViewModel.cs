@@ -5,14 +5,11 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Xpf.Grid;
 using KursDomain;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.Menu;
 using KursDomain.References;
 
@@ -52,13 +49,13 @@ namespace KursAM2.ViewModel.Finance
                     if (row != null)
                     {
                         // ReSharper disable PossibleInvalidOperationException
-                        row.CreditSumma += (decimal) d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1)
+                        row.CreditSumma += (decimal)d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1)
                             .Sum(_ => _.VZT_CRS_SUMMA);
-                       
-                        row.DebetSumma += (decimal) d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0)
+
+                        row.DebetSumma += (decimal)d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0)
                             .Sum(_ => _.VZT_CRS_SUMMA);
                         row.Rate = calcRate(row.DebetCurrency, row.CreditCurrency, row.DebetSumma, row.CreditSumma);
-                     // ReSharper restore PossibleInvalidOperationException
+                        // ReSharper restore PossibleInvalidOperationException
                     }
                     else
                     {
@@ -69,12 +66,12 @@ namespace KursAM2.ViewModel.Finance
                             DocDate = d.VZ_DATE,
                             DocNum = d.VZ_NUM,
                             Note = d.VZ_NOTES,
-                            CreditCurrency = MainReferences.Currencies[d.CurrencyToDC],
-                            DebetCurrency = MainReferences.Currencies[d.CurrencyFromDC],
+                            CreditCurrency = GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyToDC) as Currency,
+                            DebetCurrency = GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyFromDC) as Currency,
                             CreditSumma =
-                                (decimal) d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA),
+                                (decimal)d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA),
                             DebetSumma =
-                                (decimal) d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA)
+                                (decimal)d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA)
                         };
                         // ReSharper restore PossibleInvalidOperationException
                         foreach (var s in d.TD_110)
@@ -145,7 +142,7 @@ namespace KursAM2.ViewModel.Finance
             get => myCurrentRate;
             set
             {
-                if (Equals(myCurrentRate,value)) return;
+                if (Equals(myCurrentRate, value)) return;
                 myCurrentRate = value;
                 if (myCurrentRate != null)
                     loaddocuments();
@@ -160,7 +157,7 @@ namespace KursAM2.ViewModel.Finance
             get => myCurrentDocument;
             set
             {
-                if (Equals(myCurrentDocument,value)) return;
+                if (Equals(myCurrentDocument, value)) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }
@@ -216,9 +213,9 @@ namespace KursAM2.ViewModel.Finance
                                                         && _.DebetCurrency?.DocCode == d.CurrencyFromDC);
                     if (row != null)
                     {
-                        row.CreditSumma += (decimal) d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1)
+                        row.CreditSumma += (decimal)d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1)
                             .Sum(_ => _.VZT_CRS_SUMMA);
-                        row.DebetSumma += (decimal) d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0)
+                        row.DebetSumma += (decimal)d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0)
                             .Sum(_ => _.VZT_CRS_SUMMA);
                         row.Rate = calcRate(row.DebetCurrency, row.CreditCurrency, row.DebetSumma, row.CreditSumma);
                     }
@@ -226,12 +223,12 @@ namespace KursAM2.ViewModel.Finance
                     {
                         var newrow = new MutualAcountingInfoCurrenciesViewModel
                         {
-                            CreditCurrency = MainReferences.Currencies[d.CurrencyToDC],
-                            DebetCurrency = MainReferences.Currencies[d.CurrencyFromDC],
+                            CreditCurrency = GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyToDC) as Currency,
+                            DebetCurrency = GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyFromDC) as Currency,
                             CreditSumma =
-                                (decimal) d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA),
+                                (decimal)d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA),
                             DebetSumma =
-                                (decimal) d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA)
+                                (decimal)d.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA)
                         };
                         newrow.Rate = calcRate(newrow.DebetCurrency, newrow.CreditCurrency, newrow.DebetSumma,
                             newrow.CreditSumma);
@@ -244,11 +241,11 @@ namespace KursAM2.ViewModel.Finance
 
         private decimal calcRate(Currency first, Currency second, decimal summafirst, decimal summasecond)
         {
-            if (Equals(first,second)) return 1;
+            if (Equals(first, second)) return 1;
             if (summafirst == 0 || summasecond == 0) return 0;
-            if (Equals(first,GlobalOptions.SystemProfile.NationalCurrency))
+            if (Equals(first, GlobalOptions.SystemProfile.NationalCurrency))
                 return decimal.Round(summafirst / summasecond, 4);
-            if (Equals(second,GlobalOptions.SystemProfile.NationalCurrency))
+            if (Equals(second, GlobalOptions.SystemProfile.NationalCurrency))
                 return decimal.Round(summasecond / summafirst, 4);
             if (first.DocCode == CurrencyCode.USD) return decimal.Round(summafirst / summasecond, 4);
             if (second.DocCode == CurrencyCode.USD) return decimal.Round(summasecond / summafirst, 4);

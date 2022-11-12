@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Windows.Controls;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -83,10 +82,10 @@ public sealed class BankCurrencyChangeViewModel : RSViewModelBase, IEntity<BankC
         var isEntity = entity != null && entity.Id != Guid.Empty;
         Entity = entity ?? new BankCurrencyChange { Id = Guid.NewGuid() };
         if (!isEntity) return;
-        myBankFrom = MainReferences.BankAccounts[entity.BankFromDC];
-        myBankTo = MainReferences.BankAccounts[entity.BankToDC];
-        myCurrencyFrom = MainReferences.Currencies[entity.CrsFromDC];
-        myCurrencyTo = MainReferences.Currencies[entity.CrsToDC];
+        myBankFrom = GlobalOptions.ReferencesCache.GetBankAccount(entity.BankFromDC) as BankAccount;
+        myBankTo = GlobalOptions.ReferencesCache.GetBankAccount(entity.BankToDC) as BankAccount;
+        myCurrencyFrom = GlobalOptions.ReferencesCache.GetCurrency(entity.CrsFromDC) as References.Currency;
+        myCurrencyTo = GlobalOptions.ReferencesCache.GetCurrency(entity.CrsToDC) as References.Currency;
     }
 
     public override Guid Id
@@ -129,11 +128,8 @@ public sealed class BankCurrencyChangeViewModel : RSViewModelBase, IEntity<BankC
         {
             if (Entity.BankFromDC == value) return;
             Entity.BankFromDC = value;
-            if (MainReferences.BankAccounts.ContainsKey(Entity.BankFromDC))
-            {
-                myBankFrom = MainReferences.BankAccounts[Entity.BankFromDC];
-                RaisePropertyChanged(nameof(BankFrom));
-            }
+            myBankFrom = GlobalOptions.ReferencesCache.GetBankAccount(Entity.BankFromDC) as BankAccount;
+            RaisePropertyChanged(nameof(BankFrom));
 
             RaisePropertyChanged();
         }
@@ -158,12 +154,8 @@ public sealed class BankCurrencyChangeViewModel : RSViewModelBase, IEntity<BankC
         {
             if (Entity.BankToDC == value) return;
             Entity.BankToDC = value;
-            if (MainReferences.BankAccounts.ContainsKey(Entity.BankToDC))
-            {
-                myBankTo = MainReferences.BankAccounts[Entity.BankToDC];
-                RaisePropertyChanged(nameof(BankTo));
-            }
-
+            myBankTo = GlobalOptions.ReferencesCache.GetBankAccount(Entity.BankToDC) as BankAccount;
+            RaisePropertyChanged(nameof(BankTo));
             RaisePropertyChanged();
         }
     }
@@ -246,12 +238,8 @@ public sealed class BankCurrencyChangeViewModel : RSViewModelBase, IEntity<BankC
         {
             if (Entity.CrsFromDC == value) return;
             Entity.CrsFromDC = value;
-            if (MainReferences.Currencies.ContainsKey(Entity.CrsFromDC))
-            {
-                myCurrencyFrom = MainReferences.Currencies[Entity.CrsFromDC];
-                RaisePropertyChanged(nameof(CurrencyFrom));
-            }
-
+            myCurrencyFrom = GlobalOptions.ReferencesCache.GetCurrency(Entity.CrsFromDC) as References.Currency;
+            RaisePropertyChanged(nameof(CurrencyFrom));
             RaisePropertyChanged();
         }
     }
@@ -276,12 +264,8 @@ public sealed class BankCurrencyChangeViewModel : RSViewModelBase, IEntity<BankC
             if (Entity.CrsToDC == value) return;
             Entity.CrsToDC = value;
             CrsToDC = myCurrencyTo?.DocCode ?? 0;
-            if (MainReferences.Currencies.ContainsKey(Entity.CrsToDC))
-            {
-                myCurrencyFrom = MainReferences.Currencies[Entity.CrsToDC];
-                RaisePropertyChanged(nameof(CurrencyTo));
-            }
-
+            myCurrencyFrom = GlobalOptions.ReferencesCache.GetCurrency(Entity.CrsToDC) as References.Currency;
+            RaisePropertyChanged(nameof(CurrencyTo));
             RaisePropertyChanged();
         }
     }
