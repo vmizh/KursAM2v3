@@ -8,8 +8,13 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq} {ParentDC,nq}")]
-public class Country : ICountry, IDocGuid, IName, IEquatable<Country>
+public class Country : ICountry, IDocGuid, IName, IEquatable<Country>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     [MaxLength(2)] public string Alpha2 { get; set; }
 
     [MaxLength(3)] public string Alpha3 { get; set; }

@@ -112,7 +112,7 @@ namespace KursAM2.View.Finance
                     {
                         var cb1 = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.BankTo, "BankTo",
                             GlobalOptions.ReferencesCache.GetBankAccountAll().Where(_ =>
-                                ((IDocCode)_).DocCode == doc.BankFrom.DocCode
+                                ((IDocCode)_.Bank).DocCode == ((IDocCode)doc.BankFrom.Bank).DocCode
                                 && ((IDocCode)_.Currency).DocCode != doc.CurrencyFrom?.DocCode).ToList());
                         cb1.EditValueChanged += Cb_BankToValueChanged;
                     }

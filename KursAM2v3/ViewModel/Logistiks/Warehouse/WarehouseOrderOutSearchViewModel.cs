@@ -145,8 +145,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void RefreshData(object data)
         {
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             Documents.Clear();
-            //Documents = new ObservableCollection<WarehouseOrderIn>();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -165,6 +165,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
             RaisePropertyChanged(nameof(Documents));
             SearchText = "";
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
         }
 
         public override void DocumentOpen(object form)

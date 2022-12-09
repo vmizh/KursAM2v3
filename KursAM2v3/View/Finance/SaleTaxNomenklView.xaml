@@ -229,7 +229,7 @@
                                     <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
-                            <dxg:GridColumn Header="Сумма накл." Name="dcol10" FieldName="TD_26.SFT_SUMMA_NAKLAD"
+                            <dxg:GridColumn Header="Сумма накл." Name="dcol10" FieldName="TD_26.SummaNaklad"
                                             ReadOnly="True">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False" />

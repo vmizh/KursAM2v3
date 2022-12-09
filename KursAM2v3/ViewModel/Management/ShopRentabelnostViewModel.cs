@@ -105,6 +105,7 @@ namespace KursAM2.ViewModel.Management
 
         public override void RefreshData(object o)
         {
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             using (var ent = GlobalOptions.GetEntities())
             {
                 var rates =
@@ -186,7 +187,11 @@ namespace KursAM2.ViewModel.Management
                 {
                     WindowManager.ShowError(ex);
                 }
-
+                finally
+                {
+                    GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+                }
+                GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
                 RaisePropertyChanged(nameof(COList));
                 RaisePropertyChanged(nameof(NomenklList));
             }

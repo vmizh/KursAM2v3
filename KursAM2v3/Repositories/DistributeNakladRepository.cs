@@ -9,6 +9,7 @@ using Data;
 using Data.Repository;
 using KursDomain;
 using KursDomain.Documents.Invoices;
+using KursDomain.IDocuments.DistributeOverhead;
 using KursDomain.References;
 
 namespace KursAM2.Repositories
@@ -41,26 +42,6 @@ namespace KursAM2.Repositories
 
     public class DistributeNakladRepository : GenericKursDBRepository<DistributeNaklad>, IDistributeNakladRepository
     {
-        /// <summary>
-        ///     Типы распределения накладных расходов
-        /// </summary>
-        public enum DistributeNakladTypeEnum
-        {
-            [Display(Name = "Нет распределния")] NotDistribute = 0,
-
-            [Display(Name = "По цене")] PriceValue = 1,
-
-            [Display(Name = "По сумме")] SummaValue = 2,
-
-            [Display(Name = "По количеству")] QuantityValue = 3,
-
-            [Display(Name = "По объему")] VolumeValue = 4,
-
-            [Display(Name = "По весу")] WeightValue = 5,
-
-            [Display(Name = "Вручную")] ManualValue = 6
-        }
-
         public UnitOfWork<ALFAMEDIAEntities> UnitOfWork;
 
         public DistributeNakladRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork) : base(unitOfWork)

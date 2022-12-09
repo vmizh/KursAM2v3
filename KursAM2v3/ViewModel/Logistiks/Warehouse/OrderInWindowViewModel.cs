@@ -383,13 +383,28 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     return;
                 }
             }
+            var doc = SD_24Repository.GetByDC(Document.DocCode);
+            Document = new WarehouseOrderIn(doc);
+            {
+                State = RowStatus.NotEdited;
+            }
+            if (Document != null)
+                WindowName = Document.ToString();
+            if (Document.Entity.DD_SPOST_DC != null)
+            {
+                var sf = UnitOfWork.Context.SD_26.First(_ => _.DOC_CODE == Document.Entity.DD_SPOST_DC);
+                Schet = $"№{sf.SF_IN_NUM}/{sf.SF_POSTAV_NUM} от {sf.SF_POSTAV_DATE.ToShortDateString()}";
+            }
 
-            EntityManager.EntityReload(UnitOfWork.Context);
-            foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
-            RaiseAll();
-            foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
-            Document.myState = RowStatus.NotEdited;
-            Document.RaisePropertyChanged("State");
+            Document.Rows.ForEach(_ => _.State = RowStatus.NotEdited);
+            Document.State = RowStatus.NotEdited;
+
+            //EntityManager.EntityReload(UnitOfWork.Context);
+            //foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
+            //RaiseAll();
+            //foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
+            //Document.myState = RowStatus.NotEdited;
+            //Document.RaisePropertyChanged("State");
         }
 
         public override void SaveData(object data)

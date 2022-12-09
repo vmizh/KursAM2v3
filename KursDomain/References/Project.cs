@@ -16,8 +16,13 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{Id} {Name,nq} {ParentId,nq}")]
-public class Project : IProject, IDocGuid, IName, IEquatable<Project>
+public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     public Guid Id { get; set; }
 
     public bool Equals(Project other)

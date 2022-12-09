@@ -6,6 +6,7 @@ using System.Linq;
 using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
+using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -75,7 +76,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             set
             {
                 //SaveData(CurrentNomenklMain.NomenklCollection);
-                if (myCurrentNomenkl != null && Equals(myCurrentNomenkl, value)) return;
+                if (Equals(myCurrentNomenkl, value)) return;
                 myCurrentNomenkl = value;
                 if (myCurrentNomenkl != null)
                     if (myCurrentNomenkl.State == RowStatus.NewRow)
@@ -118,7 +119,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get => myCurrentNomenklMain;
             set
             {
-                if (myCurrentNomenklMain != null && Equals(myCurrentNomenklMain, value)) return;
+                if (Equals(myCurrentNomenklMain, value)) return;
                 myCurrentNomenklMain = value;
                 if (myCurrentNomenklMain != null)
                     LoadNomenklForMain(myCurrentNomenklMain);
@@ -328,7 +329,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     NOM_SALE_CRS_DC = ((IDocCode)nom.Currency).DocCode,
                                     NOM_FULL_NAME = nom.NameFull,
                                     NOM_ED_IZM_DC = CurrentNomenklMain.Unit.DocCode,
-                                    NOM_CATEG_DC = CurrentNomenklMain.NomenklGroup.DocCode,
+                                    NOM_CATEG_DC = CurrentNomenklMain.NomenklCategory.DocCode,
                                     NOM_0MATER_1USLUGA = CurrentNomenklMain.IsUsluga ? 1 : 0,
                                     NOM_1PROD_0MATER = 0,
                                     NOM_1NAKLRASH_0NO = CurrentNomenklMain.IsNakladExpense ? 1 : 0,
@@ -389,7 +390,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                         NOM_SALE_CRS_DC = ((IDocCode)nom.Currency).DocCode,
                                         NOM_FULL_NAME = nom.NameFull,
                                         NOM_ED_IZM_DC = CurrentNomenklMain.Unit.DocCode,
-                                        NOM_CATEG_DC = CurrentNomenklMain.NomenklGroup.DocCode,
+                                        NOM_CATEG_DC = CurrentNomenklMain.NomenklCategory.DocCode,
                                         NOM_0MATER_1USLUGA = CurrentNomenklMain.IsUsluga ? 1 : 0,
                                         NOM_1PROD_0MATER = 0,
                                         NOM_1NAKLRASH_0NO = CurrentNomenklMain.IsNakladExpense ? 1 : 0,
@@ -493,7 +494,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 Id = Guid.NewGuid(),
                 IsDeleted = false,
                 Group =
-                    GlobalOptions.ReferencesCache.GetNomenklGroup(CurrentNomenklMain.NomenklGroup.DocCode) as
+                    GlobalOptions.ReferencesCache.GetNomenklGroup(CurrentNomenklMain.NomenklCategory.DocCode) as
                         NomenklGroup,
                 IsUsluga = CurrentNomenklMain.IsUsluga,
                 IsNaklRashod = CurrentNomenklMain.IsNakladExpense,
@@ -585,7 +586,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 Id = Guid.NewGuid(),
                 Name = CurrentNomenklMain.Name,
                 FullName = CurrentNomenklMain.FullName,
-                NomenklGroup = CurrentNomenklMain.NomenklGroup,
+                NomenklCategory = CurrentNomenklMain.NomenklCategory,
                 NomenklType = CurrentNomenklMain.NomenklType,
                 Country = CurrentNomenklMain.Country,
                 Note = CurrentNomenklMain.Note,

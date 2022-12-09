@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows.Input;
 using Core;
+using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -229,7 +230,7 @@ namespace KursAM2.ViewModel.Logistiks
                                         NOM_SALE_CRS_DC = ((IDocCode)nom.Currency).DocCode,
                                         NOM_FULL_NAME = nom.NameFull ?? nom.Name,
                                         NOM_ED_IZM_DC = ((IDocCode)MainNomenkl.Unit).DocCode,
-                                        NOM_CATEG_DC = MainNomenkl.NomenklGroup.DocCode,
+                                        NOM_CATEG_DC = MainNomenkl.NomenklCategory.DocCode,
                                         NOM_0MATER_1USLUGA = MainNomenkl.IsUsluga ? 1 : 0,
                                         NOM_1PROD_0MATER = 0,
                                         NOM_1NAKLRASH_0NO = MainNomenkl.IsNakladExpense ? 1 : 0,
@@ -283,7 +284,7 @@ namespace KursAM2.ViewModel.Logistiks
                 MainId = MainNomenkl.Id,
                 Id = Guid.NewGuid(),
                 IsDeleted = false,
-                Group = GlobalOptions.ReferencesCache.GetNomenklGroup(MainNomenkl.NomenklGroup.DocCode) as NomenklGroup,
+                Group = GlobalOptions.ReferencesCache.GetNomenklGroup(MainNomenkl.NomenklCategory.DocCode) as NomenklGroup,
                 IsUsluga = MainNomenkl.IsUsluga,
                 IsNaklRashod = MainNomenkl.IsNakladExpense,
                 State = RowStatus.NewRow

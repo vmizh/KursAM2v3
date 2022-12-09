@@ -90,15 +90,15 @@
                             <dxe:ButtonEdit DockPanel.Dock="Left"
                                             Margin="5,0,0,0"
                                             Style="{StaticResource ButtonEditWithError}"
-                                            EditValue="{Binding Document.InvoiceClient, 
-                                    UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                            EditValue="{Binding Document.InvoiceInfo, 
+                                            UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
                                             IsTextEditable="False" MinWidth="300"
                                             AllowDefaultButton="False">
                                <dxe:ButtonEdit.Buttons>
                                    <dxe:ButtonInfo GlyphKind="Regular"
                                                    Command="{Binding SelectSchetCommand}"
                                                    ToolTip="Выбрать счет-фактуру клиенту"/>
-                                   <dxe:ButtonInfo GlyphKind="Minus"
+                                   <dxe:ButtonInfo GlyphKind="Cancel"
                                                    Command="{Binding DeleteSchetCommand}"
                                                    ToolTip="Удалить связь со счет-фактурой клиенту"/>
                                    <dxe:ButtonInfo GlyphKind="Edit"

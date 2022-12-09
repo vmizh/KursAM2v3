@@ -138,7 +138,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private Task Load()
         {
-
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             var res = Task.Factory.StartNew(() =>
             {
                 var data = SD_24Repository.GetWayBillAllByDates(StartDate, EndDate);
@@ -158,6 +158,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             foreach (var d in res.Result) Documents.Add(d);
             RaisePropertyChanged(nameof(Documents));
             DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             return res;
         }
 
@@ -166,6 +167,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             SplashScreenService.ShowSplashScreen();
             base.RefreshData(null);
             await Load();
+
         }
 
         public override void DocumentOpen(object form)

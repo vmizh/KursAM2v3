@@ -17,10 +17,7 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
     private InvoiceClientViewModel _mySfClient;
     public decimal MaxSumma = decimal.MaxValue;
     private TD_110 myEntity;
-    private Kontragent myKontragent;
     private InvoiceProvider mySFProvider;
-    private SDRSchet mySHPZ;
-    private MutualSettlementType myVzaimoraschType;
 
     public TD_110ViewModel()
     {
@@ -205,19 +202,16 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
 
     public Kontragent Kontragent
     {
-        get => myKontragent;
+        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.VZT_KONTR_DC) as Kontragent;
         set
         {
-            if (myKontragent != null && myKontragent.Equals(value)) return;
-            myKontragent = value;
-            if (myKontragent != null)
+            if (value != null)
             {
-                Entity.VZT_CRS_DC = ((IDocCode)myKontragent.Currency).DocCode;
-                Entity.VZT_KONTR_DC = myKontragent.DocCode;
-                Entity.VZT_KONTR_CRS_DC = ((IDocCode)myKontragent.Currency).DocCode;
+                Entity.VZT_CRS_DC = ((IDocCode)value.Currency).DocCode;
+                Entity.VZT_KONTR_DC = value.DocCode;
+                Entity.VZT_KONTR_CRS_DC = ((IDocCode)value.Currency).DocCode;
                 Entity.VZT_KONTR_CRS_RATE = 1;
             }
-
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(VZT_KONTR_DC));
             RaisePropertyChanged(nameof(VZT_KONTR_CRS_DC));
@@ -276,15 +270,14 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
         }
     }
 
-    public MutualSettlementType VzaimoraschType
+    public NomenklProductType VzaimoraschType
     {
-        get => myVzaimoraschType;
+        get =>
+            GlobalOptions.ReferencesCache.GetNomenklProductType(Entity.VZT_VZAIMOR_TYPE_DC) as NomenklProductType;
         set
         {
-            if (myVzaimoraschType != null && myVzaimoraschType.Equals(value)) return;
-            myVzaimoraschType = value;
-            if (myVzaimoraschType != null)
-                Entity.VZT_VZAIMOR_TYPE_DC = myVzaimoraschType.DocCode;
+            if (Equals(GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.VZT_VZAIMOR_TYPE_DC),value)) return;
+            Entity.VZT_VZAIMOR_TYPE_DC = value?.DocCode ?? 0;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(VZT_VZAIMOR_TYPE_DC));
         }
@@ -343,8 +336,6 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
         {
             if (Entity.VZT_SHPZ_DC == value) return;
             Entity.VZT_SHPZ_DC = value;
-            if (Entity.VZT_SHPZ_DC != null)
-                mySHPZ = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.VZT_SHPZ_DC) as SDRSchet;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(SHPZ));
         }
@@ -352,13 +343,11 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
 
     public SDRSchet SHPZ
     {
-        get => mySHPZ;
+        get => GlobalOptions.ReferencesCache.GetSDRSchet(Entity.VZT_SHPZ_DC) as SDRSchet;
         set
         {
-            if (mySHPZ != null && mySHPZ.Equals(value)) return;
-            mySHPZ = value;
-            if (mySHPZ != null)
-                Entity.VZT_SHPZ_DC = mySHPZ.DocCode;
+            if (Equals(GlobalOptions.ReferencesCache.GetSDRSchet(Entity.VZT_SHPZ_DC),value)) return;
+            Entity.VZT_SHPZ_DC = value?.DocCode;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(VZT_SHPZ_DC));
         }
@@ -561,14 +550,11 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
         VZT_UCH_CRS_POGASHENO = ent.VZT_UCH_CRS_POGASHENO;
         VZT_UCH_CRS_RATE = ent.VZT_UCH_CRS_RATE;
         VZT_VZAIMOR_TYPE_DC = ent.VZT_VZAIMOR_TYPE_DC;
-        VzaimoraschType =
-            GlobalOptions.ReferencesCache.GetMutualSettlementType(ent.SD_77.DOC_CODE) as MutualSettlementType;
-        VZT_1MYDOLZH_0NAMDOLZH = ent.VZT_1MYDOLZH_0NAMDOLZH;
+       VZT_1MYDOLZH_0NAMDOLZH = ent.VZT_1MYDOLZH_0NAMDOLZH;
         VZT_KONTR_CRS_DC = ent.VZT_KONTR_CRS_DC;
         VZT_KONTR_CRS_RATE = ent.VZT_KONTR_CRS_RATE;
         VZT_KONTR_CRS_SUMMA = ent.VZT_KONTR_CRS_SUMMA;
         VZT_SHPZ_DC = ent.VZT_SHPZ_DC;
-        SHPZ = ent.SD_303 == null ? null : GlobalOptions.ReferencesCache.GetSDRSchet(ent.SD_303.DOC_CODE) as SDRSchet;
         TSTAMP = ent.TSTAMP;
         SD_110 = ent.SD_110;
         SD_26 = ent.SD_26;

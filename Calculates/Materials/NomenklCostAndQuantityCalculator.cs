@@ -190,7 +190,7 @@ namespace Calculates.Materials
                                                                       "ELSE t26.SFT_SUMMA_K_OPLATE_KONTR_CRS / t26.SFT_KOL " +
                                                                       "END AS NUMERIC(18, 2)) AS Price, " +
                                                                       " CAST(CASE " +
-                                                                      "  WHEN t26.DOC_CODE IS NOT NULL THEN ISNULL(t26.SFT_SUMMA_NAKLAD, 0) / t26.SFT_KOL " +
+                                                                      "  WHEN t26.DOC_CODE IS NOT NULL THEN ISNULL(t26.SummaNaklad, 0) / t26.SFT_KOL " +
                                                                       " ELSE 0 " +
                                                                       " END AS NUMERIC(18, 2)) AS PriceNaklad, " +
                                                                       " s24.DD_DATE AS DocDate, " +

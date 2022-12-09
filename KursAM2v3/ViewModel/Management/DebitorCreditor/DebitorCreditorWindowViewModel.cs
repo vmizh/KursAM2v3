@@ -4,8 +4,6 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -17,7 +15,6 @@ using KursAM2.ViewModel.Management.Calculations;
 using KursAM2.ViewModel.Splash;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.Menu;
 using KursDomain.References;
 
@@ -152,7 +149,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
             get => myCurrentOperation;
             set
             {
-                if (Equals(myCurrentOperation,value)) return;
+                if (Equals(myCurrentOperation, value)) return;
                 myCurrentOperation = value;
                 RaisePropertyChanged();
             }
@@ -204,6 +201,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
                     Operations.Add(op);
                 }
             }
+
             RaisePropertyChanged(nameof(Operations));
         }
 
@@ -256,6 +254,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
 
         public override void RefreshData(object obj)
         {
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             CurrentCreditor = null;
             CurrentDebitor = null;
             CurrentDebitorCreditor = null;
@@ -296,6 +295,10 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
+            }
+            finally
+            {
+                GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             }
         }
 
@@ -461,23 +464,19 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
                         if (CurrentOperation.DocTypeCode == DocumentType.AccruedAmountForClient)
                         {
                             var doc = ctx.AccruedAmountForClient.FirstOrDefault(_ => _.DocInNum == num);
-                            if(doc != null)
+                            if (doc != null)
                                 DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, 0, doc.Id);
                             else
-                            {
-                                WinManager.ShowWinUIMessageBox("Документ не найден.","Сообщение");
-                            }
+                                WinManager.ShowWinUIMessageBox("Документ не найден.", "Сообщение");
                         }
 
                         if (CurrentOperation.DocTypeCode == DocumentType.AccruedAmountOfSupplier)
                         {
                             var doc = ctx.AccruedAmountOfSupplier.FirstOrDefault(_ => _.DocInNum == num);
-                            if(doc != null)
+                            if (doc != null)
                                 DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, 0, doc.Id);
                             else
-                            {
-                                WinManager.ShowWinUIMessageBox("Документ не найден.","Сообщение");
-                            }
+                                WinManager.ShowWinUIMessageBox("Документ не найден.", "Сообщение");
                         }
 
                         return;

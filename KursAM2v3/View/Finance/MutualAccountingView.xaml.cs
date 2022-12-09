@@ -121,8 +121,8 @@ namespace KursAM2.View.Finance
                     {
                         DisplayMember = "Name",
                         //ValueMember = "DocCode",
-                        ItemsSource = GlobalOptions.ReferencesCache.GetMutualSettlementTypeAll()
-                            .Cast<MutualSettlementType>().ToList()
+                        ItemsSource = GlobalOptions.ReferencesCache.GetNomenklProductTypesAll()
+                            .Cast<NomenklProductType>().ToList()
                     };
                 if (col.FieldName == "SHPZ")
                     col.EditSettings = new ComboBoxEditSettings
@@ -214,8 +214,8 @@ namespace KursAM2.View.Finance
                         {
                             DisplayMember = "Name",
                             //ValueMember = "DocCode",
-                            ItemsSource = GlobalOptions.ReferencesCache.GetMutualSettlementTypeAll()
-                                .Cast<MutualSettlementType>().ToList()
+                            ItemsSource = GlobalOptions.ReferencesCache.GetNomenklProductTypesAll()
+                                .Cast<NomenklProductType>().ToList()
                         };
                         break;
                     case "SHPZ":

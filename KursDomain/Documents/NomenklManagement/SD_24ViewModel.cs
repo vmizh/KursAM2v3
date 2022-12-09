@@ -5,6 +5,7 @@ using Data;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.Periods;
 using KursDomain.ICommon;
+using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 
 namespace KursDomain.Documents.NomenklManagement;
@@ -589,7 +590,33 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
             if (_myInvoiceClient?.DocCode == value?.DocCode) return;
             _myInvoiceClient = value;
             Entity.DD_SFACT_DC = value?.DocCode;
+            RaisePropertyChanged(nameof(InvoiceInfo));
             RaisePropertyChanged();
+        }
+    }
+
+    private string getInvoceInfo()
+    {
+        var num = InvoiceClientViewModel?.InnerNumber.ToString();
+        if (!string.IsNullOrWhiteSpace(InvoiceClientViewModel?.OuterNumber))
+        {
+            num = num + $"/{InvoiceClientViewModel?.OuterNumber}";
+        }
+
+        return num;
+    }
+
+    public string InvoiceInfo
+    {
+
+        set { }
+
+        get
+        {
+            return InvoiceClientViewModel != null
+                ? $"Счет {getInvoceInfo()} " +
+                  $" от {InvoiceClientViewModel?.DocDate.ToShortDateString()} "
+                : null;
         }
     }
 

@@ -74,11 +74,11 @@
                                     dx:DXSerializer.StoreLayoutMode="None"
                                     AutoPopulateColumns="False"
                                     VerticalAlignment="Center"
-                                    DisplayMember="Name"
-                                    ValueMember="DocCode"
                                     Width="250"
                                     PopupMinWidth="400"
                                     InvalidValueBehavior="AllowLeaveEditor"
+                                    DisplayMember="Name"
+                                    ValueMember="DocCode"
                                     ItemsSource="{Binding NomenklCategoryCollection}"
                                     EditValue="{Binding NomenklMain.CategoryDC, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
                                     SelectedItem="{Binding NomenklMain.NomenklCategory, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}">
@@ -113,10 +113,10 @@
                     <dxe:ComboBoxEdit VerticalAlignment="Center"
                                       AutoComplete="True"
                                       ItemsSource="{Binding NomenklTypeCollection}"
-                                      EditValue="{Binding NomenklMain.NomenklTypeDC,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
-                                      SelectedItem="{Binding NomenklMain.NomenklType, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                       DisplayMember="Name"
                                       ValueMember="DocCode"
+                                      EditValue="{Binding NomenklMain.NomenklTypeDC,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
+                                      SelectedItem="{Binding NomenklMain.NomenklType, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                                       InvalidValueBehavior="AllowLeaveEditor"
                                       Width="300">
                         <dxe:ComboBoxEdit.Buttons>
@@ -127,11 +127,11 @@
                     <Label Margin="10,0,5,0" VerticalAlignment="Center">Вид продукции</Label>
                     <dxe:ComboBoxEdit Name="prodeuctLookUpEdit"
                                       VerticalAlignment="Center"
-                                      DisplayMember="Name"
-                                      ValueMember="DocCode"
                                       Width="250"
                                       PopupMinWidth="400"
                                       ItemsSource="{Binding NomenklProductCollection}"
+                                      DisplayMember="Name"
+                                      ValueMember="DocCode"
                                       EditValue="{Binding NomenklMain.ProductTypeDC,
                                         UpdateSourceTrigger=PropertyChanged, 
                         ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
@@ -145,9 +145,9 @@
                     AutoComplete="True"
                     Margin="0,0,25,0"
                     ItemsSource="{Binding UnitCollection, Mode=TwoWay}"
-                    EditValue="{Binding NomenklMain.UnitDC,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     DisplayMember="Name"
                     ValueMember="DocCode"
+                    EditValue="{Binding NomenklMain.UnitDC,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     Width="250"
                     SelectedItem="{Binding NomenklMain.Unit, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
                     InvalidValueBehavior="AllowLeaveEditor">
@@ -159,12 +159,12 @@
                 <dxe:ComboBoxEdit Name="EditCountry"
                                   Margin="20,0,0,0"
                                   AutoComplete="True"
-                                  DisplayMember="Name"
-                                  ValueMember="Id"
                                   Width="250"
                                   VerticalAlignment="Center"
                                   HorizontalAlignment="Left"
                                   ItemsSource="{Binding CountryCollection}"
+                                  DisplayMember="Name"
+                                  ValueMember="DocCode"
                                   EditValue="{Binding NomenklMain.Country.Id,UpdateSourceTrigger=PropertyChanged}"
                                   SelectedItem="{Binding NomenklMain.Country, UpdateSourceTrigger=PropertyChanged}"
                                   AllowDefaultButton="False">

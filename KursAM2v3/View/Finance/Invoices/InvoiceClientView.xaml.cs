@@ -159,9 +159,9 @@ namespace KursAM2.View.Finance.Invoices
             gridRows.TotalSummary.Add(new GridSummaryItem
             {
                 SummaryType = SummaryItemType.Sum,
-                ShowInColumn = "SFT_SUMMA_NDS",
+                ShowInColumn = "NDSSumma",
                 DisplayFormat = "{0:n2}",
-                FieldName = "SFT_SUMMA_NDS"
+                FieldName = "NDSSumma"
             });
         }
 

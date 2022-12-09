@@ -6,6 +6,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 
 // ReSharper disable InconsistentNaming

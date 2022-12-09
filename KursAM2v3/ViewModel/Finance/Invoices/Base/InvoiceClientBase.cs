@@ -6,6 +6,7 @@ using System.Linq;
 using Data;
 using KursDomain;
 using KursDomain.Documents.Invoices;
+using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance.Invoices.Base
@@ -30,7 +31,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             Receiver = GlobalOptions.ReferencesCache.GetKontragent(doc.ReceiverDC) as Kontragent;
             CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(doc.CentOtvetstDC) as CentrResponsibility;
             VzaimoraschetType =
-                GlobalOptions.ReferencesCache.GetMutualSettlementType(doc.VzaimoraschetTypeDC) as MutualSettlementType;
+                GlobalOptions.ReferencesCache.GetNomenklProductType(doc.VzaimoraschetTypeDC) as NomenklProductType;
             PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(doc.PayConditionDC) as PayCondition;
             InnerNumber = doc.InnerNumber;
             OuterNumber = doc.OuterNumber;
@@ -59,7 +60,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public decimal DocCode { get; set; }
         public Guid Id { get; set; }
         public CentrResponsibility CO { get; set; }
-        public MutualSettlementType VzaimoraschetType { get; set; }
+        public NomenklProductType VzaimoraschetType { get; set; }
         public PayForm FormRaschet { get; set; }
         public DateTime DocDate { get; set; }
         public int InnerNumber { get; set; }

@@ -14,8 +14,13 @@ using KursDomain.IReferences.Kontragent;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Bank,nq} {RashAccount,nq}")]
-public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount>
+public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     [Display(AutoGenerateField = true, Name = "Корр.счет")]
     public string CorrAccount => Bank?.CorrAccount;
 

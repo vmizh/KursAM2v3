@@ -6,6 +6,7 @@ using System.Linq;
 using Data;
 using KursDomain;
 using KursDomain.Documents.Invoices;
+using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance.Invoices.Base
@@ -43,7 +44,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             IsAccepted = doc.IsAccepted ?? false;
             Note = doc.Note;
             CREATOR = doc.Creator;
-            FormRasche = GlobalOptions.ReferencesCache.GetPayForm(doc.FormRaschetDC) as PayForm;
+            FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(doc.FormRaschetDC) as PayForm;
             IsNDSInPrice = doc.IsNDSInPrice ?? false;
             CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(doc.CO_DC) as CentrResponsibility;
             if (!isLoadDetails) return;
@@ -70,7 +71,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public bool IsAccepted { get; set; }
         public string Note { get; set; }
         public string CREATOR { get; set; }
-        public PayForm FormRasche { get; set; }
+        public PayForm FormRaschet { get; set; }
         public bool IsNDSInPrice { get; set; }
         public CentrResponsibility CO { get; set; }
         public Kontragent KontrReceiver { get; set; }
@@ -89,9 +90,9 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             var Unit = Nomenkl?.Unit;
             Price = row.Price ?? 0;
             Quantity = row.Quantity;
-            SFT_NDS_PERCENT = row.NDSPercent;
-            SFT_SUMMA_NAKLAD = row.NakladSumma;
-            SFT_SUMMA_NDS = row.NDSSumma;
+            NDSPercent = row.NDSPercent;
+            SummaNaklad = row.NakladSumma;
+            NDSSumma = row.NDSSumma;
             SFT_SUMMA_K_OPLATE = row.Summa;
             Summa = row.Summa ?? 0;
             IsUsluga = Nomenkl.IsUsluga;
@@ -118,9 +119,9 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public Unit Unit { get; set; }
         public decimal Price { get; set; }
         public decimal Quantity { get; set; }
-        public decimal SFT_NDS_PERCENT { get; set; }
-        public decimal? SFT_SUMMA_NAKLAD { get; set; }
-        public decimal? SFT_SUMMA_NDS { get; set; }
+        public decimal NDSPercent { get; set; }
+        public decimal? SummaNaklad { get; set; }
+        public decimal? NDSSumma { get; set; }
         public decimal? SFT_SUMMA_K_OPLATE { get; set; }
         public decimal Summa { get; set; }
         public bool IsUsluga { get; }

@@ -34,6 +34,7 @@ namespace KursAM2.ViewModel.Logistiks
         private bool myIsShowAll;
         private int myProgressLoaded;
         private DateTime myStartDate;
+        private bool myShowProgress;
 
         public NomenklMoveOnSkladWindowViewModel()
         {
@@ -61,6 +62,17 @@ namespace KursAM2.ViewModel.Logistiks
                 myIsDataLoaded = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(IsDataNotLoaded));
+            }
+        }
+
+        public bool ShowProgress
+        {
+            get => myShowProgress;
+            set
+            {
+                if (myShowProgress == value) return;
+                myShowProgress = value;
+                RaisePropertyChanged();
             }
         }
 
@@ -1085,6 +1097,9 @@ namespace KursAM2.ViewModel.Logistiks
                 || nl.QuantityIn != 0 || nl.QuantityOut != 0 || nl.QuantityEnd != 0));
             RaisePropertyChanged(nameof(NomenklMoveList));
             IsDataLoaded = Visibility.Visible;
+            ShowProgress = false;
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+            IsCanRefresh = true;
         }
 
 
@@ -1108,7 +1123,7 @@ namespace KursAM2.ViewModel.Logistiks
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var sklDCList = ctx.NomenklMoveForCalc.Select(_ => _.StoreDC).Distinct();
+                var sklDCList = ctx.NomenklMoveForCalc.Select(_ => _.StoreDC).Distinct().AsNoTracking();
                 var skladsInfo = new Dictionary<decimal, List<NomenklQuantityInfo>>();
                 var moveInfo = new Dictionary<decimal, List<NomenklMoveInfo>>();
                 foreach (var dc in sklDCList)
@@ -1230,6 +1245,9 @@ namespace KursAM2.ViewModel.Logistiks
                 NomenklMoveList = new ObservableCollection<NomenklMoveOnSkladViewModel>(listTemp);
                 RaisePropertyChanged(nameof(NomenklMoveList));
                 IsDataLoaded = Visibility.Visible;
+                ShowProgress = false;
+                GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+                IsCanRefresh = true;
             }
         }
 
@@ -1253,8 +1271,11 @@ namespace KursAM2.ViewModel.Logistiks
         {
             DocumentList.Clear();
             NomenklMoveList.Clear();
-            await Task.Run(() => RunPrgressBar());
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
+            IsCanRefresh = false;
+           // await Task.Run(() => RunPrgressBar());
             IsDataLoaded = Visibility.Collapsed;
+            ShowProgress = true;
             if (CurrentSklad == null)
                 await Task.Run(() => LoadForAllSklads4());
             else

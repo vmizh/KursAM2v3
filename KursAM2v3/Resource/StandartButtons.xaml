@@ -42,6 +42,7 @@
                 </Setter>
                 <Setter Property="RenderTransformOrigin" Value=".5,.5" />
             </Trigger>
+            <DataTrigger Binding="{Binding Path=Is}"></DataTrigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
     <ControlTemplate x:Key="buttonDocumentAdd" TargetType="{x:Type Button}">

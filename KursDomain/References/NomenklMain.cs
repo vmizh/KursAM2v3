@@ -7,9 +7,21 @@ using KursDomain.IReferences.Nomenkl;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{Id} {NomenklNumber,nq} {Name,nq}")]
-public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain>
+public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain>, IComparable<NomenklMain>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     public decimal? DefaultNDSPercent { get; set; }
+
+    public int CompareTo(NomenklMain other)
+    {
+        if (ReferenceEquals(this, other)) return 0;
+        if (ReferenceEquals(null, other)) return 1;
+        return Id.CompareTo(other.Id);
+    }
 
     public Guid Id { get; set; }
 
@@ -22,6 +34,7 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
 
     public string Name { get; set; }
     public string Notes { get; set; }
+    // ReSharper disable once UnassignedGetOnlyAutoProperty
     public string Description { get; }
     public string NomenklNumber { get; set; }
     public IUnit Unit { get; set; }
@@ -91,6 +104,8 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
 
     public override int GetHashCode()
     {
+        // ReSharper disable once NonReadonlyMemberInGetHashCode
         return Id.GetHashCode();
     }
+    
 }

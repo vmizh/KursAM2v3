@@ -131,7 +131,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void RefreshData(object data)
         {
-            //Documents = new ObservableCollection<WarehouseOrderIn>();
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             try
             {
                 var rows = new List<WarehouseOrderIn>();
@@ -153,6 +153,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
             RaisePropertyChanged(nameof(Documents));
             SearchText = "";
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
         }
 
         public override void DocumentOpen(object form)

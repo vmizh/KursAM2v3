@@ -7,8 +7,13 @@ using KursDomain.IReferences.Nomenkl;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class NomenklType : IDocCode, IName, INomenklType, IEquatable<NomenklType>
+public class NomenklType : IDocCode, IName, INomenklType, IEquatable<NomenklType>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     public decimal DocCode { get; set; }
 
     public bool Equals(NomenklType other)

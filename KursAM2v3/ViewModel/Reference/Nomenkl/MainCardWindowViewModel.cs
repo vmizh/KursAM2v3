@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -44,7 +46,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 DocNewEmpty(null);
                 if (grp != null)
                 {
-                    NomenklMain.NomenklGroup = NomenklCategoryCollection.Single(_ => _.DocCode == grp.DocCode);
+                    NomenklMain.NomenklCategory = NomenklCategoryCollection.Single(_ => _.DocCode == grp.DocCode);
                     NomenklMain.CategoryDC = grp.DocCode;
                 }
             }
@@ -64,23 +66,23 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public ReferenceWindowViewModel ParentReference { set; get; }
 
-        public ObservableCollection<NomenklProductType> NomenklTypeCollection { set; get; } =
-            new ObservableCollection<NomenklProductType>();
+        public ObservableCollection<NomenklType> NomenklTypeCollection { set; get; } =
+            new ObservableCollection<NomenklType>();
 
         public ObservableCollection<NomenklProductKind> NomenklProductCollection { set; get; } =
             new ObservableCollection<NomenklProductKind>();
 
-        public ObservableCollection<NomenklGroupViewModel> NomenklCategoryCollection { set; get; } =
-            new ObservableCollection<NomenklGroupViewModel>();
+        public ObservableCollection<NomenklGroup> NomenklCategoryCollection { set; get; } =
+            new ObservableCollection<NomenklGroup>();
 
-        public ObservableCollection<CountriesViewModel> CountryCollection { set; get; } =
-            new ObservableCollection<CountriesViewModel>();
+        public ObservableCollection<CountriesViewModel> CountryCollection { set; get; }
+            = new ObservableCollection<CountriesViewModel>();
 
         public ObservableCollection<Unit> UnitCollection { set; get; } = new ObservableCollection<Unit>();
 
         public override bool IsCanSaveData => NomenklMain != null && NomenklMain.State != RowStatus.NotEdited &&
                                               NomenklMain.Unit != null && NomenklMain.ProductType != null &&
-                                              NomenklMain.NomenklGroup != null &&
+                                              NomenklMain.NomenklCategory != null &&
                                               !string.IsNullOrEmpty(NomenklMain.Name);
 
         //private NomenklProductViewModel myNomenklProduct;
@@ -89,7 +91,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get => NomenklMain?.ProductType;
             set
             {
-                if (NomenklMain?.ProductType != null && Equals(NomenklMain.ProductType, value)) return;
+                if (NomenklMain?.ProductType != null && NomenklMain.ProductType.Equals(value)) return;
                 if (NomenklMain != null) NomenklMain.ProductType = value;
                 RaisePropertyChanged();
             }
@@ -100,7 +102,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             get => myNomenklMain;
             set
             {
-                if (Equals(myNomenklMain, value)) return;
+                if (myNomenklMain != null && myNomenklMain.Equals(value)) return;
                 myNomenklMain = value;
                 RaisePropertyChanged();
             }
@@ -137,14 +139,24 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 foreach (var t in ctx.Countries.ToList())
                     CountryCollection.Add(new CountriesViewModel(t));
                 foreach (var t in ctx.SD_119.ToList())
-                    NomenklTypeCollection.Add(new NomenklProductType(t));
+                {
+                    var item = new NomenklType();
+                    item.LoadFromEntity(t);
+                    NomenklTypeCollection.Add(item);
+                }
+
                 foreach (var c in ctx.SD_82.ToList())
-                    NomenklCategoryCollection.Add(new NomenklGroupViewModel(c));
+                {
+                    var n = new NomenklGroup();
+                    n.LoadFromEntity(c);
+                    NomenklCategoryCollection.Add(n);
+                }
+
                 foreach (var c in ctx.SD_175.ToList())
                 {
-                    var newUnit = new Unit();
-                    newUnit.LoadFromEntity(c);
-                    UnitCollection.Add(newUnit);
+                    var u = new Unit();
+                    u.LoadFromEntity(c);
+                    UnitCollection.Add(u);
                 }
 
                 foreach (var c in ctx.SD_50.ToList())
@@ -298,6 +310,11 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         tnx.Commit();
                         NomenklMain.myState = RowStatus.NotEdited;
                         RaisePropertyChanged(nameof(IsCanSaveData));
+                        ParentReference?.LoadNomMainForCategory(null);
+                        var dcs = new List<decimal>(GlobalOptions.ReferencesCache.GetNomenklsAll()
+                            .Where(_ => ((IDocGuid)_.NomenklMain).Id == NomenklMain.Id)
+                            .Cast<KursDomain.References.Nomenkl>().Select(_ => _.DocCode));
+                        //foreach (var n in dcs) MainReferences.LoadNomenkl(n);
                     }
                     catch (Exception ex)
                     {
@@ -321,7 +338,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 Id = Guid.NewGuid(),
                 Name = NomenklMain.Name,
                 FullName = NomenklMain.FullName,
-                NomenklGroup = NomenklMain.NomenklGroup,
+                NomenklCategory = NomenklMain.NomenklCategory,
                 NomenklType = NomenklMain.NomenklType,
                 Country = NomenklMain.Country,
                 Note = NomenklMain.Note,
@@ -370,7 +387,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         {
             var frm = new TreeListFormBaseView
             {
-                LayoutManagerName = "NomenklGroup",
+                LayoutManagerName = "NomenklCategory",
                 Owner = Application.Current.MainWindow
             };
             var dtx = new CategoryReferenceWindowViewModel { Form = frm };

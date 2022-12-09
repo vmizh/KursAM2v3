@@ -31,6 +31,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Currency;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
+using KursDomain.IDocuments.DistributeOverhead;
 using KursDomain.Menu;
 using KursDomain.References;
 using InvoiceProviderRow = KursDomain.Documents.Invoices.InvoiceProviderRow;
@@ -215,8 +216,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     if (Form is DistributedNakladView frm)
                     {
                         var col = frm.gridNaklad.Columns.GetColumnByName("Rate");
-                        col.ReadOnly = myCurrentNakladInvoice.DistributeType != Repositories.DistributeNakladRepository
-                            .DistributeNakladTypeEnum.NotDistribute;
+                        col.ReadOnly = myCurrentNakladInvoice.DistributeType != DistributeNakladTypeEnum.NotDistribute;
                     }
 
                 RaisePropertyChanged();
@@ -391,23 +391,23 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             decimal allSumma = 0;
             switch (CurrentNakladInvoice.DistributeType)
             {
-                case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.ManualValue:
+                case DistributeNakladTypeEnum.ManualValue:
                     break;
-                case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.NotDistribute:
+                case DistributeNakladTypeEnum.NotDistribute:
                     break;
-                case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.PriceValue:
+                case DistributeNakladTypeEnum.PriceValue:
                     allSumma = Tovars.Sum(_ => _.Price);
                     break;
-                case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.QuantityValue:
+                case DistributeNakladTypeEnum.QuantityValue:
                     allSumma = Tovars.Sum(_ => _.Quantity);
                     break;
-                case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.SummaValue:
+                case DistributeNakladTypeEnum.SummaValue:
                     allSumma = Tovars.Sum(_ => _.Price * _.Quantity);
                     break;
-                case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.VolumeValue:
+                case DistributeNakladTypeEnum.VolumeValue:
                     allSumma = 0;
                     break;
-                case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.WeightValue:
+                case DistributeNakladTypeEnum.WeightValue:
                     allSumma = 0;
                     break;
             }
@@ -428,24 +428,24 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     decimal prc = 0;
                     switch (CurrentNakladInvoice.DistributeType)
                     {
-                        case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.ManualValue:
+                        case DistributeNakladTypeEnum.ManualValue:
                             break;
-                        case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.NotDistribute:
+                        case DistributeNakladTypeEnum.NotDistribute:
                             break;
-                        case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.PriceValue:
+                        case DistributeNakladTypeEnum.PriceValue:
                             prc = Tovars.First(_ => _.Id == inf.RowId).Price;
                             break;
-                        case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.QuantityValue:
+                        case DistributeNakladTypeEnum.QuantityValue:
                             prc = Tovars.First(_ => _.Id == inf.RowId).Quantity;
                             break;
-                        case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.SummaValue:
+                        case DistributeNakladTypeEnum.SummaValue:
                             var p = Tovars.First(_ => _.Id == inf.RowId);
                             prc = p.Quantity * p.Price;
                             break;
-                        case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.VolumeValue:
+                        case DistributeNakladTypeEnum.VolumeValue:
                             prc = 0;
                             break;
-                        case Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.WeightValue:
+                        case DistributeNakladTypeEnum.WeightValue:
                             prc = 0;
                             break;
                     }
@@ -508,7 +508,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     if (col.FieldName == "Rate")
                     {
                         if (myCurrentNakladInvoice?.DistributeType ==
-                            Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.NotDistribute)
+                            DistributeNakladTypeEnum.NotDistribute)
                             col.ReadOnly = false;
                         else
                             col.ReadOnly = true;
@@ -682,7 +682,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     var naklinv = NakladInvoices
                         .Single(_ => _.Invoice != null && _.Invoice.Id == CurrentDistributeNaklad.InvoiceNakladId);
                     ctrl.NakladSummaColumn.ReadOnly = naklinv.DistributeType !=
-                                                      Repositories.DistributeNakladRepository.DistributeNakladTypeEnum
+                                                      DistributeNakladTypeEnum
                                                           .ManualValue;
                 }
 
@@ -693,7 +693,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                             _.AccruedAmountRow != null &&
                             _.AccruedAmountRow.Id == CurrentDistributeNaklad.AccrualAmountId);
                     ctrl.NakladSummaColumn.ReadOnly = naklinv?.DistributeType !=
-                                                      Repositories.DistributeNakladRepository.DistributeNakladTypeEnum
+                                                      DistributeNakladTypeEnum
                                                           .ManualValue;
                 }
             }
@@ -930,7 +930,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             {
                 var col = frm.gridNaklad.Columns.GetColumnByName("Rate");
                 if (myCurrentNakladInvoice.DistributeType ==
-                    Repositories.DistributeNakladRepository.DistributeNakladTypeEnum.NotDistribute)
+                    DistributeNakladTypeEnum.NotDistribute)
                     col.ReadOnly = false;
                 else
                     col.ReadOnly = true;

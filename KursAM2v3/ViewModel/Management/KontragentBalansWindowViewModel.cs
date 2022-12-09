@@ -209,6 +209,7 @@ namespace KursAM2.ViewModel.Management
         {
             try
             {
+                GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
                 using (var ent = GlobalOptions.GetEntities())
                 {
                     if (GlobalOptions.ReferencesCache.GetKontragent(dc) == null)
@@ -292,6 +293,10 @@ namespace KursAM2.ViewModel.Management
             {
                 WindowManager.ShowError(ex);
                 return null;
+            }
+            finally
+            {
+                GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             }
         }
 

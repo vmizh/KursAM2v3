@@ -248,6 +248,11 @@
     <Compile Include="Auxiliary\MessageManager.cs" />
     <Compile Include="Dialogs\InvoiceProviderDialogs.cs" />
     <Compile Include="Dialogs\StandartDialogs.cs" />
+    <Compile Include="DragAndDrop\CustomDataControlDragElement.cs" />
+    <Compile Include="DragAndDrop\CustomGridDragDropManager.cs" />
+    <Compile Include="DragAndDrop\CustomTreeListDragDropManager.cs" />
+    <Compile Include="DragAndDrop\ExternalDragDropViewInfo.cs" />
+    <Compile Include="DragAndDrop\IDragRowVisibilitySupport.cs" />
     <Compile Include="Managers\BankOperationsManager.cs" />
     <Compile Include="Managers\Base\AttributeHelper.cs" />
     <Compile Include="Managers\Base\BaseItemManager.cs" />
@@ -321,6 +326,7 @@
     <Compile Include="ViewModel\Finance\AccruedAmount\SelectCashBankDialogViewModel.cs" />
     <Compile Include="ViewModel\Finance\Invoices\Base\InvoiceClientBase.cs" />
     <Compile Include="ViewModel\Finance\Invoices\Base\InvoiceProviderBase.cs" />
+    <Compile Include="ViewModel\Finance\NomenklCurrencyConvert\INomenklCurrencyConvertRepository.cs" />
     <Compile Include="ViewModel\Finance\SelectCashBankDialogView.xaml.cs">
       <DependentUpon>SelectCashBankDialogView.xaml</DependentUpon>
     </Compile>
@@ -483,6 +489,9 @@
     </Compile>
     <Compile Include="View\Finance\AccruedAmount\DialogSelectCashBankView.xaml.cs">
       <DependentUpon>DialogSelectCashBankView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Finance\Invoices\NomenklCurrencyConvertView.xaml.cs">
+      <DependentUpon>NomenklCurrencyConvertView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Finance\UC\InvoiceClientSelectRowsView.xaml.cs">
       <DependentUpon>InvoiceClientSelectRowsView.xaml</DependentUpon>
@@ -1308,6 +1317,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Finance\AccruedAmount\DialogSelectCashBankView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Finance\Invoices\NomenklCurrencyConvertView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -6,6 +6,7 @@
                  xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                 xmlns:helpers="http://schemas.devexpress.com/winfx/2008/xaml/editors/internal"
                  Title="Движение товаров на складах" Height="350" Width="600"
                  Style="{StaticResource DXSplashServices}">
     <dx:ThemedWindow.HeaderItems>
@@ -14,6 +15,9 @@
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
+    <dx:ThemedWindow.Resources>
+        <helpers:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </dx:ThemedWindow.Resources>
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
             <control:WindowMenu Height="60" DockPanel.Dock="Top" />
@@ -50,12 +54,24 @@
             </StackPanel>
         </DockPanel>
         <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
-            <Label Content="Загрузка "/>
-            <dxe:ProgressBarEdit  Width="100" EditValue="{Binding ProgressLoaded, UpdateSourceTrigger=PropertyChanged}"
-                                  Visibility="{Binding IsDataNotLoaded }"
-                                  Minimum="0"
-                                  Maximum="100"/>
-            <Label Content="Загружен" Visibility="{Binding IsDataLoaded, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label Content="Загрузка "
+                   Padding="0 6 0 0"/>
+            <dxe:ProgressBarEdit Name="progressBarEdit1" 
+                                 Width="400" Focusable="False" IsTabStop="False" IsPercent="False"
+                                 Visibility="{Binding ShowProgress, 
+                Converter={StaticResource BooleanToVisibilityConverter}}" 
+                                 HorizontalAlignment="Left" 
+                                 Height="14" 
+                                 VerticalAlignment="Bottom" 
+                                 AdditionalForeground="#FFFFFBFB" 
+                                 ShowBorder="False">
+                <dxe:ProgressBarEdit.StyleSettings>
+                    <dxe:ProgressBarMarqueeStyleSettings/>
+                </dxe:ProgressBarEdit.StyleSettings>
+            </dxe:ProgressBarEdit>
+            <Label Content="Загружен" 
+                   Visibility="{Binding IsDataLoaded, UpdateSourceTrigger=PropertyChanged}"
+                   Padding="0 6 0 0" />
         </StackPanel>
         <dxlc:LayoutControl Padding="0" x:Name="mainLayoutControl">
             <dxlc:LayoutGroup Orientation="Vertical">

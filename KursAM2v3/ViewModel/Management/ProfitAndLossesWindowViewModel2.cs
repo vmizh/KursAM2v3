@@ -1204,6 +1204,7 @@ namespace KursAM2.ViewModel.Management
 
         public override void RefreshData(object obj)
         {
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             if (Manager == null)
             {
                 Manager = new ProfitAndLossesManager(this)
@@ -1315,6 +1316,11 @@ namespace KursAM2.ViewModel.Management
             {
                 WindowManager.ShowError(ex);
             }
+            finally
+            {
+                GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+            }
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
         }
 
         private void ResetCurrencyColumns()

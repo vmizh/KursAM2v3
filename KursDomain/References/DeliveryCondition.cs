@@ -7,8 +7,13 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class DeliveryCondition : IDeliveryCondition, IDocCode, IName, IEquatable<DeliveryCondition>
+public class DeliveryCondition : IDeliveryCondition, IDocCode, IName, IEquatable<DeliveryCondition>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     public decimal DocCode { get; set; }
 
     public bool Equals(DeliveryCondition other)

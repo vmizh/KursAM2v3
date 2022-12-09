@@ -132,7 +132,6 @@
                               IsEnabled="{Binding IsNotCurrencyChange}"
                               Height="25"
                               SelectedItem="{Binding SHPZ, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                              DisplayMember="Name"
                               Margin="0 0 0 5" />
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Счет фактура">

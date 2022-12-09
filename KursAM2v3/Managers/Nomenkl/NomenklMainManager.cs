@@ -1,10 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Core;
+using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.References;
+using NomenklProductType = KursDomain.References.NomenklProductType;
 
 namespace KursAM2.Managers.Nomenkl
 {
@@ -28,7 +31,7 @@ namespace KursAM2.Managers.Nomenkl
                     Note = g.Note,
                     IsUsluga = g.IsUsluga,
                     IsNakladExpense = g.IsNakladExpense,
-                    NomenklType = g.SD_119 != null ? new NomenklProductType(g.SD_119) : null,
+                    NomenklType = g.SD_119 != null ? GlobalOptions.ReferencesCache.GetNomenklType(g.SD_119.DOC_CODE) as NomenklType : null,
                     ProductType = g.SD_50 != null ? new NomenklProductKind(g.SD_50) : null
                 }));
             }

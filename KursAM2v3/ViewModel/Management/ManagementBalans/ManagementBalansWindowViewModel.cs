@@ -424,6 +424,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
 
         public override void RefreshData(object obj)
         {
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             myBalansBuilder = new ManagementBalansBuilder();
             ExtendRows.Clear();
             ExtendRowsActual.Clear();
@@ -507,6 +508,11 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             {
                 WindowManager.ShowError(ex);
             }
+            finally
+            {
+                GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+            }
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
         }
 
         public void CalcStockHolder()

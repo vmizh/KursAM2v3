@@ -232,6 +232,7 @@ namespace KursAM2.Managers
                             var guidId = Guid.NewGuid();
                             var inNum = ctx.SD_24.Any() ? ctx.SD_24.Max(_ => _.DD_IN_NUM) + 1 : 1;
                             newDC = ctx.SD_24.Any() ? ctx.SD_24.Max(_ => _.DOC_CODE) + 1 : 10240000001;
+                            doc.DocCode = newDC;
                             ctx.SD_24.Add(new SD_24
                             {
                                 DOC_CODE = newDC,

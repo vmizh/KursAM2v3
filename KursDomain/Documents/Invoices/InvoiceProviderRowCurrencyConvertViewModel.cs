@@ -6,6 +6,11 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.ICommon;
+using KursDomain.IDocuments.DistributeOverhead;
+using KursDomain.IDocuments.Finance;
+using KursDomain.IReferences;
+using KursDomain.IReferences.Nomenkl;
 using KursDomain.References;
 
 namespace KursDomain.Documents.Invoices;
@@ -24,7 +29,9 @@ public enum DirectCalc
 [SuppressMessage("ReSharper", "MemberCanBePrivate.Global")]
 [MetadataType(typeof(InvPrvdRowCrsConvertLayoutData_FluentAPI))]
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
-public sealed class InvoiceProviderRowCurrencyConvertViewModel : RSViewModelBase, IEntity<TD_26_CurrencyConvert>
+public sealed class InvoiceProviderRowCurrencyConvertViewModel : RSViewModelBase, IEntity<TD_26_CurrencyConvert>,
+    ISFProviderNomenklCurrencyConvert
+
 {
     private TD_26_CurrencyConvert myEntity;
 
@@ -48,6 +55,16 @@ public sealed class InvoiceProviderRowCurrencyConvertViewModel : RSViewModelBase
             RaisePropertyChanged();
         }
     }
+
+    public INomenkl NomenklFrom { get; set; }
+    public INomenkl NomenklTo { get => GlobalOptions.ReferencesCache.GetNomenkl(NomenklId) as Nomenkl;
+        set
+        {
+            if (Entity.NomenklId == ((IDocGuid)value).Id) return;
+            Entity.NomenklId = ((IDocGuid)value).Id;
+            RaisePropertyChanged();
+            RaisePropertyChanged(nameof(NomenkNumber));
+        } }
 
     public override decimal DocCode
     {
@@ -150,6 +167,9 @@ public sealed class InvoiceProviderRowCurrencyConvertViewModel : RSViewModelBase
         }
     }
 
+    public decimal FromPrice { get; set; }
+    public decimal FromPriceWithNaklad { get; set; }
+
     public decimal OLdPrice { set; get; }
     public decimal OLdNakladPrice { set; get; }
 
@@ -175,6 +195,9 @@ public sealed class InvoiceProviderRowCurrencyConvertViewModel : RSViewModelBase
         }
     }
 
+    public decimal FromSumma { get; }
+    public decimal FromSummaWithNaklad { get; }
+
     public decimal Summa
     {
         get => Entity.Summa;
@@ -196,6 +219,12 @@ public sealed class InvoiceProviderRowCurrencyConvertViewModel : RSViewModelBase
             RaisePropertyChanged();
         }
     }
+
+    public decimal SFDocCode { get; set; }
+    public int SFCode { get; set; }
+    public IWarehouse Warehouse { get; set; }
+    public IEnumerable<IDistributeNakladRow> NakladRows { get; set; }
+    public IInvoiceProviderRow InvoiceProviderRow { get; set; }
 
     public override string Note
     {

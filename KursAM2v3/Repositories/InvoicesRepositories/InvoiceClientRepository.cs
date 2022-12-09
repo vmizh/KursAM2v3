@@ -6,6 +6,7 @@ using Data;
 using Data.Repository;
 using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain.Documents.Invoices;
+using KursDomain.IDocuments.Finance;
 
 namespace KursAM2.Repositories.InvoicesRepositories
 {

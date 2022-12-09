@@ -11,8 +11,13 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq} {ParentDC,nq")]
-public class ClientCategory : IClientCategory, IDocCode, IName, IEquatable<ClientCategory>
+public class ClientCategory : IClientCategory, IDocCode, IName, IEquatable<ClientCategory>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     public decimal DocCode { get; set; }
 
     public bool Equals(ClientCategory other)

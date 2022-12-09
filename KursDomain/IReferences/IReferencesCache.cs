@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using KursDomain.IReferences.Kontragent;
 using KursDomain.IReferences.Nomenkl;
 
@@ -10,6 +11,10 @@ namespace KursDomain.IReferences;
 /// </summary>
 public interface IReferencesCache
 {
+    public bool IsChangeTrackingOn { set; get; }
+
+    public DbContext DBContext { get; }
+
     ICashBox GetCashBox(decimal? dc);
     ICashBox GetCashBox(decimal dc);
     IEnumerable<ICashBox> GetCashBoxAll();
@@ -20,6 +25,11 @@ public interface IReferencesCache
 
     INomenklType GetNomenklType(decimal? dc);
     IEnumerable<INomenklType> GetNomenklTypeAll();
+
+    INomenklProductType GetNomenklProductType(decimal? dc);
+    INomenklProductType GetNomenklProductType(decimal dc);
+
+    IEnumerable<INomenklProductType> GetNomenklProductTypesAll();
 
     IProductType GetProductType(decimal? dc);
     IProductType GetProductType(decimal dc);
@@ -47,6 +57,12 @@ public interface IReferencesCache
     INomenkl GetNomenkl(decimal? dc);
     INomenkl GetNomenkl(decimal dc);
     IEnumerable<INomenkl> GetNomenklsAll();
+
+
+    INomenklMain GetNomenklMain(Guid? id);
+    INomenklMain GetNomenklMain(Guid id);
+    IEnumerable<INomenklMain> GetNomenklMainAll();
+
 
     INomenklGroup GetNomenklGroup(decimal? dc);
     IEnumerable<INomenklGroup> GetNomenklGroupAll();

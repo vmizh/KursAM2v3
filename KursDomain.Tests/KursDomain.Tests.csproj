@@ -67,6 +67,7 @@
     <Compile Include="KursConnetcTests.cs" />
     <Compile Include="Fakes\LocalKursDBContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReferenceCache\CashBoxCacheTests.cs" />
     <Compile Include="ReferenceCache\ReferencesCacheTests.cs" />
   </ItemGroup>
   <ItemGroup>

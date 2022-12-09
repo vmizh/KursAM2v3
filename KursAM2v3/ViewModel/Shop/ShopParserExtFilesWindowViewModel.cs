@@ -135,7 +135,7 @@ namespace KursAM2.ViewModel.Shop
                         KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(10430000001) as Kontragent,
                         CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(10400000012) as CentrResponsibility,
                         PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(11790000001) as PayCondition,
-                        VzaimoraschetType = GlobalOptions.ReferencesCache.GetMutualSettlementType(10770000005) as MutualSettlementType,
+                        VzaimoraschetType = GlobalOptions.ReferencesCache.GetNomenklProductType(10770000005) as NomenklProductType,
                         FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(11890000001) as PayForm,
                         IsNDSInPrice = true,
                         CREATOR = GlobalOptions.UserInfo.NickName,
@@ -162,7 +162,7 @@ namespace KursAM2.ViewModel.Shop
                             DocId = invoice.Document.Id,
                             Id = Guid.NewGuid(),
                             Code = Code,
-                            SFT_NDS_PERCENT = (decimal)(nom.NOM_NDS_PERCENT ?? Convert.ToDouble(GlobalOptions
+                            NDSPercent = (decimal)(nom.NOM_NDS_PERCENT ?? Convert.ToDouble(GlobalOptions
                                 .SystemProfile.Profile
                                 .FirstOrDefault(_ => _.SECTION == @"НОМЕНКЛАТУРА" && _.ITEM == @"НДС")
                                 ?.ITEM_VALUE)),

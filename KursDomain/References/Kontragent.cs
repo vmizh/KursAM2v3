@@ -18,8 +18,13 @@ using KursDomain.IReferences.Kontragent;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq} {Currency,nq}")]
-public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kontragent>
+public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kontragent>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     public Kontragent()
     {
         DocCode = -1;

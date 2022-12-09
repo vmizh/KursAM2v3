@@ -64,7 +64,7 @@
                             <dxg:TreeListControl.View>
                                 <dxg:TreeListView ShowTotalSummary="False"
                                                   Name="treeListPermissionStructView"
-                                                  ParentFieldName="CAT_PARENT_DC"
+                                                  ParentFieldName="ParentDC"
                                                   KeyFieldName="DocCode"
                                                   ShowAutoFilterRow="False"
                                                   EnableImmediatePosting="True">

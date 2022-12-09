@@ -12,8 +12,13 @@ using KursDomain.IReferences.Nomenkl;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq} {ParentDC,nq}")]
-public class NomenklGroup : IDocCode, IDocGuid, IName, INomenklGroup, IEquatable<NomenklGroup>
+public class NomenklGroup : IDocCode, IDocGuid, IName, INomenklGroup, IEquatable<NomenklGroup>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     public decimal DocCode { get; set; }
     public Guid Id { get; set; }
 

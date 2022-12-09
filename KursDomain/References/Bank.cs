@@ -15,8 +15,13 @@ namespace KursDomain.References;
 ///     Банк основные реквизиты
 /// </summary>
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq}")]
-public class Bank : IBank, IDocCode, IName, IEquatable<Bank>
+public class Bank : IBank, IDocCode, IName, IEquatable<Bank>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     [Display(AutoGenerateField = true, Name = "Корр.счет")]
     [MaxLength(30)]
     public string CorrAccount { get; set; }

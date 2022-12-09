@@ -59,6 +59,9 @@ namespace KursAM2.ViewModel.Reference
 
         public ObservableCollection<BankCashItem> BankCash { set; get; } = new ObservableCollection<BankCashItem>();
 
+        public ObservableCollection<SDRSchet> SHPZList { set; get; } =
+            new ObservableCollection<SDRSchet>(GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>());
+
         public ObservableCollection<BankCashItem> SelectedBankCash { set; get; } =
             new ObservableCollection<BankCashItem>();
 
@@ -535,7 +538,7 @@ namespace KursAM2.ViewModel.Reference
             if (old == null) return;
             old.BA_BANK_NAME = bAcc.BA_BANK_NAME;
             old.BA_ACC_SHORTNAME = bAcc.BA_ACC_SHORTNAME;
-            old.BA_BANKDC = bAcc.BA_BANKDC;
+            //old.BA_BANKDC = bAcc.BA_BANKDC;
             old.BA_CENTR_OTV_DC = bAcc.BA_CENTR_OTV_DC;
             old.BA_BANK_ACCOUNT = bAcc.BA_BANK_ACCOUNT;
             old.BA_CURRENCY = bAcc.BA_CURRENCY;

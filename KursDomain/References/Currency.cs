@@ -12,8 +12,13 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq}/{Id,nq} {Name,nq}")]
-public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currency>
+public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currency>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     private string _Code;
     private decimal _DocCode;
     private string _FullName;

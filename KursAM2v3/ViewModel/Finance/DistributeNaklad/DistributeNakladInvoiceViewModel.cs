@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Core.ViewModel.Base;
 using Data;
-using KursAM2.Repositories;
 using KursDomain;
 using KursDomain.ICommon;
+using KursDomain.IDocuments.DistributeOverhead;
 using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance.DistributeNaklad
@@ -67,9 +67,9 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         }
 
         [Display(Name = "Тип распределения")]
-        public DistributeNakladRepository.DistributeNakladTypeEnum DistributeType
+        public DistributeNakladTypeEnum DistributeType
         {
-            get => (DistributeNakladRepository.DistributeNakladTypeEnum)Entity.DistributeType;
+            get => (DistributeNakladTypeEnum)Entity.DistributeType;
             set
             {
                 if (Entity.DistributeType == (short)value) return;

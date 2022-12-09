@@ -38,8 +38,8 @@ namespace KursAM2.View.Finance.Invoices
             listSummaryFields.Add("Nomenkl", SummaryItemType.Count);
             listSummaryFields.Add("SFT_KOL", SummaryItemType.Sum);
             listSummaryFields.Add("Summa", SummaryItemType.Sum);
-            listSummaryFields.Add("SFT_SUMMA_NAKLAD", SummaryItemType.Sum);
-            listSummaryFields.Add("SFT_SUMMA_NDS", SummaryItemType.Sum);
+            listSummaryFields.Add("SummaNaklad", SummaryItemType.Sum);
+            listSummaryFields.Add("NDSSumma", SummaryItemType.Sum);
             listSummaryFields.Add("DDT_KOL_PRIHOD", SummaryItemType.Sum);
             InitializeComponent(); 
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;

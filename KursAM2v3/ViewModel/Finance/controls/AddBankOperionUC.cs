@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -36,6 +37,9 @@ namespace KursAM2.ViewModel.Finance.controls
             // ReSharper disable once VirtualMemberCallInConstructor
             WindowName = "Добавить операцию";
         }
+
+        public ObservableCollection<SDRSchet> SHPZList { set; get; } =
+            new ObservableCollection<SDRSchet>(GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>());
 
         public AddBankOperionUC(decimal docCode) : this()
         {

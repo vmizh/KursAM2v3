@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using KursDomain.References;
 
-namespace KursDomain.Documents.Invoices;
+namespace KursDomain.IDocuments.Finance;
 
 public interface IInvoiceClientRow
 {

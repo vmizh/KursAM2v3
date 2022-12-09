@@ -17,7 +17,7 @@ public class ReferencesCacheTests
         myTestOutputHelper = testOutputHelper;
     }
 
-    [Fact]
+    //[Fact]
     public void LoadCacheTest()
     {
         var context = new LocalKursDBContext();
@@ -52,7 +52,6 @@ public class ReferencesCacheTests
         Assert.Equal(8, cache.GetContractsTypeAll().Count());
         Assert.Equal(405, cache.GetBanksAll().Count());
         Assert.Equal(27, cache.GetBankAccountAll().Count());
-
         Assert.Equal(1172, cache.GetKontragentsAll().Count());
         Assert.Equal(27352, cache.GetNomenklsAll().Count());
     }

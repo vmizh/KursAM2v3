@@ -15,3 +15,8 @@ public interface ICashBox
     bool IsNoBalans { set; get; }
     IEnumerable<ICashBoxStartRests> StartRests { get; set; }
 }
+
+public interface ILoadFromEntity<T>
+{
+    void LoadFromEntity(T entity, IReferencesCache cache);
+}

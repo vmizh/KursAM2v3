@@ -40,6 +40,7 @@ using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using Reports.Base;
+using NomenklProductType = KursDomain.References.NomenklProductType;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -352,8 +353,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public List<PayForm> FormRaschetList => GlobalOptions.ReferencesCache.GetPayFormAll().Cast<PayForm>()
             .OrderBy(_ => _.Name).ToList();
 
-        public List<MutualSettlementType> VzaimoraschetTypeList => GlobalOptions.ReferencesCache
-            .GetMutualSettlementTypeAll().Cast<MutualSettlementType>()
+        public List<NomenklProductType> VzaimoraschetTypeList => GlobalOptions.ReferencesCache
+            .GetNomenklProductTypesAll().Cast<NomenklProductType>()
             .OrderBy(_ => _.Name).ToList();
 
         public List<PayCondition> PayConditionList => GlobalOptions.ReferencesCache.GetPayConditionAll()
@@ -507,7 +508,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Nomenkl = p.Nomenkl,
                         Quantity = p.Quantity,
                         Price = p.Price,
-                        SFT_NDS_PERCENT = p.NDSPercent,
+                        NDSPercent = p.NDSPercent,
                         PostUnit = p.Unit,
                         UchUnit = p.Unit,
                         Note = " ",
@@ -517,6 +518,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Entity = { SFT_POST_ED_IZM_DC = p.Unit.DocCode }
                     };
                     newRow.CalcRow();
+                    // ReSharper disable once PossibleNullReferenceException
                     switch (Document.Currency.DocCode)
                     {
                         case CurrencyCode.EUR:
@@ -634,7 +636,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             Nomenkl = item.Nomenkl,
                             Quantity = item.Quantity,
                             Price = 0,
-                            SFT_NDS_PERCENT = item.Nomenkl.DefaultNDSPercent ?? defaultNDS,
+                            NDSPercent = item.Nomenkl.DefaultNDSPercent ?? defaultNDS,
                             PostUnit = (Unit)item.Nomenkl.Unit,
                             UchUnit = (Unit)item.Nomenkl.Unit,
                             State = RowStatus.NewRow
@@ -967,7 +969,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     var r = new InvoiceProviderRow
                     {
                         DocCode = -1,
-                        SFT_NDS_PERCENT = nds,
+                        NDSPercent = nds,
                         Quantity = 1,
                         Price = 0,
                         Entity = { SFT_NEMENKL_DC = item.DocCode }
@@ -989,11 +991,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var q = Document.Facts.Where(_ => _.DDT_SPOST_DC == r.DocCode
                                                   && _.DDT_SPOST_ROW_CODE == r.Code).Sum(_ => _.DDT_KOL_PRIHOD);
                 // ReSharper disable once PossibleInvalidOperationException
-                Document.SummaFact += (decimal)r.SFT_SUMMA_K_OPLATE / r.Quantity * q;
+                Document.SummaFact += r.Summa / r.Quantity * q;
             }
 
             // ReSharper disable once NotResolvedInText
-            Document.RaisePropertyChanged("SF_KONTR_CRS_SUMMA");
+            Document.RaisePropertyChanged("Summa");
             // ReSharper disable once InvertIf
             if (Form is InvoiceClientView frm)
             {
@@ -1108,7 +1110,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 OLdPrice = CurrentRow.Price,
                 OLdNakladPrice = Math.Round(CurrentRow.Price +
                                             // ReSharper disable once PossibleInvalidOperationException
-                                            (CurrentRow.SFT_SUMMA_NAKLAD ?? 0) / CurrentRow.Quantity,
+                                            (CurrentRow.SummaNaklad ?? 0) / CurrentRow.Quantity,
                     2),
                 Quantity = CurrentRow.Quantity - oldQuan,
                 Rate = rate,
@@ -1199,7 +1201,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Nomenkl = n,
                         Quantity = 1,
                         Price = 0,
-                        SFT_NDS_PERCENT = n.DefaultNDSPercent ?? defaultNDS,
+                        NDSPercent = n.DefaultNDSPercent ?? defaultNDS,
                         PostUnit = (Unit)n.Unit,
                         UchUnit = (Unit)n.Unit,
                         Note = " ",
@@ -1269,7 +1271,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Nomenkl = n,
                     Quantity = 1,
                     Price = 0,
-                    SFT_NDS_PERCENT = n.DefaultNDSPercent ?? defaultNDS,
+                    NDSPercent = n.DefaultNDSPercent ?? defaultNDS,
                     PostUnit = (Unit)n.Unit,
                     UchUnit = (Unit)n.Unit,
                     Note = " ",
@@ -1338,7 +1340,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(item.DocCode) as Nomenkl,
                         Id = Guid.NewGuid(),
                         DocId = Document.Id,
-                        SFT_NDS_PERCENT = nds,
+                        NDSPercent = nds,
                         Quantity = 1,
                         PostUnit = (Unit)item.Unit,
                         UchUnit = (Unit)item.Unit,

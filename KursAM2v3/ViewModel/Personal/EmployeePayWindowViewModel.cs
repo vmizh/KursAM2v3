@@ -504,6 +504,7 @@ namespace KursAM2.ViewModel.Personal
 
         public override void RefreshData(object obj)
         {
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             CurrentEmploee = null;
             CurrentPeriod = null;
             CurrentPayDocument = null;
@@ -545,6 +546,7 @@ namespace KursAM2.ViewModel.Personal
             foreach (var t in tempMain)
                 EmployeeMain.Add(t);
             RaisePropertyChanged(nameof(EmployeeMain));
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             //if (mySelEmp == null) return;
         }
     }

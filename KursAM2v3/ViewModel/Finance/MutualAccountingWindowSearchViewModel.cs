@@ -117,6 +117,7 @@ namespace KursAM2.ViewModel.Finance
 
         public override void RefreshData(object obj)
         {
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             base.RefreshData(obj);
             SearchText = null;
             Documents.Clear();
@@ -173,6 +174,10 @@ namespace KursAM2.ViewModel.Finance
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
+            }
+            finally
+            {
+                GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             }
         }
 

@@ -8,71 +8,11 @@ using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
+using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 
 // ReSharper disable InconsistentNaming
 namespace KursDomain.Documents.Invoices;
-
-public interface IInvoiceProviderRow
-{
-    [Display(AutoGenerateField = false)] decimal DocCode { set; get; }
-
-    [Display(AutoGenerateField = false)] int Code { set; get; }
-
-    [Display(AutoGenerateField = false)] Guid Id { set; get; }
-
-    [Display(AutoGenerateField = false)] Guid DocId { set; get; }
-
-    string Note { set; get; }
-
-    [Display(AutoGenerateField = false)] Unit PostUnit { set; get; }
-
-    [Display(AutoGenerateField = false)] Unit UchUnit { set; get; }
-
-    [Display(AutoGenerateField = false)] decimal SFT_POST_KOL { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Номенклатура")]
-    Nomenkl Nomenkl { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Ном.№")]
-    string NomenklNumber { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Ед.Изм")]
-    Unit Unit { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Цена")]
-    decimal Price { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Кол-во")]
-    decimal Quantity { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "% НДС")]
-    decimal SFT_NDS_PERCENT { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Сумма накл.")]
-    decimal? SFT_SUMMA_NAKLAD { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Сумма НДС")]
-    decimal? SFT_SUMMA_NDS { set; get; }
-
-    [Display(AutoGenerateField = false)] decimal? SFT_SUMMA_K_OPLATE { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Сумма")]
-    decimal Summa { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Услуга")]
-    bool IsUsluga { get; }
-
-    [Display(AutoGenerateField = true, Name = "Накл.расход")]
-    bool IsNaklad { get; }
-
-    [Display(AutoGenerateField = false)] bool IsIncludeInPrice { set; get; }
-
-    [Display(AutoGenerateField = false)] decimal? SFT_SUMMA_K_OPLATE_KONTR_CRS { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Счет дох/расх")]
-    SDRSchet SDRSchet { set; get; }
-}
 
 /// <summary>
 ///     Счет-фактура поставщика - строка
@@ -745,7 +685,7 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
                 foreach (var r in CurrencyConvertRows)
                 {
                     r.Price = (decimal)Entity.SFT_ED_CENA;
-                    r.PriceWithNaklad = (decimal)(Entity.SFT_ED_CENA + (SFT_SUMMA_NAKLAD ?? 0) / Entity.SFT_KOL);
+                    r.PriceWithNaklad = (decimal)(Entity.SFT_ED_CENA + (SummaNaklad ?? 0) / Entity.SFT_KOL);
                     r.CalcRow();
                 }
 
@@ -780,7 +720,7 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
         }
     }
 
-    public decimal SFT_NDS_PERCENT
+    public decimal NDSPercent
     {
         get => Entity.SFT_NDS_PERCENT;
         set
@@ -796,7 +736,7 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
         }
     }
 
-    public decimal? SFT_SUMMA_NAKLAD
+    public decimal? SummaNaklad
     {
         get => Entity.SFT_SUMMA_NAKLAD;
         set
@@ -807,7 +747,7 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
         }
     }
 
-    public decimal? SFT_SUMMA_NDS
+    public decimal? NDSSumma
     {
         get => Entity.SFT_SUMMA_NDS;
         set
@@ -936,10 +876,10 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
                 var newItem = new InvoiceProviderRowCurrencyConvertViewModel(d)
                 {
                     OLdPrice = Entity.SFT_ED_CENA ?? 0,
-                    OLdNakladPrice = (SFT_SUMMA_NAKLAD ?? 0) != 0
+                    OLdNakladPrice = (SummaNaklad ?? 0) != 0
                         ? Math.Round(Entity.SFT_ED_CENA ?? 0 +
                             // ReSharper disable once PossibleInvalidOperationException
-                            (decimal)Entity.SFT_ED_CENA / (SFT_SUMMA_NAKLAD ?? 0), 2)
+                            (decimal)Entity.SFT_ED_CENA / (SummaNaklad ?? 0), 2)
                         : Math.Round(Entity.SFT_ED_CENA ?? 0, 2)
                 };
                 CurrencyConvertRows.Add(newItem);
@@ -969,8 +909,8 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
             Единица_измерения = Unit.Name,
             Цена = Price.ToString("n2"),
             Сумма = Summa.ToString("n2"),
-            Сумма_накладных = SFT_SUMMA_NAKLAD?.ToString("n2"),
-            Процент_НДС = SFT_NDS_PERCENT.ToString("n2"),
+            Сумма_накладных = SummaNaklad?.ToString("n2"),
+            Процент_НДС = NDSPercent.ToString("n2"),
             НДС_в_цене = IsIncludeInPrice ? "Да" : "Нет",
             Примечание = Note
         };
@@ -994,7 +934,7 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
                 Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
             }
 
-            RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
+            RaisePropertyChanged(nameof(NDSSumma));
             RaisePropertyChanged(nameof(Summa));
             p.RaisePropertyChanged("Summa");
         }
@@ -1051,7 +991,7 @@ public class DataAnnotationsInvoiceProviderRowShort : DataAnnotationForFluentApi
         builder.Property(_ => _.Price).AutoGenerated().DisplayName("Цена").DisplayFormatString("n2");
         builder.Property(_ => _.Summa).AutoGenerated().DisplayName("Сумма").DisplayFormatString("n2");
         builder.Property(_ => _.Note).AutoGenerated().DisplayName("Примечание");
-        builder.Property(_ => _.SFT_NDS_PERCENT).AutoGenerated().DisplayName("НДС %").DisplayFormatString("n2");
+        builder.Property(_ => _.NDSPercent).AutoGenerated().DisplayName("НДС %").DisplayFormatString("n2");
         builder.Property(_ => _.IsNaklad).AutoGenerated().DisplayName("Накладные").DisplayFormatString("n2");
         builder.Property(_ => _.IsUsluga).AutoGenerated().DisplayName("Услуга");
         builder.Property(_ => _.NomenklNumber).AutoGenerated().DisplayName("Ном.№").ReadOnly();
@@ -1072,11 +1012,11 @@ public class td_26LayoutData_FluentAPI : DataAnnotationForFluentApiBase,
         builder.Property(_ => _.Quantity).AutoGenerated().DisplayName("Кол-во").DisplayFormatString("n4");
         builder.Property(_ => _.Price).AutoGenerated().DisplayName("Цена").DisplayFormatString("n2");
         builder.Property(_ => _.Summa).AutoGenerated().DisplayName("Сумма").DisplayFormatString("n2");
-        builder.Property(_ => _.SFT_SUMMA_NAKLAD).AutoGenerated().DisplayName("Сумма накл")
+        builder.Property(_ => _.SummaNaklad).AutoGenerated().DisplayName("Сумма накл")
             .DisplayFormatString("n2").ReadOnly();
         builder.Property(_ => _.Note).AutoGenerated().DisplayName("Примечание");
-        builder.Property(_ => _.SFT_NDS_PERCENT).AutoGenerated().DisplayName("НДС %").DisplayFormatString("n2");
-        builder.Property(_ => _.SFT_SUMMA_NDS).AutoGenerated().DisplayName("НДС сумма").ReadOnly()
+        builder.Property(_ => _.NDSPercent).AutoGenerated().DisplayName("НДС %").DisplayFormatString("n2");
+        builder.Property(_ => _.NDSSumma).AutoGenerated().DisplayName("НДС сумма").ReadOnly()
             .DisplayFormatString("n2");
         builder.Property(_ => _.IsIncludeInPrice).NotAutoGenerated()
             .DisplayName("НДС включен в цену");

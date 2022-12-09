@@ -18,8 +18,13 @@ namespace KursDomain.References;
 ///     Касса
 /// </summary>
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class CashBox : ICashBox, IDocCode, IName, IEquatable<CashBox>
+public class CashBox : ICashBox, IDocCode, IName, IEquatable<CashBox>, ILoadFromEntity<SD_22>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     public ICurrency DefaultCurrency { get; set; }
     public bool IsNegativeRests { get; set; }
     public IKontragent Kontragent { get; set; }

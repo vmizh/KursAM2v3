@@ -12,7 +12,9 @@ using KursAM2.Repositories.InvoicesRepositories;
 using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.NomenklManagement;
+using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
+using KursDomain.References;
 
 namespace KursAM2.View.DialogUserControl
 {
@@ -24,14 +26,16 @@ namespace KursAM2.View.DialogUserControl
         private readonly Waybill waybill;
         private InvoiceClientViewModel myCurrentItem;
         private StandartDialogSelectUC myDataUserControl;
+        private Currency currency;
 
-        public InvoiceClientSearchDialog(bool isPaymentUse, bool isUseAcepted)
+        public InvoiceClientSearchDialog(bool isPaymentUse, bool isUseAcepted, Currency crs = null)
         {
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             WindowName = "Выбор счета";
             this.isPaymentUse = isPaymentUse;
             isAccepted = isUseAcepted;
+            currency = crs;
             RefreshData(null);
         }
 
@@ -87,10 +91,12 @@ namespace KursAM2.View.DialogUserControl
 
         public override void RefreshData(object obj)
         {
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             base.RefreshData(obj);
 
             SearchClear(null);
             Search(null);
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
         }
 
         public override void ResetLayout(object form)
@@ -111,17 +117,53 @@ namespace KursAM2.View.DialogUserControl
                         foreach (var d in InvoicesManager.GetInvoicesClient(DateTime.Today.AddDays(-300),
                                      DateTime.Today,
                                      isPaymentUse, kontragentDC, isAccepted))
-                            ItemsCollection.Add(d);
+                        {
+                            if (currency == null)
+                            {
+                                ItemsCollection.Add(d);
+                            }
+                            else
+                            {
+                                if (d.Currency.DocCode == currency.DocCode)
+                                {
+                                    ItemsCollection.Add(d);
+                                }
+                            }
+                        }
                     else
                         foreach (var d in InvoicesManager.GetInvoicesClient(DateTime.Today.AddDays(-300),
                                      DateTime.Today,
                                      isPaymentUse, null, SearchText, isAccepted))
-                            ItemsCollection.Add(d);
+                        {
+                            if (currency == null)
+                            {
+                                ItemsCollection.Add(d);
+                            }
+                            else
+                            {
+                                if (d.Currency.DocCode == currency.DocCode)
+                                {
+                                    ItemsCollection.Add(d);
+                                }
+                            }
+                        }
                 }
                 else
                 {
                     foreach (var d in InvoicesManager.GetInvoicesClient(waybill))
-                        ItemsCollection.Add(d);
+                    {
+                        if (currency == null)
+                        {
+                            ItemsCollection.Add(d);
+                        }
+                        else
+                        {
+                            if (d.Currency.DocCode == currency.DocCode)
+                            {
+                                ItemsCollection.Add(d);
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)
@@ -172,9 +214,11 @@ namespace KursAM2.View.DialogUserControl
 
         public override void RefreshData(object obj)
         {
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             base.RefreshData(obj);
             SearchClear(null);
             Search(null);
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
         }
 
         public override void ResetLayout(object form)
@@ -192,6 +236,7 @@ namespace KursAM2.View.DialogUserControl
         private readonly decimal kontragentDC;
         private InvoiceProvider myCurrentItem;
         private StandartDialogSelectUC myDataUserControl;
+        private Currency currency;
 
 
 #pragma warning disable 169
@@ -207,7 +252,8 @@ namespace KursAM2.View.DialogUserControl
 
         #region Constructors
 
-        public InvoiceProviderSearchDialog(bool isUsePayment, bool isUseAccepted, bool isOnlyLastYear = false)
+        public InvoiceProviderSearchDialog(bool isUsePayment, bool isUseAccepted, 
+            bool isOnlyLastYear = false, Currency crs = null)
         {
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
@@ -215,6 +261,7 @@ namespace KursAM2.View.DialogUserControl
             isPaymentUse = isUsePayment;
             isAccepted = isUseAccepted;
             this.isOnlyLastYear = isOnlyLastYear;
+            currency = crs;
             RefreshData(null);
         }
 
@@ -248,13 +295,37 @@ namespace KursAM2.View.DialogUserControl
                         foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
                                      true,
                                      kontragentDC, isAccepted))
-                            ItemsCollection.Add(d);
+                        {
+                            if (currency == null)
+                            {
+                                ItemsCollection.Add(d);
+                            }
+                            else
+                            {
+                                if (d.Currency.DocCode == currency.DocCode)
+                                {
+                                    ItemsCollection.Add(d);
+                                }
+                            }
+                        }
                     else
                         foreach (var d in InvoicesManager.GetInvoicesProvider(DateTime.Today.AddDays(-365),
                                      DateTime.Today,
                                      true,
                                      kontragentDC, isAccepted))
-                            ItemsCollection.Add(d);
+                        {
+                            if (currency == null)
+                            {
+                                ItemsCollection.Add(d);
+                            }
+                            else
+                            {
+                                if (d.Currency.DocCode == currency.DocCode)
+                                {
+                                    ItemsCollection.Add(d);
+                                }
+                            }
+                        }
                 }
 
                 else
@@ -263,13 +334,37 @@ namespace KursAM2.View.DialogUserControl
                         foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
                                      true,
                                      SearchText, isAccepted))
-                            ItemsCollection.Add(d);
+                        {
+                            if (currency == null)
+                            {
+                                ItemsCollection.Add(d);
+                            }
+                            else
+                            {
+                                if (d.Currency.DocCode == currency.DocCode)
+                                {
+                                    ItemsCollection.Add(d);
+                                }
+                            }
+                        }
                     else
                         foreach (var d in InvoicesManager.GetInvoicesProvider(DateTime.Today.AddDays(-365),
                                      DateTime.Today,
                                      true,
                                      SearchText, isAccepted))
-                            ItemsCollection.Add(d);
+                        {
+                            if (currency == null)
+                            {
+                                ItemsCollection.Add(d);
+                            }
+                            else
+                            {
+                                if (d.Currency.DocCode == currency.DocCode)
+                                {
+                                    ItemsCollection.Add(d);
+                                }
+                            }
+                        }
                 }
             }
             catch (Exception ex)

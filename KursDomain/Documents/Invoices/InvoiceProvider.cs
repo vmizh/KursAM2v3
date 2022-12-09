@@ -5,7 +5,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Controls;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -14,79 +13,14 @@ using DevExpress.Mvvm.DataAnnotations;
 using Helper;
 using KursDomain.Documents.Dogovora;
 using KursDomain.Documents.NomenklManagement;
-using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
+using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 using Newtonsoft.Json;
+using NomenklProductType = KursDomain.References.NomenklProductType;
 using ValidationError = Core.Helper.ValidationError;
 
 namespace KursDomain.Documents.Invoices;
-
-public interface IInvoiceProvider
-{
-    [Display(AutoGenerateField = false)] decimal DocCode { set; get; }
-
-    [Display(AutoGenerateField = false)] Guid Id { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Нкал. расходы")]
-    decimal? NakladDistributedSumma { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Ответственный")]
-    References.Employee PersonaResponsible { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "№")]
-    int? SF_IN_NUM { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "№ поставщика")]
-    string SF_POSTAV_NUM { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Дата")]
-    DateTime DocDate { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Поставщик")]
-    Kontragent Kontragent { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Сумма")]
-    decimal Summa { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Отгружено")]
-    decimal SummaFact { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Валюта")]
-    References.Currency Currency { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Оплачен")]
-    bool IsPay { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Сумма оплаты")]
-    decimal PaySumma { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Усл.платежа")]
-    PayCondition PayCondition { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Акцептован")]
-    bool IsAccepted { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Примечание")]
-    string Note { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Создатель")]
-    string CREATOR { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Форма расчетов")]
-    PayForm FormRasche { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "НДС вкл. в цену")]
-    bool IsNDSInPrice { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Центр ответст.")]
-    CentrResponsibility CO { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Получатель")]
-    Kontragent KontrReceiver { set; get; }
-
-    ObservableCollection<IInvoiceProviderRow> Rows { set; get; }
-}
 
 /// <summary>
 ///     Счет-фактура от поставщика
@@ -160,30 +94,27 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     #region Fields
 
-    private References.Currency myCurrency;
-    private DogovorOfSupplierViewModel myDogovorOfSupplier;
-    private readonly UnitOfWork<ALFAMEDIAEntities> context;
-
-    #endregion
-
-    #region Fields
-
-    private CentrResponsibility myCO;
-    private References.Employee myEmployee;
+    //private CentrResponsibility myCO;
+    //private References.Employee myEmployee;
     private SD_26 myEntity;
-    private PayForm myFormRaschet;
-    private Kontragent myKontragent;
-    private Kontragent myKontrReceiver;
-    private PayCondition myPayConditionCondition;
-    private MutualSettlementType myVzaimoraschetType;
+
+    //private PayForm myFormRaschet;
+    //private Kontragent myKontragent;
+    //private Kontragent myKontrReceiver;
+    //private PayCondition myPayConditionCondition;
+    //private NomenklProductType myVzaimoraschetType;
     private DogovorOfSupplierViewModel myContract;
 
-    private References.Employee myPersonaResponsible;
+    //private References.Employee myPersonaResponsible;
 
     //private Money myNakladAll;
     private decimal mySummaFact;
 
     private readonly bool isLoadAll;
+
+    //private References.Currency myCurrency;
+    private DogovorOfSupplierViewModel myDogovorOfSupplier;
+    private readonly UnitOfWork<ALFAMEDIAEntities> context;
 
     #endregion
 
@@ -304,22 +235,11 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     /// </summary>
     public References.Employee PersonaResponsible
     {
-        get
-        {
-            if (myPersonaResponsible == null && Employee != null)
-            {
-                myPersonaResponsible = Employee;
-                RaisePropertyChanged();
-            }
-
-            return myPersonaResponsible;
-        }
+        get => GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) as References.Employee;
         set
         {
-            if (myPersonaResponsible != null && myPersonaResponsible.Equals(value)) return;
-            myPersonaResponsible = value;
-            Employee = myPersonaResponsible;
-            Entity.PersonalResponsibleDC = myPersonaResponsible?.DocCode;
+            if (Equals(GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC), value)) return;
+            Entity.PersonalResponsibleDC = value?.DocCode;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Employee));
             RaisePropertyChanged(nameof(EmployeeTabelNumber));
@@ -354,8 +274,8 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         get => GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POST_DC) as Kontragent;
         set
         {
-            if (Equals(GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POST_DC) ,value)) return;
-            Entity.SF_POST_DC =  value.DocCode;
+            if (Equals(GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POST_DC), value)) return;
+            Entity.SF_POST_DC = value.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -377,7 +297,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     {
         get
         {
-            var s = Rows == null || Rows.Count == 0 ? 0 : Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE) ?? 0;
+            var s = Rows == null || Rows.Count == 0 ? 0 : Rows.Sum(_ => _.Summa);
             Entity.SF_FACT_SUMMA = s;
             Entity.SF_KONTR_CRS_SUMMA = s;
             Entity.SF_CRS_SUMMA = s;
@@ -417,13 +337,11 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     public References.Currency Currency
     {
-        get => myCurrency;
+        get => GlobalOptions.ReferencesCache.GetCurrency(Entity.SF_CRS_DC) as References.Currency;
         set
         {
-            if (Equals(myCurrency, value)) return;
-            myCurrency = value;
-            if (myCurrency != null)
-                Entity.SF_CRS_DC = myCurrency.DocCode;
+            if (Equals(GlobalOptions.ReferencesCache.GetCurrency(Entity.SF_CRS_DC), value)) return;
+             Entity.SF_CRS_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -517,8 +435,6 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         {
             if (Entity.SF_PAY_COND_DC == value) return;
             Entity.SF_PAY_COND_DC = value;
-            myPayConditionCondition =
-                GlobalOptions.ReferencesCache.GetPayCondition(Entity.SF_PAY_COND_DC) as PayCondition;
             RaisePropertyChanged(nameof(PayCondition));
             RaisePropertyChanged();
         }
@@ -526,15 +442,11 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     public PayCondition PayCondition
     {
-        get => myPayConditionCondition;
+        get => GlobalOptions.ReferencesCache.GetPayCondition(Entity.SF_PAY_COND_DC) as PayCondition;
         set
         {
-            if (myPayConditionCondition != null && myPayConditionCondition.Equals(value)) return;
-            myPayConditionCondition = value;
-            if (myPayConditionCondition != null)
-                Entity.SF_PAY_COND_DC = value.DocCode;
-            else
-                Entity.SF_PAY_COND_DC = -1;
+            if (Equals(GlobalOptions.ReferencesCache.GetPayCondition(Entity.SF_PAY_COND_DC), value)) return;
+            Entity.SF_PAY_COND_DC = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }
     }
@@ -546,7 +458,6 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         {
             if (Entity.TABELNUMBER == value) return;
             Entity.TABELNUMBER = value;
-            myEmployee = GlobalOptions.ReferencesCache.GetEmployee(Entity.TABELNUMBER) as References.Employee;
             RaisePropertyChanged(nameof(Employee));
             RaisePropertyChanged();
         }
@@ -557,13 +468,11 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     [Required(ErrorMessage = "Ответственный должен быть выбран обязательно.")]
     public References.Employee Employee
     {
-        get => myEmployee;
+        get => GlobalOptions.ReferencesCache.GetEmployee(Entity.TABELNUMBER) as References.Employee;
         set
         {
-            if (myEmployee != null && myEmployee.Equals(value)) return;
-            myEmployee = value;
-            if (myEmployee != null)
-                Entity.TABELNUMBER = myEmployee.TabelNumber;
+            if (Equals(GlobalOptions.ReferencesCache.GetEmployee(Entity.TABELNUMBER), value)) return;
+            Entity.TABELNUMBER = value?.TabelNumber ?? 0;
             RaisePropertyChanged(nameof(TABELNUMBER));
             RaisePropertyChanged();
         }
@@ -733,19 +642,17 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         {
             if (Entity.SF_VZAIMOR_TYPE_DC == value) return;
             Entity.SF_VZAIMOR_TYPE_DC = value;
-            myVzaimoraschetType = GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.SF_VZAIMOR_TYPE_DC) as MutualSettlementType;
             RaisePropertyChanged(nameof(VzaimoraschetType));
             RaisePropertyChanged();
         }
     }
 
-    public MutualSettlementType VzaimoraschetType
+    public NomenklProductType VzaimoraschetType
     {
-        get => myVzaimoraschetType;
+        get => GlobalOptions.ReferencesCache.GetNomenklProductType(Entity.SF_VZAIMOR_TYPE_DC) as NomenklProductType;
         set
         {
-            if (myVzaimoraschetType == value) return;
-            myVzaimoraschetType = value;
+            if (Equals(GlobalOptions.ReferencesCache.GetNomenklProductType(Entity.SF_VZAIMOR_TYPE_DC), value)) return;
             Entity.SF_VZAIMOR_TYPE_DC = value?.DocCode;
             RaisePropertyChanged();
         }
@@ -788,8 +695,6 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         }
     }
 
-    public PayForm FormRasche { get; set; }
-
     public decimal? SF_FORM_RASCH_DC
     {
         get => Entity.SF_FORM_RASCH_DC;
@@ -797,7 +702,6 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         {
             if (Entity.SF_FORM_RASCH_DC == value) return;
             Entity.SF_FORM_RASCH_DC = value;
-            myFormRaschet = GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) as PayForm;
             RaisePropertyChanged(nameof(FormRaschet));
             RaisePropertyChanged();
         }
@@ -805,12 +709,11 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     public PayForm FormRaschet
     {
-        get => myFormRaschet;
+        get => GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) as PayForm;
         set
         {
-            if (myFormRaschet != null && myFormRaschet.Equals(value)) return;
-            myFormRaschet = value;
-            Entity.SF_FORM_RASCH_DC = myFormRaschet?.DocCode;
+            if (Equals(GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC), value)) return;
+            Entity.SF_FORM_RASCH_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -950,7 +853,6 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         {
             if (Entity.SF_CENTR_OTV_DC == value) return;
             Entity.SF_CENTR_OTV_DC = value;
-            myCO = GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) as CentrResponsibility;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(CO));
         }
@@ -958,12 +860,11 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     public CentrResponsibility CO
     {
-        get => myCO;
+        get => GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) as CentrResponsibility;
         set
         {
-            if (myCO != null && myCO.Equals(value)) return;
-            myCO = value;
-            Entity.SF_CENTR_OTV_DC = myCO?.DocCode;
+            if (Equals(GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC), value)) return;
+            Entity.SF_CENTR_OTV_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -986,12 +887,11 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     /// </summary>
     public Kontragent KontrReceiver
     {
-        get => myKontrReceiver;
+        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POLUCH_KONTR_DC) as Kontragent;
         set
         {
-            if (myKontrReceiver != null && myKontrReceiver.Equals(value)) return;
-            myKontrReceiver = value;
-            Entity.SF_POLUCH_KONTR_DC = myKontrReceiver?.DocCode;
+            if (Equals(GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POLUCH_KONTR_DC), value)) return;
+            Entity.SF_POLUCH_KONTR_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -1200,15 +1100,17 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     public void LoadReferences()
     {
-        Kontragent = (Kontragent)GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POST_DC);
-        KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(SF_POLUCH_KONTR_DC) as Kontragent;
-        Currency = GlobalOptions.ReferencesCache.GetCurrency(SF_CRS_DC) as References.Currency;
-        CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(SF_CENTR_OTV_DC) as CentrResponsibility;
-        PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(SF_PAY_COND_DC) as PayCondition;
-        Employee = GlobalOptions.ReferencesCache.GetEmployee(TABELNUMBER) as References.Employee;
-        VzaimoraschetType = GlobalOptions.ReferencesCache.GetMutualSettlementType(SF_VZAIMOR_TYPE_DC) as MutualSettlementType;
-        FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(SF_FORM_RASCH_DC) as PayForm;
-        PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) as References.Employee;
+        //Kontragent = (Kontragent)GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POST_DC);
+        //KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(SF_POLUCH_KONTR_DC) as Kontragent;
+        //Currency = GlobalOptions.ReferencesCache.GetCurrency(SF_CRS_DC) as References.Currency;
+        //CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(SF_CENTR_OTV_DC) as CentrResponsibility;
+        //PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(SF_PAY_COND_DC) as PayCondition;
+        //Employee = GlobalOptions.ReferencesCache.GetEmployee(TABELNUMBER) as References.Employee;
+        //VzaimoraschetType =
+        //    GlobalOptions.ReferencesCache.GetNomenklProductType(SF_VZAIMOR_TYPE_DC) as NomenklProductType;
+        //FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(SF_FORM_RASCH_DC) as PayForm;
+        //PersonaResponsible =
+        //    GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) as References.Employee;
         if (Entity.DogovorOfSupplier != null)
             Contract = new DogovorOfSupplierViewModel(Entity.DogovorOfSupplier);
         Rows = new ObservableCollection<IInvoiceProviderRow>();
@@ -1248,7 +1150,8 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
                     if (pay.SD_34.SD_22 != null)
                         newItem.DocExtName = $"Касса {pay.SD_34.SD_22.CA_NAME}";
                     else
-                        newItem.DocExtName = $"Касса {((IName)GlobalOptions.ReferencesCache.GetCashBox(pay.SD_34.CA_DC)).Name}";
+                        newItem.DocExtName =
+                            $"Касса {((IName)GlobalOptions.ReferencesCache.GetCashBox(pay.SD_34.CA_DC)).Name}";
                 }
 
                 if (pay.TD_110 != null)

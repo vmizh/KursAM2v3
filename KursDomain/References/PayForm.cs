@@ -15,8 +15,13 @@ namespace KursDomain.References;
 ///     Форма платежа
 /// </summary>
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class PayForm : IPayForm, IDocCode, IName, IEquatable<PayForm>
+public class PayForm : IPayForm, IDocCode, IName, IEquatable<PayForm>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     [Display(AutoGenerateField = false)] public decimal DocCode { get; set; }
 
     public bool Equals(PayForm other)

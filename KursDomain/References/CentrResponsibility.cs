@@ -14,8 +14,13 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq} {ParentDC,nq}")]
-public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEquatable<CentrResponsibility>
+public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEquatable<CentrResponsibility>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     public string FullName { get; set; }
     public decimal? ParentDC { get; set; }
     public bool IsDeleted { get; set; }

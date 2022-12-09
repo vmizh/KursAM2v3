@@ -18,8 +18,13 @@ using KursDomain.IReferences.Nomenkl;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {NomenklNumber,nq} {Name,nq} {Currency,nq}")]
-public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl
+public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     [Display(AutoGenerateField = false)] public DateTime UpdateDate { get; set; }
 
     [Display(AutoGenerateField = false, Name = "Наименование")]
@@ -123,6 +128,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl
         if (entity == null)
         {
             DocCode = -1;
+            Id = Guid.Empty;
             return;
         }
 
@@ -141,6 +147,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl
         IsUslugaInRentabelnost = entity.IsUslugaInRent ?? false;
         UpdateDate = entity.UpdateDate ?? DateTime.MinValue;
         MainId = entity.MainId ?? Guid.Empty;
+        NomenklMain = refCache.GetNomenklMain(entity.MainId);
 
         Unit = refCache?.GetUnit(entity.NOM_ED_IZM_DC);
         Currency = refCache?.GetCurrency(entity.NOM_SALE_CRS_DC);

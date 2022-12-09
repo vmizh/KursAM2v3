@@ -10,8 +10,13 @@ namespace KursDomain.References;
 ///     Тип взаимозачета
 /// </summary>
 [DebuggerDisplay("{DocCode,nq} {Name,nq} Валют.конверт.:{IsCurrencyConvert,nq}")]
-public class MutualSettlementType : IMutualSettlementType, IDocCode, IName, IEquatable<MutualSettlementType>
+public class MutualSettlementType : IMutualSettlementType, IDocCode, IName, IEquatable<MutualSettlementType>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     public decimal DocCode { get; set; }
 
     public bool Equals(MutualSettlementType other)

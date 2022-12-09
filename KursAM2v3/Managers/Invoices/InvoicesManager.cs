@@ -19,6 +19,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 
 namespace KursAM2.Managers.Invoices
@@ -435,9 +436,9 @@ namespace KursAM2.Managers.Invoices
                                         SFT_ED_CENA = items.Price,
                                         SFT_KOL = items.Quantity,
                                         SFT_SUMMA_CBOROV = items.SFT_SUMMA_CBOROV,
-                                        SFT_NDS_PERCENT = items.SFT_NDS_PERCENT,
-                                        SFT_SUMMA_NAKLAD = items.SFT_SUMMA_NAKLAD,
-                                        SFT_SUMMA_NDS = items.SFT_SUMMA_NDS,
+                                        SFT_NDS_PERCENT = items.NDSPercent,
+                                        SFT_SUMMA_NAKLAD = items.SummaNaklad,
+                                        SFT_SUMMA_NDS = items.NDSSumma,
                                         SFT_SUMMA_K_OPLATE = items.SFT_SUMMA_K_OPLATE,
                                         SFT_ED_CENA_PRIHOD = items.SFT_ED_CENA_PRIHOD,
                                         SFT_IS_NAKLAD = items.SFT_IS_NAKLAD,
@@ -538,9 +539,9 @@ namespace KursAM2.Managers.Invoices
                                         SFT_ED_CENA = r.Price,
                                         SFT_KOL = r.Quantity,
                                         SFT_SUMMA_CBOROV = r.SFT_SUMMA_CBOROV,
-                                        SFT_NDS_PERCENT = r.SFT_NDS_PERCENT,
-                                        SFT_SUMMA_NAKLAD = r.SFT_SUMMA_NAKLAD,
-                                        SFT_SUMMA_NDS = r.SFT_SUMMA_NDS,
+                                        SFT_NDS_PERCENT = r.NDSPercent,
+                                        SFT_SUMMA_NAKLAD = r.SummaNaklad,
+                                        SFT_SUMMA_NDS = r.NDSSumma,
                                         SFT_SUMMA_K_OPLATE = r.SFT_SUMMA_K_OPLATE,
                                         SFT_ED_CENA_PRIHOD = r.SFT_ED_CENA_PRIHOD,
                                         SFT_IS_NAKLAD = r.SFT_IS_NAKLAD,
@@ -580,9 +581,9 @@ namespace KursAM2.Managers.Invoices
                                     oldRow.SFT_ED_CENA = r.Price;
                                     oldRow.SFT_KOL = r.Quantity;
                                     oldRow.SFT_SUMMA_CBOROV = r.SFT_SUMMA_CBOROV;
-                                    oldRow.SFT_NDS_PERCENT = r.SFT_NDS_PERCENT;
-                                    oldRow.SFT_SUMMA_NAKLAD = r.SFT_SUMMA_NAKLAD;
-                                    oldRow.SFT_SUMMA_NDS = r.SFT_SUMMA_NDS;
+                                    oldRow.SFT_NDS_PERCENT = r.NDSPercent;
+                                    oldRow.SFT_SUMMA_NAKLAD = r.SummaNaklad;
+                                    oldRow.SFT_SUMMA_NDS = r.NDSSumma;
                                     oldRow.SFT_SUMMA_K_OPLATE = r.SFT_SUMMA_K_OPLATE;
                                     oldRow.SFT_ED_CENA_PRIHOD = r.SFT_ED_CENA_PRIHOD;
                                     oldRow.SFT_IS_NAKLAD = r.SFT_IS_NAKLAD;

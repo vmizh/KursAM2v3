@@ -16,8 +16,10 @@ using Helper;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 using Newtonsoft.Json;
+using NomenklProductType = KursDomain.References.NomenklProductType;
 
 namespace KursDomain.Documents.Invoices;
 
@@ -77,7 +79,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
     public override string Name
         => Entity.DOC_CODE > 0
             ? $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " +
-              $"от {Entity.SF_DATE.ToShortDateString()} {Summa:n2} {Currency}"
+              $"от {Entity.SF_DATE.ToShortDateString()}"
             : null;
 
     public string SF_CLIENT_NAME
@@ -937,9 +939,9 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         }
     }
 
-    public MutualSettlementType VzaimoraschetType
+    public NomenklProductType VzaimoraschetType
     {
-        get => GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.SF_VZAIMOR_TYPE_DC) as MutualSettlementType;
+        get => GlobalOptions.ReferencesCache.GetNomenklProductType(Entity.SF_VZAIMOR_TYPE_DC) as NomenklProductType;
         set
         {
             if (GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.SF_VZAIMOR_TYPE_DC) == value) return;
@@ -1122,9 +1124,9 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) as CentrResponsibility;
         Receiver = GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_RECEIVER_KONTR_DC) as Kontragent;
         FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) as PayForm;
-        PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(Entity.SD_179.DOC_CODE) as PayCondition;
+        PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(Entity.SD_179?.DOC_CODE) as PayCondition;
         VzaimoraschetType =
-            GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.SD_77.DOC_CODE) as MutualSettlementType;
+            GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.SD_77?.DOC_CODE) as NomenklProductType;
         PersonaResponsible =
             GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) as References.Employee;
         if (Rows == null)

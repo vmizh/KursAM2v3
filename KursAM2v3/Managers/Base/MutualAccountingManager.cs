@@ -145,7 +145,23 @@ namespace KursAM2.Managers.Base
                                             ctx.TD_110.FirstOrDefault(
                                                 _ => _.DOC_CODE == doc.DocCode && _.CODE == r.Code);
                                         if (row == null) break;
-                                        ctx.Entry(row).CurrentValues.SetValues(r.Entity);
+                                        row.VZT_CRS_SUMMA = r.Entity.VZT_CRS_SUMMA;
+                                        row.VZT_CRS_DC = r.Entity.VZT_CRS_DC;
+                                        row.VZT_SPOST_DC = r.Entity.VZT_SPOST_DC;
+                                        row.VZT_SFACT_DC = r.Entity.VZT_SFACT_DC;
+                                        row.VZT_DOC_DATE = isConvert ? doc.Entity.VZ_DATE : r.Entity.VZT_DOC_DATE;
+                                        row.VZT_DOC_NUM = r.Entity.VZT_DOC_NUM;
+                                        row.VZT_DOC_NOTES = r.Entity.VZT_DOC_NOTES;
+                                        row.VZT_KONTR_DC = r.Entity.VZT_KONTR_DC;
+                                        row.VZT_CRS_POGASHENO = r.Entity.VZT_CRS_POGASHENO;
+                                        row.VZT_UCH_CRS_POGASHENO = r.Entity.VZT_UCH_CRS_POGASHENO;
+                                        row.VZT_UCH_CRS_RATE = r.Entity.VZT_UCH_CRS_RATE;
+                                        row.VZT_VZAIMOR_TYPE_DC = r.Entity.VZT_VZAIMOR_TYPE_DC;
+                                        row.VZT_1MYDOLZH_0NAMDOLZH = r.Entity.VZT_1MYDOLZH_0NAMDOLZH;
+                                        row.VZT_KONTR_CRS_DC = r.Entity.VZT_KONTR_CRS_DC;
+                                        row.VZT_KONTR_CRS_RATE = r.Entity.VZT_KONTR_CRS_RATE;
+                                        row.VZT_KONTR_CRS_SUMMA = r.Entity.VZT_KONTR_CRS_SUMMA;
+                                        row.VZT_SHPZ_DC = r.Entity.VZT_SHPZ_DC;
                                         break;
                                     case RowStatus.NewRow:
                                         ctx.TD_110.Add(new TD_110

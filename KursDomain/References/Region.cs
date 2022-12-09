@@ -7,8 +7,13 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq} {ParentDC,nq}")]
-public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>
+public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     public decimal DocCode { get; set; }
     public Guid Id { get; set; }
 

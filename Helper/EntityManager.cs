@@ -21,7 +21,7 @@ namespace Helper
         {
             foreach (var entity in context.ChangeTracker.Entries())
             {
-                if (entity.State != EntityState.Added)
+                if (entity.State != EntityState.Added || entity.State == EntityState.Modified)
                     entity.Reload();
                 else 
                     entity.State = EntityState.Detached;

@@ -9,8 +9,13 @@ using KursDomain.IReferences.Kontragent;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{Id,nq} {Name,nq} {ParentId,nq}")]
-public class KontragentGroup : IName, IKontragentGroup, IEquatable<KontragentGroup>
+public class KontragentGroup : IName, IKontragentGroup, IEquatable<KontragentGroup>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     public bool Equals(KontragentGroup other)
     {
         if (ReferenceEquals(null, other)) return false;

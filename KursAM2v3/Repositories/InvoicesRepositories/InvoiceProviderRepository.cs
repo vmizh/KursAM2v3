@@ -8,6 +8,7 @@ using Data.Repository;
 using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain;
 using KursDomain.Documents.Invoices;
+using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 
 namespace KursAM2.Repositories.InvoicesRepositories

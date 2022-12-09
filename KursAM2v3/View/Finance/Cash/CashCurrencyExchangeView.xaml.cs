@@ -107,24 +107,24 @@ namespace KursAM2.View.Finance.Cash
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
                     cb.EditValueChanged += Cb_EditValueChanged;
                     break;
-                case nameof(doc.KontragentType):
-                    if (e.Item.Content is ComboBoxEdit cbKontragentType) cbKontragentType.Width = 100;
-                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
-                    break;
-                case nameof(doc.KontragentName):
-                    var kontrEdit = new ButtonEdit
-                    {
-                        TextWrapping = TextWrapping.Wrap,
-                        IsTextEditable = false
-                    };
-                    kontrEdit.SetBinding(IsEnabledProperty,
-                        new Binding { Path = new PropertyPath("IsKontrSelectEnable") });
-                    kontrEdit.DefaultButtonClick += KontrEdit_DefaultButtonClick;
-                    BindingHelper.CopyBinding(oldContent, kontrEdit, BaseEdit.EditValueProperty);
-                    e.Item.Content = kontrEdit;
-                    e.Item.Width = 400;
-                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
-                    break;
+                //case nameof(doc.KontragentType):
+                //    if (e.Item.Content is ComboBoxEdit cbKontragentType) cbKontragentType.Width = 100;
+                //    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                //    break;
+                //case nameof(doc.KontragentName):
+                //    var kontrEdit = new ButtonEdit
+                //    {
+                //        TextWrapping = TextWrapping.Wrap,
+                //        IsTextEditable = false
+                //    };
+                //    kontrEdit.SetBinding(IsEnabledProperty,
+                //        new Binding { Path = new PropertyPath("IsKontrSelectEnable") });
+                //    kontrEdit.DefaultButtonClick += KontrEdit_DefaultButtonClick;
+                //    BindingHelper.CopyBinding(oldContent, kontrEdit, BaseEdit.EditValueProperty);
+                //    e.Item.Content = kontrEdit;
+                //    e.Item.Width = 400;
+                //    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                //    break;
                 case nameof(doc.CurrencyIn):
                     try
                     {

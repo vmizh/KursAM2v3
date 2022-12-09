@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
+using System.Data.SqlClient;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using KursDomain.IReferences;
 using KursDomain.IReferences.Kontragent;
@@ -8,27 +11,354 @@ using KursDomain.IReferences.Nomenkl;
 
 namespace KursDomain.References;
 
+[SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
 public class ReferencesKursCache : IReferencesCache
 {
-    #region fields
-
-    private readonly KursContext.KursContext Context;
-
-    #endregion
-
     #region Constructors
 
     public ReferencesKursCache(DbContext dbContext)
     {
         Context = dbContext as KursContext.KursContext;
+        if (Context != null) sqlConnect = new SqlConnection(Context.Database.Connection.ConnectionString);
     }
+
+    #endregion
+
+    #region fields
+
+    private readonly KursContext.KursContext Context;
+    private readonly SqlConnection sqlConnect;
+    private DateTime lastTimeCheckTrackerId;
+    private readonly int diffSecondsForCheckTracker = 120;
+
+    #endregion
+
+    #region Properties
+
+    public bool IsChangeTrackingOn { set; get; }
+    public DbContext DBContext => Context;
+
+    #endregion
+
+    #region Tracking
+
+    private class ChangeTrackingResultDC
+    {
+        public string Operation { set; get; }
+        public decimal DocCode { set; get; }
+    }
+
+    private class ChangeTrackingResultInt
+    {
+        public string Operation { set; get; }
+        public int Code { set; get; }
+    }
+
+    private class ChangeTrackingResultGuid
+    {
+        public string Operation { set; get; }
+        public Guid Id { set; get; }
+    }
+
+    private long GetCurrentChangeTrackingId()
+    {
+        using (var sqlConn = new SqlConnection(GlobalOptions.SqlConnectionString))
+        {
+            sqlConn.Open();
+            long id = 0;
+            var cmd = sqlConn.CreateCommand();
+            cmd.CommandText = "SELECT change_tracking_current_version();";
+            cmd.CommandType = CommandType.Text;
+            var res = cmd.ExecuteScalar();
+            id = (long) res;
+            sqlConn.Close();
+            lastTimeCheckTrackerId = DateTime.Now;
+            return id;
+        }
+
+        //else
+        //{
+        //    var id = Context.Database.SqlQuery<long>("SELECT change_tracking_current_version();");
+        //    return id.First();
+        //}
+    }
+
+    private IEnumerable<ChangeTrackingResultDC> GetChangeData(string tabName, long trackingId)
+    {
+        var sql =
+            $"SELECT sys_change_operation as Operation, doc_code as DocCode FROM CHANGETABLE(CHANGES {tabName}, {trackingId}) as Cht";
+
+        using (var sqlConn = new SqlConnection(GlobalOptions.SqlConnectionString))
+        {
+            sqlConn.Open();
+            var cmd = sqlConn.CreateCommand();
+            cmd.CommandText = sql;
+            cmd.CommandType = CommandType.Text;
+            var ret = new List<ChangeTrackingResultDC>();
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                    ret.Add(new ChangeTrackingResultDC
+                    {
+                        Operation = reader[0] as string,
+                        DocCode = (decimal) reader[1]
+                    });
+            }
+
+            sqlConn.Close();
+            return ret;
+        }
+    }
+
+    private IEnumerable<ChangeTrackingResultInt> GetChangeDataInt(string tabName, long trackingId, string keyFieldName)
+    {
+        var sql =
+            $"SELECT sys_change_operation as Operation, {keyFieldName} as Code FROM CHANGETABLE(CHANGES {tabName}, {trackingId}) as Cht";
+
+        using (var sqlConn = new SqlConnection(GlobalOptions.SqlConnectionString))
+        {
+            sqlConn.Open();
+            var cmd = sqlConn.CreateCommand();
+            cmd.CommandText = sql;
+            cmd.CommandType = CommandType.Text;
+            var ret = new List<ChangeTrackingResultInt>();
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                    ret.Add(new ChangeTrackingResultInt
+                    {
+                        Operation = reader[0] as string,
+                        Code = (int) reader[1]
+                    });
+            }
+
+            sqlConn.Close();
+            return ret;
+        }
+        //var chData = Context.Database
+        //    .SqlQuery<ChangeTrackingResultInt>(sql);
+        //if (chData != null && chData.Any())
+        //{
+        //    return new List<ChangeTrackingResultInt>(chData);
+        //}
+
+        //return null;
+    }
+
+    //ChangeTrackingResultGuid
+    private IEnumerable<ChangeTrackingResultGuid> GetChangeDataGuid(string tabName, long trackingId,
+        string keyFieldName)
+    {
+        var sql =
+            $"SELECT sys_change_operation as Operation, {keyFieldName} as Id FROM CHANGETABLE(CHANGES {tabName}, {trackingId}) as Cht";
+
+        using (var sqlConn = new SqlConnection(GlobalOptions.SqlConnectionString))
+        {
+            sqlConn.Open();
+            var cmd = sqlConn.CreateCommand();
+            cmd.CommandText = sql;
+            cmd.CommandType = CommandType.Text;
+            var ret = new List<ChangeTrackingResultGuid>();
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                    ret.Add(new ChangeTrackingResultGuid
+                    {
+                        Operation = reader[0] as string,
+                        Id = (Guid) reader[1]
+                    });
+            }
+
+            sqlConn.Close();
+            return ret;
+        }
+        //var chData = Context.Database
+        //    .SqlQuery<ChangeTrackingResultInt>(sql);
+        //if (chData != null && chData.Any())
+        //{
+        //    return new List<ChangeTrackingResultInt>(chData);
+        //}
+
+        //return null;
+    }
+
+    /// <summary>
+    ///     SD_77
+    /// </summary>
+    private long NomenklProductTypesTrackingId;
+
+    /// <summary>
+    ///     UD_43
+    /// </summary>
+    private long KontragentGroupsTrackingId;
+
+    /// <summary>
+    ///     sd_103
+    /// </summary>
+    private long DeliveryConditionsTrackingId;
+
+    /// <summary>
+    ///     sd_43
+    /// </summary>
+    private long KontragentsTrackingId;
+
+    /// <summary>
+    ///     sd_83
+    /// </summary>
+    private long NomenklsTrackingId;
+
+    /// <summary>
+    ///     NomenklMain
+    /// </summary>
+    private long NomenklMainTrackingId;
+
+    /// <summary>
+    ///     sd_82
+    /// </summary>
+    private long NomenklGroupsTrackingId;
+
+    /// <summary>
+    ///     sd_27
+    /// </summary>
+    private long WarehousesTrackingId;
+
+    /// <summary>
+    ///     sd_2
+    /// </summary>
+    private long EmployeesTrackingId;
+
+    /// <summary>
+    ///     SD_44
+    /// </summary>
+    private long BanksTrackingId;
+
+    /// <summary>
+    ///     SD_114
+    /// </summary>
+    private long BankAccountssTrackingId;
+
+    /// <summary>
+    ///     SD_40
+    /// </summary>
+    private long CentrResponsibilitiesTrackingId;
+
+    /// <summary>
+    ///     SD_303
+    /// </summary>
+    private long SDRSchetsTrackingId;
+
+    /// <summary>
+    ///     sd_99
+    /// </summary>
+    private long SDRStatesTrackingId;
+
+    /// <summary>
+    ///     SD_148
+    /// </summary>
+    private long ClientCategoriesTrackingId;
+
+    /// <summary>
+    ///     SD_301
+    /// </summary>
+    private long CurrenciesTrackingId;
+
+    /// <summary>
+    ///     SD_23
+    /// </summary>
+    private long RegionsTrackingId;
+
+    /// <summary>
+    ///     SD_175
+    /// </summary>
+    private long UnitsTrackingId;
+
+    /// <summary>
+    ///     SD_22
+    /// </summary>
+    private long CashBoxesTrackingId;
+
+    /// <summary>
+    ///     SD_111
+    /// </summary>
+    private long MutualSettlementTypesTrackingId;
+
+    /// <summary>
+    ///     Countries
+    /// </summary>
+    private long CountriesTrackingId;
+
+    /// <summary>
+    ///     Projects
+    /// </summary>
+    private long ProjectsTrackingId;
+
+    /// <summary>
+    ///     sd_102
+    /// </summary>
+    private long ContractTypesTrackingId;
+
+    /// <summary>
+    ///     sd_119
+    /// </summary>
+    private long NomenklTypesTrackingId;
+
+    /// <summary>
+    ///     SD_50
+    /// </summary>
+    private long ProductTypesTrackingId;
+
+    /// <summary>
+    ///     SD_189
+    /// </summary>
+    private long PayFormsTrackingId;
+
+    /// <summary>
+    ///     SD_179
+    /// </summary>
+    private long PayConditionsTrackingId;
 
     #endregion
 
     #region Форма оплаты SD_189
 
+    private void UpdateCachePayForm()
+    {
+        var changed = GetChangeData("SD_189", CashBoxesTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (PayForms.ContainsKey(ch.DocCode)) PayForms.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_189.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newCB = new PayForm();
+                                newCB.LoadFromEntity(item);
+                                PayForms.Add(newCB.DocCode, newCB);
+                            }
+                            else
+                            {
+                                if (PayForms.ContainsKey(ch.DocCode))
+                                    ((PayForm) PayForms[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        PayFormsTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public IPayForm GetPayForm(decimal? dc)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCachePayForm();
         if (dc == null) return null;
         if (PayForms.ContainsKey(dc.Value))
             return PayForms[dc.Value];
@@ -42,6 +372,8 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IPayForm> GetPayFormAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCachePayForm();
         return PayForms.Values.ToList();
     }
 
@@ -49,8 +381,44 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Условия оплаты SD_179
 
+    private void UpdateCachePayConditions()
+    {
+        var changed = GetChangeData("SD_179", PayConditionsTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (PayConditions.ContainsKey(ch.DocCode)) PayConditions.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_179.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new PayCondition();
+                                newItem.LoadFromEntity(item);
+                                PayConditions.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (PayConditions.ContainsKey(ch.DocCode))
+                                    ((PayCondition) PayConditions[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        PayConditionsTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public IPayCondition GetPayCondition(decimal? dc)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCachePayConditions();
         if (dc == null) return null;
         if (PayConditions.ContainsKey(dc.Value))
             return PayConditions[dc.Value];
@@ -64,6 +432,8 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IPayCondition> GetPayConditionAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCachePayConditions();
         return PayConditions.Values.ToList();
     }
 
@@ -93,8 +463,44 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Типы договоров
 
+    private void UpdateCacheContractType()
+    {
+        var changed = GetChangeData("SD_102", ContractTypesTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (ContractTypes.ContainsKey(ch.DocCode)) ContractTypes.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_102.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new ContractType();
+                                newItem.LoadFromEntity(item);
+                                ContractTypes.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (ContractTypes.ContainsKey(ch.DocCode))
+                                    ((ContractType) ContractTypes[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        ContractTypesTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public IContractType GetContractType(decimal? dc)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheContractType();
         if (dc == null) return null;
         if (ContractTypes.ContainsKey(dc.Value))
             return ContractTypes[dc.Value];
@@ -108,6 +514,8 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IContractType> GetContractsTypeAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheContractType();
         return ContractTypes.Values.ToList();
     }
 
@@ -118,6 +526,19 @@ public class ReferencesKursCache : IReferencesCache
     public void StartLoad()
     {
         Clear();
+        var currentTrackingId = Context.Database.SqlQuery<long>("SELECT change_tracking_current_version();");
+        KontragentGroupsTrackingId = DeliveryConditionsTrackingId =
+            KontragentsTrackingId = NomenklsTrackingId = NomenklGroupsTrackingId = WarehousesTrackingId =
+                EmployeesTrackingId = BanksTrackingId = BankAccountssTrackingId = CentrResponsibilitiesTrackingId =
+                    SDRSchetsTrackingId = SDRStatesTrackingId = ClientCategoriesTrackingId =
+                        CurrenciesTrackingId = RegionsTrackingId = UnitsTrackingId = CashBoxesTrackingId =
+                            MutualSettlementTypesTrackingId = CountriesTrackingId = ProjectsTrackingId =
+                                ContractTypesTrackingId =
+                                    NomenklTypesTrackingId = ProductTypesTrackingId = PayFormsTrackingId =
+                                        PayConditionsTrackingId = NomenklProductTypesTrackingId =
+                                            NomenklMainTrackingId =
+                                                currentTrackingId.First();
+
         foreach (var item in Context.SD_301.AsNoTracking().ToList())
         {
             var newItem = new Currency();
@@ -125,6 +546,7 @@ public class ReferencesKursCache : IReferencesCache
             if (!Currencies.ContainsKey(newItem.DocCode))
                 Currencies.Add(newItem.DocCode, newItem);
         }
+
 
         foreach (var item in Context.Countries.AsNoTracking().ToList())
         {
@@ -140,6 +562,22 @@ public class ReferencesKursCache : IReferencesCache
             newItem.LoadFromEntity(item);
             if (!Regions.ContainsKey(newItem.DocCode))
                 Regions.Add(newItem.DocCode, newItem);
+        }
+
+        foreach (var item in Context.SD_179.AsNoTracking().ToList())
+        {
+            var newItem = new PayCondition();
+            newItem.LoadFromEntity(item);
+            if (!PayConditions.ContainsKey(newItem.DocCode))
+                PayConditions.Add(newItem.DocCode, newItem);
+        }
+
+        foreach (var item in Context.SD_189.AsNoTracking().ToList())
+        {
+            var newItem = new PayForm();
+            newItem.LoadFromEntity(item);
+            if (!PayForms.ContainsKey(newItem.DocCode))
+                PayForms.Add(newItem.DocCode, newItem);
         }
 
         foreach (var item in Context.SD_175.AsNoTracking().ToList())
@@ -180,6 +618,14 @@ public class ReferencesKursCache : IReferencesCache
             newItem.LoadFromEntity(item);
             if (!ClientCategories.ContainsKey(newItem.DocCode))
                 ClientCategories.Add(newItem.DocCode, newItem);
+        }
+
+        foreach (var item in Context.SD_77.AsNoTracking().ToList())
+        {
+            var newItem = new NomenklProductType();
+            newItem.LoadFromEntity(item, this);
+            if (!NomenklProductTypes.ContainsKey(newItem.DocCode))
+                NomenklProductTypes.Add(newItem.DocCode, newItem);
         }
 
         foreach (var item in Context.UD_43.AsNoTracking().ToList())
@@ -286,6 +732,14 @@ public class ReferencesKursCache : IReferencesCache
                 Kontragents.Add(item.DOC_CODE, newItem);
         }
 
+        foreach (var item in Context.NomenklMain.AsNoTracking().ToList().ToList())
+        {
+            var newItem = new NomenklMain();
+            newItem.LoadFromEntity(item, this);
+            if (!NomenklMains.ContainsKey(newItem.Id))
+                NomenklMains.Add(item.Id, newItem);
+        }
+
         foreach (var item in Context.SD_83.AsNoTracking().ToList().ToList())
         {
             var newItem = new Nomenkl();
@@ -293,6 +747,8 @@ public class ReferencesKursCache : IReferencesCache
             if (!Nomenkls.ContainsKey(newItem.DocCode))
                 Nomenkls.Add(item.DOC_CODE, newItem);
         }
+
+        IsChangeTrackingOn = true;
     }
 
     private void Clear()
@@ -304,6 +760,11 @@ public class ReferencesKursCache : IReferencesCache
         CentrResponsibilities.Clear();
         SDRStates.Clear();
         SDRSchets.Clear();
+        DeliveryConditions.Clear();
+        NomenklTypes.Clear();
+        ProductTypes.Clear();
+        PayForms.Clear();
+        PayConditions.Clear();
 
         ClientCategories.Clear();
         KontragentGroups.Clear();
@@ -320,14 +781,51 @@ public class ReferencesKursCache : IReferencesCache
 
         Kontragents.Clear();
         Nomenkls.Clear();
+        NomenklProductTypes.Clear();
     }
 
     #endregion
 
     #region Аакты взаимозачета
 
+    private void UpdateCacheMutualSettlementType()
+    {
+        var changed = GetChangeData("SD_111", MutualSettlementTypesTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (MutualSettlementTypes.ContainsKey(ch.DocCode)) MutualSettlementTypes.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_111.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new MutualSettlementType();
+                                newItem.LoadFromEntity(item);
+                                MutualSettlementTypes.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (MutualSettlementTypes.ContainsKey(ch.DocCode))
+                                    ((MutualSettlementType) MutualSettlementTypes[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        MutualSettlementTypesTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public IMutualSettlementType GetMutualSettlementType(decimal? dc)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheMutualSettlementType();
         if (dc == null) return null;
         if (MutualSettlementTypes.ContainsKey(dc.Value))
             return MutualSettlementTypes[dc.Value];
@@ -341,6 +839,8 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IMutualSettlementType> GetMutualSettlementTypeAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheMutualSettlementType();
         return MutualSettlementTypes.Values.ToList();
     }
 
@@ -348,8 +848,79 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Счета и статьи расходов и доходов
 
+    private void UpdateCacheSDRSchet()
+    {
+        var changed = GetChangeData("SD_303", SDRSchetsTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (SDRSchets.ContainsKey(ch.DocCode)) SDRSchets.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_303.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new SDRSchet();
+                                newItem.LoadFromEntity(item, this);
+                                SDRSchets.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (SDRSchets.ContainsKey(ch.DocCode))
+                                    ((SDRSchet) SDRSchets[ch.DocCode]).LoadFromEntity(item, this);
+                            }
+                        }
+
+                        break;
+                }
+
+        SDRSchetsTrackingId = GetCurrentChangeTrackingId();
+    }
+
+    private void UpdateCacheSDRSTate()
+    {
+        var changed = GetChangeData("SD_99", SDRStatesTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (SDRStates.ContainsKey(ch.DocCode)) SDRStates.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_99.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new SDRState();
+                                newItem.LoadFromEntity(item);
+                                SDRStates.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (SDRStates.ContainsKey(ch.DocCode))
+                                    ((SDRState) SDRStates[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        SDRStatesTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public ISDRSchet GetSDRSchet(decimal? dc)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheSDRSchet();
         if (dc == null) return null;
         if (SDRSchets.ContainsKey(dc.Value))
             return SDRSchets[dc.Value];
@@ -363,17 +934,23 @@ public class ReferencesKursCache : IReferencesCache
 
     public ISDRSchet GetSDRSchet(Guid? id)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheSDRSchet();
         throw new NotImplementedException();
     }
 
     public IEnumerable<ISDRSchet> GetSDRSchetAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheSDRSchet();
         return SDRSchets.Values.ToList();
     }
 
     public ISDRState GetSDRState(decimal? dc)
     {
         if (dc == null) return null;
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheSDRSTate();
         if (SDRStates.ContainsKey(dc.Value))
             return SDRStates[dc.Value];
         var data = Context.SD_99.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
@@ -391,6 +968,8 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<ISDRState> GetSDRStateAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheSDRSTate();
         return SDRStates.Values.ToList();
     }
 
@@ -398,8 +977,44 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Категория клиентов
 
+    private void UpdateCacheClientCategory()
+    {
+        var changed = GetChangeData("SD_148", ClientCategoriesTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (ClientCategories.ContainsKey(ch.DocCode)) ClientCategories.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_148.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new ClientCategory();
+                                newItem.LoadFromEntity(item);
+                                ClientCategories.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (ClientCategories.ContainsKey(ch.DocCode))
+                                    ((ClientCategory) ClientCategories[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        ClientCategoriesTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public IClientCategory GetClientCategory(decimal? dc)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheClientCategory();
         if (dc == null) return null;
         if (ClientCategories.ContainsKey(dc.Value))
             return ClientCategories[dc.Value];
@@ -418,12 +1033,48 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IClientCategory> GetClientCategoriesAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheClientCategory();
         return ClientCategories.Values.ToList();
     }
 
     #endregion
 
     #region Валюта
+
+    private void UpdateCacheCurrency()
+    {
+        var changed = GetChangeData("SD_301", CurrenciesTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (Currencies.ContainsKey(ch.DocCode)) Currencies.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_301.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new Currency();
+                                newItem.LoadFromEntity(item);
+                                Currencies.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (Currencies.ContainsKey(ch.DocCode))
+                                    ((Currency) Currencies[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        CurrenciesTrackingId = GetCurrentChangeTrackingId();
+    }
 
     public ICurrency GetCurrency(decimal? dc)
     {
@@ -433,6 +1084,8 @@ public class ReferencesKursCache : IReferencesCache
 
     public ICurrency GetCurrency(decimal dc)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheCurrency();
         if (Currencies.ContainsKey(dc))
             return Currencies[dc];
         var data = Context.SD_301.FirstOrDefault(_ => _.DOC_CODE == dc);
@@ -445,6 +1098,8 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<ICurrency> GetCurrenciesAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheCurrency();
         return Currencies.Values.ToList();
     }
 
@@ -474,9 +1129,45 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Регионы
 
+    private void UpdateCacheRegion()
+    {
+        var changed = GetChangeData("SD_23", RegionsTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (Regions.ContainsKey(ch.DocCode)) Regions.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_23.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new Region();
+                                newItem.LoadFromEntity(item);
+                                Regions.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (Regions.ContainsKey(ch.DocCode))
+                                    ((Region) Regions[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        RegionsTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public IRegion GetRegion(decimal? dc)
     {
         if (dc == null) return null;
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheRegion();
         if (Regions.ContainsKey(dc.Value))
             return Regions[dc.Value];
         var data = Context.SD_23.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
@@ -494,6 +1185,8 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IRegion> GetRegionsAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheRegion();
         return Regions.Values.ToList();
     }
 
@@ -501,9 +1194,45 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Единицы измерения
 
+    private void UpdateCacheUnit()
+    {
+        var changed = GetChangeData("SD_175", UnitsTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (Units.ContainsKey(ch.DocCode)) Units.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_175.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new Unit();
+                                newItem.LoadFromEntity(item);
+                                Units.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (Units.ContainsKey(ch.DocCode))
+                                    ((Unit) Units[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        UnitsTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public IUnit GetUnit(decimal? dc)
     {
         if (dc == null) return null;
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheUnit();
         if (Units.ContainsKey(dc.Value))
             return Units[dc.Value];
         var data = Context.SD_175.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
@@ -521,6 +1250,9 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IUnit> GetUnitsAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheUnit();
         return Units.Values.ToList();
     }
 
@@ -528,9 +1260,80 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Kontragent
 
+    private void UpdateCacheKontragents()
+    {
+        var changed = GetChangeData("SD_43", KontragentsTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (Kontragents.ContainsKey(ch.DocCode)) Kontragents.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_43.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new Kontragent();
+                                newItem.LoadFromEntity(item, this);
+                                Kontragents.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (Kontragents.ContainsKey(ch.DocCode))
+                                    ((Kontragent) Kontragents[ch.DocCode]).LoadFromEntity(item, this);
+                            }
+                        }
+
+                        break;
+                }
+
+        KontragentsTrackingId = GetCurrentChangeTrackingId();
+    }
+
+    private void UpdateCacheKontragentGroup()
+    {
+        var changed = GetChangeDataInt("UD_43", KontragentGroupsTrackingId, "EG_ID");
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (KontragentGroups.ContainsKey(ch.Code)) KontragentGroups.Remove(ch.Code);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.UD_43.Find(ch.Code);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new KontragentGroup();
+                                newItem.LoadFromEntity(item);
+                                KontragentGroups.Add(newItem.Id, newItem);
+                            }
+                            else
+                            {
+                                if (KontragentGroups.ContainsKey(ch.Code))
+                                    ((KontragentGroup) KontragentGroups[ch.Code]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        KontragentGroupsTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public IKontragentGroup GetKontragentGroup(int? id)
     {
         if (id == null) return null;
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheKontragentGroup();
         if (KontragentGroups.ContainsKey(id.Value))
             return KontragentGroups[id.Value];
         var data = Context.UD_43.FirstOrDefault(_ => _.EG_ID == id.Value);
@@ -543,17 +1346,22 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IKontragentGroup> GetKontragentCategoriesAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheKontragentGroup();
         return KontragentGroups.Values.ToList();
     }
 
     public IKontragent GetKontragent(decimal? dc)
     {
-        if (dc == null) return null;
-        return GetKontragent(dc.Value);
+        return dc == null ? null : GetKontragent(dc.Value);
     }
 
     public IKontragent GetKontragent(decimal dc)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheKontragents();
         if (Kontragents.ContainsKey(dc))
             return Kontragents[dc];
         var data = Context.SD_43.FirstOrDefault(_ => _.DOC_CODE == dc);
@@ -567,6 +1375,9 @@ public class ReferencesKursCache : IReferencesCache
     public IKontragent GetKontragent(Guid? id)
     {
         if (id == null) return null;
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheKontragents();
         var k = Kontragents.Values.Cast<Kontragent>().FirstOrDefault(_ => _.Id == id.Value);
         if (k != null)
             return k;
@@ -580,12 +1391,49 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IKontragent> GetKontragentsAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheKontragents();
         return Kontragents.Values.ToList();
     }
 
     #endregion
 
     #region Warehouse
+
+    private void UpdateCacheWarehouse()
+    {
+        var changed = GetChangeData("SD_27", WarehousesTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (Warehouses.ContainsKey(ch.DocCode)) Warehouses.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_27.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new Warehouse();
+                                newItem.LoadFromEntity(item, this);
+                                Warehouses.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (Warehouses.ContainsKey(ch.DocCode))
+                                    ((Warehouse) Warehouses[ch.DocCode]).LoadFromEntity(item, this);
+                            }
+                        }
+
+                        break;
+                }
+
+        WarehousesTrackingId = GetCurrentChangeTrackingId();
+    }
 
     public IWarehouse GetWarehouse(decimal? dc)
     {
@@ -594,7 +1442,9 @@ public class ReferencesKursCache : IReferencesCache
 
     public IWarehouse GetWarehouse(decimal dc)
     {
-        
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheWarehouse();
         if (Warehouses.ContainsKey(dc))
             return Warehouses[dc];
         var data = Context.SD_27.FirstOrDefault(_ => _.DOC_CODE == dc);
@@ -612,6 +1462,9 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IWarehouse> GetWarehousesAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheWarehouse();
         return Warehouses.Values.ToList();
     }
 
@@ -619,9 +1472,46 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Employee
 
+    private void UpdateCacheEmployee()
+    {
+        var changed = GetChangeDataInt("SD_2", EmployeesTrackingId, "TABELNUMBER");
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (Employees.ContainsKey(ch.Code)) Employees.Remove(ch.Code);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_2.Find(ch.Code);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new Employee();
+                                newItem.LoadFromEntity(item, this);
+                                Employees.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (Employees.ContainsKey(item.DOC_CODE))
+                                    ((Employee) Employees[item.DOC_CODE]).LoadFromEntity(item, this);
+                            }
+                        }
+
+                        break;
+                }
+
+        EmployeesTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public IEmployee GetEmployee(int? tabelNumber)
     {
         if (tabelNumber == null) return null;
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheEmployee();
         var emp = Employees.Values.FirstOrDefault(_m => _m.TabelNumber == tabelNumber.Value);
         if (emp != null) return emp;
         var data = Context.SD_2.FirstOrDefault(_ => _.TABELNUMBER == tabelNumber.Value);
@@ -635,6 +1525,9 @@ public class ReferencesKursCache : IReferencesCache
     public IEmployee GetEmployee(decimal? dc)
     {
         if (dc == null) return null;
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheEmployee();
         if (Employees.ContainsKey(dc.Value))
             return Employees[dc.Value];
         var data = Context.SD_2.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
@@ -652,6 +1545,9 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IEmployee> GetEmployees()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheEmployee();
         return Employees.Values.ToList();
     }
 
@@ -659,8 +1555,45 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Nomenkl
 
+    private void UpdateCacheNomenkl()
+    {
+        var changed = GetChangeData("SD_83", NomenklsTrackingId).ToList();
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (Nomenkls.ContainsKey(ch.DocCode)) Nomenkls.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_83.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I" && !Nomenkls.ContainsKey(ch.DocCode))
+                            {
+                                var newItem = new Nomenkl();
+                                newItem.LoadFromEntity(item, this);
+                                Nomenkls.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (Nomenkls.ContainsKey(ch.DocCode))
+                                    ((Nomenkl) Nomenkls[ch.DocCode]).LoadFromEntity(item, this);
+                            }
+                        }
+
+                        break;
+                }
+
+        NomenklsTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public INomenkl GetNomenkl(Guid id)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheNomenkl();
         var k = Nomenkls.Values.Cast<Nomenkl>().FirstOrDefault(_ => _.Id == id);
         if (k != null)
             return k;
@@ -686,6 +1619,9 @@ public class ReferencesKursCache : IReferencesCache
 
     public INomenkl GetNomenkl(decimal dc)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheNomenkl();
         if (Nomenkls.ContainsKey(dc))
             return Nomenkls[dc];
         var data = Context.SD_83.FirstOrDefault(_ => _.DOC_CODE == dc);
@@ -698,12 +1634,112 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<INomenkl> GetNomenklsAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheNomenkl();
         return Nomenkls.Values.ToList();
+    }
+
+    public INomenklMain GetNomenklMain(Guid? id)
+    {
+        if (id == null) return null;
+        return GetNomenklMain(id.Value);
+    }
+
+    public INomenklMain GetNomenklMain(Guid id)
+    {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheNomenklMain();
+        if (NomenklMains.ContainsKey(id))
+            return NomenklMains[id];
+        var data = Context.NomenklMain.FirstOrDefault(_ => _.Id == id);
+        if (data == null) return null;
+        var newItem = new NomenklMain();
+        newItem.LoadFromEntity(data, this);
+        NomenklMains.Add(data.Id, newItem);
+        return NomenklMains[data.Id];
+    }
+
+    private void UpdateCacheNomenklMain()
+    {
+        var changed = GetChangeDataGuid("NomenklMain", NomenklMainTrackingId, "Id").ToList();
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (NomenklMains.ContainsKey(ch.Id)) NomenklMains.Remove(ch.Id);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.NomenklMain.Find(ch.Id);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new NomenklMain();
+                                newItem.LoadFromEntity(item, this);
+                                NomenklMains.Add(newItem.Id, newItem);
+                            }
+                            else
+                            {
+                                if (NomenklMains.ContainsKey(ch.Id))
+                                    ((NomenklMain) NomenklMains[ch.Id]).LoadFromEntity(item, this);
+                            }
+                        }
+
+                        break;
+                }
+
+        NomenklsTrackingId = GetCurrentChangeTrackingId();
+    }
+
+    public IEnumerable<INomenklMain> GetNomenklMainAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    private void UpdateCacheNomenklGroup()
+    {
+        var changed = GetChangeData("SD_82", NomenklGroupsTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (NomenklGroups.ContainsKey(ch.DocCode)) NomenklGroups.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_82.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new NomenklGroup();
+                                newItem.LoadFromEntity(item);
+                                NomenklGroups.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (NomenklGroups.ContainsKey(ch.DocCode))
+                                    ((NomenklGroup) NomenklGroups[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        NomenklGroupsTrackingId = GetCurrentChangeTrackingId();
     }
 
     public INomenklGroup GetNomenklGroup(decimal? dc)
     {
         if (dc == null) return null;
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheNomenklGroup();
         if (NomenklGroups.ContainsKey(dc.Value))
             return NomenklGroups[dc.Value];
         var data = Context.SD_82.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
@@ -716,6 +1752,9 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<INomenklGroup> GetNomenklGroupAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheNomenklGroup();
         return NomenklGroups.Values.ToList();
     }
 
@@ -729,9 +1768,80 @@ public class ReferencesKursCache : IReferencesCache
         return GetCashBox(dc.Value);
     }
 
+    private void UpdateCacheCashBox()
+    {
+        var changed = GetChangeData("SD_22", CashBoxesTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (CashBoxes.ContainsKey(ch.DocCode)) CashBoxes.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_22.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newCB = new CashBox();
+                                newCB.LoadFromEntity(item, this);
+                                CashBoxes.Add(newCB.DocCode, newCB);
+                            }
+                            else
+                            {
+                                if (CashBoxes.ContainsKey(ch.DocCode))
+                                    ((CashBox) CashBoxes[ch.DocCode]).LoadFromEntity(item, this);
+                            }
+                        }
+
+                        break;
+                }
+
+        CashBoxesTrackingId = GetCurrentChangeTrackingId();
+    }
+
+    private void UpdateCacheBank()
+    {
+        var changed = GetChangeData("SD_44", BanksTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (Banks.ContainsKey(ch.DocCode)) Banks.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_44.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newitem = new Bank();
+                                newitem.LoadFromEntity(item);
+                                Banks.Add(newitem.DocCode, newitem);
+                            }
+                            else
+                            {
+                                if (Banks.ContainsKey(ch.DocCode))
+                                    ((Bank) Banks[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        CashBoxesTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public ICashBox GetCashBox(decimal dc)
     {
-        if(CashBoxes.ContainsKey(dc))
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheCashBox();
+        if (CashBoxes.ContainsKey(dc))
             return CashBoxes[dc];
         var data = Context.SD_22.Include(_ => _.TD_22).FirstOrDefault(_ => _.DOC_CODE == dc);
         if (data == null) return null;
@@ -743,11 +1853,17 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<ICashBox> GetCashBoxAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheCashBox();
         return CashBoxes.Values.ToList();
     }
 
     public IBank GetBank(decimal? dc)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheBank();
         if (dc == null) return null;
         if (Banks.ContainsKey(dc.Value))
             return Banks[dc.Value];
@@ -761,11 +1877,17 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IBank> GetBanksAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheBank();
         return Banks.Values.ToList();
     }
 
     public IBankAccount GetBankAccount(decimal? dc)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheBankAccount();
         if (dc == null) return null;
         if (BankAccounts.ContainsKey(dc.Value))
             return BankAccounts[dc.Value];
@@ -779,15 +1901,88 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IBankAccount> GetBankAccountAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheBankAccount();
         return BankAccounts.Values.ToList();
+    }
+
+    private void UpdateCacheBankAccount()
+    {
+        var changed = GetChangeData("SD_114", CashBoxesTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (BankAccounts.ContainsKey(ch.DocCode)) BankAccounts.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_114.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newitem = new BankAccount();
+                                newitem.LoadFromEntity(item, this);
+                                BankAccounts.Add(newitem.DocCode, newitem);
+                            }
+                            else
+                            {
+                                if (BankAccounts.ContainsKey(ch.DocCode))
+                                    ((BankAccount) BankAccounts[ch.DocCode]).LoadFromEntity(item, this);
+                            }
+                        }
+
+                        break;
+                }
+
+        CashBoxesTrackingId = GetCurrentChangeTrackingId();
     }
 
     #endregion
 
     #region Тип продукции
 
+    private void UpdateCacheProductType()
+    {
+        var changed = GetChangeData("SD_50", ProductTypesTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (ProductTypes.ContainsKey(ch.DocCode)) ProductTypes.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_50.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new ProductType();
+                                newItem.LoadFromEntity(item);
+                                ProductTypes.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (ProductTypes.ContainsKey(ch.DocCode))
+                                    ((ProductType) ProductTypes[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        ProductTypesTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public IProductType GetProductType(decimal dc)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheProductType();
         if (ProductTypes.ContainsKey(dc))
             return ProductTypes[dc];
         var data = Context.SD_50.FirstOrDefault(_ => _.DOC_CODE == dc);
@@ -805,6 +2000,8 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<IProductType> GetProductTypeAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheProductType();
         return ProductTypes.Values.ToList();
     }
 
@@ -812,9 +2009,46 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Тип товара
 
+    private void UpdateCacheNomenklType()
+    {
+        var changed = GetChangeData("SD_119", NomenklTypesTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (NomenklTypes.ContainsKey(ch.DocCode)) NomenklTypes.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_119.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new NomenklType();
+                                newItem.LoadFromEntity(item);
+                                NomenklTypes.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (NomenklTypes.ContainsKey(ch.DocCode))
+                                    ((NomenklType) NomenklTypes[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        NomenklTypesTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public INomenklType GetNomenklType(decimal? dc)
     {
         if (dc == null) return null;
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheNomenklType();
         if (NomenklTypes.ContainsKey(dc.Value))
             return NomenklTypes[dc.Value];
         var data = Context.SD_119.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
@@ -827,6 +2061,9 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<INomenklType> GetNomenklTypeAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId())
+            UpdateCacheNomenklType();
         return NomenklTypes.Values.ToList();
     }
 
@@ -834,9 +2071,46 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Центр ответственности
 
+    private void UpdateCacheCentrResponsibility()
+    {
+        var changed = GetChangeData("SD_40", CentrResponsibilitiesTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (CentrResponsibilities.ContainsKey(ch.DocCode)) CentrResponsibilities.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_40.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new CentrResponsibility();
+                                newItem.LoadFromEntity(item);
+                                CentrResponsibilities.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (CentrResponsibilities.ContainsKey(ch.DocCode))
+                                    ((CentrResponsibility) CentrResponsibilities[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        CentrResponsibilitiesTrackingId = GetCurrentChangeTrackingId();
+    }
+
+
     public ICentrResponsibility GetCentrResponsibility(decimal? dc)
     {
         if (dc == null) return null;
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheCentrResponsibility();
         if (CentrResponsibilities.ContainsKey(dc.Value))
             return CentrResponsibilities[dc.Value];
         var data = Context.SD_40.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
@@ -849,6 +2123,8 @@ public class ReferencesKursCache : IReferencesCache
 
     public IEnumerable<ICentrResponsibility> GetCentrResponsibilitiesAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheCentrResponsibility();
         return CentrResponsibilities.Values.ToList();
     }
 
@@ -856,8 +2132,44 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Условия поставки sd_103
 
+    private void UpdateCacheDeliveryCondition()
+    {
+        var changed = GetChangeData("SD_103", DeliveryConditionsTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (DeliveryConditions.ContainsKey(ch.DocCode)) DeliveryConditions.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_103.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new DeliveryCondition();
+                                newItem.LoadFromEntity(item);
+                                DeliveryConditions.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (DeliveryConditions.ContainsKey(ch.DocCode))
+                                    ((DeliveryCondition) DeliveryConditions[ch.DocCode]).LoadFromEntity(item);
+                            }
+                        }
+
+                        break;
+                }
+
+        DeliveryConditionsTrackingId = GetCurrentChangeTrackingId();
+    }
+
     public IDeliveryCondition GetDeliveryCondition(decimal dc)
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheDeliveryCondition();
         if (DeliveryConditions.ContainsKey(dc))
             return DeliveryConditions[dc];
         var data = Context.SD_103.FirstOrDefault(_ => _.DOC_CODE == dc);
@@ -870,19 +2182,88 @@ public class ReferencesKursCache : IReferencesCache
 
     public IDeliveryCondition GetDeliveryCondition(decimal? dc)
     {
-        if(dc == null) return null;
+        if (dc == null) return null;
         return GetDeliveryCondition(dc.Value);
     }
 
     public IEnumerable<IDeliveryCondition> GetDeliveryConditionAll()
     {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheDeliveryCondition();
         return DeliveryConditions.Values.ToList();
     }
 
+    #endregion
+
+    #region Тип продукции для счетов SD_77
+
+    private void UpdateCacheNomenklProductType()
+    {
+        var changed = GetChangeData("SD_77", NomenklProductTypesTrackingId);
+        if (changed.Any())
+            foreach (var ch in changed)
+                switch (ch.Operation)
+                {
+                    case "D":
+                        if (NomenklProductTypes.ContainsKey(ch.DocCode)) NomenklProductTypes.Remove(ch.DocCode);
+                        break;
+                    case "I":
+                    case "U":
+                        var item = Context.SD_77.Find(ch.DocCode);
+                        if (item != null)
+                        {
+                            if (ch.Operation == "I")
+                            {
+                                var newItem = new NomenklProductType();
+                                newItem.LoadFromEntity(item, this);
+                                NomenklProductTypes.Add(newItem.DocCode, newItem);
+                            }
+                            else
+                            {
+                                if (NomenklProductTypes.ContainsKey(ch.DocCode))
+                                    ((NomenklProductType) NomenklProductTypes[ch.DocCode]).LoadFromEntity(item, this);
+                            }
+                        }
+
+                        break;
+                }
+
+        NomenklProductTypesTrackingId = GetCurrentChangeTrackingId();
+    }
+
+    public INomenklProductType GetNomenklProductType(decimal? dc)
+    {
+        if (dc == null) return null;
+        return GetNomenklProductType(dc.Value);
+    }
+
+    public INomenklProductType GetNomenklProductType(decimal dc)
+    {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheNomenklProductType();
+        if (NomenklProductTypes.ContainsKey(dc))
+            return NomenklProductTypes[dc];
+        var data = Context.SD_77.FirstOrDefault(_ => _.DOC_CODE == dc);
+        if (data == null) return null;
+        var newItem = new NomenklProductType();
+        newItem.LoadFromEntity(data, this);
+        NomenklProductTypes.Add(data.DOC_CODE, newItem);
+        return NomenklProductTypes[data.DOC_CODE];
+    }
+
+    public IEnumerable<INomenklProductType> GetNomenklProductTypesAll()
+    {
+        if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
+            NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheNomenklProductType();
+        return NomenklProductTypes.Values.ToList();
+    }
 
     #endregion
 
     #region Dictionaries
+
+    private readonly Dictionary<decimal, INomenklProductType> NomenklProductTypes
+        = new Dictionary<decimal, INomenklProductType>();
 
     private readonly Dictionary<int, IKontragentGroup> KontragentGroups =
         new Dictionary<int, IKontragentGroup>();
@@ -892,6 +2273,7 @@ public class ReferencesKursCache : IReferencesCache
 
     private readonly Dictionary<decimal, IKontragent> Kontragents = new Dictionary<decimal, IKontragent>();
     private readonly Dictionary<decimal, INomenkl> Nomenkls = new Dictionary<decimal, INomenkl>();
+    private readonly Dictionary<Guid, INomenklMain> NomenklMains = new Dictionary<Guid, INomenklMain>();
 
     private readonly Dictionary<decimal, INomenklGroup> NomenklGroups =
         new Dictionary<decimal, INomenklGroup>();

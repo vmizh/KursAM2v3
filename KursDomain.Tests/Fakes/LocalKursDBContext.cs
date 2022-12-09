@@ -9,12 +9,14 @@ public class LocalKursDBContext
 
     public LocalKursDBContext()
     {
-        SqlConnectionStringBuilder sqlBuild = new SqlConnectionStringBuilder();
-        sqlBuild.DataSource = "localhost";
-        sqlBuild.InitialCatalog = "AlfaTest";
-        sqlBuild.UserID = "sa";
-        sqlBuild.Password = "CbvrfFhntvrf65";
-        sqlBuild.IntegratedSecurity = false;
+        SqlConnectionStringBuilder sqlBuild = new SqlConnectionStringBuilder
+        {
+            DataSource = "localhost",
+            InitialCatalog = "AlfaTest",
+            UserID = "sa",
+            Password = "CbvrfFhntvrf65",
+            IntegratedSecurity = false
+        };
 
         var entityConn = new EntityConnectionStringBuilder
         {

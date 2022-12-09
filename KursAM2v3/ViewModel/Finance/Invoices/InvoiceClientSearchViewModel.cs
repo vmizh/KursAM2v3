@@ -21,6 +21,7 @@ using KursAM2.View.Finance.Invoices;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
+using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -297,10 +298,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override async void RefreshData(object data)
         {
             Documents.Clear();
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             foreach (var d in InvoiceClientRepository.GetAllByDates(StartDate, EndDate))
                 //foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 
                 //    false, null, SearchText))
                 Documents.Add(d);
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
         }
         //SplashScreenService.ShowSplashScreen();
             //await Load();

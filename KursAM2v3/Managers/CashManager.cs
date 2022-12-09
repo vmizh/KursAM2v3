@@ -267,8 +267,7 @@ namespace KursAM2.Managers
 
         public static bool CheckCashCurrencyExchange(CashCurrencyExchange doc)
         {
-            return doc.Cash != null && !string.IsNullOrWhiteSpace(doc.KontragentName)
-                                    && doc.SDRSchet != null;
+            return doc.Cash != null && doc.SDRSchet != null;
         }
 
         public static CashInViewModel NewCashIn()
@@ -942,13 +941,13 @@ namespace KursAM2.Managers
                                     return;
                                 }
 
-                                var ent2 = CurrencyExchangeViewModelToEntity(insCrsExch);
                                 insCrsExch.DOC_CODE =
                                     ctx.SD_251.Any() ? ctx.SD_251.Max(_ => _.DOC_CODE) + 1 : 12510000001;
                                 insCrsExch.CH_NUM_ORD =
                                     ctx.SD_251.Any(_ => _.CH_DATE.Year == insCrsExch.CH_DATE.Year)
                                         ? ctx.SD_251.Max(_ => _.CH_NUM_ORD) + 1
                                         : 1;
+                                var ent2 = CurrencyExchangeViewModelToEntity(insCrsExch);
                                 ctx.Entry(ent2).State = EntityState.Added;
                                 ctx.SaveChanges();
                                 insCrsExch.DocCode = ent2.DOC_CODE;

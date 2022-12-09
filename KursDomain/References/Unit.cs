@@ -12,7 +12,7 @@ using KursDomain.IReferences.Nomenkl;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class Unit : IUnit, IDocCode, IName, IEquatable<Unit>
+public class Unit : IUnit, IDocCode, IName, IEquatable<Unit>,IComparable
 {
     public decimal DocCode { get; set; }
 
@@ -59,6 +59,12 @@ public class Unit : IUnit, IDocCode, IName, IEquatable<Unit>
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
     }
 }
 

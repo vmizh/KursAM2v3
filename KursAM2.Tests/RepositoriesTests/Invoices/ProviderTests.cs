@@ -70,7 +70,7 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
 
                 Price = 1000,
                 Quantity = 1,
-                SFT_NDS_PERCENT = 18,
+                NDSPercent = 18,
                 SFT_IS_NAKLAD = 0,
                 SFT_VKLUCH_V_CENU = 1,
                 SFT_AUTO_FLAG = 0,
@@ -119,10 +119,10 @@ namespace KursAM2.Tests.RepositoriesTests.Invoices
                 Date = DateTime.Today,
                 // ReSharper disable once PossibleInvalidOperationException
                 OLdPrice = (decimal) row.Price,
-                OLdNakladPrice = (row.SFT_SUMMA_NAKLAD ?? 0) != 0
+                OLdNakladPrice = (row.SummaNaklad ?? 0) != 0
                     ? Math.Round((decimal) row.Price +
                                  // ReSharper disable once PossibleInvalidOperationException
-                                 (decimal) row.Price / (row.SFT_SUMMA_NAKLAD ?? 0), 2)
+                                 (decimal) row.Price / (row.SummaNaklad ?? 0), 2)
                     : Math.Round((decimal) row.Price, 2),
                 Quantity = row.Quantity,
                 Rate = 1

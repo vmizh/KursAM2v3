@@ -23,7 +23,6 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
     private References.Currency myDebitorCurrency;
     private SD_110 myEntity;
     private bool myIsOld;
-    private MutualSettlementType myMutualAccountingOldType;
 
     //private UD_110ViewModel myMutualAccountingType;
 
@@ -197,12 +196,11 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
 
     public MutualSettlementType MutualAccountingOldType
     {
-        get => myMutualAccountingOldType;
+        get => GlobalOptions.ReferencesCache.GetMutualSettlementType(VZ_TYPE_DC) as MutualSettlementType;
         set
         {
-            if (myMutualAccountingOldType != null && myMutualAccountingOldType.Equals(value)) return;
-            myMutualAccountingOldType = value;
-            VZ_TYPE_DC = myMutualAccountingOldType?.DocCode ?? -1;
+            if(Equals(GlobalOptions.ReferencesCache.GetMutualSettlementType(VZ_TYPE_DC),value)) return;
+            VZ_TYPE_DC = value?.DocCode ?? -1;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(VZ_TYPE_DC));
         }
@@ -303,8 +301,6 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
         {
             if (Entity.SD_111 == value) return;
             Entity.SD_111 = value;
-            myMutualAccountingOldType =
-                GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.SD_111?.DOC_CODE) as MutualSettlementType;
             RaisePropertyChanged();
         }
     }
@@ -542,8 +538,6 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
         ActType = ent.ActType;
         SD_111 = ent.SD_111;
         UD_110 = ent.UD_110;
-        myMutualAccountingOldType =
-            GlobalOptions.ReferencesCache.GetMutualSettlementType(SD_111.DOC_CODE) as MutualSettlementType;
         DebitorCurrency = GlobalOptions.ReferencesCache.GetCurrency(ent.CurrencyFromDC) as References.Currency;
         CreditorCurrency = GlobalOptions.ReferencesCache.GetCurrency(ent.CurrencyToDC) as References.Currency;
         Rows.Clear();

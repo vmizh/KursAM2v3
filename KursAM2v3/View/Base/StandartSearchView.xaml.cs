@@ -1,5 +1,7 @@
 ﻿using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
+using DevExpress.XtraGrid;
+using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace KursAM2.View.Base
 {
@@ -19,6 +21,8 @@ namespace KursAM2.View.Base
         private void GridDocuments_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
             e.Column.Name = e.Column.FieldName;
+            e.Column.SortMode = ColumnSortMode.DisplayText;
+            e.Column.ColumnFilterMode = ColumnFilterMode.DisplayText;
         }
     }
 }

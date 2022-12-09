@@ -12,8 +12,13 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq}")]
-public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>
+public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     [Display(AutoGenerateField = false, Name = "DocCode")]
     public decimal DocCode { get; set; }
 

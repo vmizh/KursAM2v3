@@ -113,19 +113,6 @@ namespace KursAM2.ViewModel.Finance
         {
             if (CurrentBankAccount != null)
             {
-                //decimal rate = 1;
-                //if (CurrentBankAccount.Currency.DocCode != GlobalOptions.SystemProfile.NationalCurrency.DocCode)
-                //{
-                //    var rates = CurrencyRate.GetRate(DateTime.Today);
-                //    if (rates.ContainsKey(CurrentBankAccount.Currency))
-                //    {
-                //        rate = rates[CurrentBankAccount.Currency];
-                //    }
-                //}
-                //var newItem = new BankOperationsViewModel
-                //{
-                //    CurrencyRateForReference = rate
-                //};
                 var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode, new BankOperationsViewModel(),
                     GlobalOptions.ReferencesCache.GetBankAccount(CurrentBankAccount.DocCode) as BankAccount);
                 if (k != null)
@@ -157,6 +144,7 @@ namespace KursAM2.ViewModel.Finance
             if (CurrentBankAccount != null)
                 bs = CurrentBankAccount.DocCode;
             BankOperationsCollection.Clear();
+            BankAccountCollection.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var cashAcc = ctx.Database.SqlQuery<AccessRight>(

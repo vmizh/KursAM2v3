@@ -12,8 +12,13 @@ using KursDomain.IReferences;
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>
+public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>, IComparable
 {
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
     public decimal DocCode { get; set; }
 
     public bool Equals(SDRState other)

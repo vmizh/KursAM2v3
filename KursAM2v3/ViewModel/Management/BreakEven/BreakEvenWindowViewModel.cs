@@ -173,6 +173,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
 
         public void RefreshData(DateTime start, DateTime end)
         {
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             using (var ent = GlobalOptions.GetEntities())
             {
                 var empls = ent.SD_2.ToList();
@@ -405,7 +406,11 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 {
                     WindowManager.ShowError(ex);
                 }
-
+                finally
+                {
+                    GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+                }
+                GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
                 SetMain();
             }
         }
