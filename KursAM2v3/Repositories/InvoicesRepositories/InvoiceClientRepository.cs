@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Core;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.Finance;

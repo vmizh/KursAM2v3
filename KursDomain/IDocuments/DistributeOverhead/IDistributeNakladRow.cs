@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using DevExpress.Xpf.Bars;
 using KursDomain.IDocuments.Finance;
-using KursDomain.IReferences;
 using IInvoiceProviderRow = KursDomain.IDocuments.Finance.IInvoiceProviderRow;
 
 namespace KursDomain.IDocuments.DistributeOverhead;
@@ -20,26 +18,4 @@ public interface IDistributeNakladRow
     decimal Summa { set; get; }
     decimal DistributeSumma { set; get; }
     decimal DistributePrice { set; get; }
-}
-
-public interface IDistributeNaklad
-{
-    Guid Id { get; set; }
-    DateTime DocDate { get; set; }
-    string DocNum { get; set; }
-    string Creator { set; get; }
-    ICurrency Currency { set; get; }
-    string Note { set; get; }
-    IEnumerable<IDistributeNakladRow> Tovars { set; get; }
-    IEnumerable<IDistributeNakladInvoice> NakladInvoices { set; get; }
-}
-
-public interface IDistributeNakladInvoice
-{
-    DistributeNakladTypeEnum DistributeType { set; get; }
-}
-
-public interface IDistributeNakladInfo
-{
-    
 }

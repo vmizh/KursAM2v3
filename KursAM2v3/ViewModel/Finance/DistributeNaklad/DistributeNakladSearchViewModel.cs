@@ -7,7 +7,7 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.POCO;

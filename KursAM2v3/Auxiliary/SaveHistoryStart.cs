@@ -2,7 +2,7 @@
 using Core;
 using Core.Helper;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using Helper;
 using KursDomain;
 using KursDomain.Documents.Bank;
@@ -44,7 +44,7 @@ namespace KursAM2.Auxiliary
 
             var invoiceSupplier = ctx.SD_26.ToList();
             foreach (var doc in invoiceSupplier.Select(ent =>
-                         new InvoiceProvider(ent, new UnitOfWork<ALFAMEDIAEntities>(ctx))))
+                         new InvoiceProvider(ent, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>(ctx))))
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceProvider), null,
                     doc.DocCode, null, (string)doc.ToJson());
 

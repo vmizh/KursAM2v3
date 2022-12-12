@@ -8,7 +8,6 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
-using Data.Repository;
 using DevExpress.Mvvm;
 using KursAM2.Managers;
 using KursAM2.Repositories.DogovorsRepositories;
@@ -17,6 +16,7 @@ using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Dogovora;
 using KursDomain.Menu;
+using KursDomain.Repository;
 
 namespace KursAM2.ViewModel.Dogovora
 {

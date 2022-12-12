@@ -7,7 +7,6 @@ using System.Linq;
 using Core.EntityViewModel;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
 using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories.InvoicesRepositories;
@@ -21,6 +20,7 @@ using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
 using KursDomain.References;
+using KursDomain.Repository;
 
 namespace KursAM2.Managers.Invoices
 {
@@ -62,7 +62,7 @@ namespace KursAM2.Managers.Invoices
         /// <returns></returns>
         public static InvoiceProvider GetInvoiceProvider(decimal dc)
         {
-            var doc = new InvoiceProvider(new UnitOfWork<ALFAMEDIAEntities>());
+            var doc = new InvoiceProvider(new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>());
             // ReSharper disable once CollectionNeverQueried.Local
             var pDocs = new List<InvoicePaymentDocument>();
             try
@@ -136,7 +136,7 @@ namespace KursAM2.Managers.Invoices
                     if (i?.SD_24 != null)
                         sum += (from q in i.TD_26 from d in q.TD_24 select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
                     // ReSharper disable once AssignNullToNotNullAttribute
-                    doc = new InvoiceProvider(i, new UnitOfWork<ALFAMEDIAEntities>())
+                    doc = new InvoiceProvider(i, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>())
                     {
                         SummaFact = sum,
                         myState = RowStatus.NotEdited
@@ -221,7 +221,7 @@ namespace KursAM2.Managers.Invoices
             if (i?.SD_24 != null)
                 sum += (from q in i.TD_26 from d in q.TD_24 select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
             // ReSharper disable once AssignNullToNotNullAttribute
-            doc = new InvoiceProvider(i, new UnitOfWork<ALFAMEDIAEntities>())
+            doc = new InvoiceProvider(i, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>())
             {
                 SummaFact = sum,
                 myState = RowStatus.NotEdited
@@ -262,7 +262,7 @@ namespace KursAM2.Managers.Invoices
 
         public static InvoiceProvider NewProviderCopy(InvoiceProvider doc)
         {
-            var ret = new InvoiceProvider(doc?.Entity, new UnitOfWork<ALFAMEDIAEntities>())
+            var ret = new InvoiceProvider(doc?.Entity, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>())
             {
                 DocCode = -1,
                 SF_POSTAV_NUM = null,
@@ -979,13 +979,13 @@ namespace KursAM2.Managers.Invoices
                             var psums = pays.Where(_ => _.DocCode == d.DOC_CODE).Sum(_ => _.Summa);
                             if (psums < d.SF_CRS_SUMMA)
                             {
-                                var newDoc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>());
+                                var newDoc = new InvoiceProvider(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>());
                                 ret.Add(newDoc);
                             }
                         }
                         else
                         {
-                            var newDoc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>());
+                            var newDoc = new InvoiceProvider(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>());
                             ret.Add(newDoc);
                         }
                 }
@@ -1123,7 +1123,7 @@ namespace KursAM2.Managers.Invoices
                     var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
-                        var newDoc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>());
+                        var newDoc = new InvoiceProvider(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>());
                         if (isUsePayment)
                         {
                             var pd = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode);
@@ -1189,7 +1189,7 @@ namespace KursAM2.Managers.Invoices
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
                         if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
-                        var newDoc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>());
+                        var newDoc = new InvoiceProvider(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>());
                         if (isUsePayment)
                         {
                             if (newDoc.PaySumma < newDoc.Summa)

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using KursDomain.References;
 
 namespace KursAM2.Repositories

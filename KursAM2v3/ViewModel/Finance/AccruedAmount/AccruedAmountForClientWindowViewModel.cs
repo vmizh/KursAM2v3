@@ -9,7 +9,7 @@ using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Utils.Extensions;

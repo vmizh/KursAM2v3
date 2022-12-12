@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 
 namespace KursAM2.Repositories.AccruedAmount
 {

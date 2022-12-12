@@ -132,6 +132,9 @@
     <Compile Include="Documents\Dogovora\Old\SD_9ViewModel.cs" />
     <Compile Include="Documents\Dogovora\Old\TD_9ViewModel.cs" />
     <Compile Include="Documents\Employee\EMP_PAYROLL_TYPEViewModel.cs" />
+    <Compile Include="IDocuments\DistributeOverhead\IDistributeNaklad.cs" />
+    <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladInfo.cs" />
+    <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladInvoice.cs" />
     <Compile Include="IDocuments\Finance\IInvoiceProvider.cs" />
     <Compile Include="IDocuments\Finance\IInvoiceProviderRow.cs" />
     <Compile Include="Documents\Invoices\SFProviderNomenklCurrencyConvertViewModel.cs" />
@@ -233,7 +236,7 @@
     <Compile Include="IDocuments\Currency\ISummaMultiWithPriceCurrency.cs" />
     <Compile Include="IDocuments\DistributeOverhead\DistributeNakladTypeEnum.cs" />
     <Compile Include="IDocuments\Finance\ISFProviderNomenklCurrencyConvert.cs" />
-    <Compile Include="IDocuments\DistributeOverhead\IDistributeOverheadCostRow.cs" />
+    <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladRow.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IConsumableWarehouseInvoice.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrder.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrderRow.cs" />
@@ -312,6 +315,11 @@
     <Compile Include="Repository\Base\GenericRepository.cs" />
     <Compile Include="Repository\CurrencyRepository\CurrencyRepository.cs" />
     <Compile Include="Repository\CurrencyRepository\ICurrencyRepository.cs" />
+    <Compile Include="Repository\GenericKursDBRepository.cs" />
+    <Compile Include="Repository\GenericKursSystemDBRepository.cs" />
+    <Compile Include="Repository\IGenericRepository.cs" />
+    <Compile Include="Repository\IRepository.cs" />
+    <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="UserMenuFavorites.cs" />
     <Compile Include="ViewModel\Base\Column\ColumnHelper.cs" />
     <Compile Include="ViewModel\Base\Column\ColumnSummary.cs" />

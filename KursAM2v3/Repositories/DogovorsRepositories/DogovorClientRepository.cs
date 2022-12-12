@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Data;
-using Data.Repository;
 using KursAM2.ViewModel.Dogovora;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Dogovora;
 using KursDomain.Documents.Invoices;
 using KursDomain.References;
+using KursDomain.Repository;
 
 namespace KursAM2.Repositories.DogovorsRepositories
 {

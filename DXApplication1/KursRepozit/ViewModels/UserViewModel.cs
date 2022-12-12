@@ -13,7 +13,7 @@ using Core.Logger;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Utils.CommonDialogs.Internal;
 using DevExpress.Xpf.Editors;

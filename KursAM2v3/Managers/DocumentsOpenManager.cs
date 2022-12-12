@@ -8,7 +8,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using DevExpress.Data;
 using DevExpress.Utils.DirectXPaint.Svg;
 using DevExpress.Xpf.Bars.Helpers;

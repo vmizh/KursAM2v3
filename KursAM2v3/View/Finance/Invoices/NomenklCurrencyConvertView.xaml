@@ -1,12 +1,116 @@
 ﻿<dx:ThemedWindow
-    x:Class="KursAM2.View.Finance.Invoices.NomenklCurrencyConvertView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol" xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    x:Class="KursAM2.View.Finance.Invoices.NomenklCurrencyConvertView"
     Title="NomenklCurrencyConvertView" Height="800" Width="1000"
     >
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}" 
+                   Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right"/>
+    </dx:ThemedWindow.HeaderItems>
 
-    <Grid>
-
-    </Grid>
+    <DockPanel Style="{StaticResource DXServices}">
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />
+        <dxlc:LayoutControl HorizontalAlignment="Stretch"
+                            VerticalAlignment="Stretch">
+            <dxlc:LayoutGroup Orientation="Vertical">
+                <dxlc:LayoutItem Label="LayoutItem">
+                        <dxe:TextEdit/>
+                    </dxlc:LayoutItem>
+                <dxlc:LayoutGroup Orientation="Vertical" View="Group"
+                                  Header="Конвертируемые номенклатуры">
+                    <dxg:GridControl x:Name="gridFromRows" AutoGenerateColumns="AddNew"
+                                     Style="{StaticResource GridControl.Search}"
+                                     SelectionMode="Row"
+                                     ItemsSource="{Binding Document.Rows, NotifyOnSourceUpdated=True}"
+                                     CurrentItem="{Binding CurrentRow, UpdateSourceTrigger=PropertyChanged}"
+                                     SelectedItems="{Binding SelectedRows, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                     >
+                        <dxg:GridControl.View>
+                            <dxg:TableView EditFormPostMode="Immediate"
+                                           ErrorsWatchMode="None"
+                                           Style="{StaticResource TableView.Search}">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Экспорт"
+                                                  Command="{Binding VisualControlExportCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}">
+                                            <MenuItem.Icon>
+                                                <Image
+                                                    Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup Orientation="Horizontal">
+                    <dxlc:LayoutGroup Header="Сконвертированные номеклатуры" View="Group" >
+                        <dxg:GridControl x:Name="gridToRows" AutoGenerateColumns="AddNew"
+                                         Style="{StaticResource GridControl.Search}"
+                                         SelectionMode="Row"
+                                         ItemsSource="{Binding Document.Rows, NotifyOnSourceUpdated=True}"
+                                         CurrentItem="{Binding CurrentRow, UpdateSourceTrigger=PropertyChanged}"
+                                         SelectedItems="{Binding SelectedRows, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                        >
+                            <dxg:GridControl.View>
+                                <dxg:TableView EditFormPostMode="Immediate"
+                                               ErrorsWatchMode="None"
+                                               Style="{StaticResource TableView.Search}">
+                                    <dxg:TableView.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Экспорт"
+                                                      Command="{Binding VisualControlExportCommand}"
+                                                      CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}">
+                                                <MenuItem.Icon>
+                                                    <Image
+                                                        Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </dxg:TableView.ContextMenu>
+                                </dxg:TableView>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </dxlc:LayoutGroup>
+                        <dxlc:LayoutGroup Header="Распределенные накладные расходы" View="GroupBox">
+                            <dxg:GridControl x:Name="gridDistributeOverheadRows" 
+                                             Style="{StaticResource GridControl.Search}"
+                                             SelectionMode="Row"
+                                             ItemsSource="{Binding Document.Rows, NotifyOnSourceUpdated=True}"
+                                             CurrentItem="{Binding CurrentRow, UpdateSourceTrigger=PropertyChanged}"
+                                             SelectedItems="{Binding SelectedRows, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                            >
+                                <dxg:GridControl.View>
+                                    <dxg:TableView EditFormPostMode="Immediate"
+                                                   ErrorsWatchMode="None"
+                                                   Style="{StaticResource TableView.Search}">
+                                        <dxg:TableView.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="Экспорт"
+                                                          Command="{Binding VisualControlExportCommand}"
+                                                          CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}">
+                                                    <MenuItem.Icon>
+                                                        <Image
+                                                            Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                            </ContextMenu>
+                                        </dxg:TableView.ContextMenu>
+                                    </dxg:TableView>
+                                </dxg:GridControl.View>
+                            </dxg:GridControl>
+                        </dxlc:LayoutGroup>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
 </dx:ThemedWindow>

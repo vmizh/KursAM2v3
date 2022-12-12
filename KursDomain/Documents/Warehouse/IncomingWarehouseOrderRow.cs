@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
@@ -10,13 +11,30 @@ namespace KursDomain.Documents.Warehouse;
 
 [DebuggerDisplay(
     "{DocCode,nq} {Code,nq} Номенклатура: {Nomenkl,nq} {Quantity,nq} ")]
-public class IncomingWarehouseOrderRow : IDescription, IRowDC, IIncomingWarehouseOrderRow, IEqualityComparer<IRowDC>
+public class IncomingWarehouseOrderRow : IDescription, IRowDC, IRowId, IIncomingWarehouseOrderRow, 
+    IEqualityComparer<IncomingWarehouseOrderRow>
 {
+    public decimal DocCode { get; set; }
+    public int Code { get; set; }
+    public Guid Id { get; set; }
+    public Guid DocId { get; set; }
     public string NomenklNumber => Nomenkl?.NomenklNumber;
     public string Notes { get; set; }
     public string Description => $"{NomenklNumber} {Nomenkl} {Quantity:n2}";
+    public INomenkl Nomenkl { get; set; }
+    public decimal Quantity { get; set; }
+    public bool IsTaxExecuted { get; set; }
+    public ISDRSchet SDRSchet { get; set; }
+    public IInvoiceProviderRow InvoiceProviderRow { get; set; }
+    public IIssueWarehouseOrderRow IssueOrderRow { get; set; }
+    
 
-    public bool Equals(IRowDC x, IRowDC y)
+    public override string ToString()
+    {
+        return Description;
+    }
+
+    public bool Equals(IncomingWarehouseOrderRow x, IncomingWarehouseOrderRow y)
     {
         if (ReferenceEquals(x, y)) return true;
         if (ReferenceEquals(x, null)) return false;
@@ -25,7 +43,7 @@ public class IncomingWarehouseOrderRow : IDescription, IRowDC, IIncomingWarehous
         return x.DocCode == y.DocCode && x.Code == y.Code;
     }
 
-    public int GetHashCode(IRowDC obj)
+    public int GetHashCode(IncomingWarehouseOrderRow obj)
     {
         unchecked
         {
@@ -33,17 +51,5 @@ public class IncomingWarehouseOrderRow : IDescription, IRowDC, IIncomingWarehous
         }
     }
 
-    public INomenkl Nomenkl { get; set; }
-    public decimal Quantity { get; set; }
-    public bool IsTaxExecuted { get; set; }
-    public ISDRSchet SDRSchet { get; set; }
-    public IInvoiceProviderRow InvoiceProviderRow { get; set; }
-    public IIssueWarehouseOrderRow IssueOrderRow { get; set; }
-    public decimal DocCode { get; set; }
-    public int Code { get; set; }
-
-    public override string ToString()
-    {
-        return Description;
-    }
+    
 }

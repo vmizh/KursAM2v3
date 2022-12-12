@@ -5,7 +5,7 @@ using System.Windows;
 using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using Data.Repository;
+using KursDomain.Repository;
 using JetBrains.Annotations;
 using KursAM2.Managers.Invoices;
 using KursAM2.Repositories.InvoicesRepositories;

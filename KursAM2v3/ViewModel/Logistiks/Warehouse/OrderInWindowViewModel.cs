@@ -10,7 +10,6 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.Native;
 using DevExpress.Mvvm.POCO;
@@ -32,6 +31,7 @@ using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.Repository;
 using InvoiceProviderRow = KursDomain.Documents.Invoices.InvoiceProviderRow;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse

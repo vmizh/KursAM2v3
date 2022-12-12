@@ -15,7 +15,8 @@ namespace KursDomain.Documents.Warehouse;
 [DebuggerDisplay(
     "{DocCode,nq} {OrderNumber,nq} Отправитель: {SenderKontragent,nq} {SenderWarehouse,nq} " +
     " от {OrderDate.ToShortDateString(),nq}")]
-public class IncomingWarehouseOrder : IDocCode, IDescription, IIncomingWarehouseOrder, IEqualityComparer<IDocCode>
+public class IncomingWarehouseOrder : IDocCode, IDocGuid, IDescription, IIncomingWarehouseOrder, 
+    IEqualityComparer<IncomingWarehouseOrder>
 {
     public string Name { get; set; }
     public string Notes { get; set; }
@@ -34,21 +35,7 @@ public class IncomingWarehouseOrder : IDocCode, IDescription, IIncomingWarehouse
     }
 
     public decimal DocCode { get; set; }
-
-    public bool Equals(IDocCode x, IDocCode y)
-    {
-        if (ReferenceEquals(x, y)) return true;
-        if (ReferenceEquals(x, null)) return false;
-        if (ReferenceEquals(y, null)) return false;
-        if (x.GetType() != y.GetType()) return false;
-        return x.DocCode == y.DocCode;
-    }
-
-    public int GetHashCode(IDocCode obj)
-    {
-        return obj.DocCode.GetHashCode();
-    }
-
+    public Guid Id { get; set; }
     public int OrderNumber { get; set; }
     public string OuterNumber { get; set; }
     public DateTime OrderDate { get; set; }
@@ -59,4 +46,20 @@ public class IncomingWarehouseOrder : IDocCode, IDescription, IIncomingWarehouse
     public IInvoiceProvider InvoiceProvider { get; set; }
     public IWarehouse Warehouse { get; set; }
     public IEnumerable<IIncomingWarehouseOrderRow> Rows { get; set; } = new List<IIncomingWarehouseOrderRow>();
+
+    public bool Equals(IncomingWarehouseOrder x, IncomingWarehouseOrder y)
+    {
+        if (ReferenceEquals(x, y)) return true;
+        if (ReferenceEquals(x, null)) return false;
+        if (ReferenceEquals(y, null)) return false;
+        if (x.GetType() != y.GetType()) return false;
+        return x.DocCode == y.DocCode;
+    }
+
+    public int GetHashCode(IncomingWarehouseOrder obj)
+    {
+        return obj.DocCode.GetHashCode();
+    }
+
+    
 }

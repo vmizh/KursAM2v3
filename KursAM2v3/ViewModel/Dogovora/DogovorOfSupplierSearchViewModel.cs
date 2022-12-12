@@ -8,7 +8,7 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using DevExpress.Mvvm;
 using KursAM2.Managers;
 using KursAM2.Repositories.DogovorsRepositories;

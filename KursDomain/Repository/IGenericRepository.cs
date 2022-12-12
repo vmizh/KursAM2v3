@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Data.Repository
+namespace KursDomain.Repository
 {
     public interface IGenericRepository<T> where T : class
     {

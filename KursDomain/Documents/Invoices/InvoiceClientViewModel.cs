@@ -10,7 +10,6 @@ using Core.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
-using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
 using KursDomain.Documents.CommonReferences;
@@ -18,6 +17,7 @@ using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
 using KursDomain.References;
+using KursDomain.Repository;
 using Newtonsoft.Json;
 using NomenklProductType = KursDomain.References.NomenklProductType;
 

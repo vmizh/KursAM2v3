@@ -9,7 +9,6 @@ using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.Dialogs;
@@ -19,6 +18,7 @@ using KursDomain.Documents.StockHolder;
 using KursDomain.Documents.Systems;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.Repository;
 
 namespace KursAM2.ViewModel.StockHolder
 {

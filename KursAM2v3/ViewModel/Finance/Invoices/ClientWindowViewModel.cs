@@ -11,7 +11,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using Helper;

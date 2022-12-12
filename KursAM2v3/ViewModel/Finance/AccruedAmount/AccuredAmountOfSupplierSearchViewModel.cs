@@ -6,7 +6,7 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using KursAM2.Managers;
 using KursAM2.Repositories.AccruedAmount;
 using KursAM2.View.Finance.AccruedAmount;

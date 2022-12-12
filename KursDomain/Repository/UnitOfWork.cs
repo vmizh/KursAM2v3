@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
 
-namespace Data.Repository
+namespace KursDomain.Repository
 {
     public interface IUnitOfWork<out TContext>
         where TContext : DbContext
@@ -98,17 +98,17 @@ namespace Data.Repository
             disposed = true;
         }
 
-        public GenericKursDBRepository<T> GenericRepository<T>() where T : class
+        public KursDomain.Repository.GenericKursDBRepository<T> GenericRepository<T>() where T : class
         {
             if (repositories == null)
                 repositories = new Dictionary<string, object>();
             var type = typeof(T).Name;
-            if (repositories.ContainsKey(type)) return (GenericKursDBRepository<T>)repositories[type];
-            var repositoryType = typeof(GenericKursDBRepository<T>);
+            if (repositories.ContainsKey(type)) return (KursDomain.Repository.GenericKursDBRepository<T>)repositories[type];
+            var repositoryType = typeof(KursDomain.Repository.GenericKursDBRepository<T>);
             var repositoryInstance = Activator.CreateInstance(repositoryType.MakeGenericType(typeof(T)),
                 Context);
             repositories.Add(type, repositoryInstance);
-            return (GenericKursDBRepository<T>)repositories[type];
+            return (KursDomain.Repository.GenericKursDBRepository<T>)repositories[type];
         }
 
         #endregion

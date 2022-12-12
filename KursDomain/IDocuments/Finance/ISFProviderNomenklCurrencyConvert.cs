@@ -22,8 +22,6 @@ public interface ISFProviderNomenklCurrencyConvert
     decimal FromSummaWithNaklad { get;  }
     decimal Summa { get;  }
     decimal SummaWithNaklad { get;  }
-    decimal SFDocCode { get; set; }
-    int SFCode { get; set; }
     IWarehouse Warehouse { get; set; }
     IEnumerable<IDistributeNakladRow> NakladRows { set; get; }
     string Description { get; }

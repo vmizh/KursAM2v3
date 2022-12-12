@@ -10,7 +10,6 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
 using DevExpress.Mvvm;
 using Helper;
 using KursAM2.Dialogs;
@@ -30,6 +29,7 @@ using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.Repository;
 using Reports.Base;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse

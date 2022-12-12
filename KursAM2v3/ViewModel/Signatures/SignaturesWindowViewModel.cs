@@ -6,7 +6,6 @@ using System.Windows.Input;
 using Core;
 using Core.ViewModel.Base;
 using Data;
-using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.Auxiliary;
@@ -18,6 +17,7 @@ using KursDomain;
 using KursDomain.Documents.Signatures;
 using KursDomain.Documents.Systems;
 using KursDomain.Menu;
+using KursDomain.Repository;
 
 namespace KursAM2.ViewModel.Signatures
 {

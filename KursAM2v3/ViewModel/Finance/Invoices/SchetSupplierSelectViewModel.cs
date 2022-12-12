@@ -4,7 +4,7 @@ using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using KursAM2.View.Finance.UC;
 using KursDomain;
 using KursDomain.Documents.Invoices;

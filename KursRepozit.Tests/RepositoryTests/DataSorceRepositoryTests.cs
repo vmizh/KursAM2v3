@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using KursRepozit.Repositories;
 using NUnit.Framework;
 

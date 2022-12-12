@@ -4,12 +4,12 @@ using System.Windows;
 using Core;
 using Core.ViewModel.Base;
 using Data;
-using Data.Repository;
 using KursAM2.Repositories;
 using KursAM2.View.Logistiks;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.Repository;
 
 namespace KursAM2.ViewModel.Logistiks
 {

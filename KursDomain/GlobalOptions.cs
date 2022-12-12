@@ -8,11 +8,11 @@ using System.Diagnostics;
 using System.Windows.Media;
 using Core;
 using Data;
-using Data.Repository;
 using Helper;
 using KursDomain.Documents.Employee;
 using KursDomain.IReferences;
 using KursDomain.References;
+using KursDomain.Repository;
 
 namespace KursDomain;
 

@@ -6,11 +6,11 @@ using System.Linq;
 using Core.EntityViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
 using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.DistributeOverhead;
 using KursDomain.References;
+using KursDomain.Repository;
 
 namespace KursAM2.Repositories
 {
@@ -82,7 +82,7 @@ namespace KursAM2.Repositories
                 .Include("TD_26.SD_261")
                 .Include("TD_26.SD_301")
                 .Include("TD_26.SD_303")
-                .FirstOrDefault(_ => _.Id == id), new UnitOfWork<ALFAMEDIAEntities>());
+                .FirstOrDefault(_ => _.Id == id), new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>());
         }
 
         public List<DistributeNaklad> GetAllByDates(DateTime dateStart, DateTime dateEnd)
@@ -369,7 +369,7 @@ namespace KursAM2.Repositories
                 .Include(_ => _.SD_189)
                 .Include(_ => _.SD_40)
                 .SingleOrDefault(_ => _.Id == id);
-            return new InvoiceProviderShort(item, new UnitOfWork<ALFAMEDIAEntities>());
+            return new InvoiceProviderShort(item, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>());
         }
 
         public DistributeNaklad CreateNew()
@@ -522,7 +522,7 @@ namespace KursAM2.Repositories
                 if (doc != null) ret.Add(new InvoiceProviderShort(doc, UnitOfWork));
             }
 
-            foreach (var d in data) ret.Add(new InvoiceProviderShort(d, new UnitOfWork<ALFAMEDIAEntities>()));
+            foreach (var d in data) ret.Add(new InvoiceProviderShort(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>()));
 
             return ret;
         }

@@ -11,7 +11,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using KursAM2.Managers;

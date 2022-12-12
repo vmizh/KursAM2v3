@@ -9,7 +9,6 @@ using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
 using DevExpress.Mvvm;
 using KursAM2.Managers;
 using KursAM2.Repositories;
@@ -19,6 +18,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.Repository;
 using Reports.Base;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse

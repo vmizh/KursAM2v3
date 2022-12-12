@@ -8,11 +8,11 @@ using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
 using KursDomain;
 using KursDomain.Documents.AccruedAmount;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.Repository;
 
 namespace KursAM2.ViewModel.Reference
 {

@@ -6,7 +6,7 @@ using System.Windows;
 using Core;
 using Core.ViewModel.Base;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;

@@ -1,6 +1,6 @@
 ﻿using Core;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;

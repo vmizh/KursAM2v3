@@ -1,11 +1,11 @@
 ﻿using System.Data.SqlClient;
 using System.Linq;
 using Data;
-using Data.Repository;
 using Helper;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
+using KursDomain.Repository;
 using NUnit.Framework;
 
 namespace KursAM2.Tests
@@ -37,7 +37,7 @@ namespace KursAM2.Tests
                     GlobalOptions.ReferencesCache.GetCurrenciesAll().Single(_ => ((IName) _).Name == "RUR") as Currency,
             };
             entities = GlobalOptions.GetEntities();
-            UnitOfWork = new UnitOfWork<ALFAMEDIAEntities>(entities);
+            UnitOfWork = new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>(entities);
         }
 
         [TearDown]
@@ -47,7 +47,7 @@ namespace KursAM2.Tests
         }
 
         public decimal DocDC = -1;
-        protected UnitOfWork<ALFAMEDIAEntities> UnitOfWork = new UnitOfWork<ALFAMEDIAEntities>();
+        protected KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities> UnitOfWork = new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>();
 
         private ALFAMEDIAEntities entities;
     }

@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
-using Data.Repository;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
 using KursDomain.Documents.Dogovora;
@@ -114,7 +113,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     //private References.Currency myCurrency;
     private DogovorOfSupplierViewModel myDogovorOfSupplier;
-    private readonly UnitOfWork<ALFAMEDIAEntities> context;
+    private readonly Repository.UnitOfWork<ALFAMEDIAEntities> context;
 
     #endregion
 
@@ -125,14 +124,14 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         Entity = DefaultValue();
     }
 
-    public InvoiceProvider(UnitOfWork<ALFAMEDIAEntities> ctx)
+    public InvoiceProvider(Repository.UnitOfWork<ALFAMEDIAEntities> ctx)
     {
         context = ctx;
         Entity = DefaultValue();
         LoadReferences();
     }
 
-    public InvoiceProvider(SD_26 entity, UnitOfWork<ALFAMEDIAEntities> ctx, bool isLoadAll = false)
+    public InvoiceProvider(SD_26 entity, Repository.UnitOfWork<ALFAMEDIAEntities> ctx, bool isLoadAll = false)
     {
         this.isLoadAll = isLoadAll;
         context = ctx;
@@ -1404,11 +1403,11 @@ public class SD_26LayoutData_FluentAPI : DataAnnotationForFluentApiBase, IMetada
 [MetadataType(typeof(DataAnnotationsInvoiceProviderShort))]
 public class InvoiceProviderShort : InvoiceProvider
 {
-    public InvoiceProviderShort(UnitOfWork<ALFAMEDIAEntities> ctx) : base(ctx)
+    public InvoiceProviderShort(Repository.UnitOfWork<ALFAMEDIAEntities> ctx) : base(ctx)
     {
     }
 
-    public InvoiceProviderShort(SD_26 entity, UnitOfWork<ALFAMEDIAEntities> ctx) : base(entity, ctx)
+    public InvoiceProviderShort(SD_26 entity, Repository.UnitOfWork<ALFAMEDIAEntities> ctx) : base(entity, ctx)
     {
     }
 }

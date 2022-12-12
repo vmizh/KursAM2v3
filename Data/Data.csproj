@@ -808,11 +808,6 @@
     <Compile Include="REMAINS_STATUS.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
-    <Compile Include="Repository\GenericKursDBRepository.cs" />
-    <Compile Include="Repository\GenericKursSystemDBRepository.cs" />
-    <Compile Include="Repository\IGenericRepository.cs" />
-    <Compile Include="Repository\UnitOfWork.cs" />
-    <Compile Include="Repository\IRepository.cs" />
     <Compile Include="RequirementForShipping.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

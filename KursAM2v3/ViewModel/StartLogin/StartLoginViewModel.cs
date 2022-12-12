@@ -17,7 +17,6 @@ using Core.ViewModel.Base;
 using Core.ViewModel.Base.Dialogs;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core;
@@ -29,6 +28,7 @@ using KursDomain;
 using KursDomain.DBContext;
 using KursDomain.Documents.Employee;
 using KursDomain.References;
+using KursDomain.Repository;
 
 namespace KursAM2.ViewModel.StartLogin
 {

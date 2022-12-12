@@ -4,12 +4,12 @@ using System.Data.Entity;
 using System.Linq;
 using Core;
 using Data;
-using Data.Repository;
 using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.Finance;
 using KursDomain.References;
+using KursDomain.Repository;
 
 namespace KursAM2.Repositories.InvoicesRepositories
 {

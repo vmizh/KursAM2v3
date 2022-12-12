@@ -3,28 +3,29 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Linq;
+using Data;
 
-namespace Data.Repository
+namespace KursDomain.Repository
 {
-    public class GenericKursSystemDBRepository<T> : IGenericRepository<T>, IDisposable where T : class
+    public class GenericKursDBRepository<T> : IGenericRepository<T>, IDisposable where T : class
     {
         private IDbSet<T> entities;
         private string errorMessage = string.Empty;
         private bool isDisposed;
 
-        public GenericKursSystemDBRepository(IUnitOfWork<KursSystemEntities> unitOfWork)
+        public GenericKursDBRepository(IUnitOfWork<ALFAMEDIAEntities> unitOfWork)
             : this(unitOfWork.Context)
         {
             Context = unitOfWork.Context;
         }
 
-        public GenericKursSystemDBRepository(KursSystemEntities context)
+        public GenericKursDBRepository(ALFAMEDIAEntities context)
         {
             isDisposed = false;
             Context = context;
         }
 
-        public KursSystemEntities Context { get; set; }
+        public ALFAMEDIAEntities Context { get; set; }
 
         public IQueryable<T> Table => Entities;
         private IDbSet<T> Entities => entities ?? (entities = Context.Set<T>());
@@ -53,7 +54,7 @@ namespace Data.Repository
                     throw new ArgumentNullException(nameof(entity));
                 Entities.Add(entity);
                 if (Context == null || isDisposed)
-                    Context = new KursSystemEntities();
+                    Context = new ALFAMEDIAEntities();
             }
             catch (DbEntityValidationException dbEx)
             {
@@ -72,7 +73,7 @@ namespace Data.Repository
                 if (entity == null)
                     throw new ArgumentNullException(nameof(entity));
                 if (Context == null || isDisposed)
-                    Context = new KursSystemEntities();
+                    Context = new ALFAMEDIAEntities();
                 SetEntryModified(entity);
             }
             catch (DbEntityValidationException dbEx)
@@ -92,7 +93,7 @@ namespace Data.Repository
                 if (entity == null)
                     throw new ArgumentNullException(nameof(entity));
                 if (Context == null || isDisposed)
-                    Context = new KursSystemEntities();
+                    Context = new ALFAMEDIAEntities();
                 Entities.Remove(entity);
                 //Context.SaveChanges(); commented out call to SaveChanges as Context save changes will be called with Unit of work
             }
@@ -108,7 +109,13 @@ namespace Data.Repository
 
         public void Refresh(T entity)
         {
+            if (entity == null) return;
             Context.Entry(entity).Reload();
+        }
+
+        public void DetachObjects()
+        {
+            foreach (var en in Context.ChangeTracker.Entries()) en.State = EntityState.Detached;
         }
 
         // ReSharper disable once ParameterHidesMember

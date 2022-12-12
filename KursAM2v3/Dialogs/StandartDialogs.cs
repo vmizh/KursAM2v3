@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Core.ViewModel.Base;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using DevExpress.Mvvm;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
@@ -454,7 +454,7 @@ namespace KursAM2.Dialogs
                     if (ctx.CurrentProviderItem != null)
                     {
                         var d = dbctx.SD_26.First(_ => _.DOC_CODE == ctx.CurrentProviderItem.DocCode);
-                        var doc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>(dbctx));
+                        var doc = new InvoiceProvider(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>(dbctx));
                         return doc;
                     }
 
@@ -483,7 +483,7 @@ namespace KursAM2.Dialogs
                     if (ctx.CurrentProviderItem != null)
                     {
                         var d = dbctx.SD_26.First(_ => _.DOC_CODE == ctx.CurrentProviderItem.DocCode);
-                        var doc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>(dbctx));
+                        var doc = new InvoiceProvider(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>(dbctx));
                         return doc;
                     }
 

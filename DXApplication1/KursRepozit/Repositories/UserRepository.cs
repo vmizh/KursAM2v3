@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 
 namespace KursRepozit.Repositories
 {

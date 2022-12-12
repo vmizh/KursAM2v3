@@ -5,7 +5,6 @@ using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using Data.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using KursAM2.Repositories;
@@ -14,6 +13,7 @@ using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.Repository;
 
 namespace KursAM2.ViewModel.Reference
 {

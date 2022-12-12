@@ -6,7 +6,6 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
-using Data.Repository;
 using KursAM2.Managers;
 using KursAM2.View.Base;
 using KursAM2.View.StockHolder;
@@ -15,6 +14,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.StockHolder;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.Repository;
 
 namespace KursAM2.ViewModel.StockHolder
 {

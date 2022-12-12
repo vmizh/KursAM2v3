@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 
 namespace KursRepozit.Repositories
 {

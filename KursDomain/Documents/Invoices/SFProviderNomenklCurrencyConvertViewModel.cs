@@ -16,13 +16,13 @@ namespace KursDomain.Documents.Invoices;
 public class SFProviderNomenklCurrencyConvert : ISFProviderNomenklCurrencyConvert,
     ILoadFromEntity<TD_26_CurrencyConvert>
 {
+    
     public SFProviderNomenklCurrencyConvert()
     {
     }
 
     public SFProviderNomenklCurrencyConvert(Guid id, INomenkl nomenklTo, INomenkl nomenklFrom, DateTime date,
-        decimal quantity, decimal rate, decimal price, decimal priceWithNaklad, string note, decimal sFDocCode,
-        int sFCode, IWarehouse warehouse)
+        decimal quantity, decimal rate, decimal price, decimal priceWithNaklad, string note, IWarehouse warehouse)
     {
         Id = id;
         NomenklTo = nomenklTo;
@@ -33,8 +33,6 @@ public class SFProviderNomenklCurrencyConvert : ISFProviderNomenklCurrencyConver
         Price = price;
         PriceWithNaklad = priceWithNaklad;
         Notes = note;
-        SFDocCode = sFDocCode;
-        SFCode = sFCode;
         Warehouse = warehouse;
     }
 
@@ -66,8 +64,6 @@ public class SFProviderNomenklCurrencyConvert : ISFProviderNomenklCurrencyConver
         Price = entity.Price;
         PriceWithNaklad = entity.PriceWithNaklad;
         Notes = entity.Note;
-        SFDocCode = entity.DOC_CODE ?? -1;
-        SFCode = entity.CODE ?? -1;
         Warehouse = cache.GetWarehouse(entity.StoreDC);
     }
 
@@ -109,12 +105,6 @@ public class SFProviderNomenklCurrencyConvert : ISFProviderNomenklCurrencyConver
     [Display(AutoGenerateField = true, Name = "Сумма (с накл.)")]
     public decimal SummaWithNaklad => PriceWithNaklad * Quantity;
 
-    [Display(AutoGenerateField = false, Name = "")]
-    public decimal SFDocCode { get; set; }
-
-    [Display(AutoGenerateField = false, Name = "")]
-    public int SFCode { get; set; }
-
     [Display(AutoGenerateField = true, Name = "Склад")]
     public IWarehouse Warehouse { get; set; }
 
@@ -124,7 +114,7 @@ public class SFProviderNomenklCurrencyConvert : ISFProviderNomenklCurrencyConver
         $"Вал. конв. товара {NomenklFrom}({NomenklNumberFrom})" +
         $" {FromPrice:n2} {FromCurrency} в {NomenklTo}({NomenklNumberTo}) {Price:n2} {ToCurrency}";
 
-    public IDocuments.Finance.IInvoiceProviderRow InvoiceProviderRow { get; set; }
+    public IInvoiceProviderRow InvoiceProviderRow { get; set; }
 
     public override string ToString()
     {
@@ -132,6 +122,7 @@ public class SFProviderNomenklCurrencyConvert : ISFProviderNomenklCurrencyConver
     }
 }
 
+[DebuggerDisplay("{DocCode,nq}/{Code} {Description,nq}")]
 public class SFProviderNomenklCurrencyConvertViewModel : RSViewModelBase, ISFProviderNomenklCurrencyConvert
 {
     #region Constructors
@@ -325,7 +316,7 @@ public class SFProviderNomenklCurrencyConvertViewModel : RSViewModelBase, ISFPro
     public override string Description =>  $"Вал. конв. товара {NomenklFrom}({NomenklNumberFrom})" +
                                            $" {FromPrice:n2} {FromCurrency} в {NomenklTo}({NomenklNumberTo}) {Price:n2} {ToCurrency}";
 
-    public IDocuments.Finance.IInvoiceProviderRow InvoiceProviderRow { get; set; }
+    public IInvoiceProviderRow InvoiceProviderRow { get; set; }
 
     public IWarehouse Warehouse
     {

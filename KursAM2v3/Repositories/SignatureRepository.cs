@@ -4,7 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using Core;
 using Data;
-using Data.Repository;
+using KursDomain.Repository;
 using KursAM2.ViewModel.Signatures;
 using KursDomain;
 using Newtonsoft.Json;

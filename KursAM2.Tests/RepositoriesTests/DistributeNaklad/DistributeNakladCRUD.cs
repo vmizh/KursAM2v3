@@ -1,5 +1,5 @@
 ﻿using System;
-using Data.Repository;
+using KursDomain.Repository;
 using KursAM2.Repositories;
 using NUnit.Framework;
 
