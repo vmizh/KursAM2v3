@@ -73,7 +73,7 @@ public class CurrencyRate
             {
                 var maxd = ctx.CURRENCY_RATES_CB.Where(_ => _.RATE_DATE <= date).Max(_ => _.RATE_DATE);
                 foreach (var r in ctx.CURRENCY_RATES_CB.Where(_ => _.RATE_DATE == maxd))
-                    ret.Add((Currency)GlobalOptions.ReferencesCache.GetCurrency(r.CRS_DC), decimal.Round(r.RATE, 4));
+                    ret.Add((Currency)GlobalOptions.ReferencesCache.GetCurrency(r.CRS_DC), decimal.Round(r.RATE/r.NOMINAL, 4));
             }
 
             ret.Add(GlobalOptions.SystemProfile.NationalCurrency, 1);

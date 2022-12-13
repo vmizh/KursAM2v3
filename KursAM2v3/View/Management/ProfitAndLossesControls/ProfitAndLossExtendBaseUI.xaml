@@ -175,6 +175,26 @@
                         </dxg:GridColumn.EditSettings>
                     </dxg:GridColumn>
                 </dxg:GridControlBand>
+                <dxg:GridControlBand Name="bandgr_8" Header="CNY">
+                    <dxg:GridColumn Name="cols81" FieldName="ProfitCNY" Header="Доход" ReadOnly="True" SortMode="Value">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
+                                                  Mask="n2" />
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn Name="cols82" FieldName="LossCNY" Header="Расход" ReadOnly="True" SortMode="Value">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
+                                                  Mask="n2" />
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                    <dxg:GridColumn Name="cols83" FieldName="ResultCNY" Header="Результат" ReadOnly="True" SortMode="Value">
+                        <dxg:GridColumn.EditSettings>
+                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
+                                                  Mask="n2" />
+                        </dxg:GridColumn.EditSettings>
+                    </dxg:GridColumn>
+                </dxg:GridControlBand>
                 <dxg:GridControlBand Name="bandgr_ext">
                     <dxg:GridColumn Name="col7" FieldName="Note" Header="Примечания"
                                             AutoFilterCondition="Contains" />
@@ -219,6 +239,12 @@
                                              DisplayFormat="n2" />
                 <dxg:GridSummaryItem FieldName="ResultSEK" SummaryType="Sum"
                                              DisplayFormat="n2" />
+                <dxg:GridSummaryItem FieldName="ProfitCNY" SummaryType="Sum"
+                                     DisplayFormat="n2" />
+                <dxg:GridSummaryItem FieldName="LossCNY" SummaryType="Sum"
+                                     DisplayFormat="n2" />
+                <dxg:GridSummaryItem FieldName="ResultCNY" SummaryType="Sum"
+                                     DisplayFormat="n2" />
             </dxg:GridControl.TotalSummary>
             <dxg:GridControl.View>
                 <dxg:TableView x:Name="gridExtend"

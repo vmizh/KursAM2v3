@@ -1228,9 +1228,13 @@ namespace KursAM2.ViewModel.Management
             //innerStartDate = StartDate != EndDate ? StartDate.AddDays(1) : StartDate;
             try
             {
+                var sDate = GlobalOptions.GetEntities()
+                    .CURRENCY_RATES_CB.Where(_ => _.RATE_DATE <= EndDate).Max(x => x.RATE_DATE);
+                if (sDate > StartDate)
+                    sDate = StartDate;
                 Manager.MyRates =
                     GlobalOptions.GetEntities()
-                        .CURRENCY_RATES_CB.Where(_ => _.RATE_DATE >= StartDate && _.RATE_DATE <= EndDate)
+                        .CURRENCY_RATES_CB.Where(_ => _.RATE_DATE >= sDate && _.RATE_DATE <= EndDate)
                         .ToList();
                 var dt = Manager.MyRates.Select(_ => _.RATE_DATE).Distinct().ToList();
                 Manager.MyRates.AddRange(dt.Select(r => new CURRENCY_RATES_CB
