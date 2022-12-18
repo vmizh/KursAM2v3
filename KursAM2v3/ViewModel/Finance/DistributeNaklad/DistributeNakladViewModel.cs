@@ -12,7 +12,6 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using KursDomain.Repository;
 using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
@@ -34,6 +33,7 @@ using KursDomain.ICommon;
 using KursDomain.IDocuments.DistributeOverhead;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.Repository;
 using InvoiceProviderRow = KursDomain.Documents.Invoices.InvoiceProviderRow;
 
 namespace KursAM2.ViewModel.Finance.DistributeNaklad
@@ -1040,10 +1040,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                                      .Where(_ => _.RowId == item.Id).ToList())
                         {
                             var d = unitOfWork.Context.DistributeNakladInfo.FirstOrDefault(_ => _.Id == inf.Id);
-                            if (d != null)
-                            {
-                                unitOfWork.Context.DistributeNakladInfo.Remove(d);
-                            }
+                            if (d != null) unitOfWork.Context.DistributeNakladInfo.Remove(d);
                         }
 
                         DistributeAllNaklads.Remove(old);
