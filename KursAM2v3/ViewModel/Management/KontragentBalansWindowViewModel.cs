@@ -217,7 +217,7 @@ namespace KursAM2.ViewModel.Management
                     RecalcKontragentBalans.CalcBalans(dc,
                         GlobalOptions.ReferencesCache.GetKontragent(dc).StartBalans);
                     var sql = "SELECT DOC_NAME as DocName, " +
-                              "ISNULL(CONVERT(VARCHAR, td_101.CODE), DOC_NUM) AS DocNum, " +
+                              "CASE WHEN DOC_TYPE_CODE = 101 THEN cast(td_101.CODE as varchar) ELSE DOC_NUM END AS DocNum, " +
                               "DOC_DATE as DocDate, " +
                               "cast(CRS_KONTR_IN as numeric(18,4)) as CrsKontrIn, " +
                               "cast(CRS_KONTR_OUT as numeric(18,4)) as CrsKontrOut, " +

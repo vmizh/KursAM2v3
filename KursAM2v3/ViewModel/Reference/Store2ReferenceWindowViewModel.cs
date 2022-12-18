@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using Core;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -12,7 +10,6 @@ using DevExpress.Xpf.LayoutControl;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursDomain;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
@@ -67,7 +64,7 @@ namespace KursAM2.ViewModel.Reference
             //if (!(CurrentRow is WarehouseIn cur)) return;
             switch (col.FieldName)
             {
-                case nameof(Warehouse.Region):
+                case nameof(WarehouseViewModel.Region):
                     var regionEdit = new ButtonEditSettings
                     {
                         TextWrapping = TextWrapping.Wrap,
@@ -76,7 +73,7 @@ namespace KursAM2.ViewModel.Reference
                     regionEdit.DefaultButtonClick += RegionEdit_DefaultButtonClick;
                     col.EditSettings = regionEdit;
                     break;
-                case nameof(Warehouse.StoreKeeper):
+                case nameof(WarehouseViewModel.Employee):
                     var empEdit = new ButtonEditSettings
                     {
                         TextWrapping = TextWrapping.Wrap,
@@ -116,7 +113,7 @@ namespace KursAM2.ViewModel.Reference
                 if (row.State != RowStatus.NotEdited)
                     lst.Add(row);
             foreach (var row in DeletedRows)
-                lst.Add((WarehouseViewModel)row);
+                lst.Add((WarehouseViewModel) row);
             if (lst.Count <= 0) return;
             if (!Manager.Save(lst)) return;
             foreach (var r in Rows)
@@ -127,31 +124,23 @@ namespace KursAM2.ViewModel.Reference
 
         public override void ItemNewEmpty(object obj)
         {
-            if (CurrentRow != null)
-            {
-                var newItem = Manager.New((WarehouseViewModel)CurrentRow);
-                newItem.Parent = CurrentRow;
-                Rows.Add(newItem);
-                SetNewItemInControl(newItem);
-            }
-            else
-            {
+            
                 var newItem = Manager.New();
                 Rows.Add(newItem);
                 SetNewItemInControl(newItem);
-            }
+            
         }
 
         public override void ItemNewChildEmpty(object obj)
         {
-            var newItem = Manager.New((WarehouseViewModel)CurrentRow);
+            var newItem = Manager.New((WarehouseViewModel) CurrentRow);
             Rows.Add(newItem);
             SetNewItemInControl(newItem);
         }
 
         public override void ItemNewCopy(object obj)
         {
-            var newItem = Manager.NewCopy((WarehouseViewModel)CurrentRow);
+            var newItem = Manager.NewCopy((WarehouseViewModel) CurrentRow);
             Rows.Add(newItem);
             SetNewItemInControl(newItem);
         }

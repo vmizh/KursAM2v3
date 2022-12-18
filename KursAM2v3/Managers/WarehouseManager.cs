@@ -82,6 +82,7 @@ namespace KursAM2.Managers
                 {
                     var data = ctx.SD_24
                         .Include(_ => _.TD_24)
+                        .Include(_ => _.SD_201)
                         .Include("TD_24.TD_26")
                         .Include("TD_24.TD_26.SD_26")
                         .Include("TD_24.SD_175")
@@ -182,17 +183,24 @@ namespace KursAM2.Managers
 
         public WarehouseOrderIn NewOrderInRecuisite(WarehouseOrderIn doc)
         {
-            var ret = new WarehouseOrderIn(doc.Entity)
-            {
-                DocCode = -1,
-                State = RowStatus.NewRow,
-                DD_IN_NUM = -1,
-                DD_EXT_NUM = null,
-                Date = DateTime.Today,
-                CREATOR = GlobalOptions.UserInfo.Name
-            };
-            ret.Rows.Clear();
-            return ret;
+            //var newEnt = (SD_24)doc?.Entity.Clone();
+            //var ret = new WarehouseOrderIn(newEnt)
+            //{
+            //    DocCode = -1,
+            //    State = RowStatus.NewRow,
+            //    DD_IN_NUM = -1,
+            //    DD_EXT_NUM = null,
+            //    Date = DateTime.Today,
+            //    Note = null,
+            //    CREATOR = GlobalOptions.UserInfo.Name,
+            //    InvoiceProvider = null,
+            //    InvoiceClientViewModel = null,
+            //    DD_SCHET = null
+            //};
+            //ret.Rows.Clear();
+            //ret.Entity.TD_24.Clear();
+            //ret.Entity.TD_24_2.Clear();
+            return NewOrderInRecuisite(doc.DocCode);
         }
 
         public WarehouseOrderIn NewOrderInRecuisite(decimal dc)
@@ -204,9 +212,14 @@ namespace KursAM2.Managers
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
                 Date = DateTime.Today,
-                CREATOR = GlobalOptions.UserInfo.Name
+                Note = null,
+                CREATOR = GlobalOptions.UserInfo.Name,
+                InvoiceProvider = null,
+                InvoiceClientViewModel = null,
+                DD_SCHET = null
             };
             ret.Rows.Clear();
+            ret.Entity.TD_24.Clear();
             return ret;
         }
 

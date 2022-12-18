@@ -1014,9 +1014,17 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         {
             var ids = SelectedTovars.Select(_ => _.Id).ToList();
             foreach (var d in SelectedTovars)
+            {
                 unitOfWork.Context.Entry(d.Entity).State = unitOfWork.Context.Entry(d.Entity).State == EntityState.Added
                     ? EntityState.Detached
                     : EntityState.Deleted;
+                var sfRow = unitOfWork.Context.TD_26.FirstOrDefault(_ => _.Id == d.TovarInvoiceRowId);
+                if (sfRow != null)
+                {
+                    sfRow.SFT_SUMMA_NAKLAD -= d.DistributeSumma;
+                    if (sfRow.SFT_SUMMA_NAKLAD < 0) sfRow.SFT_SUMMA_NAKLAD = 0;
+                }
+            }
 
             foreach (var id in ids)
             {
@@ -1033,7 +1041,9 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                         {
                             var d = unitOfWork.Context.DistributeNakladInfo.FirstOrDefault(_ => _.Id == inf.Id);
                             if (d != null)
+                            {
                                 unitOfWork.Context.DistributeNakladInfo.Remove(d);
+                            }
                         }
 
                         DistributeAllNaklads.Remove(old);

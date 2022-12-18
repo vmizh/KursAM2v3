@@ -82,7 +82,6 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             Document.DocDate = DateTime.Today;
             Document.Creator = GlobalOptions.UserInfo.Name;
             Document.myState = RowStatus.NewRow;
-            Document.Rows.Clear();
             UnitOfWork.Context.AccruedAmountOfSupplier.Add(Document.Entity);
             if (isCopy)
             {
@@ -91,6 +90,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                     UnitOfWork.Context.Entry(row.Entity).State = EntityState.Detached;
                     row.Id = Guid.NewGuid();
                     row.DocId = newId;
+                    row.CashDocs.Clear();
                     Document.Entity.AccuredAmountOfSupplierRow.Add(row.Entity);
                     row.myState = RowStatus.NewRow;
                 }

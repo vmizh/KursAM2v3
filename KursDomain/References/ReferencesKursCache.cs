@@ -29,7 +29,7 @@ public class ReferencesKursCache : IReferencesCache
     private readonly KursContext.KursContext Context;
     private readonly SqlConnection sqlConnect;
     private DateTime lastTimeCheckTrackerId;
-    private readonly int diffSecondsForCheckTracker = 120;
+    private readonly int diffSecondsForCheckTracker = 0;
 
     #endregion
 
