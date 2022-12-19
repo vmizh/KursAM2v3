@@ -193,6 +193,41 @@ namespace KursAM2.Managers.Base
                             break;
                     }
 
+                    foreach (var r in doc.Rows)
+                    {
+                        if (r.SFProvider == null)
+                        {
+                            var prow = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.VZDC == r.DocCode &&
+                                                                          _.VZCode == r.Code);
+                            if (prow != null)
+                            {
+                                ctx.ProviderInvoicePay.Remove(prow);
+                            }
+                        }
+                        else
+                        {
+                            var prow = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.VZDC == r.DocCode &&
+                                _.VZCode == r.Code);
+                            if(prow != null)
+                                // ReSharper disable once PossibleInvalidOperationException
+                                prow.Summa = (decimal)r.VZT_CRS_SUMMA;
+                            else
+                            {
+                                var newItem = new ProviderInvoicePay()
+                                {
+                                    Id = Guid.NewGuid(),
+                                    // ReSharper disable once PossibleInvalidOperationException
+                                    Summa = (decimal)r.VZT_CRS_SUMMA,
+                                    DocDC = r.SFProvider.DocCode,
+                                    Rate = 1,
+                                    VZDC = r.DocCode,
+                                    VZCode = r.Code
+                                };
+                                ctx.ProviderInvoicePay.Add(newItem);
+                            }
+                        }
+                    }
+
                     ctx.SaveChanges();
                     doc.myState = RowStatus.NotEdited;
                     foreach (var r in doc.Rows)

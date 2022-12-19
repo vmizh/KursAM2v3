@@ -574,14 +574,14 @@ namespace KursAM2.ViewModel.Management
                 {
                     Id = Guid.Parse("{B6F2540A-9593-42E3-B34F-8C0983BC39A2}"),
                     ParentId = Guid.Parse("{A938446C-AB19-45C3-8DFD-0F24AB08DF49}"),
-                    Name = @"Акты конвертации",
+                    Name = @"Валютная конвертация",
                     CalcType = TypeProfitAndLossCalc.IsProfit
                 },
                 new ProfitAndLossesMainRowViewModel
                 {
                     Id = Guid.Parse("{35EBABEC-EAC3-4C3C-8383-6326C5D64C8C}"),
                     ParentId = Guid.Parse("{F59D3232-DDF2-4F15-B7AE-E3691F385DDD}"),
-                    Name = @"Акты конвертации",
+                    Name = @"Валютная конвертация",
                     CalcType = TypeProfitAndLossCalc.IsLoss
                 },
                 new ProfitAndLossesMainRowViewModel
@@ -598,20 +598,20 @@ namespace KursAM2.ViewModel.Management
                     Name = @"Операции с внебалансовыми контрагентами",
                     CalcType = TypeProfitAndLossCalc.IsLoss
                 },
-                new ProfitAndLossesMainRowViewModel
-                {
-                    Id = Guid.Parse("{10AAC4B7-ECD1-4649-B372-256BA03C27FC}"),
-                    ParentId = Guid.Parse("{A938446C-AB19-45C3-8DFD-0F24AB08DF49}"),
-                    Name = @"Обмен валюты",
-                    CalcType = TypeProfitAndLossCalc.IsProfit
-                },
-                new ProfitAndLossesMainRowViewModel
-                {
-                    Id = Guid.Parse("{04FB505A-651E-4F65-903D-80CB4B6C74D0}"),
-                    ParentId = Guid.Parse("{F59D3232-DDF2-4F15-B7AE-E3691F385DDD}"),
-                    Name = @"Обмен валюты",
-                    CalcType = TypeProfitAndLossCalc.IsLoss
-                },
+                //new ProfitAndLossesMainRowViewModel
+                //{
+                //    Id = Guid.Parse("{10AAC4B7-ECD1-4649-B372-256BA03C27FC}"),
+                //    ParentId = Guid.Parse("{A938446C-AB19-45C3-8DFD-0F24AB08DF49}"),
+                //    Name = @"Обмен валюты",
+                //    CalcType = TypeProfitAndLossCalc.IsProfit
+                //},
+                //new ProfitAndLossesMainRowViewModel
+                //{
+                //    Id = Guid.Parse("{04FB505A-651E-4F65-903D-80CB4B6C74D0}"),
+                //    ParentId = Guid.Parse("{F59D3232-DDF2-4F15-B7AE-E3691F385DDD}"),
+                //    Name = @"Обмен валюты",
+                //    CalcType = TypeProfitAndLossCalc.IsLoss
+                //},
                 new ProfitAndLossesMainRowViewModel
                 {
                     Id = Guid.Parse("{B96B2906-C5AA-4566-B77F-F3E4B912E72E}"),

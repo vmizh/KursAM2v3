@@ -752,7 +752,7 @@ namespace KursAM2.Managers
                 {
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
-                        GroupId = Guid.Parse("{10AAC4B7-ECD1-4649-B372-256BA03C27FC}"),
+                        GroupId = Guid.Parse("{B6F2540A-9593-42E3-B34F-8C0983BC39A2}"),
                         Name = d.SD_22.CA_NAME,
                         Note = d.CH_NOTE,
                         DocCode = d.DOC_CODE,
@@ -768,7 +768,7 @@ namespace KursAM2.Managers
                     ExtendNach.Add(newOp);
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
                     {
-                        GroupId = Guid.Parse("{04FB505A-651E-4F65-903D-80CB4B6C74D0}"),
+                        GroupId = Guid.Parse("{35EBABEC-EAC3-4C3C-8383-6326C5D64C8C}"),
                         Name = d.SD_22.CA_NAME,
                         Note = d.CH_NOTE,
                         DocCode = d.DOC_CODE,
@@ -798,7 +798,7 @@ namespace KursAM2.Managers
                     {
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
-                            GroupId = Guid.Parse("{10AAC4B7-ECD1-4649-B372-256BA03C27FC}"),
+                            GroupId = Guid.Parse("{B6F2540A-9593-42E3-B34F-8C0983BC39A2}"),
                             Name = d.SD_101.SD_114.BA_ACC_SHORTNAME,
                             Note = d.VVT_DOC_NUM,
                             DocCode = d.DOC_CODE,
@@ -818,7 +818,7 @@ namespace KursAM2.Managers
                     {
                         var newOp1 = new ProfitAndLossesExtendRowViewModel
                         {
-                            GroupId = Guid.Parse("{04FB505A-651E-4F65-903D-80CB4B6C74D0}"),
+                            GroupId = Guid.Parse("{35EBABEC-EAC3-4C3C-8383-6326C5D64C8C}"),
                             Name = d.SD_101.SD_114.BA_ACC_SHORTNAME,
                             Note = d.VVT_DOC_NUM,
                             DocCode = d.DOC_CODE,
@@ -1171,12 +1171,12 @@ namespace KursAM2.Managers
             }
         }
 
-        private static void SetCurrenciesValue(IProfitCurrencyList item, decimal? crsDC, decimal? profit, decimal? loss)
+        public static void SetCurrenciesValue(IProfitCurrencyList item, decimal? crsDC, decimal? profit, decimal? loss)
         {
             SetCurrenciesValue(item, crsDC ?? 0, profit ?? 0m, loss ?? 0m);
         }
 
-        private static void SetCurrenciesValue(IProfitCurrencyList item, decimal crsDC, decimal profit, decimal loss)
+        public static void SetCurrenciesValue(IProfitCurrencyList item, decimal crsDC, decimal profit, decimal loss)
         {
             switch (crsDC)
             {
@@ -1214,12 +1214,12 @@ namespace KursAM2.Managers
                     item.ResultCHF = profit - loss;
                     break;
                 case CurrencyCode.SEK:
-                    item.ProfitSEK = 0;
+                    item.ProfitSEK = profit;
                     item.LossSEK = loss;
                     item.ResultSEK = profit - loss;
                     break;
                 case CurrencyCode.CNY:
-                    item.ProfitCNY = 0;
+                    item.ProfitCNY = profit;
                     item.LossCNY = loss;
                     item.ResultCNY = profit - loss;
                     break;

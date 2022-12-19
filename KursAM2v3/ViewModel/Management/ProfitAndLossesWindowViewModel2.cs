@@ -10,6 +10,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Grid;
+using FinanceAnalitic;
 using KursAM2.Managers;
 using KursAM2.View.Base;
 using KursAM2.View.Finance;
@@ -39,6 +40,7 @@ namespace KursAM2.ViewModel.Management
         private Currency myRecalcCurrency;
         private DateTime myStartDate;
         private int myTabSelected;
+        private CurrencyConvertRow myCurrentCrsConvert;
 
         public ProfitAndLossesWindowViewModel2()
         {
@@ -74,6 +76,9 @@ namespace KursAM2.ViewModel.Management
 
         public ObservableCollection<ProfitAndLossesExtendRowViewModel> ExtendNach { set; get; } =
             new ObservableCollection<ProfitAndLossesExtendRowViewModel>();
+
+        public ObservableCollection<CurrencyConvertRow> CurrencyConvertRows { set; get; } 
+            = new ObservableCollection<CurrencyConvertRow>();
 
         public ProfitAndLossesManager Manager { set; get; }
 
@@ -160,6 +165,17 @@ namespace KursAM2.ViewModel.Management
             }
         }
 
+        public CurrencyConvertRow CurrentCrsConvert
+        {
+            get => myCurrentCrsConvert;
+            set
+            {
+                if (myCurrentCrsConvert == value) return;
+                myCurrentCrsConvert = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public int TabSelected
         {
             get => myTabSelected;
@@ -188,16 +204,142 @@ namespace KursAM2.ViewModel.Management
                 var frm = Form as ProfitAndLosses2;
                 if (myBalansFact != null)
                 {
-                    if (myBalansFact.Id == Guid.Parse("{459937df-085f-4825-9ae9-810b054d0276}")
-                        || myBalansFact.Id == Guid.Parse("{30e9bd73-9bda-4d75-b897-332f9210b9b1}"))
-                        frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
-                    else
-                        frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
+                    switch (myBalansCalc.Id.ToString())
+                    {
+                        case "459937df-085f-4825-9ae9-810b054d0276":
+                        case "30e9bd73-9bda-4d75-b897-332f9210b9b1":
+                            frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
+                            break;
+                        case "b6f2540a-9593-42e3-b34f-8c0983bc39a2":
+                        case "35ebabec-eac3-4c3c-8383-6326c5d64c8c":
+                            frm?.NavigateTo(typeof(CurrencyConvertView));
+                            UpdateCurrencyConvert(StartDate, EndDate);
+                            break;
+                        default:
+                            frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
+                            break;
+                    }
+
+                    //if (myBalansFact.Id == Guid.Parse("{459937df-085f-4825-9ae9-810b054d0276}")
+                    //    || myBalansFact.Id == Guid.Parse("{30e9bd73-9bda-4d75-b897-332f9210b9b1}"))
+                    //    frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
+                    //else
+                    //    frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
 
                     UpdateExtend(myBalansFact.Id);
                 }
 
                 RaisePropertyChanged();
+            }
+        }
+
+        private void UpdateCurrencyConvert(DateTime dateStart, DateTime dateEnd)
+        {
+            CurrencyConvertRows.Clear();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                //var sql =
+                //    "SELECT s110.DOC_CODE as DocCode, cast(s110.VZ_NUM as varchar) as DocNum, VZ_DATE as DocDate, " +
+                //    "CREATOR as Creator, " +
+                //    "s110.CurrencyFromDC as CurrencyFromDC, s110.CurrencyToDC as CurrencyToDC," +
+                //    "SUM(CASE WHEN t110.VZT_1MYDOLZH_0NAMDOLZH = 0 THEN t110.VZT_CRS_SUMMA ELSE 0 END) AS FromSumma, " +
+                //    "SUM(CASE WHEN t110.VZT_1MYDOLZH_0NAMDOLZH = 1 THEN t110.VZT_CRS_SUMMA ELSE 0 END) AS ToSumma " +
+                //    "FROM TD_110 t110 " +
+                //    "INNER JOIN SD_110 s110  ON t110.DOC_CODE = s110.DOC_CODE " +
+                //    "INNER JOIN SD_111 s111  ON s110.VZ_TYPE_DC = s111.DOC_CODE AND s111.IsCurrencyConvert = 1 " +
+                //    $"WHERE s110.VZ_DATE >= '{Helper.CustomFormat.DateToString(dateStart)}' " +
+                //    $"AND s110.VZ_DATE <= '{Helper.CustomFormat.DateToString(dateEnd)}' " +
+                //    "GROUP BY s110.DOC_CODE, s110.VZ_NUM, VZ_DATE, s110.CREATOR, s110.CurrencyFromDC, s110.CurrencyToDC";
+
+                var sql = $@"SELECT
+                      s110.DOC_CODE AS DocCode
+                      ,'Акт конвертации' AS DocName
+                     ,CAST(s110.VZ_NUM AS VARCHAR) AS DocNum
+                     ,VZ_DATE AS DocDate
+                     ,CREATOR AS Creator
+                     ,s110.CurrencyFromDC AS CurrencyFromDC
+                     ,s110.CurrencyToDC AS CurrencyToDC
+                     ,SUM(CASE
+                        WHEN t110.VZT_1MYDOLZH_0NAMDOLZH = 0 THEN t110.VZT_CRS_SUMMA
+                        ELSE 0
+                      END) AS FromSumma
+                     ,SUM(CASE
+                        WHEN t110.VZT_1MYDOLZH_0NAMDOLZH = 1 THEN t110.VZT_CRS_SUMMA
+                        ELSE 0
+                      END) AS ToSumma,
+                      NULL AS BankRowCode
+                    FROM TD_110 t110
+                    INNER JOIN SD_110 s110
+                      ON t110.DOC_CODE = s110.DOC_CODE
+                    INNER JOIN SD_111 s111
+                      ON s110.VZ_TYPE_DC = s111.DOC_CODE
+                        AND s111.IsCurrencyConvert = 1
+                    WHERE s110.VZ_DATE >= '{Helper.CustomFormat.DateToString(dateStart)}'
+                    AND s110.VZ_DATE <= '{Helper.CustomFormat.DateToString(dateEnd)}'
+                    GROUP BY s110.DOC_CODE
+                            ,s110.VZ_NUM
+                            ,VZ_DATE
+                            ,s110.CREATOR
+                            ,s110.CurrencyFromDC
+                            ,s110.CurrencyToDC
+                    union all
+                    SELECT cast(0 AS numeric(18,0)) AS DocCode
+                    ,'Банковская конвертация' AS DocName,
+                    '' AS DocNum,
+                    bcc.DocDate AS DocDate
+                    ,bcc.CREATOR AS Creator
+                    ,bcc.CrsFromDC AS CurrencyFromDC
+                    ,bcc.CrsToDC AS CurrencyToDC
+                    ,bcc.SummaFrom AS FromSumma
+                    ,bcc.SummaTo AS ToSumma
+                    ,bcc.DocRowToCode 
+                    FROM BankCurrencyChange bcc
+                        WHERE bcc.DocDate >= '{Helper.CustomFormat.DateToString(dateStart)}' 
+                            AND bcc.DocDate <= '{Helper.CustomFormat.DateToString(dateEnd)}' 
+                    UNION all
+                    SELECT DOC_CODE,
+                    'Касса'
+                    ,cast(CH_NUM_ORD AS varchar)
+                    ,CH_DATE
+                    ,CREATOR
+                    ,CH_CRS_OUT_DC
+                    ,CH_CRS_IN_DC
+                    ,CH_CRS_OUT_SUM
+                    ,CH_CRS_IN_SUM
+                    ,null
+                    from sd_251
+                        WHERE CH_DATE >= '{Helper.CustomFormat.DateToString(dateStart)}' 
+                            AND CH_date <= '{Helper.CustomFormat.DateToString(dateEnd)}' ";
+                var data = ctx.Database.SqlQuery<CurrencyConvertRow>(sql);
+                foreach (var d in data)
+                {
+                    d.Operation = $"{GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyFromDC)} -> " +
+                                   $"{GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyToDC)}";
+                    if (d.ToSumma > 0)
+                    {
+                        if(d.CurrencyFromDC == GlobalOptions.SystemProfile.NationalCurrency.DocCode)
+                            d.Rate = d.FromSumma / d.ToSumma;
+                        else
+                        {
+                            if (d.CurrencyToDC == GlobalOptions.SystemProfile.NationalCurrency.DocCode)
+                            {
+                                d.Rate = d.ToSumma / d.FromSumma;
+                            }
+                            else
+                            {
+                                d.Rate = d.FromSumma / d.ToSumma;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        d.Rate = 1;
+                    }
+                    ProfitAndLossesManager.SetCurrenciesValue(d, d.CurrencyToDC, d.ToSumma,0);
+                    ProfitAndLossesManager.SetCurrenciesValue(d, d.CurrencyFromDC, 0,d.FromSumma);
+                    CurrencyConvertRows.Add(d);
+                }
+
             }
         }
 
@@ -212,11 +354,26 @@ namespace KursAM2.ViewModel.Management
                 var frm = Form as ProfitAndLosses2;
                 if (myBalansCalc != null)
                 {
-                    if (myBalansCalc.Id == Guid.Parse("{459937df-085f-4825-9ae9-810b054d0276}")
-                        || myBalansCalc.Id == Guid.Parse("{30e9bd73-9bda-4d75-b897-332f9210b9b1}"))
-                        frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
-                    else
-                        frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
+                    switch (myBalansCalc.Id.ToString())
+                    {
+                        case "459937df-085f-4825-9ae9-810b054d0276":
+                        case "30e9bd73-9bda-4d75-b897-332f9210b9b1":
+                            frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
+                            break;
+                        case "b6f2540a-9593-42e3-b34f-8c0983bc39a2":
+                        case "35ebabec-eac3-4c3c-8383-6326c5d64c8c":
+                            frm?.NavigateTo(typeof(CurrencyConvertView));
+                            UpdateCurrencyConvert(StartDate, EndDate);
+                            break;
+                        default:
+                            frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
+                            break;
+                    }
+                    //if (myBalansCalc.Id == Guid.Parse("{459937df-085f-4825-9ae9-810b054d0276}")
+                    //    || myBalansCalc.Id == Guid.Parse("{30e9bd73-9bda-4d75-b897-332f9210b9b1}"))
+                        
+                    //else
+                        
 
                     UpdateExtend(myBalansCalc.Id);
                 }
@@ -670,6 +827,26 @@ namespace KursAM2.ViewModel.Management
 
             ResetCurrencyDetailColumns();
             RaisePropertyChanged(nameof(ExtendActual));
+        }
+
+        public ICommand ActConvertOpenCommand
+        {
+            get { return new Command(ActConvertOpen, _ => CurrentCrsConvert != null); }
+        }
+
+        private void ActConvertOpen(object obj)
+        {
+            if (CurrentCrsConvert.BankRowCode != null)
+            {
+                DocumentsOpenManager.Open(DocumentType.Bank, (decimal)CurrentCrsConvert.BankRowCode, null);
+            }
+            else
+            {
+                DocumentsOpenManager.Open(
+                    CurrentCrsConvert.DocName == "Касса"
+                        ? DocumentType.CurrencyChange
+                        : DocumentType.CurrencyConvertAccounting, CurrentCrsConvert.DocCode, null);
+            }
         }
 
         public override void DocumentOpen(object obj)
@@ -1438,5 +1615,51 @@ namespace KursAM2.ViewModel.Management
         }
 
         #endregion
+    }
+    /// <summary>
+    /// Вспомогательный класс для формирования информации по акту валютной конвертации
+    /// </summary>
+    public class CurrencyConvertRow : IProfitCurrencyList
+    {
+        public decimal DocCode { set; get; }
+        public Guid? DocId { set; get; }
+        public string DocNum { set; get; }
+        public DateTime DocDate { set; get; }
+        public string Creator { set; get; }
+        public string DocName { set; get; }
+        public int? BankRowCode { set; get; }
+        public string Operation { set; get; }
+        public decimal CurrencyFromDC { set; get; }
+        public Currency CurrencyFrom {set; get; }
+        public decimal CurrencyToDC { set; get; }
+        public Currency CurrencyTo { set; get; }
+        public decimal RateCB { set; get; }
+        public decimal FromSumma { set; get; }
+        public decimal ToSumma { set; get; }
+        public decimal Rate { set; get; }
+        public decimal ProfitRUB { get; set; }
+        public decimal LossRUB { get; set; }
+        public decimal ResultRUB { get; set; }
+        public decimal ProfitUSD { get; set; }
+        public decimal LossUSD { get; set; }
+        public decimal ResultUSD { get; set; }
+        public decimal ProfitEUR { get; set; }
+        public decimal LossEUR { get; set; }
+        public decimal ResultEUR { get; set; }
+        public decimal ProfitSEK { get; set; }
+        public decimal LossSEK { get; set; }
+        public decimal ResultSEK { get; set; }
+        public decimal ProfitGBP { get; set; }
+        public decimal LossGBP { get; set; }
+        public decimal ResultGBP { get; set; }
+        public decimal ProfitCHF { get; set; }
+        public decimal LossCHF { get; set; }
+        public decimal ResultCHF { get; set; }
+        public decimal ProfitOther { get; set; }
+        public decimal LossOther { get; set; }
+        public decimal ResultOther { get; set; }
+        public decimal ProfitCNY { get; set; }
+        public decimal LossCNY { get; set; }
+        public decimal ResultCNY { get; set; }
     }
 }

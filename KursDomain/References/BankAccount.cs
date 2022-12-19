@@ -18,7 +18,7 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
 {
     public int CompareTo(object obj)
     {
-        var c = obj as Unit;
+        var c = obj as BankAccount;
         return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
     }
     [Display(AutoGenerateField = true, Name = "Корр.счет")]
@@ -83,7 +83,7 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
     [Display(AutoGenerateField = false)]
     public string Name
     {
-        get => ShortName;
+        get => $"{ShortName} {Currency}";
         set { }
     }
 
@@ -117,7 +117,7 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
 
     public override string ToString()
     {
-        return $"{ShortName} {RashAccount}";
+        return $"{ShortName} {RashAccount} {Currency}";
     }
 
     public void LoadFromEntity(SD_114 entity, IReferencesCache refCache)

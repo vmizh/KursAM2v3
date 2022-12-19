@@ -612,6 +612,9 @@
     <Compile Include="View\Management\Controls\BalansCompareMoneyInPathUI.xaml.cs">
       <DependentUpon>BalansCompareMoneyInPathUI.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Management\ProfitAndLossesControls\CurrencyConvertView.xaml.cs">
+      <DependentUpon>CurrencyConvertView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Management\ProfitAndLossesControls\ProfitAndLossExtendVzaimozachetUI.xaml.cs">
       <DependentUpon>ProfitAndLossExtendVzaimozachetUI.xaml</DependentUpon>
     </Compile>
@@ -1472,6 +1475,10 @@
     <Page Include="View\Management\Controls\BalansCompareMoneyInPathUI.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Management\ProfitAndLossesControls\CurrencyConvertView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Management\ProfitAndLossesControls\ProfitAndLossExtendVzaimozachetUI.xaml">
       <Generator>MSBuild:Compile</Generator>

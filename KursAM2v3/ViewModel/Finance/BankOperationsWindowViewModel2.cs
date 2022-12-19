@@ -354,8 +354,8 @@ namespace KursAM2.ViewModel.Finance
                 myCurrentBankAccount = value;
                 if (myCurrentBankAccount != null)
                 {
-                    Currency =
-                        GlobalOptions.ReferencesCache.GetBankAccount(myCurrentBankAccount.DocCode).Currency as Currency;
+                    //Currency =
+                    //    GlobalOptions.ReferencesCache.GetBankAccount(myCurrentBankAccount.DocCode).Currency as Currency;
                     GetPeriods();
                 }
 

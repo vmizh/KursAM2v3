@@ -115,7 +115,6 @@ namespace KursAM2.ViewModel.Finance
                 Document = manager.LoadBankCurrencyChange(Id);
                 if (Document == null)
                 {
-                    var winManager = new WindowManager();
                     winManager.ShowWinUIMessageBox($"Не найден документ с кодом {Id}!",
                         "Ошибка обращения к базе данных", MessageBoxButton.OK, MessageBoxImage.Error,
                         MessageBoxResult.None, MessageBoxOptions.None);
@@ -131,7 +130,7 @@ namespace KursAM2.ViewModel.Finance
 
         public override void SaveData(object data)
         {
-            using(var context = GlobalOptions.GetEntities())
+            using (var context = GlobalOptions.GetEntities())
             {
                 if (Document.SummaFrom > 0)
                 {
@@ -139,7 +138,7 @@ namespace KursAM2.ViewModel.Finance
                     var old = context.BankCurrencyChange.FirstOrDefault(_ => _.Id == Document.Id);
                     if (old != null)
                         s = old.SummaFrom;
-                    var errStr = manager.CheckForNonzero(Document.BankFromDC, 
+                    var errStr = manager.CheckForNonzero(Document.BankFromDC,
                         Document.DocDate, s > 0 ? s - Document.SummaFrom : Document.SummaFrom);
                     if (!string.IsNullOrEmpty(errStr))
                     {
@@ -148,6 +147,7 @@ namespace KursAM2.ViewModel.Finance
                     }
                 }
             }
+
             if (Document.State == RowStatus.NewRow)
             {
                 manager.AddBankCurrencyChange(Document);
@@ -182,7 +182,7 @@ namespace KursAM2.ViewModel.Finance
 
         public override void DocDelete(object form)
         {
-            using(var context = GlobalOptions.GetEntities())
+            using (var context = GlobalOptions.GetEntities())
             {
                 if (Document.SummaFrom > 0)
                 {
@@ -190,7 +190,7 @@ namespace KursAM2.ViewModel.Finance
                     var old = context.BankCurrencyChange.FirstOrDefault(_ => _.Id == Document.Id);
                     if (old != null)
                         s = old.SummaTo;
-                    var errStr = manager.CheckForNonzero(Document.BankToDC, 
+                    var errStr = manager.CheckForNonzero(Document.BankToDC,
                         Document.DocDate, s > 0 ? s - Document.SummaTo : Document.SummaTo);
                     if (!string.IsNullOrEmpty(errStr))
                     {
@@ -199,6 +199,7 @@ namespace KursAM2.ViewModel.Finance
                     }
                 }
             }
+
             if (manager.DeleteBankCurrencyChange(Document))
                 Form.Close();
         }

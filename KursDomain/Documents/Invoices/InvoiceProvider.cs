@@ -1131,6 +1131,13 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
             foreach (var pay in Entity.ProviderInvoicePay)
             {
                 var newItem = new ProviderInvoicePayViewModel(pay);
+                if (pay.TD_110 != null)
+                {
+                    newItem.DocSumma = (decimal)pay.TD_110.VZT_CRS_SUMMA;
+                    newItem.DocDate = pay.TD_110.SD_110.VZ_DATE;
+                    newItem.DocName = "Акт взаимозачета";
+                    newItem.DocExtName = $"№{pay.TD_110.SD_110.VZ_NUM} {pay.TD_110.VZT_DOC_NOTES} Создал: {pay.TD_110.SD_110.CREATOR}";
+                }
                 if (pay.TD_101 != null)
                 {
                     newItem.DocSumma = (decimal)pay.TD_101.VVT_VAL_RASHOD;
@@ -1152,16 +1159,6 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
                         newItem.DocExtName =
                             $"Касса {((IName)GlobalOptions.ReferencesCache.GetCashBox(pay.SD_34.CA_DC)).Name}";
                 }
-
-                if (pay.TD_110 != null)
-                {
-                    newItem.DocSumma = (decimal)pay.TD_110.VZT_CRS_SUMMA;
-                    newItem.DocName = "Акт взаимозачета";
-                    newItem.DocNum = pay.TD_110.SD_110.VZ_NUM.ToString();
-                    newItem.DocDate = pay.TD_110.SD_110.VZ_DATE;
-                    newItem.DocExtName = $"{pay.TD_110.VZT_DOC_NOTES}";
-                }
-
                 PaymentDocs.Add(newItem);
             }
 

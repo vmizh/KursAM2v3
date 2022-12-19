@@ -32,6 +32,7 @@
 	
 	
 	
+	
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=429e7b34_002Dc967_002D4d8f_002D9351_002D210b2670794f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CashBoxCacheTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::B68B92C0-A724-45C3-BBF1-6C788AF3BB49::.NETFramework,Version=v4.7.2::KursDomain.Tests.ReferenceCache.CashBoxCacheTests.CashBoxCacheTest&lt;/TestId&gt;&#xD;
