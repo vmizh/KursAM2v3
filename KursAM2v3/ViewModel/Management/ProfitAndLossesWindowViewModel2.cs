@@ -77,6 +77,7 @@ namespace KursAM2.ViewModel.Management
         public ObservableCollection<ProfitAndLossesExtendRowViewModel> ExtendNach { set; get; } =
             new ObservableCollection<ProfitAndLossesExtendRowViewModel>();
 
+        // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<CurrencyConvertRow> CurrencyConvertRows { set; get; } 
             = new ObservableCollection<CurrencyConvertRow>();
 
@@ -384,6 +385,7 @@ namespace KursAM2.ViewModel.Management
         }
 
         // ReSharper disable once FieldCanBeMadeReadOnly.Global
+        // ReSharper disable once CollectionNeverQueried.Global
         public List<Currency> CurrenciesForRecalc { set; get; } = new List<Currency>();
         public string RecalcCrsName => $"Пересчет в {RecalcCurrency?.Name}";
 
@@ -838,14 +840,14 @@ namespace KursAM2.ViewModel.Management
         {
             if (CurrentCrsConvert.BankRowCode != null)
             {
-                DocumentsOpenManager.Open(DocumentType.Bank, (decimal)CurrentCrsConvert.BankRowCode, null);
+                DocumentsOpenManager.Open(DocumentType.Bank, (decimal)CurrentCrsConvert.BankRowCode);
             }
             else
             {
                 DocumentsOpenManager.Open(
                     CurrentCrsConvert.DocName == "Касса"
                         ? DocumentType.CurrencyChange
-                        : DocumentType.CurrencyConvertAccounting, CurrentCrsConvert.DocCode, null);
+                        : DocumentType.CurrencyConvertAccounting, CurrentCrsConvert.DocCode);
             }
         }
 
@@ -853,6 +855,9 @@ namespace KursAM2.ViewModel.Management
         {
             switch (CurrentExtend.DocTypeCode)
             {
+                case DocumentType.Bank:
+                    DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, CurrentExtend.Code);
+                    return;
                 case DocumentType.AccruedAmountForClient:
                 case DocumentType.AccruedAmountOfSupplier:
                 case DocumentType.AktSpisaniya:
@@ -1619,6 +1624,7 @@ namespace KursAM2.ViewModel.Management
     /// <summary>
     /// Вспомогательный класс для формирования информации по акту валютной конвертации
     /// </summary>
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
     public class CurrencyConvertRow : IProfitCurrencyList
     {
         public decimal DocCode { set; get; }
