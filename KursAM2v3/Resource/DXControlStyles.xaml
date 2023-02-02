@@ -4,7 +4,7 @@
                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
                     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
-                    xmlns:dxlcs="clr-namespace:DevExpress.Xpf.LayoutControl.Serialization;assembly=DevExpress.Xpf.LayoutControl.v21.2"
+                    xmlns:dxlcs="clr-namespace:DevExpress.Xpf.LayoutControl.Serialization;assembly=DevExpress.Xpf.LayoutControl.v22.2"
                     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors">
     <Style x:Key="GridControl.Base" TargetType="dxg:GridControl">
         <Setter Property="ShowBorder" Value="False" />

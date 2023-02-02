@@ -211,7 +211,7 @@ namespace KursAM2.ViewModel.Logistiks
         private void LoadNomForSklad()
         {
             var data = nomenklManager.GetNomenklStoreQuantity(CurrentWarehouse.DocCode, new DateTime(2000, 1, 1),
-                DateTime.Today);
+                OstatokDate);
             if (data != null)
                 foreach (var d in data.Where(_ => _.OstatokQuantity > 0))
                     NomenklsForSklad.Add(new NomenklOstatkiWithPrice

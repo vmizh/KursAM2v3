@@ -34,13 +34,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.Data.Desktop.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Data.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Mvvm.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Controls.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Core.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Grid.v21.2, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Grid.v21.2.Core, Version=21.2.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.Desktop.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Mvvm.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Controls.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Core.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v21.2.Core, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -93,7 +93,6 @@
     <Compile Include="Documents\Bank\BankOperationType.cs" />
     <Compile Include="Documents\Bank\BankPeriodOperations.cs" />
     <Compile Include="Documents\Bank\BankStatements.cs" />
-    <Compile Include="Documents\Cash\Cash.cs" />
     <Compile Include="Documents\Cash\CashCurrencyExchange.cs" />
     <Compile Include="Documents\Cash\CashCurrencyExchangeKontragentType.cs" />
     <Compile Include="Documents\Cash\CashInViewModel.cs" />
@@ -108,15 +107,12 @@
     <Compile Include="Documents\CommonReferences\CrossCurrencyRate.cs" />
     <Compile Include="Documents\CommonReferences\CurrencyRate.cs" />
     <Compile Include="Documents\CommonReferences\DocumentType.cs" />
-    <Compile Include="Documents\CommonReferences\Kontragent\KontragentViewModel.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KontragentBank.cs" />
-    <Compile Include="Documents\CommonReferences\Kontragent\KontragentClientCategory.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KontragentGruzoRequisite.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KontragentTypeEnum.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KONTRAGENT_REF_OUTViewModel.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KONTRAGENT_REF_OUT_REQUISITEViewModel.cs" />
     <Compile Include="Documents\CommonReferences\Kontragent\KONTR_BALANS_OPER_ARCViewModel.cs" />
-    <Compile Include="Documents\CommonReferences\Project.cs" />
     <Compile Include="Documents\CommonReferences\Region.cs" />
     <Compile Include="Documents\Currency\CurrencyRates.cs" />
     <Compile Include="Documents\Currency\KursMoney.cs" />
@@ -136,8 +132,14 @@
     <Compile Include="Documents\Dogovora\Old\SD_9ViewModel.cs" />
     <Compile Include="Documents\Dogovora\Old\TD_9ViewModel.cs" />
     <Compile Include="Documents\Employee\EMP_PAYROLL_TYPEViewModel.cs" />
-    <Compile Include="Documents\Invoices\IInvoiceClient.cs" />
-    <Compile Include="Documents\Invoices\IInvoiceClientRow.cs" />
+    <Compile Include="IDocuments\DistributeOverhead\IDistributeNaklad.cs" />
+    <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladInfo.cs" />
+    <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladInvoice.cs" />
+    <Compile Include="IDocuments\Finance\IInvoiceProvider.cs" />
+    <Compile Include="IDocuments\Finance\IInvoiceProviderRow.cs" />
+    <Compile Include="Documents\Invoices\SFProviderNomenklCurrencyConvertViewModel.cs" />
+    <Compile Include="IDocuments\Finance\IInvoiceClient.cs" />
+    <Compile Include="IDocuments\Finance\IInvoiceClientRow.cs" />
     <Compile Include="Documents\Invoices\InvoiceClientViewModel.cs" />
     <Compile Include="Documents\Invoices\InvoiceClientRowViewModel.cs" />
     <Compile Include="Documents\Invoices\InvoicePaymentDocument.cs" />
@@ -166,7 +168,6 @@
     <Compile Include="Documents\NomenklManagement\TD_24ViewModel.cs" />
     <Compile Include="Documents\NomenklManagement\Unit.cs" />
     <Compile Include="Documents\NomenklManagement\Waibill2.cs" />
-    <Compile Include="Documents\NomenklManagement\Warehouse.cs" />
     <Compile Include="Documents\NomenklManagement\WarehouseOrderIn.cs" />
     <Compile Include="Documents\NomenklManagement\WarehouseOrderInRow.cs" />
     <Compile Include="Documents\NomenklManagement\WarehouseOrderOut.cs" />
@@ -229,13 +230,15 @@
     <Compile Include="ICommon\IName.cs" />
     <Compile Include="ICommon\IRowDC.cs" />
     <Compile Include="ICommon\IRowId.cs" />
+    <Compile Include="IDocuments\Contract\IContractProvider.cs" />
     <Compile Include="IDocuments\Currency\IMultyCurrency.cs" />
     <Compile Include="IDocuments\Currency\ISummaMultiCurrency.cs" />
     <Compile Include="IDocuments\Currency\ISummaMultiWithPriceCurrency.cs" />
+    <Compile Include="IDocuments\DistributeOverhead\DistributeNakladTypeEnum.cs" />
+    <Compile Include="IDocuments\Finance\ISFProviderNomenklCurrencyConvert.cs" />
+    <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladRow.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IConsumableWarehouseInvoice.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrder.cs" />
-    <Compile Include="IDocuments\Finance\IInvoiceClient.cs" />
-    <Compile Include="IDocuments\Finance\IInvoiceProvider.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrderRow.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIssueWarehouseOrder.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIssueWarehouseOrderRow.cs" />
@@ -259,6 +262,7 @@
     <Compile Include="IReferences\Nomenkl\INomenkl.cs" />
     <Compile Include="IReferences\Nomenkl\INomenklCategory.cs" />
     <Compile Include="IReferences\Nomenkl\INomenklMain.cs" />
+    <Compile Include="IReferences\Nomenkl\INomenklProductType.cs" />
     <Compile Include="IReferences\Nomenkl\INomenklType.cs" />
     <Compile Include="IReferences\Nomenkl\IProductType.cs" />
     <Compile Include="IReferences\ISDRSchet.cs" />
@@ -282,12 +286,13 @@
     <Compile Include="References\BankAccount.cs" />
     <Compile Include="References\CashBox.cs" />
     <Compile Include="References\CentrResponsibility.cs" />
+    <Compile Include="References\AccessRight.cs" />
     <Compile Include="References\ClientCategory.cs" />
     <Compile Include="References\ContractType.cs" />
     <Compile Include="References\Country.cs" />
     <Compile Include="References\DeliveryCondition.cs" />
-    <Compile Include="References\MainReferences.cs" />
     <Compile Include="References\NomenklMain.cs" />
+    <Compile Include="References\NomenklProductType.cs" />
     <Compile Include="References\NomenklType.cs" />
     <Compile Include="References\ProductType.cs" />
     <Compile Include="References\Employee.cs" />
@@ -310,6 +315,11 @@
     <Compile Include="Repository\Base\GenericRepository.cs" />
     <Compile Include="Repository\CurrencyRepository\CurrencyRepository.cs" />
     <Compile Include="Repository\CurrencyRepository\ICurrencyRepository.cs" />
+    <Compile Include="Repository\GenericKursDBRepository.cs" />
+    <Compile Include="Repository\GenericKursSystemDBRepository.cs" />
+    <Compile Include="Repository\IGenericRepository.cs" />
+    <Compile Include="Repository\IRepository.cs" />
+    <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="UserMenuFavorites.cs" />
     <Compile Include="ViewModel\Base\Column\ColumnHelper.cs" />
     <Compile Include="ViewModel\Base\Column\ColumnSummary.cs" />

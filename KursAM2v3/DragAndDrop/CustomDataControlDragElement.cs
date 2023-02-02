@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+using System.Windows;
 using System.Windows.Controls;
 using DevExpress.Xpf.Grid;
 

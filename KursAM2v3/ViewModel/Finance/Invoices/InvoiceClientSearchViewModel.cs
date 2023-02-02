@@ -6,23 +6,21 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using KursDomain.Repository;
-using DevExpress.Mvvm;
 using DevExpress.Xpf.Core;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.Repositories.InvoicesRepositories;
+using KursAM2.View.Base;
 using KursAM2.View.Finance.Invoices;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
+using KursDomain.Repository;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -37,7 +35,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private IInvoiceClient myCurrentDocument;
-        
+
 
         public InvoiceClientSearchViewModel()
         {
@@ -151,7 +149,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
-        
 
         public override string LayoutName => "InvoiceClientSearchViewModel";
 
@@ -160,7 +157,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get => myCurrentDocument;
             set
             {
-                if (Equals(myCurrentDocument,value)) return;
+                if (Equals(myCurrentDocument, value)) return;
                 myCurrentDocument = value;
                 if (myCurrentDocument != null)
                 {
@@ -295,57 +292,34 @@ namespace KursAM2.ViewModel.Finance.Invoices
             RefreshData(null);
         }
 
-        public override async void RefreshData(object data)
+        public override void RefreshData(object data)
         {
+            //Documents.Clear();
+            //GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
+            //foreach (var d in InvoiceClientRepository.GetAllByDates(StartDate, EndDate))
+            //    //foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 
+            //    //    false, null, SearchText))
+            //    Documents.Add(d);
+            //GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+
+            var frm = Form as StandartSearchView;
             Documents.Clear();
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
-            foreach (var d in InvoiceClientRepository.GetAllByDates(StartDate, EndDate))
-                //foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 
-                //    false, null, SearchText))
-                Documents.Add(d);
-            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+            Task.Run(() =>
+            {
+                frm?.Dispatcher.Invoke(() => { frm.loadingIndicator.Visibility = Visibility.Visible; });
+                var result = InvoiceClientRepository.GetAllByDates(StartDate, EndDate);
+                frm?.Dispatcher.Invoke(() =>
+                {
+                    frm.loadingIndicator.Visibility = Visibility.Hidden;
+                    foreach (var d in result)
+                        Documents.Add(d);
+                });
+                GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+            });
+
         }
-        //SplashScreenService.ShowSplashScreen();
-            //await Load();
         
-
-        private Task Load()
-        {
-            var res = Task.Factory.StartNew(LoadCore);
-            Documents.Clear();
-            foreach (var d in res.Result)
-            {
-                Documents.Add(d);
-            }
-
-            return res;
-        }
-
-        private List<IInvoiceClient> LoadCore()
-        {
-            var ret = new List<IInvoiceClient>();
-            //base.RefreshData(null);
-            IsDocumentOpenAllow = false;
-            IsDocNewCopyAllow = false;
-            IsDocNewCopyRequisiteAllow = false;
-            IsPrintAllow = false;
-            try
-            {
-                foreach (var d in InvoiceClientRepository.GetAllByDates(StartDate, EndDate))
-                    //foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 
-                    //    false, null, SearchText))
-                    ret.Add(d);
-            }
-            catch (Exception ex)
-            {
-                WindowManager.ShowError(ex);
-            }
-
-            SearchText = "";
-            DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
-            return ret;
-        }
-
         public override void DocumentOpen(object form)
         {
             if (CurrentDocument == null) return;

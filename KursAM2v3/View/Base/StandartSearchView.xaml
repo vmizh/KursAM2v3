@@ -8,7 +8,7 @@
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+    xmlns:userControls="clr-namespace:KursAM2.View.UserControls"
     dx:DXSerializer.Enabled="True"
     dx:WindowRestoreLayoutOptions.AllowRestoreStateForDisplayedWindow="True"
     dx:DXSerializer.StoreLayoutMode="All"
@@ -22,7 +22,8 @@
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
-    <DockPanel Style="{StaticResource DXServices}">
+    <Grid>
+        <DockPanel Style="{StaticResource DXServices}">
             <control:WindowMenu Height="60" DockPanel.Dock="Top" />
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
                 <dxe:DateEdit Width="120" EditValue="{Binding StartDate}"
@@ -49,4 +50,10 @@
                 </dxg:GridControl.View>
             </dxg:GridControl>
         </DockPanel>
+        <userControls:LoadingIndicator x:Name="loadingIndicator" Visibility="Hidden" VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Width="100"
+                                   Height="100"
+                                   RenderTransformOrigin="0.17,1.122" />
+    </Grid>
 </dx:ThemedWindow>

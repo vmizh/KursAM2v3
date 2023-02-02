@@ -8,6 +8,7 @@
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                  xmlns:helpers="http://schemas.devexpress.com/winfx/2008/xaml/editors/internal"
                  Title="Движение товаров на складах" Height="350" Width="600"
+                 xmlns:controls="clr-namespace:KursAM2.View.UserControls"
                  Style="{StaticResource DXSplashServices}">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
@@ -18,6 +19,7 @@
     <dx:ThemedWindow.Resources>
         <helpers:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </dx:ThemedWindow.Resources>
+    <Grid>
     <DockPanel>
         <DockPanel DockPanel.Dock="Top">
             <control:WindowMenu Height="60" DockPanel.Dock="Top" />
@@ -53,27 +55,9 @@
                 </dxe:CheckEdit>
             </StackPanel>
         </DockPanel>
-        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal">
-            <Label Content="Загрузка "
-                   Padding="0 6 0 0"/>
-            <dxe:ProgressBarEdit Name="progressBarEdit1" 
-                                 Width="400" Focusable="False" IsTabStop="False" IsPercent="False"
-                                 Visibility="{Binding ShowProgress, 
-                Converter={StaticResource BooleanToVisibilityConverter}}" 
-                                 HorizontalAlignment="Left" 
-                                 Height="14" 
-                                 VerticalAlignment="Bottom" 
-                                 AdditionalForeground="#FFFFFBFB" 
-                                 ShowBorder="False">
-                <dxe:ProgressBarEdit.StyleSettings>
-                    <dxe:ProgressBarMarqueeStyleSettings/>
-                </dxe:ProgressBarEdit.StyleSettings>
-            </dxe:ProgressBarEdit>
-            <Label Content="Загружен" 
-                   Visibility="{Binding IsDataLoaded, UpdateSourceTrigger=PropertyChanged}"
-                   Padding="0 6 0 0" />
-        </StackPanel>
-        <dxlc:LayoutControl Padding="0" x:Name="mainLayoutControl">
+        <StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal"/>
+            <dxlc:LayoutControl Padding="0" x:Name="mainLayoutControl">
+            
             <dxlc:LayoutGroup Orientation="Vertical">
                 <dxlc:LayoutGroup Header="LayoutGroup" View="Group"
                                   dxlc:LayoutControl.AllowVerticalSizing="True">
@@ -406,4 +390,10 @@
             </dxlc:LayoutGroup>
         </dxlc:LayoutControl>
     </DockPanel>
+        <controls:LoadingIndicator x:Name="loadingIndicator" Visibility="Hidden" VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Width="100"
+                                   Height="100"
+                                   RenderTransformOrigin="0.17,1.122" />
+    </Grid>
 </dx:ThemedWindow>

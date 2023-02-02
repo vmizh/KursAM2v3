@@ -133,14 +133,6 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         public List<IInvoiceProvider> GetAllByDates(DateTime dateStart, DateTime dateEnd)
         {
-            //DetachObjects();
-            //var ret = new List<InvoiceProvider>();
-            //var data = Context.SD_26
-            //    .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd)
-            //    .OrderByDescending(_ => _.SF_POSTAV_DATE).ToList();
-            //foreach (var d in data)
-            //    ret.Add(new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>()));
-            //return ret;
             var data = Context.InvoicePostQuery.Where(_ => _.Date >= dateStart && _.Date <= dateEnd)
                 .OrderByDescending(_ => _.Date).ToList();
             return data.Select(_ => _.DocCode).Distinct()

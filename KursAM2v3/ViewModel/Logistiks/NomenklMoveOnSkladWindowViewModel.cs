@@ -7,11 +7,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
+using KursAM2.View.Logistiks;
+using KursAM2.View.UserControls;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
@@ -1275,16 +1278,33 @@ namespace KursAM2.ViewModel.Logistiks
             IsCanRefresh = false;
            // await Task.Run(() => RunPrgressBar());
             IsDataLoaded = Visibility.Collapsed;
-            ShowProgress = true;
-            if (CurrentSklad == null)
-                await Task.Run(() => LoadForAllSklads4());
-            else
-                await Task.Run(() => LoadForCurrentSklad4());
+            //ShowProgress = true;
+            //if (CurrentSklad == null)
+            //    await Task.Run(() => LoadForAllSklads4());
+            //else
+            //    await Task.Run(() => LoadForCurrentSklad4());
+            
         }
 
         public override void RefreshData(object obj)
         {
-            RefreshDataAsync();
+            //RefreshDataAsync();
+            Task.Run(() =>
+            {
+                Form.Dispatcher.Invoke(() =>
+                {
+                    ((NomenklMoveOnSklad)Form).loadingIndicator.Visibility = Visibility.Visible;
+                });
+                if (CurrentSklad == null)
+                    LoadForAllSklads4();
+                else
+                    LoadForCurrentSklad4();
+                Form.Dispatcher.Invoke(() =>
+                {
+                    ((NomenklMoveOnSklad)Form).loadingIndicator.Visibility= Visibility.Hidden;
+                });
+
+            });
         }
 
         public override void DocumentOpen(object obj)

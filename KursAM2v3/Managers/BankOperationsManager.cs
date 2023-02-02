@@ -290,7 +290,7 @@ namespace KursAM2.Managers
             {
                 if (item.VVT_VAL_RASHOD > 0)
                 {
-                    var errStr = CheckForNonzero(bankDc, item.Date, item.VVT_VAL_RASHOD ?? 0);
+                    var errStr = CheckForNonzero(bankDc, item.Date, item.VVT_VAL_RASHOD.Value);
                     if (!string.IsNullOrEmpty(errStr))
                     {
                         winManager.ShowWinUIMessageBox(errStr, "Предупреждение", MessageBoxButton.OK);
@@ -699,7 +699,7 @@ namespace KursAM2.Managers
             //    return;
             if (item.VVT_VAL_PRIHOD > 0)
             {
-                var errStr = CheckForNonzero(bankDc, item.Date, item.VVT_VAL_PRIHOD ?? 0);
+                var errStr = CheckForNonzero(bankDc, item.Date, item.VVT_VAL_PRIHOD.Value);
                 if (!string.IsNullOrEmpty(errStr))
                 {
                     winManager.ShowWinUIMessageBox(errStr, "Предупреждение", MessageBoxButton.OK);
@@ -1299,7 +1299,7 @@ namespace KursAM2.Managers
                     });
                     ctx.SaveChanges();
                     var err = CheckForNonzero(item.BankToDC, ctx);
-                    if (!string.IsNullOrEmpty(err))
+                    if (!string.IsNullOrWhiteSpace(err))
                     {
                         if (tran.UnderlyingTransaction?.Connection != null)
                             tran.Rollback();
@@ -1309,7 +1309,7 @@ namespace KursAM2.Managers
                     }
 
                     var err2 = CheckForNonzero(item.BankToDC, ctx);
-                    if (!string.IsNullOrEmpty(err))
+                    if (!string.IsNullOrEmpty(err2))
                     {
                         if (tran.UnderlyingTransaction?.Connection != null)
                             tran.Rollback();

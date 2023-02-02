@@ -565,8 +565,8 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 sheet.Cells[$"BV{document.Rows.Count + startTableRow + 3}"].Value = document.Receiver?.GlavBuh;
                 sheet.Cells[$"P{document.Rows.Count + startTableRow + 15}"].Value = document.DocDate.ToLongDateString();
                 sheet.Cells[$"AU{document.Rows.Count + startTableRow + 23}"].Value =
-                    $"{document.Client?.FullName ?? document.Client.Name} " +
-                    $"ИНН/КПП {document.Client.INN}/{document.Client.KPP}";
+                    $"{document?.Client?.FullName ?? document?.Client.Name} " +
+                    $"ИНН/КПП {document?.Client.INN}/{document?.Client.KPP}";
 
                 var options = sheet.HeaderFooterOptions;
                 options.EvenFooter.Center = $"Стр. {"&P"} из {"&N"}";

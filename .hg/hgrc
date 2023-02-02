@@ -1,7 +1,0 @@
-[paths]
-default = https://vmizh:CbvrfFhntvrf65@bitbucket.org/redstarkursteam/kursam2v3
-
-
-[tortoisehg]
-postpull = none
-autoresolve = True

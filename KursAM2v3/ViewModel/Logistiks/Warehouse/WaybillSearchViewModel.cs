@@ -4,14 +4,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using KursAM2.Managers;
 using KursAM2.Repositories;
+using KursAM2.Repositories.InvoicesRepositories;
+using KursAM2.View.Base;
 using KursAM2.View.Logistiks.Warehouse;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
@@ -28,10 +28,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private readonly WarehouseManager DocManager = new WarehouseManager(new StandartErrorManager(
             GlobalOptions.GetEntities(),
             "WaybillViewModel"));
+
         public readonly GenericKursDBRepository<SD_24> GenericProviderRepository;
 
         // ReSharper disable once NotAccessedField.Local
         public readonly ISD_24Repository SD_24Repository;
+
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
@@ -58,6 +60,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     Command = ExportSFCommand
                 });
             }
+
             StartDate = DateTime.Today.AddDays(-30);
             EndDate = DateTime.Today;
         }
@@ -89,7 +92,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get => myCurrentDocument;
             set
             {
-                if (myCurrentDocument?.DocCode  == value?.DocCode) return;
+                if (myCurrentDocument?.DocCode == value?.DocCode) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }
@@ -136,52 +139,81 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         #region Commands
 
-        private Task Load()
+        //private Task Load()
+        //{
+        //    GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
+        //    var res = Task.Factory.StartNew(() =>
+        //    {
+        //        var data = SD_24Repository.GetWayBillAllByDates(StartDate, EndDate);
+        //        List<WayBillShort> w = new List<WayBillShort>();
+        //        foreach (var d in data)
+        //        {
+        //            w.Add(new WayBillShort(d)
+        //            {
+        //                DocCode = d.DOC_CODE,
+        //                InvoiceClient = d.SD_84 != null
+        //                    ? $"С/ф №{d.SD_84.SF_IN_NUM}/{d.SD_84.SF_OUT_NUM} от {d.SD_84.SF_DATE.ToShortDateString()}"
+        //                    : null,
+        //                State = RowStatus.NotEdited
+        //            });
+        //        }
+
+        //        return w;
+        //    });
+        //    Documents.Clear();
+        //    foreach (var d in res.Result) Documents.Add(d);
+        //    RaisePropertyChanged(nameof(Documents));
+        //    DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
+        //    GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+        //    return res;
+        //}
+
+        public override void RefreshData(object data)
         {
+            var frm = Form as StandartSearchView;
+            Documents.Clear();
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
-            var res = Task.Factory.StartNew(() =>
+            Task.Run(() =>
             {
-                var data = SD_24Repository.GetWayBillAllByDates(StartDate, EndDate);
-                List<WayBillShort> w = new List<WayBillShort>();
-                foreach (var d in data)
-                {
-                    w.Add(new WayBillShort(d)
+                frm?.Dispatcher.Invoke(() => { frm.loadingIndicator.Visibility = Visibility.Visible; });
+                var result = SD_24Repository.GetWayBillAllByDates(StartDate, EndDate)
+                    .Select(d => new WayBillShort(d)
                     {
                         DocCode = d.DOC_CODE,
-                        InvoiceClient = d.SD_84 != null ? $"С/ф №{d.SD_84.SF_IN_NUM}/{d.SD_84.SF_OUT_NUM} от {d.SD_84.SF_DATE.ToShortDateString()}" : null,
-                        State=RowStatus.NotEdited
-                    });
-                }
-                return w;
+                        InvoiceClient = d.SD_84 != null
+                            ? $"С/ф №{d.SD_84.SF_IN_NUM}/{d.SD_84.SF_OUT_NUM} от {d.SD_84.SF_DATE.ToShortDateString()}"
+                            : null,
+                        State = RowStatus.NotEdited
+                    })
+                    .ToList();
+                frm?.Dispatcher.Invoke(() =>
+                {
+                    foreach (var d in result) Documents.Add(d);
+                    frm.loadingIndicator.Visibility = Visibility.Hidden;
+                    RaisePropertyChanged(nameof(Documents));
+                });
+                GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             });
-            Documents.Clear();
-            foreach (var d in res.Result) Documents.Add(d);
-            RaisePropertyChanged(nameof(Documents));
-            DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
-            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
-            return res;
         }
 
-        public override async void RefreshData(object data)
-        {
-            SplashScreenService.ShowSplashScreen();
-            base.RefreshData(null);
-            await Load();
-
-        }
+        //public override async void RefreshData(object data)
+        //{
+        //    SplashScreenService.ShowSplashScreen();
+        //    base.RefreshData(null);
+        //    await Load();
+        //}
 
         public override void DocumentOpen(object form)
         {
-            DocumentsOpenManager.Open(DocumentType.Waybill,CurrentDocument.DocCode);
+            DocumentsOpenManager.Open(DocumentType.Waybill, CurrentDocument.DocCode);
         }
 
         public override void DocNewEmpty(object form)
         {
             var frm = new WayBillView2 {Owner = Application.Current.MainWindow};
-            var ctx = new WaybillWindowViewModel2(null) {Form = frm}; 
+            var ctx = new WaybillWindowViewModel2(null) {Form = frm};
             frm.DataContext = ctx;
             frm.Show();
-           
         }
 
         public override void DocNewCopy(object obj)
@@ -195,7 +227,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
             frm.DataContext = ctx;
             frm.Show();
-            
         }
 
         public override void DocNewCopyRequisite(object obj)
@@ -204,10 +235,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var frm = new WayBillView2 {Owner = Application.Current.MainWindow};
             var ctx = new WaybillWindowViewModel2(null)
                 {Form = frm};
-            ctx.Document = DocManager.NewWaybillRecuisite(CurrentDocument.DocCode); 
+            ctx.Document = DocManager.NewWaybillRecuisite(CurrentDocument.DocCode);
             frm.DataContext = ctx;
             frm.Show();
-           
         }
 
         #endregion

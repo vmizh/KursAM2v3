@@ -14,11 +14,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq}/{Id,nq} {Name,nq}")]
 public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currency>, IComparable
 {
-    public int CompareTo(object obj)
-    {
-        var c = obj as Unit;
-        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
-    }
     private string _Code;
     private decimal _DocCode;
     private string _FullName;
@@ -32,13 +27,19 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
     [Display(AutoGenerateField = false, Name = "Код")]
     public string NalogCode { get; set; }
 
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : string.Compare(Name, c.Name, StringComparison.Ordinal);
+    }
+
     [Display(AutoGenerateField = true, Name = "Код")]
     public string Code
     {
         get => _Code;
         set
         {
-            if (_Code == value) return;
+            if (string.Equals(_Code, value, StringComparison.InvariantCulture)) return;
             _Code = value;
         }
     }
@@ -49,7 +50,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
         get => _FullName;
         set
         {
-            if (_FullName == value) return;
+            if (string.Equals(_FullName, value, StringComparison.InvariantCulture)) return;
             _FullName = value;
         }
     }
@@ -60,7 +61,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
         get => _IsActive;
         set
         {
-            if (_IsActive == value) return;
+            if (_IsActive.Equals(value)) return;
             _IsActive = value;
         }
     }
@@ -71,7 +72,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
         get => _DocCode;
         set
         {
-            if (_DocCode == value) return;
+            if (_DocCode.Equals(value)) return;
             _DocCode = value;
         }
     }
@@ -92,7 +93,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
         get => _Name;
         set
         {
-            if (_Name == value) return;
+            if (string.Equals(_Name, value, StringComparison.InvariantCulture)) return;
             _Name = value;
         }
     }
@@ -103,14 +104,13 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
         get => _Notes;
         set
         {
-            if (_Notes == value) return;
+            if (string.Equals(_Notes, value, StringComparison.InvariantCulture)) return;
             _Notes = value;
         }
     }
 
     [Display(AutoGenerateField = false, Name = "Описание")]
     public string Description => $"Валюта: {Name} {FullName}";
-
 
     public override string ToString()
     {
@@ -139,11 +139,12 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((Currency) obj);
+        return Equals((Currency)obj);
     }
 
     public override int GetHashCode()
     {
+        // ReSharper disable once NonReadonlyMemberInGetHashCode
         return _DocCode.GetHashCode();
     }
 
@@ -162,6 +163,7 @@ public class CurrencyViewModel : ICurrency, IDocCode, IName, INotifyPropertyChan
     IEqualityComparer<CurrencyViewModel>
 {
     public readonly SD_301 Entity;
+
 
     public CurrencyViewModel(SD_301 entity)
     {
@@ -186,8 +188,8 @@ public class CurrencyViewModel : ICurrency, IDocCode, IName, INotifyPropertyChan
         get => Entity.CRS_MAIN_CURRENCY == 1;
         set
         {
-            if ((Entity.CRS_MAIN_CURRENCY == 1) == value) return;
-            Entity.CRS_MAIN_CURRENCY = (short) (value ? 1 : 0);
+            if (Entity.CRS_MAIN_CURRENCY == 1 == value) return;
+            Entity.CRS_MAIN_CURRENCY = (short)(value ? 1 : 0);
             OnPropertyChanged();
         }
     }

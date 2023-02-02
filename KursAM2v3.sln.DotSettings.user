@@ -18,6 +18,9 @@
   &lt;Assembly Path="C:\Program Files (x86)\DevExpress 21.1\Components\Bin\Framework\DevExpress.Data.v21.1.dll" /&gt;&#xD;
 &lt;/AssemblyExplorer&gt;</s:String>
 	<s:Boolean x:Key="/Default/Environment/Hierarchy/EntityFrameworkOptions/IsAlreadyNotifiedAboutEntityFramework/@EntryValue">True</s:Boolean>
+	<s:String x:Key="/Default/Environment/Highlighting/HighlightingSourceSnapshotLocation/@EntryValue">C:\Users\user\AppData\Local\Temp\JetBrains\ReSharperPlatformVs17\vAny_5d52caa7\CoverageData\_KursAM2v3.-1503182086\Snapshot\snapshot.utdcvr</s:String>
+	
+	
 	
 	
 	
@@ -37,6 +40,12 @@
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::B68B92C0-A724-45C3-BBF1-6C788AF3BB49::.NETFramework,Version=v4.7.2::KursDomain.Tests.ReferenceCache.CashBoxCacheTests.CashBoxCacheTest&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6f6de04a_002Ddf22_002D4a6e_002Db1b4_002Db93e7a526e5d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7ff74ff7_002D5140_002D4df2_002D917f_002Dbecc29e41f4c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=c9895678_002D809c_002D4a27_002D87f2_002D49c9e5f3bcc8/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CashBoxCacheTest #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;

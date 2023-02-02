@@ -85,7 +85,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             DocCode = row.DocCode;
             Code = row.RowCode;
             Id = row.Row2d;
-            DocId = DocId;
+            DocId = row.DocId;
             Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.NomenklDC) as Nomenkl;
             NomNomenkl = Nomenkl?.NomenklNumber;
             IsUsluga = Nomenkl?.IsUsluga ?? false;

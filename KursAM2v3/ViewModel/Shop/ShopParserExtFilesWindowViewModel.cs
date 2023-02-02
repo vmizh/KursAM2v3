@@ -15,6 +15,7 @@ using KursAM2.ViewModel.Finance.Invoices;
 using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
+using KursDomain.IReferences.Nomenkl;
 using KursDomain.Menu;
 using KursDomain.References;
 using NomenklMain = Data.NomenklMain;
@@ -226,7 +227,7 @@ namespace KursAM2.ViewModel.Shop
                         NomenklNumber = item.OfferId,
                         Unit = (Unit)GlobalOptions.ReferencesCache.GetUnit(1750000001),
                         Category = GlobalOptions.ReferencesCache.GetNomenklGroup(10820000053) as NomenklGroup,
-                        NomType = GlobalOptions.ReferencesCache.GetProductType(11190000034) as ProductType,
+                        NomType = GlobalOptions.ReferencesCache.GetNomenklType(11190000034) as NomenklType,
                         IsInDataBase = isInBase,
                         Count = item.Count,
                         Price = item.Price

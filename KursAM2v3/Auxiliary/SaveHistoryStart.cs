@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+using System.Linq;
 using Core;
 using Core.Helper;
 using Data;

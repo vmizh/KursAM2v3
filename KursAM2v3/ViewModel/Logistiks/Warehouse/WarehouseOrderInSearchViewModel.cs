@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
+using KursAM2.Repositories.InvoicesRepositories;
+using KursAM2.View.Base;
 using KursAM2.View.Logistiks.Warehouse;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
@@ -39,7 +41,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             set
             {
-                if (Equals(myCurrentDocument,value)) return;
+                if (Equals(myCurrentDocument, value)) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }
@@ -138,13 +140,35 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var d = ctx.SD_24.Where(_ =>
-                        _.DD_DATE >= StartDate && _.DD_DATE <= EndDate &&
-                        _.DD_TYPE_DC == 2010000001).OrderByDescending(_ => _.DD_DATE).ToList(); /*приходный складской ордер*/
+                            _.DD_DATE >= StartDate && _.DD_DATE <= EndDate &&
+                            _.DD_TYPE_DC == 2010000001).OrderByDescending(_ => _.DD_DATE)
+                        .ToList(); /*приходный складской ордер*/
                     foreach (var item in d)
                         rows.Add(new WarehouseOrderIn(item) { State = RowStatus.NotEdited });
                     Documents = new ObservableCollection<WarehouseOrderIn>(rows);
                     RaisePropertyChanged(nameof(Documents));
                 }
+                
+                //var frm = Form as StandartSearchView;
+                //Documents.Clear();
+                //GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
+                //var ctx = GlobalOptions.GetEntities();
+                //Task.Run(() =>
+                //{
+                //    frm?.Dispatcher.Invoke(() => { frm.loadingIndicator.Visibility = Visibility.Visible; });
+                //    var result = new List<WarehouseOrderIn>();
+                //    var data1 = ctx.SD_24.Where(_ =>
+                //            _.DD_DATE >= StartDate && _.DD_DATE <= EndDate &&
+                //            _.DD_TYPE_DC == 2010000001).OrderByDescending(_ => _.DD_DATE)
+                //        .ToList();
+                //    result.AddRange(data1.Select(_ => new WarehouseOrderIn(_){State = RowStatus.NotEdited}));
+                //    frm?.Dispatcher.Invoke(() =>
+                //    {
+                //        Documents = new ObservableCollection<WarehouseOrderIn>(result);
+                //        frm.loadingIndicator.Visibility = Visibility.Hidden;
+                //    });
+                //    GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+                //});
             }
             catch (Exception e)
             {
@@ -153,7 +177,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
             RaisePropertyChanged(nameof(Documents));
             SearchText = "";
-            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+            //GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
         }
 
         public override void DocumentOpen(object form)
@@ -174,9 +198,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new OrderInView { Owner = Application.Current.MainWindow };
+            var frm = new OrderInView {Owner = Application.Current.MainWindow};
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                "WarehouseOrderIn", true)) { Form = frm };
+                "WarehouseOrderIn", true)) {Form = frm};
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -184,10 +208,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocNewCopy(object obj)
         {
             if (CurrentDocument == null) return;
-            var frm = new OrderInView { Owner = Application.Current.MainWindow };
+            var frm = new OrderInView {Owner = Application.Current.MainWindow};
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderIn", true))
-                { Form = frm };
+                {Form = frm};
             ctx.Document = orderManager.NewOrderInCopy(CurrentDocument);
             frm.Show();
             frm.DataContext = ctx;
@@ -196,10 +220,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocNewCopyRequisite(object obj)
         {
             if (CurrentDocument == null) return;
-            var frm = new OrderInView { Owner = Application.Current.MainWindow };
+            var frm = new OrderInView {Owner = Application.Current.MainWindow};
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderIn", true))
-                { Form = frm };
+                {Form = frm};
             ctx.Document = orderManager.NewOrderInRecuisite(CurrentDocument);
             frm.Show();
             frm.DataContext = ctx;

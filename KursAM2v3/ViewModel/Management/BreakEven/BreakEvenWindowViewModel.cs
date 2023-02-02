@@ -211,7 +211,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                           "    , S84.SF_NOTE + ' / ' + T84.SFT_TEXT AS SF_NOTES " +
                           "   , CAST(S24.DD_IN_NUM AS VARCHAR(50)) + '/' + ISNULL(S24.DD_EXT_NUM,'') NAKL_NUM " +
                           "  , S24.DD_NOTES AS NAKL_NOTES " + "       , DD_DATE " + "      , SFT_NEMENKL_DC " +
-                          "     , SF_CENTR_OTV_DC " + "    , SF_CLIENT_DC " + "   , SF_CRS_DC " + "  , S84.CREATOR " +
+                          "     , SF_CENTR_OTV_DC " + "    , SF_CLIENT_DC " + "   , SF_CRS_DC " + "  ,S84.PersonalResponsibleDC ManagerDC " +
                           "     , DDT_KOL_RASHOD " + "    , SFT_ED_CENA " +
                           "   , (SFT_SUMMA_K_OPLATE_KONTR_CRS * (DDT_KOL_RASHOD / SFT_KOL )) as KONTR_CRS " +
                           "  , cast((SELECT p1.PRICE " + "         FROM " + "          nom_price p1 (NOLOCK) " +
@@ -238,8 +238,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                           "      INNER JOIN SD_83 S83 " + "       ON T84.SFT_NEMENKL_DC = S83.DOC_CODE) TAB " +
                           "      inner join sd_43 s43 on s43.doc_code = tab.SF_CLIENT_DC " +
                           "     inner join sd_83 s83 on s83.doc_code = tab.SFT_NEMENKL_DC " +
-                          "     LEFT OUTER JOIN EXT_USERS EU ON TAB.CREATOR = EU.USR_NICKNAME " +
-                          "    LEFT OUTER JOIN SD_2 S2 ON S2.TABELNUMBER = EU.TABELNUMBER";
+                          "     LEFT OUTER JOIN SD_2 S2 ON S2.DOC_CODE = TAB.ManagerDC";
                 try
                 {
                     DataAll.Clear();

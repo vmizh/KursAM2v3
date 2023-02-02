@@ -3,19 +3,20 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
-using Core;
 using Core.ViewModel.Base;
 using Data;
-using KursDomain.Repository;
+using DevExpress.Data.Helpers;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
+using KursAM2.View.Base;
 using KursAM2.View.Finance.Invoices;
+using KursAM2.View.Logistiks;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
+using KursDomain.Repository;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -33,6 +34,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private IInvoiceProvider myCurrentDocument;
+        
 
         public SearchInvoiceProviderViewModel()
         {
@@ -103,15 +105,24 @@ namespace KursAM2.ViewModel.Finance.Invoices
             return res;
         }
 
-        public override async void RefreshData(object data)
+        public override void RefreshData(object data)
         {
+            List<IInvoiceProvider> dbdata = new List<IInvoiceProvider>();
+            var frm = Form as StandartSearchView;
             Documents.Clear();
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
-            foreach (var d in InvoiceProviderRepository.GetAllByDates(StartDate, EndDate))
-                //foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 
-                //    false, null, SearchText))
-                Documents.Add(d);
-            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+            Task.Run(() =>
+            {
+                frm?.Dispatcher.Invoke(() => { frm.loadingIndicator.Visibility = Visibility.Visible; });
+                var result = InvoiceProviderRepository.GetAllByDates(StartDate, EndDate);
+                frm?.Dispatcher.Invoke(() =>
+                {
+                    frm.loadingIndicator.Visibility = Visibility.Hidden;
+                    foreach (var d in result)
+                        Documents.Add(d);
+                });
+                GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+            });
         }
 
         public override void DocumentOpen(object obj)
@@ -123,7 +134,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocNewEmpty(object form)
         {
-            var view = new InvoiceProviderView { Owner = Application.Current.MainWindow };
+            var view = new InvoiceProviderView {Owner = Application.Current.MainWindow};
             var ctx = new ProviderWindowViewModel(null)
             {
                 Form = view
