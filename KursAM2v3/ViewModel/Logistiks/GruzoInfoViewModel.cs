@@ -1,4 +1,5 @@
-﻿using Core.ViewModel.Base;
+﻿using System.Web.ApplicationServices;
+using Core.ViewModel.Base;
 using KursDomain.Documents.Bank;
 using KursDomain.References;
 

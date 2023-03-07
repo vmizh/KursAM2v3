@@ -1,5 +1,8 @@
-﻿namespace KursAM2.ViewModel.Shop
+﻿using System.Diagnostics;
+
+namespace KursAM2.ViewModel.Shop
 {
+    [DebuggerDisplay("{OfferId,nq} {Name}")]
     public class ShopExtFileOrderItem
     {
         public string OfferId { set; get; }

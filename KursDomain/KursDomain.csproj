@@ -134,6 +134,7 @@
     <Compile Include="Documents\Dogovora\Old\SD_9ViewModel.cs" />
     <Compile Include="Documents\Dogovora\Old\TD_9ViewModel.cs" />
     <Compile Include="Documents\Employee\EMP_PAYROLL_TYPEViewModel.cs" />
+    <Compile Include="ICommon\ITreeReference.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNaklad.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladInfo.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladInvoice.cs" />
@@ -289,6 +290,7 @@
     <Compile Include="References\CashBox.cs" />
     <Compile Include="References\CentrResponsibility.cs" />
     <Compile Include="References\AccessRight.cs" />
+    <Compile Include="References\Class1.cs" />
     <Compile Include="References\ClientCategory.cs" />
     <Compile Include="References\ContractType.cs" />
     <Compile Include="References\Country.cs" />

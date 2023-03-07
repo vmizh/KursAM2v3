@@ -1,6 +1,7 @@
 ﻿using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using DevExpress.XtraGrid;
+using Helper;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace KursAM2.View.Base
@@ -13,10 +14,14 @@ namespace KursAM2.View.Base
         public StandartSearchView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            ThemeManager.SetThemeName(this, ThemeManager.ActualApplicationThemeName);
+            
         }
+
+        static StandartSearchView()
+        {
+            GridControlLocalizer.Active = new CustomDXGridLocalizer();
+        }
+
 
         private void GridDocuments_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {

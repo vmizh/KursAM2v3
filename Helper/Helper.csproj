@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BindingHelper.cs" />
+    <Compile Include="CustomDXGridLocalizer.cs" />
     <Compile Include="DevExpressHelper.cs" />
     <Compile Include="EntityManager.cs" />
     <Compile Include="EnumExtensions.cs" />

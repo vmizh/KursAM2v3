@@ -6,7 +6,6 @@ using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -15,7 +14,6 @@ using KursAM2.ViewModel.Finance.Invoices;
 using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
-using KursDomain.IReferences.Nomenkl;
 using KursDomain.Menu;
 using KursDomain.References;
 using NomenklMain = Data.NomenklMain;
@@ -39,8 +37,8 @@ namespace KursAM2.ViewModel.Shop
         public static List<ShopExtFileOrderItem> ShopXMLParsingOrder(string text)
         {
             //string[] separatingStrings = {"<item", "/>"};
-            string[] separatingStrings = { "\r\n" };
-            string[] separatingStrings2 = { "\"" };
+            string[] separatingStrings = {"\r\n"};
+            string[] separatingStrings2 = {"\""};
             var OrderItems = new List<ShopExtFileOrderItem>();
 
             var str = text.Split(separatingStrings, StringSplitOptions.RemoveEmptyEntries);
@@ -136,11 +134,12 @@ namespace KursAM2.ViewModel.Shop
                         KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(10430000001) as Kontragent,
                         CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(10400000012) as CentrResponsibility,
                         PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(11790000001) as PayCondition,
-                        VzaimoraschetType = GlobalOptions.ReferencesCache.GetNomenklProductType(10770000005) as NomenklProductType,
+                        VzaimoraschetType =
+                            GlobalOptions.ReferencesCache.GetNomenklProductType(10770000005) as NomenklProductType,
                         FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(11890000001) as PayForm,
                         IsNDSInPrice = true,
                         CREATOR = GlobalOptions.UserInfo.NickName,
-                        PersonaResponsible = (Employee)GlobalOptions.ReferencesCache.GetEmployee((int?)104),
+                        PersonaResponsible = (Employee) GlobalOptions.ReferencesCache.GetEmployee(104),
                         Currency = GlobalOptions.SystemProfile.NationalCurrency,
                         State = RowStatus.NewRow,
                         DocCode = -1,
@@ -163,7 +162,7 @@ namespace KursAM2.ViewModel.Shop
                             DocId = invoice.Document.Id,
                             Id = Guid.NewGuid(),
                             Code = Code,
-                            NDSPercent = (decimal)(nom.NOM_NDS_PERCENT ?? Convert.ToDouble(GlobalOptions
+                            NDSPercent = (decimal) (nom.NOM_NDS_PERCENT ?? Convert.ToDouble(GlobalOptions
                                 .SystemProfile.Profile
                                 .FirstOrDefault(_ => _.SECTION == @"НОМЕНКЛАТУРА" && _.ITEM == @"НДС")
                                 ?.ITEM_VALUE)),
@@ -225,7 +224,7 @@ namespace KursAM2.ViewModel.Shop
                         Name = item.Name.Replace("\"", "'")
                             .Substring(0, item.Name.Length > 500 ? 500 : item.Name.Length - 1),
                         NomenklNumber = item.OfferId,
-                        Unit = (Unit)GlobalOptions.ReferencesCache.GetUnit(1750000001),
+                        Unit = (Unit) GlobalOptions.ReferencesCache.GetUnit(1750000001),
                         Category = GlobalOptions.ReferencesCache.GetNomenklGroup(10820000053) as NomenklGroup,
                         NomType = GlobalOptions.ReferencesCache.GetNomenklType(11190000034) as NomenklType,
                         IsInDataBase = isInBase,

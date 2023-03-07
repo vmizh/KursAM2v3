@@ -149,9 +149,9 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
         MainId = entity.MainId ?? Guid.Empty;
         NomenklMain = refCache.GetNomenklMain(entity.MainId);
 
-        Unit = refCache?.GetUnit(entity.NOM_ED_IZM_DC);
-        Currency = refCache?.GetCurrency(entity.NOM_SALE_CRS_DC);
-        Group = refCache?.GetNomenklGroup(entity.NOM_CATEG_DC);
+        Unit = refCache.GetUnit(entity.NOM_ED_IZM_DC);
+        Currency = refCache.GetCurrency(entity.NOM_SALE_CRS_DC);
+        Group = refCache.GetNomenklGroup(entity.NOM_CATEG_DC);
     }
 
     public override bool Equals(object obj)
@@ -164,6 +164,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
 
     public override int GetHashCode()
     {
+        // ReSharper disable once NonReadonlyMemberInGetHashCode
         return DocCode.GetHashCode();
     }
 }
@@ -175,7 +176,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
 {
-    private Currency myCurrency;
+    //private Currency myCurrency;
     private SD_83 myEntity;
     private NomenklGroup myGroup;
     private ProductType myNomenklType;
@@ -346,7 +347,7 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
         get => GlobalOptions.ReferencesCache.GetCurrency(NOM_SALE_CRS_DC) as Currency;
         set
         {
-            if (Equals(myCurrency, value)) return;
+            if (Equals(GlobalOptions.ReferencesCache.GetCurrency(NOM_SALE_CRS_DC), value)) return;
             NOM_SALE_CRS_DC = value?.DocCode;
             RaisePropertyChanged();
         }
@@ -1534,7 +1535,9 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
 
             return q;
         }
+#pragma warning disable CS0168
         catch (Exception ex)
+#pragma warning restore CS0168
         {
             //WindowManager.ShowError(null, ex);
             return 0;
@@ -1560,7 +1563,9 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
                 return q;
             }
         }
+#pragma warning disable CS0168
         catch (Exception ex)
+#pragma warning restore CS0168
         {
             //WindowManager.ShowError(null, ex);
             return 0;
@@ -1588,7 +1593,9 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
                 return q;
             }
         }
+#pragma warning disable CS0168
         catch (Exception ex)
+#pragma warning restore CS0168
         {
             //WindowManager.ShowError(null, ex);
             return 0;
@@ -1618,7 +1625,9 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
                 return q;
             }
         }
+#pragma warning disable CS0168
         catch (Exception ex)
+#pragma warning restore CS0168
         {
             //WindowManager.ShowError(null, ex);
             return 0;
@@ -1660,7 +1669,9 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
 
             return ret;
         }
+#pragma warning disable CS0168
         catch (Exception ex)
+#pragma warning restore CS0168
         {
             //WindowManager.ShowError(null, ex);
             return null;
