@@ -494,7 +494,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 Id = Guid.NewGuid(),
                 IsDeleted = false,
                 Group =
-                    GlobalOptions.ReferencesCache.GetNomenklGroup(CurrentNomenklMain.NomenklCategory.DocCode) as
+                    GlobalOptions.ReferencesCache.GetNomenklGroup(CurrentNomenklMain.NomenklCategory?.DocCode) as
                         NomenklGroup,
                 IsUsluga = CurrentNomenklMain.IsUsluga,
                 IsNaklRashod = CurrentNomenklMain.IsNakladExpense,

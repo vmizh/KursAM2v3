@@ -1675,17 +1675,14 @@ public class ReferencesKursCache : IReferencesCache
                     case "U":
                         var item = Context.NomenklMain.Find(ch.Id);
                         if (item != null)
-                        {
-                            if (ch.Operation == "I")
+                        { 
+                            if (NomenklMains.ContainsKey(ch.Id))
+                                    ((NomenklMain) NomenklMains[ch.Id]).LoadFromEntity(item, this);
+                            else 
                             {
                                 var newItem = new NomenklMain();
                                 newItem.LoadFromEntity(item, this);
                                 NomenklMains.Add(newItem.Id, newItem);
-                            }
-                            else
-                            {
-                                if (NomenklMains.ContainsKey(ch.Id))
-                                    ((NomenklMain) NomenklMains[ch.Id]).LoadFromEntity(item, this);
                             }
                         }
 

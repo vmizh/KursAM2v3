@@ -164,7 +164,7 @@
                                   HorizontalAlignment="Left"
                                   ItemsSource="{Binding CountryCollection}"
                                   DisplayMember="Name"
-                                  ValueMember="DocCode"
+                                  ValueMember="Id"
                                   EditValue="{Binding NomenklMain.Country.Id,UpdateSourceTrigger=PropertyChanged}"
                                   SelectedItem="{Binding NomenklMain.Country, UpdateSourceTrigger=PropertyChanged}"
                                   AllowDefaultButton="False">

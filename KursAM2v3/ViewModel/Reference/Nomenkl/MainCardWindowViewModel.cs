@@ -310,10 +310,6 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         tnx.Commit();
                         NomenklMain.myState = RowStatus.NotEdited;
                         RaisePropertyChanged(nameof(IsCanSaveData));
-                        ParentReference?.LoadNomMainForCategory(null);
-                        var dcs = new List<decimal>(GlobalOptions.ReferencesCache.GetNomenklsAll()
-                            .Where(_ => ((IDocGuid)_.NomenklMain).Id == NomenklMain.Id)
-                            .Cast<KursDomain.References.Nomenkl>().Select(_ => _.DocCode));
                         //foreach (var n in dcs) MainReferences.LoadNomenkl(n);
                     }
                     catch (Exception ex)
@@ -322,6 +318,9 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         WindowManager.ShowError(ex);
                         return;
                     }
+
+                    ParentReference?.LoadNomMainForCategory(null);
+                    var mainNom = GlobalOptions.ReferencesCache.GetNomenklMain(NomenklMain.Id);
                 }
 
                 if (state == RowStatus.NewRow)
