@@ -213,7 +213,7 @@
                                             ReadOnly="{Binding IsCanChangeCurrency}">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:ComboBoxEditSettings
-                                        ItemsSource="{Binding CurrencyCollection}"
+                                        ItemsSource="{Binding CurrencyCollectionForNomenklMain}"
                                         IsTextEditable="False" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>

@@ -364,7 +364,7 @@ namespace KursAM2.View.Finance.UC
             if (dtx != null && dtx.KontragentViewModel != null)
                 item1 = StandartDialogs.SelectAllInvoiceClient(dtx.KontragentViewModel.DocCode, true, true);
             else
-                item1 = StandartDialogs.SelectAllInvoiceClient(true, true);
+                item1 = StandartDialogs.SelectAllInvoiceClient(true, true, dtx?.Currency);
             if (item1 == null) return;
             var d2 = item1 as InvoiceClientViewModel;
             var d1 = item1 as InvoiceProvider;

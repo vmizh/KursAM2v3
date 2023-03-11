@@ -13,6 +13,7 @@ using KursDomain.ICommon;
 using KursDomain.References;
 using NomenklMain = Data.NomenklMain;
 
+// ReSharper disable once CheckNamespace
 namespace Core.EntityViewModel.NomenklManagement;
 
 public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IDataErrorInfo
@@ -21,7 +22,7 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
     private NomenklMain myEntity;
     private NomenklGroup myNomenklCategory;
     public NomenklType myNomenklType;
-    public NomenklProductKind myProductType;
+    public ProductType myProductType;
     private Unit myUnit;
 
     public NomenklMainViewModel()
@@ -33,6 +34,7 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
     {
         Entity = entity ?? DefaultValue();
         LoadReference();
+        myState = entity != null ? RowStatus.NotEdited : RowStatus.NewRow;
     }
 
     public ObservableCollection<NomenklViewModel> NomenklCollection { set; get; }
@@ -71,6 +73,15 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
         }
     }
 
+    public override void RaisePropertyChanged(string propertyName = null)
+    {
+        base.RaisePropertyChanged(propertyName);
+        if (Parent is RSWindowViewModelBase p)
+        {
+            p.RaisePropertyChanged("IsCanSaveData");
+        }
+    }
+
     public override string Note
     {
         get => Entity.Note;
@@ -81,6 +92,7 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
             RaisePropertyChanged();
         }
     }
+
 
     public bool IsCurrencyTransfer
     {
@@ -101,17 +113,15 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
         set
         {
             if (Entity.IsUsluga == value) return;
-            if (CheckResetIsUsluga())
+            if (!CheckResetIsUsluga()) return;
+            Entity.IsUsluga = value;
+            if (!value)
             {
-                Entity.IsUsluga = value;
-                if (!value)
-                {
-                    IsNakladExpense = false;
-                    IsRentabelnost = false;
-                }
-
-                RaisePropertyChanged();
+                IsNakladExpense = false;
+                IsRentabelnost = false;
             }
+
+            RaisePropertyChanged();
         }
     }
 
@@ -268,7 +278,7 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
         }
     }
 
-    public NomenklProductKind ProductType
+    public ProductType ProductType
     {
         get => myProductType;
         set
@@ -431,19 +441,35 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
     private void LoadReference()
     {
         myCountry = new CountriesViewModel(Entity.Countries);
-        var nomType = new NomenklType();
-        nomType.LoadFromEntity(Entity.SD_119);
-        myNomenklType = nomType;
-        var nomGroup = new NomenklGroup();
-        nomGroup.LoadFromEntity(Entity.SD_82);
-        myNomenklCategory = nomGroup;
-        var nomUnit = new Unit();
-        nomUnit.LoadFromEntity(Entity.SD_175);
-        myUnit = nomUnit;
-        if (Entity.SD_83 != null && Entity.SD_83.Count > 0)
-            foreach (var n in Entity.SD_83)
-                NomenklCollection.Add(new NomenklViewModel(n));
-        ProductType = new NomenklProductKind(Entity.SD_50);
+
+        if (Entity.SD_82 != null)
+        {
+            myNomenklType = new NomenklType();
+            myNomenklType.LoadFromEntity(Entity.SD_119);
+        }
+
+        if (Entity.SD_82 != null)
+        {
+            myNomenklCategory = new NomenklGroup();
+            myNomenklCategory.LoadFromEntity(Entity.SD_82);
+        }
+
+        if (Entity.SD_175 != null)
+        {
+            myUnit = new Unit();
+            myUnit.LoadFromEntity(Entity.SD_175);
+        }
+
+        if (Entity.SD_50 != null)
+        {
+            ProductType = new ProductType();
+            ProductType.LoadFromEntity(Entity.SD_50);
+        }
+
+        if (Entity.SD_83 == null || Entity.SD_83.Count <= 0) return;
+        foreach (var n in Entity.SD_83)
+            NomenklCollection.Add(new NomenklViewModel(n));
+
     }
 
     public NomenklMain Load(decimal dc)

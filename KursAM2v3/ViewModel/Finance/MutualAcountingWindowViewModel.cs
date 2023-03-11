@@ -215,37 +215,37 @@ namespace KursAM2.ViewModel.Finance
                 KontragentManager.UpdateSelectCount(newcred.Kontragent.DocCode);
             }
 
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                try
-                {
-                    var old = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.VZDC == CurrentCreditor.DocCode
-                                                                         && _.VZCode == CurrentCreditor.Code);
-                    if (old == null)
-                        ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
-                        {
-                            Id = Guid.NewGuid(),
-                            Rate = 1,
-                            // ReSharper disable once PossibleInvalidOperationException
-                            Summa = (decimal)CurrentCreditor.VZT_CRS_SUMMA,
-                            VZDC = CurrentCreditor.DocCode,
-                            VZCode = CurrentCreditor.Code,
-                            // ReSharper disable once PossibleInvalidOperationException
-                            DocDC = (decimal)CurrentCreditor.VZT_SPOST_DC
-                        });
-                    else
-                        // ReSharper disable once PossibleInvalidOperationException
-                        old.Summa = (decimal)CurrentCreditor.VZT_CRS_SUMMA;
+            //using (var ctx = GlobalOptions.GetEntities())
+            //{
+            //    try
+            //    {
+            //        var old = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.VZDC == CurrentCreditor.DocCode
+            //                                                             && _.VZCode == CurrentCreditor.Code);
+            //        if (old == null)
+            //            ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
+            //            {
+            //                Id = Guid.NewGuid(),
+            //                Rate = 1,
+            //                // ReSharper disable once PossibleInvalidOperationException
+            //                Summa = (decimal)CurrentCreditor.VZT_CRS_SUMMA,
+            //                VZDC = CurrentCreditor.DocCode,
+            //                VZCode = CurrentCreditor.Code,
+            //                // ReSharper disable once PossibleInvalidOperationException
+            //                DocDC = (decimal)CurrentCreditor.SFProvider.DocCode,
+            //            });
+            //        else
+            //            // ReSharper disable once PossibleInvalidOperationException
+            //            old.Summa = (decimal)CurrentCreditor.VZT_CRS_SUMMA;
 
-                    ctx.SaveChanges();
-                }
-                catch (Exception ex)
-                {
-                    WindowManager.ShowError(ex);
-                }
+            //        ctx.SaveChanges();
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        WindowManager.ShowError(ex);
+            ////    }
 
-                UpdateVisualData();
-            }
+            //    UpdateVisualData();
+            //}
         }
 
         public ICommand SetCreditorSFCommand

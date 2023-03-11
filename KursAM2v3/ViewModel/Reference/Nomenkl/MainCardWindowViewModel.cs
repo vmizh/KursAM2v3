@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -51,8 +50,10 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 }
             }
 
-            State = RowStatus.NotEdited;
+            NomenklMain.Parent = this;
+            //NomenklMain.State = RowStatus.NotEdited;;
         }
+
 
         public MainCardWindowViewModel(NomenklMainViewModel nom) : this()
         {
@@ -69,8 +70,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         public ObservableCollection<NomenklType> NomenklTypeCollection { set; get; } =
             new ObservableCollection<NomenklType>();
 
-        public ObservableCollection<NomenklProductKind> NomenklProductCollection { set; get; } =
-            new ObservableCollection<NomenklProductKind>();
+        public ObservableCollection<ProductType> NomenklProductCollection { set; get; } =
+            new ObservableCollection<ProductType>();
 
         public ObservableCollection<NomenklGroup> NomenklCategoryCollection { set; get; } =
             new ObservableCollection<NomenklGroup>();
@@ -86,7 +87,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                               !string.IsNullOrEmpty(NomenklMain.Name);
 
         //private NomenklProductViewModel myNomenklProduct;
-        public NomenklProductKind NomenklProduct
+        public ProductType NomenklProduct
         {
             get => NomenklMain?.ProductType;
             set
@@ -96,6 +97,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 RaisePropertyChanged();
             }
         }
+
+        public bool IsMultyCurrency => NomenklMain?.NomenklCollection.Count == 1;
 
         public NomenklMainViewModel NomenklMain
         {
@@ -160,7 +163,11 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 }
 
                 foreach (var c in ctx.SD_50.ToList())
-                    NomenklProductCollection.Add(new NomenklProductKind(c));
+                {
+                    var p = new ProductType();
+                    p.LoadFromEntity(c);
+                    NomenklProductCollection.Add(p);
+                }
             }
         }
 
@@ -238,7 +245,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     IsNakladExpense = NomenklMain.IsNakladExpense,
                                     IsUsluga = NomenklMain.IsUsluga,
                                     UnitDC = NomenklMain.UnitDC,
-                                    ProductDC = NomenklMain.ProductType.DOC_CODE,
+                                    ProductDC = ((IDocCode)NomenklMain.ProductType).DocCode,
                                     IsRentabelnost = NomenklMain.IsRentabelnost,
                                     IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer,
                                     IsOnlyState = NomenklMain.IsOnlyState
@@ -292,7 +299,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 old.IsNakladExpense = NomenklMain.IsNakladExpense;
                                 old.IsUsluga = NomenklMain.IsUsluga;
                                 old.UnitDC = NomenklMain.UnitDC;
-                                old.ProductDC = NomenklMain.ProductType.DOC_CODE;
+                                old.ProductDC = ((IDocCode)NomenklMain.ProductType).DocCode;
                                 old.IsRentabelnost = NomenklMain.IsRentabelnost;
                                 old.IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer;
                                 old.IsOnlyState = NomenklMain.IsOnlyState;

@@ -976,7 +976,7 @@ namespace KursAM2.Managers.Invoices
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                         if (isUsePayment)
                         {
-                            var psums = pays.Where(_ => _.DocCode == d.DOC_CODE).Sum(_ => _.Summa);
+                            var psums = pays.Where(_ => _.DocCode == d.DOC_CODE).Sum(_ => _.PaySumma);
                             if (psums < d.SF_CRS_SUMMA)
                             {
                                 var newDoc = new InvoiceProvider(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>());

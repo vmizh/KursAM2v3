@@ -5,6 +5,8 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Xpf.Core.Native;
+using KursDomain.ICommon;
 
 namespace KursDomain.Documents.Invoices;
 
@@ -54,23 +56,24 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
 
     public decimal DocSumma
     {
-        get => myDocSumma;
-        set
-        {
-            if (myDocSumma == value) return;
-            myDocSumma = value;
-            RaisePropertyChanged();
+        get
+        { 
+            if (TD_101 != null) return (decimal)TD_101.VVT_VAL_RASHOD;
+            if (TD_110 != null) return (decimal)TD_110.VZT_CRS_SUMMA;
+            if (SD_34 != null) return (decimal)SD_34.SUMM_ORD;
+            return 0;
         }
     }
 
     public string DocExtName
     {
-        get => myDocExtName;
-        set
-        {
-            if (myDocExtName == value) return;
-            myDocExtName = value;
-            RaisePropertyChanged();
+        get
+        { 
+            if (TD_101 != null) return $"{TD_101.SD_101.SD_114.BA_BANK_NAME} " +
+                                       $"р/с {TD_101.SD_101.SD_114.BA_RASH_ACC}";;
+            if (TD_110 != null) return $"{TD_110.VZT_DOC_NOTES}";
+            if (SD_34 != null) return $"Касса {((IName)GlobalOptions.ReferencesCache.GetCashBox(SD_34.CA_DC)).Name}";;
+            return null;
         }
     }
 
@@ -85,36 +88,39 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
         }
     }
 
+   
+
     public string DocName
     {
-        get => myDocName;
-        set
-        {
-            if (myDocName == value) return;
-            myDocName = value;
-            RaisePropertyChanged();
+        get
+        { 
+            if (TD_101 != null) return "Банковская транзакция";
+            if (TD_110 != null) return "Акт взаимозачета";
+            if (SD_34 != null) return "Расходный кассовый ордер";
+            return null;
         }
     }
 
     public DateTime DocDate
     {
-        get => myDocDate;
-        set
-        {
-            if (myDocDate == value) return;
-            myDocDate = value;
-            RaisePropertyChanged();
+        get
+        { 
+            if (TD_101 != null) return TD_101.SD_101.VV_START_DATE;
+            if (TD_110 != null) return TD_110.SD_110.VZ_DATE;
+            if (SD_34 != null) return SD_34.DATE_ORD.Value;
+            return DateTime.MinValue;
         }
+       
     }
 
     public string DocNum
     {
-        get => myDocNum;
-        set
-        {
-            if (myDocNum == value) return;
-            myDocNum = value;
-            RaisePropertyChanged();
+        get
+        { 
+            if (TD_101 != null) return TD_101.VVT_DOC_NUM;
+            if (TD_110 != null) return TD_110.SD_110.VZ_NUM.ToString();
+            if (SD_34 != null) return SD_34.NUM_ORD.ToString();
+            return "";
         }
     }
 

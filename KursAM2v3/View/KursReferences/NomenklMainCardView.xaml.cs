@@ -3,6 +3,7 @@ using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using KursAM2.ViewModel.Reference.Nomenkl;
+using KursDomain.ICommon;
 using LayoutManager;
 
 namespace KursAM2.View.KursReferences
@@ -49,8 +50,11 @@ namespace KursAM2.View.KursReferences
         {
             var ctx = DataContext as MainCardWindowViewModel;
             if (ctx == null) return;
-            ctx.RaisePropertyChanged("NomenklMain");
+            //ctx.RaisePropertyChanged("NomenklMain");
             LayoutManager.Load();
+            if (ctx.NomenklMain.State != RowStatus.NewRow)
+                ctx.NomenklMain.State = RowStatus.NotEdited;
+
         }
 
         private void TextEdit_Validate(object sender, ValidationEventArgs e)

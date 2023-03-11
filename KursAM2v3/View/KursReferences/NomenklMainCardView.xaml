@@ -62,10 +62,12 @@
                                IsEnabled="{Binding NomenklMain.IsUsluga, UpdateSourceTrigger=PropertyChanged}" />
                 <Label DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center">Валютный учет</Label>
                 <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsCurrencyTransfer, Mode=TwoWay}" DockPanel.Dock="Left"
-                               Margin="5,0,0,0" VerticalAlignment="Center" />
+                               Margin="5,0,0,0" VerticalAlignment="Center" 
+                               IsEnabled="{Binding IsMultyCurrency}"/>
                 <Label DockPanel.Dock="Left" Margin="10,0,0,0" VerticalAlignment="Center">Только гос.валюта</Label>
                 <dxe:CheckEdit IsChecked="{Binding NomenklMain.IsOnlyState, Mode=TwoWay}" DockPanel.Dock="Left"
-                               Margin="5,0,0,0" VerticalAlignment="Center" />
+                               Margin="5,0,0,0" VerticalAlignment="Center" 
+                               IsEnabled="{Binding IsMultyCurrency}"/>
             </StackPanel>
             <DockPanel Height="40" Margin="0,5,0,5" LastChildFill="False">
                 <StackPanel Orientation="Horizontal">
@@ -162,15 +164,11 @@
                                   Width="250"
                                   VerticalAlignment="Center"
                                   HorizontalAlignment="Left"
-                                  ItemsSource="{Binding CountryCollection}"
-                                  DisplayMember="Name"
-                                  ValueMember="Id"
-                                  EditValue="{Binding NomenklMain.Country.Id,UpdateSourceTrigger=PropertyChanged}"
+                                  ItemsSource="{Binding CountryCollection, Mode=TwoWay}"
+                                  EditValue="{Binding NomenklMain.Country,UpdateSourceTrigger=PropertyChanged}"
                                   SelectedItem="{Binding NomenklMain.Country, UpdateSourceTrigger=PropertyChanged}"
-                                  AllowDefaultButton="False">
+                                  AllowDefaultButton="True">
                     <dxe:ComboBoxEdit.Buttons>
-                        <dxe:ButtonInfo GlyphKind="DropDown"
-                                        Command="{Binding (dxe:ButtonEdit.OwnerEdit).OpenPopupCommand, RelativeSource={RelativeSource Self}}" />
                         <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding ClearCountryCommand}" />
                     </dxe:ComboBoxEdit.Buttons>
                 </dxe:ComboBoxEdit>

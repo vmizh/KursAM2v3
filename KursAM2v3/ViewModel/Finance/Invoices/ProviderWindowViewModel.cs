@@ -816,6 +816,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var crsrates = new CurrencyRates(DateTime.Today, DateTime.Today);
             var rate = Math.Round(crsrates.GetRate(Document.Currency.DocCode,
                 GlobalOptions.SystemProfile.NationalCurrency.DocCode, DateTime.Today), 4);
+            Document.PaymentDocs.Clear();
+            foreach (var p in Document.Entity.ProviderInvoicePay)
+            {
+                Document.PaymentDocs.Add(new ProviderInvoicePayViewModel(p));
+            }
             if (Document.PaymentDocs.Count > 0)
                 rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
 
@@ -1714,12 +1719,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             ? oper.Remainder
                             : Document.Summa - Document.PaySumma,
                         // ReSharper disable once PossibleInvalidOperationException
-                        DocSumma = (decimal)old.VVT_VAL_RASHOD,
-                        DocDate = old.SD_101.VV_START_DATE,
                         Rate = old.CurrencyRateForReference ?? 1,
-                        DocName = "Банковский платеж",
-                        DocExtName = $"{old.SD_101.SD_114.BA_BANK_NAME} " +
-                                     $"р/с {old.SD_101.SD_114.BA_RASH_ACC}"
                     };
                     Document.PaymentDocs.Add(newItem);
                     Document.Entity.ProviderInvoicePay.Add(newItem.Entity);
@@ -1777,14 +1777,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             Summa = Document.Summa - Document.PaySumma >= (decimal)old.SUMM_ORD
                                 ? (decimal)old.SUMM_ORD
                                 : Document.Summa - Document.PaySumma,
-                            DocSumma = (decimal)old.SUMM_ORD,
                             // ReSharper disable once PossibleInvalidOperationException
-                            DocDate = (DateTime)old.DATE_ORD,
-                            DocNum = old.NUM_ORD.ToString(),
                             Rate = 1,
-                            DocName = "Расходный кассовый ордер",
                             // ReSharper disable once PossibleInvalidOperationException
-                            DocExtName = $"Касса: {((IName)GlobalOptions.ReferencesCache.GetCashBox(old.CA_DC)).Name} "
                         };
                         Document.Entity.ProviderInvoicePay.Add(newItem.Entity);
                         Document.PaymentDocs.Add(newItem);
@@ -1833,12 +1828,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Summa = Document.Summa - Document.PaySumma >= (decimal)old.VZT_CRS_SUMMA
                         ? (decimal)old.VZT_CRS_SUMMA
                         : Document.Summa - Document.PaySumma,
-                    DocSumma = (decimal)old.VZT_CRS_SUMMA,
-                    DocDate = old.SD_110.VZ_DATE,
-                    Rate = 1,
-                    DocName = "Акт взаимозачета",
-                    DocNum = old.SD_110.VZ_NUM.ToString(),
-                    DocExtName = old.VZT_DOC_NOTES
+                   Rate = 1,
                 };
                 Document.Entity.ProviderInvoicePay.Add(newItem.Entity);
                 Document.PaymentDocs.Add(newItem);

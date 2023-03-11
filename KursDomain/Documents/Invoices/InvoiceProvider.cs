@@ -296,6 +296,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     {
         get
         {
+            if (Rows.Count <= 0) return Entity.SF_CRS_SUMMA;
             var s = Rows == null || Rows.Count == 0 ? 0 : Rows.Sum(_ => _.Summa);
             Entity.SF_FACT_SUMMA = s;
             Entity.SF_KONTR_CRS_SUMMA = s;
@@ -305,6 +306,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
             Entity.SF_KONTR_CRS_RATE = 1;
             Entity.SF_UCHET_VALUTA_RATE = 1;
             return s;
+
         }
     }
 
@@ -1099,17 +1101,6 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     public void LoadReferences()
     {
-        //Kontragent = (Kontragent)GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POST_DC);
-        //KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(SF_POLUCH_KONTR_DC) as Kontragent;
-        //Currency = GlobalOptions.ReferencesCache.GetCurrency(SF_CRS_DC) as References.Currency;
-        //CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(SF_CENTR_OTV_DC) as CentrResponsibility;
-        //PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(SF_PAY_COND_DC) as PayCondition;
-        //Employee = GlobalOptions.ReferencesCache.GetEmployee(TABELNUMBER) as References.Employee;
-        //VzaimoraschetType =
-        //    GlobalOptions.ReferencesCache.GetNomenklProductType(SF_VZAIMOR_TYPE_DC) as NomenklProductType;
-        //FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(SF_FORM_RASCH_DC) as PayForm;
-        //PersonaResponsible =
-        //    GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) as References.Employee;
         if (Entity.DogovorOfSupplier != null)
             Contract = new DogovorOfSupplierViewModel(Entity.DogovorOfSupplier);
         Rows = new ObservableCollection<IInvoiceProviderRow>();
@@ -1131,34 +1122,6 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
             foreach (var pay in Entity.ProviderInvoicePay)
             {
                 var newItem = new ProviderInvoicePayViewModel(pay);
-                if (pay.TD_110 != null)
-                {
-                    newItem.DocSumma = (decimal)pay.TD_110.VZT_CRS_SUMMA;
-                    newItem.DocDate = pay.TD_110.SD_110.VZ_DATE;
-                    newItem.DocName = "Акт взаимозачета";
-                    newItem.DocExtName = $"№{pay.TD_110.SD_110.VZ_NUM} {pay.TD_110.VZT_DOC_NOTES} Создал: {pay.TD_110.SD_110.CREATOR}";
-                }
-                if (pay.TD_101 != null)
-                {
-                    newItem.DocSumma = (decimal)pay.TD_101.VVT_VAL_RASHOD;
-                    newItem.DocDate = pay.TD_101.SD_101.VV_START_DATE;
-                    newItem.DocName = "Банковский платеж";
-                    newItem.DocExtName = $"{pay.TD_101.SD_101.SD_114.BA_BANK_NAME} " +
-                                         $"р/с {pay.TD_101.SD_101.SD_114.BA_RASH_ACC}";
-                }
-
-                if (pay.SD_34 != null)
-                {
-                    newItem.DocSumma = (decimal)pay.SD_34.SUMM_ORD;
-                    newItem.DocName = "Расходный кассовый ордер";
-                    newItem.DocNum = pay.SD_34.NUM_ORD.ToString();
-                    newItem.DocDate = (DateTime)pay.SD_34.DATE_ORD;
-                    if (pay.SD_34.SD_22 != null)
-                        newItem.DocExtName = $"Касса {pay.SD_34.SD_22.CA_NAME}";
-                    else
-                        newItem.DocExtName =
-                            $"Касса {((IName)GlobalOptions.ReferencesCache.GetCashBox(pay.SD_34.CA_DC)).Name}";
-                }
                 PaymentDocs.Add(newItem);
             }
 

@@ -464,9 +464,9 @@ namespace KursAM2.Dialogs
             return null;
         }
 
-        public static RSViewModelBase SelectAllInvoiceClient(bool isUsePayment, bool isUseAccepted)
+        public static RSViewModelBase SelectAllInvoiceClient(bool isUsePayment, bool isUseAccepted, Currency crs = null)
         {
-            var ctx = new InvoiceAllSearchDialog(isUsePayment, isUseAccepted);
+            var ctx = new InvoiceAllSearchDialog(isUsePayment, isUseAccepted, crs);
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();

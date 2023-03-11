@@ -390,15 +390,18 @@ namespace KursAM2.View.DialogUserControl
         private IInvoiceClient myCurrentClientItem;
         private IInvoiceProvider myCurrentProviderItem;
         private AllInvocesDialogSelectUC myDataUserControl;
+        private Currency myCurrency;
 
-        public InvoiceAllSearchDialog(bool isUsePayment, bool isUseAcepted)
+        public InvoiceAllSearchDialog(bool isUsePayment, bool isUseAcepted, Currency crs = null)
         {
             LayoutControl = myDataUserControl = new AllInvocesDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             WindowName = "Выбор счета";
             this.isUsePayment = isUsePayment;
             isAccepted = isUseAcepted;
+            this.myCurrency = crs;
             RefreshData(null);
+            
         }
 
         public InvoiceAllSearchDialog(decimal kontrDC, bool isUsePayment, bool isUseAcepted)
@@ -501,7 +504,16 @@ namespace KursAM2.View.DialogUserControl
                     foreach (var inv in providerRepository.GetAllByDates(new DateTime(2000, 1, 1), DateTime.Today)
                                  .Where(inv => !isUsePayment || inv.Summa != inv.PaySumma)
                                  .Where(inv => !isAccepted || inv.IsAccepted))
-                        ProviderItemsCollection.Add(inv);
+                    {
+                        if (myCurrency == null)
+                        {
+                            ProviderItemsCollection.Add(inv);
+                            continue;
+                        }
+                        if(inv.Currency == myCurrency)
+                            ProviderItemsCollection.Add(inv);
+                    }
+                       
                 }
 
 

@@ -234,7 +234,7 @@ namespace KursAM2.ViewModel.Logistiks
                                         NOM_0MATER_1USLUGA = MainNomenkl.IsUsluga ? 1 : 0,
                                         NOM_1PROD_0MATER = 0,
                                         NOM_1NAKLRASH_0NO = MainNomenkl.IsNakladExpense ? 1 : 0,
-                                        NOM_PRODUCT_DC = MainNomenkl.ProductType.DOC_CODE,
+                                        NOM_PRODUCT_DC = ((IDocCode)MainNomenkl.ProductType).DocCode,
                                         UpdateDate = DateTime.Now,
                                         Id = nom.Id,
                                         MainId = nom.MainId

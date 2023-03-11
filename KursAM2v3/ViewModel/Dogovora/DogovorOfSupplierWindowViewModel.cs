@@ -184,42 +184,6 @@ namespace KursAM2.ViewModel.Dogovora
                     foreach (var pay in sf.ProviderInvoicePay)
                     {
                         var newPay = new ProviderInvoicePayViewModel(pay);
-                        if (pay.TD_101 != null)
-                        {
-                            // ReSharper disable once PossibleInvalidOperationException
-                            newPay.DocSumma = (decimal)pay.TD_101.VVT_VAL_RASHOD;
-                            newPay.DocDate = pay.TD_101.SD_101.VV_START_DATE;
-                            newPay.DocName = "Банковский платеж";
-                            newPay.DocExtName = $"{pay.TD_101.SD_101.SD_114.BA_BANK_NAME} " +
-                                                $"р/с {pay.TD_101.SD_101.SD_114.BA_RASH_ACC}";
-                        }
-
-                        if (pay.SD_34 != null)
-                        {
-                            // ReSharper disable once PossibleInvalidOperationException
-                            newPay.DocSumma = (decimal)pay.SD_34.SUMM_ORD;
-                            newPay.DocName = "Расходный кассовый ордер";
-                            newPay.DocNum = pay.SD_34.NUM_ORD.ToString();
-                            // ReSharper disable once PossibleInvalidOperationException
-                            newPay.DocDate = (DateTime)pay.SD_34.DATE_ORD;
-                            if (pay.SD_34.SD_22 != null)
-                                newPay.DocExtName = $"Касса {pay.SD_34.SD_22.CA_NAME}";
-                            else
-                                // ReSharper disable once PossibleInvalidOperationException
-                                newPay.DocExtName =
-                                    $"Касса {((IName)GlobalOptions.ReferencesCache.GetCashBox(pay.SD_34.CA_DC)).Name}";
-                        }
-
-                        if (pay.TD_110 != null)
-                        {
-                            // ReSharper disable once PossibleInvalidOperationException
-                            newPay.DocSumma = (decimal)pay.TD_110.VZT_CRS_SUMMA;
-                            newPay.DocName = "Акт взаимозачета";
-                            newPay.DocNum = pay.TD_110.SD_110.VZ_NUM.ToString();
-                            newPay.DocDate = pay.TD_110.SD_110.VZ_DATE;
-                            newPay.DocExtName = $"{pay.TD_110.VZT_DOC_NOTES}";
-                        }
-
                         PaymentList.Add(newPay);
                     }
             }

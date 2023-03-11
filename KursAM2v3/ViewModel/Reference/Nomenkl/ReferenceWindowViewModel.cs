@@ -18,7 +18,6 @@ using KursAM2.Managers.Nomenkl;
 using KursAM2.View.DialogUserControl.ViewModel;
 using KursAM2.View.KursReferences;
 using KursDomain;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
@@ -52,6 +51,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             new ObservableCollection<NomenklMainViewModel>();
 
         public ObservableCollection<Currency> CurrencyCollection { set; get; }
+        public ObservableCollection<Currency> CurrencyCollectionForNomenklMain { set; get; }
+            = new ObservableCollection<Currency>();
 
         //public bool IsSearchTextNull => 
         public bool IsCanChangeCurrency
@@ -78,6 +79,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 //SaveData(CurrentNomenklMain.NomenklCollection);
                 if (Equals(myCurrentNomenkl, value)) return;
                 myCurrentNomenkl = value;
+                reloadCurrencies();
                 if (myCurrentNomenkl != null)
                     if (myCurrentNomenkl.State == RowStatus.NewRow)
                         IsCanChangeCurrency = false;
@@ -123,7 +125,25 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 myCurrentNomenklMain = value;
                 if (myCurrentNomenklMain != null)
                     LoadNomenklForMain(myCurrentNomenklMain);
+                reloadCurrencies();
                 RaisePropertyChanged();
+            }
+        }
+
+        private void reloadCurrencies()
+        {
+            CurrencyCollectionForNomenklMain.Clear();
+            if (myCurrentNomenklMain != null)
+            {
+                foreach (var crs in CurrencyCollection)
+                {
+                    if (myCurrentNomenklMain.NomenklCollection.Where(_ => _.Currency != null)
+                        .Select(_ => _.Currency.DocCode)
+                        .All(d => d != crs.DocCode))
+                    {
+                        CurrencyCollectionForNomenklMain.Add(crs);
+                    }
+                }
             }
         }
 
@@ -162,7 +182,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         {
             var d = obj as NomenklViewModel;
             if (d == null) return;
-            if (d.State != RowStatus.NotEdited)
+            if (d.State != RowStatus.NotEdited && d.Currency != null)
                 SaveNomenkl(d);
         }
 
@@ -233,6 +253,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         .Include(_ => _.SD_175)
                         .Include(_ => _.SD_82)
                         .Include(_ => _.SD_83)
+                        .Include(_ => _.Countries)
                         .Where(_ => _.CategoryDC == nomCat.DocCode)
                         .ToList();
                     foreach (var d in data)
@@ -326,14 +347,14 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     NOM_NAME = nom.Name,
                                     NOM_NOMENKL = nom.NomenklNumber,
                                     NOM_NOTES = nom.Note,
-                                    NOM_SALE_CRS_DC = ((IDocCode)nom.Currency).DocCode,
+                                    NOM_SALE_CRS_DC = ((IDocCode)nom.Currency)?.DocCode,
                                     NOM_FULL_NAME = nom.NameFull,
                                     NOM_ED_IZM_DC = CurrentNomenklMain.Unit.DocCode,
                                     NOM_CATEG_DC = CurrentNomenklMain.NomenklCategory.DocCode,
                                     NOM_0MATER_1USLUGA = CurrentNomenklMain.IsUsluga ? 1 : 0,
                                     NOM_1PROD_0MATER = 0,
                                     NOM_1NAKLRASH_0NO = CurrentNomenklMain.IsNakladExpense ? 1 : 0,
-                                    NOM_PRODUCT_DC = CurrentNomenklMain.ProductType.DOC_CODE,
+                                    NOM_PRODUCT_DC = ((IDocCode)CurrentNomenklMain.ProductType).DocCode,
                                     Id = nom.Id,
                                     MainId = nom.MainId,
                                     IsUslugaInRent = nom.IsRentabelnost
@@ -394,7 +415,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                         NOM_0MATER_1USLUGA = CurrentNomenklMain.IsUsluga ? 1 : 0,
                                         NOM_1PROD_0MATER = 0,
                                         NOM_1NAKLRASH_0NO = CurrentNomenklMain.IsNakladExpense ? 1 : 0,
-                                        NOM_PRODUCT_DC = CurrentNomenklMain.ProductType.DOC_CODE,
+                                        NOM_PRODUCT_DC = ((IDocCode)CurrentNomenklMain.ProductType).DocCode,
                                         Id = nom.Id,
                                         MainId = nom.MainId,
                                         IsUslugaInRent = CurrentNomenklMain.IsRentabelnost
@@ -500,7 +521,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 IsNaklRashod = CurrentNomenklMain.IsNakladExpense,
                 IsRentabelnost = CurrentNomenklMain.IsRentabelnost,
                 State = RowStatus.NewRow,
-                NOM_PRODUCT_DC = CurrentNomenklMain.ProductType.DOC_CODE,
+                NOM_PRODUCT_DC = ((IDocCode)CurrentNomenklMain.ProductType).DocCode,
                 IsCurrencyTransfer = CurrentNomenklMain.IsCurrencyTransfer
             };
             CurrentNomenklMain.NomenklCollection.Add(newItem);
@@ -559,16 +580,16 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public void NomenklMainEdit(object obj)
         {
-            var ctx = new MainCardWindowViewModel(CurrentNomenklMain.Id, null)
+            var ctx = new MainCardWindowViewModel()
             {
                 ParentReference = this,
                 NomenklMain = CurrentNomenklMain,
-                State = CurrentNomenklMain.State
+                //State = CurrentNomenklMain.State
             };
             // ReSharper disable once UseObjectOrCollectionInitializer
-            var form = new NomenklMainCardView { Owner = Application.Current.MainWindow, DataContext = ctx };
-            //form.DataContext = ctx;
+            var form = new NomenklMainCardView { Owner = Application.Current.MainWindow };
             form.Show();
+            form.DataContext = ctx;
             //ctx.RefreshData(null);
         }
 

@@ -349,6 +349,15 @@ public class NomenklViewModel : RSViewModelBase, IEntity<SD_83>
         {
             if (Equals(GlobalOptions.ReferencesCache.GetCurrency(NOM_SALE_CRS_DC), value)) return;
             NOM_SALE_CRS_DC = value?.DocCode;
+            foreach (var crs in GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>())
+            {
+                if (NomenklNumber.Contains(crs.Name))
+                {
+                    NomenklNumber = NomenklNumber.Replace(crs.Name, string.Empty).TrimEnd();
+                }
+            }
+
+            NomenklNumber = $"{NomenklNumber} {((IName)GlobalOptions.ReferencesCache.GetCurrency(NOM_SALE_CRS_DC)).Name}";
             RaisePropertyChanged();
         }
     }

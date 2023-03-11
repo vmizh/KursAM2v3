@@ -311,8 +311,8 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
             {
                 CashKontragentType.Bank => ((IName)GlobalOptions.ReferencesCache.GetBankAccount(BANK_RASCH_SCHET_DC))
                     ?.Name,
-                CashKontragentType.Kontragent => ((IName)GlobalOptions.ReferencesCache.GetKontragent(KONTRAGENT_DC))
-                    .Name,
+                CashKontragentType.Kontragent => KONTRAGENT_DC != null ? ((IName)GlobalOptions.ReferencesCache.GetKontragent(KONTRAGENT_DC))
+                    .Name : null,
                 CashKontragentType.Cash => CASH_TO_DC != null ? CashTo.Name : null,
                 CashKontragentType.Employee => TABELNUMBER != null ? Employee?.Name : null,
                 CashKontragentType.StockHolder => StockHolder?.Name,
