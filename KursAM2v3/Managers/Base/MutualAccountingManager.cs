@@ -7,6 +7,7 @@ using System.Text;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using Helper;
 using KursDomain;
 using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
@@ -44,7 +45,7 @@ namespace KursAM2.Managers.Base
                     .AsNoTracking()
                     .FirstOrDefault(_ => _.DOC_CODE == dc);
                 if (ent == null) return new SD_110ViewModel();
-                return new SD_110ViewModel(ent) {State = RowStatus.NotEdited};
+                return new SD_110ViewModel(ent) { State = RowStatus.NotEdited };
             }
         }
 
@@ -67,185 +68,230 @@ namespace KursAM2.Managers.Base
 
         public override SD_110ViewModel Save(SD_110ViewModel doc)
         {
-            try
+            var listSfPostDC = new List<decimal>();
+            var listSfClientDC = new List<decimal>();
+            using (var ctx = GlobalOptions.GetEntities())
             {
-                using (var ctx = GlobalOptions.GetEntities())
+                using (var tran = ctx.Database.BeginTransaction())
                 {
-                    var isConvert = GlobalOptions.ReferencesCache.GetMutualSettlementType(doc.VZ_TYPE_DC)
-                        .IsCurrencyConvert;
-                    switch (doc.State)
+                    try
                     {
-                        case RowStatus.NewRow:
-                            var newDC = ctx.SD_110.Any() ? ctx.SD_110.Max(_ => _.DOC_CODE) + 1 : 11100000001;
-                            doc.VZ_NUM = ctx.SD_110.Any() ? ctx.SD_110.Max(_ => _.VZ_NUM) + 1 : 1;
-                            doc.DocCode = newDC;
-                            ctx.SD_110.Add(new SD_110
-                            {
-                                DOC_CODE = newDC,
-                                VZ_NUM = doc.Entity.VZ_NUM,
-                                VZ_DATE = doc.Entity.VZ_DATE,
-                                VZ_TYPE_DC = doc.Entity.VZ_TYPE_DC,
-                                VZ_PRIBIL_UCH_CRS_SUM = doc.Entity.VZ_PRIBIL_UCH_CRS_SUM,
-                                VZ_NOTES = doc.Entity.VZ_NOTES,
-                                CREATOR = doc.Entity.CREATOR,
-                                VZ_LEFT_UCH_CRS_SUM = doc.Entity.VZ_LEFT_UCH_CRS_SUM,
-                                VZ_RIGHT_UCH_CRS_SUM = doc.Entity.VZ_RIGHT_UCH_CRS_SUM,
-                                CurrencyFromDC = doc.Entity.CurrencyFromDC,
-                                CurrencyToDC = doc.Entity.CurrencyToDC
-                            });
-                            foreach (var r in doc.Rows)
-                            {
-                                r.DocCode = newDC;
-                                ctx.TD_110.Add(new TD_110
+                        var isConvert = GlobalOptions.ReferencesCache.GetMutualSettlementType(doc.VZ_TYPE_DC)
+                            .IsCurrencyConvert;
+                        switch (doc.State)
+                        {
+                            case RowStatus.NewRow:
+                                var newDC = ctx.SD_110.Any() ? ctx.SD_110.Max(_ => _.DOC_CODE) + 1 : 11100000001;
+                                doc.VZ_NUM = ctx.SD_110.Any() ? ctx.SD_110.Max(_ => _.VZ_NUM) + 1 : 1;
+                                doc.DocCode = newDC;
+                                ctx.SD_110.Add(new SD_110
                                 {
                                     DOC_CODE = newDC,
-                                    CODE = r.Entity.CODE,
-                                    VZT_CRS_SUMMA = r.Entity.VZT_CRS_SUMMA,
-                                    VZT_CRS_DC = r.Entity.VZT_CRS_DC,
-                                    VZT_SPOST_DC = r.Entity.VZT_SPOST_DC,
-                                    VZT_SFACT_DC = r.Entity.VZT_SFACT_DC,
-                                    VZT_DOC_DATE = isConvert ? doc.Entity.VZ_DATE : r.Entity.VZT_DOC_DATE,
-                                    VZT_DOC_NUM = r.Entity.VZT_DOC_NUM,
-                                    VZT_DOC_NOTES = r.Entity.VZT_DOC_NOTES,
-                                    VZT_KONTR_DC = r.Entity.VZT_KONTR_DC,
-                                    VZT_CRS_POGASHENO = r.Entity.VZT_CRS_POGASHENO,
-                                    VZT_UCH_CRS_POGASHENO = r.Entity.VZT_UCH_CRS_POGASHENO,
-                                    VZT_UCH_CRS_RATE = r.Entity.VZT_UCH_CRS_RATE,
-                                    VZT_VZAIMOR_TYPE_DC = r.Entity.VZT_VZAIMOR_TYPE_DC,
-                                    VZT_1MYDOLZH_0NAMDOLZH = r.Entity.VZT_1MYDOLZH_0NAMDOLZH,
-                                    VZT_KONTR_CRS_DC = r.Entity.VZT_KONTR_CRS_DC,
-                                    VZT_KONTR_CRS_RATE = r.Entity.VZT_KONTR_CRS_RATE,
-                                    VZT_KONTR_CRS_SUMMA = r.Entity.VZT_KONTR_CRS_SUMMA,
-                                    VZT_SHPZ_DC = r.Entity.VZT_SHPZ_DC
+                                    VZ_NUM = doc.Entity.VZ_NUM,
+                                    VZ_DATE = doc.Entity.VZ_DATE,
+                                    VZ_TYPE_DC = doc.Entity.VZ_TYPE_DC,
+                                    VZ_PRIBIL_UCH_CRS_SUM = doc.Entity.VZ_PRIBIL_UCH_CRS_SUM,
+                                    VZ_NOTES = doc.Entity.VZ_NOTES,
+                                    CREATOR = doc.Entity.CREATOR,
+                                    VZ_LEFT_UCH_CRS_SUM = doc.Entity.VZ_LEFT_UCH_CRS_SUM,
+                                    VZ_RIGHT_UCH_CRS_SUM = doc.Entity.VZ_RIGHT_UCH_CRS_SUM,
+                                    CurrencyFromDC = doc.Entity.CurrencyFromDC,
+                                    CurrencyToDC = doc.Entity.CurrencyToDC
                                 });
-                            }
-
-                            break;
-                        case RowStatus.Edited:
-                        case RowStatus.NotEdited:
-                            var entity = ctx.SD_110.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
-                            if (entity == null) return null;
-                            ctx.Entry(entity).CurrentValues.SetValues(doc.Entity);
-                            foreach (var r in doc.DeletedRows)
-                            {
-                                var delRow =
-                                    ctx.TD_110.FirstOrDefault(_ => _.DOC_CODE == r.DocCode && _.CODE == r.Code);
-                                if (delRow != null)
-                                    ctx.TD_110.Remove(delRow);
-                            }
-
-                            foreach (var r in doc.Rows)
-                            {
-                                r.VZT_DOC_DATE = isConvert ? doc.Entity.VZ_DATE : r.Entity.VZT_DOC_DATE;
-                                switch (r.State)
+                                foreach (var r in doc.Rows)
                                 {
-                                    case RowStatus.Edited:
-                                    case RowStatus.NotEdited:
-                                        var row =
-                                            ctx.TD_110.FirstOrDefault(
-                                                _ => _.DOC_CODE == doc.DocCode && _.CODE == r.Code);
-                                        if (row == null) break;
-                                        row.VZT_CRS_SUMMA = r.Entity.VZT_CRS_SUMMA;
-                                        row.VZT_CRS_DC = r.Entity.VZT_CRS_DC;
-                                        row.VZT_SPOST_DC = r.Entity.VZT_SPOST_DC;
-                                        row.VZT_SFACT_DC = r.Entity.VZT_SFACT_DC;
-                                        row.VZT_DOC_DATE = isConvert ? doc.Entity.VZ_DATE : r.Entity.VZT_DOC_DATE;
-                                        row.VZT_DOC_NUM = r.Entity.VZT_DOC_NUM;
-                                        row.VZT_DOC_NOTES = r.Entity.VZT_DOC_NOTES;
-                                        row.VZT_KONTR_DC = r.Entity.VZT_KONTR_DC;
-                                        row.VZT_CRS_POGASHENO = r.Entity.VZT_CRS_POGASHENO;
-                                        row.VZT_UCH_CRS_POGASHENO = r.Entity.VZT_UCH_CRS_POGASHENO;
-                                        row.VZT_UCH_CRS_RATE = r.Entity.VZT_UCH_CRS_RATE;
-                                        row.VZT_VZAIMOR_TYPE_DC = r.Entity.VZT_VZAIMOR_TYPE_DC;
-                                        row.VZT_1MYDOLZH_0NAMDOLZH = r.Entity.VZT_1MYDOLZH_0NAMDOLZH;
-                                        row.VZT_KONTR_CRS_DC = r.Entity.VZT_KONTR_CRS_DC;
-                                        row.VZT_KONTR_CRS_RATE = r.Entity.VZT_KONTR_CRS_RATE;
-                                        row.VZT_KONTR_CRS_SUMMA = r.Entity.VZT_KONTR_CRS_SUMMA;
-                                        row.VZT_SHPZ_DC = r.Entity.VZT_SHPZ_DC;
-                                        break;
-                                    case RowStatus.NewRow:
-                                        ctx.TD_110.Add(new TD_110
-                                        {
-                                            DOC_CODE = r.DocCode,
-                                            CODE = r.Entity.CODE,
-                                            VZT_CRS_SUMMA = r.Entity.VZT_CRS_SUMMA,
-                                            VZT_CRS_DC = r.Entity.VZT_CRS_DC,
-                                            VZT_SPOST_DC = r.Entity.VZT_SPOST_DC,
-                                            VZT_SFACT_DC = r.Entity.VZT_SFACT_DC,
-                                            VZT_DOC_DATE = isConvert ? doc.Entity.VZ_DATE : r.Entity.VZT_DOC_DATE,
-                                            VZT_DOC_NUM = r.Entity.VZT_DOC_NUM,
-                                            VZT_DOC_NOTES = r.Entity.VZT_DOC_NOTES,
-                                            VZT_KONTR_DC = r.Entity.VZT_KONTR_DC,
-                                            VZT_CRS_POGASHENO = r.Entity.VZT_CRS_POGASHENO,
-                                            VZT_UCH_CRS_POGASHENO = r.Entity.VZT_UCH_CRS_POGASHENO,
-                                            VZT_UCH_CRS_RATE = r.Entity.VZT_UCH_CRS_RATE,
-                                            VZT_VZAIMOR_TYPE_DC = r.Entity.VZT_VZAIMOR_TYPE_DC,
-                                            VZT_1MYDOLZH_0NAMDOLZH = r.Entity.VZT_1MYDOLZH_0NAMDOLZH,
-                                            VZT_KONTR_CRS_DC = r.Entity.VZT_KONTR_CRS_DC,
-                                            VZT_KONTR_CRS_RATE = r.Entity.VZT_KONTR_CRS_RATE,
-                                            VZT_KONTR_CRS_SUMMA = r.Entity.VZT_KONTR_CRS_SUMMA,
-                                            VZT_SHPZ_DC = r.Entity.VZT_SHPZ_DC
-                                        });
-                                        break;
+                                    r.DocCode = newDC;
+                                    ctx.TD_110.Add(new TD_110
+                                    {
+                                        DOC_CODE = newDC,
+                                        CODE = r.Entity.CODE,
+                                        VZT_CRS_SUMMA = r.Entity.VZT_CRS_SUMMA,
+                                        VZT_CRS_DC = r.Entity.VZT_CRS_DC,
+                                        VZT_SPOST_DC = r.Entity.VZT_SPOST_DC,
+                                        VZT_SFACT_DC = r.Entity.VZT_SFACT_DC,
+                                        VZT_DOC_DATE = isConvert ? doc.Entity.VZ_DATE : r.Entity.VZT_DOC_DATE,
+                                        VZT_DOC_NUM = r.Entity.VZT_DOC_NUM,
+                                        VZT_DOC_NOTES = r.Entity.VZT_DOC_NOTES,
+                                        VZT_KONTR_DC = r.Entity.VZT_KONTR_DC,
+                                        VZT_CRS_POGASHENO = r.Entity.VZT_CRS_POGASHENO,
+                                        VZT_UCH_CRS_POGASHENO = r.Entity.VZT_UCH_CRS_POGASHENO,
+                                        VZT_UCH_CRS_RATE = r.Entity.VZT_UCH_CRS_RATE,
+                                        VZT_VZAIMOR_TYPE_DC = r.Entity.VZT_VZAIMOR_TYPE_DC,
+                                        VZT_1MYDOLZH_0NAMDOLZH = r.Entity.VZT_1MYDOLZH_0NAMDOLZH,
+                                        VZT_KONTR_CRS_DC = r.Entity.VZT_KONTR_CRS_DC,
+                                        VZT_KONTR_CRS_RATE = r.Entity.VZT_KONTR_CRS_RATE,
+                                        VZT_KONTR_CRS_SUMMA = r.Entity.VZT_KONTR_CRS_SUMMA,
+                                        VZT_SHPZ_DC = r.Entity.VZT_SHPZ_DC
+                                    });
+                                }
+
+                                break;
+                            case RowStatus.Edited:
+                            case RowStatus.NotEdited:
+                                var entity = ctx.SD_110.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
+                                if (entity == null) return null;
+                                ctx.Entry(entity).CurrentValues.SetValues(doc.Entity);
+                                foreach (var r in doc.DeletedRows)
+                                {
+                                    var delRow =
+                                        ctx.TD_110.FirstOrDefault(_ => _.DOC_CODE == r.DocCode && _.CODE == r.Code);
+                                    if (delRow == null) continue;
+                                    if(delRow.VZT_SPOST_DC != null)
+                                        listSfPostDC.Add(delRow.VZT_SPOST_DC.Value);
+                                    if (delRow.VZT_SFACT_DC != null)
+                                    {
+                                        listSfClientDC.Add(delRow.VZT_SFACT_DC.Value);
+                                    }
+                                    ctx.TD_110.Remove(delRow);
+                                    var prows = ctx.ProviderInvoicePay.Where(_ =>
+                                        _.VZDC == r.DocCode && _.VZCode == r.Code).ToList();
+                                    if (prows.Count <= 0) continue;
+                                    foreach (var p in prows) ctx.ProviderInvoicePay.Remove(p);
+                                }
+
+                                foreach (var r in doc.Rows)
+                                {
+                                    r.VZT_DOC_DATE = isConvert ? doc.Entity.VZ_DATE : r.Entity.VZT_DOC_DATE;
+                                    switch (r.State)
+                                    {
+                                        case RowStatus.Edited:
+                                        case RowStatus.NotEdited:
+                                            var row =
+                                                ctx.TD_110.FirstOrDefault(
+                                                    _ => _.DOC_CODE == doc.DocCode && _.CODE == r.Code);
+                                            if (row == null) break;
+                                            row.VZT_CRS_SUMMA = r.Entity.VZT_CRS_SUMMA;
+                                            row.VZT_CRS_DC = r.Entity.VZT_CRS_DC;
+                                            row.VZT_SPOST_DC = r.Entity.VZT_SPOST_DC;
+                                            row.VZT_SFACT_DC = r.Entity.VZT_SFACT_DC;
+                                            row.VZT_DOC_DATE =
+                                                isConvert ? doc.Entity.VZ_DATE : r.Entity.VZT_DOC_DATE;
+                                            row.VZT_DOC_NUM = r.Entity.VZT_DOC_NUM;
+                                            row.VZT_DOC_NOTES = r.Entity.VZT_DOC_NOTES;
+                                            row.VZT_KONTR_DC = r.Entity.VZT_KONTR_DC;
+                                            row.VZT_CRS_POGASHENO = r.Entity.VZT_CRS_POGASHENO;
+                                            row.VZT_UCH_CRS_POGASHENO = r.Entity.VZT_UCH_CRS_POGASHENO;
+                                            row.VZT_UCH_CRS_RATE = r.Entity.VZT_UCH_CRS_RATE;
+                                            row.VZT_VZAIMOR_TYPE_DC = r.Entity.VZT_VZAIMOR_TYPE_DC;
+                                            row.VZT_1MYDOLZH_0NAMDOLZH = r.Entity.VZT_1MYDOLZH_0NAMDOLZH;
+                                            row.VZT_KONTR_CRS_DC = r.Entity.VZT_KONTR_CRS_DC;
+                                            row.VZT_KONTR_CRS_RATE = r.Entity.VZT_KONTR_CRS_RATE;
+                                            row.VZT_KONTR_CRS_SUMMA = r.Entity.VZT_KONTR_CRS_SUMMA;
+                                            row.VZT_SHPZ_DC = r.Entity.VZT_SHPZ_DC;
+                                            break;
+                                        case RowStatus.NewRow:
+                                            ctx.TD_110.Add(new TD_110
+                                            {
+                                                DOC_CODE = r.DocCode,
+                                                CODE = r.Code,
+                                                VZT_CRS_SUMMA = r.Entity.VZT_CRS_SUMMA,
+                                                VZT_CRS_DC = r.Entity.VZT_CRS_DC,
+                                                VZT_SPOST_DC = r.Entity.VZT_SPOST_DC,
+                                                VZT_SFACT_DC = r.Entity.VZT_SFACT_DC,
+                                                VZT_DOC_DATE =
+                                                    isConvert ? doc.Entity.VZ_DATE : r.Entity.VZT_DOC_DATE,
+                                                VZT_DOC_NUM = r.Entity.VZT_DOC_NUM,
+                                                VZT_DOC_NOTES = r.Entity.VZT_DOC_NOTES,
+                                                VZT_KONTR_DC = r.Entity.VZT_KONTR_DC,
+                                                VZT_CRS_POGASHENO = r.Entity.VZT_CRS_POGASHENO,
+                                                VZT_UCH_CRS_POGASHENO = r.Entity.VZT_UCH_CRS_POGASHENO,
+                                                VZT_UCH_CRS_RATE = r.Entity.VZT_UCH_CRS_RATE,
+                                                VZT_VZAIMOR_TYPE_DC = r.Entity.VZT_VZAIMOR_TYPE_DC,
+                                                VZT_1MYDOLZH_0NAMDOLZH = r.Entity.VZT_1MYDOLZH_0NAMDOLZH,
+                                                VZT_KONTR_CRS_DC = r.Entity.VZT_KONTR_CRS_DC,
+                                                VZT_KONTR_CRS_RATE = r.Entity.VZT_KONTR_CRS_RATE,
+                                                VZT_KONTR_CRS_SUMMA = r.Entity.VZT_KONTR_CRS_SUMMA,
+                                                VZT_SHPZ_DC = r.Entity.VZT_SHPZ_DC
+                                            });
+                                            break;
+                                    }
+                                }
+
+                                break;
+                        }
+
+                        foreach (var r in doc.Rows)
+                            if (r.SFProvider == null)
+                            {
+                                var prow = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.VZDC == r.DocCode &&
+                                    _.VZCode == r.Code);
+                                if (prow != null)
+                                {
+                                    ctx.ProviderInvoicePay.Remove(prow);
+                                    ctx.Database.ExecuteSqlCommand(
+                                        $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(prow.DocDC)}");
+                                }
+                            }
+                            else
+                            {
+                                var prow = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.VZDC == r.DocCode &&
+                                    _.VZCode == r.Code);
+                                if (prow != null)
+                                {
+                                    // ReSharper disable once PossibleInvalidOperationException
+                                    prow.Summa = (decimal)r.VZT_CRS_SUMMA;
+                                    //ctx.Database.ExecuteSqlCommand($"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {Helper.CustomFormat.DecimalToSqlDecimal(prow.DocDC)}");
+                                }
+                                else
+                                {
+                                    var newItem = new ProviderInvoicePay
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        // ReSharper disable once PossibleInvalidOperationException
+                                        Summa = (decimal)r.VZT_CRS_SUMMA,
+                                        DocDC = r.SFProvider.DocCode,
+                                        Rate = 1,
+                                        VZDC = r.DocCode,
+                                        VZCode = r.Code
+                                    };
+                                    ctx.ProviderInvoicePay.Add(newItem);
+                                    //ctx.Database.ExecuteSqlCommand($"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {Helper.CustomFormat.DecimalToSqlDecimal(prow.DocDC)}");
                                 }
                             }
 
-                            break;
-                    }
-
-                    foreach (var r in doc.Rows)
-                    {
-                        if (r.SFProvider == null)
+                        ctx.SaveChanges();
+                        foreach (var row in doc.Rows)
                         {
-                            var prow = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.VZDC == r.DocCode &&
-                                                                          _.VZCode == r.Code);
-                            if (prow != null)
-                            {
-                                ctx.ProviderInvoicePay.Remove(prow);
-                            }
+                            if (row.VZT_SPOST_DC != null)
+                                ctx.Database.ExecuteSqlCommand(
+                                    $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(row.VZT_SPOST_DC)}");
+                            if (row.VZT_SFACT_DC != null)
+                                ctx.Database.ExecuteSqlCommand(
+                                    $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(row.VZT_SFACT_DC)}");
                         }
-                        else
+
+                        foreach (var dc in listSfClientDC)
                         {
-                            var prow = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.VZDC == r.DocCode &&
-                                _.VZCode == r.Code);
-                            if(prow != null)
-                                // ReSharper disable once PossibleInvalidOperationException
-                                prow.Summa = (decimal)r.VZT_CRS_SUMMA;
-                            else
-                            {
-                                var newItem = new ProviderInvoicePay()
-                                {
-                                    Id = Guid.NewGuid(),
-                                    // ReSharper disable once PossibleInvalidOperationException
-                                    Summa = (decimal)r.VZT_CRS_SUMMA,
-                                    DocDC = r.SFProvider.DocCode,
-                                    Rate = 1,
-                                    VZDC = r.DocCode,
-                                    VZCode = r.Code
-                                };
-                                ctx.ProviderInvoicePay.Add(newItem);
-                            }
+                            ctx.Database.ExecuteSqlCommand(
+                                $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(dc)}");
                         }
-                    }
+                        foreach (var dc in listSfPostDC)
+                        {
+                            ctx.Database.ExecuteSqlCommand(
+                                $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(dc)}");
 
-                    ctx.SaveChanges();
-                    doc.myState = RowStatus.NotEdited;
-                    foreach (var r in doc.Rows)
+                        }
+
+                        doc.myState = RowStatus.NotEdited;
+                        foreach (var r in doc.Rows)
+                        {
+                            r.myState = RowStatus.NotEdited;
+                            r.RaisePropertyChanged("State");
+                        }
+
+                        tran.Commit();
+                        doc.RaisePropertyChanged("State");
+                    }
+                    catch (Exception ex)
                     {
-                        r.myState = RowStatus.NotEdited;
-                        r.RaisePropertyChanged("State");
+                        tran.Rollback();
+                        WindowManager.ShowError(ex);
+                        return null;
                     }
-
-                    doc.RaisePropertyChanged("State");
                 }
-            }
-            catch (Exception ex)
-            {
-                WindowManager.ShowError(ex);
-                return null;
-            }
 
-            return doc;
+                return doc;
+            }
         }
 
         public override bool IsChecked(SD_110ViewModel doc)

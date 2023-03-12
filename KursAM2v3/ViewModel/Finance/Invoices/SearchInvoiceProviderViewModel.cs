@@ -30,7 +30,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         // ReSharper disable once NotAccessedField.Local
         public readonly IInvoiceProviderRepository InvoiceProviderRepository;
 
-        public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
+        public UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private IInvoiceProvider myCurrentDocument;

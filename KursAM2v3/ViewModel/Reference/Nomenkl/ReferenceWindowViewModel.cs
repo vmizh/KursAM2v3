@@ -11,6 +11,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.Native;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Mvvm.Xpf;
 using Helper;
@@ -580,15 +581,22 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public void NomenklMainEdit(object obj)
         {
-            var ctx = new MainCardWindowViewModel()
+            using (var dbContext = GlobalOptions.GetEntities())
             {
-                ParentReference = this,
-                NomenklMain = CurrentNomenklMain,
-            };
-            // ReSharper disable once UseObjectOrCollectionInitializer
-            var form = new NomenklMainCardView { Owner = Application.Current.MainWindow };
-            form.Show();
-            form.DataContext = ctx;
+                var nm = dbContext.NomenklMain.Single(_ => _.Id == CurrentNomenklMain.Id);
+                var ctx = new MainCardWindowViewModel()
+                {
+                    ParentReference = this,
+                    NomenklMain = new NomenklMainViewModel(nm)
+                    {
+                        State = RowStatus.NotEdited
+                    },
+                };
+                // ReSharper disable once UseObjectOrCollectionInitializer
+                var form = new NomenklMainCardView { Owner = Application.Current.MainWindow };
+                form.Show();
+                form.DataContext = ctx;
+            }
         }
 
         public ICommand NomenklMainCopyCommand

@@ -521,7 +521,15 @@ namespace KursAM2.View.DialogUserControl
                     foreach (var inv in clientRepository.GetAllByDates(new DateTime(2000, 1, 1), DateTime.Today)
                                  .Where(inv => !isUsePayment || inv.Summa != inv.PaySumma)
                                  .Where(inv => !isAccepted || inv.IsAccepted))
-                        ClientItemsCollection.Add(inv);
+                    {
+                        if (myCurrency == null)
+                        {
+                            ClientItemsCollection.Add(inv);
+                            continue;
+                        }
+                        if(inv.Currency == myCurrency)
+                            ClientItemsCollection.Add(inv);
+                    }
                 }
                
             }

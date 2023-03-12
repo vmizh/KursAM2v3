@@ -71,9 +71,6 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         public List<IInvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd)
         {
-            //var data = Context.SD_84
-            //    .Where(_ => _.SF_DATE >= dateStart && _.SF_DATE <= dateEnd)
-            //    .OrderByDescending(_ => _.SF_DATE).ToList();
             var data = Context.InvoiceClientQuery.Where(_ => _.DocDate >= dateStart && _.DocDate <= dateEnd)
                 .OrderByDescending(_ => _.DocDate).ToList();
             return data.Select(_ => _.DocCode).Distinct()

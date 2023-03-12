@@ -190,11 +190,13 @@ namespace KursAM2.ViewModel.Finance
                     vzdefault =
                         GlobalOptions.ReferencesCache.GetNomenklProductType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as
                             NomenklProductType;
-
+                var m =  DebitorCollection.Any() ?  DebitorCollection.Max(_ => _.Code) + 1 : 0;
+                var m2 =  CreditorCollection.Any() ?  CreditorCollection.Max(_ => _.Code) + 1 : 0;
+                var _code = Math.Max(m, m2) + 1;
                 var newcred = new MutualAccountingCreditorViewModel
                 {
                     DocCode = Document.DocCode,
-                    Code = Document.Rows.Count + 1,
+                    Code = _code,
                     VZT_DOC_DATE = Document.VZ_DATE,
                     VZT_DOC_NUM = (Document.Rows.Count + 1).ToString(),
                     VZT_1MYDOLZH_0NAMDOLZH = 1,
@@ -216,38 +218,6 @@ namespace KursAM2.ViewModel.Finance
                 // ReSharper disable once PossibleNullReferenceException
                 KontragentManager.UpdateSelectCount(newcred.Kontragent.DocCode);
             }
-
-            //using (var ctx = GlobalOptions.GetEntities())
-            //{
-            //    try
-            //    {
-            //        var old = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.VZDC == CurrentCreditor.DocCode
-            //                                                             && _.VZCode == CurrentCreditor.Code);
-            //        if (old == null)
-            //            ctx.ProviderInvoicePay.Add(new ProviderInvoicePay
-            //            {
-            //                Id = Guid.NewGuid(),
-            //                Rate = 1,
-            //                // ReSharper disable once PossibleInvalidOperationException
-            //                Summa = (decimal)CurrentCreditor.VZT_CRS_SUMMA,
-            //                VZDC = CurrentCreditor.DocCode,
-            //                VZCode = CurrentCreditor.Code,
-            //                // ReSharper disable once PossibleInvalidOperationException
-            //                DocDC = (decimal)CurrentCreditor.SFProvider.DocCode,
-            //            });
-            //        else
-            //            // ReSharper disable once PossibleInvalidOperationException
-            //            old.Summa = (decimal)CurrentCreditor.VZT_CRS_SUMMA;
-
-            //        ctx.SaveChanges();
-            //    }
-            //    catch (Exception ex)
-            //    {
-            //        WindowManager.ShowError(ex);
-            ////    }
-
-            //    UpdateVisualData();
-            //}
         }
 
         public ICommand SetCreditorSFCommand
@@ -288,11 +258,13 @@ namespace KursAM2.ViewModel.Finance
                     vzdefault =
                         GlobalOptions.ReferencesCache.GetNomenklProductType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as
                             NomenklProductType;
-
+                var m =  DebitorCollection.Any() ?  DebitorCollection.Max(_ => _.Code) + 1 : 0;
+                var m2 =  CreditorCollection.Any() ?  CreditorCollection.Max(_ => _.Code) + 1 : 0;
+                var _code = Math.Max(m, m2) + 1;
                 var newdeb = new MutualAccountingDebitorViewModel
                 {
                     DocCode = Document.DocCode,
-                    Code = Document.Rows.Count + 1,
+                    Code = _code,
                     VZT_DOC_DATE = Document.VZ_DATE,
                     VZT_DOC_NUM = (Document.Rows.Count + 1).ToString(),
                     VZT_1MYDOLZH_0NAMDOLZH = 0,
@@ -618,10 +590,13 @@ namespace KursAM2.ViewModel.Finance
                             NomenklProductType;
                 var k = StandartDialogs.SelectKontragent(Document.IsOld ? null : Document.DebitorCurrency);
                 if (k == null) return;
+                var m =  DebitorCollection.Any() ?  DebitorCollection.Max(_ => _.Code) + 1 : 0;
+                var m2 =  CreditorCollection.Any() ?  CreditorCollection.Max(_ => _.Code) + 1 : 0;
+                var _code = Math.Max(m, m2) + 1;
                 var newdeb = new MutualAccountingDebitorViewModel
                 {
                     DocCode = Document.DocCode,
-                    Code = Document.Rows.Count == 0 ? 1 : Document.Rows.Max(_ => _.Code) + 1,
+                    Code = _code,
                     VZT_DOC_DATE = Document.VZ_DATE,
                     VZT_DOC_NUM = (Document.Rows.Count + 1).ToString(),
                     VZT_1MYDOLZH_0NAMDOLZH = 0,
@@ -660,10 +635,13 @@ namespace KursAM2.ViewModel.Finance
                 vzdefault =
                     GlobalOptions.ReferencesCache.GetNomenklProductType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as
                         NomenklProductType;
+            var m =  DebitorCollection.Any() ?  DebitorCollection.Max(_ => _.Code) + 1 : 0;
+            var m2 =  CreditorCollection.Any() ?  CreditorCollection.Max(_ => _.Code) + 1 : 0;
+            var _code = Math.Max(m, m2) + 1;
             var newcred = new MutualAccountingCreditorViewModel
             {
                 DocCode = Document.DocCode,
-                Code = Document.Rows.Count == 0 ? 1 : Document.Rows.Max(_ => _.Code) + 1,
+                Code = _code,
                 VZT_DOC_DATE = Document.VZ_DATE,
                 VZT_DOC_NUM = (Document.Rows.Count + 1).ToString(),
                 VZT_1MYDOLZH_0NAMDOLZH = 1,

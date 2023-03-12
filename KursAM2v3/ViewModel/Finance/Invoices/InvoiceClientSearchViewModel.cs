@@ -29,7 +29,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public readonly GenericKursDBRepository<SD_84> GenericProviderRepository;
 
         // ReSharper disable once NotAccessedField.Local
-        public readonly IInvoiceClientRepository InvoiceClientRepository;
+        public IInvoiceClientRepository InvoiceClientRepository;
 
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
@@ -294,14 +294,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void RefreshData(object data)
         {
-            //Documents.Clear();
-            //GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
-            //foreach (var d in InvoiceClientRepository.GetAllByDates(StartDate, EndDate))
-            //    //foreach (var d in InvoicesManager.GetInvoicesClient(StartDate, EndDate, 
-            //    //    false, null, SearchText))
-            //    Documents.Add(d);
-            //GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
-
+            InvoiceClientRepository =
+                new InvoiceClientRepository(
+                    new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString)));
             var frm = Form as StandartSearchView;
             Documents.Clear();
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
@@ -317,9 +312,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 });
                 GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             });
-
         }
-        
+
         public override void DocumentOpen(object form)
         {
             if (CurrentDocument == null) return;

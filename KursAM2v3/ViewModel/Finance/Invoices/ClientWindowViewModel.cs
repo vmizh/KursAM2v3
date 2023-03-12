@@ -766,6 +766,34 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as Currency,
                         Note = c.VVT_DOC_NUM
                     });
+                foreach (var c in ctx.TD_110.Include(_ => _.SD_110)
+                             .Where(_ => _.VZT_SFACT_DC == Document.DocCode))
+                    Document.PaymentDocs.Add(new InvoicePaymentDocument
+                    {
+                        DocCode = c.DOC_CODE,
+                        Code = c.CODE,
+                        DocumentType = DocumentType.MutualAccounting,
+                        DocumentName =
+                            // ReSharper disable once PossibleInvalidOperationException
+                            $"{c.SD_110.VZ_DATE.ToShortDateString()} на {(decimal) c.VZT_CRS_SUMMA}",
+                        Summa = (decimal) c.VZT_CRS_SUMMA,
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VZT_CRS_DC) as Currency,
+                        Note = c.VZT_DOC_NUM
+                    });
+                foreach (var c in ctx.SD_33
+                             .Where(_ => _.SFACT_DC == Document.DocCode))
+                    Document.PaymentDocs.Add(new InvoicePaymentDocument
+                    {
+                        DocCode = c.DOC_CODE,
+                        //Code = c.CODE,
+                        DocumentType = DocumentType.CashIn,
+                        DocumentName =
+                            // ReSharper disable once PossibleInvalidOperationException
+                            $"{c.DATE_ORD.Value.ToShortDateString()} на {(decimal) c.CRS_SUMMA} {GlobalOptions.ReferencesCache.GetCashBox(c.CA_DC)}",
+                        Summa = (decimal) c.CRS_SUMMA,
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC) as Currency,
+                        Note = c.NUM_ORD.ToString()
+                    });
                 Document.ShipmentRows.Clear();
                 var facts = ctx.TD_24.Include(_ => _.TD_26).Where(_ => _.DDT_SFACT_DC == Document.DocCode)
                     .AsNoTracking().ToList();
