@@ -34,7 +34,6 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
     {
         Entity = entity ?? DefaultValue();
         LoadReference();
-        myState = entity != null ? RowStatus.NotEdited : RowStatus.NewRow;
     }
 
     public ObservableCollection<NomenklViewModel> NomenklCollection { set; get; }
@@ -117,8 +116,8 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
             Entity.IsUsluga = value;
             if (!value)
             {
-                IsNakladExpense = false;
-                IsRentabelnost = false;
+                Entity.IsNakladExpense = false;
+                Entity.IsRentabelnost = false;
             }
 
             RaisePropertyChanged();
@@ -168,7 +167,7 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
             if (myNomenklCategory != null && myNomenklCategory.Equals(value)) return;
             myNomenklCategory = value;
             if (myNomenklCategory != null)
-                CategoryDC = myNomenklCategory.DocCode;
+                Entity.CategoryDC = myNomenklCategory.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -214,7 +213,7 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
             // ReSharper disable once PossibleUnintendedReferenceComparison
             if (myCountry == value) return;
             myCountry = value;
-            CountryId = myCountry?.Id;
+            Entity.CountryId = myCountry?.Id;
             RaisePropertyChanged();
         }
     }
@@ -238,7 +237,7 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
             if (myUnit != null && myUnit.Equals(value)) return;
             myUnit = value;
             if (myUnit != null)
-                UnitDC = myUnit.DocCode;
+                Entity.UnitDC = myUnit.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -273,7 +272,7 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
             if (myNomenklType != null && myNomenklType.Equals(value)) return;
             myNomenklType = value;
             if (myNomenklType != null)
-                NomenklTypeDC = myNomenklType.DocCode;
+                Entity.TypeDC = myNomenklType.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -286,7 +285,7 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
             if (myProductType != null && myProductType.Equals(value)) return;
             myProductType = value;
             if (myProductType != null)
-                ProductTypeDC = myProductType.DocCode;
+                Entity.ProductDC = myProductType.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -462,8 +461,8 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
 
         if (Entity.SD_50 != null)
         {
-            ProductType = new ProductType();
-            ProductType.LoadFromEntity(Entity.SD_50);
+            myProductType = new ProductType();
+            myProductType.LoadFromEntity(Entity.SD_50);
         }
 
         if (Entity.SD_83 == null || Entity.SD_83.Count <= 0) return;

@@ -465,7 +465,7 @@ namespace KursAM2.View.DialogUserControl
         public override void RefreshData(object obj)
         {
             base.RefreshData(obj);
-            SearchClear(null);
+            //SearchClear(null);
             Search(null);
         }
 
@@ -477,14 +477,6 @@ namespace KursAM2.View.DialogUserControl
         #region Commands
 
         public override bool IsCanSearch => !string.IsNullOrEmpty(SearchText);
-
-        public override void SearchClear(object obj)
-        {
-            ClientItemsCollection.Clear();
-            ProviderItemsCollection.Clear();
-            CurrentClientItem = null;
-            CurrentProviderItem = null;
-        }
 
         public override void Search(object obj)
         {
@@ -515,8 +507,7 @@ namespace KursAM2.View.DialogUserControl
                     }
                        
                 }
-
-
+               
                 ClientItemsCollection.Clear();
                 if (kontragentDC > 0)
                 {
@@ -532,6 +523,7 @@ namespace KursAM2.View.DialogUserControl
                                  .Where(inv => !isAccepted || inv.IsAccepted))
                         ClientItemsCollection.Add(inv);
                 }
+               
             }
             catch (Exception ex)
             {

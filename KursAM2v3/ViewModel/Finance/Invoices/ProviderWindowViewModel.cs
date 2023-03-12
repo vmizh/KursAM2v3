@@ -762,21 +762,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void OpenPayDocument(object obj)
         {
-            switch (CurrentPaymentDoc.DocName)
-            {
-                case "Расходный кассовый ордер":
-                    // ReSharper disable once PossibleInvalidOperationException
-                    DocumentsOpenManager.Open(DocumentType.CashOut, (decimal)CurrentPaymentDoc.CashDC);
-                    break;
-                case "Банковский платеж":
-                    // ReSharper disable once PossibleInvalidOperationException
-                    DocumentsOpenManager.Open(DocumentType.Bank, (decimal)CurrentPaymentDoc.BankCode);
-                    break;
-                case "Акт взаимозачета":
-                    // ReSharper disable once PossibleInvalidOperationException
-                    DocumentsOpenManager.Open(DocumentType.MutualAccounting, (decimal)CurrentPaymentDoc.VZDC);
-                    break;
-            }
+            if (CurrentPaymentDoc.CashDC != null)
+                DocumentsOpenManager.Open(DocumentType.CashOut, (decimal)CurrentPaymentDoc.CashDC);
+            if (CurrentPaymentDoc.BankCode != null)
+                DocumentsOpenManager.Open(DocumentType.Bank, (decimal)CurrentPaymentDoc.BankCode);
+            if (CurrentPaymentDoc.VZDC != null)
+                DocumentsOpenManager.Open(DocumentType.MutualAccounting, (decimal)CurrentPaymentDoc.VZDC);
         }
 
         public override void RefreshData(object obj)

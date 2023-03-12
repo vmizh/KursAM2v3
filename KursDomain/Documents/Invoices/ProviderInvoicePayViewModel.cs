@@ -15,11 +15,6 @@ namespace KursDomain.Documents.Invoices;
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<ProviderInvoicePay>
 {
-    private DateTime myDocDate;
-    private string myDocExtName;
-    private string myDocName;
-    private string myDocNum;
-    private decimal myDocSumma;
     private ProviderInvoicePay myEntity;
 
     public ProviderInvoicePayViewModel()

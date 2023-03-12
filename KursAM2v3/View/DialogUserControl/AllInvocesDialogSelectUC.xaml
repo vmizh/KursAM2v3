@@ -37,7 +37,8 @@
             </dxlc:LayoutItem>
             <dxlc:LayoutControl Name="mainLayoutControl" Padding="1" Orientation="Vertical"
                                 Margin="0,10,0,0">
-                <dxlc:LayoutGroup x:Name="layoutTabs" View="Tabs">
+                <dxlc:LayoutGroup x:Name="layoutTabs" View="Tabs" 
+                                 SelectedTabChildChanged="layoutTabs_SelectedTabChildChanged">
                     <dxlc:LayoutGroup x:Name="LayoutClent" Header="Счета клиентам">
                         <dxg:GridControl x:Name="gridControlClient"
                          Margin="0,10,0,0"

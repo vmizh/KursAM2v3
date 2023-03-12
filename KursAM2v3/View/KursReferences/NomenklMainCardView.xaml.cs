@@ -44,6 +44,9 @@ namespace KursAM2.View.KursReferences
         private void NomenklMainCardView_Closing(object sender, CancelEventArgs e)
         {
             LayoutManager.Save();
+            var ctx = DataContext as MainCardWindowViewModel;
+            if (ctx == null) return;
+            ctx.NomenklMain = null;
         }
 
         private void NomenklMainCardView_Loaded(object sender, RoutedEventArgs e)

@@ -31,7 +31,7 @@ public interface IInvoiceProvider
     Kontragent Kontragent { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Сумма")]
-    decimal Summa { set; get; }
+    decimal Summa { get; }
 
     [Display(AutoGenerateField = true, Name = "Отгружено")]
     decimal SummaFact { set; get; }

@@ -259,7 +259,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                     foreach (var d in data)
                         NomenklMainCollection.Add(new NomenklMainViewModel(d)
                         {
-                            State = RowStatus.NotEdited
+                            myState = RowStatus.NotEdited
                         });
                 }
             }
@@ -584,13 +584,11 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             {
                 ParentReference = this,
                 NomenklMain = CurrentNomenklMain,
-                //State = CurrentNomenklMain.State
             };
             // ReSharper disable once UseObjectOrCollectionInitializer
             var form = new NomenklMainCardView { Owner = Application.Current.MainWindow };
             form.Show();
             form.DataContext = ctx;
-            //ctx.RefreshData(null);
         }
 
         public ICommand NomenklMainCopyCommand

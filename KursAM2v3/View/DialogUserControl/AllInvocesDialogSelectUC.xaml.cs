@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using Core.ViewModel.Base;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
+using DevExpress.Xpf.LayoutControl;
 using LayoutManager;
 
 namespace KursAM2.View.DialogUserControl
@@ -48,10 +50,32 @@ namespace KursAM2.View.DialogUserControl
         private void CashSelectDialogUC_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
+            tabsChanged();
+
+        }
+
+        private void tabsChanged()
+        {
             var dtx = DataContext as InvoiceAllSearchDialog;
-            if (dtx == null) return;
-            dtx.CurrentClientItem = null;
-            dtx.CurrentProviderItem = null;
+            switch (layoutTabs.SelectedTabIndex)
+            {
+                case 0:
+                    dtx.CurrentProviderItem = null;
+                    if (dtx.ClientItemsCollection.Count > 0)
+                    {
+                        dtx.CurrentClientItem = dtx.ClientItemsCollection.First();
+                    }
+
+                    break;
+                case 1:
+                    dtx.CurrentClientItem = null;
+                    if (dtx.ProviderItemsCollection.Count > 0)
+                    {
+                        dtx.CurrentProviderItem = dtx.ProviderItemsCollection.First();
+                    }
+
+                    break;
+            }
         }
 
         private void gridControlClient_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
@@ -108,6 +132,11 @@ namespace KursAM2.View.DialogUserControl
 
         private void gridViewClient_OnRowDoubleClick(object sender, RowDoubleClickEventArgs e)
         {
+        }
+
+        private void layoutTabs_SelectedTabChildChanged(object sender, ValueChangedEventArgs<FrameworkElement> e)
+        {
+            tabsChanged();
         }
     }
 }

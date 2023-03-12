@@ -225,6 +225,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         {
             if (Entity.SF_OPRIHOD_DATE == value) return;
             Entity.SF_OPRIHOD_DATE = value;
+            RaisePropertyChanged(nameof(Summa));
             RaisePropertyChanged();
         }
     }
@@ -278,8 +279,6 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
             RaisePropertyChanged();
         }
     }
-
-    decimal IInvoiceProvider.Summa { get; set; }
 
     public decimal SF_RUB_SUMMA
     {
@@ -1142,6 +1141,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
                         Facts.Add(newItem);
                     }
+        RaisePropertyChanged(nameof(Summa));
     }
 
     public List<SD_26> LoadList()
@@ -1286,8 +1286,8 @@ public class SD_26LayoutData_FluentAPI : DataAnnotationForFluentApiBase, IMetada
 
         #region Form Layout
 
-            // @formatter:off
-            builder.DataFormLayout()
+        // @formatter:off
+        builder.DataFormLayout()
                 .Group("first",Orientation.Vertical)
                     .Group("Счет", Orientation.Horizontal)
                         .ContainsProperty(_ => _.SF_IN_NUM)

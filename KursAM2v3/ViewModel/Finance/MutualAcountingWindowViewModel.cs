@@ -9,7 +9,6 @@ using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using Data;
 using DevExpress.Xpf.Editors;
 using Helper;
 using KursAM2.Dialogs;
@@ -177,6 +176,7 @@ namespace KursAM2.ViewModel.Finance
                     GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_POST_DC) as Kontragent;
                 CurrentCreditor.SFProvider = item;
                 if (CurrentCreditor.State == RowStatus.NotEdited) CurrentCreditor.myState = RowStatus.Edited;
+                // ReSharper disable once PossibleNullReferenceException
                 KontragentManager.UpdateSelectCount(CurrentCreditor.Kontragent.DocCode);
             }
             else
@@ -188,7 +188,8 @@ namespace KursAM2.ViewModel.Finance
                     _.SECTION == "MUTUAL_ACCOUNTING" && _.ITEM == "DEFAULT_TYPE_PRODUCT");
                 if (vzdefDC != null)
                     vzdefault =
-                        GlobalOptions.ReferencesCache.GetNomenklProductType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as NomenklProductType;
+                        GlobalOptions.ReferencesCache.GetNomenklProductType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as
+                            NomenklProductType;
 
                 var newcred = new MutualAccountingCreditorViewModel
                 {
@@ -212,6 +213,7 @@ namespace KursAM2.ViewModel.Finance
                 Document.Rows.Add(newcred);
                 CreditorCollection.Add(newcred);
                 CurrentCreditor = newcred;
+                // ReSharper disable once PossibleNullReferenceException
                 KontragentManager.UpdateSelectCount(newcred.Kontragent.DocCode);
             }
 
@@ -272,6 +274,7 @@ namespace KursAM2.ViewModel.Finance
                     GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_CLIENT_DC) as Kontragent;
                 CurrentDebitor.SfClient = item;
                 if (CurrentDebitor.State == RowStatus.NotEdited) CurrentDebitor.myState = RowStatus.Edited;
+                // ReSharper disable once PossibleNullReferenceException
                 KontragentManager.UpdateSelectCount(CurrentDebitor.Kontragent.DocCode);
             }
             else
@@ -307,6 +310,7 @@ namespace KursAM2.ViewModel.Finance
                 Document.Rows.Add(newdeb);
                 DebitorCollection.Add(newdeb);
                 CurrentDebitor = newdeb;
+                // ReSharper disable once PossibleNullReferenceException
                 KontragentManager.UpdateSelectCount(newdeb.Kontragent.DocCode);
             }
 
@@ -536,7 +540,7 @@ namespace KursAM2.ViewModel.Finance
             get
             {
                 return new Command(AddNewCreditor,
-                    appDomain => Document?.CreditorCurrency != null ||
+                    _ => Document?.CreditorCurrency != null ||
                                  (!IsCurrencyConvert && Document?.DebitorCurrency != null));
             }
         }
