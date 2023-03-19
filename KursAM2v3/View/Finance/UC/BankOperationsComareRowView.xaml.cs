@@ -25,6 +25,7 @@ namespace KursAM2.View.Finance.UC
     public partial class BankOperationsComareRowView
     {
         private readonly WindowManager winMan = new WindowManager();
+        private decimal maxSumma = decimal.MaxValue;
 
         public BankOperationsComareRowView()
         {
@@ -257,12 +258,6 @@ namespace KursAM2.View.Finance.UC
                     case BankOperationType.Kontragent:
                         var k = StandartDialogs.SelectKontragent(dtc.Currency);
                         if (k == null) return;
-                        //if (dtc.Payment == null)
-                        //{
-                        //    dtc.Payment = k;
-                        //    Payment.Text = k.Name;
-                        //}
-                        //if (dtc.Kontragent != null) return;
                         if (dtc.BankOperationType == BankOperationType.Kontragent)
                         {
                             dtc.KontragentViewModel = k;
@@ -316,11 +311,16 @@ namespace KursAM2.View.Finance.UC
         private void Consumption_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
         {
             if (Consumption.Value > 0) Incoming.Value = 0;
+            if((decimal)e.NewValue > maxSumma) 
+                Consumption.Value = maxSumma;
         }
 
         private void Incoming_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
         {
             if (Incoming.Value > 0) Consumption.Value = 0;
+            if((decimal)e.NewValue > maxSumma) 
+                Incoming.Value = maxSumma;
+
         }
 
         private void BaseEdit_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
@@ -371,6 +371,8 @@ namespace KursAM2.View.Finance.UC
             if (d1 == null && d2 == null) return;
             if (d2 != null)
             {
+                Incoming.IsEnabled = true;
+                Consumption.IsEnabled = false;
                 if (dtx != null)
                 {
                     if (d2.DocDate != dtx.Date)
@@ -378,7 +380,7 @@ namespace KursAM2.View.Finance.UC
                                 "Даты операции и счета не совпадают. Переустановить дату, как в счете?",
                                 "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                             dtx.Date = d2.DocDate;
-
+                    maxSumma = d2.Summa - d2.PaySumma;
                     // ReSharper disable once PossibleInvalidOperationException
                     dtx.VVT_VAL_PRIHOD = d2.Summa - d2.PaySumma;
                     dtx.VVT_DOC_NUM = d2.ToString();
@@ -396,6 +398,7 @@ namespace KursAM2.View.Finance.UC
 
                 if (dtx2 != null)
                 {
+                    maxSumma = d2.Summa - d2.PaySumma;
                     if (d2.DocDate != dtx2.Date) dtx2.Date = d2.DocDate;
                     // ReSharper disable once PossibleInvalidOperationException
                     dtx2.VVT_VAL_PRIHOD = d2.Summa - d2.PaySumma;
@@ -415,8 +418,11 @@ namespace KursAM2.View.Finance.UC
 
             if (d1 != null)
             {
+                Incoming.IsEnabled = false;
+                Consumption.IsEnabled = true;
                 if (dtx != null)
                 {
+                    maxSumma = d1.Summa - d1.PaySumma;
                     if (d1.DocDate != dtx.Date)
                         if (winMan.ShowWinUIMessageBox(
                                 "Даты операции и счета не совпадают. Переустановить дату, как в счете?",
@@ -436,6 +442,7 @@ namespace KursAM2.View.Finance.UC
 
                 if (dtx2 != null)
                 {
+                    maxSumma = d1.Summa - d1.PaySumma;
                     if (d1.DocDate != dtx2.Date) dtx2.Date = d1.DocDate;
                     dtx2.VVT_VAL_RASHOD = d1.Summa - d1.PaySumma;
                     dtx2.VVT_DOC_NUM = d1.ToString();

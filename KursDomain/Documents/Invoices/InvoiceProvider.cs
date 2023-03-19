@@ -57,8 +57,11 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     protected string SFact(decimal dc)
     {
-        var doc = context.Context.SD_84.FirstOrDefault(_ => _.DOC_CODE == dc);
+        SD_84 doc = null;
+        if (context != null)
+            doc = context.Context.SD_84.FirstOrDefault(_ => _.DOC_CODE == dc);
         return doc == null ? null : $"№ {doc.SF_IN_NUM}/{doc.SF_OUT_NUM} от {doc.SF_DATE}  {doc.SF_NOTE}";
+
     }
 
     public virtual void Save(SD_26 doc)
@@ -135,6 +138,13 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     {
         this.isLoadAll = isLoadAll;
         context = ctx;
+        Entity = entity ?? DefaultValue();
+        LoadReferences();
+        Rows.CollectionChanged += (o, args) => State = RowStatus.NotEdited;
+    }
+
+    public InvoiceProvider(SD_26 entity)
+    {
         Entity = entity ?? DefaultValue();
         LoadReferences();
         Rows.CollectionChanged += (o, args) => State = RowStatus.NotEdited;
@@ -378,7 +388,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
             RaisePropertyChanged();
         }
     }
-
+   
     public short SF_PAY_FLAG
     {
         get => Entity.SF_PAY_FLAG;
@@ -401,10 +411,11 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         }
     }
 
-    decimal IInvoiceProvider.PaySumma { get; set; }
+    public decimal PaySumma => PaymentDocs?.Sum(_ => _.DocSumma) ?? 0;
+
     public decimal SFT_SUMMA_K_OPLATE { get; set; }
 
-    public decimal PaySumma => (decimal)PaymentDocs?.Sum(_ => _.Summa);
+    //public decimal PaySumma => PaymentDocs?.Sum(_ => _.DocSumma) ?? 0;
 
     public decimal SF_FACT_SUMMA
     {

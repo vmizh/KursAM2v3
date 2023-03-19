@@ -62,31 +62,35 @@ namespace KursAM2.ViewModel.Finance.controls
                 if (rates.ContainsKey(row.Currency)) rate = rates[row.Currency];
             }
 
-            BankAccount = bankAcc;
-            CurrentBankOperations = new BankOperationsViewModel
+            using (var ctx = GlobalOptions.GetEntities())
             {
-                DocCode = row.DOC_CODE,
-                Code = row.Code,
-                BankAccount = bankAcc,
-                Date = isNew ? DateTime.Today : row.Date,
-                Currency = bankAcc.Currency as Currency,
-                Kontragent = row.Kontragent,
-                BankOperationType = row.BankOperationType,
-                BankAccountOut = row.BankAccountOut,
-                BankAccountIn = row.BankAccountIn,
-                Payment = row.Payment,
-                VVT_VAL_RASHOD = row.VVT_VAL_RASHOD,
-                VVT_VAL_PRIHOD = row.VVT_VAL_PRIHOD,
-                SHPZ = row.SHPZ,
-                VVT_SFACT_CLIENT_DC = row.VVT_SFACT_CLIENT_DC,
-                VVT_SFACT_POSTAV_DC = row.VVT_SFACT_POSTAV_DC,
-                SFName = row.SFName,
-                VVT_DOC_NUM = row.VVT_DOC_NUM,
-                State = isNew ? RowStatus.NewRow : RowStatus.NotEdited,
-                AccuredId = row.AccuredId,
-                AccuredInfo = row.AccuredInfo,
-                CurrencyRateForReference = row.CurrencyRateForReference
-            };
+                BankAccount = bankAcc;
+                CurrentBankOperations = new BankOperationsViewModel
+                {
+                    DocCode = row.DOC_CODE,
+                    Code = row.Code,
+                    BankAccount = bankAcc,
+                    Date = isNew ? DateTime.Today : row.Date,
+                    Currency = bankAcc.Currency as Currency,
+                    Kontragent = row.Kontragent,
+                    BankOperationType = row.BankOperationType,
+                    BankAccountOut = row.BankAccountOut,
+                    BankAccountIn = row.BankAccountIn,
+                    Payment = row.Payment,
+                    VVT_VAL_RASHOD = row.VVT_VAL_RASHOD,
+                    VVT_VAL_PRIHOD = row.VVT_VAL_PRIHOD,
+                    SHPZ = row.SHPZ,
+                    VVT_SFACT_CLIENT_DC = row.VVT_SFACT_CLIENT_DC,
+                    VVT_SFACT_POSTAV_DC = row.VVT_SFACT_POSTAV_DC,
+                    SFName = row.SFName,
+                    VVT_DOC_NUM = row.VVT_DOC_NUM,
+                    State = isNew ? RowStatus.NewRow : RowStatus.NotEdited,
+                    AccuredId = row.AccuredId,
+                    AccuredInfo = row.AccuredInfo,
+                    CurrencyRateForReference = row.CurrencyRateForReference,
+
+                };
+            }
         }
 
         public bool IsCurrencyRateNotCanSet =>

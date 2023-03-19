@@ -10,7 +10,9 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
 using KursDomain.Documents.Cash;
+using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
+using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 using Newtonsoft.Json;
 

@@ -11,7 +11,6 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
-using DevExpress.Mvvm.Native;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Mvvm.Xpf;
 using Helper;
@@ -32,6 +31,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         private NomenklMainViewModel myCurrentNomenklMain;
         private bool myIsCanChangeCurrency;
         private bool myIsCategoryEnabled;
+        readonly WindowManager WinManager = new WindowManager();
 
         public ReferenceWindowViewModel()
         {
@@ -52,6 +52,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             new ObservableCollection<NomenklMainViewModel>();
 
         public ObservableCollection<Currency> CurrencyCollection { set; get; }
+
         public ObservableCollection<Currency> CurrencyCollectionForNomenklMain { set; get; }
             = new ObservableCollection<Currency>();
 
@@ -131,23 +132,6 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             }
         }
 
-        private void reloadCurrencies()
-        {
-            CurrencyCollectionForNomenklMain.Clear();
-            if (myCurrentNomenklMain != null)
-            {
-                foreach (var crs in CurrencyCollection)
-                {
-                    if (myCurrentNomenklMain.NomenklCollection.Where(_ => _.Currency != null)
-                        .Select(_ => _.Currency.DocCode)
-                        .All(d => d != crs.DocCode))
-                    {
-                        CurrencyCollectionForNomenklMain.Add(crs);
-                    }
-                }
-            }
-        }
-
         public NomenklGroupViewModel CurrentCategory
         {
             get => myCurrentCategory;
@@ -178,6 +162,17 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                                CurrentNomenklMain.NomenklCollection.Any(_ =>
                                                    _.State != RowStatus.NotEdited) &&
                                                CurrentNomenklMain.NomenklCollection.All(_ => _.Check()));
+
+        private void reloadCurrencies()
+        {
+            CurrencyCollectionForNomenklMain.Clear();
+            if (myCurrentNomenklMain != null)
+                foreach (var crs in CurrencyCollection)
+                    if (myCurrentNomenklMain.NomenklCollection.Where(_ => _.Currency != null)
+                        .Select(_ => _.Currency.DocCode)
+                        .All(d => d != crs.DocCode))
+                        CurrencyCollectionForNomenklMain.Add(crs);
+        }
 
         private void FocusedRowChanged(object obj)
         {
@@ -452,13 +447,29 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         #region Command
 
+        private bool isNomenklCanDelete()
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                return CurrentNomenkl != null && !(ctx.TD_24.Any(_ => _.DDT_NOMENKL_DC == CurrentNomenkl.DocCode)
+                                               || ctx.TD_26.Any(_ => _.SFT_NEMENKL_DC == CurrentNomenkl.DocCode)
+                                               || ctx.TD_84.Any(_ => _.SFT_NEMENKL_DC == CurrentNomenkl.DocCode)
+                                               || ctx.TD_26_CurrencyConvert.Any(_ => _.NomenklId == CurrentNomenkl.Id));
+            }
+        }
+
         public ICommand NomenklDeleteCommand
         {
-            get { return new Command(NomenklDelete, _ => CurrentNomenkl != null); }
+            get { return new Command(NomenklDelete, _ => isNomenklCanDelete()); }
         }
 
         private void NomenklDelete(object obj)
         {
+            var res = WinManager.ShowWinUIMessageBox("По данной номенклатуре операций нет, удалить?", "Запрос",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+            if (res == MessageBoxResult.No) return;
+            
             using (var ctx = GlobalOptions.GetEntities())
             {
                 using (var tnx = ctx.Database.BeginTransaction())
@@ -467,7 +478,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                     {
                         if (ctx.TD_24.Any(_ => _.DDT_NOMENKL_DC == CurrentNomenkl.DocCode)
                             || ctx.TD_26.Any(_ => _.SFT_NEMENKL_DC == CurrentNomenkl.DocCode)
-                            || ctx.TD_84.Any(_ => _.SFT_NEMENKL_DC == CurrentNomenkl.DocCode))
+                            || ctx.TD_84.Any(_ => _.SFT_NEMENKL_DC == CurrentNomenkl.DocCode)
+                            || ctx.TD_26_CurrencyConvert.Any(_ => _.NomenklId == CurrentNomenkl.Id))
                         {
                             WindowManager.ShowMessage(Application.Current.MainWindow,
                                 $"По номенклатуре №{CurrentNomenkl.NomenklNumber} {CurrentNomenkl.Name} есть операции. Удаление не возможно",
@@ -584,13 +596,13 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             using (var dbContext = GlobalOptions.GetEntities())
             {
                 var nm = dbContext.NomenklMain.Single(_ => _.Id == CurrentNomenklMain.Id);
-                var ctx = new MainCardWindowViewModel()
+                var ctx = new MainCardWindowViewModel
                 {
                     ParentReference = this,
                     NomenklMain = new NomenklMainViewModel(nm)
                     {
                         State = RowStatus.NotEdited
-                    },
+                    }
                 };
                 // ReSharper disable once UseObjectOrCollectionInitializer
                 var form = new NomenklMainCardView { Owner = Application.Current.MainWindow };

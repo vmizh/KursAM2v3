@@ -246,7 +246,7 @@ namespace KursAM2.Managers.Invoices
 
         public static InvoiceProvider NewProvider()
         {
-            var ret = new InvoiceProvider(null)
+            var ret = new InvoiceProvider((SD_26)null)
             {
                 DocCode = -1,
                 DocDate = DateTime.Today,
@@ -865,12 +865,24 @@ namespace KursAM2.Managers.Invoices
                             data = ctx.SD_26
                                 .Include(_ => _.TD_26)
                                 .Include("TD_26.TD_24")
+                                .Include(_ => _.ProviderInvoicePay)
+                                .Include("ProviderInvoicePay.TD_101")
+                                .Include("ProviderInvoicePay.TD_101.SD_101")
+                                .Include("ProviderInvoicePay.SD_34")
+                                .Include("ProviderInvoicePay.TD_110")
+                                .Include("ProviderInvoicePay.TD_110.SD_110")
                                 .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
                                                                           && _.SF_ACCEPTED == 1).ToList();
                         else
                             data = ctx.SD_26
                                 .Include(_ => _.TD_26)
                                 .Include("TD_26.TD_24")
+                                .Include(_ => _.ProviderInvoicePay)
+                                .Include("ProviderInvoicePay.TD_101")
+                                .Include("ProviderInvoicePay.TD_101.SD_101")
+                                .Include("ProviderInvoicePay.SD_34")
+                                .Include("ProviderInvoicePay.TD_110")
+                                .Include("ProviderInvoicePay.TD_110.SD_110")
                                 .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd).ToList();
                     }
                     else
@@ -879,6 +891,12 @@ namespace KursAM2.Managers.Invoices
                             data = (from sd26 in ctx.SD_26
                                     .Include(_ => _.TD_26)
                                     .Include("TD_26.TD_24")
+                                    .Include(_ => _.ProviderInvoicePay)
+                                    .Include("ProviderInvoicePay.TD_101")
+                                    .Include("ProviderInvoicePay.TD_101.SD_101")
+                                    .Include("ProviderInvoicePay.SD_34")
+                                    .Include("ProviderInvoicePay.TD_110")
+                                    .Include("ProviderInvoicePay.TD_110.SD_110")
                                     .Include(_ => _.SD_43)
                                     .Include(_ => _.SD_179)
                                     .Include(_ => _.SD_77)
@@ -923,6 +941,12 @@ namespace KursAM2.Managers.Invoices
                             data = (from sd26 in ctx.SD_26
                                     .Include(_ => _.TD_26)
                                     .Include("TD_26.TD_24")
+                                    .Include(_ => _.ProviderInvoicePay)
+                                    .Include("ProviderInvoicePay.TD_101")
+                                    .Include("ProviderInvoicePay.TD_101.SD_101")
+                                    .Include("ProviderInvoicePay.SD_34")
+                                    .Include("ProviderInvoicePay.TD_110")
+                                    .Include("ProviderInvoicePay.TD_110.SD_110")
                                     .Include(_ => _.SD_43)
                                     .Include(_ => _.SD_179)
                                     .Include(_ => _.SD_77)
@@ -979,13 +1003,13 @@ namespace KursAM2.Managers.Invoices
                             var psums = pays.Where(_ => _.DocCode == d.DOC_CODE).Sum(_ => _.PaySumma);
                             if (psums < d.SF_CRS_SUMMA)
                             {
-                                var newDoc = new InvoiceProvider(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>());
+                                var newDoc = new InvoiceProvider(d);
                                 ret.Add(newDoc);
                             }
                         }
                         else
                         {
-                            var newDoc = new InvoiceProvider(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>());
+                            var newDoc = new InvoiceProvider(d);
                             ret.Add(newDoc);
                         }
                 }
@@ -1147,13 +1171,19 @@ namespace KursAM2.Managers.Invoices
             var ret = new List<IInvoiceProvider>();
             try
             {
-                using (var ctx = GlobalOptions.GetEntities())
+                using (var context  = new UnitOfWork<ALFAMEDIAEntities>())
                 {
                     List<SD_26> data;
                     if (isAccepted)
-                        data = (from sd26 in ctx.SD_26
+                        data = (from sd26 in context.Context.SD_26
                                 .Include(_ => _.TD_26)
                                 .Include("TD_26.TD_24")
+                                .Include(_ => _.ProviderInvoicePay)
+                                .Include("ProviderInvoicePay.TD_101")
+                                .Include("ProviderInvoicePay.TD_101.SD_101")
+                                .Include("ProviderInvoicePay.SD_34")
+                                .Include("ProviderInvoicePay.TD_110")
+                                .Include("ProviderInvoicePay.TD_110.SD_110")
                                 .Include(_ => _.SD_43)
                                 .Include(_ => _.SD_179)
                                 .Include(_ => _.SD_77)
@@ -1161,7 +1191,7 @@ namespace KursAM2.Managers.Invoices
                                 .Include(_ => _.SD_40)
                                 .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd &&
                                             _.SF_POST_DC == kontragentDC && (_.SF_ACCEPTED ?? 0) == 1)
-                            join td26 in ctx.TD_26
+                            join td26 in context.Context.TD_26
                                     .Include(_ => _.SD_83)
                                     .Include(_ => _.SD_175)
                                     .Include(_ => _.SD_43)
@@ -1169,9 +1199,15 @@ namespace KursAM2.Managers.Invoices
                             //where 
                             select sd26).ToList();
                     else
-                        data = (from sd26 in ctx.SD_26
+                        data = (from sd26 in context.Context.SD_26
                                 .Include(_ => _.TD_26)
                                 .Include("TD_26.TD_24")
+                                .Include(_ => _.ProviderInvoicePay)
+                                .Include("ProviderInvoicePay.TD_101")
+                                .Include("ProviderInvoicePay.TD_101.SD_101")
+                                .Include("ProviderInvoicePay.SD_34")
+                                .Include("ProviderInvoicePay.TD_110")
+                                .Include("ProviderInvoicePay.TD_110.SD_110")
                                 .Include(_ => _.SD_43)
                                 .Include(_ => _.SD_179)
                                 .Include(_ => _.SD_77)
@@ -1179,17 +1215,18 @@ namespace KursAM2.Managers.Invoices
                                 .Include(_ => _.SD_40)
                                 .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd &&
                                             _.SF_POST_DC == kontragentDC)
-                            join td26 in ctx.TD_26
+                            join td26 in context.Context.TD_26
                                     .Include(_ => _.SD_83)
                                     .Include(_ => _.SD_175)
                                     .Include(_ => _.SD_43)
                                 on sd26.DOC_CODE equals td26.DOC_CODE
                             //where 
                             select sd26).ToList();
+
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
                         if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
-                        var newDoc = new InvoiceProvider(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>());
+                        var newDoc = new InvoiceProvider(d);
                         if (isUsePayment)
                         {
                             if (newDoc.PaySumma < newDoc.Summa)

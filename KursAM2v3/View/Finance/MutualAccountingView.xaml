@@ -159,7 +159,8 @@
                                     <MenuItem Header="Добавить" Command="{Binding AddNewDebitorCommand}" />
                                     <MenuItem Header="Удалить" Command="{Binding RemoveDebitorCommand}" />
                                     <Separator />
-                                    <MenuItem Header="Счет-фактура" Command="{Binding SetDebitorSFCommand}" />
+                                    <MenuItem Header="Добавить счет-фактуру" Command="{Binding SetNewDebitorSFCommand}" />
+                                    <MenuItem Header="Счет-фактура для позиции" Command="{Binding SetDebitorSFCommand}" />
                                     <Separator />
                                     <MenuItem Header="Экспорт"
                                               Command="{Binding VisualControlExportCommand}"
@@ -174,7 +175,8 @@
                             </dxg:TableView.ContextMenu>
                             <dxmvvm:Interaction.Behaviors>
                                 <dxmvvm:EventToCommand EventName="CellValueChanging"
-                                                       Command="{Binding UpdateCalcSummaCommand}" />
+                                                       Command="{Binding UpdateDebitorCalcSummaCommand}" 
+                                                       PassEventArgsToCommand="True"/>
                             </dxmvvm:Interaction.Behaviors>
                             <dxg:TableView.RowStyle>
                                 <Style TargetType="{x:Type dxg:RowControl}">
@@ -216,7 +218,8 @@
                                     <MenuItem Header="Добавить" Command="{Binding AddNewCreditorCommand}" />
                                     <MenuItem Header="Удалить" Command="{Binding RemoveCreditorCommand}" />
                                     <Separator />
-                                    <MenuItem Header="Счет-фактура" Command="{Binding SetCreditorSFCommand}" />
+                                    <MenuItem Header="Добавить счет-фактуру" Command="{Binding SetNewCreditorSFCommand}" />
+                                    <MenuItem Header="Счет-фактура для позиции" Command="{Binding SetCreditorSFCommand}" />
                                     <Separator />
                                     <MenuItem Header="Экспорт"
                                               Command="{Binding VisualControlExportCommand}"
@@ -231,7 +234,8 @@
                             </dxg:TableView.ContextMenu>
                             <dxmvvm:Interaction.Behaviors>
                                 <dxmvvm:EventToCommand EventName="CellValueChanging"
-                                                       Command="{Binding UpdateCalcSummaCommand}" />
+                                                       Command="{Binding UpdateCreditorCalcSummaCommand}" 
+                                                       PassEventArgsToCommand="True"/>
                             </dxmvvm:Interaction.Behaviors>
                             <dxg:TableView.RowStyle>
                                 <Style TargetType="{x:Type dxg:RowControl}">

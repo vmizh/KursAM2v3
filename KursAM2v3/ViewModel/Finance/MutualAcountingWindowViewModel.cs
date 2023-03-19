@@ -10,6 +10,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors;
+using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -127,7 +128,6 @@ namespace KursAM2.ViewModel.Finance
         public void UpdateVisualData()
         {
             UpdateDebitorCreditorCollections(null);
-            UpdateCalcSumma(null);
             RaisePropertyChanged(nameof(IsCurrencyConvert));
             RaisePropertyChanged(nameof(Document));
             RaisePropertyChanged(nameof(DebitorCollection));
@@ -154,102 +154,17 @@ namespace KursAM2.ViewModel.Finance
 
         public ICommand SetDebitorSFCommand
         {
-            get { return new Command(SetDebitorSF, _ => true); }
+            get { return new Command(SetDebitorSF, _ => CurrentDebitor != null); }
         }
 
-        private void SetCreditorSF(object obj)
+        public ICommand SetNewDebitorSFCommand
         {
-            if (CurrentCreditor != null)
-            {
-                var item = CurrentCreditor.VZT_KONTR_DC > 0
-                    ? StandartDialogs.SelectInvoiceProvider(CurrentCreditor.VZT_KONTR_DC, true, true, true)
-                    : StandartDialogs.SelectInvoiceProvider(true, true, true, Document.CreditorCurrency);
-                if (item == null) return;
-                CurrentCreditor.VZT_DOC_NUM = (Document.Rows.Count + 1).ToString();
-                CurrentCreditor.VZT_CRS_POGASHENO = item.Summa - item.PaySumma;
-                CurrentCreditor.VZT_UCH_CRS_POGASHENO = item.Summa - item.PaySumma;
-                CurrentCreditor.VZT_CRS_SUMMA = item.Summa - item.PaySumma;
-                CurrentCreditor.VZT_KONTR_CRS_SUMMA = item.Summa - item.PaySumma;
-                CurrentCreditor.VZT_UCH_CRS_RATE = 1;
-                CurrentCreditor.VZT_SPOST_DC = item.DocCode;
-                CurrentCreditor.Kontragent =
-                    GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_POST_DC) as Kontragent;
-                CurrentCreditor.SFProvider = item;
-                if (CurrentCreditor.State == RowStatus.NotEdited) CurrentCreditor.myState = RowStatus.Edited;
-                // ReSharper disable once PossibleNullReferenceException
-                KontragentManager.UpdateSelectCount(CurrentCreditor.Kontragent.DocCode);
-            }
-            else
-            {
-                var item = StandartDialogs.SelectInvoiceProvider(true, true, true, Document.CreditorCurrency);
-                if (item == null) return;
-                NomenklProductType vzdefault = null;
-                var vzdefDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(_ =>
-                    _.SECTION == "MUTUAL_ACCOUNTING" && _.ITEM == "DEFAULT_TYPE_PRODUCT");
-                if (vzdefDC != null)
-                    vzdefault =
-                        GlobalOptions.ReferencesCache.GetNomenklProductType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as
-                            NomenklProductType;
-                var m =  DebitorCollection.Any() ?  DebitorCollection.Max(_ => _.Code) + 1 : 0;
-                var m2 =  CreditorCollection.Any() ?  CreditorCollection.Max(_ => _.Code) + 1 : 0;
-                var _code = Math.Max(m, m2) + 1;
-                var newcred = new MutualAccountingCreditorViewModel
-                {
-                    DocCode = Document.DocCode,
-                    Code = _code,
-                    VZT_DOC_DATE = Document.VZ_DATE,
-                    VZT_DOC_NUM = (Document.Rows.Count + 1).ToString(),
-                    VZT_1MYDOLZH_0NAMDOLZH = 1,
-                    VZT_CRS_POGASHENO = item.Summa - item.PaySumma,
-                    VZT_UCH_CRS_POGASHENO = item.Summa - item.PaySumma,
-                    VZT_CRS_SUMMA = item.Summa - item.PaySumma,
-                    VZT_KONTR_CRS_SUMMA = item.Summa - item.PaySumma,
-                    VZT_UCH_CRS_RATE = 1,
-                    VZT_SPOST_DC = item.DocCode,
-                    State = RowStatus.NewRow,
-                    VzaimoraschType = vzdefault,
-                    Parent = Document,
-                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_POST_DC) as Kontragent,
-                    SFProvider = item
-                };
-                Document.Rows.Add(newcred);
-                CreditorCollection.Add(newcred);
-                CurrentCreditor = newcred;
-                // ReSharper disable once PossibleNullReferenceException
-                KontragentManager.UpdateSelectCount(newcred.Kontragent.DocCode);
-            }
+            get { return new Command(SetNewDebitorSF, _ => true); }
         }
 
-        public ICommand SetCreditorSFCommand
+        private void SetNewDebitorSF(object obj)
         {
-            get { return new Command(SetCreditorSF, _ => true); }
-        }
-
-        private void SetDebitorSF(object obj)
-        {
-            if (CurrentDebitor != null)
-            {
-                var item = CurrentDebitor.VZT_KONTR_DC > 0
-                    ? StandartDialogs.SelectInvoiceClient(CurrentDebitor.VZT_KONTR_DC, true, true)
-                    : StandartDialogs.SelectInvoiceClient(true, true, Document.DebitorCurrency);
-                if (item == null) return;
-                CurrentDebitor.VZT_DOC_NUM = (Document.Rows.Count + 1).ToString();
-                CurrentDebitor.VZT_CRS_POGASHENO = item.Summa - item.PaySumma;
-                CurrentDebitor.VZT_UCH_CRS_POGASHENO = item.Summa - item.PaySumma;
-                CurrentDebitor.VZT_CRS_SUMMA = item.Summa - item.PaySumma;
-                CurrentDebitor.VZT_KONTR_CRS_SUMMA = -(item.Summa - item.PaySumma);
-                CurrentDebitor.VZT_UCH_CRS_RATE = 1;
-                CurrentDebitor.VZT_SFACT_DC = item.DocCode;
-                CurrentDebitor.Kontragent =
-                    GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_CLIENT_DC) as Kontragent;
-                CurrentDebitor.SfClient = item;
-                if (CurrentDebitor.State == RowStatus.NotEdited) CurrentDebitor.myState = RowStatus.Edited;
-                // ReSharper disable once PossibleNullReferenceException
-                KontragentManager.UpdateSelectCount(CurrentDebitor.Kontragent.DocCode);
-            }
-            else
-            {
-                var item = StandartDialogs.SelectInvoiceClient(true, true, Document.DebitorCurrency);
+            var item = StandartDialogs.SelectInvoiceClient(true, true, Document.DebitorCurrency);
                 if (item == null) return;
                 NomenklProductType vzdefault = null;
                 var vzdefDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(_ =>
@@ -277,36 +192,148 @@ namespace KursAM2.ViewModel.Finance
                     VzaimoraschType = vzdefault,
                     Parent = Document,
                     Kontragent = GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_CLIENT_DC) as Kontragent,
-                    SfClient = item
+                    SfClient = item,
+                    MaxSumma = item.Summa - item.PaySumma,
                 };
                 Document.Rows.Add(newdeb);
                 DebitorCollection.Add(newdeb);
                 CurrentDebitor = newdeb;
                 // ReSharper disable once PossibleNullReferenceException
                 KontragentManager.UpdateSelectCount(newdeb.Kontragent.DocCode);
-            }
-
-            UpdateVisualData();
+                CalcItogoSumma();
         }
 
-        public ICommand UpdateCalcSummaCommand
+        private void SetCreditorSF(object obj)
         {
-            get { return new Command(UpdateCalcSumma, _ => true); }
+            var item = CurrentCreditor.VZT_KONTR_DC > 0
+                ? StandartDialogs.SelectInvoiceProvider(CurrentCreditor.VZT_KONTR_DC, true, true, true)
+                : StandartDialogs.SelectInvoiceProvider(true, true, true, Document.CreditorCurrency);
+            if (item == null) return;
+            CurrentCreditor.VZT_DOC_NUM = (Document.Rows.Count + 1).ToString();
+            CurrentCreditor.VZT_CRS_POGASHENO = item.Summa - item.PaySumma;
+            CurrentCreditor.VZT_UCH_CRS_POGASHENO = item.Summa - item.PaySumma;
+            CurrentCreditor.VZT_CRS_SUMMA = item.Summa - item.PaySumma;
+            CurrentCreditor.VZT_KONTR_CRS_SUMMA = item.Summa - item.PaySumma;
+            CurrentCreditor.VZT_UCH_CRS_RATE = 1;
+            CurrentCreditor.VZT_SPOST_DC = item.DocCode;
+            CurrentCreditor.Kontragent =
+                GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_POST_DC) as Kontragent;
+            CurrentCreditor.SFProvider = item;
+            CurrentCreditor.MaxSumma = item.Summa - item.PaySumma;
+            if (CurrentCreditor.State == RowStatus.NotEdited) CurrentCreditor.myState = RowStatus.Edited;
+            // ReSharper disable once PossibleNullReferenceException
+            KontragentManager.UpdateSelectCount(CurrentCreditor.Kontragent.DocCode);
+            CalcItogoSumma();
+        }
+
+        private void SetNewCreditorSF(object obj)
+        {
+
+            var item = StandartDialogs.SelectInvoiceProvider(true, true, true, Document.CreditorCurrency);
+            if (item == null) return;
+            NomenklProductType vzdefault = null;
+            var vzdefDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(_ =>
+                _.SECTION == "MUTUAL_ACCOUNTING" && _.ITEM == "DEFAULT_TYPE_PRODUCT");
+            if (vzdefDC != null)
+                vzdefault =
+                    GlobalOptions.ReferencesCache.GetNomenklProductType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as
+                        NomenklProductType;
+            var m = DebitorCollection.Any() ? DebitorCollection.Max(_ => _.Code) + 1 : 0;
+            var m2 = CreditorCollection.Any() ? CreditorCollection.Max(_ => _.Code) + 1 : 0;
+            var _code = Math.Max(m, m2) + 1;
+            var newcred = new MutualAccountingCreditorViewModel
+            {
+                DocCode = Document.DocCode,
+                Code = _code,
+                VZT_DOC_DATE = Document.VZ_DATE,
+                VZT_DOC_NUM = (Document.Rows.Count + 1).ToString(),
+                VZT_1MYDOLZH_0NAMDOLZH = 1,
+                VZT_CRS_POGASHENO = item.Summa - item.PaySumma,
+                VZT_UCH_CRS_POGASHENO = item.Summa - item.PaySumma,
+                VZT_CRS_SUMMA = item.Summa - item.PaySumma,
+                VZT_KONTR_CRS_SUMMA = item.Summa - item.PaySumma,
+                VZT_UCH_CRS_RATE = 1,
+                VZT_SPOST_DC = item.DocCode,
+                State = RowStatus.NewRow,
+                VzaimoraschType = vzdefault,
+                Parent = Document,
+                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_POST_DC) as Kontragent,
+                SFProvider = item,
+                MaxSumma = item.Summa - item.PaySumma
+            };
+            Document.Rows.Add(newcred);
+            CreditorCollection.Add(newcred);
+            CurrentCreditor = newcred;
+            // ReSharper disable once PossibleNullReferenceException
+            KontragentManager.UpdateSelectCount(newcred.Kontragent.DocCode);
+            CalcItogoSumma();
+        }
+
+
+        public ICommand SetCreditorSFCommand
+        {
+            get { return new Command(SetCreditorSF, _ => CurrentCreditor != null); }
+        }
+
+        public ICommand SetNewCreditorSFCommand
+        {
+            get { return new Command(SetNewCreditorSF, _ => true); }
+        }
+
+        private void SetDebitorSF(object obj)
+        {
+
+            var item = CurrentDebitor.VZT_KONTR_DC > 0
+                ? StandartDialogs.SelectInvoiceClient(CurrentDebitor.VZT_KONTR_DC, true, true)
+                : StandartDialogs.SelectInvoiceClient(true, true, Document.DebitorCurrency);
+            if (item == null) return;
+            CurrentDebitor.VZT_DOC_NUM = (Document.Rows.Count + 1).ToString();
+            CurrentDebitor.VZT_CRS_POGASHENO = item.Summa - item.PaySumma;
+            CurrentDebitor.VZT_UCH_CRS_POGASHENO = item.Summa - item.PaySumma;
+            CurrentDebitor.VZT_CRS_SUMMA = item.Summa - item.PaySumma;
+            CurrentDebitor.VZT_KONTR_CRS_SUMMA = -(item.Summa - item.PaySumma);
+            CurrentDebitor.VZT_UCH_CRS_RATE = 1;
+            CurrentDebitor.VZT_SFACT_DC = item.DocCode;
+            CurrentDebitor.Kontragent =
+                GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_CLIENT_DC) as Kontragent;
+            CurrentDebitor.SfClient = item;
+            if (CurrentDebitor.State == RowStatus.NotEdited) CurrentDebitor.myState = RowStatus.Edited;
+            CurrentDebitor.MaxSumma = item.Summa - item.PaySumma;
+            // ReSharper disable once PossibleNullReferenceException
+            KontragentManager.UpdateSelectCount(CurrentDebitor.Kontragent.DocCode);
+            UpdateVisualData();
+            CalcItogoSumma();
+
+        }
+
+        public ICommand UpdateCreditorCalcSummaCommand
+        {
+            get { return new Command(UpdateCreditorCalcSumma, _ => true); }
+        }
+        public ICommand UpdateDebitorCalcSummaCommand
+        {
+            get { return new Command(UpdateDebitorCalcSumma, _ => true); }
         }
 
         private decimal CalcItogoSumma()
         {
             decimal sumLeft = 0, sumRight = 0;
-            foreach (var l in Document.Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0))
+            foreach (var l in DebitorCollection)
                 if (l.Kontragent?.IsBalans == true)
                     // ReSharper disable once PossibleInvalidOperationException
-                    sumLeft += Math.Abs((decimal)l.VZT_KONTR_CRS_SUMMA);
-            foreach (var l in Document.Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1))
+                    sumLeft += Math.Abs((decimal)l.VZT_CRS_SUMMA);
+            foreach (var l in CreditorCollection)
                 if (l.Kontragent?.IsBalans == true)
                     // ReSharper disable once PossibleInvalidOperationException
-                    sumRight += (decimal)l.VZT_KONTR_CRS_SUMMA;
+                    sumRight += (decimal)l.VZT_CRS_SUMMA;
             if (!IsCurrencyConvert)
+            {
+                Document.VZ_RIGHT_UCH_CRS_SUM = sumRight;
+                Document.VZ_LEFT_UCH_CRS_SUM = sumLeft;
+                Document.VZ_PRIBIL_UCH_CRS_SUM = sumRight - sumLeft;
                 return sumRight - sumLeft;
+            }
+
             var d = CurrencyConvertRate != 0
                 ? (Document.CreditorCurrency.DocCode == CurrencyCode.RUB ? sumRight / CurrencyConvertRate : sumRight) -
                   (Document.DebitorCurrency.DocCode == CurrencyCode.RUB ? sumLeft / CurrencyConvertRate : sumLeft)
@@ -314,18 +341,42 @@ namespace KursAM2.ViewModel.Finance
             return d;
         }
 
-        private void UpdateCalcSumma(object obj)
+        private void UpdateDebitorCalcSumma(object obj)
         {
+            var param = obj as CellValueChangedEventArgs;
+            if (param == null) return;
             if (Document == null) return;
             var state = Document.State;
+            CurrentDebitor.VZT_CRS_SUMMA = (decimal)param.Value;
             if (IsNotOld)
             {
+                CalcItogoSumma(); //Document.VZ_RIGHT_UCH_CRS_SUM - Document.VZ_LEFT_UCH_CRS_SUM;
+            }
+            else
+            {
                 Document.VZ_LEFT_UCH_CRS_SUM = Document.Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0)
-                    .Sum(_ => _.VZT_CRS_SUMMA);
+                    .Sum(_ => _.VZT_UCH_CRS_POGASHENO);
                 Document.VZ_RIGHT_UCH_CRS_SUM = Document.Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1)
-                    .Sum(_ => _.VZT_CRS_SUMMA);
+                    .Sum(_ => _.VZT_UCH_CRS_POGASHENO);
                 Document.VZ_PRIBIL_UCH_CRS_SUM =
                     CalcItogoSumma(); //Document.VZ_RIGHT_UCH_CRS_SUM - Document.VZ_LEFT_UCH_CRS_SUM;
+            }
+
+            Document.myState = state;
+            RaisePropertyChanged(nameof(Document));
+            RaisePropertyChanged(nameof(CurrencyConvertRate));
+        }
+
+        private void UpdateCreditorCalcSumma(object obj)
+        {
+            var param = obj as CellValueChangedEventArgs;
+            if (param == null) return;
+            if (Document == null) return;
+            var state = Document.State;
+            CurrentCreditor.VZT_CRS_SUMMA = (decimal)param.Value;
+            if (IsNotOld)
+            {
+                CalcItogoSumma(); //Document.VZ_RIGHT_UCH_CRS_SUM - Document.VZ_LEFT_UCH_CRS_SUM;
             }
             else
             {
@@ -395,15 +446,23 @@ namespace KursAM2.ViewModel.Finance
 
                 foreach (var r in Document.Rows)
                 {
+                    r.Parent = Document;
                     if (r.VZT_SFACT_DC != null)
+                    {
                         r.SfClient = InvoicesManager.GetInvoiceClient((decimal)r.VZT_SFACT_DC);
+                        r.MaxSumma = r.SfClient.Summa - r.SfClient.PaySumma + (r.VZT_CRS_SUMMA ?? 0);
+                    }
+
                     if (r.VZT_SPOST_DC != null)
+                    {
                         r.SFProvider = InvoicesManager.GetInvoiceProvider((decimal)r.VZT_SPOST_DC);
+                        r.MaxSumma = r.SFProvider.Summa - r.SFProvider.PaySumma + (r.VZT_CRS_SUMMA ?? 0);
+                    }
+
                     r.myState = RowStatus.NotEdited;
                 }
 
                 UpdateDebitorCreditorCollections(null);
-                UpdateCalcSumma(null);
                 Document.myState = RowStatus.NotEdited;
                 RaisePropertyChanged(nameof(IsCanSaveData));
             }
@@ -454,6 +513,11 @@ namespace KursAM2.ViewModel.Finance
             DocumentsOpenManager.SaveLastOpenInfo(
                 IsCurrencyConvert ? DocumentType.CurrencyConvertAccounting : DocumentType.MutualAccounting, Document.Id,
                 Document.DocCode, Document.CREATOR, "", Document.Description);
+            foreach (var r in Document.Rows)
+            {
+                r.myState = RowStatus.NotEdited;
+            }
+            Document.State = RowStatus.NotEdited;
         }
 
         private void UpdateDebitorCreditorCollections(TD_110ViewModel vm, bool isDebitor = true)
@@ -535,6 +599,7 @@ namespace KursAM2.ViewModel.Finance
                 {
                     Document.Rows.Remove(CurrentCreditor);
                     CreditorCollection.Remove(CurrentCreditor);
+                    CalcItogoSumma();
                     return;
                 }
 
@@ -543,8 +608,8 @@ namespace KursAM2.ViewModel.Finance
                 if (CurrentCreditor.Parent is RSViewModelBase prnt)
                     prnt.State = RowStatus.Edited;
                 CreditorCollection.Remove(CurrentCreditor);
-                UpdateCalcSumma(null);
                 RaisePropertyChanged(nameof(CurrencyConvertRate));
+                CalcItogoSumma();
             }
         }
 
@@ -562,6 +627,7 @@ namespace KursAM2.ViewModel.Finance
                 {
                     Document.Rows.Remove(CurrentDebitor);
                     DebitorCollection.Remove(CurrentDebitor);
+                    CalcItogoSumma();
                     return;
                 }
 
@@ -570,8 +636,8 @@ namespace KursAM2.ViewModel.Finance
                 if (CurrentDebitor.Parent is RSViewModelBase prnt)
                     prnt.State = RowStatus.Edited;
                 DebitorCollection.Remove(CurrentDebitor);
-                UpdateCalcSumma(null);
                 RaisePropertyChanged(nameof(CurrencyConvertRate));
+                CalcItogoSumma();
             }
 
             //DebitorCollection.Remove(CurrentDebitor);
@@ -617,6 +683,7 @@ namespace KursAM2.ViewModel.Finance
                 CurrentDebitor = newdeb;
                 KontragentManager.UpdateSelectCount(k.DocCode);
                 RaisePropertyChanged(nameof(CurrencyConvertRate));
+                CalcItogoSumma();
             }
             catch (Exception ex)
             {
@@ -662,6 +729,7 @@ namespace KursAM2.ViewModel.Finance
             CurrentCreditor = newcred;
             KontragentManager.UpdateSelectCount(k.DocCode);
             RaisePropertyChanged(nameof(CurrencyConvertRate));
+            CalcItogoSumma();
         }
 
         public override string SaveInfo => Manager.CheckedInfo;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using System.Text;
 
 namespace Helper
 {
@@ -52,6 +53,21 @@ namespace Helper
             {
                 CurrencyDecimalSeparator = ".,"
             });
+        }
+
+        public static string GetFullExceptionTextMessage(Exception ex, string methodName = null)
+        {
+            var errText = new StringBuilder(ex.Message);
+            var ex1 = ex;
+            while (ex1.InnerException != null)
+            {
+                ex1 = ex1.InnerException;
+                errText.Append(ex1.Message + "\n");
+                if (ex1.InnerException != null)
+                    errText.Append(ex1.InnerException.Message);
+            }
+
+            return string.IsNullOrWhiteSpace(methodName) ? errText.ToString() : $"{methodName} -> {errText}";
         }
 
         public static string GetEnumName(Enum enumElement)

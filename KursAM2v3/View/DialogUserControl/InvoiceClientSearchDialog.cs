@@ -332,7 +332,7 @@ namespace KursAM2.View.DialogUserControl
                 {
                     if (!isOnlyLastYear)
                         foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
-                                     true,
+                                     isPaymentUse,
                                      SearchText, isAccepted))
                         {
                             if (currency == null)
@@ -350,7 +350,7 @@ namespace KursAM2.View.DialogUserControl
                     else
                         foreach (var d in InvoicesManager.GetInvoicesProvider(DateTime.Today.AddDays(-365),
                                      DateTime.Today,
-                                     true,
+                                     isPaymentUse,
                                      SearchText, isAccepted))
                         {
                             if (currency == null)
@@ -494,7 +494,7 @@ namespace KursAM2.View.DialogUserControl
                 {
                     var providerRepository = new InvoiceProviderRepository(GlobalOptions.GetEntities());
                     foreach (var inv in providerRepository.GetAllByDates(new DateTime(2000, 1, 1), DateTime.Today)
-                                 .Where(inv => !isUsePayment || inv.Summa != inv.PaySumma)
+                                 .Where(inv => !isUsePayment || inv.Summa > inv.PaySumma)
                                  .Where(inv => !isAccepted || inv.IsAccepted))
                     {
                         if (myCurrency == null)
@@ -519,7 +519,7 @@ namespace KursAM2.View.DialogUserControl
                 {
                     var clientRepository = new InvoiceClientRepository(GlobalOptions.GetEntities());
                     foreach (var inv in clientRepository.GetAllByDates(new DateTime(2000, 1, 1), DateTime.Today)
-                                 .Where(inv => !isUsePayment || inv.Summa != inv.PaySumma)
+                                 .Where(inv => !isUsePayment || inv.Summa > inv.PaySumma)
                                  .Where(inv => !isAccepted || inv.IsAccepted))
                     {
                         if (myCurrency == null)

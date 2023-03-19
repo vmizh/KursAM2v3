@@ -71,14 +71,27 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
         {
             if (Entity.VZT_CRS_SUMMA == value) return;
             if (value < 0)
+            {
+                Entity.VZT_CRS_SUMMA = 0;
                 //WindowManager.ShowMessage("Сумма не может быть меньше 0!", "Ошибка",
                 //    MessageBoxImage.Stop);
                 return;
+            }
 
             if (value > MaxSumma && VZT_SFACT_DC != null)
+            {
                 //WindowManager.ShowMessage("Сумма не может быть больше сумму оплаты по счету!", "Ошибка",
                 //    MessageBoxImage.Stop);
+                Entity.VZT_CRS_SUMMA = MaxSumma;
                 return;
+            }
+            if (value > MaxSumma && VZT_SPOST_DC != null)
+            {
+                //WindowManager.ShowMessage("Сумма не может быть больше сумму оплаты по счету!", "Ошибка",
+                //    MessageBoxImage.Stop);
+                Entity.VZT_CRS_SUMMA = MaxSumma;
+                return;
+            }
 
             Entity.VZT_CRS_SUMMA = value;
             VZT_KONTR_CRS_SUMMA = VZT_1MYDOLZH_0NAMDOLZH == 0 ? -Entity.VZT_CRS_SUMMA : Entity.VZT_CRS_SUMMA;
@@ -91,6 +104,12 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
                                         (Entity.VZT_UCH_CRS_RATE == 0 ? 1 : Entity.VZT_UCH_CRS_RATE);
             VZT_CRS_POGASHENO = Entity.VZT_CRS_SUMMA;
             RaisePropertyChanged();
+            if (Parent is SD_110ViewModel p)
+            {
+                 p.RaisePropertyChanged("VZ_LEFT_UCH_CRS_SUM");
+                 p.RaisePropertyChanged("VZ_RIGHT_UCH_CRS_SUM");
+                 p.RaisePropertyChanged("VZ_PRIBIL_UCH_CRS_SUM");
+            }
         }
     }
 

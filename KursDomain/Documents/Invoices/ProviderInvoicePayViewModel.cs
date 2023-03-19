@@ -49,23 +49,15 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
         }
     }
 
-    public decimal DocSumma
-    {
-        get
-        { 
-            if (TD_101 != null) return (decimal)TD_101.VVT_VAL_RASHOD;
-            if (TD_110 != null) return (decimal)TD_110.VZT_CRS_SUMMA;
-            if (SD_34 != null) return (decimal)SD_34.SUMM_ORD;
-            return 0;
-        }
-    }
+    public decimal DocSumma =>
+        (TD_101?.VVT_VAL_RASHOD ?? 0) + (TD_110?.VZT_CRS_SUMMA ?? 0) + (SD_34?.SUMM_ORD ?? 0);
 
     public string DocExtName
     {
         get
         { 
             if (TD_101 != null) return $"{TD_101.SD_101.SD_114.BA_BANK_NAME} " +
-                                       $"р/с {TD_101.SD_101.SD_114.BA_RASH_ACC}";;
+                                              $"р/с {TD_101.SD_101.SD_114.BA_RASH_ACC}";;
             if (TD_110 != null) return $"{TD_110.VZT_DOC_NOTES}";
             if (SD_34 != null) return $"Касса {((IName)GlobalOptions.ReferencesCache.GetCashBox(SD_34.CA_DC)).Name}";;
             return null;
@@ -177,7 +169,7 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
 
     public TD_110 TD_110
     {
-        get => Entity.TD_110;
+        get =>  Entity.TD_110;
         set
         {
             if (Entity.TD_110 == value) return;

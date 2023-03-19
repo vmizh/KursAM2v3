@@ -72,13 +72,13 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
     public decimal CashPaySumma { set; get; }
 
     public override string Description => Entity != null
-        ? $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " +
+        ? $"С/ф клиенту №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " +
           $"от {Entity.SF_DATE.ToShortDateString()} {Client} {Summa:n2} {Currency}"
         : null;
 
     public override string Name
         => Entity.DOC_CODE > 0
-            ? $"С/ф №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " +
+            ? $"С/ф клиенту №{Entity.SF_IN_NUM}/{Entity.SF_OUT_NUM} " +
               $"от {Entity.SF_DATE.ToShortDateString()}"
             : null;
 

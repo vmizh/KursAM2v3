@@ -64,23 +64,47 @@ public class ReferencesKursCache : IReferencesCache
     {
         using (var sqlConn = new SqlConnection(GlobalOptions.SqlConnectionString))
         {
-            sqlConn.Open();
-            long id = 0;
-            var cmd = sqlConn.CreateCommand();
-            cmd.CommandText = "SELECT change_tracking_current_version();";
-            cmd.CommandType = CommandType.Text;
-            var res = cmd.ExecuteScalar();
-            id = (long) res;
-            sqlConn.Close();
-            lastTimeCheckTrackerId = DateTime.Now;
-            return id;
+            try
+            {
+                sqlConn.Open();
+                long id = 0;
+                var cmd = sqlConn.CreateCommand();
+                cmd.CommandText = "SELECT change_tracking_current_version();";
+                cmd.CommandType = CommandType.Text;
+                var res = cmd.ExecuteScalar();
+                id = (long)res;
+                sqlConn.Close();
+                lastTimeCheckTrackerId = DateTime.Now;
+                return id;
+            }
+            catch (Exception ex)
+            {
+                saveError(ex, "ReferenceKursCache.GetCurrentChangeTrackingId()");
+            }
         }
 
-        //else
-        //{
-        //    var id = Context.Database.SqlQuery<long>("SELECT change_tracking_current_version();");
-        //    return id.First();
-        //}
+        return 0;
+    }
+
+    private void saveError(Exception ex, string methodName)
+    {
+        using (var sqlConn = new SqlConnection(GlobalOptions.SqlSystemConnectionString))
+        {
+            sqlConn.Open();
+            var cmd = sqlConn.CreateCommand();
+            cmd.CommandText =
+                @"INSERT INTO dbo.Errors(Id, DbId, UserId, Host, ErrorText, Note, Moment)"
+                + $"VALUES('{Helper.CustomFormat.GuidToSqlString(Guid.NewGuid())}', " +
+                $"'{Helper.CustomFormat.GuidToSqlString(GlobalOptions.DataBaseId)}'," +
+                $"'{Helper.CustomFormat.GuidToSqlString(GlobalOptions.UserInfo.KursId)}'," +
+                $"'{Environment.MachineName}'," +
+                $"'{Helper.CustomFormat.GetFullExceptionTextMessage(ex, methodName)}'," +
+                $"'', '{Helper.CustomFormat.DateToString(DateTime.Now)}')";
+            cmd.CommandType = CommandType.Text;
+            cmd.ExecuteNonQuery();
+            sqlConn.Close();
+
+        }
     }
 
     private IEnumerable<ChangeTrackingResultDC> GetChangeData(string tabName, long trackingId)
@@ -90,23 +114,31 @@ public class ReferencesKursCache : IReferencesCache
 
         using (var sqlConn = new SqlConnection(GlobalOptions.SqlConnectionString))
         {
-            sqlConn.Open();
-            var cmd = sqlConn.CreateCommand();
-            cmd.CommandText = sql;
-            cmd.CommandType = CommandType.Text;
-            var ret = new List<ChangeTrackingResultDC>();
-            using (var reader = cmd.ExecuteReader())
+            try
             {
-                while (reader.Read())
-                    ret.Add(new ChangeTrackingResultDC
-                    {
-                        Operation = reader[0] as string,
-                        DocCode = (decimal) reader[1]
-                    });
-            }
+                sqlConn.Open();
+                var cmd = sqlConn.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.CommandType = CommandType.Text;
+                var ret = new List<ChangeTrackingResultDC>();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                        ret.Add(new ChangeTrackingResultDC
+                        {
+                            Operation = reader[0] as string,
+                            DocCode = (decimal)reader[1]
+                        });
+                }
 
-            sqlConn.Close();
-            return ret;
+                sqlConn.Close();
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                saveError(ex, "ReferenceKursCache.GetCurrentChangeTrackingId()");
+                return new List<ChangeTrackingResultDC>();
+            }
         }
     }
 
@@ -117,32 +149,32 @@ public class ReferencesKursCache : IReferencesCache
 
         using (var sqlConn = new SqlConnection(GlobalOptions.SqlConnectionString))
         {
-            sqlConn.Open();
-            var cmd = sqlConn.CreateCommand();
-            cmd.CommandText = sql;
-            cmd.CommandType = CommandType.Text;
-            var ret = new List<ChangeTrackingResultInt>();
-            using (var reader = cmd.ExecuteReader())
+            try
             {
-                while (reader.Read())
-                    ret.Add(new ChangeTrackingResultInt
-                    {
-                        Operation = reader[0] as string,
-                        Code = (int) reader[1]
-                    });
+                sqlConn.Open();
+                var cmd = sqlConn.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.CommandType = CommandType.Text;
+                var ret = new List<ChangeTrackingResultInt>();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                        ret.Add(new ChangeTrackingResultInt
+                        {
+                            Operation = reader[0] as string,
+                            Code = (int)reader[1]
+                        });
+                }
+
+                sqlConn.Close();
+                return ret;
             }
-
-            sqlConn.Close();
-            return ret;
+            catch (Exception ex)
+            {
+                saveError(ex, "ReferenceKursCache.GetCurrentChangeTrackingId()");
+                return new List<ChangeTrackingResultInt>();
+            }
         }
-        //var chData = Context.Database
-        //    .SqlQuery<ChangeTrackingResultInt>(sql);
-        //if (chData != null && chData.Any())
-        //{
-        //    return new List<ChangeTrackingResultInt>(chData);
-        //}
-
-        //return null;
     }
 
     //ChangeTrackingResultGuid
@@ -151,35 +183,34 @@ public class ReferencesKursCache : IReferencesCache
     {
         var sql =
             $"SELECT sys_change_operation as Operation, {keyFieldName} as Id FROM CHANGETABLE(CHANGES {tabName}, {trackingId}) as Cht";
-
-        using (var sqlConn = new SqlConnection(GlobalOptions.SqlConnectionString))
+        try
         {
-            sqlConn.Open();
-            var cmd = sqlConn.CreateCommand();
-            cmd.CommandText = sql;
-            cmd.CommandType = CommandType.Text;
-            var ret = new List<ChangeTrackingResultGuid>();
-            using (var reader = cmd.ExecuteReader())
+            using (var sqlConn = new SqlConnection(GlobalOptions.SqlConnectionString))
             {
-                while (reader.Read())
-                    ret.Add(new ChangeTrackingResultGuid
-                    {
-                        Operation = reader[0] as string,
-                        Id = (Guid) reader[1]
-                    });
+                sqlConn.Open();
+                var cmd = sqlConn.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.CommandType = CommandType.Text;
+                var ret = new List<ChangeTrackingResultGuid>();
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                        ret.Add(new ChangeTrackingResultGuid
+                        {
+                            Operation = reader[0] as string,
+                            Id = (Guid)reader[1]
+                        });
+                }
+
+                sqlConn.Close();
+                return ret;
             }
-
-            sqlConn.Close();
-            return ret;
         }
-        //var chData = Context.Database
-        //    .SqlQuery<ChangeTrackingResultInt>(sql);
-        //if (chData != null && chData.Any())
-        //{
-        //    return new List<ChangeTrackingResultInt>(chData);
-        //}
-
-        //return null;
+        catch (Exception ex)
+        {
+            saveError(ex, "ReferenceKursCache.GetCurrentChangeTrackingId()");
+            return new List<ChangeTrackingResultGuid>();
+        }
     }
 
     /// <summary>

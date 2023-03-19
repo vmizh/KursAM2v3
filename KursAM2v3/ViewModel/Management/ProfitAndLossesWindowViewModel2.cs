@@ -220,13 +220,6 @@ namespace KursAM2.ViewModel.Management
                             frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
                             break;
                     }
-
-                    //if (myBalansFact.Id == Guid.Parse("{459937df-085f-4825-9ae9-810b054d0276}")
-                    //    || myBalansFact.Id == Guid.Parse("{30e9bd73-9bda-4d75-b897-332f9210b9b1}"))
-                    //    frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
-                    //else
-                    //    frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
-
                     UpdateExtend(myBalansFact.Id);
                 }
 

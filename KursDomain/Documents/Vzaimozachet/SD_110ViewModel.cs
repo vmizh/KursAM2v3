@@ -81,12 +81,25 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
 
     public decimal? DebitorSumma
     {
-        get { return Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0; }
+        get
+        {
+            Entity.VZ_RIGHT_UCH_CRS_SUM = Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0;
+            Entity.VZ_PRIBIL_UCH_CRS_SUM = Entity.VZ_RIGHT_UCH_CRS_SUM - Entity.VZ_LEFT_UCH_CRS_SUM;
+            RaisePropertyChanged(nameof(VZ_PRIBIL_UCH_CRS_SUM));
+            return Entity.VZ_RIGHT_UCH_CRS_SUM;
+        }
     }
 
     public decimal? CreditorSumma
     {
-        get { return Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0; }
+        get
+        {
+            Entity.VZ_LEFT_UCH_CRS_SUM =
+                Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0;
+            Entity.VZ_PRIBIL_UCH_CRS_SUM = Entity.VZ_RIGHT_UCH_CRS_SUM - Entity.VZ_LEFT_UCH_CRS_SUM;
+            RaisePropertyChanged(nameof(VZ_PRIBIL_UCH_CRS_SUM));
+            return Entity.VZ_LEFT_UCH_CRS_SUM;
+        }
     }
 
     public override string Description

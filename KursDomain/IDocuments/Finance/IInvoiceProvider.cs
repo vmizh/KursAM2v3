@@ -43,7 +43,7 @@ public interface IInvoiceProvider
     bool IsPay { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Сумма оплаты")]
-    decimal PaySumma { set; get; }
+    decimal PaySumma { get; }
 
     [Display(AutoGenerateField = true, Name = "Усл.платежа")]
     PayCondition PayCondition { set; get; }

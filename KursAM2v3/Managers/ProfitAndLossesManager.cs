@@ -2428,7 +2428,7 @@ namespace KursAM2.Managers
                         AktZachetResult = 0,
                         CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC).Currency).Name,
                         DocNum = $"{d.DocInNum}/{d.DocExtNum}",
-                        StringId = d.Id.ToString()
+                        StringId = d.ToString()
                         //CalcType = TypeProfitAndLossCalc.IsProfit
                     };
                     SetCurrenciesValue(newOp1,
@@ -2467,7 +2467,7 @@ namespace KursAM2.Managers
                                 .GetKontragent(d.AccruedAmountOfSupplier.KontrDC).Currency)
                             .Name,
                         DocNum = $"{d.AccruedAmountOfSupplier.DocInNum}/{d.AccruedAmountOfSupplier.DocExtNum}",
-                        StringId = d.Id.ToString()
+                        StringId = d.DocId.ToString()
                         //CalcType = TypeProfitAndLossCalc.IsProfit
                     };
                     SetCurrenciesValue(newOp1,
