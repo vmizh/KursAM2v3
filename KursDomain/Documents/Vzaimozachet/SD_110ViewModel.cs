@@ -85,7 +85,7 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
         {
             Entity.VZ_RIGHT_UCH_CRS_SUM = Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0;
             Entity.VZ_PRIBIL_UCH_CRS_SUM = Entity.VZ_RIGHT_UCH_CRS_SUM - Entity.VZ_LEFT_UCH_CRS_SUM;
-            RaisePropertyChanged(nameof(VZ_PRIBIL_UCH_CRS_SUM));
+            //RaisePropertyChanged(nameof(VZ_PRIBIL_UCH_CRS_SUM));
             return Entity.VZ_RIGHT_UCH_CRS_SUM;
         }
     }
@@ -97,7 +97,7 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
             Entity.VZ_LEFT_UCH_CRS_SUM =
                 Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0;
             Entity.VZ_PRIBIL_UCH_CRS_SUM = Entity.VZ_RIGHT_UCH_CRS_SUM - Entity.VZ_LEFT_UCH_CRS_SUM;
-            RaisePropertyChanged(nameof(VZ_PRIBIL_UCH_CRS_SUM));
+            //RaisePropertyChanged(nameof(VZ_PRIBIL_UCH_CRS_SUM));
             return Entity.VZ_LEFT_UCH_CRS_SUM;
         }
     }
@@ -106,13 +106,13 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
     {
         get
         {
-            var ds = $"Дебиторы: {DebitorSumma} {DebitorCurrency} (";
+            var ds = $"Дебиторы: {DebitorSumma:n2} {DebitorCurrency} (";
             var debList = Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Select(_ => _.Kontragent).Distinct()
                 .ToList();
             ds = debList.Aggregate(ds, (current, cred) => current + $" {cred},");
             ds = ds.Remove(ds.Length - 1);
             ds += ")";
-            var cs = $"Кредиторы: {CreditorSumma} {CreditorCurrency} (";
+            var cs = $"Кредиторы: {CreditorSumma:n2} {CreditorCurrency} (";
             var gredList = Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Select(_ => _.Kontragent).Distinct()
                 .ToList();
             cs = gredList.Aggregate(cs, (current, cred) => current + $" {cred},");
@@ -627,8 +627,8 @@ public static class DataAnnotationsSD_110ViewModel
         builder.Property(_ => _.VZ_DATE).DisplayName("Дата");
         builder.Property(_ => _.VZ_NUM).DisplayName("Номер");
         builder.Property(_ => _.MutualAccountingOldType).DisplayName("Тип зачета");
-        builder.Property(_ => _.DebitorSumma).DisplayName("Дебитор (-) к балансу");
-        builder.Property(_ => _.CreditorSumma).DisplayName("Кредитор (+) к балансу");
+        builder.Property(_ => _.DebitorSumma).DisplayName("Дебитор (-) к балансу").DisplayFormatString("n2");
+        builder.Property(_ => _.CreditorSumma).DisplayName("Кредитор (+) к балансу").DisplayFormatString("n2");
         builder.Property(_ => _.DebitorCurrency).DisplayName("Валюта дебитора");
         builder.Property(_ => _.CreditorCurrency).DisplayName("Валюта кредитора");
         builder.Property(_ => _.VZ_NOTES).DisplayName("Примечание");

@@ -159,7 +159,7 @@
                                     <MenuItem Header="Добавить" Command="{Binding AddNewDebitorCommand}" />
                                     <MenuItem Header="Удалить" Command="{Binding RemoveDebitorCommand}" />
                                     <Separator />
-                                    <MenuItem Header="Добавить счет-фактуру" Command="{Binding SetNewDebitorSFCommand}" />
+                                    <MenuItem Header="Добавить счет-фактуру клиенту" Command="{Binding SetNewDebitorSFCommand}" />
                                     <MenuItem Header="Счет-фактура для позиции" Command="{Binding SetDebitorSFCommand}" />
                                     <Separator />
                                     <MenuItem Header="Экспорт"
@@ -218,7 +218,7 @@
                                     <MenuItem Header="Добавить" Command="{Binding AddNewCreditorCommand}" />
                                     <MenuItem Header="Удалить" Command="{Binding RemoveCreditorCommand}" />
                                     <Separator />
-                                    <MenuItem Header="Добавить счет-фактуру" Command="{Binding SetNewCreditorSFCommand}" />
+                                    <MenuItem Header="Добавить счет-фактуру поставщика" Command="{Binding SetNewCreditorSFCommand}" />
                                     <MenuItem Header="Счет-фактура для позиции" Command="{Binding SetCreditorSFCommand}" />
                                     <Separator />
                                     <MenuItem Header="Экспорт"

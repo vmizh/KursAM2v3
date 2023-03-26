@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Windows;
+using Core.ViewModel.Base;
 using DevExpress.Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
@@ -7,6 +8,7 @@ using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Finance;
 using KursDomain;
+using KursDomain.ICommon;
 using KursDomain.References;
 using LayoutManager;
 
@@ -120,7 +122,6 @@ namespace KursAM2.View.Finance
                     col.EditSettings = new ComboBoxEditSettings
                     {
                         DisplayMember = "Name",
-                        //ValueMember = "DocCode",
                         ItemsSource = GlobalOptions.ReferencesCache.GetNomenklProductTypesAll()
                             .Cast<NomenklProductType>().ToList()
                     };
@@ -128,9 +129,13 @@ namespace KursAM2.View.Finance
                     col.EditSettings = new ComboBoxEditSettings
                     {
                         DisplayMember = "Name",
-                        //ValueMember = "DocCode",
                         ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList()
                     };
+            }
+            
+            if (DataContext is MutualAcountingWindowViewModel ctx)
+            {
+                ctx.Document.State = RowStatus.NotEdited;
             }
         }
 
@@ -228,6 +233,12 @@ namespace KursAM2.View.Finance
                         break;
                 }
             }
+
+            if (DataContext is MutualAcountingWindowViewModel ctx)
+            {
+                ctx.Document.State = RowStatus.NotEdited;
+            }
+
         }
     }
 }

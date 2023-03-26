@@ -11,7 +11,6 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using KursDomain.Repository;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using Helper;
@@ -31,6 +30,7 @@ using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.Repository;
 using Reports.Base;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -55,6 +55,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public readonly GenericKursDBRepository<SD_84> GenericClientRepository;
         public IInvoiceClientRepository InvoiceClientRepository;
         private readonly List<decimal> myUsedNomenklsDC = new List<decimal>();
+
         // ReSharper disable once NotAccessedField.Local
         private bool IsLoadPay = true;
 
@@ -566,7 +567,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var kontr = StandartDialogs.SelectKontragent(Document.Currency);
             if (kontr == null) return;
             if (Document.Rows.Any(_ =>
-                    !_.IsUsluga && ((IDocCode) _.Nomenkl.Currency).DocCode != ((IDocCode) kontr.Currency).DocCode))
+                    !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != ((IDocCode)kontr.Currency).DocCode))
             {
                 WindowManager.ShowMessage(
                     "По счету есть товары с валютой, отличной от валюты контрагента. Изменить контрагента нельзя.",
@@ -608,7 +609,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     if (item.DefaultNDSPercent == null)
                         nds = 0;
                     else
-                        nds = (decimal) item.DefaultNDSPercent;
+                        nds = (decimal)item.DefaultNDSPercent;
                     // ReSharper disable once UseObjectOrCollectionInitializer
                     var r = new InvoiceClientRowViewModel
                     {
@@ -626,7 +627,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     };
                     r.Entity.SFT_NEMENKL_DC = item.DocCode;
                     Document?.Rows.Add(r);
-                    if(Document != null)
+                    if (Document != null)
                         Document.Entity.TD_84.Add(r.Entity);
                     newCode++;
                 }
@@ -647,7 +648,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var kontr = StandartDialogs.SelectKontragent(Document.Currency);
             if (kontr == null) return;
             if (Document.Rows.Any(_ =>
-                    !_.IsUsluga && ((IDocCode) _.Nomenkl.Currency).DocCode != ((IDocCode) kontr.Currency).DocCode))
+                    !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != ((IDocCode)kontr.Currency).DocCode))
             {
                 WindowManager.ShowMessage(
                     "По счету есть товары с валютой, отличной от валюты дилера. Изменить контрагента нельзя.",
@@ -656,7 +657,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
 
             Document.Diler = kontr;
-            Document.SF_DILER_CRS_DC = ((IDocCode) kontr.Currency).DocCode;
+            Document.SF_DILER_CRS_DC = ((IDocCode)kontr.Currency).DocCode;
             Document.SF_DILER_SUMMA = 0;
             Document.SF_DILER_RATE = 1;
             if (Form is InvoiceClientView frm)
@@ -679,7 +680,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var kontr = StandartDialogs.SelectKontragent(Document.Currency);
             if (kontr == null) return;
             if (Document.Rows.Any(_ =>
-                    !_.IsUsluga && ((IDocCode) _.Nomenkl.Currency).DocCode != ((IDocCode) kontr.Currency).DocCode))
+                    !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != ((IDocCode)kontr.Currency).DocCode))
             {
                 WindowManager.ShowMessage(
                     "По счету есть товары с валютой, отличной от валюты контрагента. Изменить контрагента нельзя.",
@@ -709,7 +710,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     case MessageBoxResult.No:
                         foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
                         Document.LoadReferences();
-                        LoadFromExternal();
+                        //LoadFromExternal();
 
                         foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>())
                         {
@@ -731,7 +732,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
                 Document.LoadReferences();
-                LoadFromExternal();
+                //LoadFromExternal();
 
                 foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>())
                 {
@@ -761,8 +762,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         DocumentType = DocumentType.Bank,
                         DocumentName =
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
-                        Summa = (decimal) c.VVT_VAL_PRIHOD,
+                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
+                        Summa = (decimal)c.VVT_VAL_PRIHOD,
                         Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as Currency,
                         Note = c.VVT_DOC_NUM
                     });
@@ -775,8 +776,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         DocumentType = DocumentType.MutualAccounting,
                         DocumentName =
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.SD_110.VZ_DATE.ToShortDateString()} на {(decimal) c.VZT_CRS_SUMMA}",
-                        Summa = (decimal) c.VZT_CRS_SUMMA,
+                            $"{c.SD_110.VZ_DATE.ToShortDateString()} на {(decimal)c.VZT_CRS_SUMMA}",
+                        Summa = (decimal)c.VZT_CRS_SUMMA,
                         Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VZT_CRS_DC) as Currency,
                         Note = c.VZT_DOC_NUM
                     });
@@ -789,8 +790,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         DocumentType = DocumentType.CashIn,
                         DocumentName =
                             // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.DATE_ORD.Value.ToShortDateString()} на {(decimal) c.CRS_SUMMA} {GlobalOptions.ReferencesCache.GetCashBox(c.CA_DC)}",
-                        Summa = (decimal) c.CRS_SUMMA,
+                            $"{c.DATE_ORD.Value.ToShortDateString()} на {(decimal)c.CRS_SUMMA} {GlobalOptions.ReferencesCache.GetCashBox(c.CA_DC)}",
+                        Summa = (decimal)c.CRS_SUMMA,
                         Currency = GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC) as Currency,
                         Note = c.NUM_ORD.ToString()
                     });
@@ -857,7 +858,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (Document.SF_UCHET_VALUTA_RATE == null) Document.SF_UCHET_VALUTA_RATE = 1;
 
                 if (Document.SF_KONTR_CRS_DC == null)
-                    Document.SF_KONTR_CRS_DC = ((IDocCode) Document.Client.Currency).DocCode;
+                    Document.SF_KONTR_CRS_DC = ((IDocCode)Document.Client.Currency).DocCode;
 
                 if (Document.Entity.SF_KONTR_CRS_SUMMA == null) Document.Entity.SF_KONTR_CRS_SUMMA = Document.Summa;
                 foreach (var row in Document.Rows.Cast<InvoiceClientRowViewModel>())
@@ -866,7 +867,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
-                    Document.DocCode, null, (string) Document.ToJson());
+                    Document.DocCode, null, (string)Document.ToJson());
                 RecalcKontragentBalans.CalcBalans(Document.Client.DocCode, Document.DocDate);
                 nomenklManager.RecalcPrice(myUsedNomenklsDC);
                 foreach (var ndc in Document.Rows.Select(_ => _.Nomenkl.DocCode)) AddUsedNomenkl(ndc);
@@ -952,8 +953,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get
             {
                 return new Command(DeleteRow,
-                    _ => CurrentRow != null && Document != null 
-                                            && Document.ShipmentRows.All(x => x.Nomenkl.DocCode != CurrentRow.Nomenkl.DocCode));
+                    _ => CurrentRow != null && Document != null
+                                            && Document.ShipmentRows.All(x =>
+                                                x.Nomenkl.DocCode != CurrentRow.Nomenkl.DocCode));
             }
         }
 
@@ -1018,8 +1020,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new InvoiceClientView {Owner = Application.Current.MainWindow};
-            var ctx = new ClientWindowViewModel {Form = frm};
+            var frm = new InvoiceClientView { Owner = Application.Current.MainWindow };
+            var ctx = new ClientWindowViewModel { Form = frm };
             ctx.Document = InvoicesManager.NewClient();
             frm.Show();
             frm.DataContext = ctx;
@@ -1076,7 +1078,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     if (item.DefaultNDSPercent == null)
                         nds = 0;
                     else
-                        nds = (decimal) item.DefaultNDSPercent;
+                        nds = (decimal)item.DefaultNDSPercent;
                     // ReSharper disable once UseObjectOrCollectionInitializer
                     var r = new InvoiceClientRowViewModel
                     {
@@ -1141,7 +1143,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     if (item.DefaultNDSPercent == null)
                         nds = 0;
                     else
-                        nds = (decimal) item.DefaultNDSPercent;
+                        nds = (decimal)item.DefaultNDSPercent;
                     // ReSharper disable once UseObjectOrCollectionInitializer
                     var r = new InvoiceClientRowViewModel
                     {
@@ -1159,7 +1161,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     };
                     r.Entity.SFT_NEMENKL_DC = item.DocCode;
                     Document?.Rows.Add(r);
-                    if(Document != null)
+                    if (Document != null)
                         Document.Entity.TD_84.Add(r.Entity);
                     newCode++;
                 }
@@ -1298,7 +1300,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         // ReSharper disable once PossibleInvalidOperationException
                         $"{GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC)} ({c.CREATOR})",
                     // ReSharper disable once PossibleInvalidOperationException
-                    Summa = (decimal) c.SUMM_ORD,
+                    Summa = (decimal)c.SUMM_ORD,
                     Currency = GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC) as Currency,
                     Note = c.NOTES_ORD
                 });
@@ -1312,8 +1314,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     DocumentType = DocumentType.Bank,
                     DocumentName =
                         // ReSharper disable once PossibleInvalidOperationException
-                        $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal) c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
-                    Summa = (decimal) c.VVT_VAL_PRIHOD,
+                        $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
+                    Summa = (decimal)c.VVT_VAL_PRIHOD,
                     Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as Currency,
                     Note = c.VVT_DOC_NUM
                 });
@@ -1328,7 +1330,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         // ReSharper disable once PossibleInvalidOperationException
                         $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA}",
                     // ReSharper disable once PossibleInvalidOperationException
-                    Summa = (decimal) c.VZT_CRS_SUMMA,
+                    Summa = (decimal)c.VZT_CRS_SUMMA,
                     Currency = GlobalOptions.ReferencesCache.GetCurrency(c.SD_110.CurrencyFromDC) as Currency,
                     Note = c.VZT_DOC_NOTES
                 });

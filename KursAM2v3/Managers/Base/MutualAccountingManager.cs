@@ -68,8 +68,6 @@ namespace KursAM2.Managers.Base
 
         public override SD_110ViewModel Save(SD_110ViewModel doc)
         {
-            var listSfPostDC = new List<decimal>();
-            var listSfClientDC = new List<decimal>();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 using (var tran = ctx.Database.BeginTransaction())
@@ -136,12 +134,6 @@ namespace KursAM2.Managers.Base
                                     var delRow =
                                         ctx.TD_110.FirstOrDefault(_ => _.DOC_CODE == r.DocCode && _.CODE == r.Code);
                                     if (delRow == null) continue;
-                                    if(delRow.VZT_SPOST_DC != null)
-                                        listSfPostDC.Add(delRow.VZT_SPOST_DC.Value);
-                                    if (delRow.VZT_SFACT_DC != null)
-                                    {
-                                        listSfClientDC.Add(delRow.VZT_SFACT_DC.Value);
-                                    }
                                     ctx.TD_110.Remove(delRow);
                                     var prows = ctx.ProviderInvoicePay.Where(_ =>
                                         _.VZDC == r.DocCode && _.VZCode == r.Code).ToList();
@@ -230,7 +222,6 @@ namespace KursAM2.Managers.Base
                                 {
                                     // ReSharper disable once PossibleInvalidOperationException
                                     prow.Summa = (decimal)r.VZT_CRS_SUMMA;
-                                    //ctx.Database.ExecuteSqlCommand($"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {Helper.CustomFormat.DecimalToSqlDecimal(prow.DocDC)}");
                                 }
                                 else
                                 {
@@ -245,7 +236,6 @@ namespace KursAM2.Managers.Base
                                         VZCode = r.Code
                                     };
                                     ctx.ProviderInvoicePay.Add(newItem);
-                                    //ctx.Database.ExecuteSqlCommand($"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {Helper.CustomFormat.DecimalToSqlDecimal(prow.DocDC)}");
                                 }
                             }
 
@@ -258,18 +248,6 @@ namespace KursAM2.Managers.Base
                             if (row.VZT_SFACT_DC != null)
                                 ctx.Database.ExecuteSqlCommand(
                                     $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(row.VZT_SFACT_DC)}");
-                        }
-
-                        foreach (var dc in listSfClientDC)
-                        {
-                            ctx.Database.ExecuteSqlCommand(
-                                $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(dc)}");
-                        }
-                        foreach (var dc in listSfPostDC)
-                        {
-                            ctx.Database.ExecuteSqlCommand(
-                                $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(dc)}");
-
                         }
 
                         doc.myState = RowStatus.NotEdited;
@@ -407,11 +385,46 @@ namespace KursAM2.Managers.Base
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var d = ctx.SD_110.Include(_ => _.TD_110).FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
-                    if (d != null)
+                    var sfClientDCList = new List<decimal>();
+                    var sfProviderDCList = new List<decimal>();
+                    var items = new List<(decimal, int)>();
+                    if (d == null) return;
+                    foreach (var r in d.TD_110)
                     {
-                        ctx.SD_110.Remove(d);
-                        ctx.SaveChanges();
+                        items.Add((r.DOC_CODE, r.CODE));
+                        if (r.VZT_SFACT_DC != null)
+                        {
+                            sfClientDCList.Add(r.VZT_SFACT_DC.Value);
+
+                        }
+
+                        if (r.VZT_SPOST_DC != null)
+                        {
+                            sfProviderDCList.Add(r.VZT_SPOST_DC.Value);
+                        }
                     }
+                    foreach (var pd in items.Select(item => ctx.ProviderInvoicePay.FirstOrDefault(_ =>
+                                 _.VZDC == item.Item1 && _.VZCode == item.Item2)).Where(pd => pd != null))
+                    {
+                        ctx.ProviderInvoicePay.Remove(pd);
+                    }
+                    ctx.SD_110.Remove(d);
+                    ctx.SaveChanges();
+                    if (sfClientDCList.Count > 0)
+                        foreach (var sfClientDC in sfClientDCList)
+                        {
+                            ctx.Database.ExecuteSqlCommand(
+                                $"EXEC dbo.GenerateSFClientCash {Helper.CustomFormat.DecimalToSqlDecimal(sfClientDC)}");
+                        }
+
+                    if (sfProviderDCList.Count > 0)
+                        foreach (var sfProviderDC in sfProviderDCList)
+                        {
+                            ctx.Database.ExecuteSqlCommand(
+                                $"EXEC dbo.GenerateSFProviderCash {Helper.CustomFormat.DecimalToSqlDecimal(sfProviderDC)}");
+                        }
+
+                    ctx.SaveChanges();
                 }
             }
             catch (Exception ex)

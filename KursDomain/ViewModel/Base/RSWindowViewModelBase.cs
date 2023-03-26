@@ -11,12 +11,15 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
+using DevExpress.XtraGrid;
 using Helper;
 using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.Menu;
 using LayoutManager;
+using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace Core.ViewModel.Base
 {
@@ -256,6 +259,7 @@ namespace Core.ViewModel.Base
                     grid.FilterString = null;
                     foreach (var col in grid.Columns)
                     {
+                        col.AutoFilterCondition = AutoFilterCondition.Contains;
                         col.Name = col.FieldName;
                         if (col.FieldType == typeof(decimal) ||
                             col.FieldType == typeof(decimal?)
@@ -283,6 +287,29 @@ namespace Core.ViewModel.Base
                                 ShowInColumn = col.FieldName
                             });
                         }
+
+                        if (col.FieldType != typeof(decimal) && col.FieldType != typeof(decimal?)
+                                                             && col.FieldType != typeof(double) &&
+                                                             col.FieldType != typeof(double?)
+                                                             && col.FieldType != typeof(float) &&
+                                                             col.FieldType != typeof(float?)
+                                                             && col.FieldType != typeof(DateTime) &&
+                                                             col.FieldType != typeof(DateTime?))
+                        {
+                            col.SortMode = ColumnSortMode.DisplayText;
+                            col.ColumnFilterMode = ColumnFilterMode.DisplayText;
+                            col.SortMode = ColumnSortMode.DisplayText;
+                            if (col.FieldType == typeof(string))
+                                col.EditSettings = new TextEditSettings
+                                {
+                                    SelectAllOnMouseUp = true
+                                };
+                        }
+                        else
+                        {
+                            col.SortMode = ColumnSortMode.Value;
+                            col.ColumnFilterMode = ColumnFilterMode.Value;
+                        }
                     }
                 }
             }
@@ -292,7 +319,32 @@ namespace Core.ViewModel.Base
                 foreach (var t in trees)
                 {
                     foreach (var col in t.Columns)
+                    {
+                        col.AutoFilterCondition = AutoFilterCondition.Contains;
                         col.Name = col.FieldName;
+                        if (col.FieldType != typeof(decimal) && col.FieldType != typeof(decimal?)
+                                                             && col.FieldType != typeof(double) &&
+                                                             col.FieldType != typeof(double?)
+                                                             && col.FieldType != typeof(float) &&
+                                                             col.FieldType != typeof(float?)
+                                                             && col.FieldType != typeof(DateTime) &&
+                                                             col.FieldType != typeof(DateTime?))
+                        {
+                            col.SortMode = ColumnSortMode.DisplayText;
+                            col.ColumnFilterMode = ColumnFilterMode.DisplayText;
+                            col.SortMode = ColumnSortMode.DisplayText;
+                            if (col.FieldType == typeof(string))
+                                col.EditSettings = new TextEditSettings
+                                {
+                                    SelectAllOnMouseUp = true
+                                };
+                        }
+                        else
+                        {
+                            col.SortMode = ColumnSortMode.Value;
+                            col.ColumnFilterMode = ColumnFilterMode.Value;
+                        }
+                    }
                 }
             }
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;

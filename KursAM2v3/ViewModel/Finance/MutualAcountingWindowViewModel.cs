@@ -159,7 +159,7 @@ namespace KursAM2.ViewModel.Finance
 
         public ICommand SetNewDebitorSFCommand
         {
-            get { return new Command(SetNewDebitorSF, _ => true); }
+            get { return new Command(SetNewDebitorSF, _ => Document.MutualAccountingOldType != null); }
         }
 
         private void SetNewDebitorSF(object obj)
@@ -195,6 +195,8 @@ namespace KursAM2.ViewModel.Finance
                     SfClient = item,
                     MaxSumma = item.Summa - item.PaySumma,
                 };
+                if (Document.DebitorCurrency == null)
+                    Document.DebitorCurrency = newdeb.Currency;
                 Document.Rows.Add(newdeb);
                 DebitorCollection.Add(newdeb);
                 CurrentDebitor = newdeb;
@@ -205,9 +207,7 @@ namespace KursAM2.ViewModel.Finance
 
         private void SetCreditorSF(object obj)
         {
-            var item = CurrentCreditor.VZT_KONTR_DC > 0
-                ? StandartDialogs.SelectInvoiceProvider(CurrentCreditor.VZT_KONTR_DC, true, true, true)
-                : StandartDialogs.SelectInvoiceProvider(true, true, true, Document.CreditorCurrency);
+            var item = StandartDialogs.SelectInvoiceProvider(CurrentCreditor.VZT_KONTR_DC, true, true, true);
             if (item == null) return;
             CurrentCreditor.VZT_DOC_NUM = (Document.Rows.Count + 1).ToString();
             CurrentCreditor.VZT_CRS_POGASHENO = item.Summa - item.PaySumma;
@@ -220,12 +220,15 @@ namespace KursAM2.ViewModel.Finance
                 GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_POST_DC) as Kontragent;
             CurrentCreditor.SFProvider = item;
             CurrentCreditor.MaxSumma = item.Summa - item.PaySumma;
+            if (Document.CreditorCurrency == null)
+                Document.CreditorCurrency = CurrentCreditor.Currency;
             if (CurrentCreditor.State == RowStatus.NotEdited) CurrentCreditor.myState = RowStatus.Edited;
             // ReSharper disable once PossibleNullReferenceException
             KontragentManager.UpdateSelectCount(CurrentCreditor.Kontragent.DocCode);
             CalcItogoSumma();
         }
 
+        
         private void SetNewCreditorSF(object obj)
         {
 
@@ -262,13 +265,14 @@ namespace KursAM2.ViewModel.Finance
                 MaxSumma = item.Summa - item.PaySumma
             };
             Document.Rows.Add(newcred);
+            if (Document.CreditorCurrency == null)
+                Document.CreditorCurrency = newcred.Currency;
             CreditorCollection.Add(newcred);
             CurrentCreditor = newcred;
             // ReSharper disable once PossibleNullReferenceException
             KontragentManager.UpdateSelectCount(newcred.Kontragent.DocCode);
             CalcItogoSumma();
         }
-
 
         public ICommand SetCreditorSFCommand
         {
@@ -277,15 +281,12 @@ namespace KursAM2.ViewModel.Finance
 
         public ICommand SetNewCreditorSFCommand
         {
-            get { return new Command(SetNewCreditorSF, _ => true); }
+            get { return new Command(SetNewCreditorSF, _ => Document.MutualAccountingOldType != null); }
         }
 
         private void SetDebitorSF(object obj)
         {
-
-            var item = CurrentDebitor.VZT_KONTR_DC > 0
-                ? StandartDialogs.SelectInvoiceClient(CurrentDebitor.VZT_KONTR_DC, true, true)
-                : StandartDialogs.SelectInvoiceClient(true, true, Document.DebitorCurrency);
+            var item = StandartDialogs.SelectInvoiceClient(CurrentDebitor.VZT_KONTR_DC, true, true);
             if (item == null) return;
             CurrentDebitor.VZT_DOC_NUM = (Document.Rows.Count + 1).ToString();
             CurrentDebitor.VZT_CRS_POGASHENO = item.Summa - item.PaySumma;
@@ -517,7 +518,9 @@ namespace KursAM2.ViewModel.Finance
             {
                 r.myState = RowStatus.NotEdited;
             }
-            Document.State = RowStatus.NotEdited;
+            Document.myState = RowStatus.NotEdited;
+            Document.RaisePropertyChanged("State");
+            RaisePropertyChanged(nameof(WindowName));
         }
 
         private void UpdateDebitorCreditorCollections(TD_110ViewModel vm, bool isDebitor = true)

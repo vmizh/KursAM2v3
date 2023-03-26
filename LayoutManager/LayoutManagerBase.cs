@@ -27,7 +27,7 @@ namespace LayoutManager
         {
             get
             {
-                var spath = (string) Application.Current.Properties["DataPath"];
+                var spath = (string)Application.Current.Properties["DataPath"];
                 if (!Directory.Exists(spath))
                     Directory.CreateDirectory(spath);
                 return spath;
@@ -63,7 +63,7 @@ namespace LayoutManager
                     var ms = new MemoryStream();
                     if (LayoutControl != null && !(LayoutControl is DataLayoutControl))
                     {
-                        DXSerializer.Serialize(LayoutControl, ms, "Kurs", null);
+                        DXSerializer.Serialize(LayoutControl, ms, "Kurs");
                         saveLayout.Layout = ms.ToArray();
                     }
 
@@ -133,7 +133,7 @@ namespace LayoutManager
 
         public WindowsScreenState WindowSave()
         {
-            var saveLayout = new WindowsScreenState {IsWindow = false};
+            var saveLayout = new WindowsScreenState { IsWindow = false };
             if (Win != null)
                 saveLayout = new WindowsScreenState
                 {
@@ -200,7 +200,7 @@ namespace LayoutManager
                 if (LayoutControl != null && !(LayoutControl is DataLayoutControl))
                 {
                     var ms1 = new MemoryStream();
-                    DXSerializer.Serialize(LayoutControl, ms1, "Kurs", null);
+                    DXSerializer.Serialize(LayoutControl, ms1, "Kurs");
                     WinState.Layout = ms1.ToArray();
                 }
 
@@ -223,7 +223,7 @@ namespace LayoutManager
                 }
 
                 if (!(new DataContractSerializer(typeof(WindowsScreenState)).ReadObject(r) is WindowsScreenState p)
-                ) return;
+                   ) return;
                 if (Win != null)
                 {
                     Win.WindowStartupLocation = p.FormStartLocation;
@@ -238,21 +238,22 @@ namespace LayoutManager
                 var ms = new MemoryStream(p.Layout);
                 //var doc = XDocument.Load(ms);
                 if (LayoutControl != null)
-                    DXSerializer.Deserialize(LayoutControl, ms, "Kurs", null);
+                    DXSerializer.Deserialize(LayoutControl, ms, "Kurs");
                 var grids = WindowHelper.GetLogicalChildCollection<GridControl>(LayoutControl);
                 var trees = WindowHelper.GetLogicalChildCollection<TreeListControl>(LayoutControl);
                 if (grids != null && grids.Count > 0)
                     foreach (var ctrl in grids)
                     foreach (var column in ctrl.Columns)
+                    {
+                        column.AutoFilterCondition = AutoFilterCondition.Contains;
                         if (column.FieldType != typeof(decimal) && column.FieldType != typeof(decimal?)
                                                                 && column.FieldType != typeof(double) &&
                                                                 column.FieldType != typeof(double?)
-                                                                && column.FieldType == typeof(float) &&
-                                                                column.FieldType == typeof(float?)
+                                                                && column.FieldType != typeof(float) &&
+                                                                column.FieldType != typeof(float?)
                                                                 && column.FieldType != typeof(DateTime) &&
                                                                 column.FieldType != typeof(DateTime?))
                         {
-                            column.AutoFilterCondition = AutoFilterCondition.Contains;
                             column.ColumnFilterMode = ColumnFilterMode.DisplayText;
                             column.SortMode = ColumnSortMode.DisplayText;
                             if (column.FieldType == typeof(string))
@@ -261,27 +262,25 @@ namespace LayoutManager
                                     SelectAllOnMouseUp = true
                                 };
                         }
+                    }
 
                 if (trees != null && trees.Count > 0)
                     foreach (var ctrl in trees)
                     foreach (var column in ctrl.Columns)
-                        if (column.FieldType != typeof(decimal) && column.FieldType != typeof(decimal?)
-                                                                && column.FieldType != typeof(double) &&
-                                                                column.FieldType != typeof(double?)
-                                                                && column.FieldType == typeof(float) &&
-                                                                column.FieldType == typeof(float?)
-                                                                && column.FieldType != typeof(DateTime) &&
-                                                                column.FieldType != typeof(DateTime?))
-                        {
-                            column.AutoFilterCondition = AutoFilterCondition.Contains;
-                            column.ColumnFilterMode = ColumnFilterMode.DisplayText;
-                            column.SortMode = ColumnSortMode.DisplayText;
-                            if (column.FieldType == typeof(string))
-                                column.EditSettings = new TextEditSettings
-                                {
-                                    SelectAllOnMouseUp = true
-                                };
-                        }
+                    {
+                        column.AutoFilterCondition = AutoFilterCondition.Contains;
+                        if (column.FieldType == typeof(decimal) || column.FieldType == typeof(decimal?) ||
+                            column.FieldType == typeof(double) || column.FieldType == typeof(double?) ||
+                            column.FieldType != typeof(float) || column.FieldType != typeof(float?) ||
+                            column.FieldType == typeof(DateTime) || column.FieldType == typeof(DateTime?)) continue;
+                        column.ColumnFilterMode = ColumnFilterMode.DisplayText;
+                        column.SortMode = ColumnSortMode.DisplayText;
+                        if (column.FieldType == typeof(string))
+                            column.EditSettings = new TextEditSettings
+                            {
+                                SelectAllOnMouseUp = true
+                            };
+                    }
 
                 if (autoSummary)
                 {
@@ -289,6 +288,8 @@ namespace LayoutManager
                     {
                         ctrl1.TotalSummary.Clear();
                         foreach (var column in ctrl1.Columns)
+                        {
+                            column.AutoFilterCondition = AutoFilterCondition.Contains;
                             if (column.FieldType == typeof(decimal) || column.FieldType == typeof(decimal?)
                                                                     || column.FieldType == typeof(double) ||
                                                                     column.FieldType == typeof(double?)
@@ -304,32 +305,28 @@ namespace LayoutManager
                                 };
                                 ctrl1.TotalSummary.Add(summary);
                             }
-                            else
-                            {
-                                if (column.FieldType != typeof(decimal) && column.FieldType != typeof(decimal?)
-                                                                        && column.FieldType != typeof(double) &&
-                                                                        column.FieldType != typeof(double?)
-                                    || column.FieldType == typeof(float) ||
-                                    column.FieldType == typeof(float?))
+
+                            if (column.FieldType == typeof(decimal) || column.FieldType == typeof(decimal?) ||
+                                column.FieldType == typeof(double) || column.FieldType == typeof(double?) ||
+                                column.FieldType == typeof(float) || column.FieldType == typeof(float?) ||
+                                column.FieldType == typeof(DateTime) || column.FieldType == typeof(DateTime?)) continue;
+                            column.ColumnFilterMode = ColumnFilterMode.DisplayText;
+                            column.SortMode = ColumnSortMode.DisplayText;
+                            if (column.FieldType == typeof(string))
+                                column.EditSettings = new TextEditSettings
                                 {
-                                    column.AutoFilterCondition = AutoFilterCondition.Contains;
-                                    column.ColumnFilterMode = ColumnFilterMode.DisplayText;
-                                    column.SortMode = ColumnSortMode.DisplayText;
-                                    if (column.FieldType == typeof(string))
-                                    {
-                                        column.EditSettings = new TextEditSettings
-                                        {
-                                            SelectAllOnMouseUp = true
-                                        };
-                                    }
-                                }
-                            }
+                                    SelectAllOnMouseUp = true
+                                };
+                        }
                     }
+
 
                     if (LayoutControl is TreeListControl ctrl)
                     {
                         ctrl.TotalSummary.Clear();
                         foreach (var column in ctrl.Columns)
+                        {
+                            column.AutoFilterCondition = AutoFilterCondition.Contains;
                             if (column.FieldType == typeof(decimal) || column.FieldType == typeof(decimal?)
                                                                     || column.FieldType == typeof(double) ||
                                                                     column.FieldType == typeof(double?)
@@ -345,27 +342,19 @@ namespace LayoutManager
                                 };
                                 ctrl.TotalSummary.Add(summary);
                             }
-                            else
-                            {
-                                foreach (var col in ctrl.Columns)
-                                    if (col.FieldType != typeof(decimal) || column.FieldType == typeof(decimal?)
-                                                                         || column.FieldType == typeof(double) ||
-                                                                         column.FieldType == typeof(double?)
-                                                                         || column.FieldType == typeof(float) ||
-                                                                         column.FieldType == typeof(float?))
-                                    {
-                                        column.AutoFilterCondition = AutoFilterCondition.Contains;
-                                        column.ColumnFilterMode = ColumnFilterMode.DisplayText;
-                                        column.SortMode = ColumnSortMode.DisplayText;
-                                        if (column.FieldType == typeof(string))
-                                        {
-                                            column.EditSettings = new TextEditSettings
-                                            {
-                                                SelectAllOnMouseUp = true
-                                            };
-                                        }
-                                    }
-                            }
+
+                            if (column.FieldType == typeof(decimal) || column.FieldType == typeof(decimal?) ||
+                                column.FieldType == typeof(double) || column.FieldType == typeof(double?) ||
+                                column.FieldType == typeof(float) || column.FieldType == typeof(float?) ||
+                                column.FieldType == typeof(DateTime) || column.FieldType == typeof(DateTime?)) continue;
+                            column.ColumnFilterMode = ColumnFilterMode.DisplayText;
+                            column.SortMode = ColumnSortMode.DisplayText;
+                            if (column.FieldType == typeof(string))
+                                column.EditSettings = new TextEditSettings
+                                {
+                                    SelectAllOnMouseUp = true
+                                };
+                        }
                     }
                 }
 

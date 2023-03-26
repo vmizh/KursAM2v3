@@ -94,7 +94,7 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
         { 
             if (TD_101 != null) return TD_101.SD_101.VV_START_DATE;
             if (TD_110 != null) return TD_110.SD_110.VZ_DATE;
-            if (SD_34 != null) return SD_34.DATE_ORD.Value;
+            if (SD_34 != null) return SD_34.DATE_ORD ?? DateTime.MinValue;
             return DateTime.MinValue;
         }
        

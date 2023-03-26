@@ -15,6 +15,7 @@ using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
 using KursDomain.References;
+using KursDomain.Repository;
 using Newtonsoft.Json;
 using NomenklProductType = KursDomain.References.NomenklProductType;
 using ValidationError = Core.Helper.ValidationError;
@@ -61,7 +62,6 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         if (context != null)
             doc = context.Context.SD_84.FirstOrDefault(_ => _.DOC_CODE == dc);
         return doc == null ? null : $"№ {doc.SF_IN_NUM}/{doc.SF_OUT_NUM} от {doc.SF_DATE}  {doc.SF_NOTE}";
-
     }
 
     public virtual void Save(SD_26 doc)
@@ -116,7 +116,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     //private References.Currency myCurrency;
     private DogovorOfSupplierViewModel myDogovorOfSupplier;
-    private readonly Repository.UnitOfWork<ALFAMEDIAEntities> context;
+    private readonly UnitOfWork<ALFAMEDIAEntities> context;
 
     #endregion
 
@@ -127,14 +127,14 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         Entity = DefaultValue();
     }
 
-    public InvoiceProvider(Repository.UnitOfWork<ALFAMEDIAEntities> ctx)
+    public InvoiceProvider(UnitOfWork<ALFAMEDIAEntities> ctx)
     {
         context = ctx;
         Entity = DefaultValue();
         LoadReferences();
     }
 
-    public InvoiceProvider(SD_26 entity, Repository.UnitOfWork<ALFAMEDIAEntities> ctx, bool isLoadAll = false)
+    public InvoiceProvider(SD_26 entity, UnitOfWork<ALFAMEDIAEntities> ctx, bool isLoadAll = false)
     {
         this.isLoadAll = isLoadAll;
         context = ctx;
@@ -315,7 +315,6 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
             Entity.SF_KONTR_CRS_RATE = 1;
             Entity.SF_UCHET_VALUTA_RATE = 1;
             return s;
-
         }
     }
 
@@ -351,7 +350,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         set
         {
             if (Equals(GlobalOptions.ReferencesCache.GetCurrency(Entity.SF_CRS_DC), value)) return;
-             Entity.SF_CRS_DC = value?.DocCode;
+            Entity.SF_CRS_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -388,7 +387,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
             RaisePropertyChanged();
         }
     }
-   
+
     public short SF_PAY_FLAG
     {
         get => Entity.SF_PAY_FLAG;
@@ -1152,6 +1151,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
                         Facts.Add(newItem);
                     }
+
         RaisePropertyChanged(nameof(Summa));
     }
 
@@ -1374,11 +1374,11 @@ public class SD_26LayoutData_FluentAPI : DataAnnotationForFluentApiBase, IMetada
 [MetadataType(typeof(DataAnnotationsInvoiceProviderShort))]
 public class InvoiceProviderShort : InvoiceProvider
 {
-    public InvoiceProviderShort(Repository.UnitOfWork<ALFAMEDIAEntities> ctx) : base(ctx)
+    public InvoiceProviderShort(UnitOfWork<ALFAMEDIAEntities> ctx) : base(ctx)
     {
     }
 
-    public InvoiceProviderShort(SD_26 entity, Repository.UnitOfWork<ALFAMEDIAEntities> ctx) : base(entity, ctx)
+    public InvoiceProviderShort(SD_26 entity, UnitOfWork<ALFAMEDIAEntities> ctx) : base(entity, ctx)
     {
     }
 }

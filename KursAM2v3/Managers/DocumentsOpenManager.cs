@@ -205,6 +205,7 @@ namespace KursAM2.Managers
                     break;
                 case DocumentType.MutualAccounting:
                     var mut = OpenMutualAccounting(dc);
+                    mut.Document.myState = RowStatus.NotEdited;
                     SaveLastOpenInfo(docType, mut.Document.Id, mut.Document.DocCode, mut.Document.CREATOR,
                         "", mut.Document.Description);
                     break;

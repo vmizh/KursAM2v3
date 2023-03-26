@@ -258,8 +258,24 @@ namespace KursAM2.ViewModel.Finance
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
             if (res != MessageBoxResult.Yes) return;
+            var sfPostDC = CurrentBankOperations.VVT_SFACT_POSTAV_DC;
+            var sfFactDC = CurrentBankOperations.VVT_SFACT_CLIENT_DC;
             var date = CurrentBankOperations.Date;
             manager.DeleteBankOperations(CurrentBankOperations, CurrentBankAccount.DocCode);
+            if (sfPostDC != null)
+            {
+                using (var context = GlobalOptions.GetEntities())
+                {
+                    context.Database.ExecuteSqlCommand($"EXEC dbo.GenerateSFProviderCash {Helper.CustomFormat.DecimalToSqlDecimal(sfPostDC)}");
+                }
+            }
+            if (sfFactDC != null)
+            {
+                using (var context = GlobalOptions.GetEntities())
+                {
+                    context.Database.ExecuteSqlCommand($"EXEC dbo.GenerateSFClientCash {Helper.CustomFormat.DecimalToSqlDecimal(sfFactDC)}");
+                }
+            }
             UpdateValueInWindow(CurrentBankOperations);
             var dd = Periods.Where(_ => _.DateStart <= date && _.PeriodType == PeriodType.Day)
                 .Max(_ => _.DateStart);

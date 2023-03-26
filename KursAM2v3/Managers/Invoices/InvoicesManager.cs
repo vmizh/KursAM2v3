@@ -1171,7 +1171,7 @@ namespace KursAM2.Managers.Invoices
             var ret = new List<IInvoiceProvider>();
             try
             {
-                using (var context  = new UnitOfWork<ALFAMEDIAEntities>())
+                using (var context  = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString)))
                 {
                     List<SD_26> data;
                     if (isAccepted)
@@ -1728,11 +1728,13 @@ namespace KursAM2.Managers.Invoices
                     //MainReferences.UpdateNomenkl();
                     foreach (var d in data.OrderByDescending(_ => _.SF_DATE))
                     {
+                        
                         if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
                         var newDoc = new InvoiceClientViewModel(d, context, true)
                         {
                             State = RowStatus.NotEdited
                         };
+                        newDoc.PaymentDocs.Clear();
                         if (isUsePayment)
                         {
                             var pd = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode);

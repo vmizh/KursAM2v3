@@ -356,6 +356,10 @@ namespace KursAM2.Managers
                                         }
                                     }
                                 }
+
+                                ctx.Database.ExecuteSqlCommand(
+                                    $"EXEC dbo.GenerateSFProviderCash {Helper.CustomFormat.DecimalToSqlDecimal(item.VVT_SFACT_POSTAV_DC)}");
+
                             }
                             else
                             {
@@ -388,6 +392,9 @@ namespace KursAM2.Managers
                                                 return;
                                         }
                                     }
+                                ctx.Database.ExecuteSqlCommand(
+                                    $"EXEC dbo.GenerateSFClientCash {Helper.CustomFormat.DecimalToSqlDecimal(item.VVT_SFACT_CLIENT_DC)}");
+
                             }
 
                         var oldItem = ctx.TD_101.FirstOrDefault(_ => _.DOC_CODE == item.DocCode

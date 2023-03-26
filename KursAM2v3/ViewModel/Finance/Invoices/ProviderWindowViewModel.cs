@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Core.Helper;
@@ -307,32 +308,35 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
             else
             {
-                Document = new InvoiceProvider(doc, UnitOfWork)
+                Task.Run(() =>
                 {
-                    State = RowStatus.NotEdited
-                };
-                if (Document != null)
-                    WindowName = Document.ToString();
-                Document.myState = RowStatus.NotEdited;
-                var crsrates = new CurrencyRates(DateTime.Today.AddDays(-100), DateTime.Today);
-                var rate = Math.Round(crsrates.GetRate(Document.Currency.DocCode,
-                    GlobalOptions.SystemProfile.NationalCurrency.DocCode, DateTime.Today), 4);
-                if (Document.PaymentDocs.Count > 0)
-                    rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
-                foreach (var r in Document.Rows.Cast<InvoiceProviderRow>())
-                {
-                    AddUsedNomenkl(r.Nomenkl.DocCode);
-                    foreach (var rr in r.CurrencyConvertRows)
+                    Document = new InvoiceProvider(doc, UnitOfWork)
                     {
-                        rr.Rate = rate;
-                        rr.myState = RowStatus.NotEdited;
-                        AddUsedNomenkl(rr.Nomenkl.DocCode);
+                        State = RowStatus.NotEdited
+                    };
+                    if (Document != null)
+                        WindowName = Document.ToString();
+                    Document.myState = RowStatus.NotEdited;
+                    var crsrates = new CurrencyRates(DateTime.Today.AddDays(-100), DateTime.Today);
+                    var rate = Math.Round(crsrates.GetRate(Document.Currency.DocCode,
+                        GlobalOptions.SystemProfile.NationalCurrency.DocCode, DateTime.Today), 4);
+                    if (Document.PaymentDocs.Count > 0)
+                        rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
+                    foreach (var r in Document.Rows.Cast<InvoiceProviderRow>())
+                    {
+                        AddUsedNomenkl(r.Nomenkl.DocCode);
+                        foreach (var rr in r.CurrencyConvertRows)
+                        {
+                            rr.Rate = rate;
+                            rr.myState = RowStatus.NotEdited;
+                            AddUsedNomenkl(rr.Nomenkl.DocCode);
+                        }
+
+                        r.myState = RowStatus.NotEdited;
                     }
 
-                    r.myState = RowStatus.NotEdited;
-                }
-
-                Document.myState = RowStatus.NotEdited;
+                    Document.myState = RowStatus.NotEdited;
+                });
                 //RaiseAll();
             }
         }
@@ -808,7 +812,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var rate = Math.Round(crsrates.GetRate(Document.Currency.DocCode,
                 GlobalOptions.SystemProfile.NationalCurrency.DocCode, DateTime.Today), 4);
             Document.PaymentDocs.Clear();
-            foreach (var p in Document.Entity.ProviderInvoicePay)
+            foreach (var p in UnitOfWork.Context.ProviderInvoicePay
+                         .Include(_ => _.TD_101)
+                         .Include(_ => _.TD_101.SD_101)
+                         .Include(_ => _.TD_110)
+                         .Include(_ => _.TD_110.SD_110)
+                         .Include(_ => _.SD_34)
+                         .Where(_ => _.DocDC == Document.DocCode))
             {
                 Document.PaymentDocs.Add(new ProviderInvoicePayViewModel(p));
             }
@@ -1670,6 +1680,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             UnitOfWork.Context.ProviderInvoicePay.Remove(CurrentPaymentDoc.Entity);
             Document.PaymentDocs.Remove(CurrentPaymentDoc);
             SaveData(null);
+            UnitOfWork.Context.Database.ExecuteSqlCommand($"EXEC dbo.GenerateSFProviderCash {Helper.CustomFormat.DecimalToSqlDecimal(Document.DocCode)}");
             // ReSharper disable once StringLiteralTypo
             // ReSharper disable once NotResolvedInText
             Document.RaisePropertyChanged("PaySumma");

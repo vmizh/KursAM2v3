@@ -2,7 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursDomain.Repository;
@@ -26,13 +25,13 @@ namespace KursAM2.View.DialogUserControl
         private readonly Waybill waybill;
         private InvoiceClientViewModel myCurrentItem;
         private StandartDialogSelectUC myDataUserControl;
-        private Currency currency;
+        private readonly Currency currency;
 
         public InvoiceClientSearchDialog(bool isPaymentUse, bool isUseAcepted, Currency crs = null)
         {
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            WindowName = "Выбор счета";
+            WindowName = "Выбор счета клиенту";
             this.isPaymentUse = isPaymentUse;
             isAccepted = isUseAcepted;
             currency = crs;
@@ -43,7 +42,7 @@ namespace KursAM2.View.DialogUserControl
         {
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            WindowName = "Выбор счета";
+            WindowName = "Выбор счета клиенту";
             this.kontragentDC = kontragentDC;
             this.isPaymentUse = isPaymentUse;
             isAccepted = isUseAcepted;
@@ -257,7 +256,7 @@ namespace KursAM2.View.DialogUserControl
         {
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            WindowName = "Выбор счета";
+            WindowName = "Выбор счета поставщика";
             isPaymentUse = isUsePayment;
             isAccepted = isUseAccepted;
             this.isOnlyLastYear = isOnlyLastYear;
@@ -271,7 +270,7 @@ namespace KursAM2.View.DialogUserControl
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             kontragentDC = kontrDC;
-            WindowName = "Выбор счета";
+            WindowName = "Выбор счета поставщика";
             isPaymentUse = isUsePayment;
             isAccepted = isUseAccepted;
             this.isOnlyLastYear = isOnlyLastYear;
@@ -505,7 +504,6 @@ namespace KursAM2.View.DialogUserControl
                         if(inv.Currency == myCurrency)
                             ProviderItemsCollection.Add(inv);
                     }
-                       
                 }
                
                 ClientItemsCollection.Clear();

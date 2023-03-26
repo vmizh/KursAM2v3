@@ -94,16 +94,16 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
-        private Task Load()
-        {
-            var res = Task.Factory.StartNew(() =>
-                new List<IInvoiceProvider>(InvoiceProviderRepository.GetAllByDates(StartDate, EndDate)));
-            Documents.Clear();
-            foreach (var d in res.Result) Documents.Add(d);
-            RaisePropertyChanged(nameof(Documents));
-            DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
-            return res;
-        }
+        //private Task Load()
+        //{
+        //    var res = Task.Factory.StartNew(() =>
+        //        new List<IInvoiceProvider>(InvoiceProviderRepository.GetAllByDates(StartDate, EndDate)));
+        //    Documents.Clear();
+        //    foreach (var d in res.Result) Documents.Add(d);
+        //    RaisePropertyChanged(nameof(Documents));
+        //    DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
+        //    return res;
+        //}
 
         public override void RefreshData(object data)
         {

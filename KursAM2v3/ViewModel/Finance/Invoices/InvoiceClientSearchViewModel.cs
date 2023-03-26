@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -28,11 +27,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
     {
         public readonly GenericKursDBRepository<SD_84> GenericProviderRepository;
 
-        // ReSharper disable once NotAccessedField.Local
-        public IInvoiceClientRepository InvoiceClientRepository;
-
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+
+        // ReSharper disable once NotAccessedField.Local
+        public IInvoiceClientRepository InvoiceClientRepository;
 
         private IInvoiceClient myCurrentDocument;
 

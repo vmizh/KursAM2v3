@@ -43,9 +43,11 @@ public interface IInvoiceClient
     References.Currency Currency { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Отгружено")]
+    [DisplayFormat(DataFormatString = "n2", NullDisplayText = "0")]
     decimal SummaOtgruz { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Сумма дилера")]
+    [DisplayFormat(DataFormatString = "n2", NullDisplayText = "0")]
     decimal DilerSumma { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Примечание")]
@@ -58,6 +60,7 @@ public interface IInvoiceClient
     bool IsAccepted { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Сумма")]
+    [DisplayFormat(DataFormatString = "n2", NullDisplayText = "0")]
     decimal Summa { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Создатель")]
@@ -67,6 +70,7 @@ public interface IInvoiceClient
     bool IsNDSIncludeInPrice { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Оплачено")]
+    [DisplayFormat(DataFormatString = "n2", NullDisplayText = "0")]
     decimal PaySumma { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Ответственный")]
