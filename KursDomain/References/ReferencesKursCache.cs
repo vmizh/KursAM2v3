@@ -1505,7 +1505,7 @@ public class ReferencesKursCache : IReferencesCache
 
     private void UpdateCacheEmployee()
     {
-        var changed = GetChangeDataInt("SD_2", EmployeesTrackingId, "TABELNUMBER");
+        var changed = GetChangeDataInt("SD_2", EmployeesTrackingId, "TABELNUMBER").ToList();
         if (changed.Any())
             foreach (var ch in changed)
                 switch (ch.Operation)
@@ -1518,19 +1518,15 @@ public class ReferencesKursCache : IReferencesCache
                         var item = Context.SD_2.Find(ch.Code);
                         if (item != null)
                         {
-                            if (ch.Operation == "I")
+                            if (Employees.ContainsKey(item.DOC_CODE))
+                                ((Employee) Employees[item.DOC_CODE]).LoadFromEntity(item, this);
+                            else
                             {
                                 var newItem = new Employee();
                                 newItem.LoadFromEntity(item, this);
                                 Employees.Add(newItem.DocCode, newItem);
                             }
-                            else
-                            {
-                                if (Employees.ContainsKey(item.DOC_CODE))
-                                    ((Employee) Employees[item.DOC_CODE]).LoadFromEntity(item, this);
-                            }
                         }
-
                         break;
                 }
 

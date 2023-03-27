@@ -122,6 +122,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Properties
 
+        public List<ShipmentRowViewModel> ShipmentRowDeleted => new List<ShipmentRowViewModel>();
+
+        
         public List<Currency> CurrencyList => GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>()
             .OrderBy(_ => _.Name).ToList();
 
@@ -864,6 +867,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var row in Document.Rows.Cast<InvoiceClientRowViewModel>())
                     if (row.Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS == null)
                         row.Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = row.Summa;
+                foreach (var old in ShipmentRowDeleted.Select(shDel => UnitOfWork.Context.TD_24.FirstOrDefault(_ =>
+                             _.DOC_CODE == shDel.DOC_CODE && _.CODE == shDel.Code)).Where(old => old != null))
+                {
+                    old.DDT_SFACT_DC = null;
+                    old.DDT_SFACT_ROW_CODE = null;
+                }
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
@@ -879,7 +888,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>()) r.myState = RowStatus.NotEdited;
 
                 foreach (var f in Document.ShipmentRows) f.myState = RowStatus.NotEdited;
-
+                ShipmentRowDeleted.Clear();
                 foreach (var p in Document.PaymentDocs) p.myState = RowStatus.NotEdited;
                 Document.myState = RowStatus.NotEdited;
                 Document.RaisePropertyChanged("State");
@@ -959,6 +968,23 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
+        public ICommand DeleteStoreLinkCommand
+        {
+            get { return new Command(DeleteStoreLink, _ => CurrentShipmentRow != null); }
+        }
+
+        private void DeleteStoreLink(object obj)
+        {
+            if (CurrentShipmentRow != null)
+            {
+                ShipmentRowDeleted.Add(CurrentShipmentRow);
+                Document.ShipmentRows.Remove(CurrentShipmentRow);
+                if(Document.myState != RowStatus.NewRow)
+                    Document.myState = RowStatus.Edited;
+            }
+
+        }
+
         private void DeleteRow(object obj)
         {
             if (CurrentRow != null && CurrentRow.State != RowStatus.NewRow)
@@ -966,6 +992,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.DeletedRows.Add(CurrentRow);
                 Document.Entity.TD_84.Remove(CurrentRow.Entity);
                 Document.Rows.Remove(CurrentRow);
+                if(Document.myState != RowStatus.NewRow)
+                    Document.myState = RowStatus.Edited;
+                ;
             }
 
             UpdateVisualData(null);

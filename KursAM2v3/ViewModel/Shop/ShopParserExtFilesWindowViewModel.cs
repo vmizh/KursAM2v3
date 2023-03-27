@@ -142,6 +142,7 @@ namespace KursAM2.ViewModel.Shop
                         PersonaResponsible = (Employee) GlobalOptions.ReferencesCache.GetEmployee(104),
                         Currency = GlobalOptions.SystemProfile.NationalCurrency,
                         State = RowStatus.NewRow,
+                        Employee = (Employee) GlobalOptions.ReferencesCache.GetEmployee(104),
                         DocCode = -1,
                         DocDate = DateTime.Today
                     }
