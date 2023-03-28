@@ -1673,7 +1673,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         _.DOC_CODE == CurrentPaymentDoc.VZDC
                         && _.CODE == CurrentPaymentDoc.VZCode);
                     if (old2 != null)
-                        old2.VZT_SPOST_DC = null;
+                        UnitOfWork.Context.TD_110.Remove(old2);
                     break;
             }
 

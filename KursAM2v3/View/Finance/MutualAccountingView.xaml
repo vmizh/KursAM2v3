@@ -9,6 +9,7 @@
                  xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                  xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:iCommon="clr-namespace:KursDomain.ICommon;assembly=KursDomain"
                  mc:Ignorable="d"
                  Icon="{Binding Source={StaticResource MutualDrawingImage},
                 Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
@@ -21,9 +22,12 @@
     </dx:ThemedWindow.HeaderItems>
     <DockPanel>
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
-        <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
-                <StackPanel Orientation="Horizontal" Margin="0,0,0,7">
+        <StackPanel DockPanel.Dock="Top" Orientation="Vertical" Margin="0 5 0 0">
+            <DockPanel LastChildFill="False">
+                <StackPanel 
+                    Orientation="Horizontal" 
+                    Margin="0,0,0,7"
+                    DockPanel.Dock="Left">
                     <Label VerticalAlignment="Center">№</Label>
                     <Label VerticalAlignment="Center" Margin="3,0,0,0" Width="70" Height="20"
                            Content="{Binding Document.VZ_NUM}" />
@@ -42,7 +46,18 @@
                            MinHeight="20"
                            Width="200" Background="{x:Null}" />
                 </StackPanel>
-            </StackPanel>
+                <dxe:ComboBoxEdit MinWidth="100" Height="25" DockPanel.Dock="Right"
+                                  VerticalAlignment="Center"
+                                  VerticalContentAlignment="Center"
+                                  IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }">
+                    <dxmvvm:Interaction.Behaviors>
+                        <dxmvvm:EnumItemsSourceBehavior
+                            EnumType="{x:Type iCommon:RowStatus}" />
+                    </dxmvvm:Interaction.Behaviors>
+                </dxe:ComboBoxEdit>
+                <Label Content="  Статус:   " DockPanel.Dock="Right" 
+                       VerticalAlignment="Center"/>
+            </DockPanel>
             <StackPanel Orientation="Horizontal">
                 <Label Content="Тип взаимозачета" />
                 <dxe:ComboBoxEdit Name="typeVzaimozachetComboBoxEdit"
@@ -162,6 +177,8 @@
                                     <MenuItem Header="Добавить счет-фактуру клиенту" Command="{Binding SetNewDebitorSFCommand}" />
                                     <MenuItem Header="Счет-фактура для позиции" Command="{Binding SetDebitorSFCommand}" />
                                     <Separator />
+                                    <MenuItem Header="Открыть счет-фактуру" Command="{Binding OpenDebitorSFCommand}" />
+                                    <Separator />
                                     <MenuItem Header="Экспорт"
                                               Command="{Binding VisualControlExportCommand}"
                                               CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
@@ -220,6 +237,8 @@
                                     <Separator />
                                     <MenuItem Header="Добавить счет-фактуру поставщика" Command="{Binding SetNewCreditorSFCommand}" />
                                     <MenuItem Header="Счет-фактура для позиции" Command="{Binding SetCreditorSFCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="Открыть счет-фактуру" Command="{Binding OpenCreditorSFCommand}" />
                                     <Separator />
                                     <MenuItem Header="Экспорт"
                                               Command="{Binding VisualControlExportCommand}"

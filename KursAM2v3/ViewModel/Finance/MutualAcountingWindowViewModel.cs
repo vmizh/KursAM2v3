@@ -152,6 +152,30 @@ namespace KursAM2.ViewModel.Finance
 
         #region Commands
 
+        //<MenuItem Header="Открыть счет-фактуру" Command="{Binding OpenDebitorSFCommand}" />
+        //<Separator />
+
+        public ICommand OpenDebitorSFCommand
+        {
+            get { return new Command(OpenDebitorSF, _ => CurrentDebitor?.SfClient != null ); }
+        }
+
+        private void OpenDebitorSF(object obj)
+        {
+           DocumentsOpenManager.Open(DocumentType.InvoiceClient,CurrentDebitor.SfClient.DocCode);
+        }
+
+        public ICommand OpenCreditorSFCommand
+        {
+            get { return new Command(OpenCreditorSF, _ => CurrentCreditor?.SFProvider != null); }
+        }
+
+        private void OpenCreditorSF(object obj)
+        {
+            DocumentsOpenManager.Open(DocumentType.InvoiceProvider,CurrentCreditor.SFProvider.DocCode);
+        }
+
+
         public ICommand SetDebitorSFCommand
         {
             get { return new Command(SetDebitorSF, _ => CurrentDebitor != null); }
@@ -363,7 +387,7 @@ namespace KursAM2.ViewModel.Finance
                     CalcItogoSumma(); //Document.VZ_RIGHT_UCH_CRS_SUM - Document.VZ_LEFT_UCH_CRS_SUM;
             }
 
-            Document.myState = state;
+            //Document.myState = state;
             RaisePropertyChanged(nameof(Document));
             RaisePropertyChanged(nameof(CurrencyConvertRate));
         }

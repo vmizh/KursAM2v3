@@ -887,7 +887,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.myState = RowStatus.NotEdited;
                 foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>()) r.myState = RowStatus.NotEdited;
 
-                foreach (var f in Document.ShipmentRows) f.myState = RowStatus.NotEdited;
                 ShipmentRowDeleted.Clear();
                 foreach (var p in Document.PaymentDocs) p.myState = RowStatus.NotEdited;
                 Document.myState = RowStatus.NotEdited;
@@ -943,7 +942,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             var m = ctx.TD_110.FirstOrDefault(_ => _.DOC_CODE == CurrentPaymentDoc.DocCode
                                                                    && _.CODE == CurrentPaymentDoc.Code);
                             if (m == null) return;
-                            m.VZT_SFACT_DC = null;
+                            ctx.TD_110.Remove(m);
                             break;
                     }
 

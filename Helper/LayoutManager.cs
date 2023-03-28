@@ -36,13 +36,13 @@ namespace Helper
     public class LayoutManager
     {
         public const int Version = 1;
+        private readonly KursSystemEntities context;
         public readonly string ControlName;
         public readonly string FormName;
 
         private readonly ILayoutSerializationService layoutService;
         private readonly MemoryStream StartLayoutStream = new MemoryStream();
         private readonly Window window;
-        private readonly KursSystemEntities context;
 
         public LayoutManager(KursSystemEntities systemDBContext, ThemedWindow form, string formName)
         {
@@ -52,7 +52,8 @@ namespace Helper
             form.SaveLayoutToStream(StartLayoutStream);
         }
 
-        public LayoutManager(KursSystemEntities systemDBContext, ILayoutSerializationService service, string formName, string ctrlName)
+        public LayoutManager(KursSystemEntities systemDBContext, ILayoutSerializationService service, string formName,
+            string ctrlName)
         {
             context = systemDBContext;
             layoutService = service;
@@ -61,7 +62,7 @@ namespace Helper
             StartLayout = layoutService.Serialize();
         }
 
-        public LayoutManager([NotNull] Window win,  ILayoutSerializationService service, string formName,
+        public LayoutManager([NotNull] Window win, ILayoutSerializationService service, string formName,
             string ctrlName,
             KursSystemEntities systemDBContext)
         {
@@ -90,71 +91,78 @@ namespace Helper
             if (layoutService == null) return;
 
             if (CurrentUser.UserInfo == null) return;
-            var l = context.FormLayout.FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
-                                                           && _.FormName == FormName
-                                                           && _.ControlName == FormName);
-            try
+            using (var tran = context.Database.BeginTransaction())
             {
-                StringBuilder sb = null;
-                if (window != null)
+
+
+                var l = context.FormLayout.FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
+                                                               && _.FormName == FormName
+                                                               && _.ControlName == FormName);
+                try
                 {
-                    sb = new StringBuilder();
-                    var winState = new WindowsScreenState
+                    StringBuilder sb = null;
+                    if (window != null)
                     {
-                        FormHeight = window.Height,
-                        FormWidth = window.Width,
-                        FormLeft = window.WindowState == WindowState.Maximized ? 0 : window.Left,
-                        FormTop = window.WindowState == WindowState.Maximized ? 0 : window.Top,
-                        FormStartLocation = window.WindowStartupLocation,
-                        FormState = window.WindowState
-                    };
-                    var ser1 =
-                        new DataContractSerializer(typeof(WindowsScreenState));
-                    using (var writer = XmlWriter.Create(sb))
-                    {
-                        ser1.WriteObject(writer, winState);
-                        writer.Flush();
+                        sb = new StringBuilder();
+                        var winState = new WindowsScreenState
+                        {
+                            FormHeight = window.Height,
+                            FormWidth = window.Width,
+                            FormLeft = window.WindowState == WindowState.Maximized ? 0 : window.Left,
+                            FormTop = window.WindowState == WindowState.Maximized ? 0 : window.Top,
+                            FormStartLocation = window.WindowStartupLocation,
+                            FormState = window.WindowState
+                        };
+                        var ser1 =
+                            new DataContractSerializer(typeof(WindowsScreenState));
+                        using (var writer = XmlWriter.Create(sb))
+                        {
+                            ser1.WriteObject(writer, winState);
+                            writer.Flush();
+                        }
                     }
-                }
 
-                var s = layoutService.Serialize();
-                if (l == null)
-                {
-                    context.FormLayout.Add(new FormLayout
+                    var s = layoutService.Serialize();
+                    if (l == null)
                     {
-                        Id = Guid.NewGuid(),
-                        UpdateDate = DateTime.Now,
-                        UserId = CurrentUser.UserInfo.KursId,
-                        FormName = FormName,
-                        ControlName = FormName,
-                        Layout = layoutService.Serialize(),
-                        WindowState = sb?.ToString()
-                    });
-                }
-                else
-                {
-                    l.UpdateDate = DateTime.Now;
-                    l.UserId = CurrentUser.UserInfo.KursId;
-                    l.FormName = FormName;
-                    l.ControlName = FormName;
-                    l.Layout = layoutService.Serialize();
-                    l.WindowState = sb?.ToString();
-                }
+                        context.FormLayout.Add(new FormLayout
+                        {
+                            Id = Guid.NewGuid(),
+                            UpdateDate = DateTime.Now,
+                            UserId = CurrentUser.UserInfo.KursId,
+                            FormName = FormName,
+                            ControlName = FormName,
+                            Layout = layoutService.Serialize(),
+                            WindowState = sb?.ToString()
+                        });
+                    }
+                    else
+                    {
+                        l.UpdateDate = DateTime.Now;
+                        l.UserId = CurrentUser.UserInfo.KursId;
+                        l.FormName = FormName;
+                        l.ControlName = FormName;
+                        l.Layout = layoutService.Serialize();
+                        l.WindowState = sb?.ToString();
+                    }
 
-                context.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка сохранения разметки {FormName} / {ControlName}" + $"{ex}");
+                    context.SaveChanges();
+                    tran.Commit();
+                }
+                catch (Exception ex)
+                {
+                    tran.Rollback();
+                    MessageBox.Show($"Ошибка сохранения разметки {FormName} / {ControlName}" + $"{ex}");
+                }
             }
         }
 
         public bool IsLayoutExists()
         {
             if (CurrentUser.UserInfo == null) return false;
-                return context.FormLayout.Any(_ => _.UserId == CurrentUser.UserInfo.KursId
-                                                   && _.FormName == FormName);
-       }
+            return context.FormLayout.Any(_ => _.UserId == CurrentUser.UserInfo.KursId
+                                               && _.FormName == FormName);
+        }
 
         public void Load()
         {
@@ -164,27 +172,24 @@ namespace Helper
                 var l = context.FormLayout.FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
                                                                && _.FormName == FormName
                                                                && _.ControlName == FormName);
-                if (l != null)
+                if (l == null) return;
+                var d = new DataContractSerializer(typeof(WindowsScreenState));
+                if (l.WindowState != null && window != null &&
+                    d.ReadObject(XmlReader.Create(new StringReader(l.WindowState))) is WindowsScreenState p)
                 {
-                    var d = new DataContractSerializer(typeof(WindowsScreenState));
-                    if (l.WindowState != null && window != null &&
-                        d.ReadObject(XmlReader.Create(new StringReader(l.WindowState))) is WindowsScreenState p)
-                    {
-                        window.WindowStartupLocation = p.FormStartLocation;
-                        window.WindowState = p.FormState;
-                        window.Height = p.FormHeight;
-                        window.Width = p.FormWidth;
-                        window.Left = p.FormLeft < 0 ? 0 : StartWinState.FormLeft;
-                        window.Top = p.FormTop < 0 ? 0 : StartWinState.FormTop;
-                    }
-
-                    layoutService.Deserialize(l.Layout);
+                    window.WindowStartupLocation = p.FormStartLocation;
+                    window.WindowState = p.FormState;
+                    window.Height = p.FormHeight;
+                    window.Width = p.FormWidth;
+                    window.Left = p.FormLeft < 0 ? 0 : StartWinState.FormLeft;
+                    window.Top = p.FormTop < 0 ? 0 : StartWinState.FormTop;
                 }
+
+                layoutService.Deserialize(l.Layout);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки разметки {FormName} " + ex.Message);
-                //layoutService.Deserialize(null);
             }
         }
 
