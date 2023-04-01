@@ -226,7 +226,7 @@
                                         <dxe:TextEditSettings DisplayFormat="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
-                                <dxg:GridColumn Name="col_6" FieldName="CrsOperIn" Header="Баланс(опер) (-)"
+                                <!--<dxg:GridColumn Name="col_6" FieldName="CrsOperIn" Header="Баланс(опер) (-)"
                                                 ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:TextEditSettings DisplayFormat="n2" />
@@ -237,25 +237,25 @@
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:TextEditSettings DisplayFormat="n2" />
                                     </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
+                                </dxg:GridColumn>-->
                                 <dxg:GridColumn Name="col_8" FieldName="CrsOperDC" Header="Код документа"
                                                 ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:TextEditSettings DisplayFormat="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
-                                <dxg:GridColumn Name="col_9" FieldName="CrsOperRate" Header="Курс (опер)"
+                                <dxg:GridColumn Name="col_9" FieldName="CrsOperRate" Header="Курс"
                                                 ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:TextEditSettings DisplayFormat="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
-                                <dxg:GridColumn Name="col_10" FieldName="CrsUchRate" Header="Курс (уч)"
+                                <!--<dxg:GridColumn Name="col_10" FieldName="CrsUchRate" Header="Курс (уч)"
                                                 ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
                                         <dxe:TextEditSettings DisplayFormat="n2" />
                                     </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
+                                </dxg:GridColumn>-->
                                 <dxg:GridColumn Name="col_12" FieldName="Project" Header="Проект"
                                                 ReadOnly="True" SortMode="DisplayText">
                                     <dxg:GridColumn.EditSettings>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
+using Helper;
 using KursAM2.ViewModel.Management;
 using LayoutManager;
 
@@ -27,6 +28,11 @@ namespace KursAM2.View.Management
             myKontragentLookUpLayoutName =
                 $"{Environment.CurrentDirectory}\\Layout\\KontragentLookUpEdit.{Guid.NewGuid()}.xml";
             Loaded += KontragentBalansForm_Loaded;
+        }
+
+        static KontragentBalansForm()
+        {
+            GridControlLocalizer.Active = new CustomDXGridLocalizer();
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

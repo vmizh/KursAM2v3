@@ -119,6 +119,20 @@ namespace KursAM2.ViewModel.Finance
                 {
                     k.State = RowStatus.NewRow;
                     manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
+                    if (k.VVT_SFACT_POSTAV_DC != null)
+                    {
+                        using (var context = GlobalOptions.GetEntities())
+                        {
+                            context.Database.ExecuteSqlCommand($"EXEC dbo.GenerateSFProviderCash {Helper.CustomFormat.DecimalToSqlDecimal(k.VVT_SFACT_POSTAV_DC)}");
+                        }
+                    }
+                    if (k.VVT_SFACT_CLIENT_DC != null)
+                    {
+                        using (var context = GlobalOptions.GetEntities())
+                        {
+                            context.Database.ExecuteSqlCommand($"EXEC dbo.GenerateSFClientCash {Helper.CustomFormat.DecimalToSqlDecimal(k.VVT_SFACT_CLIENT_DC)}");
+                        }
+                    }
                     BankOperationsCollection.Add(k);
                     BankOperationsCollection.First(_ => _.DOC_CODE == k.DOC_CODE && _.Code == k.Code).State =
                         RowStatus.NotEdited;

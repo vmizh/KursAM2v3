@@ -369,7 +369,7 @@ namespace KursAM2.ViewModel.Finance
         private void UpdateDebitorCalcSumma(object obj)
         {
             var param = obj as CellValueChangedEventArgs;
-            if (param == null) return;
+            if (param == null || param.Column.Name != "VZT_CRS_SUMMA") return;
             if (Document == null) return;
             var state = Document.State;
             CurrentDebitor.VZT_CRS_SUMMA = (decimal)param.Value;
@@ -395,7 +395,7 @@ namespace KursAM2.ViewModel.Finance
         private void UpdateCreditorCalcSumma(object obj)
         {
             var param = obj as CellValueChangedEventArgs;
-            if (param == null) return;
+            if (param == null || param.Column.Name != "VZT_CRS_SUMMA") return;
             if (Document == null) return;
             var state = Document.State;
             CurrentCreditor.VZT_CRS_SUMMA = (decimal)param.Value;

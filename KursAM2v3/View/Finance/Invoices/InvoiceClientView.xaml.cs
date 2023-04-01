@@ -27,6 +27,10 @@ namespace KursAM2.View.Finance.Invoices
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
+        static InvoiceClientView()
+        {
+            GridControlLocalizer.Active = new CustomDXGridLocalizer();
+        }
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public ComboBoxEdit CurrencyItem { set; get; }
         private ClientWindowViewModel viewModel => DataContext as ClientWindowViewModel;

@@ -585,13 +585,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand AddNomenklSimpleCommand
         {
-            get { return new Command(AddNomenklSimple, _ => true); }
+            get { return new Command(AddNomenklSimple, _ => Document?.Currency != null); }
         }
 
         private IEnumerable<Nomenkl> LoadNomenkl(string srchText)
         {
-            return GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>().Where(_ =>
-                (_.Name + _.NomenklNumber + _.FullName).ToUpper().Contains(srchText.ToUpper())).OrderBy(_ => _.Name);
+            return GlobalOptions.ReferencesCache.GetNomenklsAll()
+                .Where(_ => ((IDocCode)_.Currency).DocCode == Document.Currency.DocCode).Cast<Nomenkl>().Where(_ =>
+                    (_.Name + _.NomenklNumber + _.FullName).ToUpper().Contains(srchText.ToUpper()))
+                .OrderBy(_ => _.Name);
         }
 
 
@@ -1088,12 +1090,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand AddUslugaCommand
         {
-            get { return new Command(AddUsluga, _ => true); }
+            get { return new Command(AddUsluga, _ => Document?.Currency != null); }
         }
 
         private void AddUsluga(object obj)
         {
-            var k = StandartDialogs.SelectNomenkls();
+            var k = StandartDialogs.SelectNomenkls(Document.Currency);
             if (k != null)
             {
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
@@ -1154,7 +1156,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ICommand AddNomenklCommand
         {
-            get { return new Command(AddNomenkl, _ => true); }
+            get { return new Command(AddNomenkl, _ => Document?.Currency != null); }
         }
 
         private void AddNomenkl(object obj)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using Core.ViewModel.Base;
@@ -393,7 +394,7 @@ namespace KursAM2.View.Finance.UC
                     dtx.KontragentViewModel = d2.Client;
                     Kontragent.Text = dtx.KontragentViewModel.Name;
                     dtx.CurrentBankOperations.SFName =
-                        $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa} {GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency}";
+                        $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa:n2} {GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency}";
                 }
 
                 if (dtx2 != null)
@@ -411,7 +412,7 @@ namespace KursAM2.View.Finance.UC
                     dtx2.Kontragent = d2.Client;
                     Kontragent.Text = dtx2.Kontragent.Name;
                     dtx2.SFName =
-                        $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa} " +
+                        $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa:n2} " +
                         $"{GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency}";
                 }
             }
@@ -464,6 +465,24 @@ namespace KursAM2.View.Finance.UC
             if (dtx == null && dtx2 == null) return;
             if (dtx != null)
             {
+                if (dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC == null &&
+                    dtx.CurrentBankOperations.VVT_SFACT_POSTAV_DC == null) return;
+
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    if (dtx.CurrentBankOperations.VVT_SFACT_POSTAV_DC != null)
+                    {
+                        ctx.Database.ExecuteSqlCommand(
+                            $"EXEC dbo.GenerateSFProviderCash {Convert.ToString(dtx.CurrentBankOperations.VVT_SFACT_POSTAV_DC.Value, CultureInfo.InvariantCulture).Replace(",", ".")}");
+                    }
+
+                    if (dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC != null)
+                    {
+                        ctx.Database.ExecuteSqlCommand(
+                            $"EXEC dbo.GenerateSFProviderCash {Convert.ToString(dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC.Value, CultureInfo.InvariantCulture).Replace(",", ".")}");
+                    }
+                }
+
                 dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC = null;
                 dtx.CurrentBankOperations.VVT_SFACT_POSTAV_DC = null;
                 dtx.SFName = null;
@@ -472,6 +491,22 @@ namespace KursAM2.View.Finance.UC
 
             if (dtx2 != null)
             {
+                if (dtx2.VVT_SFACT_CLIENT_DC == null && dtx2.VVT_SFACT_POSTAV_DC == null) return;
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    if (dtx2.VVT_SFACT_POSTAV_DC != null)
+                    {
+                        ctx.Database.ExecuteSqlCommand(
+                            $"EXEC dbo.GenerateSFProviderCash {Convert.ToString(dtx2.VVT_SFACT_POSTAV_DC.Value, CultureInfo.InvariantCulture).Replace(",", ".")}");
+                    }
+
+                    if (dtx2.VVT_SFACT_CLIENT_DC != null)
+                    {
+                        ctx.Database.ExecuteSqlCommand(
+                            $"EXEC dbo.GenerateSFProviderCash {Convert.ToString(dtx2.VVT_SFACT_CLIENT_DC.Value,CultureInfo.InvariantCulture).Replace(",", ".")}");
+                    }
+                }
+
                 dtx2.VVT_SFACT_CLIENT_DC = null;
                 dtx2.VVT_SFACT_POSTAV_DC = null;
                 dtx2.SFName = null;

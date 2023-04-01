@@ -249,6 +249,15 @@ namespace KursAM2.Managers.Base
                                 ctx.Database.ExecuteSqlCommand(
                                     $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(row.VZT_SFACT_DC)}");
                         }
+                        foreach (var row in doc.DeletedRows)
+                        {
+                            if (row.VZT_SPOST_DC != null)
+                                ctx.Database.ExecuteSqlCommand(
+                                    $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(row.VZT_SPOST_DC)}");
+                            if (row.VZT_SFACT_DC != null)
+                                ctx.Database.ExecuteSqlCommand(
+                                    $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(row.VZT_SFACT_DC)}");
+                        }
 
                         doc.myState = RowStatus.NotEdited;
                         foreach (var r in doc.Rows)

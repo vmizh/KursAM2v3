@@ -10,8 +10,10 @@ using System.Windows.Markup;
 using System.Windows.Media;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
+using Helper;
 using KursAM2.ViewModel.Management.ManagementBalans;
 using LayoutManager;
+using WindowsScreenState = LayoutManager.WindowsScreenState;
 
 namespace KursAM2.View.Management
 {
@@ -33,6 +35,11 @@ namespace KursAM2.View.Management
             Closing += ManagementBalansView_Closing;
             Loaded += ManagementBalansView_Loaded;
             DataContextChanged += ManagementBalansView_DataContextChanged;
+        }
+
+        static ManagementBalansView()
+        {
+            GridControlLocalizer.Active = new CustomDXGridLocalizer();
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

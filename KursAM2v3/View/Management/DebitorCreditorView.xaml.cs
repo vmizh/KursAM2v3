@@ -7,6 +7,7 @@ using Core.WindowsManager;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
+using Helper;
 using KursAM2.ViewModel.Management;
 using KursAM2.ViewModel.Management.Calculations;
 using KursAM2.ViewModel.Management.DebitorCreditor;
@@ -36,6 +37,11 @@ namespace KursAM2.View.Management
             UnFilteredColumnStyle = new Style(typeof(LightweightCellEditor), colStyle);
             UnFilteredColumnStyle.Setters.Add(new Setter(ForegroundProperty, Brushes.Black));
             Title = "Дебиторы/кредиторы. База данных " + GlobalOptions.DataBaseName;
+        }
+
+        static DebitorCreditorView()
+        {
+            GridControlLocalizer.Active = new CustomDXGridLocalizer();
         }
 
         private Style FilteredColumnStyle { get; }

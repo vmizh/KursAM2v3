@@ -203,6 +203,7 @@ public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
     public virtual event PropertyChangedEventHandler PropertyChanged;
 
     [DataMember]
+    [Display(AutoGenerateField = false)]
     public virtual string Name
     {
         get => myName;
@@ -215,6 +216,7 @@ public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
     }
 
     [DataMember]
+    [Display(AutoGenerateField = false)]
     public virtual string Note
     {
         get => myNote;

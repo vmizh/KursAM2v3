@@ -45,6 +45,10 @@ namespace KursAM2.View.Finance.Invoices
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
+        static InvoiceProviderView()
+        {
+            GridControlLocalizer.Active = new CustomDXGridLocalizer();
+        }
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
             e.Column.Name = e.Column.FieldName;

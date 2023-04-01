@@ -140,7 +140,7 @@ namespace KursAM2.View.Logistiks.UC
                 {
                     myDataUserControl.treeListPermissionStruct.IsEnabled = false;
                     NomenklItemCollection.AddRange(GlobalOptions.ReferencesCache.GetNomenklsAll()
-                        .Where(_ => _.IsUsluga).Cast<Nomenkl>());
+                        .Where(_ => _.IsUsluga && ((IDocCode)_.Currency).DocCode == currentCrs.DocCode).Cast<Nomenkl>());
                     NomenklItem.AddRange(NomenklItemCollection);
                 }
 

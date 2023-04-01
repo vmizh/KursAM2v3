@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using DevExpress.Xpf.Core.Native;
 using KursDomain.ICommon;
 
 namespace KursDomain.Documents.Invoices;
 
-[MetadataType(typeof(ProviderInvoicePayData_FluentAPI))]
+//[MetadataType(typeof(ProviderInvoicePayData_FluentAPI))]
 // ReSharper disable once ClassNeverInstantiated.Global
 // ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<ProviderInvoicePay>
@@ -27,6 +27,7 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
         Entity = entity ?? DefaultValue();
     }
 
+    [Display(AutoGenerateField = false)]
     public override Guid Id
     {
         get => Entity.Id;
@@ -38,6 +39,9 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
         }
     }
 
+    [Display(AutoGenerateField = true, Name = "Сумма", Order = 2)]
+    [ReadOnly(true)]
+    [DisplayFormat(DataFormatString = "n2")]
     public decimal Summa
     {
         get => Entity.Summa;
@@ -48,22 +52,29 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
             RaisePropertyChanged();
         }
     }
-
+    [Display(AutoGenerateField = false)]
     public decimal DocSumma =>
         (TD_101?.VVT_VAL_RASHOD ?? 0) + (TD_110?.VZT_CRS_SUMMA ?? 0) + (SD_34?.SUMM_ORD ?? 0);
 
+    [Display(AutoGenerateField = true, Name = "Оплата", Order = 3)]
+    [ReadOnly(true)]
     public string DocExtName
     {
         get
-        { 
-            if (TD_101 != null) return $"{TD_101.SD_101.SD_114.BA_BANK_NAME} " +
-                                              $"р/с {TD_101.SD_101.SD_114.BA_RASH_ACC}";;
+        {
+            if (TD_101 != null)
+                return $"{TD_101.SD_101.SD_114.BA_BANK_NAME} " +
+                       $"р/с {TD_101.SD_101.SD_114.BA_RASH_ACC}";
+            ;
             if (TD_110 != null) return $"{TD_110.VZT_DOC_NOTES}";
-            if (SD_34 != null) return $"Касса {((IName)GlobalOptions.ReferencesCache.GetCashBox(SD_34.CA_DC)).Name}";;
+            if (SD_34 != null) return $"Касса {((IName)GlobalOptions.ReferencesCache.GetCashBox(SD_34.CA_DC)).Name}";
+            ;
             return null;
         }
     }
 
+    [Display(AutoGenerateField = true, Name = "Курс(справочно)", Order = 5)]
+    [DisplayFormat(DataFormatString = "n4")]
     public decimal Rate
     {
         get => Entity.Rate;
@@ -75,12 +86,13 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
         }
     }
 
-   
 
+    [Display(AutoGenerateField = true, Name = "Тип документа", Order = 1)]
+    [ReadOnly(true)]
     public string DocName
     {
         get
-        { 
+        {
             if (TD_101 != null) return "Банковская транзакция";
             if (TD_110 != null) return "Акт взаимозачета";
             if (SD_34 != null) return "Расходный кассовый ордер";
@@ -88,29 +100,32 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
         }
     }
 
+    [Display(AutoGenerateField = true, Name = "Дата", Order = 0)]
+    [ReadOnly(true)]
     public DateTime DocDate
     {
         get
-        { 
+        {
             if (TD_101 != null) return TD_101.SD_101.VV_START_DATE;
             if (TD_110 != null) return TD_110.SD_110.VZ_DATE;
             if (SD_34 != null) return SD_34.DATE_ORD ?? DateTime.MinValue;
             return DateTime.MinValue;
         }
-       
     }
 
+    [Display(AutoGenerateField = true, Name = "Расшифровка", Order = 4)]
+    [ReadOnly(true)]
     public string DocNum
     {
         get
-        { 
+        {
             if (TD_101 != null) return TD_101.VVT_DOC_NUM;
             if (TD_110 != null) return TD_110.SD_110.VZ_NUM.ToString();
             if (SD_34 != null) return SD_34.NUM_ORD.ToString();
             return "";
         }
     }
-
+    [Display(AutoGenerateField = false)]
     public int? BankCode
     {
         get => Entity.BankCode;
@@ -121,7 +136,7 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
             RaisePropertyChanged();
         }
     }
-
+    [Display(AutoGenerateField = false)]
     public decimal? CashDC
     {
         get => Entity.CashDC;
@@ -132,7 +147,7 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
             RaisePropertyChanged();
         }
     }
-
+    [Display(AutoGenerateField = false)]
     // ReSharper disable once InconsistentNaming
     public decimal? VZDC
     {
@@ -144,7 +159,7 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
             RaisePropertyChanged();
         }
     }
-
+    [Display(AutoGenerateField = false)]
     public int? VZCode
     {
         get => Entity.VZCode;
@@ -155,7 +170,8 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
             RaisePropertyChanged();
         }
     }
-
+    [Display(AutoGenerateField = true, Name = "Примечание", Order = 7)]
+    [ReadOnly(true)]
     public override string Note
     {
         get => Entity.Note;
@@ -166,10 +182,10 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
             RaisePropertyChanged();
         }
     }
-
+    [Display(AutoGenerateField = false)]
     public TD_110 TD_110
     {
-        get =>  Entity.TD_110;
+        get => Entity.TD_110;
         set
         {
             if (Entity.TD_110 == value) return;
@@ -177,7 +193,7 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
             RaisePropertyChanged();
         }
     }
-
+    [Display(AutoGenerateField = false)]
     public TD_101 TD_101
     {
         get => Entity.TD_101;
@@ -188,7 +204,7 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
             RaisePropertyChanged();
         }
     }
-
+    [Display(AutoGenerateField = false)]
     public SD_34 SD_34
     {
         get => Entity.SD_34;
@@ -199,14 +215,14 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
             RaisePropertyChanged();
         }
     }
-
+    [Display(AutoGenerateField = false)]
     public bool IsAccessRight { get; set; }
 
     public ProviderInvoicePay DefaultValue()
     {
         return new ProviderInvoicePay { Id = Guid.NewGuid() };
     }
-
+    [Display(AutoGenerateField = false)]
     public ProviderInvoicePay Entity
     {
         get => myEntity;
@@ -276,17 +292,14 @@ public class ProviderInvoicePayData_FluentAPI : DataAnnotationForFluentApiBase,
     {
         SetNotAutoGenerated(metadataBuilder);
         metadataBuilder.Property(_ => _.Entity).NotAutoGenerated();
-        metadataBuilder.Property(_ => _.DocName).AutoGenerated().DisplayName("Документ");
-        metadataBuilder.Property(_ => _.DocExtName).AutoGenerated().DisplayName("Расшифровка");
-        metadataBuilder.Property(_ => _.DocNum).AutoGenerated().DisplayName("№");
-        metadataBuilder.Property(_ => _.DocDate).AutoGenerated().DisplayName("Дата");
-        metadataBuilder.Property(_ => _.Rate).AutoGenerated().DisplayName("Курс(справочно)");
-        metadataBuilder.Property(_ => _.DocSumma).AutoGenerated().DisplayName("Сумма док-та")
-            .DisplayFormatString("n2");
+
+        metadataBuilder.Property(_ => _.DocDate).AutoGenerated().LocatedAt(0).DisplayName("Дата").ReadOnly();
+        metadataBuilder.Property(_ => _.DocName).AutoGenerated().DisplayName("Тип документа").ReadOnly();
         metadataBuilder.Property(_ => _.Summa).AutoGenerated().DisplayName("Сумма")
-            .DisplayFormatString("n2");
-        // .MatchesInstanceRule(_ => _.Summa > 0 && _.Summa <= _.DocSumma,
-        //     ()=>"Сумма должна быть больше нуля и не больше суммы документа");
+            .DisplayFormatString("n2").ReadOnly();
+        metadataBuilder.Property(_ => _.DocExtName).AutoGenerated().DisplayName("Оплата").ReadOnly();
+        metadataBuilder.Property(_ => _.DocNum).AutoGenerated().DisplayName("Расшифровка").ReadOnly();
+        metadataBuilder.Property(_ => _.Rate).AutoGenerated().DisplayName("Курс(справочно)").ReadOnly();
         metadataBuilder.Property(_ => _.Note).AutoGenerated().DisplayName("Примечание");
     }
 }
