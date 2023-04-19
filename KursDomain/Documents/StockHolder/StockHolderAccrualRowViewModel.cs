@@ -164,6 +164,7 @@ public class StockHolderAccrualRowViewModel : RSViewModelBase, IDataErrorInfo,
             AccrualType = new StockHolderAccrualTypeViewModel(Entity.StockHolderAccrualType);
         if (Entity.StockHolders != null)
             StockHolder = new StockHolderViewModel(Entity.StockHolders);
+        DocId = Entity.DocId;
     }
 
     #endregion

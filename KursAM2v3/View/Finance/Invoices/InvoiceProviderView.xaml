@@ -243,7 +243,7 @@
                                     MinWidth="150"
                                     AutoComplete = "True"
                                     ItemsSource="{Binding EmployeeList, UpdateSourceTrigger=PropertyChanged}"
-                                    EditValue="{Binding Document.PersonaResponsible, Mode=TwoWay,
+                                    EditValue="{Binding Document.Employee, Mode=TwoWay,
                                     UpdateSourceTrigger=PropertyChanged, 
                                     NotifyOnValidationError=True,
                                     ValidatesOnDataErrors=True}"

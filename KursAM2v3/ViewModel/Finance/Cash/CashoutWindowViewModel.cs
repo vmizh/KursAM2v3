@@ -62,6 +62,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         public Window BookView;
         private readonly DateTime oldDate = DateTime.MaxValue;
         public decimal OldSumma;
+        private readonly decimal? oldKontrDC;
 
         #endregion
 
@@ -81,6 +82,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             RefreshData(dc);
             // ReSharper disable once PossibleInvalidOperationException
             oldDate = (DateTime)Document.DATE_ORD;
+            oldKontrDC = Document.KONTRAGENT_DC;
         }
 
         #endregion
@@ -153,10 +155,26 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         public override void SaveData(object data)
         {
-            if (Document.State == RowStatus.Edited)
-                CashManager.UpdateDocument(CashDocumentType.CashOut, Document, oldDate);
-            if (Document.State == RowStatus.NewRow)
-                CashManager.InsertDocument(CashDocumentType.CashOut, Document);
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                if (Document.State == RowStatus.Edited)
+                    CashManager.UpdateDocument(CashDocumentType.CashOut, Document, oldDate);
+                if (Document.State == RowStatus.NewRow)
+                    CashManager.InsertDocument(CashDocumentType.CashOut, Document);
+                var newKontrDC = Document.KONTRAGENT_DC;
+                if (oldKontrDC != null)
+                {
+                    ctx.Database.ExecuteSqlCommand(
+                        $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(oldKontrDC)}");
+                }
+
+                if (newKontrDC != null && newKontrDC != oldKontrDC)
+                {
+                    ctx.Database.ExecuteSqlCommand(
+                        $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(newKontrDC)}");
+                }
+            }
+
             if (BookView is CashBookView bw)
                 if (bw.DataContext is CashBookWindowViewModel ctx)
                     ctx.RefreshActual(Document);

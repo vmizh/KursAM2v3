@@ -5,6 +5,7 @@ using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
+using Core.WindowsManager;
 using Data;
 using KursAM2.Managers;
 using KursAM2.View.Base;
@@ -43,8 +44,21 @@ namespace KursAM2.ViewModel.StockHolder
         public override void DocumentOpen(object obj)
         {
             if (CurrentDocument == null) return;
-            DocumentsOpenManager.Open(
-                DocumentType.StockHolderAccrual, 0, CurrentDocument.Id, this);
+            bool isDocExists;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                isDocExists = ctx.StockHolderAccrual.Any(_ => _.Id == CurrentDocument.Id);
+            }
+            if(isDocExists)
+                DocumentsOpenManager.Open(
+                    DocumentType.StockHolderAccrual, 0, CurrentDocument.Id, this);
+            else
+            {
+                var w = new WindowManager();
+                w.ShowWinUIMessageBox($"Документ с кодом {CurrentDocument.Id} не найден, или был удален.","Предупреждение",
+                    MessageBoxButton.OK,MessageBoxImage.Warning);
+                return;
+            }
         }
 
         public override void DocNewCopy(object form)
@@ -78,6 +92,7 @@ namespace KursAM2.ViewModel.StockHolder
                 Owner = Application.Current.MainWindow,
                 DataContext = ctx
             };
+            ctx.Form = view;
             ctx.RefreshData(null);
             view.Show();
             
@@ -95,7 +110,6 @@ namespace KursAM2.ViewModel.StockHolder
                 DataContext = ctx
             };
             ctx.Form = frm;
-            
             frm.Show();
         }
 

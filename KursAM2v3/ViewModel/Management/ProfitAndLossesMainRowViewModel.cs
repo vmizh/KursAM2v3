@@ -657,9 +657,9 @@ namespace KursAM2.ViewModel.Management
                 },
                 new ProfitAndLossesMainRowViewModel
                 {
-                    Id = StockHolder,
+                    Id = StockHolderPay,
                     ParentId = Rashod,
-                    Name = @"Начисления акционерам ",
+                    Name = @"Выплаты акционерам",
                     CalcType = TypeProfitAndLossCalc.IsLoss
                 }
             };
@@ -718,7 +718,8 @@ namespace KursAM2.ViewModel.Management
 
         #region Акционеры
 
-        public static readonly Guid StockHolder = Guid.Parse("{8FC37BDA-4509-4DC8-BC53-7A8869D17364}");
+        public static readonly Guid StockHolderPay = Guid.Parse("{8FC37BDA-4509-4DC8-BC53-7A8869D17364}");
+        public static readonly Guid StockHolderNach = Guid.Parse("{241A902B-5B80-4F31-898C-E9A10B28A70C}");
 
         #endregion
 

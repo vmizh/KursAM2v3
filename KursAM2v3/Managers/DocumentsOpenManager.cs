@@ -2,20 +2,10 @@
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
-using System.Windows.Forms;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using KursDomain.Repository;
-using DevExpress.Data;
-using DevExpress.Utils.DirectXPaint.Svg;
-using DevExpress.Xpf.Bars.Helpers;
-using DevExpress.Xpf.Bars.Themes;
-using DevExpress.Xpf.Core.Native;
-using DevExpress.Xpf.Editors.Settings;
-using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Managers.Base;
 using KursAM2.View.Dogovors;
@@ -46,7 +36,7 @@ using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
-using Application = System.Windows.Application;
+using KursDomain.Repository;
 
 namespace KursAM2.Managers
 {
@@ -139,7 +129,7 @@ namespace KursAM2.Managers
                         DocId = docId,
                         Creator = creator ?? "не указан",
                         DocDC = docDC,
-                        DocType = (int) docType,
+                        DocType = (int)docType,
                         LastChanger = lastChanger,
                         LastOpen = DateTime.Now,
                         Description = desc
@@ -301,17 +291,15 @@ namespace KursAM2.Managers
             var dtx = new DistributeNakladViewModel(null, new DocumentOpenType
             {
                 Id = id,
-                OpenType = DocumentCreateTypeEnum.Open,
+                OpenType = DocumentCreateTypeEnum.Open
             })
             {
                 Form = dsForm
             };
-            dsForm.DataContext = dtx; 
-            
-            foreach (var t in dtx.Tovars)
-            {
-                t.State = RowStatus.NotEdited;
-            }
+            dsForm.DataContext = dtx;
+
+            foreach (var t in dtx.Tovars) t.State = RowStatus.NotEdited;
+
             dsForm.Show();
             dtx.myState = RowStatus.NotEdited;
             return dtx;
@@ -319,7 +307,7 @@ namespace KursAM2.Managers
 
         private static DogovorOfSupplierWindowViewModel OpenDogovorOfSupplier(Guid? id, object parent)
         {
-            var ctx = new DogovorOfSupplierWindowViewModel(id) {ParentFormViewModel = (RSWindowViewModelBase) parent};
+            var ctx = new DogovorOfSupplierWindowViewModel(id) { ParentFormViewModel = (RSWindowViewModelBase)parent };
             var view = new DogovorOfSupplierView
             {
                 Owner = Application.Current.MainWindow,
@@ -506,7 +494,7 @@ namespace KursAM2.Managers
             {
                 Owner = Application.Current.MainWindow
             };
-            var ctx = new NomenklTransferWindowViewModel(id) {Form = frm};
+            var ctx = new NomenklTransferWindowViewModel(id) { Form = frm };
             frm.DataContext = ctx;
             frm.Show();
             return ctx;
@@ -548,6 +536,7 @@ namespace KursAM2.Managers
             view.Show();
             return ctx;
         }
+
         //OpenAccruedAmountOfSupplier
         private static AccruedAmountOfSupplierWindowViewModel OpenAccruedAmountOfSupplier(Guid? id, object parent)
         {
@@ -572,7 +561,7 @@ namespace KursAM2.Managers
             view.Show();
             return ctx;
         }
-        
+
         private static ProviderWindowViewModel OpenSFProvider(decimal docCode)
         {
             var ctx = new ProviderWindowViewModel(docCode);
@@ -597,10 +586,10 @@ namespace KursAM2.Managers
                 Owner = Application.Current.MainWindow,
                 DataContext = ctx
             };
-            ctx.Form = form; 
+            ctx.Form = form;
             form.Show();
             ctx.RefreshData(id);
-            
+
             return ctx;
         }
 
@@ -626,7 +615,7 @@ namespace KursAM2.Managers
         /// <param name="docCode"></param>
         private static MutualAcountingWindowViewModel OpenMutualAccounting(decimal docCode)
         {
-            var frm = new MutualAccountingView {Owner = Application.Current.MainWindow};
+            var frm = new MutualAccountingView { Owner = Application.Current.MainWindow };
             var ctx = new MutualAcountingWindowViewModel(docCode)
             {
                 IsCurrencyConvert = false,
@@ -645,7 +634,7 @@ namespace KursAM2.Managers
         /// <param name="docCode"></param>
         private static MutualAcountingWindowViewModel OpenCurrencyConvertAccounting(decimal docCode)
         {
-            var frm = new MutualAccountingView {Owner = Application.Current.MainWindow};
+            var frm = new MutualAccountingView { Owner = Application.Current.MainWindow };
             var ctx = new MutualAcountingWindowViewModel(docCode)
             {
                 IsCurrencyConvert = true,
@@ -655,7 +644,7 @@ namespace KursAM2.Managers
             ctx.CreateMenu();
             frm.Show();
             frm.DataContext = ctx;
-            var dtx = (MutualAcountingWindowViewModel) frm.DataContext;
+            var dtx = (MutualAcountingWindowViewModel)frm.DataContext;
             dtx.Document.State = RowStatus.NotEdited;
             return ctx;
         }
@@ -729,13 +718,12 @@ namespace KursAM2.Managers
             ctx.BookView = parent as CashBookView;
             var form = new CashInView
             {
-                Owner = Application.Current.MainWindow, 
+                Owner = Application.Current.MainWindow,
                 DataContext = ctx
             };
             ctx.Form = form;
             ctx.CreateMenu();
             form.Show();
-           
         }
 
         /// <summary>
@@ -744,7 +732,7 @@ namespace KursAM2.Managers
         /// <param name="dc"></param>
         private static OrderInWindowViewModel OpenStoreIn(decimal dc)
         {
-            var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),null), dc);
+            var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(), null), dc);
             var form = new OrderInView
             {
                 Owner = Application.Current.MainWindow,
@@ -765,7 +753,7 @@ namespace KursAM2.Managers
             {
                 Owner = Application.Current.MainWindow
             };
-            var ctx = new WaybillWindowViewModel2(dc) {Form = form}; 
+            var ctx = new WaybillWindowViewModel2(dc) { Form = form };
             form.DataContext = ctx;
             form.Show();
             return ctx;

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Controls;
-using Core;
+using System.Windows.Input;
 using Core.ViewModel.Base;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
@@ -13,13 +13,6 @@ namespace KursAM2.ViewModel.StockHolder
 {
     public sealed class SelectStockHolderDialogViewModel : RSWindowViewModelBase
     {
-        #region Fields
-
-        private StockHolderViewModel myCurrentObject;
-        private ICurrentWindowService winCurrentService;
-
-        #endregion
-
         #region Constructors
 
         public SelectStockHolderDialogViewModel()
@@ -29,8 +22,20 @@ namespace KursAM2.ViewModel.StockHolder
 
         #endregion
 
+        #region Fields
+
+        private StockHolderViewModel myCurrentObject;
+        private ICurrentWindowService winCurrentService;
+
+        #endregion
+
         #region Commands
 
+        public ICommand RowDoubleClickCommand
+        {
+            get { return new Command(Ok, _ => CurrentItem != null); }
+        }
+               
         public override bool IsOkAllow()
         {
             return CurrentItem != null;
@@ -44,7 +49,6 @@ namespace KursAM2.ViewModel.StockHolder
                 DialogResult = MessageResult.OK;
                 winCurrentService.Close();
             }
-
         }
 
         public override void Cancel(object obj)
@@ -64,7 +68,7 @@ namespace KursAM2.ViewModel.StockHolder
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var data = ctx.StockHolders.ToList();
-                foreach(var d in data)
+                foreach (var d in data)
                     ItemsCollection.Add(new StockHolderViewModel(d));
             }
         }

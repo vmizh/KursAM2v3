@@ -13,6 +13,7 @@ using KursAM2.Managers;
 using KursAM2.View.Finance.Cash;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
+using KursDomain;
 using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
@@ -54,6 +55,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         private CashInViewModel myDocument;
         private readonly DateTime oldDate = DateTime.MaxValue;
         public decimal OldSumma;
+        private readonly decimal? oldKontrDC;
 
         #endregion
 
@@ -73,6 +75,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             RefreshData(dc);
             // ReSharper disable once PossibleInvalidOperationException
             oldDate = (DateTime)Document.DATE_ORD;
+            oldKontrDC = Document.KONTRAGENT_DC;
         }
 
         #endregion
@@ -181,9 +184,26 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             if (Document.State == RowStatus.NewRow)
             {
-                CashManager.InsertDocument(CashDocumentType.CashIn, Document);
-                if (!(BookView?.DataContext is CashBookWindowViewModel ctx)) return;
-                ctx.RefreshActual(Document);
+                using (var context = GlobalOptions.GetEntities())
+                {
+                    CashManager.InsertDocument(CashDocumentType.CashIn, Document);
+                    if (!(BookView?.DataContext is CashBookWindowViewModel ctx)) return;
+                    var newKontrDC = Document.KONTRAGENT_DC;
+                    if (oldKontrDC != null)
+                    {
+                        context.Database.ExecuteSqlCommand(
+                            $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(oldKontrDC)}");
+                    }
+
+                    if (newKontrDC != null && newKontrDC != oldKontrDC)
+                    {
+                        context.Database.ExecuteSqlCommand(
+                            $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(newKontrDC)}");
+                    } 
+                    ctx.RefreshActual(Document);
+                }
+
+               
                 return;
             }
 

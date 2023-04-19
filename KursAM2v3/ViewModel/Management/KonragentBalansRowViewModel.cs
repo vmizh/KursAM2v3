@@ -13,17 +13,27 @@ namespace KursAM2.ViewModel.Management
     {
         private Project myProject;
 
-        [DataMember] public string DocName { get; set; }
-
-        [DataMember] public string DocNum { get; set; }
-
-        [DataMember] public string DocExtNum { get; set; }
-
         [DataMember] public DateTime DocDate { get; set; }
-
+        [DataMember] public string DocNum { get; set; }
+        [DataMember] public string DocExtNum { get; set; }
+        [DataMember] public string DocName { get; set; }
         [DataMember] public decimal CrsKontrIn { get; set; }
-
         [DataMember] public decimal CrsKontrOut { get; set; }
+        [DataMember] public decimal Nakopit { set; get; }
+        [DataMember] public decimal CrsOperRate { get; set; }
+
+        [DataMember] public string Notes { set; get; }
+        [DataMember]
+        public Project Project
+        {
+            get => myProject;
+            set
+            {
+                if (Equals(myProject,value)) return;
+                myProject = value;
+                RaisePropertyChanged();
+            }
+        }
 
         [DataMember] public decimal DocDC { get; set; }
 
@@ -37,27 +47,14 @@ namespace KursAM2.ViewModel.Management
 
         [DataMember] public decimal CrsOperDC { get; set; }
 
-        [DataMember] public decimal CrsOperRate { get; set; }
+        
 
         [DataMember] public decimal CrsUchRate { get; set; }
 
-        [DataMember] public decimal Nakopit { set; get; }
-
         [DataMember] public new string Id { set; get; }
 
-        [DataMember]
-        public Project Project
-        {
-            get => myProject;
-            set
-            {
-                if (Equals(myProject,value)) return;
-                myProject = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        [DataMember] public string Notes { set; get; }
+       
+      
 
         public override decimal DocCode => DocDC;
 

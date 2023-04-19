@@ -118,7 +118,7 @@ public class SDRStateViewModel : RSViewModelBase, IEntity<SD_99>
         }
     }
 
-    public new string Name
+    public override string Name
     {
         get => Entity.SZ_NAME;
         set
@@ -129,7 +129,7 @@ public class SDRStateViewModel : RSViewModelBase, IEntity<SD_99>
         }
     }
 
-    public new decimal DocCode
+    public override decimal DocCode
     {
         get => Entity.DOC_CODE;
         set

@@ -198,21 +198,6 @@ namespace Core.ViewModel.Base
             return false;
         }
 
-        //public virtual void LoadLayout()
-        //{
-        //    if (Form is ThemedWindow frm)
-        //    {
-        //        LayoutManager ??= new global::Helper.LayoutManager(GlobalOptions.KursSystemDBContext,
-        //            frm, LayoutName);
-        //        LayoutManager.LoadLayout();
-        //    }
-        //}
-
-        //public virtual void SaveLayout()
-        //{
-        //    LayoutManager.SaveLayout();
-        //}
-
         public virtual void OnWindowClosing(object obj)
         {
             LayoutManager?.Save();

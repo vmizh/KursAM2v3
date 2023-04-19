@@ -10,9 +10,11 @@ using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.View.Management;
 using KursAM2.ViewModel.Management.Calculations;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
@@ -60,7 +62,7 @@ namespace KursAM2.ViewModel.Management
             get => myCurrentPeriod;
             set
             {
-                if (Equals(myCurrentPeriod,value)) return;
+                if (Equals(myCurrentPeriod, value)) return;
                 myCurrentPeriod = value;
                 if (myCurrentPeriod != null)
                     LoadDocumentsForPeriod();
@@ -92,7 +94,7 @@ namespace KursAM2.ViewModel.Management
                 : null;
             set
             {
-                if (Equals(myKontragent,value)) return;
+                if (Equals(myKontragent, value)) return;
                 myKontragent = value;
                 if (myKontragent != null)
                 {
@@ -110,7 +112,7 @@ namespace KursAM2.ViewModel.Management
         }
 
         public string CrsName => Kontragent != null && Kontragent.Currency != null
-            ? ((IName) Kontragent.Currency).Name
+            ? ((IName)Kontragent.Currency).Name
             : null;
 
         [DataMember]
@@ -190,13 +192,6 @@ namespace KursAM2.ViewModel.Management
                 .ToList();
             Periods = new ObservableCollection<KontragentPeriod>(localperiods);
             RaisePropertyChanged(nameof(Periods));
-        }
-
-        protected override void OnWindowLoaded(object obj)
-        {
-            if (IsLayoutLoaded) return;
-            if (LayoutManager == null) OnLayoutInitial(null);
-            LayoutManager.Load();
         }
 
         public void LoadOperations(decimal doccode)
@@ -598,6 +593,26 @@ namespace KursAM2.ViewModel.Management
                 myPeriodModeName = value;
                 RaisePropertyChanged();
             }
+        }
+
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            var frm = Form as KontragentBalansForm;
+            if (frm == null) return;
+            var nakSummaries = new List<GridSummaryItem>();
+            foreach (var s in frm.KontrOperGrid.TotalSummary)
+            {
+                if (s.FieldName == "Nakopit" || s.FieldName == "CrsOperRate")
+                    nakSummaries.Add(s);
+            }
+
+            foreach (var col in frm.KontrOperGrid.Columns)
+            {
+                if (col.FieldName == "Notes")
+                    col.Header = "Примечание";
+            }
+            foreach (var c in nakSummaries) frm.KontrOperGrid.TotalSummary.Remove(c);
         }
 
         #endregion

@@ -1006,31 +1006,59 @@ namespace KursAM2.Managers
 
         public void CalcStockHolders()
         {
+            //using (var ctx = GlobalOptions.GetEntities())
+            //{
+            //    var data = ctx.StockHolderAccrualRows
+            //        .Include(_ => _.StockHolderAccrual)
+            //        .Include(_ => _.StockHolders)
+            //        .Where(_ => _.StockHolderAccrual.Date >= DateStart && _.StockHolderAccrual.Date <= DateEnd)
+            //        .ToList();
+            //    foreach (var d in data)
+            //    {
+            //        var newOp = new ProfitAndLossesExtendRowViewModel
+            //        {
+            //            Date = d.StockHolderAccrual.Date,
+            //            GroupId = ProfitAndLossesMainRowViewModel.StockHolderNach,
+            //            Name = d.StockHolders.Name,
+            //            Id = d.DocId,
+            //            Quantity = 1,
+            //            Kontragent = null,
+            //            DocTypeCode = DocumentType.StockHolderAccrual,
+            //            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC) as Currency,
+            //            CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC)).Name,
+            //            DocNum = d.StockHolderAccrual.Num.ToString(),
+            //            Price = d.Summa ?? 0
+            //        };
+            //        SetCurrenciesValue(newOp, d.CurrencyDC, 0,
+            //            d.Summa);
+
+            //        Extend.Add(newOp);
+            //        ExtendNach.Add(newOp);
+            //    }
+            //}
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var data = ctx.StockHolderAccrualRows
-                    .Include(_ => _.StockHolderAccrual)
-                    .Include(_ => _.StockHolders)
-                    .Where(_ => _.StockHolderAccrual.Date >= DateStart && _.StockHolderAccrual.Date <= DateEnd)
-                    .ToList();
+                var data = ctx.SD_34.Include(_ => _.StockHolders)
+                    .AsNoTracking().Where(_ => _.DATE_ORD >= DateStart && _.DATE_ORD <= DateEnd
+                        && _.StockHolderId != null).ToList();
                 foreach (var d in data)
                 {
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
-                        Date = d.StockHolderAccrual.Date,
-                        GroupId = ProfitAndLossesMainRowViewModel.StockHolder,
+                        Date = d.DATE_ORD ?? DateTime.MinValue,
+                        GroupId = ProfitAndLossesMainRowViewModel.StockHolderPay,
                         Name = d.StockHolders.Name,
-                        Id = d.DocId,
+                        DocCode = d.DOC_CODE,
                         Quantity = 1,
                         Kontragent = null,
-                        DocTypeCode = DocumentType.StockHolderAccrual,
-                        Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC) as Currency,
-                        CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC)).Name,
-                        DocNum = d.StockHolderAccrual.Num.ToString(),
-                        Price = d.Summa ?? 0
+                        DocTypeCode = DocumentType.CashOut,
+                        Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC) as Currency,
+                        CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.CRS_DC)).Name,
+                        DocNum = d.NUM_ORD.ToString(),
+                        Price = d.CRS_SUMMA ?? 0
                     };
-                    SetCurrenciesValue(newOp, d.CurrencyDC, 0,
-                        d.Summa);
+                    SetCurrenciesValue(newOp, d.CRS_DC, 0,
+                        d.CRS_SUMMA);
 
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);

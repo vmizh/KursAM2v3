@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -47,7 +46,9 @@ namespace KursAM2.ViewModel.StockHolder
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private bool isHoldersDeleted;
-        readonly List<Users> Users = GlobalOptions.KursSystem().Users.Where(_ => !_.IsDeleted).AsNoTracking().ToList();
+
+        private readonly List<Users> Users = GlobalOptions.KursSystem().Users.Where(_ => !_.IsDeleted).AsNoTracking()
+            .ToList();
 
         #endregion
 
@@ -157,17 +158,14 @@ namespace KursAM2.ViewModel.StockHolder
             var newItem = new StockHolderViewModel(newEntity)
             {
                 myState = RowStatus.NewRow
-
             };
             foreach (var u in Users)
-            {
                 newItem.UserRights.Add(new UserRights
                 {
                     User = new KursUser(u),
                     IsSelected = false,
                     Parent = newItem
                 });
-            }
             StockHolders.Add(newItem);
             if (Form is StockHolderReestrView frm)
             {
@@ -225,9 +223,7 @@ namespace KursAM2.ViewModel.StockHolder
                     var rights = unitOfWork.Context.StockHolderUserRights
                         .Where(_ => _.StockHolderId == sh.Id).ToList();
                     foreach (var u in Users)
-                    {
                         if (rights.Any(_ => _.UserId == u.Id))
-                        {
                             sh.UserRights.Add(new UserRights
                             {
                                 User = new KursUser(u),
@@ -235,9 +231,7 @@ namespace KursAM2.ViewModel.StockHolder
                                 myState = RowStatus.NotEdited,
                                 Parent = sh
                             });
-                        }
                         else
-                        {
                             sh.UserRights.Add(new UserRights
                             {
                                 User = new KursUser(u),
@@ -245,8 +239,6 @@ namespace KursAM2.ViewModel.StockHolder
                                 myState = RowStatus.NotEdited,
                                 Parent = sh
                             });
-                        }
-                    }
                 }
 
                 isHoldersDeleted = false;
@@ -260,26 +252,19 @@ namespace KursAM2.ViewModel.StockHolder
         public override void SaveData(object data)
         {
             var dellist = unitOfWork.Context.StockHolderUserRights.ToList();
-            foreach (var d in dellist)
-            {
-                unitOfWork.Context.StockHolderUserRights.Remove(d);
-            }
+            foreach (var d in dellist) unitOfWork.Context.StockHolderUserRights.Remove(d);
 
             try
             {
                 unitOfWork.CreateTransaction();
                 foreach (var sh in StockHolders)
-                {
-                    foreach (var r in sh.UserRights.Where(_ => _.IsSelected))
+                foreach (var r in sh.UserRights.Where(_ => _.IsSelected))
+                    unitOfWork.Context.StockHolderUserRights.Add(new StockHolderUserRights
                     {
-                        unitOfWork.Context.StockHolderUserRights.Add(new StockHolderUserRights
-                        {
-                            Id = Guid.NewGuid(),
-                            StockHolderId = sh.Id,
-                            UserId = r.User.Id
-                        });
-                    }
-                }
+                        Id = Guid.NewGuid(),
+                        StockHolderId = sh.Id,
+                        UserId = r.User.Id
+                    });
 
                 unitOfWork.Save();
                 unitOfWork.Commit();

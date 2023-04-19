@@ -413,7 +413,7 @@ namespace KursAM2.ViewModel.Finance
                     CalcItogoSumma(); //Document.VZ_RIGHT_UCH_CRS_SUM - Document.VZ_LEFT_UCH_CRS_SUM;
             }
 
-            Document.myState = state;
+            //Document.myState = state;
             RaisePropertyChanged(nameof(Document));
             RaisePropertyChanged(nameof(CurrencyConvertRate));
         }
@@ -506,6 +506,7 @@ namespace KursAM2.ViewModel.Finance
             {
                 case MessageBoxResult.Yes:
                     Manager.Delete(Document);
+                    Document.State = RowStatus.NotEdited;
                     CloseWindow(null);
                     break;
                 case MessageBoxResult.No:

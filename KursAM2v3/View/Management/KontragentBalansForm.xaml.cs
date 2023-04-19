@@ -40,7 +40,7 @@ namespace KursAM2.View.Management
 
         public void SaveLayout()
         {
-            LayoutManager.Save();
+            //LayoutManager.Save();
         }
 
         private void KontragentBalansForm_Loaded(object sender, RoutedEventArgs e)

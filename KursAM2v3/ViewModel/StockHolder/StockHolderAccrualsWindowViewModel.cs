@@ -6,7 +6,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -40,47 +39,101 @@ namespace KursAM2.ViewModel.StockHolder
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
         }
 
+
+        public StockHolderAccrualWindowViewModel(StockHolderAccrual entity, bool isAddToRepository = false) : this()
+        {
+            Document = new StockHolderAccrualViewModel(entity);
+            if (!isAddToRepository) return;
+            unitOfWork.Context.StockHolderAccrual.Add(entity);
+        }
+
         #endregion
 
         #region Methods
 
-        //private bool IsAccrualsChanged()
-        //{
-        //    return StockHolders.Any(sh => sh.Accruals.Any(acr => acr.State != RowStatus.NotEdited));
-        //}
-
         public void SetAsNewCopy(bool isCopy)
         {
-            var newId = Guid.NewGuid();
-            unitOfWork.Context.Entry(Document.Entity).State = EntityState.Detached;
-            Document.Id = newId;
-            Document.Date = DateTime.Today;
-            Document.Creator = GlobalOptions.UserInfo.Name;
-            Document.myState = RowStatus.NewRow;
-            Document.Rows.Clear();
-            Document.Note = string.Empty;
-            Document.Num = -1;
-            unitOfWork.Context.StockHolderAccrual.Add(Document.Entity);
-            if (isCopy)
+            using (var ctx = GlobalOptions.GetEntities())
             {
-                foreach (var row in Document.Rows)
+                var data = ctx.StockHolderAccrual
+                    .Include(_ => _.StockHolderAccrualRows)
+                    .Include(_ => _.StockHolderAccrualRows.Select(s1 => s1.StockHolders))
+                    .Include(_ => _.StockHolderAccrualRows.Select(s1 => s1.StockHolderAccrualType))
+                    .AsNoTracking()
+                    .FirstOrDefault(_ => _.Id == Document.Id);
+                if (data == null)
                 {
-                    unitOfWork.Context.Entry(row.Entity).State = EntityState.Detached;
-                    row.Id = Guid.NewGuid();
-                    row.DocId = newId;
-                    Document.Entity.StockHolderAccrualRows.Add(row.Entity);
-                    row.myState = RowStatus.NewRow;
-                }
-            }
-            else
-            {
-                foreach (var item in Document.Rows)
-                {
-                    unitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
-                    Document.Entity.StockHolderAccrualRows.Clear();
+                    WinManager.ShowWinUIMessageBox(
+                        $"Документ с id \"{Document.Id}\" не найден. Создание копиии не возможно.", "Сообщение",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
                 }
 
-                Document.Rows.Clear();
+                var dtx = new StockHolderAccrualWindowViewModel();
+                var newItem = new StockHolderAccrual
+                {
+                    Id = Guid.NewGuid(),
+                    StockHolderAccrualRows = new List<StockHolderAccrualRows>(),
+                    Creator = GlobalOptions.UserInfo.NickName,
+                    Date = DateTime.Today,
+                    Num = -1,
+                    Note = data.Note
+                };
+                dtx.unitOfWork.Context.StockHolderAccrual.Add(newItem);
+                if (isCopy)
+                    foreach (var r in data.StockHolderAccrualRows)
+                    {
+                        var newRow = new StockHolderAccrualRows
+                        {
+                            Id = Guid.NewGuid(),
+                            StockHolders = dtx.unitOfWork.Context
+                                .StockHolders.FirstOrDefault(_ => _.Id == r.StockHolderId),
+                            StockHolderAccrual = newItem,
+                            StockHolderAccrualType = dtx.unitOfWork.Context
+                                .StockHolderAccrualType.FirstOrDefault(_ => _.Id == r.AcrrualTypeId),
+                            AcrrualTypeId = r.AcrrualTypeId,
+                            CurrencyDC = r.CurrencyDC,
+                            DocId = newItem.Id,
+                            Note = r.Note,
+                            StockHolderId = r.StockHolderId,
+                            Summa = r.Summa
+                        };
+                        newItem.StockHolderAccrualRows.Add(newRow);
+                    }
+
+                var newDoc = new StockHolderAccrualViewModel(newItem)
+                {
+                    State = RowStatus.NewRow
+                };
+                dtx.Document = newDoc;
+
+                foreach (var r in dtx.Document.Rows) r.State = RowStatus.NewRow;
+
+                if (isCopy)
+                {
+                    dtx.StockHolders.Clear();
+                    foreach (var r in dtx.Document.Rows.Select(_ => _.StockHolder).Distinct())
+                    {
+                        if (dtx.StockHolders.Any(_ => _.StockHolder.Id == r.Id)) continue;
+                        var newSh = new StockHolderItem
+                        {
+                            Id = Guid.NewGuid(),
+                            StockHolder = r,
+                            Accruals = new ObservableCollection<StockHolderAccrualRowViewModel>(
+                                dtx.Document.Rows.Where(_ => _.StockHolder.Id == r.Id)),
+                            myState = RowStatus.NewRow
+                        };
+                        dtx.StockHolders.Add(newSh);
+                    }
+                }
+
+                var view = new StockHolderAccrualsView
+                {
+                    Owner = Application.Current.MainWindow,
+                    DataContext = dtx
+                };
+                dtx.Form = view;
+                view.Show();
             }
         }
 
@@ -91,25 +144,32 @@ namespace KursAM2.ViewModel.StockHolder
                     switch (c.FieldName)
                     {
                         case "SummaRUB":
-                            c.Visible = StockHolders.Sum(_ => _.SummaRUB) != 0;
+                            c.Visible = StockHolders.Any(_ =>
+                                _.Accruals.Any(x => x.Currency.DocCode == CurrencyCode.RUB));
                             break;
                         case "SummaCHF":
-                            c.Visible = StockHolders.Sum(_ => _.SummaCHF) != 0;
+                            c.Visible = StockHolders.Any(_ =>
+                                _.Accruals.Any(x => x.Currency.DocCode == CurrencyCode.CHF));
                             break;
                         case "SummaEUR":
-                            c.Visible = StockHolders.Sum(_ => _.SummaEUR) != 0;
+                            c.Visible = StockHolders.Any(_ =>
+                                _.Accruals.Any(x => x.Currency.DocCode == CurrencyCode.EUR));
                             break;
                         case "SummaGBP":
-                            c.Visible = StockHolders.Sum(_ => _.SummaGBP) != 0;
+                            c.Visible = StockHolders.Any(_ =>
+                                _.Accruals.Any(x => x.Currency.DocCode == CurrencyCode.GBP));
                             break;
                         case "SummaSEK":
-                            c.Visible = StockHolders.Sum(_ => _.SummaSEK) != 0;
+                            c.Visible = StockHolders.Any(_ =>
+                                _.Accruals.Any(x => x.Currency.DocCode == CurrencyCode.SEK));
                             break;
                         case "SummaUSD":
-                            c.Visible = StockHolders.Sum(_ => _.SummaUSD) != 0;
+                            c.Visible = StockHolders.Any(_ =>
+                                _.Accruals.Any(x => x.Currency.DocCode == CurrencyCode.USD));
                             break;
                         case "SummaCNY":
-                            c.Visible = StockHolders.Sum(_ => _.SummaCNY) != 0;
+                            c.Visible = StockHolders.Any(_ =>
+                                _.Accruals.Any(x => x.Currency.DocCode == CurrencyCode.CNY));
                             break;
                     }
         }
@@ -118,12 +178,13 @@ namespace KursAM2.ViewModel.StockHolder
 
         #region Fields
 
+        private readonly WindowManager WinManager = new WindowManager();
+
         private readonly IStockHolderAccrualsRepository repository;
 
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
-        private bool isHolderAccrualsDeleted;
         private StockHolderAccrualViewModel myDocument;
         private StockHolderItem myCurrentcStockHolder;
         private StockHolderAccrualRowViewModel myCurrentAccrual;
@@ -136,8 +197,9 @@ namespace KursAM2.ViewModel.StockHolder
         public override string LayoutName => "StockHolderAccrualWindowViewModel";
 
         public override bool IsCanSaveData => Document != null &&
-                                              (Document.State != RowStatus.NotEdited 
-                                              || isHolderAccrualsDeleted);
+                                              Document.State != RowStatus.NotEdited && Document.Rows.All(_ =>
+                                                  _.AccrualType != null
+                                                  && _.Currency != null && _.Summa >= 0);
 
         public ObservableCollection<StockHolderItem> StockHolders { set; get; } =
             new ObservableCollection<StockHolderItem>();
@@ -147,6 +209,8 @@ namespace KursAM2.ViewModel.StockHolder
 
         public List<StockHolderAccrualTypeViewModel> StockHolderAccruelTypes { set; get; } =
             new List<StockHolderAccrualTypeViewModel>();
+
+        //public List<StockHolderAccrualRowViewModel> DeletedRows = new List<StockHolderAccrualRowViewModel>();
 
         public StockHolderAccrualViewModel Document
         {
@@ -188,9 +252,11 @@ namespace KursAM2.ViewModel.StockHolder
 
         public override bool IsDocDeleteAllow => Document?.State != RowStatus.NewRow;
 
+        public override bool IsDocNewCopyAllow => Document.State != RowStatus.NewRow;
+        public override bool IsDocNewCopyRequisiteAllow => Document.State != RowStatus.NewRow;
+
         public override void DocDelete(object form)
         {
-            var WinManager = new WindowManager();
             var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?", "Запрос",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
@@ -232,19 +298,16 @@ namespace KursAM2.ViewModel.StockHolder
 
         private void DeleteStockHolder(object obj)
         {
+            foreach (var accr in CurrentStockHolder.Accruals) Document.Rows.Remove(accr);
             CurrentStockHolder.Accruals.Remove(CurrentAccrual);
-            StockHolders.Remove(CurrentStockHolder);
             if (CurrentStockHolder.State == RowStatus.NewRow)
-            {
                 foreach (var acc in CurrentStockHolder.Accruals)
                     unitOfWork.Context.Entry(acc.Entity).State = EntityState.Detached;
-            }
             else
-            {
-                isHolderAccrualsDeleted = true;
                 foreach (var acc in CurrentStockHolder.Accruals)
                     repository.GenericRepository.Context.StockHolderAccrualRows.Remove(acc.Entity);
-            }
+            StockHolders.Remove(CurrentStockHolder);
+            Document.State = RowStatus.Edited;
         }
 
         public ICommand AddStockHolderCommand
@@ -257,13 +320,33 @@ namespace KursAM2.ViewModel.StockHolder
             var service = this.GetService<IDialogService>("DialogServiceUI");
             var sh = StandartDialogs.SelectStockHolder(service);
             if (sh != null)
-                StockHolders.Add(new StockHolderItem
+            {
+                var newStockHolder = new StockHolderItem
                 {
                     Id = Guid.NewGuid(),
                     StockHolder = new StockHolderViewModel(sh.Entity),
                     myState = RowStatus.NewRow,
                     Parent = Document
-                });
+                };
+                StockHolders.Add(newStockHolder);
+                var newAccrual = new StockHolderAccrualRows
+                {
+                    Id = Guid.NewGuid(),
+                    DocId = Document.Id,
+                    Summa = 0,
+                    CurrencyDC = GlobalOptions.SystemProfile.NationalCurrency.DocCode,
+                    StockHolderId = sh.Id
+                };
+                unitOfWork.Context.StockHolderAccrualRows.Add(newAccrual);
+                var newAccViewModel = new StockHolderAccrualRowViewModel(newAccrual)
+                {
+                    State = RowStatus.NewRow
+                };
+                Document.Rows.Add(newAccViewModel);
+                newStockHolder.Accruals.Add(newAccViewModel);
+            }
+
+            SetVisibleColums();
         }
 
         public ICommand AddAllStockHolderCommand
@@ -276,13 +359,29 @@ namespace KursAM2.ViewModel.StockHolder
             foreach (var sh in unitOfWork.Context.StockHolders.ToList())
             {
                 if (StockHolders.Any(_ => _.StockHolder.Id == sh.Id)) continue;
-                StockHolders.Add(new StockHolderItem
+                var newStockHolder = new StockHolderItem
                 {
                     Id = Guid.NewGuid(),
                     StockHolder = new StockHolderViewModel(sh),
                     myState = RowStatus.NewRow,
                     Parent = Document
-                });
+                };
+                StockHolders.Add(newStockHolder);
+                var newAccrual = new StockHolderAccrualRows
+                {
+                    Id = Guid.NewGuid(),
+                    DocId = Document.Id,
+                    Summa = 0,
+                    CurrencyDC = GlobalOptions.SystemProfile.NationalCurrency.DocCode,
+                    StockHolderId = sh.Id
+                };
+                unitOfWork.Context.StockHolderAccrualRows.Add(newAccrual);
+                var newAccViewModel = new StockHolderAccrualRowViewModel(newAccrual)
+                {
+                    State = RowStatus.NewRow
+                };
+                Document.Rows.Add(newAccViewModel);
+                newStockHolder.Accruals.Add(newAccViewModel);
             }
 
             SetVisibleColums();
@@ -296,16 +395,19 @@ namespace KursAM2.ViewModel.StockHolder
         private void DeleteStockHolderAccrual(object obj)
         {
             if (CurrentAccrual.State == RowStatus.NewRow)
-            {
                 unitOfWork.Context.Entry(CurrentAccrual.Entity).State = EntityState.Detached;
-            }
             else
-            {
-                isHolderAccrualsDeleted = true;
                 repository.GenericRepository.Context.StockHolderAccrualRows.Remove(CurrentAccrual.Entity);
-            }
-
+            Document.Rows.Remove(CurrentAccrual);
             CurrentStockHolder.Accruals.Remove(CurrentAccrual);
+
+            if (CurrentStockHolder.Accruals.Count != 0) return;
+            if (WinManager.ShowWinUIMessageBox($"Для акционера {CurrentStockHolder} удалены все начисления," +
+                                               "удалить акционера из ведомости?", "Запрос",
+                    MessageBoxButton.YesNoCancel,
+                    MessageBoxImage.Question) == MessageBoxResult.Yes)
+                StockHolders.Remove(CurrentStockHolder);
+            Document.State = RowStatus.Edited;
         }
 
         public ICommand AddStockHolderAccrualCommand
@@ -322,72 +424,22 @@ namespace KursAM2.ViewModel.StockHolder
                 StockHolderId = CurrentStockHolder.StockHolder.Id
             };
             Document.Entity.StockHolderAccrualRows.Add(newItem);
-            CurrentStockHolder.Accruals.Add(new StockHolderAccrualRowViewModel(newItem)
-            {
-                StockHolder = CurrentStockHolder.StockHolder,
-                Currency = GlobalOptions.SystemProfile.NationalCurrency,
-                Parent = Document,
-                State = RowStatus.NewRow
-            });
+            var newAcc = new StockHolderAccrualRowViewModel(newItem)
+                {
+                    StockHolder = CurrentStockHolder.StockHolder,
+                    Currency = GlobalOptions.SystemProfile.NationalCurrency,
+                    Parent = Document,
+                    State = RowStatus.NewRow
+                }
+                ;
+            CurrentStockHolder.Accruals.Add(newAcc);
+            Document.Rows.Add(newAcc);
             SetVisibleColums();
         }
 
         public override void DocNewCopy(object form)
         {
-            var ctx = new StockHolderAccrualWindowViewModel();
-            ctx.RefreshData(null);
-            ctx.Document.Creator = GlobalOptions.UserInfo.NickName;
-            ctx.Document.Date = DateTime.Today;
-            ctx.Document.Note = Document.Note;
-            ctx.Document.Num = -1;
-
-            foreach (var acc in Document.Entity.StockHolderAccrualRows)
-            {
-                var newAcc = new StockHolderAccrualRows
-                {
-                    Id = Guid.NewGuid(),
-                    DocId = ctx.Document.Id,
-                    AcrrualTypeId = acc.AcrrualTypeId,
-                    CurrencyDC = acc.CurrencyDC,
-                    Note = acc.Note,
-                    StockHolderId = acc.StockHolderId,
-                    Summa = acc.Summa
-                };
-                ctx.Document.Entity.StockHolderAccrualRows.Add(newAcc);
-                ctx.Document.Rows.Add(new StockHolderAccrualRowViewModel(newAcc)
-                {
-                    myState = RowStatus.NewRow
-                });
-            }
-
-            foreach (var acc in ctx.Document.Entity.StockHolderAccrualRows)
-            {
-                if (ctx.StockHolders.Any(_ => _.StockHolder.Id == acc.StockHolderId)) continue;
-                var newItem = new StockHolderItem
-                {
-                    Id = Guid.NewGuid(),
-                    Parent = ctx.Document,
-                    StockHolder = new StockHolderViewModel(acc.StockHolders),
-                    myState = RowStatus.NewRow
-                };
-                foreach (var a in ctx.Document.Entity.StockHolderAccrualRows
-                             .Where(_ => _.StockHolderId == newItem.StockHolder.Id))
-                    newItem.Accruals.Add(new StockHolderAccrualRowViewModel(a)
-                    {
-                        Id = Guid.NewGuid(),
-                        DocId = ctx.Document.Id,
-                        myState = RowStatus.NewRow
-                    });
-                ctx.StockHolders.Add(newItem);
-            }
-
-            var frm = new StockHolderAccrualsView
-            {
-                Owner = Application.Current.MainWindow,
-                DataContext = ctx
-            };
-            ctx.Form = frm;
-            frm.Show();
+            SetAsNewCopy(true);
         }
 
         public override void DocNewCopyRequisite(object form)
@@ -406,7 +458,6 @@ namespace KursAM2.ViewModel.StockHolder
                 unitOfWork.CreateTransaction();
                 unitOfWork.Save();
                 unitOfWork.Commit();
-                isHolderAccrualsDeleted = false;
                 Document.myState = RowStatus.NotEdited;
             }
             catch (Exception ex)
@@ -418,7 +469,6 @@ namespace KursAM2.ViewModel.StockHolder
 
         public override void RefreshData(object obj)
         {
-            var WinManager = new WindowManager();
             if (IsCanSaveData)
             {
                 var res = WinManager.ShowWinUIMessageBox("В документ внесены изменения, сохранить?", "Запрос",
@@ -430,7 +480,10 @@ namespace KursAM2.ViewModel.StockHolder
                         SaveData(null);
                         break;
                     case MessageBoxResult.No:
-                        foreach (var entity in unitOfWork.Context.ChangeTracker.Entries().Where(_ => _.State == EntityState.Modified )) entity.Reload();
+                        foreach (var entity in unitOfWork.Context.ChangeTracker.Entries()
+                                     .Where(_ => _.State == EntityState.Modified || _.State == EntityState.Detached ||
+                                                 _.State == EntityState.Deleted)
+                                ) entity.Reload();
                         StockHolders.Clear();
                         foreach (var r in Document.Rows.Select(_ => _.StockHolder).Distinct())
                         {
@@ -446,8 +499,13 @@ namespace KursAM2.ViewModel.StockHolder
                             StockHolders.Add(newItem);
                         }
 
-                        foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
-                        Document.myState = RowStatus.NotEdited;
+                        foreach (var r in Document.Rows)
+                        {
+                            r.Parent = Document;
+                            r.myState = RowStatus.NotEdited;
+                        }
+
+                        Document.State = RowStatus.NotEdited;
                         break;
                     case MessageBoxResult.Cancel:
                         return;
@@ -456,7 +514,6 @@ namespace KursAM2.ViewModel.StockHolder
 
             try
             {
-                isHolderAccrualsDeleted = false;
                 if (obj == null && Document == null)
                 {
                     var newEntity = new StockHolderAccrual
@@ -475,6 +532,7 @@ namespace KursAM2.ViewModel.StockHolder
                 else
                 {
                     StockHolders.Clear();
+                    //DeletedRows.Clear();
                     if (obj is Guid guid)
                         // ReSharper disable once PossibleNullReferenceException
                         Document = new StockHolderAccrualViewModel(
@@ -499,8 +557,13 @@ namespace KursAM2.ViewModel.StockHolder
                         StockHolders.Add(newItem);
                     }
 
-                    foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
-                    Document.myState = RowStatus.NotEdited;
+                    foreach (var r in Document.Rows)
+                    {
+                        r.Parent = Document;
+                        r.myState = RowStatus.NotEdited;
+                    }
+
+                    Document.State = RowStatus.NotEdited;
                 }
             }
             catch (Exception ex)

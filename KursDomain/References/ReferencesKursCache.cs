@@ -2236,16 +2236,13 @@ public class ReferencesKursCache : IReferencesCache
                         var item = Context.SD_77.Find(ch.DocCode);
                         if (item != null)
                         {
-                            if (ch.Operation == "I")
+                            if (NomenklProductTypes.ContainsKey(ch.DocCode))
+                                ((NomenklProductType) NomenklProductTypes[ch.DocCode]).LoadFromEntity(item, this);
+                            else
                             {
                                 var newItem = new NomenklProductType();
                                 newItem.LoadFromEntity(item, this);
                                 NomenklProductTypes.Add(newItem.DocCode, newItem);
-                            }
-                            else
-                            {
-                                if (NomenklProductTypes.ContainsKey(ch.DocCode))
-                                    ((NomenklProductType) NomenklProductTypes[ch.DocCode]).LoadFromEntity(item, this);
                             }
                         }
 

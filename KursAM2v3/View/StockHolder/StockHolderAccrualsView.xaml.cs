@@ -43,7 +43,7 @@ namespace KursAM2.View.StockHolder
                             ItemsSource = dtx.StockHolderAccruelTypes
                         };
                     break;
-                case "StockHolder":
+                case "StockHolderNach":
                     e.Column.Visible = false;
                     break;
             }
@@ -57,25 +57,26 @@ namespace KursAM2.View.StockHolder
 
         private void TableViewControlStockAccruals_CellValueChanging(object sender, CellValueChangedEventArgs e)
         {
-            if (DataContext is StockHolderAccrualWindowViewModel dtx)
-            {
-                foreach (var sh in dtx.StockHolders) sh.RaisePropertyAllChanged();
-                dtx.SetVisibleColums();
-                if (dtx.State != RowStatus.NewRow)
-                {
-                    dtx.Document.State = RowStatus.Edited;
-                    dtx.Document.RaisePropertyChanged("State");
-                    GridControlStockHolder.UpdateTotalSummary();
-                }
-            }
+            //if (DataContext is StockHolderAccrualWindowViewModel dtx)
+            //{
+            //    if (dtx.State != RowStatus.NewRow)
+            //    {
+            //        dtx.Document.State = RowStatus.Edited;
+            //        dtx.Document.RaisePropertyChanged("State");
+            //        GridControlStockHolder.UpdateTotalSummary();
+            //    }
+            //}
         }
 
         private void TableViewControlStockAccruals_OnCellValueChanged(object sender, CellValueChangedEventArgs e)
         {
             GridControlStockHolder.UpdateTotalSummary();
             if (DataContext is StockHolderAccrualWindowViewModel ctx)
+            {
                 foreach (var sh in ctx.StockHolders)
                     sh.RaisePropertyAllChanged();
+                ctx.SetVisibleColums();
+            }
         }
 
         private void DateEdit_EditValueChanging(object sender, EditValueChangingEventArgs e)

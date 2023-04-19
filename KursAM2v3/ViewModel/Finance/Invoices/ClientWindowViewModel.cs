@@ -947,9 +947,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             ctx.TD_110.Remove(m);
                             break;
                     }
+                    ctx.Database.ExecuteSqlCommand(
+                        $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.DocCode)}");
 
                     ctx.SaveChanges();
                     Document.PaymentDocs.Remove(CurrentPaymentDoc);
+                    
                 }
                 catch (Exception ex)
                 {
