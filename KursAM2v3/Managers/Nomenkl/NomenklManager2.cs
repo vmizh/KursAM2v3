@@ -190,5 +190,29 @@ namespace KursAM2.Managers.Nomenkl
         public decimal OstatokQuantity { set; get; }
         public decimal OstatokSumma { set; get; }
         public decimal OstatokNaklSumma { set; get; }
+
+    }
+
+    public class NomenklQuantityInfoExt : NomenklQuantityInfo
+    {
+        public NomenklQuantityInfoExt(NomenklQuantityInfo item)
+        {
+            NomDC = item.NomDC;
+            NomNomenkl = item.NomNomenkl;
+            NomName = item.NomName;
+            StartQuantity = item.StartQuantity;
+            StartSumma = item.StartSumma;
+            StartNaklSumma = item.StartNaklSumma;
+            PrihodStart = item.PrihodStart;
+            RashodStart = item.RashodStart;
+            Prihod = item.Prihod;
+            Rashod = item.Rashod;
+            OstatokQuantity = item.OstatokQuantity;
+            OstatokSumma = item.OstatokSumma;
+            OstatokNaklSumma = item.OstatokNaklSumma;
+            Nomenkl = (KursDomain.References.Nomenkl)GlobalOptions.ReferencesCache.GetNomenkl(item.NomDC);
+        }
+
+        public KursDomain.References.Nomenkl Nomenkl { set; get; }
     }
 }

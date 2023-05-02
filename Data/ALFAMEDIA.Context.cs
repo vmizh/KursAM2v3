@@ -793,6 +793,10 @@ namespace Data
         public virtual DbSet<CashSFProvider> CashSFProvider { get; set; }
         public virtual DbSet<InvoiceClientQuery> InvoiceClientQuery { get; set; }
         public virtual DbSet<InvoicePostQuery> InvoicePostQuery { get; set; }
+        public virtual DbSet<RefundFromClient> RefundFromClient { get; set; }
+        public virtual DbSet<RefundFromClientRow> RefundFromClientRow { get; set; }
+        public virtual DbSet<RefundToProvider> RefundToProvider { get; set; }
+        public virtual DbSet<RefundToProviderRow> RefundToProviderRow { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

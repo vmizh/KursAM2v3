@@ -108,6 +108,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 RaisePropertyChanged();
             }
         }
+
+        public decimal CurrencyTotal => SummaCHF + SummaSEK + SummaCNY + SummaEUR + SummaGBP + SummaRUB + SummaUSD;
     }
 
     public class ManagementBalansCompareGroupViewModel : SummaCompareCurrencies

@@ -234,10 +234,17 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var item in Document.Rows.Cast<InvoiceProviderRow>())
                 {
                     UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
-                    Document.Entity.TD_26.Clear();
                 }
-
+                Document.Entity.TD_26.Clear();
                 Document.Rows.Clear();
+                Document.SF_FACT_SUMMA = 0;
+                Document.SF_KONTR_CRS_SUMMA = 0;
+                Document.Entity.SF_CRS_SUMMA = 0;
+                Document.SF_FACT_SUMMA = 1;
+                Document.SF_CRS_RATE = 1;
+                Document.SF_KONTR_CRS_RATE = 1;
+                Document.SF_UCHET_VALUTA_RATE = 1;
+                Document.SummaFact = 0;
             }
         }
 

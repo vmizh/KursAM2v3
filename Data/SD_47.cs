@@ -18,6 +18,8 @@ namespace Data
         public SD_47()
         {
             this.TD_47 = new HashSet<TD_47>();
+            this.RefundFromClient = new HashSet<RefundFromClient>();
+            this.RefundToProvider = new HashSet<RefundToProvider>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -29,5 +31,9 @@ namespace Data
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TD_47> TD_47 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RefundFromClient> RefundFromClient { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RefundToProvider> RefundToProvider { get; set; }
     }
 }

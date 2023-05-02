@@ -104,6 +104,8 @@ namespace Data
             this.UD_83 = new HashSet<UD_83>();
             this.UD_831 = new HashSet<UD_83>();
             this.SD_821 = new HashSet<SD_82>();
+            this.RefundFromClientRow = new HashSet<RefundFromClientRow>();
+            this.RefundToProviderRow = new HashSet<RefundToProviderRow>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -363,5 +365,9 @@ namespace Data
         public virtual ICollection<UD_83> UD_831 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_82> SD_821 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RefundFromClientRow> RefundFromClientRow { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<RefundToProviderRow> RefundToProviderRow { get; set; }
     }
 }

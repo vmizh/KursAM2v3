@@ -134,6 +134,7 @@
     <Compile Include="Documents\Dogovora\Old\SD_9ViewModel.cs" />
     <Compile Include="Documents\Dogovora\Old\TD_9ViewModel.cs" />
     <Compile Include="Documents\Employee\EMP_PAYROLL_TYPEViewModel.cs" />
+    <Compile Include="Documents\Refund\RefundFromClientSimple.cs" />
     <Compile Include="ICommon\ITreeReference.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNaklad.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladInfo.cs" />
@@ -240,6 +241,9 @@
     <Compile Include="IDocuments\DistributeOverhead\DistributeNakladTypeEnum.cs" />
     <Compile Include="IDocuments\Finance\ISFProviderNomenklCurrencyConvert.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladRow.cs" />
+    <Compile Include="IDocuments\Refund\IRefundFromClient.cs" />
+    <Compile Include="Documents\Refund\RefundFromClientRowViewModel.cs" />
+    <Compile Include="Documents\Refund\RefundFromClientViewModel.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IConsumableWarehouseInvoice.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrder.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrderRow.cs" />

@@ -203,7 +203,7 @@
             </DrawingGroup>
         </DrawingImage.Drawing>
     </DrawingImage>
-    <Image x:Key="imageStandartWindow" Source="{StaticResource DrawingStandartWindow}" />
+    <!--<Image x:Key="imageStandartWindow" Source="{StaticResource DrawingStandartWindow}" />-->
     <DrawingImage x:Key="imageStandartSearch">
         <DrawingImage.Drawing>
             <DrawingGroup>

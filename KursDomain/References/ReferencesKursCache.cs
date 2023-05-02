@@ -1646,6 +1646,7 @@ public class ReferencesKursCache : IReferencesCache
 
     public INomenkl GetNomenkl(decimal dc)
     {
+        if (dc <= 0) return null;
         if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
             NomenklsTrackingId != GetCurrentChangeTrackingId())
             UpdateCacheNomenkl();
