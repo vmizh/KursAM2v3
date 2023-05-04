@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Data.Entity;
 using Core.ViewModel.Base;
 using Data;
-using KursDomain.Repository;
 using DevExpress.Mvvm;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
@@ -27,6 +27,7 @@ using KursDomain.Documents.StockHolder;
 using KursDomain.Documents.Systems;
 using KursDomain.ICommon;
 using KursDomain.References;
+using KursDomain.Repository;
 
 namespace KursAM2.Dialogs
 {
@@ -417,7 +418,8 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
 
-        public static InvoiceClientViewModel SelectInvoiceClient(bool isUsePayment, bool isUseAccepted, Currency crs = null)
+        public static InvoiceClientViewModel SelectInvoiceClient(bool isUsePayment, bool isUseAccepted,
+            Currency crs = null)
         {
             var ctx = new InvoiceClientSearchDialog(isUsePayment, isUseAccepted, crs);
             var dlg = new SelectDialogView {DataContext = ctx};
@@ -453,8 +455,13 @@ namespace KursAM2.Dialogs
 
                     if (ctx.CurrentProviderItem != null)
                     {
-                        var d = dbctx.SD_26.First(_ => _.DOC_CODE == ctx.CurrentProviderItem.DocCode);
-                        var doc = new InvoiceProvider(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>(dbctx));
+                        var d = dbctx.SD_26
+                            .Include(_ => _.TD_26)
+                            .Include(_ => _.ProviderInvoicePay)
+                            .Include(_ => _.ProviderInvoicePay.Select(x => x.TD_101))
+                            .Include(_ => _.ProviderInvoicePay.Select(x => x.SD_34))
+                            .First(_ => _.DOC_CODE == ctx.CurrentProviderItem.DocCode);
+                        var doc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>(dbctx));
                         return doc;
                     }
 
@@ -482,8 +489,13 @@ namespace KursAM2.Dialogs
 
                     if (ctx.CurrentProviderItem != null)
                     {
-                        var d = dbctx.SD_26.First(_ => _.DOC_CODE == ctx.CurrentProviderItem.DocCode);
-                        var doc = new InvoiceProvider(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>(dbctx));
+                        var d = dbctx.SD_26
+                            .Include(_ => _.TD_26)
+                            .Include(_ => _.ProviderInvoicePay)
+                            .Include(_ => _.ProviderInvoicePay.Select(x => x.TD_101))
+                            .Include(_ => _.ProviderInvoicePay.Select(x => x.SD_34))
+                            .First(_ => _.DOC_CODE == ctx.CurrentProviderItem.DocCode);
+                        var doc = new InvoiceProvider(d);
                         return doc;
                     }
 

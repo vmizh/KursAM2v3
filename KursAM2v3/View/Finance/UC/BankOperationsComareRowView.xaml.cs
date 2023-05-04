@@ -362,99 +362,106 @@ namespace KursAM2.View.Finance.UC
             var dtx2 = DataContext as BankOperationsViewModel;
             if (dtx == null && dtx2 == null) return;
             RSViewModelBase item1;
-            if (dtx != null && dtx.KontragentViewModel != null)
-                item1 = StandartDialogs.SelectAllInvoiceClient(dtx.KontragentViewModel.DocCode, true, true);
-            else
-                item1 = StandartDialogs.SelectAllInvoiceClient(true, true, dtx?.Currency);
-            if (item1 == null) return;
-            var d2 = item1 as InvoiceClientViewModel;
-            var d1 = item1 as InvoiceProvider;
-            if (d1 == null && d2 == null) return;
-            if (d2 != null)
+            try
             {
-                Incoming.IsEnabled = true;
-                Consumption.IsEnabled = false;
-                if (dtx != null)
+                if (dtx != null && dtx.KontragentViewModel != null)
+                    item1 = StandartDialogs.SelectAllInvoiceClient(dtx.KontragentViewModel.DocCode, true, true);
+                else
+                    item1 = StandartDialogs.SelectAllInvoiceClient(true, true, dtx?.Currency);
+                if (item1 == null) return;
+                var d2 = item1 as InvoiceClientViewModel;
+                var d1 = item1 as InvoiceProvider;
+                if (d1 == null && d2 == null) return;
+                if (d2 != null)
                 {
-                    if (d2.DocDate != dtx.Date)
-                        if (winMan.ShowWinUIMessageBox(
-                                "Даты операции и счета не совпадают. Переустановить дату, как в счете?",
-                                "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                            dtx.Date = d2.DocDate;
-                    maxSumma = d2.Summa - d2.PaySumma;
-                    // ReSharper disable once PossibleInvalidOperationException
-                    dtx.VVT_VAL_PRIHOD = d2.Summa - d2.PaySumma;
-                    dtx.VVT_DOC_NUM = d2.ToString();
-                    dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC = d2.DocCode;
-                    dtx.Payment = d2.Client;
-                    dtx.SFName = d2.ToString();
-                    Payment.Text = dtx.Payment.Name;
-                    dtx.Currency = GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency;
-                    dtx.BankOperationType = BankOperationType.Kontragent;
-                    dtx.KontragentViewModel = d2.Client;
-                    Kontragent.Text = dtx.KontragentViewModel.Name;
-                    dtx.CurrentBankOperations.SFName =
-                        $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa:n2} {GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency}";
+                    Incoming.IsEnabled = true;
+                    Consumption.IsEnabled = false;
+                    if (dtx != null)
+                    {
+                        if (d2.DocDate != dtx.Date)
+                            if (winMan.ShowWinUIMessageBox(
+                                    "Даты операции и счета не совпадают. Переустановить дату, как в счете?",
+                                    "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                                dtx.Date = d2.DocDate;
+                        maxSumma = d2.Summa - d2.PaySumma;
+                        // ReSharper disable once PossibleInvalidOperationException
+                        dtx.VVT_VAL_PRIHOD = d2.Summa - d2.PaySumma;
+                        dtx.VVT_DOC_NUM = d2.ToString();
+                        dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC = d2.DocCode;
+                        dtx.Payment = d2.Client;
+                        dtx.SFName = d2.ToString();
+                        Payment.Text = dtx.Payment.Name;
+                        dtx.Currency = GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency;
+                        dtx.BankOperationType = BankOperationType.Kontragent;
+                        dtx.KontragentViewModel = d2.Client;
+                        Kontragent.Text = dtx.KontragentViewModel.Name;
+                        dtx.CurrentBankOperations.SFName =
+                            $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa:n2} {GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency}";
+                    }
+
+                    if (dtx2 != null)
+                    {
+                        maxSumma = d2.Summa - d2.PaySumma;
+                        if (d2.DocDate != dtx2.Date) dtx2.Date = d2.DocDate;
+                        // ReSharper disable once PossibleInvalidOperationException
+                        dtx2.VVT_VAL_PRIHOD = d2.Summa - d2.PaySumma;
+                        dtx2.VVT_DOC_NUM = d2.ToString();
+                        dtx2.VVT_SFACT_CLIENT_DC = d2.DocCode;
+                        dtx2.Payment = d2.Client;
+                        Payment.Text = dtx2.Payment.Name;
+                        dtx2.SFName = d2.ToString();
+                        dtx2.Currency = GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency;
+                        dtx2.Kontragent = d2.Client;
+                        Kontragent.Text = dtx2.Kontragent.Name;
+                        dtx2.SFName =
+                            $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa:n2} " +
+                            $"{GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency}";
+                    }
                 }
 
-                if (dtx2 != null)
+                if (d1 != null)
                 {
-                    maxSumma = d2.Summa - d2.PaySumma;
-                    if (d2.DocDate != dtx2.Date) dtx2.Date = d2.DocDate;
-                    // ReSharper disable once PossibleInvalidOperationException
-                    dtx2.VVT_VAL_PRIHOD = d2.Summa - d2.PaySumma;
-                    dtx2.VVT_DOC_NUM = d2.ToString();
-                    dtx2.VVT_SFACT_CLIENT_DC = d2.DocCode;
-                    dtx2.Payment = d2.Client;
-                    Payment.Text = dtx2.Payment.Name;
-                    dtx2.SFName = d2.ToString();
-                    dtx2.Currency = GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency;
-                    dtx2.Kontragent = d2.Client;
-                    Kontragent.Text = dtx2.Kontragent.Name;
-                    dtx2.SFName =
-                        $"С/ф №{d2.InnerNumber}/{d2.OuterNumber} от {d2.DocDate.ToShortDateString()} на {d2.Summa:n2} " +
-                        $"{GlobalOptions.ReferencesCache.GetCurrency(d2.Entity.SF_CRS_DC) as Currency}";
+                    Incoming.IsEnabled = false;
+                    Consumption.IsEnabled = true;
+                    if (dtx != null)
+                    {
+                        maxSumma = d1.Summa - d1.PaySumma;
+                        if (d1.DocDate != dtx.Date)
+                            if (winMan.ShowWinUIMessageBox(
+                                    "Даты операции и счета не совпадают. Переустановить дату, как в счете?",
+                                    "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                                dtx.Date = d1.DocDate;
+                        dtx.VVT_VAL_RASHOD = d1.Summa - d1.PaySumma;
+                        dtx.VVT_DOC_NUM = d1.ToString();
+                        dtx.CurrentBankOperations.VVT_SFACT_POSTAV_DC = d1.DocCode;
+                        dtx.SFName = d1.ToString();
+                        dtx.CurrentBankOperations.VVT_DOC_NUM = d1.ToString();
+                        dtx.BankOperationType = BankOperationType.Kontragent;
+                        dtx.KontragentViewModel = d1.Kontragent;
+                        Kontragent.Text = dtx.KontragentViewModel.Name;
+                        dtx.Payment = d1.Kontragent;
+                        Payment.Text = dtx.Payment.Name;
+                    }
+
+                    if (dtx2 != null)
+                    {
+                        maxSumma = d1.Summa - d1.PaySumma;
+                        if (d1.DocDate != dtx2.Date) dtx2.Date = d1.DocDate;
+                        dtx2.VVT_VAL_RASHOD = d1.Summa - d1.PaySumma;
+                        dtx2.VVT_DOC_NUM = d1.ToString();
+                        dtx2.VVT_SFACT_POSTAV_DC = d1.DocCode;
+                        dtx2.SFName = d1.ToString();
+                        dtx2.Payment = GlobalOptions.SystemProfile.OwnerKontragent;
+                        dtx2.BankOperationType = BankOperationType.Kontragent;
+                        dtx2.Kontragent = d1.Kontragent;
+                        Kontragent.Text = dtx2.Kontragent.Name;
+                        Payment.Text = dtx2.Payment.Name;
+                    }
                 }
             }
-
-            if (d1 != null)
+            catch (Exception ex)
             {
-                Incoming.IsEnabled = false;
-                Consumption.IsEnabled = true;
-                if (dtx != null)
-                {
-                    maxSumma = d1.Summa - d1.PaySumma;
-                    if (d1.DocDate != dtx.Date)
-                        if (winMan.ShowWinUIMessageBox(
-                                "Даты операции и счета не совпадают. Переустановить дату, как в счете?",
-                                "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                            dtx.Date = d1.DocDate;
-                    dtx.VVT_VAL_RASHOD = d1.Summa - d1.PaySumma;
-                    dtx.VVT_DOC_NUM = d1.ToString();
-                    dtx.CurrentBankOperations.VVT_SFACT_POSTAV_DC = d1.DocCode;
-                    dtx.SFName = d1.ToString();
-                    dtx.CurrentBankOperations.VVT_DOC_NUM = d1.ToString();
-                    dtx.BankOperationType = BankOperationType.Kontragent;
-                    dtx.KontragentViewModel = d1.Kontragent;
-                    Kontragent.Text = dtx.KontragentViewModel.Name;
-                    dtx.Payment = d1.Kontragent;
-                    Payment.Text = dtx.Payment.Name;
-                }
-
-                if (dtx2 != null)
-                {
-                    maxSumma = d1.Summa - d1.PaySumma;
-                    if (d1.DocDate != dtx2.Date) dtx2.Date = d1.DocDate;
-                    dtx2.VVT_VAL_RASHOD = d1.Summa - d1.PaySumma;
-                    dtx2.VVT_DOC_NUM = d1.ToString();
-                    dtx2.VVT_SFACT_POSTAV_DC = d1.DocCode;
-                    dtx2.SFName = d1.ToString();
-                    dtx2.Payment = GlobalOptions.SystemProfile.OwnerKontragent;
-                    dtx2.BankOperationType = BankOperationType.Kontragent;
-                    dtx2.Kontragent = d1.Kontragent;
-                    Kontragent.Text = dtx2.Kontragent.Name;
-                    Payment.Text = dtx2.Payment.Name;
-                }
+                WindowManager.ShowError(ex, "Ошибка выбора счета фактуры");
             }
         }
 

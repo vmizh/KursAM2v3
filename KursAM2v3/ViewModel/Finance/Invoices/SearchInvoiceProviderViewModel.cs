@@ -5,13 +5,11 @@ using System.Threading.Tasks;
 using System.Windows;
 using Core.ViewModel.Base;
 using Data;
-using DevExpress.Data.Helpers;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.Invoices;
-using KursAM2.View.Logistiks;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.IDocuments.Finance;
@@ -30,11 +28,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
         // ReSharper disable once NotAccessedField.Local
         public readonly IInvoiceProviderRepository InvoiceProviderRepository;
 
+        private IInvoiceProvider myCurrentDocument;
+
         public UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
-        private IInvoiceProvider myCurrentDocument;
-        
 
         public SearchInvoiceProviderViewModel()
         {
@@ -93,17 +91,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 RaisePropertyChanged();
             }
         }
-
-        //private Task Load()
-        //{
-        //    var res = Task.Factory.StartNew(() =>
-        //        new List<IInvoiceProvider>(InvoiceProviderRepository.GetAllByDates(StartDate, EndDate)));
-        //    Documents.Clear();
-        //    foreach (var d in res.Result) Documents.Add(d);
-        //    RaisePropertyChanged(nameof(Documents));
-        //    DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
-        //    return res;
-        //}
 
         public override void RefreshData(object data)
         {
