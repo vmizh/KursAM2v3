@@ -12,7 +12,6 @@ using KursAM2.View.Repozit;
 using KursDomain;
 using KursDomain.Documents.Systems;
 using KursDomain.Menu;
-using KursRepositories.ViewModels;
 
 namespace KursAM2.ViewModel.Repozit
 {

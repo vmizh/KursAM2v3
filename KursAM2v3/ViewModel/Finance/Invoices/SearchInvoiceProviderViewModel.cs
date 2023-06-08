@@ -26,7 +26,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public readonly GenericKursDBRepository<SD_26> GenericProviderRepository;
 
         // ReSharper disable once NotAccessedField.Local
-        public readonly IInvoiceProviderRepository InvoiceProviderRepository;
+        public IInvoiceProviderRepository InvoiceProviderRepository;
 
         private IInvoiceProvider myCurrentDocument;
 
@@ -94,8 +94,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void RefreshData(object data)
         {
-            List<IInvoiceProvider> dbdata = new List<IInvoiceProvider>();
             var frm = Form as StandartSearchView;
+            InvoiceProviderRepository =
+                new InvoiceProviderRepository(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
             Documents.Clear();
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             Task.Run(() =>
@@ -106,10 +107,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     frm.loadingIndicator.Visibility = Visibility.Hidden;
                     foreach (var d in result)
+                    {
                         Documents.Add(d);
+                    }
                 });
                 GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             });
+            frm.gridDocuments.RefreshData();
         }
 
         public override void DocumentOpen(object obj)

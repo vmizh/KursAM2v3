@@ -4,7 +4,6 @@ using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.DragDrop;
-using DevExpress.Xpf.Reports.UserDesigner.Editors.TypedStyles;
 using KursAM2.ViewModel.Reference.Kontragent;
 using KursDomain;
 using KursDomain.References;

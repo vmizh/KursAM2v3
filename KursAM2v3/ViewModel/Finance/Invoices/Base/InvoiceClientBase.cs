@@ -22,30 +22,46 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
 
         public InvoiceClientBase(IEnumerable<InvoiceClientQuery> invList, bool isLoadDetails = false)
         {
-            if (invList == null || !invList.Any())
-                throw new ArgumentNullException();
-            var doc = invList.First();
-            DocCode = doc.DocCode;
-            Id = doc.Id;
-            DocDate = doc.DocDate;
-            Receiver = GlobalOptions.ReferencesCache.GetKontragent(doc.ReceiverDC) as Kontragent;
-            CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(doc.CentOtvetstDC) as CentrResponsibility;
-            VzaimoraschetType =
-                GlobalOptions.ReferencesCache.GetNomenklProductType(doc.VzaimoraschetTypeDC) as NomenklProductType;
-            PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(doc.PayConditionDC) as PayCondition;
-            InnerNumber = doc.InnerNumber;
-            OuterNumber = doc.OuterNumber;
-            Client = GlobalOptions.ReferencesCache.GetKontragent(doc.ClientDC) as Kontragent;
-            Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CurrencyDC) as Currency;
-            SummaOtgruz = Math.Round(doc.SummaOtgruz ?? 0, 2);
-            DilerSumma = Math.Round(doc.DilerSumma, 2);
-            Note = doc.Note;
-            Diler = GlobalOptions.ReferencesCache.GetKontragent(doc.DilerDC) as Kontragent;
-            IsAccepted = doc.IsAccepted ?? false;
-            Summa = Math.Round(doc.Summa ?? 0, 2);
-            CREATOR = doc.CREATOR;
-            IsNDSIncludeInPrice = doc.IsNDSIncludeInPrice ?? false;
-            PaySumma = Math.Round(doc.PaySumma ?? 0, 2);
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                if (invList == null || !invList.Any())
+                    throw new ArgumentNullException();
+                var doc = invList.First();
+                DocCode = doc.DocCode;
+                Id = doc.Id;
+                DocDate = doc.DocDate;
+                Receiver = GlobalOptions.ReferencesCache.GetKontragent(doc.ReceiverDC) as Kontragent;
+                CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(doc.CentOtvetstDC) as CentrResponsibility;
+                VzaimoraschetType =
+                    GlobalOptions.ReferencesCache.GetNomenklProductType(doc.VzaimoraschetTypeDC) as NomenklProductType;
+                PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(doc.PayConditionDC) as PayCondition;
+                InnerNumber = doc.InnerNumber;
+                OuterNumber = doc.OuterNumber;
+                Client = GlobalOptions.ReferencesCache.GetKontragent(doc.ClientDC) as Kontragent;
+                Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CurrencyDC) as Currency;
+                SummaOtgruz = Math.Round(doc.SummaOtgruz ?? 0, 2);
+                DilerSumma = Math.Round(doc.DilerSumma, 2);
+                Note = doc.Note;
+                Diler = GlobalOptions.ReferencesCache.GetKontragent(doc.DilerDC) as Kontragent;
+                IsAccepted = doc.IsAccepted ?? false;
+                Summa = Math.Round(doc.Summa ?? 0, 2);
+                CREATOR = doc.CREATOR;
+                FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(doc.FormRaschetDC) as PayForm;
+                IsNDSIncludeInPrice = doc.IsNDSIncludeInPrice ?? false;
+                PaySumma = Math.Round(doc.PaySumma ?? 0, 2);
+                var r = ctx.SD_84.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
+                if (r != null)
+                {
+                    PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(r.PersonalResponsibleDC) as Employee;
+                }
+                else
+                {
+                    var k = ctx.SD_43.FirstOrDefault(_ => _.DOC_CODE == doc.ClientDC);
+                    if(k.OTVETSTV_LICO != null)
+                        PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(k.OTVETSTV_LICO.Value) as Employee;
+                }
+            }
+
             if (!isLoadDetails) return;
             Rows = new ObservableCollection<IInvoiceClientRow>();
             foreach (var r in invList) Rows.Add(new InvoiceClientRowBase(r));

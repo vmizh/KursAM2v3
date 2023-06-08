@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using DevExpress.Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -53,6 +54,46 @@ namespace KursAM2.View.Management
                 ctx.Kontragent = ctx.Kontragents.Single(_ => _.DocCode == ctx.StartKontragent.DocCode);
             searchLookUpEditKontragent.EditValue = ctx.Kontragent;
             searchLookUpEditKontragent.IsPopupOpen = false;
+            //KontrOperGrid
+            //    KontrOperTableView
+            KontrOperTableView.ShowTotalSummary = true;
+            KontrOperGrid.TotalSummary.Clear();
+            /*<dxg:GridSummaryItem ShowInColumn="CrsKontrIn" FieldName="CrsKontrIn"
+                                                 SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem ShowInColumn="CrsKontrOut" FieldName="CrsKontrOut"
+                                                 SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem ShowInColumn="CrsKontrStart" FieldName="CrsKontrStart"
+                                                 SummaryType="Sum" DisplayFormat="n2" />
+                            <dxg:GridSummaryItem ShowInColumn="CrsKontrEnd" FieldName="CrsKontrEnd"
+                                                 SummaryType="Sum" DisplayFormat="n2" />*/
+            KontrOperGrid.TotalSummary.Add(new GridSummaryItem
+            {
+                SummaryType = SummaryItemType.Sum,
+                FieldName = "CrsKontrIn",
+                DisplayFormat = "n2",
+                ShowInColumn = "CrsKontrIn"
+            });
+            KontrOperGrid.TotalSummary.Add(new GridSummaryItem
+            {
+                SummaryType = SummaryItemType.Sum,
+                FieldName = "CrsKontrOut",
+                DisplayFormat = "n2",
+                ShowInColumn = "CrsKontrOut"
+            });
+            KontrOperGrid.TotalSummary.Add(new GridSummaryItem
+            {
+                SummaryType = SummaryItemType.Sum,
+                FieldName = "CrsKontrStart",
+                DisplayFormat = "n2",
+                ShowInColumn = "CrsKontrStart"
+            });
+            KontrOperGrid.TotalSummary.Add(new GridSummaryItem
+            {
+                SummaryType = SummaryItemType.Sum,
+                FieldName = "CrsKontrEnd",
+                DisplayFormat = "n2",
+                ShowInColumn = "CrsKontrEnd"
+            });
         }
 
         private void KontragentBalansForm_Closing(object sender, CancelEventArgs e)

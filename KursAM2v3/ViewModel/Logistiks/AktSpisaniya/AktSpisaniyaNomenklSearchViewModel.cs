@@ -7,6 +7,7 @@ using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.Managers;
+using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories;
 using KursAM2.View.Logistiks.AktSpisaniya;
 using KursDomain;
@@ -21,6 +22,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
     public sealed class AktSpisaniyaNomenklSearchViewModel : RSWindowViewModelBase
     {
         public readonly IAktSpisaniyaNomenkl_TitleRepository AktSpisaniyaNomenklRepository;
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         public readonly GenericKursDBRepository<AktSpisaniyaNomenkl_Title> BaseRepository;
 
@@ -167,9 +169,16 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         {
             base.RefreshData(obj);
             Documents.Clear();
-            foreach (var d in AktSpisaniyaNomenklRepository.GetAllByDates(StartDate, EndDate).ToList())
-                Documents.Add(new AktSpisaniyaNomenklTitleViewModel(d));
+            foreach (var newItem in AktSpisaniyaNomenklRepository.GetAllByDates(StartDate, EndDate).ToList()
+                         .Select(d => new AktSpisaniyaNomenklTitleViewModel(d)))
+            {
+                foreach (var r in newItem.Rows)
+                {
+                    r.Prices = nomenklManager.GetNomenklPrice(r.Nomenkl.DocCode, newItem.DocDate);
+                }
 
+                Documents.Add(newItem);
+            }
             RaisePropertyChanged(nameof(Documents));
         }
 

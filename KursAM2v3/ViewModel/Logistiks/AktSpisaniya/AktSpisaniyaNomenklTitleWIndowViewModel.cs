@@ -195,6 +195,9 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public ObservableCollection<SignatureViewModel> SignatureRows { set; get; } =
             new ObservableCollection<SignatureViewModel>();
 
+        public List<Currency> CurrencyList =>
+            GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>().ToList();
+
         public override Visibility IsMenuInfoVisibility => IsSigned ? Visibility.Visible : Visibility.Hidden;
 
         public bool IsSigned
@@ -271,10 +274,16 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         #region Command
 
+        public bool IsWarehouseCanChanged => Document.State == RowStatus.NewRow && Document.Rows.Count == 0;
+        public bool IsCurrencyCanChanged => Document.State == RowStatus.NewRow && Document.Rows.Count == 0;
+
+        public override bool IsDocDeleteAllow => Document.State != RowStatus.NewRow;
+
         public override bool IsCanSaveData =>
             Document != null && Document.State != RowStatus.NotEdited
                              && Document.Rows.All(_ => _.Quantity <= _.MaxQuantity)
-                             && Document.Warehouse != null;
+                             && Document.Warehouse != null
+                             && Document.Currency != null;
 
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
 
@@ -386,6 +395,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 {
                     unitOfWork.Rollback();
                     var nom = GlobalOptions.ReferencesCache.GetNomenkl(n) as Nomenkl;
+                    // ReSharper disable once PossibleNullReferenceException
                     WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
                                               // ReSharper disable once PossibleInvalidOperationException
                                               $"склад {Document.Warehouse} в кол-ве {c} ",
@@ -457,13 +467,15 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public ICommand AddNomenklCommand
         {
-            get { return new Command(AddNomenkl, _ => Document?.Warehouse != null && IsSigned == false); }
+            get { return new Command(AddNomenkl, _ => Document?.Warehouse != null 
+                                                      && Document?.Currency != null
+                                                      && IsSigned == false); }
         }
 
         private void AddNomenkl(object obj)
         {
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
-            var ctx = new DialogSelectExistNomOnSkaldViewModel(Document.Warehouse, Document.DocDate);
+            var ctx = new DialogSelectExistNomOnSkaldViewModel(Document.Warehouse, Document.DocDate, Document?.Currency);
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, $"Запрос для склада: {Document.Warehouse}", ctx) ==
                 MessageResult.Cancel) return;
@@ -539,6 +551,53 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             foreach (var s in signs) SignatureRows.Add(s);
             if (Document.myState != RowStatus.NewRow)
                 Document.myState = RowStatus.Edited;
+        }
+
+        public override void DocNewEmpty(object form)
+        {
+            var frm = new AktSpisaniyaView
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var ctx = new AktSpisaniyaNomenklTitleWIndowViewModel
+            {
+                Form = frm,
+                State = RowStatus.NewRow
+            };
+            frm.DataContext = ctx;
+            frm.Show();
+        }
+
+        public override void DocNewCopy(object obj)
+        {
+            if (Document == null)
+                return;
+            var ctx = new AktSpisaniyaNomenklTitleWIndowViewModel(Document.Id);
+            ctx.SetAsNewCopy(true);
+            var frm = new AktSpisaniyaView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+
+            ctx.Form = frm;
+            frm.Show();
+        }
+
+        public override void DocNewCopyRequisite(object obj)
+        {
+            if (Document == null)
+                return;
+            var ctx = new AktSpisaniyaNomenklTitleWIndowViewModel(Document.Id);
+            ctx.SetAsNewCopy(false);
+            var frm = new AktSpisaniyaView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+
+            ctx.Form = frm;
+            frm.Show();
         }
 
         #endregion

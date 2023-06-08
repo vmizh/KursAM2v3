@@ -34,7 +34,7 @@ namespace KursAM2.View.DialogUserControl.Standart
                     DbId = GlobalOptions.DataBaseId,
                     Host = Environment.MachineName,
                     UserId = GlobalOptions.UserInfo.KursId,
-                    ErrorText = "Log накладные расходы -> " + str,
+                    ErrorText = "Log RSDialogView -> " + str,
                     Moment = DateTime.Now
                 });
                 context.SaveChanges();

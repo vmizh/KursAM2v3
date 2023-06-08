@@ -188,45 +188,46 @@ namespace KursAM2.ViewModel.Finance
 
         private void SetNewDebitorSF(object obj)
         {
-            var item = StandartDialogs.SelectInvoiceClient(true, true, Document.DebitorCurrency);
-                if (item == null) return;
-                NomenklProductType vzdefault = null;
-                var vzdefDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(_ =>
-                    _.SECTION == "MUTUAL_ACCOUNTING" && _.ITEM == "DEFAULT_TYPE_PRODUCT");
-                if (vzdefDC != null)
-                    vzdefault =
-                        GlobalOptions.ReferencesCache.GetNomenklProductType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as
-                            NomenklProductType;
-                var m =  DebitorCollection.Any() ?  DebitorCollection.Max(_ => _.Code) + 1 : 0;
-                var m2 =  CreditorCollection.Any() ?  CreditorCollection.Max(_ => _.Code) + 1 : 0;
-                var _code = Math.Max(m, m2) + 1;
-                var newdeb = new MutualAccountingDebitorViewModel
-                {
-                    DocCode = Document.DocCode,
-                    Code = _code,
-                    VZT_DOC_DATE = Document.VZ_DATE,
-                    VZT_DOC_NUM = (Document.Rows.Count + 1).ToString(),
-                    VZT_1MYDOLZH_0NAMDOLZH = 0,
-                    VZT_CRS_POGASHENO = item.Summa - item.PaySumma,
-                    VZT_UCH_CRS_POGASHENO = item.Summa - item.PaySumma,
-                    VZT_CRS_SUMMA = item.Summa - item.PaySumma,
-                    VZT_KONTR_CRS_SUMMA = -(item.Summa - item.PaySumma),
-                    VZT_UCH_CRS_RATE = 1,
-                    State = RowStatus.NewRow,
-                    VzaimoraschType = vzdefault,
-                    Parent = Document,
-                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_CLIENT_DC) as Kontragent,
-                    SfClient = item,
-                    MaxSumma = item.Summa - item.PaySumma,
-                };
-                if (Document.DebitorCurrency == null)
-                    Document.DebitorCurrency = newdeb.Currency;
-                Document.Rows.Add(newdeb);
-                DebitorCollection.Add(newdeb);
-                CurrentDebitor = newdeb;
-                // ReSharper disable once PossibleNullReferenceException
-                KontragentManager.UpdateSelectCount(newdeb.Kontragent.DocCode);
-                CalcItogoSumma();
+            var item = StandartDialogs.SelectInvoiceClient(true, true,
+                DebitorCollection.Select(_ => _.SfClient?.DocCode ?? 0).Distinct().ToList(), Document.DebitorCurrency);
+            if (item == null) return;
+            NomenklProductType vzdefault = null;
+            var vzdefDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(_ =>
+                _.SECTION == "MUTUAL_ACCOUNTING" && _.ITEM == "DEFAULT_TYPE_PRODUCT");
+            if (vzdefDC != null)
+                vzdefault =
+                    GlobalOptions.ReferencesCache.GetNomenklProductType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as
+                        NomenklProductType;
+            var m = DebitorCollection.Any() ? DebitorCollection.Max(_ => _.Code) + 1 : 0;
+            var m2 = CreditorCollection.Any() ? CreditorCollection.Max(_ => _.Code) + 1 : 0;
+            var _code = Math.Max(m, m2) + 1;
+            var newdeb = new MutualAccountingDebitorViewModel
+            {
+                DocCode = Document.DocCode,
+                Code = _code,
+                VZT_DOC_DATE = Document.VZ_DATE,
+                VZT_DOC_NUM = (Document.Rows.Count + 1).ToString(),
+                VZT_1MYDOLZH_0NAMDOLZH = 0,
+                VZT_CRS_POGASHENO = item.Summa - item.PaySumma,
+                VZT_UCH_CRS_POGASHENO = item.Summa - item.PaySumma,
+                VZT_CRS_SUMMA = item.Summa - item.PaySumma,
+                VZT_KONTR_CRS_SUMMA = -(item.Summa - item.PaySumma),
+                VZT_UCH_CRS_RATE = 1,
+                State = RowStatus.NewRow,
+                VzaimoraschType = vzdefault,
+                Parent = Document,
+                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(item.Entity.SF_CLIENT_DC) as Kontragent,
+                SfClient = item,
+                MaxSumma = item.Summa - item.PaySumma,
+            };
+            if (Document.DebitorCurrency == null)
+                Document.DebitorCurrency = newdeb.Currency;
+            Document.Rows.Add(newdeb);
+            DebitorCollection.Add(newdeb);
+            CurrentDebitor = newdeb;
+            // ReSharper disable once PossibleNullReferenceException
+            KontragentManager.UpdateSelectCount(newdeb.Kontragent.DocCode);
+            CalcItogoSumma();
         }
 
         private void SetCreditorSF(object obj)
@@ -256,7 +257,9 @@ namespace KursAM2.ViewModel.Finance
         private void SetNewCreditorSF(object obj)
         {
 
-            var item = StandartDialogs.SelectInvoiceProvider(true, true, true, Document.CreditorCurrency);
+            var item = StandartDialogs.SelectInvoiceProvider(true, true,
+                CreditorCollection.Select(_ => _.SFProvider?.DocCode ?? 0).Distinct().ToList(),
+                true, Document.CreditorCurrency);
             if (item == null) return;
             NomenklProductType vzdefault = null;
             var vzdefDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(_ =>

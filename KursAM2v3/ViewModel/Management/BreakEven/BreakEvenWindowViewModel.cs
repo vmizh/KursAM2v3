@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.View.Management;
@@ -35,6 +37,13 @@ namespace KursAM2.ViewModel.Management.BreakEven
         private readonly ObservableCollection<BreakEvenNomGroupViewModel> myTempNomenklGroups =
             new ObservableCollection<BreakEvenNomGroupViewModel>();
 
+        private BreakEvenCOrGroupViewModel _CurrentCO;
+
+
+        private DocumentCrsRow _CurrentCurrencyDocument;
+        private BreakEvenKontrGroupViewModel _CurrentKontragent;
+        private BreakEvenManagerGroupViewModel _CurrentManager;
+        private BreakEvenNomGroupViewModel _CurrentNomenkl;
         private DocumentRow myCurrentDocument;
         private DateTime myEndDate;
         private DateTime myStartDate;
@@ -53,16 +62,100 @@ namespace KursAM2.ViewModel.Management.BreakEven
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
         }
 
+        public override string LayoutName => "BreakEvenWindowViewModel";
+        public override string WindowName => "Рентабельность";
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<DocumentRow> DocumentGroup { set; get; }
-
-        public ObservableCollection<DocumentRow> DocumentCurrencyGroup { set; get; } =
-            new ObservableCollection<DocumentRow>();
-
+        public ObservableCollection<DocumentCrsRow> DocumentCurrencyGroup { set; get; } =
+            new ObservableCollection<DocumentCrsRow>();
         public ObservableCollection<BreakEvenNomGroupViewModel> NomenklGroups { set; get; }
         public ObservableCollection<BreakEvenCOrGroupViewModel> CoGroups { set; get; }
         public ObservableCollection<BreakEvenKontrGroupViewModel> KontrGroups { set; get; }
         public ObservableCollection<BreakEvenManagerGroupViewModel> ManagerGroups { set; get; }
+
+        public BreakEvenNomGroupViewModel CurrentNomenkl
+        {
+            get => _CurrentNomenkl;
+            set
+            {
+                if (_CurrentNomenkl == value) return;
+                _CurrentNomenkl = value;
+                if (_CurrentNomenkl == null)
+                {
+                    DocumentCurrencyGroup.Clear();
+                    DocumentGroup.Clear();
+                }
+                else
+                {
+                    UpdateDocForNomenkl(_CurrentNomenkl.NomenklNumber);
+                }
+
+                RaisePropertyChanged();
+            }
+        }
+
+        public BreakEvenKontrGroupViewModel CurrentKontragent
+        {
+            get => _CurrentKontragent;
+            set
+            {
+                if (_CurrentKontragent == value) return;
+                _CurrentKontragent = value;
+                if (_CurrentKontragent == null)
+                {
+                    DocumentCurrencyGroup.Clear();
+                    DocumentGroup.Clear();
+                }
+                else
+                {
+                    UpdateForKontragent(_CurrentKontragent.Name);
+                }
+
+                RaisePropertyChanged();
+            }
+        }
+
+        public BreakEvenManagerGroupViewModel CurrentManager
+        {
+            get => _CurrentManager;
+            set
+            {
+                if (_CurrentManager == value) return;
+                _CurrentManager = value;
+                if (_CurrentManager == null)
+                {
+                    DocumentCurrencyGroup.Clear();
+                    DocumentGroup.Clear();
+                }
+                else
+                {
+                    UpdateDocForManager(_CurrentManager.Name);
+                }
+
+                RaisePropertyChanged();
+            }
+        }
+
+        public BreakEvenCOrGroupViewModel CurrentCO
+        {
+            get => _CurrentCO;
+            set
+            {
+                if (_CurrentCO == value) return;
+                _CurrentCO = value;
+                if (_CurrentCO == null)
+                {
+                    DocumentCurrencyGroup.Clear();
+                    DocumentGroup.Clear();
+                }
+                else
+                {
+                    UpdateDocForCO(_CurrentCO.Name);
+                }
+
+                RaisePropertyChanged();
+            }
+        }
 
         public DocumentRow CurrentDocument
         {
@@ -71,6 +164,17 @@ namespace KursAM2.ViewModel.Management.BreakEven
             {
                 if (myCurrentDocument == value) return;
                 myCurrentDocument = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public DocumentCrsRow CurrentCurrencyDocument
+        {
+            get => _CurrentCurrencyDocument;
+            set
+            {
+                if (_CurrentCurrencyDocument == value) return;
+                _CurrentCurrencyDocument = value;
                 RaisePropertyChanged();
             }
         }
@@ -100,14 +204,15 @@ namespace KursAM2.ViewModel.Management.BreakEven
         public override bool IsDocumentOpenAllow => CurrentDocument != null
                                                     && DocumentsOpenManager.IsDocumentOpen(CurrentDocument.DocType);
 
-        public void UpdateDocForNomenkl(string nomNum)
+        private void UpdateForKontragent(string name)
         {
             DocumentGroup.Clear();
-            DocumentCurrencyGroup.Clear();
-            foreach (var d in DataAll.Where(t => t.Nomenkl.NomenklNumber == nomNum))
+            foreach (var d in DataAll.Where(t => t.Kontragent == name))
             {
                 DocumentGroup.Add(new DocumentRow
                 {
+                    DocCode = d.DocDC,
+                    DocType = d.DocType,
                     COName = d.CentrOfResponsibility.Name,
                     Date = d.Date,
                     DilerName = d.Diler,
@@ -127,8 +232,214 @@ namespace KursAM2.ViewModel.Management.BreakEven
                     SummaNomenkl = d.SummaNomenkl,
                     SummaNomenklCrs = d.SummaNomenklCrs
                 });
-                DocumentCurrencyGroup.Add(new DocumentRow
+                DocumentCurrencyGroup.Add(new DocumentCrsRow
                 {
+                    DocCode = d.DocDC,
+                    DocType = d.DocType,
+                    COName = d.CentrOfResponsibility.Name,
+                    Date = d.Date,
+                    DilerName = d.Diler,
+                    DilerSumma = d.DilerSumma,
+                    IsUsluga = d.IsUsluga,
+                    KontragentName = d.Kontragent,
+                    KontrSummaCrs = d.KontrSummaCrs,
+                    Price = d.Price,
+                    KontrSumma = d.KontrSumma,
+                    ManagerName = d.Manager,
+                    Naklad = d.Naklad,
+                    Nomenkl = d.Nomenkl,
+                    NomenklSumWOReva = Math.Round(d.KontrSummaCrs - d.NomenklSumWOReval, 2),
+                    OperCrsName = d.OperCrsName,
+                    Quantity = d.Quantity,
+                    Schet = d.Schet,
+                    SummaNomenkl = d.SummaNomenkl,
+                    SummaNomenklCrs = d.SummaNomenklCrs,
+                    SummaOperNomenkl = d.SummaOperNomenkl,
+                    KontrOperSummaCrs = d.KontrOperSummaCrs,
+                    SummaOperNomenklCrs = d.SummaOperNomenklCrs,
+                    ResultEUR = d.OperCurrency.Name == "EUR" ? Math.Round(d.KontrSumma - d.SummaOperNomenklCrs, 2) : 0,
+                    ResultRUB =
+                        d.OperCurrency.Name == "RUB" || d.OperCurrency.Name == "RUR"
+                            ? Math.Round(d.KontrSumma - d.SummaOperNomenklCrs, 2)
+                            : 0,
+                    ResultUSD = d.OperCurrency.Name == "USD" ? Math.Round(d.KontrSumma - d.SummaOperNomenklCrs, 2) : 0
+                });
+            }
+        }
+
+        private void UpdateDocForManager(string name)
+        {
+            DocumentGroup.Clear();
+            DocumentCurrencyGroup.Clear();
+            foreach (var d in DataAll.Where(t => t.Manager == name))
+            {
+                DocumentGroup.Add(new DocumentRow
+                {
+                    DocCode = d.DocDC,
+                    DocType = d.DocType,
+                    COName = d.CentrOfResponsibility.Name,
+                    Date = d.Date,
+                    DilerName = d.Diler,
+                    DilerSumma = d.DilerSumma,
+                    IsUsluga = d.IsUsluga,
+                    KontragentName = d.Kontragent,
+                    KontrSummaCrs = d.KontrSummaCrs,
+                    Price = d.Price,
+                    KontrSumma = d.KontrSumma,
+                    ManagerName = d.Manager,
+                    Naklad = d.Naklad,
+                    Nomenkl = d.Nomenkl,
+                    NomenklSumWOReva = Math.Round(d.KontrSummaCrs - d.SummaNomenkl - d.DilerSumma, 2),
+                    OperCrsName = d.OperCrsName,
+                    Quantity = d.Quantity,
+                    Schet = d.Schet,
+                    SummaNomenkl = d.SummaNomenkl,
+                    SummaNomenklCrs = d.SummaNomenklCrs
+                });
+                DocumentCurrencyGroup.Add(new DocumentCrsRow
+                {
+                    DocCode = d.DocDC,
+                    DocType = d.DocType,
+                    COName = d.CentrOfResponsibility.Name,
+                    Date = d.Date,
+                    DilerName = d.Diler,
+                    DilerSumma = d.DilerSumma,
+                    IsUsluga = d.IsUsluga,
+                    KontragentName = d.Kontragent,
+                    KontrSummaCrs = d.KontrSummaCrs,
+                    Price = d.Price,
+                    KontrSumma = d.KontrSumma,
+                    ManagerName = d.Manager,
+                    Naklad = d.Naklad,
+                    Nomenkl = d.Nomenkl,
+                    NomenklSumWOReva = Math.Round(d.KontrSummaCrs - d.SummaNomenkl - d.DilerSumma, 2),
+                    OperCrsName = d.OperCrsName,
+                    Quantity = d.Quantity,
+                    Schet = d.Schet,
+                    SummaNomenkl = d.SummaNomenkl,
+                    SummaNomenklCrs = d.SummaNomenklCrs,
+                    SummaOperNomenkl = d.SummaOperNomenkl,
+                    KontrOperSummaCrs = d.KontrOperSummaCrs,
+                    SummaOperNomenklCrs = d.SummaOperNomenklCrs,
+                    ResultEUR =
+                        d.OperCurrency.Name == "EUR"
+                            ? Math.Round(d.KontrSumma - d.SummaOperNomenklCrs - d.DilerSumma, 2)
+                            : 0,
+                    ResultRUB =
+                        d.OperCurrency.Name == "RUB" || d.OperCurrency.Name == "RUR"
+                            ? Math.Round(d.KontrSumma - d.SummaOperNomenklCrs - d.DilerSumma, 2)
+                            : 0,
+                    ResultUSD =
+                        d.OperCurrency.Name == "USD"
+                            ? Math.Round(d.KontrSumma - d.SummaOperNomenklCrs - d.DilerSumma, 2)
+                            : 0
+                });
+            }
+        }
+
+        private void UpdateDocForCO(string name)
+        {
+            DocumentGroup.Clear();
+            DocumentCurrencyGroup.Clear();
+            foreach (var d in DataAll.Where(t => t.CentrOfResponsibility.Name == name))
+            {
+                DocumentGroup.Add(new DocumentRow
+                {
+                    DocCode = d.DocDC,
+                    DocType = d.DocType,
+                    COName = d.CentrOfResponsibility.Name,
+                    Date = d.Date,
+                    DilerName = d.Diler,
+                    DilerSumma = d.DilerSumma,
+                    IsUsluga = d.IsUsluga,
+                    KontragentName = d.Kontragent,
+                    KontrSummaCrs = d.KontrSummaCrs,
+                    Price = d.Price,
+                    KontrSumma = d.KontrSumma,
+                    ManagerName = d.Manager,
+                    Naklad = d.Naklad,
+                    Nomenkl = d.Nomenkl,
+                    NomenklSumWOReva = Math.Round(d.KontrSummaCrs - d.SummaNomenkl - d.DilerSumma, 2),
+                    OperCrsName = d.OperCrsName,
+                    Quantity = d.Quantity,
+                    Schet = d.Schet,
+                    SummaNomenkl = d.SummaNomenkl,
+                    SummaNomenklCrs = d.SummaNomenklCrs
+                });
+                DocumentCurrencyGroup.Add(new DocumentCrsRow
+                {
+                    DocCode = d.DocDC,
+                    DocType = d.DocType,
+                    COName = d.CentrOfResponsibility.Name,
+                    Date = d.Date,
+                    DilerName = d.Diler,
+                    DilerSumma = d.DilerSumma,
+                    IsUsluga = d.IsUsluga,
+                    KontragentName = d.Kontragent,
+                    KontrSummaCrs = d.KontrSummaCrs,
+                    Price = d.Price,
+                    KontrSumma = d.KontrSumma,
+                    ManagerName = d.Manager,
+                    Naklad = d.Naklad,
+                    Nomenkl = d.Nomenkl,
+                    NomenklSumWOReva = Math.Round(d.KontrSummaCrs - d.SummaNomenkl - d.DilerSumma, 2),
+                    OperCrsName = d.OperCrsName,
+                    Quantity = d.Quantity,
+                    Schet = d.Schet,
+                    SummaNomenkl = d.SummaNomenkl,
+                    SummaNomenklCrs = d.SummaNomenklCrs,
+                    SummaOperNomenkl = d.SummaOperNomenkl,
+                    KontrOperSummaCrs = d.KontrOperSummaCrs,
+                    SummaOperNomenklCrs = d.SummaOperNomenklCrs,
+                    ResultEUR =
+                        d.OperCurrency.Name == "EUR"
+                            ? Math.Round(d.KontrSumma - d.SummaOperNomenklCrs - d.DilerSumma, 2)
+                            : 0,
+                    ResultRUB =
+                        d.OperCurrency.Name == "RUB" || d.OperCurrency.Name == "RUR"
+                            ? Math.Round(d.KontrSumma - d.SummaOperNomenklCrs - d.DilerSumma, 2)
+                            : 0,
+                    ResultUSD =
+                        d.OperCurrency.Name == "USD"
+                            ? Math.Round(d.KontrSumma - d.SummaOperNomenklCrs - d.DilerSumma, 2)
+                            : 0
+                });
+            }
+        }
+
+        public void UpdateDocForNomenkl(string nomNum)
+        {
+            DocumentGroup.Clear();
+            DocumentCurrencyGroup.Clear();
+            foreach (var d in DataAll.Where(t => t.Nomenkl.NomenklNumber == nomNum))
+            {
+                DocumentGroup.Add(new DocumentRow
+                {
+                    DocCode = d.DocDC,
+                    DocType = d.DocType,
+                    COName = d.CentrOfResponsibility.Name,
+                    Date = d.Date,
+                    DilerName = d.Diler,
+                    DilerSumma = d.DilerSumma,
+                    IsUsluga = d.IsUsluga,
+                    KontragentName = d.Kontragent,
+                    KontrSummaCrs = d.KontrSummaCrs,
+                    Price = d.Price,
+                    KontrSumma = d.KontrSumma,
+                    ManagerName = d.Manager,
+                    Naklad = d.Naklad,
+                    Nomenkl = d.Nomenkl,
+                    NomenklSumWOReva = Math.Round(d.KontrSummaCrs - d.SummaNomenkl - d.DilerSumma, 2),
+                    OperCrsName = d.OperCrsName,
+                    Quantity = d.Quantity,
+                    Schet = d.Schet,
+                    SummaNomenkl = d.SummaNomenkl,
+                    SummaNomenklCrs = d.SummaNomenklCrs
+                });
+                DocumentCurrencyGroup.Add(new DocumentCrsRow
+                {
+                    DocCode = d.DocDC,
+                    DocType = d.DocType,
                     COName = d.CentrOfResponsibility.Name,
                     Date = d.Date,
                     DilerName = d.Diler,
@@ -191,7 +502,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 }));
                 var sql = " SELECT s83.NOM_0MATER_1USLUGA IsUsluga, " + "DD_DATE DATE, " +
                           "SFT_NEMENKL_DC NomenklDC, " +
-                          "isnull(SF_CENTR_OTV_DC,0) Sd40, " + "isnull(SF_CLIENT_DC,0) KontragentDC, " +
+                          "isnull(SF_CENTR_OTV_DC,0) CO, " + "isnull(SF_CLIENT_DC,0) KontragentDC, " +
                           "isnull(SF_CRS_DC,0) Currency, " + "isnull(S2.DOC_CODE,0) Manager, " +
                           "cast(DDT_KOL_RASHOD as numeric(18,8)) Quantity, " +
                           "cast(isnull(SFT_ED_CENA,0) as numeric(18,4)) Price, " +
@@ -211,7 +522,8 @@ namespace KursAM2.ViewModel.Management.BreakEven
                           "    , S84.SF_NOTE + ' / ' + T84.SFT_TEXT AS SF_NOTES " +
                           "   , CAST(S24.DD_IN_NUM AS VARCHAR(50)) + '/' + ISNULL(S24.DD_EXT_NUM,'') NAKL_NUM " +
                           "  , S24.DD_NOTES AS NAKL_NOTES " + "       , DD_DATE " + "      , SFT_NEMENKL_DC " +
-                          "     , SF_CENTR_OTV_DC " + "    , SF_CLIENT_DC " + "   , SF_CRS_DC " + "  ,S84.PersonalResponsibleDC ManagerDC " +
+                          "     , SF_CENTR_OTV_DC " + "    , SF_CLIENT_DC " + "   , SF_CRS_DC " +
+                          "  ,S84.PersonalResponsibleDC ManagerDC " +
                           "     , DDT_KOL_RASHOD " + "    , SFT_ED_CENA " +
                           "   , (SFT_SUMMA_K_OPLATE_KONTR_CRS * (DDT_KOL_RASHOD / SFT_KOL )) as KONTR_CRS " +
                           "  , cast((SELECT p1.PRICE " + "         FROM " + "          nom_price p1 (NOLOCK) " +
@@ -314,6 +626,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                         ((IName)kontr.ResponsibleEmployee)?.Name;
                                     DataAll.Add(new BreakEvenRow
                                     {
+                                        DocDC = d.DOC_CODE,
                                         Kontragent = ((IName)kontr).Name,
                                         Kontr = kontr as Kontragent,
                                         Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(d.SFT_NEMENKL_DC) as Nomenkl,
@@ -348,8 +661,9 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                 }
                         }
 
-                    foreach (var d in ent.Database.SqlQuery<BreakEvenTemp>(sql))
+                    foreach(var d in ent.Database.SqlQuery<BreakEvenTemp>(sql))
                     {
+                        if (d.NomSumm == 0) continue;
                         var nom = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as Nomenkl;
                         var diler = GlobalOptions.ReferencesCache.GetKontragent(d.Diler) as Kontragent;
                         var co = GlobalOptions.ReferencesCache.GetCentrResponsibility(d.CO) as CentrResponsibility
@@ -358,6 +672,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                         var crs = GlobalOptions.ReferencesCache.GetCurrency(d.Currency) as Currency;
                         DataAll.Add(new BreakEvenRow
                         {
+                            DocDC = d.DocDC,
                             Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC)).Name,
                             Kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent,
                             Nomenkl = nom,
@@ -397,7 +712,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                 !d.IsSaleTax
                                     ? Convert.ToDecimal(d.NomenklSumWOReval) //crsNomenklRate
                                     : (d.NomSumm - (d.SaleTaxPrice ?? 0)) * d.Quantity,
-                            DocType = DocumentsOpenManager.GetMaterialDocTypeFromDC(d.TypeDC)
+                            DocType = DocumentType.InvoiceClient
                         });
                     }
                 }
@@ -409,6 +724,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 {
                     GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
                 }
+
                 GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
                 SetMain();
             }
@@ -560,7 +876,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             foreach (var item in myTempNomenklGroups)
             {
                 item.Result = Math.Round(item.Summa - item.Cost - item.DilerSumma, 2);
-                item.ResultWOReval = Math.Round(item.Summa - item.CostWOReval - item.DilerSumma, 2);
+                item.ResultWOReval = Math.Round(item.Summa - item.Cost, 2);
                 item.Price = Math.Round(item.Summa / item.Quantity, 2);
                 item.CostOne = item.Cost / item.Quantity;
                 item.CostWORevalOne = item.CostWOReval / item.Quantity;
@@ -573,7 +889,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             foreach (var item in myTempKontrGroups)
             {
                 item.Result = Math.Round(item.Summa - item.Cost - item.DilerSumma, 2);
-                item.ResultWOReval = Math.Round(item.Summa - item.CostWOReval - item.DilerSumma, 2);
+                item.ResultWOReval = Math.Round(item.Summa - item.Cost, 2);
                 item.Price = Math.Round(item.Summa / item.Quantity, 2);
             }
 
@@ -583,7 +899,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             foreach (var item in myTempCoGroups)
             {
                 item.Result = Math.Round(item.Summa - item.Cost - item.DilerSumma, 2);
-                item.ResultWOReval = Math.Round(item.Summa - item.CostWOReval - item.DilerSumma, 2);
+                item.ResultWOReval = Math.Round(item.Summa - item.Cost, 2);
                 item.Price = Math.Round(item.Summa / item.Quantity, 2);
             }
 
@@ -593,7 +909,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             foreach (var item in myTempManagerGroups)
             {
                 item.Result = Math.Round(item.Summa - item.Cost - item.DilerSumma, 2);
-                item.ResultWOReval = Math.Round(item.Summa - item.CostWOReval - item.DilerSumma, 2);
+                item.ResultWOReval = Math.Round(item.Summa - item.Cost, 2);
                 item.Price = Math.Round(item.Summa / item.Quantity, 2);
             }
 
@@ -602,9 +918,96 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 ManagerGroups.Add(d);
         }
 
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            var frm = Form as BreakEvenForm2;
+            if (frm == null) return;
+            var cols = new List<GridColumn>();
+
+            cols.Clear();
+            cols.AddRange(frm.gridDocument.Columns.Where(s => s.FieldName.Contains("One")));
+            foreach (var s in cols) frm.gridDocument.Columns.Remove(s);
+
+            cols.Clear();
+            cols.AddRange(frm.gridCO.Columns.Where(s => s.FieldName.Contains("One")));
+            foreach (var s in cols) frm.gridCO.Columns.Remove(s);
+
+            cols.Clear();
+            cols.AddRange(frm.gridKontr.Columns.Where(s => s.FieldName.Contains("One")));
+            foreach (var s in cols) frm.gridKontr.Columns.Remove(s);
+
+            cols.Clear();
+            cols.AddRange(frm.gridManager.Columns.Where(s => s.FieldName.Contains("One")));
+            foreach (var s in cols) frm.gridManager.Columns.Remove(s);
+
+
+            var sums = new List<GridSummaryItem>();
+            foreach (var s in frm.gridCO.TotalSummary)
+                if (s.FieldName == "Price" || s.FieldName == "Quantity")
+                    sums.Add(s);
+
+            foreach (var s in sums) frm.gridCO.TotalSummary.Remove(s);
+            sums.Clear();
+            foreach (var s in frm.gridDocument.TotalSummary)
+                if (s.FieldName == "Price" || s.FieldName == "Quantity" )
+                    sums.Add(s);
+
+            foreach (var s in sums) frm.gridDocument.TotalSummary.Remove(s);
+            sums.Clear();
+            foreach (var s in frm.gridKontr.TotalSummary)
+                if (s.FieldName == "Price" || s.FieldName == "Quantity" )
+                    sums.Add(s);
+
+            foreach (var s in sums) frm.gridKontr.TotalSummary.Remove(s);
+            sums.Clear();
+            foreach (var s in frm.gridManager.TotalSummary)
+                if (s.FieldName == "Price" || s.FieldName == "Quantity" )
+                    sums.Add(s);
+
+            foreach (var s in sums) frm.gridManager.TotalSummary.Remove(s);
+            sums.Clear();
+            foreach (var s in frm.gridNomenkl.TotalSummary)
+                if (s.FieldName == "Price" || s.FieldName == "Quantity")
+                    sums.Add(s);
+
+            foreach (var s in sums) frm.gridNomenkl.TotalSummary.Remove(s);
+        }
+
+        #region Commands
+
+        public ICommand SelectedTabChildChangedCommand
+        {
+            get { return new Command(SelectedTabChildChanged, _ => true); }
+        }
+
+        private void SelectedTabChildChanged(object obj)
+        {
+            DocumentGroup.Clear();
+            DocumentCurrencyGroup.Clear();
+        }
+
+        public override ICommand DocumentOpenCommand
+        {
+            get { return new Command(DocumentOpen, _ => CurrentDocument != null); }
+        }
+
         public override void DocumentOpen(object obj)
         {
-            DocumentsOpenManager.Open(CurrentDocument.DocType, CurrentDocument.DocCode);
+            DocumentsOpenManager.Open(DocumentType.InvoiceClient, CurrentDocument.DocCode);
         }
+
+
+        public ICommand DocumentCurrencyOpenCommand
+        {
+            get { return new Command(DocumentCurrencyOpen, _ => CurrentCurrencyDocument != null); }
+        }
+
+        private void DocumentCurrencyOpen(object obj)
+        {
+            DocumentsOpenManager.Open(DocumentType.InvoiceClient, CurrentCurrencyDocument.DocCode);
+        }
+
+        #endregion
     }
 }

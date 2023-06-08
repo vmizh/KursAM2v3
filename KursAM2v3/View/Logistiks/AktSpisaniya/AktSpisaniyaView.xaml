@@ -62,8 +62,27 @@
                                           DockPanel.Dock="Left"
                                           MinWidth="200"
                                           Margin="22 0"
+                                          IsEnabled="{Binding IsWarehouseCanChanged}"
                                           ItemsSource="{Binding WarehouseList}"
                                           EditValue="{Binding Document.Warehouse, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
+                    </StackPanel>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Валюта: " />
+                        <dxe:ComboBoxEdit Style="{StaticResource ComboBoxEditWithError}"
+                                          DockPanel.Dock="Left"
+                                          MinWidth="200"
+                                          Margin="69 0"
+                                          IsEnabled="{Binding IsCurrencyCanChanged}"
+                                          ItemsSource="{Binding CurrencyList}"
+                                          EditValue="{Binding Document.Currency, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}" />
+                        <Label Content="Сумма: " />
+                        <dxe:PopupCalcEdit EditValue="{Binding Document.Summa, Mode=OneWay}"
+                                           Margin="0 0 0 0"
+                                           AllowDefaultButton="False" IsReadOnly="True"
+                                           DisplayFormatString="n2" MaskUseAsDisplayFormat="True"
+                                           HorizontalAlignment="Right" DockPanel.Dock="Left" MinWidth="120" />
                     </StackPanel>
                 </dxlc:LayoutItem>
                 <DockPanel HorizontalAlignment="Stretch" Margin="0 0 0 0">

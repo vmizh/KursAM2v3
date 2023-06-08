@@ -7,7 +7,6 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 using System.Windows.Media;
-using Core;
 using DevExpress.Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
@@ -25,7 +24,8 @@ namespace KursAM2.View.Management
     {
         public BreakEvenForm()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent();
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             NomGroup = new BreakEvenNomGroupViewModel();
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             Closing += BreakEvenForm_Closing;
@@ -36,6 +36,7 @@ namespace KursAM2.View.Management
         public BreakEvenNomGroupViewModel NomGroup { set; get; }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -44,6 +45,13 @@ namespace KursAM2.View.Management
         private void BreakEvenForm_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
+            gridCOView.ShowTotalSummary = true;
+            gridDocumentView.ShowTotalSummary = true;
+            gridKontrView.ShowTotalSummary = true;
+            gridManagerView.ShowTotalSummary = true;
+            gridNomenklView.ShowTotalSummary = true;
+            gridCurrencyDocumentView.ShowTotalSummary = true;
+
             gridDocument.TotalSummary.Clear();
             foreach (var col in gridDocument.Columns)
             {
@@ -57,6 +65,7 @@ namespace KursAM2.View.Management
                 };
                 gridDocument.TotalSummary.Add(summary);
             }
+
             gridNomenkl.TotalSummary.Clear();
             foreach (var col in gridNomenkl.Columns)
             {
@@ -70,6 +79,7 @@ namespace KursAM2.View.Management
                 };
                 gridNomenkl.TotalSummary.Add(summary);
             }
+
             gridKontr.TotalSummary.Clear();
             foreach (var col in gridKontr.Columns)
             {
@@ -83,6 +93,7 @@ namespace KursAM2.View.Management
                 };
                 gridKontr.TotalSummary.Add(summary);
             }
+
             gridCO.TotalSummary.Clear();
             foreach (var col in gridCO.Columns)
             {
@@ -96,6 +107,7 @@ namespace KursAM2.View.Management
                 };
                 gridCO.TotalSummary.Add(summary);
             }
+
             gridManager.TotalSummary.Clear();
             foreach (var col in gridManager.Columns)
             {
@@ -116,6 +128,7 @@ namespace KursAM2.View.Management
             gridKontr.SelectionMode = MultiSelectMode.None;
             gridManager.SelectionMode = MultiSelectMode.None;
             gridNomenkl.SelectionMode = MultiSelectMode.None;
+            gridCurrencyDocument.SelectionMode = MultiSelectMode.None;
         }
 
         private void BreakEvenForm_Closing(object sender, CancelEventArgs e)
@@ -163,7 +176,7 @@ namespace KursAM2.View.Management
                     SummaNomenkl = d.SummaNomenkl,
                     SummaNomenklCrs = d.SummaNomenklCrs
                 });
-                ctx.DocumentCurrencyGroup.Add(new DocumentRow
+                ctx.DocumentCurrencyGroup.Add(new DocumentCrsRow
                 {
                     COName = d.CentrOfResponsibility.Name,
                     Date = d.Date,
@@ -200,6 +213,7 @@ namespace KursAM2.View.Management
                             : 0
                 });
             }
+
             gridDocument.RefreshData();
             gridCurrencyDocument.RefreshData();
         }
@@ -226,7 +240,7 @@ namespace KursAM2.View.Management
                     KontrSumma = d.KontrSumma,
                     ManagerName = d.Manager,
                     Naklad = d.Naklad,
-                    Nomenkl =d.Nomenkl,
+                    Nomenkl = d.Nomenkl,
                     NomenklSumWOReva = Math.Round(d.KontrSummaCrs - d.SummaNomenkl - d.DilerSumma, 2),
                     OperCrsName = d.OperCrsName,
                     Quantity = d.Quantity,
@@ -234,7 +248,7 @@ namespace KursAM2.View.Management
                     SummaNomenkl = d.SummaNomenkl,
                     SummaNomenklCrs = d.SummaNomenklCrs
                 });
-                ctx.DocumentCurrencyGroup.Add(new DocumentRow
+                ctx.DocumentCurrencyGroup.Add(new DocumentCrsRow
                 {
                     COName = d.CentrOfResponsibility.Name,
                     Date = d.Date,
@@ -271,6 +285,7 @@ namespace KursAM2.View.Management
                             : 0
                 });
             }
+
             gridDocument.RefreshData();
             gridCurrencyDocument.RefreshData();
         }
@@ -304,7 +319,7 @@ namespace KursAM2.View.Management
                     SummaNomenkl = d.SummaNomenkl,
                     SummaNomenklCrs = d.SummaNomenklCrs
                 });
-                ctx.DocumentCurrencyGroup.Add(new DocumentRow
+                ctx.DocumentCurrencyGroup.Add(new DocumentCrsRow
                 {
                     COName = d.CentrOfResponsibility.Name,
                     Date = d.Date,
@@ -335,6 +350,7 @@ namespace KursAM2.View.Management
                     ResultUSD = d.OperCurrency.Name == "USD" ? Math.Round(d.KontrSumma - d.SummaOperNomenklCrs, 2) : 0
                 });
             }
+
             gridDocument.RefreshData();
         }
 
@@ -346,8 +362,6 @@ namespace KursAM2.View.Management
             gridDocument.RefreshData();
             gridCurrencyDocument.RefreshData();
         }
-
-        
     }
 
     public class DecimalToColorConverter : MarkupExtension, IValueConverter
@@ -361,7 +375,7 @@ namespace KursAM2.View.Management
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var summaryList = (List<GridTotalSummaryData>) value;
+            var summaryList = (List<GridTotalSummaryData>)value;
             if (summaryList == null || summaryList.Count == 0)
                 return null;
             var sumValue = System.Convert.ToInt32(summaryList[0].Value);

@@ -162,7 +162,7 @@ public class WindowManager : IWindowManager
         return previousFrame?.GetMethod().Name;
     }
 
-    public static void ShowError(Exception ex, string caption = null)
+    public static void ShowError(Exception ex, string ext_text = null, string caption = null)
     {
         var winActive = Application.Current.Windows.OfType<Window>().SingleOrDefault(x => x.IsActive);
         var methodname = GetCallForExceptionThisMethod(null, ex);
@@ -174,6 +174,13 @@ public class WindowManager : IWindowManager
             errText.Append(ex1.Message + "\n");
             if (ex1.InnerException != null)
                 errText.Append(ex1.InnerException.Message);
+        }
+
+        if (!string.IsNullOrEmpty(ext_text))
+        {
+            errText.Append("\n");
+            errText.Append("---------\n");
+            errText.Append(ext_text);
         }
 
         if (GlobalOptions.UserInfo != null)

@@ -326,7 +326,7 @@ namespace KursAM2.ViewModel.Logistiks
                                           doc.TD_26.SFT_KOL;
                         newItem.SummaOut = 0;
                         newItem.SummaDelta =
-// ReSharper disable once PossibleInvalidOperationException
+                        // ReSharper disable once PossibleInvalidOperationException
                             (decimal)(doc.TD_26.SFT_SUMMA_K_OPLATE / doc.TD_26.SFT_KOL * doc.DDT_KOL_PRIHOD);
                         newItem.Note = doc.SD_24.DD_NOTES + " / " + doc.TD_26.SD_26.SF_NOTES;
                     }
@@ -377,7 +377,7 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaIn = 0,
                         SummaOut = doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceStart,
                         SummaDelta = -doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceEnd,
-                        Note = doc.SD_24.DD_NOTES + " / " + doc.TD_84.SD_84.SF_NOTE
+                        Note = doc.SD_24.DD_NOTES + " / " + doc.TD_84?.SD_84.SF_NOTE
                     });
                 }
 
@@ -414,7 +414,7 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaIn = 0,
                         SummaOut = doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceStart,
                         SummaDelta = -doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceEnd,
-                        Note = doc.SD_24.DD_NOTES + " / " + (doc.TD_84 != null ? doc.TD_84.SD_84.SF_NOTE : string.Empty)
+                        Note = doc.SD_24.DD_NOTES + " / " + (doc.TD_84 != null ? doc.TD_84?.SD_84.SF_NOTE : string.Empty)
                     });
                 }
 
@@ -481,7 +481,7 @@ namespace KursAM2.ViewModel.Logistiks
                         Id = doc.TD_26.SD_26.Id,
                         DocCode = doc.TD_26.DOC_CODE,
                         DocumentName = "Акт валютной конвертации (по счету)",
-                        DocumentNum = doc.TD_26.SD_26.SF_IN_NUM + "/" + doc.TD_26.SD_26.SF_POSTAV_NUM,
+                        DocumentNum = doc.TD_26?.SD_26.SF_IN_NUM + "/" + doc.TD_26?.SD_26.SF_POSTAV_NUM,
                         DocumentDate = doc.Date,
                         QuantityIn = doc.Quantity,
                         QuantityOut = 0,
@@ -493,7 +493,7 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaIn = doc.Price * doc.Quantity,
                         SummaOut = 0,
                         SummaDelta = doc.Price * doc.Quantity,
-                        Note = doc.TD_26.SD_26.SF_NOTES + "/" + doc.Note
+                        Note = doc.TD_26?.SD_26.SF_NOTES + "/" + doc.Note
                     });
 
                 var docs4 = from cc in ctx.TD_26_CurrencyConvert
@@ -531,7 +531,7 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaIn = 0,
                         SummaOut = prc,
                         SummaDelta = -prc,
-                        Note = doc.TD_26.SD_26.SF_NOTES + "/" + doc.Note
+                        Note = doc.TD_26?.SD_26.SF_NOTES + "/" + doc.Note
                     });
                 }
 
@@ -582,6 +582,7 @@ namespace KursAM2.ViewModel.Logistiks
                     DocumentList.Add(new NomPriceDocumentViewModel
                     {
                         DocCode = 0,
+                        Id = doc.Doc_Id,
                         DocumentName = "Акт списания номенклатур",
                         DocumentNum = doc.AktSpisaniyaNomenkl_Title.Num_Doc.ToString(),
                         DocumentDate = doc.AktSpisaniyaNomenkl_Title.Date_Doc,
@@ -1328,6 +1329,9 @@ namespace KursAM2.ViewModel.Logistiks
                     break;
                 case "Акт валютной конвертации (по счету)":
                     DocumentsOpenManager.Open(DocumentType.InvoiceProvider, CurrentDocument.DocCode);
+                    break;
+                case "Акт списания номенклатур":
+                    DocumentsOpenManager.Open(DocumentType.AktSpisaniya, 0, CurrentDocument.Id);
                     break;
             }
         }

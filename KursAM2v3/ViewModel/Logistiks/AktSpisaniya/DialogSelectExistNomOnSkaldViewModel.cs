@@ -11,6 +11,7 @@ using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks.AktSpisaniya;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
 using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
@@ -18,14 +19,16 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
     public sealed class DialogSelectExistNomOnSkaldViewModel : RSWindowViewModelBase
     {
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+        private readonly Currency myCurrency = null;
 
         #region Constructors
 
         public DialogSelectExistNomOnSkaldViewModel(KursDomain.References.Warehouse sklad,
-            DateTime date)
+            DateTime date, Currency currency = null)
         {
             warehouse = sklad;
             Date = date;
+            myCurrency = currency;
             RefreshData(null);
         }
 
@@ -282,13 +285,27 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                     && nl.QuantityIn == 0 && nl.QuantityOut == 0 && nl.QuantityEnd == 0));
                 foreach (var nl in delList) listTemp.Remove(nl);
                 NomenklList.Clear();
-                foreach (var n in listTemp.Where(_ => _.QuantityEnd > 0))
-                    NomenklList.Add(new NomenklRemainsOnSkladWithPrice
-                    {
-                        Nomenkl = n.Nomenkl,
-                        Quantity = n.QuantityEnd,
-                        Prices = nomenklManager.GetNomenklPrice(n.Nomenkl.DocCode, DateTime.Today)
-                    });
+                if (myCurrency == null)
+                {
+                    foreach (var n in listTemp.Where(_ => _.QuantityEnd > 0))
+                        NomenklList.Add(new NomenklRemainsOnSkladWithPrice
+                        {
+                            Nomenkl = n.Nomenkl,
+                            Quantity = n.QuantityEnd,
+                            Prices = nomenklManager.GetNomenklPrice(n.Nomenkl.DocCode, DateTime.Today)
+                        });
+                }
+                else
+                {
+                    foreach (var n in listTemp.Where(_ =>
+                                 _.QuantityEnd > 0 && ((IDocCode)_.Nomenkl.Currency).DocCode == myCurrency.DocCode))
+                        NomenklList.Add(new NomenklRemainsOnSkladWithPrice
+                        {
+                            Nomenkl = n.Nomenkl,
+                            Quantity = n.QuantityEnd,
+                            Prices = nomenklManager.GetNomenklPrice(n.Nomenkl.DocCode, DateTime.Today)
+                        });
+                }
             }
         }
 

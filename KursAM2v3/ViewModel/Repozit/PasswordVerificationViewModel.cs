@@ -7,7 +7,6 @@ using System.Windows;
 using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using DevExpress.Xpf.DataAccess;
 using Helper;
 
 namespace KursAM2.ViewModel.Repozit

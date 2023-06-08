@@ -379,7 +379,7 @@ namespace KursAM2.View
                         break;
                     case "  Рентабельность":
                         var renCtx = new BreakEvenWindowViewModel();
-                        form = new BreakEvenForm
+                        form = new BreakEvenForm2
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = renCtx

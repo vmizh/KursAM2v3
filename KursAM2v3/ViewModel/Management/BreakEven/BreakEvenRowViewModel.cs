@@ -1,8 +1,11 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using Core.Helper;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using DevExpress.Data;
+using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.References;
 
@@ -83,7 +86,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myDateField;
             set
             {
-                if (Equals(myDateField,value)) return;
+                if (Equals(myDateField, value)) return;
                 myDateField = value;
                 RaisePropertyChanged();
             }
@@ -107,7 +110,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myDilerSummaField;
             set
             {
-                if (Equals(myDilerSummaField,value)) return;
+                if (Equals(myDilerSummaField, value)) return;
                 myDilerSummaField = value;
                 RaisePropertyChanged();
             }
@@ -119,7 +122,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myIsUslugaField;
             set
             {
-                if (Equals(myIsUslugaField,value)) return;
+                if (Equals(myIsUslugaField, value)) return;
                 myIsUslugaField = value;
                 RaisePropertyChanged();
             }
@@ -143,7 +146,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myKontrSummaField;
             set
             {
-                if (Equals(myKontrSummaField,value)) return;
+                if (Equals(myKontrSummaField, value)) return;
                 myKontrSummaField = value;
                 RaisePropertyChanged();
             }
@@ -155,7 +158,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myKontrSummaCrsField;
             set
             {
-                if (Equals(myKontrSummaCrsField,value)) return;
+                if (Equals(myKontrSummaCrsField, value)) return;
                 myKontrSummaCrsField = value;
                 RaisePropertyChanged();
             }
@@ -167,7 +170,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myKontrOperSummaCrs;
             set
             {
-                if (Equals(myKontrSummaCrsField,value)) return;
+                if (Equals(myKontrSummaCrsField, value)) return;
                 myKontrSummaCrsField = value;
                 RaisePropertyChanged();
             }
@@ -241,7 +244,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myPriceField;
             set
             {
-                if (Equals(myPriceField,value)) return;
+                if (Equals(myPriceField, value)) return;
                 myPriceField = value;
                 RaisePropertyChanged();
             }
@@ -253,7 +256,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myQuantityField;
             set
             {
-                if (Equals(myQuantityField,value)) return;
+                if (Equals(myQuantityField, value)) return;
                 myQuantityField = value;
                 RaisePropertyChanged();
             }
@@ -277,7 +280,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => mySummaNomenklField;
             set
             {
-                if (Equals(mySummaNomenklField,value)) return;
+                if (Equals(mySummaNomenklField, value)) return;
                 mySummaNomenklField = value;
                 RaisePropertyChanged();
             }
@@ -289,7 +292,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => mySummaNomenklCrsField;
             set
             {
-                if (Equals(mySummaNomenklCrsField,value)) return;
+                if (Equals(mySummaNomenklCrsField, value)) return;
                 mySummaNomenklCrsField = value;
                 RaisePropertyChanged();
             }
@@ -302,7 +305,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myNOMENKLSumWoRevalField;
             set
             {
-                if (Equals(myNOMENKLSumWoRevalField,value)) return;
+                if (Equals(myNOMENKLSumWoRevalField, value)) return;
                 myNOMENKLSumWoRevalField = value;
                 RaisePropertyChanged();
             }
@@ -314,7 +317,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => mySummaOperNomenklField;
             set
             {
-                if (Equals(mySummaOperNomenklField,value)) return;
+                if (Equals(mySummaOperNomenklField, value)) return;
                 mySummaNomenklField = value;
                 RaisePropertyChanged();
             }
@@ -326,7 +329,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => mySummaNomenklCrsField;
             set
             {
-                if (Equals(mySummaNomenklCrsField,value)) return;
+                if (Equals(mySummaNomenklCrsField, value)) return;
                 mySummaNomenklCrsField = value;
                 RaisePropertyChanged();
             }
@@ -339,52 +342,61 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myNOMENKLOperSumWoRevalField;
             set
             {
-                if (Equals(myNOMENKLOperSumWoRevalField,value)) return;
+                if (Equals(myNOMENKLOperSumWoRevalField, value)) return;
                 myNOMENKLSumWoRevalField = value;
                 RaisePropertyChanged();
             }
         }
     }
 
+    public class DataAnnotationsCommonRow : DataAnnotationForFluentApiBase,
+        IMetadataProvider<CommonRow>
+    {
+        void IMetadataProvider<CommonRow>.BuildMetadata(
+            MetadataBuilder<CommonRow> builder)
+        {
+            SetNotAutoGenerated(builder);
+            builder.Property(_ => _.Name).AutoGenerated().DisplayName("Наименование").LocatedAt(1).ReadOnly();
+            builder.Property(_ => _.CurrencyName).AutoGenerated().DisplayName("Валюта").LocatedAt(2).ReadOnly();
+            builder.Property(_ => _.Quantity).NotAutoGenerated().DisplayName("Кол-во").LocatedAt(3).DisplayFormatString("n2")
+                .ReadOnly();
+            builder.Property(_ => _.Summa).AutoGenerated().DisplayName("Сумма").LocatedAt(5).DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.Price).NotAutoGenerated().DisplayName("Цена").LocatedAt(4).DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.Cost).AutoGenerated().DisplayName("Себестоимость").LocatedAt(8).DisplayFormatString("n2")
+                .ReadOnly();
+            builder.Property(_ => _.Naklad).AutoGenerated().DisplayName("Себе-сть накл.").LocatedAt(7).DisplayFormatString("n2")
+                .ReadOnly();
+            builder.Property(_ => _.CostOne).AutoGenerated().DisplayName("Себе-сть ед.").LocatedAt(14).DisplayFormatString("n2")
+                .ReadOnly();
+            builder.Property(_ => _.NakladOne).AutoGenerated().DisplayName("Себе-сть ед. накл.").LocatedAt(13)
+                .DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.DilerSumma).AutoGenerated().DisplayName("Дилерские").LocatedAt(10).DisplayFormatString("n2")
+                .ReadOnly();
+            builder.Property(_ => _.Result).AutoGenerated().LocatedAt(11).DisplayName("Результат").DisplayFormatString("n2")
+                .ReadOnly();
+            builder.Property(_ => _.CostWOReval).AutoGenerated().DisplayName("Себе-сть (факт)")
+                .DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.CostWORevalOne).AutoGenerated().DisplayName("Себе-сть (факт) ед.").LocatedAt(6)
+                .DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.ResultWOReval).AutoGenerated().DisplayName("Результат (факт)").LocatedAt(12)
+                .DisplayFormatString("n2").ReadOnly();
+        }
+    }
+
     #region Nested type: CommonRow
 
+    [MetadataType(typeof(DataAnnotationsCommonRow))]
     public class CommonRow : RSViewModelBase
     {
         private decimal myResult;
-
-        [GridColumnSummary(SummaryItemType.Count, "n0")]
-        [GridColumnView("Кол-во", SettingsType.Decimal, ReadOnly = true)]
         public decimal Quantity { set; get; }
-
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Сумма", SettingsType.Decimal, ReadOnly = true)]
         public decimal Summa { set; get; }
-
-        [GridColumnView("Цена", SettingsType.Decimal, ReadOnly = true)]
         public decimal Price { set; get; }
-
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Себестоимость", SettingsType.Decimal, ReadOnly = true)]
         public decimal Cost { set; get; }
-
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Себестоимость с накладными", SettingsType.Decimal, ReadOnly = true)]
         public decimal Naklad { set; get; }
-
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Себестоимость(ед)", SettingsType.Decimal, ReadOnly = true)]
         public decimal CostOne { set; get; }
-
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Себестоимость с накладными(ед)", SettingsType.Decimal, ReadOnly = true)]
         public decimal NakladOne { set; get; }
-
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Дилерские", SettingsType.Decimal, ReadOnly = true)]
         public decimal DilerSumma { set; get; }
-
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Результат", SettingsType.Decimal, ReadOnly = true)]
         public decimal Result
         {
             set
@@ -396,163 +408,175 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get => myResult;
         }
 
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Себестоимость(факт)", SettingsType.Decimal, ReadOnly = true)]
         // ReSharper disable once InconsistentNaming
         public decimal CostWOReval { set; get; }
 
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Себестоимость(факт)", SettingsType.Decimal, ReadOnly = true)]
         // ReSharper disable once InconsistentNaming
         public decimal CostWORevalOne { set; get; }
 
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Результат (факт)", SettingsType.Decimal, ReadOnly = true)]
         // ReSharper disable once InconsistentNaming
         public decimal ResultWOReval { set; get; }
-
         public decimal Currency { set; get; }
         public string CurrencyName { set; get; }
+        
     }
 
     #endregion
 
+    public class DataAnnotationsDocumentRow : DataAnnotationForFluentApiBase,
+        IMetadataProvider<DocumentRow>
+    {
+        void IMetadataProvider<DocumentRow>.BuildMetadata(
+            MetadataBuilder<DocumentRow> builder)
+        {
+            SetNotAutoGenerated(builder);
+            builder.Property(_ => _.DocType).AutoGenerated().LocatedAt(1).DisplayName("Тип документа").ReadOnly();
+            builder.Property(_ => _.Currency).NotAutoGenerated();
+            builder.Property(_ => _.Date).AutoGenerated().DisplayName("Дата").LocatedAt(0).ReadOnly();
+            builder.Property(_ => _.NomenklNumber).AutoGenerated().DisplayName("Ном.№").LocatedAt(3).ReadOnly();
+            builder.Property(_ => _.Nomenkl).AutoGenerated().DisplayName("Товар").LocatedAt(4).ReadOnly();
+            builder.Property(_ => _.COName).AutoGenerated().DisplayName("Центр. отв.").LocatedAt(12).ReadOnly();
+            builder.Property(_ => _.KontragentName).AutoGenerated().DisplayName("Контрагент").LocatedAt(2).ReadOnly();
+            builder.Property(_ => _.OperCrsName).NotAutoGenerated().DisplayName("Валюта (опер)").ReadOnly();
+            builder.Property(_ => _.ManagerName).AutoGenerated().DisplayName("Менеджер").LocatedAt(15).ReadOnly();
+            builder.Property(_ => _.Quantity).AutoGenerated().DisplayName("Кол-во").LocatedAt(6).DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.Price).AutoGenerated().DisplayName("Цена").LocatedAt(5).DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.KontrSumma).AutoGenerated().DisplayName("Сумма счета").LocatedAt(7).DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.SummaNomenkl).AutoGenerated().DisplayName("Всего (товар)").LocatedAt(8).DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.KontrSummaCrs).AutoGenerated().DisplayName("Зачислено контрагенту").LocatedAt(10).DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.Schet).AutoGenerated().DisplayName("Счет").LocatedAt(13).ReadOnly();
+            builder.Property(_ => _.DilerName).AutoGenerated().DisplayName("Дилер").LocatedAt(14).ReadOnly();
+            builder.Property(_ => _.DilerSumma).AutoGenerated().DisplayName("Дилер сумма").LocatedAt(9).DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.NomenklSumWOReva).AutoGenerated().DisplayName("Результат").LocatedAt(11).DisplayFormatString("n2").ReadOnly();
+        }
+    }
+
+    public class DataAnnotationsDocumentCrsRow : DataAnnotationForFluentApiBase,
+        IMetadataProvider<DocumentCrsRow>
+    {
+        void IMetadataProvider<DocumentCrsRow>.BuildMetadata(
+            MetadataBuilder<DocumentCrsRow> builder)
+        {
+            SetNotAutoGenerated(builder);
+            builder.Property(_ => _.DocType).AutoGenerated().DisplayName("Тип документа").ReadOnly();
+            builder.Property(_ => _.Currency).NotAutoGenerated();
+            builder.Property(_ => _.Date).AutoGenerated().DisplayName("Дата").ReadOnly();
+            builder.Property(_ => _.NomenklNumber).AutoGenerated().DisplayName("Ном.№").ReadOnly();
+            builder.Property(_ => _.Nomenkl).AutoGenerated().DisplayName("Товар").ReadOnly();
+            builder.Property(_ => _.COName).AutoGenerated().DisplayName("Центр. отв.").ReadOnly();
+            builder.Property(_ => _.KontragentName).AutoGenerated().DisplayName("Контрагент").ReadOnly();
+            builder.Property(_ => _.OperCrsName).NotAutoGenerated().DisplayName("Валюта (опер)").ReadOnly();
+            builder.Property(_ => _.ManagerName).AutoGenerated().DisplayName("Менеджер").ReadOnly();
+            builder.Property(_ => _.Quantity).AutoGenerated().DisplayName("Кол-во").DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.Price).AutoGenerated().DisplayName("Цена").DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.KontrSumma).AutoGenerated().DisplayName("Сумма счета").DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.SummaNomenkl).AutoGenerated().DisplayName("Всего (товар)").DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.KontrSummaCrs).AutoGenerated().DisplayName("Зачислено контрагенту").DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.Schet).AutoGenerated().DisplayName("Счет").ReadOnly();
+            builder.Property(_ => _.DilerName).AutoGenerated().DisplayName("Дилер").ReadOnly();
+            builder.Property(_ => _.DilerSumma).AutoGenerated().DisplayName("Дилер сумма").DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.NomenklSumWOReva).AutoGenerated().DisplayName("Результат").DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.ResultEUR).AutoGenerated().DisplayName("EUR").DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.ResultUSD).AutoGenerated().DisplayName("USD").DisplayFormatString("n2").ReadOnly();
+            builder.Property(_ => _.ResultRUB).AutoGenerated().DisplayName("RUB").DisplayFormatString("n2").ReadOnly();
+        }
+    }
+
     #region Nested type: DocumentRow
 
+    [MetadataType(typeof(DataAnnotationsDocumentRow))]
     [DataContract]
     public class DocumentRow
     {
         public DocumentType DocType { set; get; }
         public decimal DocCode { set; get; }
 
-        [GridColumnView("Валюта", SettingsType.Default, ReadOnly = true)]
         [DataMember]
         public string Currency { set; get; }
 
-        [GridColumnView("Услуга", SettingsType.Default, ReadOnly = true)]
         [DataMember]
         public bool IsUsluga { set; get; }
 
-        [GridColumnView("Дата", SettingsType.Default, ReadOnly = true)]
         [DataMember]
         public DateTime Date { set; get; }
 
-        [GridColumnView("Товар", SettingsType.Default, ReadOnly = true)]
         [DataMember]
         public Nomenkl Nomenkl { set; get; }
 
-        [GridColumnView("Nom.№", SettingsType.Default, ReadOnly = true)]
         [DataMember]
         public string NomenklNumber => Nomenkl?.NomenklNumber;
 
-        [GridColumnView("Центр. отв.", SettingsType.Default, ReadOnly = true)]
         [DataMember]
         public string COName { set; get; }
 
-        [GridColumnView("Контрагент", SettingsType.Default, ReadOnly = true)]
         [DataMember]
         public string KontragentName { set; get; }
 
-        [GridColumnView("Валюта (опер)", SettingsType.Default, ReadOnly = true)]
         [DataMember]
         public string OperCrsName { set; get; }
 
-        [GridColumnView("Менеджер", SettingsType.Default, ReadOnly = true)]
         [DataMember]
         public string ManagerName { set; get; }
 
-        [GridColumnSummary(SummaryItemType.Count, "n0")]
-        [GridColumnView("Кол-во", SettingsType.Decimal, ReadOnly = true)]
         [DataMember]
         public decimal Quantity { set; get; }
 
-        [GridColumnView("Цена", SettingsType.Decimal, ReadOnly = true)]
         [DataMember]
         public decimal Price { set; get; }
 
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Сумма счета", SettingsType.Decimal, ReadOnly = true)]
-        [DataMember]
+       [DataMember]
         public decimal KontrSumma { set; get; }
 
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Всего (товар)", SettingsType.Decimal, ReadOnly = true)]
         [DataMember]
         public decimal SummaNomenkl { set; get; }
 
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Всего (товар)", SettingsType.Decimal, ReadOnly = true)]
         [DataMember]
         public decimal SummaOperNomenkl { set; get; }
 
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Зачислено контрагенту", SettingsType.Decimal, ReadOnly = true)]
-        [DataMember]
+         [DataMember]
         public decimal KontrSummaCrs { set; get; }
 
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Себестоимость товара", SettingsType.Decimal, ReadOnly = true)]
         [DataMember]
         public decimal SummaNomenklCrs { set; get; }
 
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Себестоимость товара", SettingsType.Decimal, ReadOnly = true)]
-        [DataMember]
+         [DataMember]
         public decimal SummaOperNomenklCrs { set; get; }
 
-        [GridColumnView("Счет", SettingsType.Default, ReadOnly = true)]
         [DataMember]
         public string Schet { set; get; }
 
-        [GridColumnView("Накладные", SettingsType.Default, ReadOnly = true)]
         [DataMember]
         public string Naklad { set; get; }
 
-        [GridColumnView("Дилер", SettingsType.Default, ReadOnly = true)]
         [DataMember]
         public string DilerName { set; get; }
 
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Сумма (дилер)", SettingsType.Decimal, ReadOnly = true)]
-        [DataMember]
+         [DataMember]
         public decimal DilerSumma { set; get; }
 
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Результат", SettingsType.Decimal, ReadOnly = true)]
         [DataMember]
         // ReSharper disable once InconsistentNaming
         public decimal NomenklSumWOReva { set; get; }
 
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Результат", SettingsType.Decimal, ReadOnly = true)]
-        [DataMember]
-        public decimal ResultRUB { set; get; }
-
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Результат", SettingsType.Decimal, ReadOnly = true)]
-        [DataMember]
-        public decimal ResultUSD { set; get; }
-
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Результат", SettingsType.Decimal, ReadOnly = true)]
-        [DataMember]
-        public decimal ResultEUR { set; get; }
-
-        [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Зачислено контрагенту", SettingsType.Decimal, ReadOnly = true)]
         [DataMember]
         public decimal KontrOperSummaCrs { set; get; }
     }
 
-    #endregion
-
-    #region Nested type: NomenklRow
-
-    public class NomenklRow : CommonRow
+    [MetadataType(typeof(DataAnnotationsDocumentCrsRow))]
+    [DataContract]
+    public class DocumentCrsRow : DocumentRow
     {
-        [GridColumnView("Номенкл.№", SettingsType.Default, ReadOnly = true)]
-        public string NomenklNumber { set; get; }
+        [DataMember]
+        public decimal ResultRUB { set; get; }
+
+        [DataMember]
+        public decimal ResultUSD { set; get; }
+
+        [DataMember]
+        public decimal ResultEUR { set; get; }
     }
 
     #endregion
+
+   
 }

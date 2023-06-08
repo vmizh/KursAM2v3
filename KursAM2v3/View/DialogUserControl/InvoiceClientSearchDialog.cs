@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -27,6 +28,8 @@ namespace KursAM2.View.DialogUserControl
         private StandartDialogSelectUC myDataUserControl;
         private readonly Currency currency;
 
+        private readonly List<decimal> _ExcludeSfDCs;
+
         public InvoiceClientSearchDialog(bool isPaymentUse, bool isUseAcepted, Currency crs = null)
         {
             LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
@@ -35,6 +38,17 @@ namespace KursAM2.View.DialogUserControl
             this.isPaymentUse = isPaymentUse;
             isAccepted = isUseAcepted;
             currency = crs;
+            RefreshData(null);
+        }
+        public InvoiceClientSearchDialog(bool isPaymentUse, bool isUseAcepted, List<decimal> ecxcludeSfDCs, Currency crs = null)
+        {
+            LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
+            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+            WindowName = "Выбор счета клиенту";
+            this.isPaymentUse = isPaymentUse;
+            isAccepted = isUseAcepted;
+            currency = crs;
+            _ExcludeSfDCs = ecxcludeSfDCs;
             RefreshData(null);
         }
 
@@ -49,6 +63,21 @@ namespace KursAM2.View.DialogUserControl
             waybill = null;
             RefreshData(null);
         }
+
+        public InvoiceClientSearchDialog(decimal kontragentDC, bool isPaymentUse, bool isUseAcepted,
+            List<decimal> ecxcludeSfDCs)
+        {
+            LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
+            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+            WindowName = "Выбор счета клиенту";
+            this.kontragentDC = kontragentDC;
+            this.isPaymentUse = isPaymentUse;
+            isAccepted = isUseAcepted;
+            waybill = null;
+            _ExcludeSfDCs = ecxcludeSfDCs;
+            RefreshData(null);
+        }
+
 
         public InvoiceClientSearchDialog([NotNull] Waybill waybill)
         {
@@ -119,12 +148,26 @@ namespace KursAM2.View.DialogUserControl
                         {
                             if (currency == null)
                             {
-                                ItemsCollection.Add(d);
+                                if (_ExcludeSfDCs == null)
+                                {
+                                    ItemsCollection.Add(d);
+                                }
+                                else
+                                {
+                                    if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
+                                    ItemsCollection.Add(d);
+                                }
                             }
                             else
                             {
-                                if (d.Currency.DocCode == currency.DocCode)
+                                if (d.Currency.DocCode != currency.DocCode) continue;
+                                if (_ExcludeSfDCs == null)
                                 {
+                                    ItemsCollection.Add(d);
+                                }
+                                else
+                                {
+                                    if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
                                     ItemsCollection.Add(d);
                                 }
                             }
@@ -136,12 +179,26 @@ namespace KursAM2.View.DialogUserControl
                         {
                             if (currency == null)
                             {
-                                ItemsCollection.Add(d);
+                                if (_ExcludeSfDCs == null)
+                                {
+                                    ItemsCollection.Add(d);
+                                }
+                                else
+                                {
+                                    if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
+                                    ItemsCollection.Add(d);
+                                }
                             }
                             else
                             {
-                                if (d.Currency.DocCode == currency.DocCode)
+                                if (d.Currency.DocCode != currency.DocCode) continue;
+                                if (_ExcludeSfDCs == null)
                                 {
+                                    ItemsCollection.Add(d);
+                                }
+                                else
+                                {
+                                    if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
                                     ItemsCollection.Add(d);
                                 }
                             }
@@ -153,12 +210,26 @@ namespace KursAM2.View.DialogUserControl
                     {
                         if (currency == null)
                         {
-                            ItemsCollection.Add(d);
+                            if (_ExcludeSfDCs == null)
+                            {
+                                ItemsCollection.Add(d);
+                            }
+                            else
+                            {
+                                if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
+                                ItemsCollection.Add(d);
+                            }
                         }
                         else
                         {
-                            if (d.Currency.DocCode == currency.DocCode)
+                            if (d.Currency.DocCode != currency.DocCode) continue;
+                            if (_ExcludeSfDCs == null)
                             {
+                                ItemsCollection.Add(d);
+                            }
+                            else
+                            {
+                                if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
                                 ItemsCollection.Add(d);
                             }
                         }
@@ -183,6 +254,7 @@ namespace KursAM2.View.DialogUserControl
 
     public sealed class InvoiceProviderSearchDialog : RSWindowViewModelBase, IDataUserControl
     {
+        private readonly List<decimal> _ExcludeSfDCs;
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<IInvoiceProvider> ItemsCollection { set; get; } =
             new ObservableCollection<IInvoiceProvider>();
@@ -263,6 +335,19 @@ namespace KursAM2.View.DialogUserControl
             currency = crs;
             RefreshData(null);
         }
+        public InvoiceProviderSearchDialog(bool isUsePayment, bool isUseAccepted, List<decimal> excludeSfDCs,
+            bool isOnlyLastYear = false, Currency crs = null)
+        {
+            LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
+            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+            WindowName = "Выбор счета поставщика";
+            isPaymentUse = isUsePayment;
+            isAccepted = isUseAccepted;
+            this.isOnlyLastYear = isOnlyLastYear;
+            currency = crs;
+            _ExcludeSfDCs = excludeSfDCs;
+            RefreshData(null);
+        }
 
         public InvoiceProviderSearchDialog(decimal kontrDC, bool isUsePayment, bool isUseAccepted,
             bool isOnlyLastYear = false)
@@ -274,6 +359,20 @@ namespace KursAM2.View.DialogUserControl
             isPaymentUse = isUsePayment;
             isAccepted = isUseAccepted;
             this.isOnlyLastYear = isOnlyLastYear;
+            RefreshData(null);
+        }
+
+        public InvoiceProviderSearchDialog(decimal kontrDC, bool isUsePayment, bool isUseAccepted,
+            List<decimal> excludeSfDCs, bool isOnlyLastYear = false)
+        {
+            LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
+            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+            kontragentDC = kontrDC;
+            WindowName = "Выбор счета поставщика";
+            isPaymentUse = isUsePayment;
+            isAccepted = isUseAccepted;
+            this.isOnlyLastYear = isOnlyLastYear;
+            _ExcludeSfDCs = excludeSfDCs;
             RefreshData(null);
         }
 
@@ -297,13 +396,29 @@ namespace KursAM2.View.DialogUserControl
                         {
                             if (currency == null)
                             {
-                                ItemsCollection.Add(d);
+                                if (_ExcludeSfDCs == null)
+                                {
+                                    ItemsCollection.Add(d);
+                                }
+                                else
+                                {
+                                    if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
+                                    ItemsCollection.Add(d);
+                                }
                             }
                             else
                             {
                                 if (d.Currency.DocCode == currency.DocCode)
                                 {
-                                    ItemsCollection.Add(d);
+                                    if (_ExcludeSfDCs == null)
+                                    {
+                                        ItemsCollection.Add(d);
+                                    }
+                                    else
+                                    {
+                                        if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
+                                        ItemsCollection.Add(d);
+                                    }
                                 }
                             }
                         }
@@ -315,13 +430,29 @@ namespace KursAM2.View.DialogUserControl
                         {
                             if (currency == null)
                             {
-                                ItemsCollection.Add(d);
+                                if (_ExcludeSfDCs == null)
+                                {
+                                    ItemsCollection.Add(d);
+                                }
+                                else
+                                {
+                                    if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
+                                    ItemsCollection.Add(d);
+                                }
                             }
                             else
                             {
                                 if (d.Currency.DocCode == currency.DocCode)
                                 {
-                                    ItemsCollection.Add(d);
+                                    if (_ExcludeSfDCs == null)
+                                    {
+                                        ItemsCollection.Add(d);
+                                    }
+                                    else
+                                    {
+                                        if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
+                                        ItemsCollection.Add(d);
+                                    }
                                 }
                             }
                         }
@@ -336,13 +467,29 @@ namespace KursAM2.View.DialogUserControl
                         {
                             if (currency == null)
                             {
-                                ItemsCollection.Add(d);
+                                if (_ExcludeSfDCs == null)
+                                {
+                                    ItemsCollection.Add(d);
+                                }
+                                else
+                                {
+                                    if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
+                                    ItemsCollection.Add(d);
+                                }
                             }
                             else
                             {
                                 if (d.Currency.DocCode == currency.DocCode)
                                 {
-                                    ItemsCollection.Add(d);
+                                    if (_ExcludeSfDCs == null)
+                                    {
+                                        ItemsCollection.Add(d);
+                                    }
+                                    else
+                                    {
+                                        if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
+                                        ItemsCollection.Add(d);
+                                    }
                                 }
                             }
                         }
@@ -354,13 +501,29 @@ namespace KursAM2.View.DialogUserControl
                         {
                             if (currency == null)
                             {
-                                ItemsCollection.Add(d);
+                                if (_ExcludeSfDCs == null)
+                                {
+                                    ItemsCollection.Add(d);
+                                }
+                                else
+                                {
+                                    if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
+                                    ItemsCollection.Add(d);
+                                }
                             }
                             else
                             {
                                 if (d.Currency.DocCode == currency.DocCode)
                                 {
-                                    ItemsCollection.Add(d);
+                                    if (_ExcludeSfDCs == null)
+                                    {
+                                        ItemsCollection.Add(d);
+                                    }
+                                    else
+                                    {
+                                        if (_ExcludeSfDCs.Contains(d.DocCode)) continue;
+                                        ItemsCollection.Add(d);
+                                    }
                                 }
                             }
                         }

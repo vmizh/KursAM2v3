@@ -18,6 +18,7 @@
         <Setter Property="dx:DXSerializer.StoreLayoutMode" Value="All" />
         <Setter Property="dxg:DataControlSerializationOptions.AddNewColumns" Value="True" />
         <Setter Property="dxg:DataControlSerializationOptions.RemoveOldColumns" Value="True" />
+        <Setter Property="UseFieldNameForSerialization" Value="True"/>
         <Setter Property="SelectionMode" Value="None" />
     </Style>
 
@@ -192,6 +193,7 @@
         <Setter Property="ShowAutoFilterRow" Value="True" />
         <Setter Property="EnableImmediatePosting" Value="True" />
         <Setter Property="EditFormPostMode" Value="Immediate" />
+        <Setter Property="ShowCriteriaInAutoFilterRow" Value="True"/>
         <Setter Property="CellTemplate">
             <Setter.Value>
                 <DataTemplate>

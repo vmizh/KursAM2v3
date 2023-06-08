@@ -15,8 +15,7 @@ namespace Helper
 
         public static string DateToString(DateTime? date)
         {
-            if (date == null) return "20000101";
-            return DateToString(date.Value);
+            return date == null ? "20000101" : DateToString(date.Value);
         }
 
         public static string DateWithTimeToString(DateTime date)

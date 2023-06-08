@@ -2427,23 +2427,20 @@ namespace KursAM2.Managers
             {
                 var outBalansClient = ctx.AccruedAmountForClient
                     .Include(_ => _.AccuredAmountForClientRow)
-                    .Where(_ => _.DocDate >= DateStart && _.DocDate <= DateEnd);
-                //var outBalansSupplier = ctx.AccruedAmountOfSupplier
-                //    .Include(_ => _.AccuredAmountOfSupplierRow)
-                //    .Where(_ => _.DocDate >= DateStart && _.DocDate <= DateEnd);
+                    .Where(_ => _.DocDate >= DateStart && _.DocDate <= DateEnd).ToList();
                 var outBalansSupplier = ctx.AccuredAmountOfSupplierRow
                     .Include(_ => _.AccruedAmountOfSupplier)
                     .Where(_ => _.AccruedAmountOfSupplier.DocDate >= DateStart &&
-                                _.AccruedAmountOfSupplier.DocDate <= DateEnd);
+                                _.AccruedAmountOfSupplier.DocDate <= DateEnd).ToList();
 
                 foreach (var d in outBalansClient)
                 {
+
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountClient,
                         Name = "Внебалансовые начисления для клиентов",
-                        Note =
-                            string.Format($"Дата {d.DocDate.ToShortDateString()} №{d.DocInNum}/{d.DocExtNum} {d.Note}"),
+                        Note = string.Format($"Дата {d.DocDate.ToShortDateString()} №{d.DocInNum}/{d.DocExtNum} {d.Note}"),
                         DocCode = 0,
                         Quantity = 1,
                         Price = d.AccuredAmountForClientRow?.Sum(_ => _.Summa) ?? 0,
@@ -2456,9 +2453,11 @@ namespace KursAM2.Managers
                         AktZachetResult = 0,
                         CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC).Currency).Name,
                         DocNum = $"{d.DocInNum}/{d.DocExtNum}",
-                        StringId = d.ToString()
-                        //CalcType = TypeProfitAndLossCalc.IsProfit
+                        StringId = d.Id.ToString()
                     };
+
+                    //CalcType = TypeProfitAndLossCalc.IsProfit
+                    
                     SetCurrenciesValue(newOp1,
                         ((IDocCode)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC).Currency).DocCode,
                         newOp1.Price, 0m);

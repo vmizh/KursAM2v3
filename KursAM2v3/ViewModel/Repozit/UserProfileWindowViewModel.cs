@@ -15,7 +15,6 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.XtraEditors.DXErrorProvider;
 using KursDomain;
-using KursRepositories.ViewModels;
 using MessageBox = System.Windows.MessageBox;
 
 namespace KursAM2.ViewModel.Repozit

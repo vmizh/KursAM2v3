@@ -386,9 +386,28 @@ namespace KursAM2.Dialogs
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
+        public static InvoiceProvider SelectInvoiceProvider(bool isUsePayment, bool isUseAccepted,
+            List<decimal> excludeSfDCs, bool isLastYearOnly = false, Currency crs = null)
+        {
+            var ctx = new InvoiceProviderSearchDialog(isUsePayment, isUseAccepted, excludeSfDCs, isLastYearOnly, crs);
+            var dlg = new SelectDialogView {DataContext = ctx};
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            return !ctx.DialogResult ? null : ctx.CurrentItem;
+        }
+
 
         public static InvoiceProvider SelectInvoiceProvider(decimal kontrDC, bool isUsePayment, bool isUseAccepted,
             bool isLastYearOnly = false)
+        {
+            var ctx = new InvoiceProviderSearchDialog(kontrDC, isUsePayment, isUseAccepted, isLastYearOnly);
+            var dlg = new SelectDialogView {DataContext = ctx};
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            return !ctx.DialogResult ? null : ctx.CurrentItem;
+        }
+        public static InvoiceProvider SelectInvoiceProvider(decimal kontrDC, bool isUsePayment, bool isUseAccepted,
+            List<decimal> excludeSfDcs,  bool isLastYearOnly = false)
         {
             var ctx = new InvoiceProviderSearchDialog(kontrDC, isUsePayment, isUseAccepted, isLastYearOnly);
             var dlg = new SelectDialogView {DataContext = ctx};
@@ -421,7 +440,17 @@ namespace KursAM2.Dialogs
         public static InvoiceClientViewModel SelectInvoiceClient(bool isUsePayment, bool isUseAccepted,
             Currency crs = null)
         {
-            var ctx = new InvoiceClientSearchDialog(isUsePayment, isUseAccepted, crs);
+            var ctx = new InvoiceClientSearchDialog(isUsePayment, isUseAccepted,  crs);
+            var dlg = new SelectDialogView {DataContext = ctx};
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            return !ctx.DialogResult ? null : ctx.CurrentItem;
+        }
+        public static InvoiceClientViewModel SelectInvoiceClient(bool isUsePayment, bool isUseAccepted,
+            List<decimal> excludeSfDCs,
+            Currency crs = null)
+        {
+            var ctx = new InvoiceClientSearchDialog(isUsePayment, isUseAccepted, excludeSfDCs,  crs);
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
@@ -429,6 +458,16 @@ namespace KursAM2.Dialogs
         }
 
         public static InvoiceClientViewModel SelectInvoiceClient(decimal kontrDC, bool isUsePayment, bool isUseAccepted)
+        {
+            var ctx = new InvoiceClientSearchDialog(kontrDC, isUsePayment, isUseAccepted);
+            var dlg = new SelectDialogView {DataContext = ctx};
+            ctx.Form = dlg;
+            dlg.ShowDialog();
+            return !ctx.DialogResult ? null : ctx.CurrentItem;
+        }
+
+        public static InvoiceClientViewModel SelectInvoiceClient(decimal kontrDC, bool isUsePayment, bool isUseAccepted, 
+            List<decimal> excludeSfDCs)
         {
             var ctx = new InvoiceClientSearchDialog(kontrDC, isUsePayment, isUseAccepted);
             var dlg = new SelectDialogView {DataContext = ctx};

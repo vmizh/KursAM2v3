@@ -9,7 +9,6 @@ using Core.ViewModel.Base;
 using Data;
 using KursDomain;
 using KursDomain.Documents.Systems;
-using KursRepositories.ViewModels;
 using MessageBox = System.Windows.MessageBox;
 
 namespace KursAM2.ViewModel.Repozit

@@ -4,7 +4,6 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
-using KursRepositories.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
