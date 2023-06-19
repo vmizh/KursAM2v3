@@ -7,18 +7,12 @@ using Helper;
 
 namespace KursAM2.View.Base
 {
-    /// <summary>
-    ///     Interaction logic for BaseDocumentView.xaml
-    /// </summary>
-    public partial class BaseDocumentView
+    public class DXWindowSettings
     {
-        public BaseDocumentView()
+        public static void Settings()
         {
-            InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             GridControlLocalizer.Active = new CustomDXGridLocalizer();
             EditorLocalizer.Active = new CustomEditorsLocalizer();
-
 
             EventManager.RegisterClassHandler(typeof(GridColumn), DXSerializer.AllowPropertyEvent,
                 new AllowPropertyEventHandler((d, e) =>
@@ -28,5 +22,6 @@ namespace KursAM2.View.Base
                     e.Handled = true;
                 }));
         }
+       
     }
 }

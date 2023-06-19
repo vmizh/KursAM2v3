@@ -1,30 +1,32 @@
 ﻿using System.Data.Entity.Core.EntityClient;
 using System.Data.SqlClient;
 
-namespace KursDomain.Tests.Fakes;
-
-public class LocalKursDBContext
+namespace KursDomain.Tests.Fakes
 {
-    public KursContext.KursContext Context { get; }
 
-    public LocalKursDBContext()
+    public class LocalKursDBContext
     {
-        SqlConnectionStringBuilder sqlBuild = new SqlConnectionStringBuilder
-        {
-            DataSource = "localhost",
-            InitialCatalog = "AlfaTest",
-            UserID = "sa",
-            Password = "CbvrfFhntvrf65",
-            IntegratedSecurity = false
-        };
+        public KursContext.KursContext Context { get; }
 
-        var entityConn = new EntityConnectionStringBuilder
+        public LocalKursDBContext()
         {
-            Provider = "System.Data.SqlClient",
-            ProviderConnectionString = sqlBuild.ConnectionString,
-            Metadata =
-                @"res://*/ALFAMEDIA.csdl|res://*/ALFAMEDIA.ssdl|res://*/ALFAMEDIA.msl"
-        }.ToString();
-        Context = new KursContext.KursContext(entityConn);
+            SqlConnectionStringBuilder sqlBuild = new SqlConnectionStringBuilder
+            {
+                DataSource = "localhost",
+                InitialCatalog = "AlfaTest",
+                UserID = "sa",
+                Password = "CbvrfFhntvrf65",
+                IntegratedSecurity = false
+            };
+
+            var entityConn = new EntityConnectionStringBuilder
+            {
+                Provider = "System.Data.SqlClient",
+                ProviderConnectionString = sqlBuild.ConnectionString,
+                Metadata =
+                    @"res://*/ALFAMEDIA.csdl|res://*/ALFAMEDIA.ssdl|res://*/ALFAMEDIA.msl"
+            }.ToString();
+            Context = new KursContext.KursContext(entityConn);
+        }
     }
 }

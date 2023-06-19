@@ -20,12 +20,12 @@ namespace Data
             this.Errors = new HashSet<Errors>();
             this.KontragentCashes = new HashSet<KontragentCashes>();
             this.LastDocument = new HashSet<LastDocument>();
+            this.LastMenuUserSearch = new HashSet<LastMenuUserSearch>();
+            this.SignatureSchemes = new HashSet<SignatureSchemes>();
             this.SignatureType = new HashSet<SignatureType>();
+            this.UserMenuFavorites = new HashSet<UserMenuFavorites>();
             this.UserMenuRight = new HashSet<UserMenuRight>();
             this.Users = new HashSet<Users>();
-            this.SignatureSchemes = new HashSet<SignatureSchemes>();
-            this.UserMenuFavorites = new HashSet<UserMenuFavorites>();
-            this.LastMenuUserSearch = new HashSet<LastMenuUserSearch>();
         }
     
         public System.Guid Id { get; set; }
@@ -44,16 +44,16 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LastDocument> LastDocument { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<LastMenuUserSearch> LastMenuUserSearch { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<SignatureSchemes> SignatureSchemes { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SignatureType> SignatureType { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserMenuFavorites> UserMenuFavorites { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserMenuRight> UserMenuRight { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Users> Users { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SignatureSchemes> SignatureSchemes { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserMenuFavorites> UserMenuFavorites { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LastMenuUserSearch> LastMenuUserSearch { get; set; }
     }
 }

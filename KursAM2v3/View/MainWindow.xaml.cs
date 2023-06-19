@@ -343,9 +343,9 @@ namespace KursAM2.View
                         break;
                     case "  Дебиторы / Кредиторы":
                         var dbctx = new DebitorCreditorWindowViewModel();
-                        form = new DebitorCreditorView { Owner = Application.Current.MainWindow };
-                        form.DataContext = dbctx;
+                        form = new DebitorCreditorView { Owner = Application.Current.MainWindow }; 
                         dbctx.Form = form;
+                        form.DataContext = dbctx;
                         form.Show();
                         break;
                     case "Контрагенты для документов":
@@ -366,7 +366,7 @@ namespace KursAM2.View
                         ctxdog.Form.Show();
                         break;
                     case "Лицевые счета контрагентов":
-                        form = new KontragentBalansForm
+                        form = new KontragentBalansView
                         {
                             Owner = Application.Current.MainWindow
                         };

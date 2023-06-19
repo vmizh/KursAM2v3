@@ -9,8 +9,7 @@
     xmlns:splashWindow="clr-namespace:KursAM2.View.SplashWindow"
     xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
     x:Class="KursAM2.View.Management.DebitorCreditorView"
-    Title="Дебиторы / кредиторы" Height="650" Width="925"
-    >
+    Title="{Binding WindowName}" Height="650" Width="925">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
                    Foreground="{Binding DatabaseColor}"
@@ -40,7 +39,7 @@
             </dx:DXSplashScreenService.SplashScreenWindowStyle>
         </dx:DXSplashScreenService>
     </dxmvvm:Interaction.Behaviors>
-    <DockPanel>
+    <DockPanel Style="{StaticResource DXServices}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
             <dxlc:LayoutItem Label="Период с " Width="180">
@@ -81,115 +80,24 @@
                                   dxlc:LayoutControl.AllowVerticalSizing="True">
                     <dxlc:LayoutGroup Header="Дебиторы"
                                       dxlc:LayoutControl.AllowVerticalSizing="True">
-                        <dxg:GridControl HorizontalAlignment="Stretch"
-                                         MaxHeight="100000"
-                                         MaxWidth="100000"
-                                         VerticalAlignment="Stretch"
-                                         Name="DebitorGrid"
+                        <dxg:GridControl Name="DebitorGrid"
+                                         Style="{StaticResource GridControl.Base}"
                                          dx:DXSerializer.SerializationID="gridDebitor"
-                                         dx:DXSerializer.StoreLayoutMode="All"
-                                         dxg:DataControlSerializationOptions.AddNewColumns="True"
-                                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                          Margin="-10"
                                          SelectionMode="Row"
                                          CurrentItem="{Binding CurrentDebitor, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                                          ItemsSource="{Binding Debitors}"
                                          CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
-                                         CurrentColumnChanged="DebitorCreditorTableView_FocusedColumnChanged">
-                            <dxg:GridControl.Columns>
-                                <dxg:GridColumn x:Name="ddcolKontr1" FieldName="Kontragent" Header="Контрагент"
-                                                ReadOnly="True" />
-                                <dxg:GridColumn x:Name="dcolKontrCrs" FieldName="CurrencyName" Header="Валюта"
-                                                ReadOnly="True" />
-                                <dxg:GridColumn x:Name="dcolKontrStart" FieldName="KontrStart" Header="Начало"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="dcolKontrOut1_5" FieldName="KontrOut" Header="Баланс(-)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="dcolKontrIn1_4" FieldName="KontrIn" Header="Баланс(+)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="dcolKontEnd" FieldName="KontrEnd" Header="Конец"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="dcolUchetStart" FieldName="UchetStart" Header="Начало(уч)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="dcolUchetIn1_5" FieldName="UchetIn" Header="Уч. Баланс(+)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="dcolUchetOut1_3" FieldName="UchetOut"
-                                                Header="Уч. Баланс(-)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="dcolUchetEnd" FieldName="UchetEnd" Header="Конец(уч)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="dcolIsBalans" FieldName="IsBalans" Header="Баланс"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CheckEditSettings />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="dcolIsSelected" FieldName="IsSelected" />
-                            </dxg:GridControl.Columns>
-                            <dxg:GridControl.TotalSummary>
-                                <dxg:GridSummaryItem FieldName="KontrStart" SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="KontrIn"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="KontrOut"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="KontrEnd"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="UchetStart" SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="UchetIn"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="UchetOut"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="UchetEnd"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                            </dxg:GridControl.TotalSummary>
+                                         CurrentColumnChanged="DebitorCreditorTableView_FocusedColumnChanged"
+                                         AutoGeneratingColumn="Grid_OnAutoGeneratingColumn" 
+                                         FilterChanged="DebitorGrid_FilterChanged"
+                                         CustomRowFilter="Grid_CustomRowFilter"
+                                         CurrentItemChanged="Grid_CurrentItemChanged">
                             <dxg:GridControl.View>
-                                <dxg:TableView ShowTotalSummary="True" x:Name="DebitorTableView"
-                                               ShowAutoFilterRow="True"
+                                <dxg:TableView Style="{StaticResource TableView.Standart}"
+                                               x:Name="DebitorTableView"
                                                ShowGroupPanel="False"
-                                               AllowEditing="True"
-                                               UseIndicatorForSelection="True"
-                                               
-                                               >
+                                               UseIndicatorForSelection="True">
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Открыть лицевой счет"
@@ -220,111 +128,22 @@
                     </dxlc:LayoutGroup>
                     <dxlc:LayoutGroup Header="Кредиторы"
                                       dxlc:LayoutControl.AllowVerticalSizing="True">
-                        <dxg:GridControl HorizontalAlignment="Stretch"
-                                         Name="CreditorGrid"
-                                         MaxHeight="100000"
-                                         MaxWidth="100000" VerticalAlignment="Stretch"
+                        <dxg:GridControl Name="CreditorGrid"
+                                         Style="{StaticResource GridControl.Base}"
                                          dx:DXSerializer.SerializationID="gridCreditor"
-                                         dx:DXSerializer.StoreLayoutMode="All"
-                                         dxg:DataControlSerializationOptions.AddNewColumns="True"
-                                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                          Margin="-10"
                                          CurrentItem="{Binding CurrentCreditor, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                                          ItemsSource="{Binding Creditors}" SelectionMode="Row"
                                          CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
-                                         CurrentColumnChanged="DebitorCreditorTableView_FocusedColumnChanged">
-                            <dxg:GridControl.Columns>
-                                <dxg:GridColumn x:Name="ccolKontr" FieldName="Kontragent" Header="Контрагент"
-                                                ReadOnly="True" />
-                                <dxg:GridColumn x:Name="ccolKontrCrs" FieldName="CurrencyName" Header="Валюта"
-                                                ReadOnly="True" />
-                                <dxg:GridColumn x:Name="ccolKontrStart" FieldName="KontrStart" Header="Начало"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="ccolKontrOut1_5" FieldName="KontrOut" Header="Баланс(-)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="ccolKontrIn1_5" FieldName="KontrIn" Header="Баланс(+)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="cccolKontEnd" FieldName="KontrEnd" Header="Конец"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="ccolUchetStart" FieldName="UchetStart" Header="Начало(уч)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="ccolUchetIn1_5" FieldName="UchetOut" Header="Уч. Баланс(-)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="ccolUchetOut1_5" FieldName="UchetIn" Header="Уч. Баланс(+)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="ccolUchetEnd" FieldName="UchetEnd" Header="Конец(уч)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="ccolIsBalans" FieldName="IsBalans" Header="Баланс"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CheckEditSettings />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="dcolIsSelected2" FieldName="IsSelected" />
-                            </dxg:GridControl.Columns>
-                            <dxg:GridControl.TotalSummary>
-                                <dxg:GridSummaryItem FieldName="KontrStart" SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="KontrIn"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="KontrOut"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="KontrEnd"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="UchetStart" SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="UchetIn"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="UchetOut"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="UchetEnd"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                            </dxg:GridControl.TotalSummary>
+                                         CurrentColumnChanged="DebitorCreditorTableView_FocusedColumnChanged"
+                                         AutoGeneratingColumn="Grid_OnAutoGeneratingColumn"
+                                         FilterChanged="CreditorGrid_FilterChanged" 
+                                         CustomRowFilter="Grid_CustomRowFilter" 
+                                         CurrentItemChanged="Grid_CurrentItemChanged">
                             <dxg:GridControl.View>
-                                <dxg:TableView ShowTotalSummary="True"
+                                <dxg:TableView Style="{StaticResource TableView.Standart}"
                                                x:Name="CreditorTableView"
-                                               ShowAutoFilterRow="True"
-                                               AllowEditing="True"
-                                               
-                                               >
+                                               UseIndicatorForSelection="True">
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Открыть лицевой счет"
@@ -356,112 +175,23 @@
                     </dxlc:LayoutGroup>
                     <dxlc:LayoutGroup Header="Все"
                                       dxlc:LayoutControl.AllowVerticalSizing="True">
-                        <dxg:GridControl x:Name="DebitorCreditorGrid" HorizontalAlignment="Stretch"
-                                         MaxHeight="100000"
-                                         MaxWidth="100000" VerticalAlignment="Stretch"
+                        <dxg:GridControl x:Name="DebitorCreditorGrid"
+                                         Style="{StaticResource GridControl.Base}"
                                          dx:DXSerializer.SerializationID="gridDebitorCreditor"
-                                         dx:DXSerializer.StoreLayoutMode="All"
-                                         dxg:DataControlSerializationOptions.AddNewColumns="True"
-                                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                          Margin="-10"
                                          CurrentItem="{Binding CurrentDebitorCreditor, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                                          ItemsSource="{Binding DebitorCreditorAll,NotifyOnSourceUpdated=True}"
                                          SelectionMode="Row"
                                          CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
-                                         CurrentColumnChanged="DebitorCreditorTableView_FocusedColumnChanged">
-                            <dxg:GridControl.Columns>
-                                <dxg:GridColumn x:Name="colKontr" FieldName="Kontragent" Header="Контрагент"
-                                                ReadOnly="True" />
-                                <dxg:GridColumn x:Name="colKontrCrs" FieldName="CurrencyName" Header="Валюта"
-                                                ReadOnly="True" />
-                                <dxg:GridColumn x:Name="colKontrStart" FieldName="KontrStart" Header="Начало"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="colKontrOut1_5" FieldName="KontrOut" Header="Баланс(+)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="colKontrIn1_5" FieldName="KontrIn" Header="Баланс(-)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="colKontEnd" FieldName="KontrEnd" Header="Конец"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="colUchetStart" FieldName="UchetStart" Header="Начало(уч)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="colUchetIn1_5" FieldName="UchetOut" Header="Уч. Баланс(-)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="colUchetOut1_5" FieldName="UchetIn" Header="Уч.Баланс(+)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="colUchetEnd" FieldName="UchetEnd" Header="Конец(уч)"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:TextEditSettings DisplayFormat="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn x:Name="CdcolIsBalansGridColumn" FieldName="IsBalans"
-                                                Header="Баланс"
-                                                ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CheckEditSettings />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="dcolIsSelected3" FieldName="IsSelected" />
-                            </dxg:GridControl.Columns>
-                            <dxg:GridControl.TotalSummary>
-                                <dxg:GridSummaryItem FieldName="KontrStart" SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="KontrIn"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="KontrOut"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="KontrEnd"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="UchetStart" SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="UchetIn"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="UchetOut"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                                <dxg:GridSummaryItem FieldName="UchetEnd"
-                                                     SummaryType="Sum"
-                                                     DisplayFormat="n2" />
-                            </dxg:GridControl.TotalSummary>
+                                         CurrentColumnChanged="DebitorCreditorTableView_FocusedColumnChanged"
+                                         AutoGeneratingColumn="Grid_OnAutoGeneratingColumn"
+                                         FilterChanged="DebitorCreditorGrid_FilterChanged"
+                                         CustomRowFilter="Grid_CustomRowFilter"
+                                         CurrentItemChanged="Grid_CurrentItemChanged">
                             <dxg:GridControl.View>
-                                <dxg:TableView ShowTotalSummary="True" 
+                                <dxg:TableView Style="{StaticResource TableView.Standart}"
                                                x:Name="DebitorCreditorTableView"
-                                               
-                                               
-                                               ShowAutoFilterRow="True"
-                                               AllowEditing="True">
+                                               UseIndicatorForSelection="True">
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Открыть лицевой счет"
@@ -499,102 +229,22 @@
                               VerticalAlignment="Stretch"
                               View="Group"
                               dxlc:LayoutControl.AllowVerticalSizing="True">
-                <dxg:GridControl x:Name="KontrOperGrid" HorizontalAlignment="Stretch"
-                                 MaxHeight="1000"
-                                 MaxWidth="2000" VerticalAlignment="Stretch"
+                <dxg:GridControl x:Name="KontrOperGrid"
+                                 Style="{StaticResource GridControl.Base}"
                                  dx:DXSerializer.SerializationID="gridOperation"
-                                 dx:DXSerializer.StoreLayoutMode="All"
-                                 dxg:DataControlSerializationOptions.AddNewColumns="True"
-                                 dxg:DataControlSerializationOptions.RemoveOldColumns="True" Margin="-10"
+                                 Margin="-10"
                                  ItemsSource="{Binding Operations}"
                                  CurrentItem="{Binding CurrentOperation}"
                                  SelectionMode="Row"
-                                 CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
-
-                    <dxg:GridControl.Columns>
-                        <dxg:GridColumn x:Name="DocName1" FieldName="DocName" Header="Документ" ReadOnly="True" />
-                        <dxg:GridColumn x:Name="DocNum1" FieldName="DocNum" Header="№" ReadOnly="True" />
-                        <dxg:GridColumn x:Name="DocExtNum" FieldName="DocExtNum" Header="Внеш.№" ReadOnly="True" />
-                        <dxg:GridColumn x:Name="DocDateColumn1" FieldName="DocDate" Header="Дата"
-                                        ReadOnly="True" />
-                        <dxg:GridColumn x:Name="CrsKontrIn6_3" FieldName="CrsKontrOut" Header="Баланс(+)"
-                                        ReadOnly="True">
-                            <dxg:GridColumn.EditSettings>
-                                <dxe:TextEditSettings DisplayFormat="n2" />
-                            </dxg:GridColumn.EditSettings>
-                        </dxg:GridColumn>
-                        <dxg:GridColumn x:Name="CrsKontrOut6_3" FieldName="CrsKontrIn" Header="Баланс(-)"
-                                        ReadOnly="True">
-                            <dxg:GridColumn.EditSettings>
-                                <dxe:TextEditSettings DisplayFormat="n2" />
-                            </dxg:GridColumn.EditSettings>
-                        </dxg:GridColumn>
-                        <dxg:GridColumn x:Name="CrsOperIn6_4" FieldName="CrsOperOut" Header="Опер(+)"
-                                        ReadOnly="True">
-                            <dxg:GridColumn.EditSettings>
-                                <dxe:TextEditSettings DisplayFormat="n2" />
-                            </dxg:GridColumn.EditSettings>
-                        </dxg:GridColumn>
-                        <dxg:GridColumn x:Name="CrsOperOut6_3" FieldName="CrsOperIn" Header="Опер(-)"
-                                        ReadOnly="True">
-                            <dxg:GridColumn.EditSettings>
-                                <dxe:TextEditSettings DisplayFormat="n2" />
-                            </dxg:GridColumn.EditSettings>
-                        </dxg:GridColumn>
-                        <dxg:GridColumn x:Name="CrsOperDC" FieldName="CrsOperDC" Header="Код документа"
-                                        ReadOnly="True">
-                            <dxg:GridColumn.EditSettings>
-                                <dxe:TextEditSettings DisplayFormat="n2" />
-                            </dxg:GridColumn.EditSettings>
-                        </dxg:GridColumn>
-                        <dxg:GridColumn x:Name="CrsOperRate" FieldName="CrsOperRate" Header="Курс (опер)"
-                                        ReadOnly="True">
-                            <dxg:GridColumn.EditSettings>
-                                <dxe:TextEditSettings DisplayFormat="n2" />
-                            </dxg:GridColumn.EditSettings>
-                        </dxg:GridColumn>
-                        <dxg:GridColumn x:Name="CrsUchRate" FieldName="CrsUchRate" Header="Курс (уч)"
-                                        ReadOnly="True">
-                            <dxg:GridColumn.EditSettings>
-                                <dxe:TextEditSettings DisplayFormat="n2" />
-                            </dxg:GridColumn.EditSettings>
-                        </dxg:GridColumn>
-                        <dxg:GridColumn x:Name="Notes"
-                                        FieldName="Notes"
-                                        ReadOnly="True"
-                                        />
-                        <dxg:GridColumn x:Name="Nakopit" FieldName="Nakopit" Header="Накопительно"
-                                        ReadOnly="True">
-                            <dxg:GridColumn.EditSettings>
-                                <dxe:TextEditSettings DisplayFormat="n2" />
-                            </dxg:GridColumn.EditSettings>
-                        </dxg:GridColumn>
-                    </dxg:GridControl.Columns>
-                    <dxg:GridControl.TotalSummary>
-                        <dxg:GridSummaryItem ShowInColumn="CrsKontrIn" FieldName="CrsKontrIn" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                        <dxg:GridSummaryItem ShowInColumn="CrsKontrOut" FieldName="CrsKontrOut"
-                                             SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                        <dxg:GridSummaryItem ShowInColumn="CrsKontrStart" FieldName="CrsKontrStart"
-                                             SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                        <dxg:GridSummaryItem ShowInColumn="CrsKontrEnd" FieldName="CrsKontrEnd"
-                                             SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                    </dxg:GridControl.TotalSummary>
+                                 CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
+                                 AutoGeneratingColumn="Grid_OnAutoGeneratingColumn">
                     <dxg:GridControl.View>
-                        <dxg:TableView ShowTotalSummary="True"
+                        <dxg:TableView Style="{StaticResource TableView.Standart}"
                                        x:Name="KontrOperTableView"
-                                       
-                                       
                                        UseIndicatorForSelection="True"
-                                       EditorButtonShowMode="ShowForFocusedRow"
-                                       ShowAutoFilterRow="True"
-                                       AllowEditing="False">
+                                       EditorButtonShowMode="ShowForFocusedRow">
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
-
                                     <MenuItem Header="Открыть документ"
                                               Command="{Binding DocumentOpenCommand}" />
                                     <Separator />

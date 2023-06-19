@@ -21,6 +21,21 @@
         <Setter Property="UseFieldNameForSerialization" Value="True"/>
         <Setter Property="SelectionMode" Value="None" />
     </Style>
+    <Style x:Key="TreelistControl.Base" TargetType="dxg:TreeListControl">
+        <Setter Property="ShowBorder" Value="False" />
+        <Setter Property="EnableSmartColumnsGeneration" Value="True" />
+        <Setter Property="AutoGenerateColumns" Value="RemoveOld" />
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="MaxHeight" Value="10000" />
+        <Setter Property="MaxWidth" Value="10000" />
+        <Setter Property="dx:DXSerializer.Enabled" Value="True" />
+        <Setter Property="dx:DXSerializer.StoreLayoutMode" Value="All" />
+        <Setter Property="dxg:DataControlSerializationOptions.AddNewColumns" Value="True" />
+        <Setter Property="dxg:DataControlSerializationOptions.RemoveOldColumns" Value="True" />
+        <Setter Property="UseFieldNameForSerialization" Value="True"/>
+        <Setter Property="SelectionMode" Value="None" />
+    </Style>
 
     <Style TargetType="dxlc:LayoutControl">
         <Setter Property="dxlcs:RestoreLayoutOptions.AddNewItems" Value="True" />
@@ -55,6 +70,7 @@
         <Setter Property="ShowTotalSummary" Value="True" />
         <Setter Property="ShowAutoFilterRow" Value="True" />
         <Setter Property="EnableImmediatePosting" Value="True" />
+        <Setter Property="ShowCriteriaInAutoFilterRow" Value="True"/>
         <Setter Property="ShowGroupPanel" Value="True" />
         <Setter Property="ContextMenu">
             <Setter.Value>
@@ -184,6 +200,54 @@
                                                PassEventArgsToCommand="True" />
                     </ItemsControl>
                 </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <Style x:Key="TreeListView.Edit" TargetType="dxg:TreeListView">
+        <Setter Property="ShowTotalSummary" Value="True" />
+        <Setter Property="ShowAutoFilterRow" Value="True" />
+        <Setter Property="EnableImmediatePosting" Value="True" />
+        <Setter Property="EditFormPostMode" Value="Immediate" />
+        <Setter Property="ShowCriteriaInAutoFilterRow" Value="True"/>
+        <Setter Property="CellTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <Grid>
+                        <Border Name="PART_ValidationBorder" BorderThickness="2" BorderBrush="Black"
+                                Visibility="Collapsed" />
+                        <dxe:InplaceBaseEdit Name="PART_Editor" />
+                    </Grid>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding (dxe:BaseEdit.HasValidationError)}" Value="True">
+                            <Setter TargetName="PART_ValidationBorder" Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="TreeListView.Standart" TargetType="dxg:TreeListView">
+        <Setter Property="ShowTotalSummary" Value="False" />
+        <Setter Property="ShowAutoFilterRow" Value="False" />
+        <Setter Property="EnableImmediatePosting" Value="False" />
+        <Setter Property="ShowCriteriaInAutoFilterRow" Value="False"/>
+        <Setter Property="KeyFieldName" Value="Id"/>
+        <Setter Property="ParentFieldName" Value="ParentId"/>
+        <Setter Property="AllowSorting" Value="False"/>
+        <Setter Property="NavigationStyle" Value="Row"/>
+        <Setter Property="ContextMenu">
+            <Setter.Value>
+                <ContextMenu>
+                    <MenuItem Header="Экспорт"
+                              Command="{Binding VisualControlExportCommand}"
+                              CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,
+                                              AncestorType={x:Type ContextMenu}}}">
+                        <MenuItem.Icon>
+                            <Image Source="{StaticResource ExportDrawingImage}" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </ContextMenu>
             </Setter.Value>
         </Setter>
     </Style>

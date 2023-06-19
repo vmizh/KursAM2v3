@@ -45,6 +45,7 @@ namespace KursAM2.ViewModel.Management
         public ProfitAndLossesWindowViewModel2()
         {
             WindowName = "Прибыли и убытки";
+            LayoutName = "ProfitAndLossesWindowViewModel2";
             ExtendActual = new ObservableCollection<ProfitAndLossesExtendRowViewModel>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = GetRightMenu();

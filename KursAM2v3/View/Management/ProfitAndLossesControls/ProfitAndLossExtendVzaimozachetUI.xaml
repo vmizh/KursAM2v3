@@ -160,7 +160,8 @@
                 </dxg:GridControlBand>
                 <dxg:GridControlBand Name="bandgr_ext">
                     <dxg:GridColumn Name="col7" FieldName="Note" Header="Примечания"
-                                            AutoFilterCondition="Contains" />
+                                            AutoFilterCondition="Contains" 
+                                            />
                 </dxg:GridControlBand>
             </dxg:GridControl.Bands>
             <dxg:GridControl.TotalSummary>
@@ -208,8 +209,7 @@
                                        UseIndicatorForSelection="True"
                                        AllowPerPixelScrolling="True"
                                        ShowTotalSummary="True"
-                                       
-                                       
+                                       ShowCriteriaInAutoFilterRow="True"
                                        >
                     <dxg:TableView.FormatConditions>
                         <dxg:FormatCondition ApplyToRow="True" Expression="[AktZachet]='red'">

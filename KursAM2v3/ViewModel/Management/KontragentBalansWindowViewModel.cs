@@ -1,15 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core;
+using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
@@ -27,7 +30,7 @@ namespace KursAM2.ViewModel.Management
     [DataContract]
     public class KontragentBalansWindowViewModel : RSWindowViewModelBase
     {
-        private KonragentBalansRowViewModel myCurrentDocument;
+        private KontragentBalansRowViewModel myCurrentDocument;
         private KontragentPeriod myCurrentPeriod;
         private Kontragent myKontragent;
         private decimal myLastBalansSumma;
@@ -35,9 +38,9 @@ namespace KursAM2.ViewModel.Management
 
         public KontragentBalansWindowViewModel()
         {
-            Operations = new ObservableCollection<KonragentBalansRowViewModel>();
+            Operations = new ObservableCollection<KontragentBalansRowViewModel>();
             Periods = new ObservableCollection<KontragentPeriod>();
-            Documents = new ObservableCollection<KonragentBalansRowViewModel>();
+            Documents = new ObservableCollection<KontragentBalansRowViewModel>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
         }
@@ -47,16 +50,18 @@ namespace KursAM2.ViewModel.Management
             StartKontragent = Kontragents.Single(_ => _.DocCode == doccode);
         }
 
-        public override string LayoutName => "KontragentBalansFormNew";
+        public override string LayoutName => "KontragentBalansView";
+        public override string WindowName => "Лицевой счет контрагента";
 
-        public ObservableCollection<KonragentBalansRowViewModel> SelectedDocs { set; get; } =
-            new ObservableCollection<KonragentBalansRowViewModel>();
+        public ObservableCollection<KontragentBalansRowViewModel> SelectedDocs { set; get; } =
+            new ObservableCollection<KontragentBalansRowViewModel>();
 
         public Kontragent StartKontragent { get; set; }
 
         // ReSharper disable once CollectionNeverQueried.Global
-        public ObservableCollection<KonragentBalansRowViewModel> Documents { set; get; }
+        public ObservableCollection<KontragentBalansRowViewModel> Documents { set; get; }
 
+        
         public KontragentPeriod CurrentPeriod
         {
             get => myCurrentPeriod;
@@ -72,7 +77,7 @@ namespace KursAM2.ViewModel.Management
             }
         }
 
-        public KonragentBalansRowViewModel CurrentDocument
+        public KontragentBalansRowViewModel CurrentDocument
         {
             get => myCurrentDocument;
             set
@@ -139,7 +144,7 @@ namespace KursAM2.ViewModel.Management
             }
         }
 
-        [DataMember] public ObservableCollection<KonragentBalansRowViewModel> Operations { set; get; }
+        [DataMember] public ObservableCollection<KontragentBalansRowViewModel> Operations { set; get; }
 
         [DataMember]
         public ObservableCollection<KontragentPeriod> Periods { set; get; } =
@@ -174,7 +179,7 @@ namespace KursAM2.ViewModel.Management
             RaisePropertyChanged(nameof(Documents));
         }
 
-        private void LoadPeriod(IEnumerable<KonragentBalansRowViewModel> rows)
+        private void LoadPeriod(IEnumerable<KontragentBalansRowViewModel> rows)
         {
             if (rows == null) return;
             var periods = DatePeriod.GenerateIerarhy(rows.Select(_ => _.DocDate).Distinct(), PeriodIerarhy.YearMonth);
@@ -200,7 +205,7 @@ namespace KursAM2.ViewModel.Management
             LoadPeriod(Operations);
         }
 
-        public ObservableCollection<KonragentBalansRowViewModel> Load(decimal dc)
+        public ObservableCollection<KontragentBalansRowViewModel> Load(decimal dc)
         {
             try
             {
@@ -240,7 +245,7 @@ namespace KursAM2.ViewModel.Management
                               "LEFT OUTER JOIN sd_430 ON doc_dc = sd_430.DOC_CODE " +
                               $"WHERE KONTR_DC = {CustomFormat.DecimalToSqlDecimal(dc)} " +
                               "ORDER BY kboa.DOC_DATE;";
-                    var data1 = ent.Database.SqlQuery<KonragentBalansRowViewModel>(sql).ToList();
+                    var data1 = ent.Database.SqlQuery<KontragentBalansRowViewModel>(sql).ToList();
                     decimal sum = 0;
                     Operations.Clear();
                     var sn = data1.FirstOrDefault(_ => _.DocName == " На начало учета");
@@ -250,7 +255,7 @@ namespace KursAM2.ViewModel.Management
                             sum = -sn.CrsKontrIn;
                         else
                             sum = sn.CrsKontrOut;
-                        //Operations.Add(KonragentBalansRowViewModel.DbToViewModel(sn, (decimal) Math.Round(sum, 2)));
+                        //Operations.Add(KontragentBalansRowViewModel.DbToViewModel(sn, (decimal) Math.Round(sum, 2)));
                         Operations.Add(sn);
                         data1.Remove(sn);
                     }
@@ -310,12 +315,12 @@ namespace KursAM2.ViewModel.Management
             get { return new Command(DocumentLinkToProject, _ => SelectedDocs != null && SelectedDocs.Count > 0); }
         }
 
-        public override void ResetLayout(object form)
-        {
-            var curKontr = Kontragent;
-            base.ResetLayout(form);
-            Kontragent = curKontr;
-        }
+        //public override void ResetLayout(object form)
+        //{
+        //    var curKontr = Kontragent;
+        //    base.ResetLayout(form);
+        //    Kontragent = curKontr;
+        //}
 
         private void DocumentLinkToProject(object obj)
         {
@@ -598,28 +603,39 @@ namespace KursAM2.ViewModel.Management
         protected override void OnWindowLoaded(object obj)
         {
             base.OnWindowLoaded(obj);
-            var frm = Form as KontragentBalansForm;
+            var frm = Form as KontragentBalansView;
             if (frm == null) return;
+            frm.treeListPeriodView.ShowTotalSummary = false;
             var nakSummaries = new List<GridSummaryItem>();
             foreach (var s in frm.KontrOperGrid.TotalSummary)
             {
                 if (s.FieldName == "Nakopit" || s.FieldName == "CrsOperRate")
                     nakSummaries.Add(s);
             }
-
-            foreach (var col in frm.KontrOperGrid.Columns)
-            {
-                if (col.FieldName == "Notes")
-                    col.Header = "Примечание";
-            }
+            
             foreach (var c in nakSummaries) frm.KontrOperGrid.TotalSummary.Remove(c);
         }
 
         #endregion
     }
 
+    [MetadataType(typeof(DataAnnotationKontragentPeriod))]
     public class KontragentPeriod : DatePeriod
     {
         [DataMember] public decimal EndPeriodSumma { set; get; }
+    }
+
+    public class DataAnnotationKontragentPeriod : DataAnnotationForFluentApiBase, IMetadataProvider<KontragentPeriod>
+    {
+        void IMetadataProvider<KontragentPeriod>.BuildMetadata(MetadataBuilder<KontragentPeriod> builder)
+        {
+            SetNotAutoGenerated(builder);
+            builder.Property(_ => _.PeriodType).NotAutoGenerated();
+            //builder.Property(_ => _.DateEnd).NotAutoGenerated().DisplayName("Конец");
+            //builder.Property(_ => _.DateStart).NotAutoGenerated().DisplayName("Начало");
+            builder.Property(_ => _.EndPeriodSumma).AutoGenerated().LocatedAt(1).ReadOnly().DisplayName("Сумма на конец").DisplayFormatString("n2");
+            builder.Property(_ => _.Name).AutoGenerated().LocatedAt(0).ReadOnly().DisplayName("Период");
+               
+        }
     }
 }

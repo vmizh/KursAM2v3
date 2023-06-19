@@ -251,9 +251,7 @@
                                        UseIndicatorForSelection="True"
                                        AllowPerPixelScrolling="True"
                                        ShowTotalSummary="True"
-                                       
-                                       
-                                       >
+                                       ShowCriteriaInAutoFilterRow="True">
                     <dxg:TableView.FormatConditions>
                         <dxg:FormatCondition ApplyToRow="True" Expression="[AktZachet]='red'">
                             <!-- ReSharper disable once ObsoleteElement -->

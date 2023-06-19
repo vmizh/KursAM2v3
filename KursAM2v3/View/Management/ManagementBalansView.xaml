@@ -8,7 +8,7 @@
     xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
     xmlns:controls="clr-namespace:KursAM2.View.Management.Controls"
     x:Class="KursAM2.View.Management.ManagementBalansView"
-    Title="Управленческий баланс" Height="550" Width="725"
+    Title="{Binding WindowName}" Height="550" Width="725"
     Icon="pack://siteoforigin:,,,/Images/document_preferences.png">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
@@ -16,7 +16,7 @@
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
-    <DockPanel>
+    <DockPanel Style="{StaticResource DXServices}">
         <DockPanel DockPanel.Dock="Top">
             <control:WindowMenu Height="60" DockPanel.Dock="Top" />
             <DockPanel DockPanel.Dock="Top">

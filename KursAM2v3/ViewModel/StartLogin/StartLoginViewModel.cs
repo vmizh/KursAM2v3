@@ -12,7 +12,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Dialogs;
 using Core.WindowsManager;
@@ -121,9 +120,9 @@ namespace KursAM2.ViewModel.StartLogin
             if (!userIni.KeyExists("Login", "Start")) userIni.Write("Start", "Login", "");
             if (!userIni.KeyExists("LastDataBase", "Start")) userIni.Write("Start", "LastDataBase", "");
             if (!userIni.KeyExists("DefaultDataBase", "Start")) userIni.Write("Start", "DefaultDataBase", "");
-            if (!userIni.KeyExists("System","Version")) userIni.Write("Version", "System", "0");
-            if (!userIni.KeyExists("Test","Version")) userIni.Write("Version", "Test", "0");
-            if (!userIni.KeyExists("Version","Version")) userIni.Write("Version", "Version", "0");
+            if (!userIni.KeyExists("System", "Version")) userIni.Write("Version", "System", "0");
+            if (!userIni.KeyExists("Test", "Version")) userIni.Write("Version", "Test", "0");
+            if (!userIni.KeyExists("Version", "Version")) userIni.Write("Version", "Version", "0");
         }
 
         #region command
@@ -191,7 +190,7 @@ namespace KursAM2.ViewModel.StartLogin
                                 Notes = grp.Note,
                                 Picture = ImageManager.ByteToImage(grp.Picture),
                                 // ReSharper disable once PossibleInvalidOperationException
-                                OrderBy = (int) (grpOrd != null ? grpOrd.Order : grp.Id)
+                                OrderBy = (int)(grpOrd != null ? grpOrd.Order : grp.Id)
                             };
                             tileGroupsTemp.Add(newGrp);
                         }
@@ -224,19 +223,17 @@ namespace KursAM2.ViewModel.StartLogin
                 newUser.MainTileGroups = new List<TileGroup>(tileGroups.OrderBy(_ => _.OrderBy));
                 newUser.Groups =
                     GlobalOptions.GetEntities().EXT_GROUPS.Select(
-                            grp => new UserGroup {Id = grp.GR_ID, Name = grp.GR_NAME})
+                            grp => new UserGroup { Id = grp.GR_ID, Name = grp.GR_NAME })
                         .ToList();
                 var fav = ctx.UserMenuFavorites.Where(_ => _.DbId == GlobalOptions.DataBaseId
                                                            && _.UserId == newUser.KursId).ToList();
-                foreach (var f in fav)
-                {
-                    newUser.MenuFavorites.Add(f);
-                }
+                foreach (var f in fav) newUser.MenuFavorites.Add(f);
                 GlobalOptions.UserInfo = newUser;
                 Helper.CurrentUser.UserInfo = newUser;
                 GlobalOptions.SystemProfile = new SystemProfile();
             }
-            var refer = new ReferencesKursCache(new KursDBContext(GlobalOptions.SqlConnectionString).Context );
+
+            var refer = new ReferencesKursCache(new KursDBContext(GlobalOptions.SqlConnectionString).Context);
             refer.StartLoad();
             GlobalOptions.ReferencesCache = refer;
             SetUserProfile(newUser.NickName.ToUpper());
@@ -263,8 +260,8 @@ namespace KursAM2.ViewModel.StartLogin
                     // ReSharper disable once InconsistentNaming
                     var DC = Convert.ToDecimal(ownKontrDC.ITEM_VALUE);
                     var ownKontr =
-                        GlobalOptions.GetEntities().SD_43.Include(_ => _.TD_43).
-                            Include(_ => _.TD_43.Select(x => x.SD_44))
+                        GlobalOptions.GetEntities().SD_43.Include(_ => _.TD_43)
+                            .Include(_ => _.TD_43.Select(x => x.SD_44))
                             .SingleOrDefault(_ => _.DOC_CODE == DC);
                     if (ownKontr != null)
                         GlobalOptions.SystemProfile.OwnerKontragent = new Kontragent();
@@ -381,7 +378,7 @@ namespace KursAM2.ViewModel.StartLogin
 
                 string hostName;
                 var section = ConfigurationManager.GetSection("appSettings") as NameValueCollection;
-#if  DEBUG
+#if DEBUG
                 hostName = section.Get("KursSystemDebugHost");
 #else
             hostName = section.Get("KursSystemHost");
@@ -399,7 +396,8 @@ namespace KursAM2.ViewModel.StartLogin
                     DataSource = hostName,
                     InitialCatalog = "KursSystem",
                     UserID = "sa",
-                    Password = "CbvrfFhntvrf65"
+                    Password = "CbvrfFhntvrf65",
+                    ConnectTimeout = 0
                 }.ToString());
                 GlobalOptions.KursSystemDBUnitOfWork =
                     new UnitOfWork<KursSystemEntities>(GlobalOptions.KursSystemDBContext);
@@ -443,11 +441,13 @@ namespace KursAM2.ViewModel.StartLogin
                     errText.Append($"\n {exx.InnerException.Message}");
                     exx = exx.InnerException;
                 }
-                IDialogService service = this.GetService<IDialogService>("errorDialogService");
+
+                var service = this.GetService<IDialogService>("errorDialogService");
                 service?.ShowDialog(MessageButton.OK, "Ошибка", new DialogErrorViewModel
                 {
-                    ErrorText = errText.ToString().Replace("The underlying provider failed on Open","Не могу открыть базу данных")
-                        .Replace("Login failed for user","Неправильный пользователь/пароль")
+                    ErrorText = errText.ToString().Replace("The underlying provider failed on Open",
+                            "Не могу открыть базу данных")
+                        .Replace("Login failed for user", "Неправильный пользователь/пароль")
                 });
                 //MessageBox.Show("CheckAndSetUser error.\n" + errText);
                 newUser = null;
@@ -476,7 +476,7 @@ namespace KursAM2.ViewModel.StartLogin
         {
             string hostName;
             var section = ConfigurationManager.GetSection("appSettings") as NameValueCollection;
-#if  DEBUG
+#if DEBUG
             hostName = section.Get("KursSystemDebugHost");
 #else
             hostName = section.Get("KursSystemHost");
@@ -512,13 +512,13 @@ namespace KursAM2.ViewModel.StartLogin
                         while (reader.Read())
                             ComboBoxItemSource.Add(new DataSource
                             {
-                                Name = (string) reader.GetValue(0),
-                                ShowName = (string) reader.GetValue(1),
-                                Order = (int) reader.GetValue(2),
-                                Server = (string) reader.GetValue(3),
-                                DBName = (string) reader.GetValue(4),
-                                Color = (SolidColorBrush) new BrushConverter().ConvertFromString(
-                                    (string) reader.GetValue(5)),
+                                Name = (string)reader.GetValue(0),
+                                ShowName = (string)reader.GetValue(1),
+                                Order = (int)reader.GetValue(2),
+                                Server = (string)reader.GetValue(3),
+                                DBName = (string)reader.GetValue(4),
+                                Color = (SolidColorBrush)new BrushConverter().ConvertFromString(
+                                    (string)reader.GetValue(5)),
                                 Id = reader.GetGuid(6)
                             });
                     }

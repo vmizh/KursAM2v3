@@ -2,7 +2,9 @@
 using System.Windows.Controls;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Core.Serialization;
+using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
+using Helper;
 
 namespace KursAM2.View.Management
 {
@@ -14,15 +16,17 @@ namespace KursAM2.View.Management
         public BreakEvenForm2()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            //ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            ////GridControlLocalizer.Active = new CustomDXGridLocalizer();
+            ////EditorLocalizer.Active = new CustomEditorsLocalizer();
 
-            EventManager.RegisterClassHandler(typeof(GridColumn), DXSerializer.AllowPropertyEvent,
-                new AllowPropertyEventHandler((d, e) =>
-                {
-                    if (!e.Property.Name.Contains("Header")) return;
-                    e.Allow = false;
-                    e.Handled = true;
-                }));
+            //EventManager.RegisterClassHandler(typeof(GridColumn), DXSerializer.AllowPropertyEvent,
+            //    new AllowPropertyEventHandler((d, e) =>
+            //    {
+            //        if (!e.Property.Name.Contains("Header")) return;
+            //        e.Allow = false;
+            //        e.Handled = true;
+            //    }));
         }
 
 

@@ -518,6 +518,9 @@
     <Compile Include="View\Management\Controls\BalansCompareMoneyInPathUI.xaml.cs">
       <DependentUpon>BalansCompareMoneyInPathUI.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Management\KontragentBalansView.xaml.cs">
+      <DependentUpon>KontragentBalansView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Management\ProfitAndLossesControls\CurrencyConvertView.xaml.cs">
       <DependentUpon>CurrencyConvertView.xaml</DependentUpon>
     </Compile>
@@ -528,7 +531,7 @@
       <DependentUpon>ProfitAndLossExtendBaseUI.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\Management\ProfitAndLossesWindowViewModel2.cs" />
-    <Compile Include="ViewModel\Management\KonragentBalansRowViewModel.cs" />
+    <Compile Include="ViewModel\Management\KontragentBalansRowViewModel.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectPrihodDocRow.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectProviderPrihodWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectProfitAndLossesWindowViewModel.cs" />
@@ -1068,6 +1071,7 @@
     <Resource Include="Font\Roboto-Regular.ttf" />
     <Resource Include="Font\Roboto-Thin.ttf" />
     <Resource Include="Font\Roboto-ThinItalic.ttf" />
+    <None Include="App.config" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -1118,11 +1122,6 @@
     </None>
     <None Include="Reports\Zakaz.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config">
-      <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1386,6 +1385,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Management\Controls\BalansCompareMoneyInPathUI.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Management\KontragentBalansView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

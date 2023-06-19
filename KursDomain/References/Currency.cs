@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using Data;
 using KursDomain.Annotations;
 using KursDomain.ICommon;
@@ -11,6 +12,7 @@ using KursDomain.IReferences;
 
 namespace KursDomain.References;
 
+[DataContract]
 [DebuggerDisplay("{DocCode,nq}/{Id,nq} {Name,nq}")]
 public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currency>, IComparable
 {
@@ -21,9 +23,10 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
     private string _Name;
     private string _Notes;
 
+    [DataMember]
     [Display(AutoGenerateField = false, Name = "Код")]
     public string NalogName { get; set; }
-
+    [DataMember]
     [Display(AutoGenerateField = false, Name = "Код")]
     public string NalogCode { get; set; }
 
@@ -32,7 +35,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
         var c = obj as Unit;
         return c == null ? 0 : string.Compare(Name, c.Name, StringComparison.Ordinal);
     }
-
+    [DataMember]
     [Display(AutoGenerateField = true, Name = "Код")]
     public string Code
     {
@@ -43,7 +46,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
             _Code = value;
         }
     }
-
+    [DataMember]
     [Display(AutoGenerateField = true, Name = "Полное наименование")]
     public string FullName
     {
@@ -54,7 +57,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
             _FullName = value;
         }
     }
-
+    [DataMember]
     [Display(AutoGenerateField = true, Name = "Активная")]
     public bool IsActive
     {
@@ -65,7 +68,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
             _IsActive = value;
         }
     }
-
+    [DataMember]
     [Display(AutoGenerateField = false, Name = "DocCode")]
     public decimal DocCode
     {
@@ -76,7 +79,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
             _DocCode = value;
         }
     }
-
+    [DataMember]
     [Display(AutoGenerateField = false, Name = "Id")]
     public Guid Id { get; set; }
 
@@ -86,7 +89,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
         if (ReferenceEquals(this, other)) return true;
         return _DocCode == other._DocCode;
     }
-
+    [DataMember]
     [Display(AutoGenerateField = true, Name = "Наименование")]
     public string Name
     {
@@ -97,7 +100,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
             _Name = value;
         }
     }
-
+    [DataMember]
     [Display(AutoGenerateField = true, Name = "Примечание")]
     public string Notes
     {
@@ -108,7 +111,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
             _Notes = value;
         }
     }
-
+    [DataMember]
     [Display(AutoGenerateField = false, Name = "Описание")]
     public string Description => $"Валюта: {Name} {FullName}";
 

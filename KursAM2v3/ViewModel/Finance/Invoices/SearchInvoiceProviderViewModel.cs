@@ -161,5 +161,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ctx.Form = frm;
             frm.Show();
         }
+
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            if (Form is StandartSearchView frm)
+            {
+                frm.gridDocumentsTableView.ShowTotalSummary = true;
+            }
+           
+        }
     }
 }

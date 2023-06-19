@@ -9,8 +9,10 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Bars;
+using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Managers;
+using KursAM2.View.Management;
 using KursAM2.ViewModel.Management.Calculations;
 using KursAM2.ViewModel.Splash;
 using KursDomain;
@@ -26,7 +28,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
         private DebitorCreditorRow myCurrentCreditor;
         private DebitorCreditorRow myCurrentDebitor;
         private DebitorCreditorRow myCurrentDebitorCreditor;
-        private KonragentBalansRowViewModel myCurrentOperation;
+        private KontragentBalansRowViewModel myCurrentOperation;
         private DateTime myEnd;
         private DateTime myStart;
 
@@ -35,7 +37,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
             DebitorCreditorAll = new ObservableCollection<DebitorCreditorRow>();
             Debitors = new GalleryCollection<DebitorCreditorRow>();
             Creditors = new ObservableCollection<DebitorCreditorRow>();
-            Operations = new ObservableCollection<KonragentBalansRowViewModel>();
+            Operations = new ObservableCollection<KontragentBalansRowViewModel>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
         }
@@ -43,7 +45,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
         public ObservableCollection<DebitorCreditorRow> DebitorCreditorAll { set; get; }
         public ObservableCollection<DebitorCreditorRow> Debitors { set; get; }
         public ObservableCollection<DebitorCreditorRow> Creditors { set; get; }
-        public ObservableCollection<KonragentBalansRowViewModel> Operations { set; get; }
+        public ObservableCollection<KontragentBalansRowViewModel> Operations { set; get; }
 
         public DebitorCreditorRow CurrentDebitorCreditor
         {
@@ -78,6 +80,9 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
                 RaisePropertyChanged(nameof(Operations));
             }
         }
+
+        public override string WindowName => "Дебиторы /  кредиторы";
+        public override string LayoutName => "DebitorCreditorWindowViewModel";
 
         public decimal DebitorSumma
         {
@@ -144,7 +149,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
             }
         }
 
-        public KonragentBalansRowViewModel CurrentOperation
+        public KontragentBalansRowViewModel CurrentOperation
         {
             get => myCurrentOperation;
             set
@@ -160,7 +165,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
             var debitorCreditorRow = DebitorCreditorAll.FirstOrDefault(_ => _.KontrInfo.DocCode == kontrDC);
             if (debitorCreditorRow == null) return;
             var start = debitorCreditorRow.KontrStart;
-            Operations = new ObservableCollection<KonragentBalansRowViewModel>();
+            Operations.Clear(); //= new ObservableCollection<KontragentBalansRowViewModel>();
             var sql = "SELECT DOC_NAME as DocName, " +
                       "ISNULL(CONVERT(VARCHAR, td_101.CODE), DOC_NUM) AS DocNum, " +
                       "DOC_DATE as DocDate, " +
@@ -193,7 +198,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
                       "ORDER BY kboa.KONTR_DC,kboa.DOC_DATE;";
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var data = ctx.Database.SqlQuery<KonragentBalansRowViewModel>(sql);
+                var data = ctx.Database.SqlQuery<KontragentBalansRowViewModel>(sql);
                 foreach (var op in data)
                 {
                     start += Convert.ToDecimal(op.CrsKontrOut) - Convert.ToDecimal(op.CrsKontrIn);
@@ -259,9 +264,25 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
             CurrentDebitor = null;
             CurrentDebitorCreditor = null;
             Operations.Clear();
-            DebitorCreditorAll = new ObservableCollection<DebitorCreditorRow>(Load(Start, End));
-            Debitors = new ObservableCollection<DebitorCreditorRow>(DebitorCreditorAll.Where(_ => _.KontrEnd > 0));
-            Creditors = new ObservableCollection<DebitorCreditorRow>(DebitorCreditorAll.Where(_ => _.KontrEnd < 0));
+            DebitorCreditorAll.Clear();
+            Debitors.Clear();
+            Creditors.Clear();
+            foreach (var d in Load(Start, End))
+            {
+                DebitorCreditorAll.Add(d);
+            }
+
+            foreach (var deb in DebitorCreditorAll.Where(_ => _.KontrEnd > 0))
+            {
+                Debitors.Add(deb);
+            }
+            foreach (var cred in DebitorCreditorAll.Where(_ => _.KontrEnd < 0))
+            {
+                Creditors.Add(cred);
+            }
+            //DebitorCreditorAll = new ObservableCollection<DebitorCreditorRow>(Load(Start, End));
+            //Debitors = new ObservableCollection<DebitorCreditorRow>(DebitorCreditorAll.Where(_ => _.KontrEnd > 0));
+            //Creditors = new ObservableCollection<DebitorCreditorRow>(DebitorCreditorAll.Where(_ => _.KontrEnd < 0));
             foreach (var kontr in DebitorCreditorAll.Where(_ => _.KontrEnd == 0))
             {
                 if (kontr.KontrStart < 0)
@@ -355,37 +376,37 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
                 try
                 {
                     sql = "SELECT KONTR_DC as rdr0 " +
-                              ", cast(sum(BLS_START) AS NUMERIC(18, 2)) as rdr1 " +
-                              ", cast(sum(BLS_out) AS NUMERIC(18, 2)) as rdr2 " +
-                              ", cast(sum(BLS_in) AS NUMERIC(18, 2)) as rdr3 " +
-                              ", cast(sum(BLS_START) - sum(BLS_OUT) + sum(BLS_IN)   AS NUMERIC(18, 2)) as rdr4 " +
-                              ", isnull(s.flag_balans,0) as rdr5" +
-                              ", s.VALUTA_DC as rdr6 " + "FROM " +
-                              " (SELECT KONTR_DC KONTR_DC " + ", 0 BLS_START " +
-                              ", SUM(CRS_KONTR_IN ) BLS_IN " +
-                              ", SUM( CRS_KONTR_OUT ) BLS_OUT " + ", 0 BLS_END " +
-                              "FROM " + " KONTR_BALANS_OPER_ARC KBOA " +
-                              " INNER JOIN SD_43 S43 " +
-                              "  ON S43.DOC_CODE = KBOA.KONTR_DC " + "WHERE " +
-                              $" DOC_DATE >= '{CustomFormat.DateToString(start)}' AND DOC_DATE <= '{CustomFormat.DateToString(end)}' " +
-                              "AND DOC_DATE >= S43.START_BALANS " + "GROUP BY kontr_dc " +
-                              " UNION ALL " + "SELECT KONTR_DC " +
-                              "    , sum(CRS_KONTR_IN) - sum(CRS_KONTR_OUT) " + "   , 0 " +
-                              "  , 0 " + " , 0 " + "FROM " +
-                              " KONTR_BALANS_OPER_ARC KBOA " + "INNER JOIN SD_43 S43 " +
-                              " ON S43.DOC_CODE = KBOA.KONTR_DC " + "WHERE " +
-                              $" DOC_DATE < '{CustomFormat.DateToString(start)}'  " +
-                              "AND DOC_DATE >= S43.START_BALANS " + "GROUP BY KONTR_DC " +
-                              "UNION ALL " + "SELECT KONTR_DC " + "    , 0 " + "   , 0 " +
-                              "  , 0 " + " , sum(CRS_KONTR_IN) - sum(CRS_KONTR_OUT) " +
-                              "FROM " + " KONTR_BALANS_OPER_ARC KBOA " +
-                              "INNER JOIN SD_43 S43 " +
-                              "ON S43.DOC_CODE = KBOA.KONTR_DC " + "	WHERE " +
-                              $"	  DOC_DATE <= '{CustomFormat.DateToString(end)}' " +
-                              "	  AND DOC_DATE >= S43.START_BALANS " + "	GROUP BY " +
-                              "	  KONTR_DC) TAB " +
-                              "	 inner join sd_43 s on s.doc_code = tab.kontr_dc and isnull(DELETED,0)=0 " +
-                              "	GROUP BY " + "	  KONTR_DC, s.flag_balans, s.valuta_dc";
+                          ", cast(sum(BLS_START) AS NUMERIC(18, 2)) as rdr1 " +
+                          ", cast(sum(BLS_out) AS NUMERIC(18, 2)) as rdr2 " +
+                          ", cast(sum(BLS_in) AS NUMERIC(18, 2)) as rdr3 " +
+                          ", cast(sum(BLS_START) - sum(BLS_OUT) + sum(BLS_IN)   AS NUMERIC(18, 2)) as rdr4 " +
+                          ", isnull(s.flag_balans,0) as rdr5" +
+                          ", s.VALUTA_DC as rdr6 " + "FROM " +
+                          " (SELECT KONTR_DC KONTR_DC " + ", 0 BLS_START " +
+                          ", SUM(CRS_KONTR_IN ) BLS_IN " +
+                          ", SUM( CRS_KONTR_OUT ) BLS_OUT " + ", 0 BLS_END " +
+                          "FROM " + " KONTR_BALANS_OPER_ARC KBOA " +
+                          " INNER JOIN SD_43 S43 " +
+                          "  ON S43.DOC_CODE = KBOA.KONTR_DC " + "WHERE " +
+                          $" DOC_DATE >= '{CustomFormat.DateToString(start)}' AND DOC_DATE <= '{CustomFormat.DateToString(end)}' " +
+                          "AND DOC_DATE >= S43.START_BALANS " + "GROUP BY kontr_dc " +
+                          " UNION ALL " + "SELECT KONTR_DC " +
+                          "    , sum(CRS_KONTR_IN) - sum(CRS_KONTR_OUT) " + "   , 0 " +
+                          "  , 0 " + " , 0 " + "FROM " +
+                          " KONTR_BALANS_OPER_ARC KBOA " + "INNER JOIN SD_43 S43 " +
+                          " ON S43.DOC_CODE = KBOA.KONTR_DC " + "WHERE " +
+                          $" DOC_DATE < '{CustomFormat.DateToString(start)}'  " +
+                          "AND DOC_DATE >= S43.START_BALANS " + "GROUP BY KONTR_DC " +
+                          "UNION ALL " + "SELECT KONTR_DC " + "    , 0 " + "   , 0 " +
+                          "  , 0 " + " , sum(CRS_KONTR_IN) - sum(CRS_KONTR_OUT) " +
+                          "FROM " + " KONTR_BALANS_OPER_ARC KBOA " +
+                          "INNER JOIN SD_43 S43 " +
+                          "ON S43.DOC_CODE = KBOA.KONTR_DC " + "	WHERE " +
+                          $"	  DOC_DATE <= '{CustomFormat.DateToString(end)}' " +
+                          "	  AND DOC_DATE >= S43.START_BALANS " + "	GROUP BY " +
+                          "	  KONTR_DC) TAB " +
+                          "	 inner join sd_43 s on s.doc_code = tab.kontr_dc and isnull(DELETED,0)=0 " +
+                          "	GROUP BY " + "	  KONTR_DC, s.flag_balans, s.valuta_dc";
                     var data =
                         ent.Database.SqlQuery<DebCredTemp>(sql)
                             .ToList();
@@ -424,6 +445,23 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
 
         public override bool IsDocumentOpenAllow =>
             CurrentOperation != null && DocumentsOpenManager.IsDocumentOpen(CurrentOperation.DocTypeCode);
+
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            List<GridSummaryItem> cols = new List<GridSummaryItem>();
+            if (Form is not DebitorCreditorView frm) return;
+            foreach (var csum in frm.KontrOperGrid.TotalSummary)
+            {
+                if (csum.FieldName == "Nakopit" || csum.FieldName.Contains("Rate"))
+                    cols.Add(csum);
+            }
+
+            foreach (var c in cols)
+            {
+                frm.KontrOperGrid.TotalSummary.Remove(c);
+            }
+        }
 
         public override void DocumentOpen(object obj)
         {

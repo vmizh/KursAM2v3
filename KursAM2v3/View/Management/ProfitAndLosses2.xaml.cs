@@ -14,14 +14,14 @@ namespace KursAM2.View.Management
     /// <summary>
     ///     Interaction logic for ProfitAndLosses2.xaml
     /// </summary>
-    public partial class ProfitAndLosses2 : ILayout
+    public partial class ProfitAndLosses2 
     {
         public ProfitAndLosses2()
         {
             InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
-            Closing += OnClosing;
-            Loaded += ProfitAndLosses_Loaded;
+            //Closing += OnClosing;
+            //Loaded += ProfitAndLosses_Loaded;
         }
 
         private void ProfitAndLosses_Loaded(object sender, RoutedEventArgs e)
@@ -75,30 +75,7 @@ namespace KursAM2.View.Management
             }
         }
 
-        private void GridControlMain_OnSelectedItemChanged(object sender, SelectedItemChangedEventArgs e)
-        {
-            //if (!(DataContext is ProfitAndLossesWindowViewModel2 ctx)) return;
-            //if (e.NewItem is ProfitAndLossesMainRowViewModel v) ctx.UpdateExtend(v.Id);
-            //if (!(e.NewItem is ProfitAndLossesMainRowViewModel item))
-            //{
-            //    col124.Visible = false;
-            //    return;
-            //}
-            //col124.Visible = item.Name == "Финансовые операции";
-
-        }
-
-        private void GridControlMain_OnSelectedItemChanged2(object sender, SelectedItemChangedEventArgs e)
-        {
-            //if (!(DataContext is ProfitAndLossesWindowViewModel2 ctx)) return;
-            //if (e.NewItem is ProfitAndLossesMainRowViewModel v) ctx.UpdateExtend2(v.Id);
-            //if (!(e.NewItem is ProfitAndLossesMainRowViewModel item))
-            //{
-            //    col124.Visible = false;
-            //    return;
-            //}
-            //col124.Visible = item.Name == "Финансовые операции";
-        }
+        
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }

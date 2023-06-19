@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-using System.Data.Entity;
-using System.Data.Entity.Core.EntityClient;
+﻿using System.Data.Entity.Core.EntityClient;
 using System.Diagnostics;
 
 namespace Data

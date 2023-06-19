@@ -19,24 +19,23 @@ namespace KursAM2.View.Management
     /// <summary>
     ///     Interaction logic for DebitorCreditorView.xaml
     /// </summary>
-    public partial class DebitorCreditorView : ILayout
+    public partial class DebitorCreditorView
     {
         public DebitorCreditorView()
         {
             InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
-            Closing += DebitorCreditorView_Closing;
-            Loaded += DebitorCreditorView_Loaded;
+            //LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            //Closing += DebitorCreditorView_Closing;
+            //Loaded += DebitorCreditorView_Loaded;
             DebitorCreditorGrid.FilterChanged += DebitorCreditorGrid_FilterChanged;
             DebitorGrid.FilterChanged += DebitorGrid_FilterChanged;
             CreditorGrid.FilterChanged += CreditorGrid_FilterChanged;
-            var column = DebitorCreditorGrid.Columns[0];
+            var column = new GridColumn();
             var colStyle = column.CellStyle;
             FilteredColumnStyle = new Style(typeof(LightweightCellEditor), colStyle);
             FilteredColumnStyle.Setters.Add(new Setter(ForegroundProperty, Brushes.Blue));
             UnFilteredColumnStyle = new Style(typeof(LightweightCellEditor), colStyle);
             UnFilteredColumnStyle.Setters.Add(new Setter(ForegroundProperty, Brushes.Black));
-            Title = "Дебиторы/кредиторы. База данных " + GlobalOptions.DataBaseName;
         }
 
         static DebitorCreditorView()
@@ -46,22 +45,22 @@ namespace KursAM2.View.Management
 
         private Style FilteredColumnStyle { get; }
         private Style UnFilteredColumnStyle { get; }
-        public LayoutManager.LayoutManager LayoutManager { get; set; }
-        public string LayoutManagerName { get; set; }
-        public void SaveLayout()
-        {
-            LayoutManager.Save();
-        }
+        //public LayoutManager.LayoutManager LayoutManager { get; set; }
+        //public string LayoutManagerName { get; set; }
+        //public void SaveLayout()
+        //{
+        //    LayoutManager.Save();
+        //}
 
-        private void DebitorCreditorView_Loaded(object sender, RoutedEventArgs e)
-        {
-            LayoutManager.Load();
-        }
+        //private void DebitorCreditorView_Loaded(object sender, RoutedEventArgs e)
+        //{
+        //    LayoutManager.Load();
+        //}
 
-        private void DebitorCreditorView_Closing(object sender, CancelEventArgs e)
-        {
-            LayoutManager.Save();
-        }
+        //private void DebitorCreditorView_Closing(object sender, CancelEventArgs e)
+        //{
+        //    LayoutManager.Save();
+        //}
 
         private void CreditorGrid_FilterChanged(object sender, RoutedEventArgs e)
         {
@@ -203,6 +202,27 @@ namespace KursAM2.View.Management
                 if (ctx.CurrentDebitorCreditor != null)
                     ctx.CurrentDebitorCreditor.IsSelected = !ctx.CurrentDebitorCreditor.IsSelected;
             }
+        }
+
+        private void Grid_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+        {
+            e.Column.Name = e.Column.FieldName;
+        }
+
+        private void Grid_CustomRowFilter(object sender, RowFilterEventArgs e)
+        {
+            foreach (var col in e.Source.Columns)
+                col.CellStyle = col.IsFiltered ? FilteredColumnStyle : UnFilteredColumnStyle;
+        }
+
+        private void Grid_CurrentItemChanged(object sender, CurrentItemChangedEventArgs e)
+        {
+            foreach (var col in CreditorGrid.Columns)
+                col.CellStyle = col.IsFiltered ? FilteredColumnStyle : UnFilteredColumnStyle;
+            foreach (var col in DebitorGrid.Columns)
+                col.CellStyle = col.IsFiltered ? FilteredColumnStyle : UnFilteredColumnStyle;
+            foreach (var col in DebitorCreditorGrid.Columns)
+                col.CellStyle = col.IsFiltered ? FilteredColumnStyle : UnFilteredColumnStyle;
         }
     }
 }

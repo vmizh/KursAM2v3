@@ -392,14 +392,6 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaStart = d.Summa
                 };
                 newNom.SetSumma(newNom.Currency, d.Summa, 0);
-                //var sec = mySecondBalans.ExtendRows.FirstOrDefault(_ => _.Nom != null &&_.Nom.DocCode == newNom.NomenklDC);
-                //if (sec != null && (sec.Quantity != newNom.QuantityStart || sec.Price != newNom.PriceStart))
-                //{
-                //    newNom.QuantityEnd = sec.Quantity;
-                //    newNom.PriceEnd = sec.Price;
-                //    newNom.SummaEnd = sec.Summa;
-                //    newNom.SetSumma(newNom.Currency, 0, sec.Summa);
-                //}
                 NomenklDeltaListTemp.Add(newNom);
             }
 
@@ -1247,7 +1239,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         }
 
         [MetadataType(typeof(DataAnnotationsKontragentBalansOperations))]
-        public class KontragentBalansOperation : KonragentBalansRowViewModel, IMultyCurrency
+        public class KontragentBalansOperation : KontragentBalansRowViewModel, IMultyCurrency
         {
             public KontragentViewModel KontragentViewModel { set; get; }
             public Currency Currency => KontragentViewModel?.BalansCurrency;

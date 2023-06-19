@@ -18,11 +18,11 @@ namespace Data
         public KursMenuItem()
         {
             this.FormLayout = new HashSet<FormLayout>();
-            this.UserMenuRight = new HashSet<UserMenuRight>();
-            this.UserRoles = new HashSet<UserRoles>();
+            this.LastMenuUserSearch = new HashSet<LastMenuUserSearch>();
             this.SignatureSchemes = new HashSet<SignatureSchemes>();
             this.UserMenuFavorites = new HashSet<UserMenuFavorites>();
-            this.LastMenuUserSearch = new HashSet<LastMenuUserSearch>();
+            this.UserMenuRight = new HashSet<UserMenuRight>();
+            this.UserRoles = new HashSet<UserRoles>();
         }
     
         public int Id { get; set; }
@@ -38,14 +38,14 @@ namespace Data
         public virtual ICollection<FormLayout> FormLayout { get; set; }
         public virtual KursMenuGroup KursMenuGroup { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserMenuRight> UserMenuRight { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<UserRoles> UserRoles { get; set; }
+        public virtual ICollection<LastMenuUserSearch> LastMenuUserSearch { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SignatureSchemes> SignatureSchemes { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserMenuFavorites> UserMenuFavorites { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LastMenuUserSearch> LastMenuUserSearch { get; set; }
+        public virtual ICollection<UserMenuRight> UserMenuRight { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserRoles> UserRoles { get; set; }
     }
 }

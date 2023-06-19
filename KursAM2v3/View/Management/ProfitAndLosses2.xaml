@@ -18,7 +18,7 @@
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
-    <DockPanel>
+    <DockPanel Style="{StaticResource DXServices}">
         <DockPanel DockPanel.Dock="Top">
             <control:WindowMenu Height="60" DockPanel.Dock="Top"/>
             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" DockPanel.Dock="Top"
@@ -67,6 +67,7 @@
                                 ShowTotalSummary="False" ShowAutoFilterRow="False"
                                 ShowGroupPanel="False" ShowIndicator="False"
                                 VerticalScrollbarVisibility="Disabled"
+
                                 />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
@@ -89,7 +90,6 @@
                         dx:DXSerializer.StoreLayoutMode="All"
                         dxg:DataControlSerializationOptions.AddNewColumns="True"
                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                        SelectedItemChanged="GridControlMain_OnSelectedItemChanged"
                         CurrentItem="{Binding BalansFact}"
                         SelectionMode="Row"
                         ItemsSource="{Binding Main, Mode=OneWay}">
@@ -340,7 +340,6 @@
                         dx:DXSerializer.StoreLayoutMode="All"
                         dxg:DataControlSerializationOptions.AddNewColumns="True"
                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                        SelectedItemChanged="GridControlMain_OnSelectedItemChanged2"
                         CurrentItem="{Binding BalansCalc}"
                         SelectionMode="Row"
                         ItemsSource="{Binding MainNach, NotifyOnSourceUpdated=true}">

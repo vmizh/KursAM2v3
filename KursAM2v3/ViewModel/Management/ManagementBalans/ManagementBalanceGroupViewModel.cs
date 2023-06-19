@@ -263,7 +263,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         public KontragentTypeEnum KontragentType { set; get; }
     }
 
-    public class KontragentOperationsItemBase : KonragentBalansRowViewModel
+    public class KontragentOperationsItemBase : KontragentBalansRowViewModel
     {
     }
 

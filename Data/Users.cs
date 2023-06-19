@@ -21,10 +21,10 @@ namespace Data
             this.FormLayout = new HashSet<FormLayout>();
             this.KontragentCashes = new HashSet<KontragentCashes>();
             this.LastDocument = new HashSet<LastDocument>();
-            this.DataSources = new HashSet<DataSources>();
-            this.SignatureType = new HashSet<SignatureType>();
-            this.UserMenuFavorites = new HashSet<UserMenuFavorites>();
             this.LastMenuUserSearch = new HashSet<LastMenuUserSearch>();
+            this.UserMenuFavorites = new HashSet<UserMenuFavorites>();
+            this.SignatureType = new HashSet<SignatureType>();
+            this.DataSources = new HashSet<DataSources>();
         }
     
         public System.Guid Id { get; set; }
@@ -46,12 +46,12 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<LastDocument> LastDocument { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DataSources> DataSources { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<SignatureType> SignatureType { get; set; }
+        public virtual ICollection<LastMenuUserSearch> LastMenuUserSearch { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserMenuFavorites> UserMenuFavorites { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<LastMenuUserSearch> LastMenuUserSearch { get; set; }
+        public virtual ICollection<SignatureType> SignatureType { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DataSources> DataSources { get; set; }
     }
 }

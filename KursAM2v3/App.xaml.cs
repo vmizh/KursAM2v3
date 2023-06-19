@@ -6,6 +6,10 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Core.Serialization;
+using DevExpress.Xpf.Editors;
+using DevExpress.Xpf.Grid;
+using Helper;
 
 namespace KursAM2
 {
@@ -38,9 +42,19 @@ namespace KursAM2
             try
             {
                 ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-               ToolTipService.ShowOnDisabledProperty.OverrideMetadata(
+                ToolTipService.ShowOnDisabledProperty.OverrideMetadata(
                     typeof(Control),
                     new FrameworkPropertyMetadata(true));
+                GridControlLocalizer.Active = new CustomDXGridLocalizer();
+                EditorLocalizer.Active = new CustomEditorsLocalizer();
+
+                EventManager.RegisterClassHandler(typeof(GridColumn), DXSerializer.AllowPropertyEvent,
+                    new AllowPropertyEventHandler((d, e) =>
+                    {
+                        if (!e.Property.Name.Contains("Header")) return;
+                        e.Allow = false;
+                        e.Handled = true;
+                    }));
                 baseStart();
             }
             catch (Exception ex)

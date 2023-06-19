@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-    <Schema Namespace="KursSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+      <Schema Namespace="KursSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="DataSources">
           <Key>
             <PropertyRef Name="Id" />
@@ -232,6 +232,18 @@
           </Key>
           <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="DBId" Type="uniqueidentifier" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Versions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="SystemNum" Type="int" Nullable="false" />
+          <Property Name="TestNum" Type="int" Nullable="false" />
+          <Property Name="VersionNum" Type="int" Nullable="false" />
+          <Property Name="ServerPath" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="DateCreate" Type="date" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
         </EntityType>
         <Association Name="FK_Errors_DbId">
           <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
@@ -615,6 +627,7 @@
           <EntitySet Name="UserRolesLinkMenuItem" EntityType="Self.UserRolesLinkMenuItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UsersLinkDB" EntityType="Self.UsersLinkDB" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Versions" EntityType="Self.Versions" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_Errors_DbId" Association="Self.FK_Errors_DbId">
             <End Role="DataSources" EntitySet="DataSources" />
             <End Role="Errors" EntitySet="Errors" />
@@ -736,138 +749,11 @@
             <End Role="UsersLinkDB" EntitySet="UsersLinkDB" />
           </AssociationSet>
         </EntityContainer>
-      </Schema></edmx:StorageModels>
+      </Schema>
+    </edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="KursSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityContainer Name="KursSystemEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="DataSources" EntityType="KursSystemModel.DataSources" />
-          <EntitySet Name="Errors" EntityType="KursSystemModel.Errors" />
-          <EntitySet Name="FormLayout" EntityType="KursSystemModel.FormLayout" />
-          <EntitySet Name="KontragentCashes" EntityType="KursSystemModel.KontragentCashes" />
-          <EntitySet Name="KursMenuGroup" EntityType="KursSystemModel.KursMenuGroup" />
-          <EntitySet Name="KursMenuItem" EntityType="KursSystemModel.KursMenuItem" />
-          <EntitySet Name="LastDocument" EntityType="KursSystemModel.LastDocument" />
-          <EntitySet Name="Log" EntityType="KursSystemModel.Log" />
-          <EntitySet Name="SignatureType" EntityType="KursSystemModel.SignatureType" />
-          <EntitySet Name="TasksLog" EntityType="KursSystemModel.TasksLog" />
-          <EntitySet Name="UserMenuOrder" EntityType="KursSystemModel.UserMenuOrder" />
-          <EntitySet Name="UserMenuRight" EntityType="KursSystemModel.UserMenuRight" />
-          <EntitySet Name="UserRoles" EntityType="KursSystemModel.UserRoles" />
-          <EntitySet Name="Users" EntityType="KursSystemModel.Users" />
-          <AssociationSet Name="FK_Errors_DbId" Association="KursSystemModel.FK_Errors_DbId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="Errors" EntitySet="Errors" />
-          </AssociationSet>
-          <AssociationSet Name="FK_KontragentCashes_DBId" Association="KursSystemModel.FK_KontragentCashes_DBId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="KontragentCashes" EntitySet="KontragentCashes" />
-          </AssociationSet>
-          <AssociationSet Name="FK_LastDocument_DbId" Association="KursSystemModel.FK_LastDocument_DbId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="LastDocument" EntitySet="LastDocument" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SignatureType_DbId" Association="KursSystemModel.FK_SignatureType_DbId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="SignatureType" EntitySet="SignatureType" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserMenuRight_DBId" Association="KursSystemModel.FK_UserMenuRight_DBId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="UserMenuRight" EntitySet="UserMenuRight" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Errors_UserId" Association="KursSystemModel.FK_Errors_UserId">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="Errors" EntitySet="Errors" />
-          </AssociationSet>
-          <AssociationSet Name="FK_FormLayout_FormId" Association="KursSystemModel.FK_FormLayout_FormId">
-            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
-            <End Role="FormLayout" EntitySet="FormLayout" />
-          </AssociationSet>
-          <AssociationSet Name="FK_FormLayout_UserId" Association="KursSystemModel.FK_FormLayout_UserId">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="FormLayout" EntitySet="FormLayout" />
-          </AssociationSet>
-          <AssociationSet Name="FK_KontragentCashes_UserId" Association="KursSystemModel.FK_KontragentCashes_UserId">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="KontragentCashes" EntitySet="KontragentCashes" />
-          </AssociationSet>
-          <AssociationSet Name="FK_KursMenuGroup_ParentId" Association="KursSystemModel.FK_KursMenuGroup_ParentId">
-            <End Role="KursMenuGroup" EntitySet="KursMenuGroup" />
-            <End Role="KursMenuGroup1" EntitySet="KursMenuGroup" />
-          </AssociationSet>
-          <AssociationSet Name="FK_KursMenuItem_GroupId" Association="KursSystemModel.FK_KursMenuItem_GroupId">
-            <End Role="KursMenuGroup" EntitySet="KursMenuGroup" />
-            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserMenuRight_MenuId" Association="KursSystemModel.FK_UserMenuRight_MenuId">
-            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
-            <End Role="UserMenuRight" EntitySet="UserMenuRight" />
-          </AssociationSet>
-          <AssociationSet Name="FK_LastDocument_UserId" Association="KursSystemModel.FK_LastDocument_UserId">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="LastDocument" EntitySet="LastDocument" />
-          </AssociationSet>
-          <AssociationSet Name="UserRolesLinkMenuItem" Association="KursSystemModel.UserRolesLinkMenuItem">
-            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
-            <End Role="UserRoles" EntitySet="UserRoles" />
-          </AssociationSet>
-          <AssociationSet Name="UsersLinkDB" Association="KursSystemModel.UsersLinkDB">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="Users" EntitySet="Users" />
-          </AssociationSet>
-          <AssociationSet Name="SignatureLink" Association="KursSystemModel.SignatureLink">
-            <End Role="SignatureType" EntitySet="SignatureType" />
-            <End Role="Users" EntitySet="Users" />
-          </AssociationSet>
-          <EntitySet Name="SignatureSchemes" EntityType="KursSystemModel.SignatureSchemes" />
-          <EntitySet Name="SignatureSchemesInfo" EntityType="KursSystemModel.SignatureSchemesInfo" />
-          <AssociationSet Name="FK_SignatureSchemes_DbId" Association="KursSystemModel.FK_SignatureSchemes_DbId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SignatureSchemes_DocumentTYpeId" Association="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId">
-            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
-            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SignatureSchemesInfo_SchemeId" Association="KursSystemModel.FK_SignatureSchemesInfo_SchemeId">
-            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
-            <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SignatureSchemesInfo_ParentId" Association="KursSystemModel.FK_SignatureSchemesInfo_ParentId">
-            <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
-            <End Role="SignatureSchemesInfo1" EntitySet="SignatureSchemesInfo" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SignatureSchemesInfo_SignId" Association="KursSystemModel.FK_SignatureSchemesInfo_SignId">
-            <End Role="SignatureType" EntitySet="SignatureType" />
-            <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
-          </AssociationSet>
-          <EntitySet Name="UserMenuFavorites" EntityType="KursSystemModel.UserMenuFavorites" />
-          <AssociationSet Name="FK_UserMenuFavorites_DbId" Association="KursSystemModel.FK_UserMenuFavorites_DbId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserMenuFavorites_MenuId" Association="KursSystemModel.FK_UserMenuFavorites_MenuId">
-            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
-            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserMenuFavorites_UserId" Association="KursSystemModel.FK_UserMenuFavorites_UserId">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
-          </AssociationSet>
-          <EntitySet Name="LastMenuUserSearch" EntityType="KursSystemModel.LastMenuUserSearch" />
-          <AssociationSet Name="FK_LastMenuUserSearch_DbId" Association="KursSystemModel.FK_LastMenuUserSearch_DbId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
-          </AssociationSet>
-          <AssociationSet Name="FK_LastMenuUserSearch_MenuId" Association="KursSystemModel.FK_LastMenuUserSearch_MenuId">
-            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
-            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
-          </AssociationSet>
-          <AssociationSet Name="FK_LastMenuUserSearch_UserId" Association="KursSystemModel.FK_LastMenuUserSearch_UserId">
-            <End Role="Users" EntitySet="Users" />
-            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
-          </AssociationSet>
-          </EntityContainer>
         <EntityType Name="DataSources">
           <Key>
             <PropertyRef Name="Id" />
@@ -879,16 +765,16 @@
           <Property Name="Server" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="DBName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="Color" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Errors" Relationship="KursSystemModel.FK_Errors_DbId" FromRole="DataSources" ToRole="Errors" />
-          <NavigationProperty Name="KontragentCashes" Relationship="KursSystemModel.FK_KontragentCashes_DBId" FromRole="DataSources" ToRole="KontragentCashes" />
-          <NavigationProperty Name="LastDocument" Relationship="KursSystemModel.FK_LastDocument_DbId" FromRole="DataSources" ToRole="LastDocument" />
-          <NavigationProperty Name="SignatureType" Relationship="KursSystemModel.FK_SignatureType_DbId" FromRole="DataSources" ToRole="SignatureType" />
-          <NavigationProperty Name="UserMenuRight" Relationship="KursSystemModel.FK_UserMenuRight_DBId" FromRole="DataSources" ToRole="UserMenuRight" />
-          <NavigationProperty Name="Users" Relationship="KursSystemModel.UsersLinkDB" FromRole="DataSources" ToRole="Users" />
-          <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemes_DbId" FromRole="DataSources" ToRole="SignatureSchemes" />
-          <NavigationProperty Name="UserMenuFavorites" Relationship="KursSystemModel.FK_UserMenuFavorites_DbId" FromRole="DataSources" ToRole="UserMenuFavorites" />
-          <NavigationProperty Name="LastMenuUserSearch" Relationship="KursSystemModel.FK_LastMenuUserSearch_DbId" FromRole="DataSources" ToRole="LastMenuUserSearch" />
           <Property Name="IsVisible" Type="Boolean" />
+          <NavigationProperty Name="Errors" Relationship="Self.FK_Errors_DbId" FromRole="DataSources" ToRole="Errors" />
+          <NavigationProperty Name="KontragentCashes" Relationship="Self.FK_KontragentCashes_DBId" FromRole="DataSources" ToRole="KontragentCashes" />
+          <NavigationProperty Name="LastDocument" Relationship="Self.FK_LastDocument_DbId" FromRole="DataSources" ToRole="LastDocument" />
+          <NavigationProperty Name="LastMenuUserSearch" Relationship="Self.FK_LastMenuUserSearch_DbId" FromRole="DataSources" ToRole="LastMenuUserSearch" />
+          <NavigationProperty Name="SignatureSchemes" Relationship="Self.FK_SignatureSchemes_DbId" FromRole="DataSources" ToRole="SignatureSchemes" />
+          <NavigationProperty Name="SignatureType" Relationship="Self.FK_SignatureType_DbId" FromRole="DataSources" ToRole="SignatureType" />
+          <NavigationProperty Name="UserMenuFavorites" Relationship="Self.FK_UserMenuFavorites_DbId" FromRole="DataSources" ToRole="UserMenuFavorites" />
+          <NavigationProperty Name="UserMenuRight" Relationship="Self.FK_UserMenuRight_DBId" FromRole="DataSources" ToRole="UserMenuRight" />
+          <NavigationProperty Name="Users" Relationship="Self.UsersLinkDB" FromRole="DataSources" ToRole="Users" />
         </EntityType>
         <EntityType Name="Errors">
           <Key>
@@ -897,12 +783,12 @@
           <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="DbId" Type="Guid" Nullable="false" />
           <Property Name="UserId" Type="Guid" Nullable="false" />
-          <Property Name="Host" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
-          <Property Name="ErrorText" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Host" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ErrorText" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Note" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Moment" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_Errors_DbId" FromRole="Errors" ToRole="DataSources" />
-          <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_Errors_UserId" FromRole="Errors" ToRole="Users" />
+          <NavigationProperty Name="DataSources" Relationship="Self.FK_Errors_DbId" FromRole="Errors" ToRole="DataSources" />
+          <NavigationProperty Name="Users" Relationship="Self.FK_Errors_UserId" FromRole="Errors" ToRole="Users" />
         </EntityType>
         <EntityType Name="FormLayout">
           <Key>
@@ -910,42 +796,42 @@
           </Key>
           <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="UserId" Type="Guid" Nullable="false" />
-          <Property Name="FormName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="ControlName" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="Layout" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FormName" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ControlName" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Layout" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="FormId" Type="Int32" />
           <Property Name="UpdateDate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="WindowState" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FK_FormLayout_FormId" FromRole="FormLayout" ToRole="KursMenuItem" />
-          <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_FormLayout_UserId" FromRole="FormLayout" ToRole="Users" />
           <Property Name="Version" Type="Int32" />
+          <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_FormLayout_FormId" FromRole="FormLayout" ToRole="KursMenuItem" />
+          <NavigationProperty Name="Users" Relationship="Self.FK_FormLayout_UserId" FromRole="FormLayout" ToRole="Users" />
         </EntityType>
         <EntityType Name="KontragentCashes">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="KontragentDC" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="KontragentDC" Type="Decimal" Precision="18" Scale="0" Nullable="false" />
           <Property Name="Count" Type="Int32" Nullable="false" />
           <Property Name="LastUpdate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="DBId" Type="Guid" Nullable="false" />
           <Property Name="UserId" Type="Guid" Nullable="false" />
-          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_KontragentCashes_DBId" FromRole="KontragentCashes" ToRole="DataSources" />
-          <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_KontragentCashes_UserId" FromRole="KontragentCashes" ToRole="Users" />
+          <NavigationProperty Name="DataSources" Relationship="Self.FK_KontragentCashes_DBId" FromRole="KontragentCashes" ToRole="DataSources" />
+          <NavigationProperty Name="Users" Relationship="Self.FK_KontragentCashes_UserId" FromRole="KontragentCashes" ToRole="Users" />
         </EntityType>
         <EntityType Name="KursMenuGroup">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Note" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="OrderBy" Type="Int32" Nullable="false" />
           <Property Name="Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="ParentId" Type="Int32" />
-          <NavigationProperty Name="KursMenuGroup1" Relationship="KursSystemModel.FK_KursMenuGroup_ParentId" FromRole="KursMenuGroup" ToRole="KursMenuGroup1" />
-          <NavigationProperty Name="KursMenuGroup2" Relationship="KursSystemModel.FK_KursMenuGroup_ParentId" FromRole="KursMenuGroup1" ToRole="KursMenuGroup" />
-          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FK_KursMenuItem_GroupId" FromRole="KursMenuGroup" ToRole="KursMenuItem" />
+          <NavigationProperty Name="KursMenuGroup1" Relationship="Self.FK_KursMenuGroup_ParentId" FromRole="KursMenuGroup" ToRole="KursMenuGroup1" />
+          <NavigationProperty Name="KursMenuGroup2" Relationship="Self.FK_KursMenuGroup_ParentId" FromRole="KursMenuGroup1" ToRole="KursMenuGroup" />
+          <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_KursMenuItem_GroupId" FromRole="KursMenuGroup" ToRole="KursMenuItem" />
         </EntityType>
         <EntityType Name="KursMenuItem">
           <Key>
@@ -953,19 +839,19 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="GroupId" Type="Int32" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="Note" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="OrderBy" Type="Int32" />
           <Property Name="Code" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="FormLayout" Relationship="KursSystemModel.FK_FormLayout_FormId" FromRole="KursMenuItem" ToRole="FormLayout" />
-          <NavigationProperty Name="KursMenuGroup" Relationship="KursSystemModel.FK_KursMenuItem_GroupId" FromRole="KursMenuItem" ToRole="KursMenuGroup" />
-          <NavigationProperty Name="UserMenuRight" Relationship="KursSystemModel.FK_UserMenuRight_MenuId" FromRole="KursMenuItem" ToRole="UserMenuRight" />
-          <NavigationProperty Name="UserRoles" Relationship="KursSystemModel.UserRolesLinkMenuItem" FromRole="KursMenuItem" ToRole="UserRoles" />
           <Property Name="IsSign" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId" FromRole="KursMenuItem" ToRole="SignatureSchemes" />
-          <NavigationProperty Name="UserMenuFavorites" Relationship="KursSystemModel.FK_UserMenuFavorites_MenuId" FromRole="KursMenuItem" ToRole="UserMenuFavorites" />
-          <NavigationProperty Name="LastMenuUserSearch" Relationship="KursSystemModel.FK_LastMenuUserSearch_MenuId" FromRole="KursMenuItem" ToRole="LastMenuUserSearch" />
+          <NavigationProperty Name="FormLayout" Relationship="Self.FK_FormLayout_FormId" FromRole="KursMenuItem" ToRole="FormLayout" />
+          <NavigationProperty Name="KursMenuGroup" Relationship="Self.FK_KursMenuItem_GroupId" FromRole="KursMenuItem" ToRole="KursMenuGroup" />
+          <NavigationProperty Name="LastMenuUserSearch" Relationship="Self.FK_LastMenuUserSearch_MenuId" FromRole="KursMenuItem" ToRole="LastMenuUserSearch" />
+          <NavigationProperty Name="SignatureSchemes" Relationship="Self.FK_SignatureSchemes_DocumentTYpeId" FromRole="KursMenuItem" ToRole="SignatureSchemes" />
+          <NavigationProperty Name="UserMenuFavorites" Relationship="Self.FK_UserMenuFavorites_MenuId" FromRole="KursMenuItem" ToRole="UserMenuFavorites" />
+          <NavigationProperty Name="UserMenuRight" Relationship="Self.FK_UserMenuRight_MenuId" FromRole="KursMenuItem" ToRole="UserMenuRight" />
+          <NavigationProperty Name="UserRoles" Relationship="Self.UserRolesLinkMenuItem" FromRole="KursMenuItem" ToRole="UserRoles" />
         </EntityType>
         <EntityType Name="LastDocument">
           <Key>
@@ -977,12 +863,26 @@
           <Property Name="DocType" Type="Int32" Nullable="false" />
           <Property Name="DocDC" Type="Decimal" Precision="18" Scale="0" />
           <Property Name="DocId" Type="Guid" />
-          <Property Name="Creator" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
-          <Property Name="LastChanger" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="false" />
+          <Property Name="Creator" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="LastChanger" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="LastOpen" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_LastDocument_DbId" FromRole="LastDocument" ToRole="DataSources" />
-          <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_LastDocument_UserId" FromRole="LastDocument" ToRole="Users" />
+          <NavigationProperty Name="DataSources" Relationship="Self.FK_LastDocument_DbId" FromRole="LastDocument" ToRole="DataSources" />
+          <NavigationProperty Name="Users" Relationship="Self.FK_LastDocument_UserId" FromRole="LastDocument" ToRole="Users" />
+        </EntityType>
+        <EntityType Name="LastMenuUserSearch">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="UserId" Type="Guid" Nullable="false" />
+          <Property Name="DbId" Type="Guid" Nullable="false" />
+          <Property Name="MenuId" Type="Int32" Nullable="false" />
+          <Property Name="LastOpen" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="OpenCount" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="DataSources" Relationship="Self.FK_LastMenuUserSearch_DbId" FromRole="LastMenuUserSearch" ToRole="DataSources" />
+          <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_LastMenuUserSearch_MenuId" FromRole="LastMenuUserSearch" ToRole="KursMenuItem" />
+          <NavigationProperty Name="Users" Relationship="Self.FK_LastMenuUserSearch_UserId" FromRole="LastMenuUserSearch" ToRole="Users" />
         </EntityType>
         <EntityType Name="Log">
           <Key>
@@ -998,26 +898,66 @@
           <Property Name="ProgramName" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="UserName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="SignatureSchemes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="DbId" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="DocumentTYpeId" Type="Int32" Nullable="false" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="DataSources" Relationship="Self.FK_SignatureSchemes_DbId" FromRole="SignatureSchemes" ToRole="DataSources" />
+          <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_SignatureSchemes_DocumentTYpeId" FromRole="SignatureSchemes" ToRole="KursMenuItem" />
+          <NavigationProperty Name="SignatureSchemesInfo" Relationship="Self.FK_SignatureSchemesInfo_SchemeId" FromRole="SignatureSchemes" ToRole="SignatureSchemesInfo" />
+        </EntityType>
+        <EntityType Name="SignatureSchemesInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="SignId" Type="Guid" Nullable="false" />
+          <Property Name="ParentId" Type="Guid" />
+          <Property Name="IsRequired" Type="Boolean" Nullable="false" />
+          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="SchemeId" Type="Guid" Nullable="false" />
+          <NavigationProperty Name="SignatureSchemes" Relationship="Self.FK_SignatureSchemesInfo_SchemeId" FromRole="SignatureSchemesInfo" ToRole="SignatureSchemes" />
+          <NavigationProperty Name="SignatureSchemesInfo1" Relationship="Self.FK_SignatureSchemesInfo_ParentId" FromRole="SignatureSchemesInfo" ToRole="SignatureSchemesInfo1" />
+          <NavigationProperty Name="SignatureSchemesInfo2" Relationship="Self.FK_SignatureSchemesInfo_ParentId" FromRole="SignatureSchemesInfo1" ToRole="SignatureSchemesInfo" />
+          <NavigationProperty Name="SignatureType" Relationship="Self.FK_SignatureSchemesInfo_SignId" FromRole="SignatureSchemesInfo" ToRole="SignatureType" />
+        </EntityType>
         <EntityType Name="SignatureType">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="DbId" Type="Guid" Nullable="false" />
-          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_SignatureType_DbId" FromRole="SignatureType" ToRole="DataSources" />
-          <NavigationProperty Name="Users" Relationship="KursSystemModel.SignatureLink" FromRole="SignatureType" ToRole="Users" />
-          <NavigationProperty Name="SignatureSchemesInfo" Relationship="KursSystemModel.FK_SignatureSchemesInfo_SignId" FromRole="SignatureType" ToRole="SignatureSchemesInfo" />
+          <NavigationProperty Name="DataSources" Relationship="Self.FK_SignatureType_DbId" FromRole="SignatureType" ToRole="DataSources" />
+          <NavigationProperty Name="SignatureSchemesInfo" Relationship="Self.FK_SignatureSchemesInfo_SignId" FromRole="SignatureType" ToRole="SignatureSchemesInfo" />
+          <NavigationProperty Name="Users" Relationship="Self.SignatureLink" FromRole="SignatureType" ToRole="Users" />
         </EntityType>
         <EntityType Name="TasksLog">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="TypeName" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
-          <Property Name="TaskInfo" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TypeName" Type="String" MaxLength="200" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="TaskInfo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="ExecTime" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
+        <EntityType Name="UserMenuFavorites">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="UserId" Type="Guid" Nullable="false" />
+          <Property Name="DbId" Type="Guid" Nullable="false" />
+          <Property Name="MenuId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="DataSources" Relationship="Self.FK_UserMenuFavorites_DbId" FromRole="UserMenuFavorites" ToRole="DataSources" />
+          <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_UserMenuFavorites_MenuId" FromRole="UserMenuFavorites" ToRole="KursMenuItem" />
+          <NavigationProperty Name="Users" Relationship="Self.FK_UserMenuFavorites_UserId" FromRole="UserMenuFavorites" ToRole="Users" />
         </EntityType>
         <EntityType Name="UserMenuOrder">
           <Key>
@@ -1035,27 +975,27 @@
           </Key>
           <Property Name="Id" Type="Guid" Nullable="false" />
           <Property Name="DBId" Type="Guid" Nullable="false" />
-          <Property Name="LoginName" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="LoginName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="MenuId" Type="Int32" Nullable="false" />
           <Property Name="IsReadOnly" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_UserMenuRight_DBId" FromRole="UserMenuRight" ToRole="DataSources" />
-          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FK_UserMenuRight_MenuId" FromRole="UserMenuRight" ToRole="KursMenuItem" />
+          <NavigationProperty Name="DataSources" Relationship="Self.FK_UserMenuRight_DBId" FromRole="UserMenuRight" ToRole="DataSources" />
+          <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_UserMenuRight_MenuId" FromRole="UserMenuRight" ToRole="KursMenuItem" />
         </EntityType>
         <EntityType Name="UserRoles">
           <Key>
             <PropertyRef Name="id" />
           </Key>
           <Property Name="id" Type="Guid" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.UserRolesLinkMenuItem" FromRole="UserRoles" ToRole="KursMenuItem" />
+          <NavigationProperty Name="KursMenuItem" Relationship="Self.UserRolesLinkMenuItem" FromRole="UserRoles" ToRole="KursMenuItem" />
         </EntityType>
         <EntityType Name="Users">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Note" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
           <Property Name="IsAdmin" Type="Boolean" Nullable="false" />
           <Property Name="IsTester" Type="Boolean" Nullable="false" />
@@ -1063,18 +1003,30 @@
           <Property Name="Avatar" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="FullName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
           <Property Name="ThemeName" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Errors" Relationship="KursSystemModel.FK_Errors_UserId" FromRole="Users" ToRole="Errors" />
-          <NavigationProperty Name="FormLayout" Relationship="KursSystemModel.FK_FormLayout_UserId" FromRole="Users" ToRole="FormLayout" />
-          <NavigationProperty Name="KontragentCashes" Relationship="KursSystemModel.FK_KontragentCashes_UserId" FromRole="Users" ToRole="KontragentCashes" />
-          <NavigationProperty Name="LastDocument" Relationship="KursSystemModel.FK_LastDocument_UserId" FromRole="Users" ToRole="LastDocument" />
-          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.UsersLinkDB" FromRole="Users" ToRole="DataSources" />
-          <NavigationProperty Name="SignatureType" Relationship="KursSystemModel.SignatureLink" FromRole="Users" ToRole="SignatureType" />
-          <NavigationProperty Name="UserMenuFavorites" Relationship="KursSystemModel.FK_UserMenuFavorites_UserId" FromRole="Users" ToRole="UserMenuFavorites" />
-          <NavigationProperty Name="LastMenuUserSearch" Relationship="KursSystemModel.FK_LastMenuUserSearch_UserId" FromRole="Users" ToRole="LastMenuUserSearch" />
+          <NavigationProperty Name="Errors" Relationship="Self.FK_Errors_UserId" FromRole="Users" ToRole="Errors" />
+          <NavigationProperty Name="FormLayout" Relationship="Self.FK_FormLayout_UserId" FromRole="Users" ToRole="FormLayout" />
+          <NavigationProperty Name="KontragentCashes" Relationship="Self.FK_KontragentCashes_UserId" FromRole="Users" ToRole="KontragentCashes" />
+          <NavigationProperty Name="LastDocument" Relationship="Self.FK_LastDocument_UserId" FromRole="Users" ToRole="LastDocument" />
+          <NavigationProperty Name="LastMenuUserSearch" Relationship="Self.FK_LastMenuUserSearch_UserId" FromRole="Users" ToRole="LastMenuUserSearch" />
+          <NavigationProperty Name="UserMenuFavorites" Relationship="Self.FK_UserMenuFavorites_UserId" FromRole="Users" ToRole="UserMenuFavorites" />
+          <NavigationProperty Name="SignatureType" Relationship="Self.SignatureLink" FromRole="Users" ToRole="SignatureType" />
+          <NavigationProperty Name="DataSources" Relationship="Self.UsersLinkDB" FromRole="Users" ToRole="DataSources" />
+        </EntityType>
+        <EntityType Name="Versions">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="SystemNum" Type="Int32" Nullable="false" />
+          <Property Name="TestNum" Type="Int32" Nullable="false" />
+          <Property Name="VersionNum" Type="Int32" Nullable="false" />
+          <Property Name="ServerPath" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DateCreate" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
         </EntityType>
         <Association Name="FK_Errors_DbId">
-          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
-          <End Type="KursSystemModel.Errors" Role="Errors" Multiplicity="*" />
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="Errors" Type="Self.Errors" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="DataSources">
               <PropertyRef Name="Id" />
@@ -1085,8 +1037,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_KontragentCashes_DBId">
-          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
-          <End Type="KursSystemModel.KontragentCashes" Role="KontragentCashes" Multiplicity="*" />
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="KontragentCashes" Type="Self.KontragentCashes" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="DataSources">
               <PropertyRef Name="Id" />
@@ -1097,8 +1049,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_LastDocument_DbId">
-          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
-          <End Type="KursSystemModel.LastDocument" Role="LastDocument" Multiplicity="*" />
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="LastDocument" Type="Self.LastDocument" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="DataSources">
               <PropertyRef Name="Id" />
@@ -1108,9 +1060,33 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_LastMenuUserSearch_DbId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="LastMenuUserSearch" Type="Self.LastMenuUserSearch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastMenuUserSearch">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SignatureSchemes_DbId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="SignatureSchemes" Type="Self.SignatureSchemes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SignatureSchemes">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_SignatureType_DbId">
-          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
-          <End Type="KursSystemModel.SignatureType" Role="SignatureType" Multiplicity="*" />
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="SignatureType" Type="Self.SignatureType" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="DataSources">
               <PropertyRef Name="Id" />
@@ -1120,9 +1096,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UserMenuFavorites_DbId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="UserMenuFavorites" Type="Self.UserMenuFavorites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuFavorites">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_UserMenuRight_DBId">
-          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
-          <End Type="KursSystemModel.UserMenuRight" Role="UserMenuRight" Multiplicity="*" />
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="UserMenuRight" Type="Self.UserMenuRight" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="DataSources">
               <PropertyRef Name="Id" />
@@ -1133,8 +1121,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_Errors_UserId">
-          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="1" />
-          <End Type="KursSystemModel.Errors" Role="Errors" Multiplicity="*" />
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="Errors" Type="Self.Errors" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Users">
               <PropertyRef Name="Id" />
@@ -1145,8 +1133,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_FormLayout_FormId">
-          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="0..1" />
-          <End Type="KursSystemModel.FormLayout" Role="FormLayout" Multiplicity="*" />
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="0..1" />
+          <End Role="FormLayout" Type="Self.FormLayout" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="KursMenuItem">
               <PropertyRef Name="Id" />
@@ -1157,8 +1145,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_FormLayout_UserId">
-          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="1" />
-          <End Type="KursSystemModel.FormLayout" Role="FormLayout" Multiplicity="*" />
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="FormLayout" Type="Self.FormLayout" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Users">
               <PropertyRef Name="Id" />
@@ -1169,8 +1157,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_KontragentCashes_UserId">
-          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="1" />
-          <End Type="KursSystemModel.KontragentCashes" Role="KontragentCashes" Multiplicity="*" />
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="KontragentCashes" Type="Self.KontragentCashes" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Users">
               <PropertyRef Name="Id" />
@@ -1181,8 +1169,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_KursMenuGroup_ParentId">
-          <End Type="KursSystemModel.KursMenuGroup" Role="KursMenuGroup" Multiplicity="0..1" />
-          <End Type="KursSystemModel.KursMenuGroup" Role="KursMenuGroup1" Multiplicity="*" />
+          <End Role="KursMenuGroup" Type="Self.KursMenuGroup" Multiplicity="0..1" />
+          <End Role="KursMenuGroup1" Type="Self.KursMenuGroup" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="KursMenuGroup">
               <PropertyRef Name="Id" />
@@ -1193,8 +1181,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_KursMenuItem_GroupId">
-          <End Type="KursSystemModel.KursMenuGroup" Role="KursMenuGroup" Multiplicity="1" />
-          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="*" />
+          <End Role="KursMenuGroup" Type="Self.KursMenuGroup" Multiplicity="1" />
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="KursMenuGroup">
               <PropertyRef Name="Id" />
@@ -1204,9 +1192,45 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_LastMenuUserSearch_MenuId">
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
+          <End Role="LastMenuUserSearch" Type="Self.LastMenuUserSearch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastMenuUserSearch">
+              <PropertyRef Name="MenuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SignatureSchemes_DocumentTYpeId">
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
+          <End Role="SignatureSchemes" Type="Self.SignatureSchemes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SignatureSchemes">
+              <PropertyRef Name="DocumentTYpeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMenuFavorites_MenuId">
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
+          <End Role="UserMenuFavorites" Type="Self.UserMenuFavorites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="KursMenuItem">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuFavorites">
+              <PropertyRef Name="MenuId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_UserMenuRight_MenuId">
-          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="1" />
-          <End Type="KursSystemModel.UserMenuRight" Role="UserMenuRight" Multiplicity="*" />
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
+          <End Role="UserMenuRight" Type="Self.UserMenuRight" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="KursMenuItem">
               <PropertyRef Name="Id" />
@@ -1217,8 +1241,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_LastDocument_UserId">
-          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="1" />
-          <End Type="KursSystemModel.LastDocument" Role="LastDocument" Multiplicity="*" />
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="LastDocument" Type="Self.LastDocument" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Users">
               <PropertyRef Name="Id" />
@@ -1228,73 +1252,21 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="UserRolesLinkMenuItem">
-          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="*" />
-          <End Type="KursSystemModel.UserRoles" Role="UserRoles" Multiplicity="*" />
-        </Association>
-        <Association Name="UsersLinkDB">
-          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="*" />
-          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="*" />
-        </Association>
-        <Association Name="SignatureLink">
-          <End Type="KursSystemModel.SignatureType" Role="SignatureType" Multiplicity="*" />
-          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="*" />
-        </Association>
-        <EntityType Name="SignatureSchemes">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="DbId" Type="Guid" Nullable="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="false" />
-          <Property Name="DocumentTYpeId" Type="Int32" Nullable="false" />
-          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_SignatureSchemes_DbId" FromRole="SignatureSchemes" ToRole="DataSources" />
-          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FK_SignatureSchemes_DocumentTYpeId" FromRole="SignatureSchemes" ToRole="KursMenuItem" />
-          <NavigationProperty Name="SignatureSchemesInfo" Relationship="KursSystemModel.FK_SignatureSchemesInfo_SchemeId" FromRole="SignatureSchemes" ToRole="SignatureSchemesInfo" />
-        </EntityType>
-        <EntityType Name="SignatureSchemesInfo">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="SignId" Type="Guid" Nullable="false" />
-          <Property Name="ParentId" Type="Guid" />
-          <Property Name="IsRequired" Type="Boolean" Nullable="false" />
-          <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="SchemeId" Type="Guid" Nullable="false" />
-          <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemesInfo_SchemeId" FromRole="SignatureSchemesInfo" ToRole="SignatureSchemes" />
-          <NavigationProperty Name="SignatureSchemesInfo1" Relationship="KursSystemModel.FK_SignatureSchemesInfo_ParentId" FromRole="SignatureSchemesInfo" ToRole="SignatureSchemesInfo1" />
-          <NavigationProperty Name="SignatureSchemesInfo2" Relationship="KursSystemModel.FK_SignatureSchemesInfo_ParentId" FromRole="SignatureSchemesInfo1" ToRole="SignatureSchemesInfo" />
-          <NavigationProperty Name="SignatureType" Relationship="KursSystemModel.FK_SignatureSchemesInfo_SignId" FromRole="SignatureSchemesInfo" ToRole="SignatureType" />
-        </EntityType>
-        <Association Name="FK_SignatureSchemes_DbId">
-          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
-          <End Type="KursSystemModel.SignatureSchemes" Role="SignatureSchemes" Multiplicity="*" />
+        <Association Name="FK_LastMenuUserSearch_UserId">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="LastMenuUserSearch" Type="Self.LastMenuUserSearch" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="DataSources">
+            <Principal Role="Users">
               <PropertyRef Name="Id" />
             </Principal>
-            <Dependent Role="SignatureSchemes">
-              <PropertyRef Name="DbId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_SignatureSchemes_DocumentTYpeId">
-          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="1" />
-          <End Type="KursSystemModel.SignatureSchemes" Role="SignatureSchemes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="KursMenuItem">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="SignatureSchemes">
-              <PropertyRef Name="DocumentTYpeId" />
+            <Dependent Role="LastMenuUserSearch">
+              <PropertyRef Name="UserId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SignatureSchemesInfo_SchemeId">
-          <End Type="KursSystemModel.SignatureSchemes" Role="SignatureSchemes" Multiplicity="1" />
-          <End Type="KursSystemModel.SignatureSchemesInfo" Role="SignatureSchemesInfo" Multiplicity="*" />
+          <End Role="SignatureSchemes" Type="Self.SignatureSchemes" Multiplicity="1" />
+          <End Role="SignatureSchemesInfo" Type="Self.SignatureSchemesInfo" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="SignatureSchemes">
               <PropertyRef Name="Id" />
@@ -1305,8 +1277,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SignatureSchemesInfo_ParentId">
-          <End Type="KursSystemModel.SignatureSchemesInfo" Role="SignatureSchemesInfo" Multiplicity="0..1" />
-          <End Type="KursSystemModel.SignatureSchemesInfo" Role="SignatureSchemesInfo1" Multiplicity="*" />
+          <End Role="SignatureSchemesInfo" Type="Self.SignatureSchemesInfo" Multiplicity="0..1" />
+          <End Role="SignatureSchemesInfo1" Type="Self.SignatureSchemesInfo" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="SignatureSchemesInfo">
               <PropertyRef Name="Id" />
@@ -1317,8 +1289,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="FK_SignatureSchemesInfo_SignId">
-          <End Type="KursSystemModel.SignatureType" Role="SignatureType" Multiplicity="1" />
-          <End Type="KursSystemModel.SignatureSchemesInfo" Role="SignatureSchemesInfo" Multiplicity="*" />
+          <End Role="SignatureType" Type="Self.SignatureType" Multiplicity="1" />
+          <End Role="SignatureSchemesInfo" Type="Self.SignatureSchemesInfo" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="SignatureType">
               <PropertyRef Name="Id" />
@@ -1328,45 +1300,9 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="UserMenuFavorites">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="UserId" Type="Guid" Nullable="false" />
-          <Property Name="DbId" Type="Guid" Nullable="false" />
-          <Property Name="MenuId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_UserMenuFavorites_DbId" FromRole="UserMenuFavorites" ToRole="DataSources" />
-          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FK_UserMenuFavorites_MenuId" FromRole="UserMenuFavorites" ToRole="KursMenuItem" />
-          <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_UserMenuFavorites_UserId" FromRole="UserMenuFavorites" ToRole="Users" />
-        </EntityType>
-        <Association Name="FK_UserMenuFavorites_DbId">
-          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
-          <End Type="KursSystemModel.UserMenuFavorites" Role="UserMenuFavorites" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="UserMenuFavorites">
-              <PropertyRef Name="DbId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserMenuFavorites_MenuId">
-          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="1" />
-          <End Type="KursSystemModel.UserMenuFavorites" Role="UserMenuFavorites" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="KursMenuItem">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="UserMenuFavorites">
-              <PropertyRef Name="MenuId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_UserMenuFavorites_UserId">
-          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="1" />
-          <End Type="KursSystemModel.UserMenuFavorites" Role="UserMenuFavorites" Multiplicity="*" />
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="UserMenuFavorites" Type="Self.UserMenuFavorites" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Users">
               <PropertyRef Name="Id" />
@@ -1376,308 +1312,412 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="LastMenuUserSearch">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="UserId" Type="Guid" Nullable="false" />
-          <Property Name="DbId" Type="Guid" Nullable="false" />
-          <Property Name="MenuId" Type="Int32" Nullable="false" />
-          <Property Name="LastOpen" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="OpenCount" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_LastMenuUserSearch_DbId" FromRole="LastMenuUserSearch" ToRole="DataSources" />
-          <NavigationProperty Name="KursMenuItem" Relationship="KursSystemModel.FK_LastMenuUserSearch_MenuId" FromRole="LastMenuUserSearch" ToRole="KursMenuItem" />
-          <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_LastMenuUserSearch_UserId" FromRole="LastMenuUserSearch" ToRole="Users" />
-        </EntityType>
-        <Association Name="FK_LastMenuUserSearch_DbId">
-          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
-          <End Type="KursSystemModel.LastMenuUserSearch" Role="LastMenuUserSearch" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="LastMenuUserSearch">
-              <PropertyRef Name="DbId" />
-            </Dependent>
-          </ReferentialConstraint>
+        <Association Name="SignatureLink">
+          <End Role="SignatureType" Type="Self.SignatureType" Multiplicity="*" />
+          <End Role="Users" Type="Self.Users" Multiplicity="*" />
         </Association>
-        <Association Name="FK_LastMenuUserSearch_MenuId">
-          <End Type="KursSystemModel.KursMenuItem" Role="KursMenuItem" Multiplicity="1" />
-          <End Type="KursSystemModel.LastMenuUserSearch" Role="LastMenuUserSearch" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="KursMenuItem">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="LastMenuUserSearch">
-              <PropertyRef Name="MenuId" />
-            </Dependent>
-          </ReferentialConstraint>
+        <Association Name="UserRolesLinkMenuItem">
+          <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="*" />
+          <End Role="UserRoles" Type="Self.UserRoles" Multiplicity="*" />
         </Association>
-        <Association Name="FK_LastMenuUserSearch_UserId">
-          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="1" />
-          <End Type="KursSystemModel.LastMenuUserSearch" Role="LastMenuUserSearch" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Users">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="LastMenuUserSearch">
-              <PropertyRef Name="UserId" />
-            </Dependent>
-          </ReferentialConstraint>
+        <Association Name="UsersLinkDB">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="*" />
+          <End Role="Users" Type="Self.Users" Multiplicity="*" />
         </Association>
-        </Schema>
+        <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="DataSources" EntityType="Self.DataSources" />
+          <EntitySet Name="Errors" EntityType="Self.Errors" />
+          <EntitySet Name="FormLayout" EntityType="Self.FormLayout" />
+          <EntitySet Name="KontragentCashes" EntityType="Self.KontragentCashes" />
+          <EntitySet Name="KursMenuGroup" EntityType="Self.KursMenuGroup" />
+          <EntitySet Name="KursMenuItem" EntityType="Self.KursMenuItem" />
+          <EntitySet Name="LastDocument" EntityType="Self.LastDocument" />
+          <EntitySet Name="LastMenuUserSearch" EntityType="Self.LastMenuUserSearch" />
+          <EntitySet Name="Log" EntityType="Self.Log" />
+          <EntitySet Name="SignatureSchemes" EntityType="Self.SignatureSchemes" />
+          <EntitySet Name="SignatureSchemesInfo" EntityType="Self.SignatureSchemesInfo" />
+          <EntitySet Name="SignatureType" EntityType="Self.SignatureType" />
+          <EntitySet Name="TasksLog" EntityType="Self.TasksLog" />
+          <EntitySet Name="UserMenuFavorites" EntityType="Self.UserMenuFavorites" />
+          <EntitySet Name="UserMenuOrder" EntityType="Self.UserMenuOrder" />
+          <EntitySet Name="UserMenuRight" EntityType="Self.UserMenuRight" />
+          <EntitySet Name="UserRoles" EntityType="Self.UserRoles" />
+          <EntitySet Name="Users" EntityType="Self.Users" />
+          <EntitySet Name="Versions" EntityType="Self.Versions" />
+          <AssociationSet Name="FK_Errors_DbId" Association="Self.FK_Errors_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="Errors" EntitySet="Errors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KontragentCashes_DBId" Association="Self.FK_KontragentCashes_DBId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="KontragentCashes" EntitySet="KontragentCashes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastDocument_DbId" Association="Self.FK_LastDocument_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="LastDocument" EntitySet="LastDocument" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastMenuUserSearch_DbId" Association="Self.FK_LastMenuUserSearch_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignatureSchemes_DbId" Association="Self.FK_SignatureSchemes_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignatureType_DbId" Association="Self.FK_SignatureType_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="SignatureType" EntitySet="SignatureType" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuFavorites_DbId" Association="Self.FK_UserMenuFavorites_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuRight_DBId" Association="Self.FK_UserMenuRight_DBId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="UserMenuRight" EntitySet="UserMenuRight" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Errors_UserId" Association="Self.FK_Errors_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="Errors" EntitySet="Errors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FormLayout_FormId" Association="Self.FK_FormLayout_FormId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="FormLayout" EntitySet="FormLayout" />
+          </AssociationSet>
+          <AssociationSet Name="FK_FormLayout_UserId" Association="Self.FK_FormLayout_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="FormLayout" EntitySet="FormLayout" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KontragentCashes_UserId" Association="Self.FK_KontragentCashes_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="KontragentCashes" EntitySet="KontragentCashes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KursMenuGroup_ParentId" Association="Self.FK_KursMenuGroup_ParentId">
+            <End Role="KursMenuGroup" EntitySet="KursMenuGroup" />
+            <End Role="KursMenuGroup1" EntitySet="KursMenuGroup" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KursMenuItem_GroupId" Association="Self.FK_KursMenuItem_GroupId">
+            <End Role="KursMenuGroup" EntitySet="KursMenuGroup" />
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastMenuUserSearch_MenuId" Association="Self.FK_LastMenuUserSearch_MenuId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignatureSchemes_DocumentTYpeId" Association="Self.FK_SignatureSchemes_DocumentTYpeId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuFavorites_MenuId" Association="Self.FK_UserMenuFavorites_MenuId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuRight_MenuId" Association="Self.FK_UserMenuRight_MenuId">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="UserMenuRight" EntitySet="UserMenuRight" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastDocument_UserId" Association="Self.FK_LastDocument_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="LastDocument" EntitySet="LastDocument" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastMenuUserSearch_UserId" Association="Self.FK_LastMenuUserSearch_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignatureSchemesInfo_SchemeId" Association="Self.FK_SignatureSchemesInfo_SchemeId">
+            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
+            <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignatureSchemesInfo_ParentId" Association="Self.FK_SignatureSchemesInfo_ParentId">
+            <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
+            <End Role="SignatureSchemesInfo1" EntitySet="SignatureSchemesInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignatureSchemesInfo_SignId" Association="Self.FK_SignatureSchemesInfo_SignId">
+            <End Role="SignatureType" EntitySet="SignatureType" />
+            <End Role="SignatureSchemesInfo" EntitySet="SignatureSchemesInfo" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuFavorites_UserId" Association="Self.FK_UserMenuFavorites_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
+          </AssociationSet>
+          <AssociationSet Name="SignatureLink" Association="Self.SignatureLink">
+            <End Role="SignatureType" EntitySet="SignatureType" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="UserRolesLinkMenuItem" Association="Self.UserRolesLinkMenuItem">
+            <End Role="KursMenuItem" EntitySet="KursMenuItem" />
+            <End Role="UserRoles" EntitySet="UserRoles" />
+          </AssociationSet>
+          <AssociationSet Name="UsersLinkDB" Association="Self.UsersLinkDB">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="Users" EntitySet="Users" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-        <EntityContainerMapping StorageEntityContainer="KursSystemModelStoreContainer" CdmEntityContainer="KursSystemEntities">
+        <EntityContainerMapping StorageEntityContainer="KursSystemModelStoreContainer" CdmEntityContainer="Entities">
           <EntitySetMapping Name="DataSources">
             <EntityTypeMapping TypeName="KursSystemModel.DataSources">
               <MappingFragment StoreEntitySet="DataSources">
-                <ScalarProperty Name="IsVisible" ColumnName="IsVisible" />
-                <ScalarProperty Name="Color" ColumnName="Color" />
-                <ScalarProperty Name="DBName" ColumnName="DBName" />
-                <ScalarProperty Name="Server" ColumnName="Server" />
-                <ScalarProperty Name="Order" ColumnName="Order" />
-                <ScalarProperty Name="ShowName" ColumnName="ShowName" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="ShowName" ColumnName="ShowName" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Server" ColumnName="Server" />
+                <ScalarProperty Name="DBName" ColumnName="DBName" />
+                <ScalarProperty Name="Color" ColumnName="Color" />
+                <ScalarProperty Name="IsVisible" ColumnName="IsVisible" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="Errors">
             <EntityTypeMapping TypeName="KursSystemModel.Errors">
               <MappingFragment StoreEntitySet="Errors">
-                <ScalarProperty Name="Moment" ColumnName="Moment" />
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="ErrorText" ColumnName="ErrorText" />
-                <ScalarProperty Name="Host" ColumnName="Host" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="DbId" ColumnName="DbId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DbId" ColumnName="DbId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Host" ColumnName="Host" />
+                <ScalarProperty Name="ErrorText" ColumnName="ErrorText" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="Moment" ColumnName="Moment" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="FormLayout">
             <EntityTypeMapping TypeName="KursSystemModel.FormLayout">
               <MappingFragment StoreEntitySet="FormLayout">
-                <ScalarProperty Name="Version" ColumnName="Version" />
-                <ScalarProperty Name="WindowState" ColumnName="WindowState" />
-                <ScalarProperty Name="UpdateDate" ColumnName="UpdateDate" />
-                <ScalarProperty Name="FormId" ColumnName="FormId" />
-                <ScalarProperty Name="Layout" ColumnName="Layout" />
-                <ScalarProperty Name="ControlName" ColumnName="ControlName" />
-                <ScalarProperty Name="FormName" ColumnName="FormName" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="FormName" ColumnName="FormName" />
+                <ScalarProperty Name="ControlName" ColumnName="ControlName" />
+                <ScalarProperty Name="Layout" ColumnName="Layout" />
+                <ScalarProperty Name="FormId" ColumnName="FormId" />
+                <ScalarProperty Name="UpdateDate" ColumnName="UpdateDate" />
+                <ScalarProperty Name="WindowState" ColumnName="WindowState" />
+                <ScalarProperty Name="Version" ColumnName="Version" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="KontragentCashes">
             <EntityTypeMapping TypeName="KursSystemModel.KontragentCashes">
               <MappingFragment StoreEntitySet="KontragentCashes">
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="DBId" ColumnName="DBId" />
-                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
-                <ScalarProperty Name="Count" ColumnName="Count" />
-                <ScalarProperty Name="KontragentDC" ColumnName="KontragentDC" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="KontragentDC" ColumnName="KontragentDC" />
+                <ScalarProperty Name="Count" ColumnName="Count" />
+                <ScalarProperty Name="LastUpdate" ColumnName="LastUpdate" />
+                <ScalarProperty Name="DBId" ColumnName="DBId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="KursMenuGroup">
             <EntityTypeMapping TypeName="KursSystemModel.KursMenuGroup">
               <MappingFragment StoreEntitySet="KursMenuGroup">
-                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
-                <ScalarProperty Name="Picture" ColumnName="Picture" />
-                <ScalarProperty Name="OrderBy" ColumnName="OrderBy" />
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="OrderBy" ColumnName="OrderBy" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="KursMenuItem">
             <EntityTypeMapping TypeName="KursSystemModel.KursMenuItem">
               <MappingFragment StoreEntitySet="KursMenuItem">
-                <ScalarProperty Name="IsSign" ColumnName="IsSign" />
-                <ScalarProperty Name="Code" ColumnName="Code" />
-                <ScalarProperty Name="OrderBy" ColumnName="OrderBy" />
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="Picture" ColumnName="Picture" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="GroupId" ColumnName="GroupId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="OrderBy" ColumnName="OrderBy" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="IsSign" ColumnName="IsSign" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="LastDocument">
             <EntityTypeMapping TypeName="KursSystemModel.LastDocument">
               <MappingFragment StoreEntitySet="LastDocument">
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="LastOpen" ColumnName="LastOpen" />
-                <ScalarProperty Name="LastChanger" ColumnName="LastChanger" />
-                <ScalarProperty Name="Creator" ColumnName="Creator" />
-                <ScalarProperty Name="DocId" ColumnName="DocId" />
-                <ScalarProperty Name="DocDC" ColumnName="DocDC" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="DbId" ColumnName="DbId" />
                 <ScalarProperty Name="DocType" ColumnName="DocType" />
-                <ScalarProperty Name="DbId" ColumnName="DbId" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Log">
-            <EntityTypeMapping TypeName="KursSystemModel.Log">
-              <MappingFragment StoreEntitySet="Log">
-                <ScalarProperty Name="UserName" ColumnName="UserName" />
-                <ScalarProperty Name="ProgramName" ColumnName="ProgramName" />
-                <ScalarProperty Name="Callsite" ColumnName="Callsite" />
-                <ScalarProperty Name="Logger" ColumnName="Logger" />
-                <ScalarProperty Name="Message" ColumnName="Message" />
-                <ScalarProperty Name="Level" ColumnName="Level" />
-                <ScalarProperty Name="Logged" ColumnName="Logged" />
-                <ScalarProperty Name="MachineName" ColumnName="MachineName" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SignatureType">
-            <EntityTypeMapping TypeName="KursSystemModel.SignatureType">
-              <MappingFragment StoreEntitySet="SignatureType">
-                <ScalarProperty Name="DbId" ColumnName="DbId" />
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="TasksLog">
-            <EntityTypeMapping TypeName="KursSystemModel.TasksLog">
-              <MappingFragment StoreEntitySet="TasksLog">
-                <ScalarProperty Name="ExecTime" ColumnName="ExecTime" />
-                <ScalarProperty Name="TaskInfo" ColumnName="TaskInfo" />
-                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UserMenuOrder">
-            <EntityTypeMapping TypeName="KursSystemModel.UserMenuOrder">
-              <MappingFragment StoreEntitySet="UserMenuOrder">
-                <ScalarProperty Name="Order" ColumnName="Order" />
-                <ScalarProperty Name="TileId" ColumnName="TileId" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="IsGroup" ColumnName="IsGroup" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UserMenuRight">
-            <EntityTypeMapping TypeName="KursSystemModel.UserMenuRight">
-              <MappingFragment StoreEntitySet="UserMenuRight">
-                <ScalarProperty Name="IsReadOnly" ColumnName="IsReadOnly" />
-                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
-                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
-                <ScalarProperty Name="DBId" ColumnName="DBId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UserRoles">
-            <EntityTypeMapping TypeName="KursSystemModel.UserRoles">
-              <MappingFragment StoreEntitySet="UserRoles">
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="id" ColumnName="id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Users">
-            <EntityTypeMapping TypeName="KursSystemModel.Users">
-              <MappingFragment StoreEntitySet="Users">
-                <ScalarProperty Name="ThemeName" ColumnName="ThemeName" />
-                <ScalarProperty Name="FullName" ColumnName="FullName" />
-                <ScalarProperty Name="Avatar" ColumnName="Avatar" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-                <ScalarProperty Name="IsTester" ColumnName="IsTester" />
-                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <AssociationSetMapping Name="UserRolesLinkMenuItem" TypeName="KursSystemModel.UserRolesLinkMenuItem" StoreEntitySet="UserRolesLinkMenuItem">
-            <EndProperty Name="UserRoles">
-              <ScalarProperty Name="id" ColumnName="RolesId" />
-            </EndProperty>
-            <EndProperty Name="KursMenuItem">
-              <ScalarProperty Name="Id" ColumnName="MenuId" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="UsersLinkDB" TypeName="KursSystemModel.UsersLinkDB" StoreEntitySet="UsersLinkDB">
-            <EndProperty Name="Users">
-              <ScalarProperty Name="Id" ColumnName="UserId" />
-            </EndProperty>
-            <EndProperty Name="DataSources">
-              <ScalarProperty Name="Id" ColumnName="DBId" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <AssociationSetMapping Name="SignatureLink" TypeName="KursSystemModel.SignatureLink" StoreEntitySet="SignatureLink">
-            <EndProperty Name="Users">
-              <ScalarProperty Name="Id" ColumnName="UserId" />
-            </EndProperty>
-            <EndProperty Name="SignatureType">
-              <ScalarProperty Name="Id" ColumnName="SignId" />
-            </EndProperty>
-          </AssociationSetMapping>
-          <EntitySetMapping Name="SignatureSchemes">
-            <EntityTypeMapping TypeName="KursSystemModel.SignatureSchemes">
-              <MappingFragment StoreEntitySet="SignatureSchemes">
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="DocumentTYpeId" ColumnName="DocumentTYpeId" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="DbId" ColumnName="DbId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="SignatureSchemesInfo">
-            <EntityTypeMapping TypeName="KursSystemModel.SignatureSchemesInfo">
-              <MappingFragment StoreEntitySet="SignatureSchemesInfo">
-                <ScalarProperty Name="SchemeId" ColumnName="SchemeId" />
-                <ScalarProperty Name="Note" ColumnName="Note" />
-                <ScalarProperty Name="IsRequired" ColumnName="IsRequired" />
-                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
-                <ScalarProperty Name="SignId" ColumnName="SignId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="UserMenuFavorites">
-            <EntityTypeMapping TypeName="KursSystemModel.UserMenuFavorites">
-              <MappingFragment StoreEntitySet="UserMenuFavorites">
-                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
-                <ScalarProperty Name="DbId" ColumnName="DbId" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DocDC" ColumnName="DocDC" />
+                <ScalarProperty Name="DocId" ColumnName="DocId" />
+                <ScalarProperty Name="Creator" ColumnName="Creator" />
+                <ScalarProperty Name="LastChanger" ColumnName="LastChanger" />
+                <ScalarProperty Name="LastOpen" ColumnName="LastOpen" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
           <EntitySetMapping Name="LastMenuUserSearch">
             <EntityTypeMapping TypeName="KursSystemModel.LastMenuUserSearch">
               <MappingFragment StoreEntitySet="LastMenuUserSearch">
-                <ScalarProperty Name="OpenCount" ColumnName="OpenCount" />
-                <ScalarProperty Name="LastOpen" ColumnName="LastOpen" />
-                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
-                <ScalarProperty Name="DbId" ColumnName="DbId" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="DbId" ColumnName="DbId" />
+                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
+                <ScalarProperty Name="LastOpen" ColumnName="LastOpen" />
+                <ScalarProperty Name="OpenCount" ColumnName="OpenCount" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Log">
+            <EntityTypeMapping TypeName="KursSystemModel.Log">
+              <MappingFragment StoreEntitySet="Log">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="MachineName" ColumnName="MachineName" />
+                <ScalarProperty Name="Logged" ColumnName="Logged" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="Logger" ColumnName="Logger" />
+                <ScalarProperty Name="Callsite" ColumnName="Callsite" />
+                <ScalarProperty Name="ProgramName" ColumnName="ProgramName" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SignatureSchemes">
+            <EntityTypeMapping TypeName="KursSystemModel.SignatureSchemes">
+              <MappingFragment StoreEntitySet="SignatureSchemes">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DbId" ColumnName="DbId" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="DocumentTYpeId" ColumnName="DocumentTYpeId" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SignatureSchemesInfo">
+            <EntityTypeMapping TypeName="KursSystemModel.SignatureSchemesInfo">
+              <MappingFragment StoreEntitySet="SignatureSchemesInfo">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SignId" ColumnName="SignId" />
+                <ScalarProperty Name="ParentId" ColumnName="ParentId" />
+                <ScalarProperty Name="IsRequired" ColumnName="IsRequired" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="SchemeId" ColumnName="SchemeId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SignatureType">
+            <EntityTypeMapping TypeName="KursSystemModel.SignatureType">
+              <MappingFragment StoreEntitySet="SignatureType">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="DbId" ColumnName="DbId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TasksLog">
+            <EntityTypeMapping TypeName="KursSystemModel.TasksLog">
+              <MappingFragment StoreEntitySet="TasksLog">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="TypeName" ColumnName="TypeName" />
+                <ScalarProperty Name="TaskInfo" ColumnName="TaskInfo" />
+                <ScalarProperty Name="ExecTime" ColumnName="ExecTime" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserMenuFavorites">
+            <EntityTypeMapping TypeName="KursSystemModel.UserMenuFavorites">
+              <MappingFragment StoreEntitySet="UserMenuFavorites">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="DbId" ColumnName="DbId" />
+                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserMenuOrder">
+            <EntityTypeMapping TypeName="KursSystemModel.UserMenuOrder">
+              <MappingFragment StoreEntitySet="UserMenuOrder">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="IsGroup" ColumnName="IsGroup" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="TileId" ColumnName="TileId" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserMenuRight">
+            <EntityTypeMapping TypeName="KursSystemModel.UserMenuRight">
+              <MappingFragment StoreEntitySet="UserMenuRight">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DBId" ColumnName="DBId" />
+                <ScalarProperty Name="LoginName" ColumnName="LoginName" />
+                <ScalarProperty Name="MenuId" ColumnName="MenuId" />
+                <ScalarProperty Name="IsReadOnly" ColumnName="IsReadOnly" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserRoles">
+            <EntityTypeMapping TypeName="KursSystemModel.UserRoles">
+              <MappingFragment StoreEntitySet="UserRoles">
+                <ScalarProperty Name="id" ColumnName="id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="KursSystemModel.Users">
+              <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="IsAdmin" ColumnName="IsAdmin" />
+                <ScalarProperty Name="IsTester" ColumnName="IsTester" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="Avatar" ColumnName="Avatar" />
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="ThemeName" ColumnName="ThemeName" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Versions">
+            <EntityTypeMapping TypeName="KursSystemModel.Versions">
+              <MappingFragment StoreEntitySet="Versions">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="SystemNum" ColumnName="SystemNum" />
+                <ScalarProperty Name="TestNum" ColumnName="TestNum" />
+                <ScalarProperty Name="VersionNum" ColumnName="VersionNum" />
+                <ScalarProperty Name="ServerPath" ColumnName="ServerPath" />
+                <ScalarProperty Name="DateCreate" ColumnName="DateCreate" />
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="SignatureLink" TypeName="KursSystemModel.SignatureLink" StoreEntitySet="SignatureLink">
+            <EndProperty Name="SignatureType">
+              <ScalarProperty Name="Id" ColumnName="SignId" />
+            </EndProperty>
+            <EndProperty Name="Users">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="UserRolesLinkMenuItem" TypeName="KursSystemModel.UserRolesLinkMenuItem" StoreEntitySet="UserRolesLinkMenuItem">
+            <EndProperty Name="KursMenuItem">
+              <ScalarProperty Name="Id" ColumnName="MenuId" />
+            </EndProperty>
+            <EndProperty Name="UserRoles">
+              <ScalarProperty Name="id" ColumnName="RolesId" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="UsersLinkDB" TypeName="KursSystemModel.UsersLinkDB" StoreEntitySet="UsersLinkDB">
+            <EndProperty Name="DataSources">
+              <ScalarProperty Name="Id" ColumnName="DBId" />
+            </EndProperty>
+            <EndProperty Name="Users">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

@@ -11,7 +11,7 @@
                  xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                  mc:Ignorable="d"
-                 Title="BreakEvenForm2" Height="450" Width="800">
+                 Title="{Binding WindowName}" Height="450" Width="800">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
                    Foreground="{Binding DatabaseColor}"

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -95,7 +96,10 @@ namespace Helper
             {
 
 
-                var l = context.FormLayout.FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
+                var l = context.FormLayout
+                    .Include(_ => _.Users)
+                    .Include(_ => _.KursMenuItem)
+                    .FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
                                                                && _.FormName == FormName
                                                                && _.ControlName == FormName);
                 try
@@ -132,17 +136,17 @@ namespace Helper
                             UserId = CurrentUser.UserInfo.KursId,
                             FormName = FormName,
                             ControlName = FormName,
-                            Layout = layoutService.Serialize(),
+                            Layout = s,
                             WindowState = sb?.ToString()
                         });
                     }
                     else
                     {
                         l.UpdateDate = DateTime.Now;
-                        l.UserId = CurrentUser.UserInfo.KursId;
-                        l.FormName = FormName;
-                        l.ControlName = FormName;
-                        l.Layout = layoutService.Serialize();
+                        //l.UserId = CurrentUser.UserInfo.KursId;
+                        //l.FormName = FormName;
+                        //l.ControlName = FormName;
+                        l.Layout = s;
                         l.WindowState = sb?.ToString();
                     }
 

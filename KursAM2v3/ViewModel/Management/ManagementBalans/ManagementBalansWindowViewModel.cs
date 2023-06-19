@@ -71,6 +71,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             CurrentCurrencyRate = CurrencyRates[0];
         }
 
+
+        public override string WindowName => "Управленческий баланс";
+        public override string LayoutName => "ManagementBalansWindowViewModel";
+
         public ObservableCollection<ColumnSummary> SummaryList { get; } =
             new ObservableCollection<ColumnSummary>();
 
