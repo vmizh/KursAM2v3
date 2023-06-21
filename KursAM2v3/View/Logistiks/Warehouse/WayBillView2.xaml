@@ -102,7 +102,7 @@
                                                    Command="{Binding DeleteSchetCommand}"
                                                    ToolTip="Удалить связь со счет-фактурой клиенту"/>
                                    <dxe:ButtonInfo GlyphKind="Edit"
-                                                   Command="{Binding OpenSchetCommand}"
+                                                   Command="{Binding OpenMainSchetCommand}"
                                                    ToolTip="Открыть счет-фактуру клиенту"/>
                                </dxe:ButtonEdit.Buttons>
                             </dxe:ButtonEdit>

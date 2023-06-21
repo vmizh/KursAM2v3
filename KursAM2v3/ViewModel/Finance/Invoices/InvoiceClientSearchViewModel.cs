@@ -9,6 +9,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Core;
+using Helper;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.Repositories.InvoicesRepositories;
@@ -51,7 +52,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             EndDate = DateTime.Today;
-            StartDate = EndDate.AddDays(-30);
+            StartDate = DateHelper.GetFirstDate();
             var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
             if (prn != null)
             {
@@ -368,7 +369,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 frm.gridDocumentsTableView.ShowTotalSummary = true;
             }
-           
+            StartDate = DateHelper.GetFirstDate();
         }
     }
 }

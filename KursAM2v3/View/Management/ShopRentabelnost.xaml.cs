@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using DevExpress.Xpf.Core;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Management
@@ -16,8 +17,7 @@ namespace KursAM2.View.Management
         public ShopRentabelnost()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             //DataContext = new ShopRentabelnostViewModel();
             Closing += ShopRentabelnost_Closing;
             Loaded += ShopRentabelnost_Loaded;

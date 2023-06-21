@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using DevExpress.Xpf.Core;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.KursReferences.KontragentControls
@@ -13,7 +14,7 @@ namespace KursAM2.View.KursReferences.KontragentControls
         {
             InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager("KontragentGruzoUserControl", LayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),"KontragentGruzoUserControl", gruzoGridControl);
             Loaded += KontragentGruzo_Loaded;
             Unloaded += KontragentGruzo_Unloaded;
         }

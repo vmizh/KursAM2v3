@@ -85,12 +85,11 @@ namespace KursAM2.View
             try
             {
                 InitializeComponent();
-                ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
 #if (!DEBUG)
                 myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, 1000 * 360 * 3, Timeout.Infinite);
 
 #endif
-                LayoutManager = new LayoutManager.LayoutManager("MainWindow", this, dockLayout1);
+                LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),"MainWindow", this, dockLayout1);
                 Loaded += MainWindow_Loaded;
                 Closing += MainWindow_Closing;
                 Closed += MainWindow_Closed;
@@ -154,17 +153,16 @@ namespace KursAM2.View
 
         private void MainWindow_Closing(object sender, CancelEventArgs e)
         {
-            LayoutManager.Save();
+            //LayoutManager.Save();
             foreach (var f in from Window f in Application.Current.Windows where f != null select f)
             {
+                if (f is MainWindow) continue;
                 if (f is KursBaseSearchWindow s)
                     if (s.DataContext is DistributeNakladSearchViewModel ctx)
                         ctx.OnWindowClosing();
-
-                //if (f is KursBaseWindow b)
-                //    if (b.DataContext is DistributeNakladViewModel ctx)
-                //        ctx.OnWindowClosing();
-                if (f is ILayout l) l.SaveLayout();
+                if (f is ILayout l) 
+                    
+                    l.SaveLayout();
                 f.Close();
             }
         }
@@ -434,7 +432,9 @@ namespace KursAM2.View
                             DataContext = ctxpb2
                         };
                         ctxpb2.Form = form;
+                        ctxpb2.RaisePropertyAllChanged();
                         form.Show();
+
                         break;
                     case "Грузовые реквизиты контрагентов":
                         var ctx3 = new KontragentGruzoInfoWindowViewModel();
@@ -483,11 +483,14 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Справочник контрагентов":
-                        form = new KontragentReference2View { Owner = Application.Current.MainWindow };
-                        var ctxRef = new KontragentReferenceWindowViewModel();
-                        ctxRef.Form = form;
-                        form.Show();
+                        form = new KontragentReference2View { Owner = Application.Current.MainWindow }; 
+                        var ctxRef = new KontragentReferenceWindowViewModel
+                        {
+                            Form = form
+                        };
                         form.DataContext = ctxRef;
+                        form.Show();
+                        
                         break;
                     case "Справочник складов":
                         var frm = new TreeListFormBaseView2
@@ -1306,6 +1309,7 @@ namespace KursAM2.View
                     i++;
                 }
             }
+            LayoutManager.Save();
         }
 
         private void TileDocumentItems_OnItemPositionChanged(object sender, ValueChangedEventArgs<int> e)
@@ -1321,7 +1325,8 @@ namespace KursAM2.View
                         GlobalOptions.UserInfo.MainTileGroups.FirstOrDefault(_ => _.Id == currentMainGroupId);
                     var menuItem = menuGroup?.TileItems.FirstOrDefault(_ => _.Id == (int)t.Tag);
                     if (menuItem != null) menuItem.OrderBy = i;
-                    var old = ctx.UserMenuOrder.FirstOrDefault(_ => !_.IsGroup && _.TileId == (int)t.Tag);
+                    var old = ctx.UserMenuOrder.FirstOrDefault(_ => !_.IsGroup && _.TileId == (int)t.Tag
+                    && _.UserId == GlobalOptions.UserInfo.KursId);
                     if (old == null)
                         ctx.UserMenuOrder.Add(new UserMenuOrder
                         {
@@ -1337,6 +1342,7 @@ namespace KursAM2.View
                     i++;
                 }
             }
+            LayoutManager.Save();
         }
 
         private void BarButtonItem4_OnItemClick(object sender, ItemClickEventArgs e)
@@ -1375,6 +1381,11 @@ namespace KursAM2.View
                 DataContext = context
             };
             frm.Show();
+        }
+
+        private void LayoutPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            LayoutManager.Save();
         }
     }
 }

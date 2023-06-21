@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
+using Data;
+using KursDomain;
 using LayoutManager;
 
 namespace PeriodManager.View
@@ -14,7 +16,7 @@ namespace PeriodManager.View
         public SetPeriodCloseForGroupView()
         {
             InitializeComponent();
-            LayoutManager = new global::LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new global::LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, mainLayoutControl);
             Closing += SetPeriodCloseForGroupView_Closing;
             Loaded += SetPeriodCloseForGroupView_Loaded;
         }

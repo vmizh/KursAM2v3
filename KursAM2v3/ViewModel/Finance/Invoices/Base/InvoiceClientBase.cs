@@ -154,6 +154,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public Guid Id { get; set; }
         public Guid DocId { get; set; }
         public string NomNomenkl { get; set; }
+        public Unit Unit { get; set; }
         public bool IsUsluga { get; set; }
         public decimal Quantity { get; set; }
         public decimal Price { get; set; }

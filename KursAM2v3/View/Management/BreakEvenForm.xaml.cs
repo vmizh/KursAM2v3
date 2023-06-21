@@ -25,9 +25,8 @@ namespace KursAM2.View.Management
         public BreakEvenForm()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             NomGroup = new BreakEvenNomGroupViewModel();
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, mainLayoutControl);
             Closing += BreakEvenForm_Closing;
             Loaded += BreakEvenForm_Loaded;
             Title = "Рентабельность. База данных " + GlobalOptions.DataBaseName;

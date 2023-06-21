@@ -76,7 +76,7 @@
                                      ShowPinButton="False"
                                      ShowMaximizeButton="False"
                                      ShowCaption="False"
-                                     ShowCaptionImage="False">
+                                     ShowCaptionImage="False" SizeChanged="LayoutPanel_SizeChanged">
                         <dxlc:TileLayoutControl x:Name="tileMainGroup"
                                                 Background="#FFD0D6D3"
                                                 Margin="0"
@@ -95,7 +95,8 @@
                                      Name="DocumentLayoutPanel"
                                      dx:DXSerializer.SerializationID="DocumentLayoutPanel1"
                                      dx:DXSerializer.LayoutVersion="1"
-                                     dx:DXSerializer.StoreLayoutMode="All">
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     SizeChanged="LayoutPanel_SizeChanged">
                         <dxd:LayoutPanel.Appearance>
                             <dxd:Appearance>
                                 <dxd:Appearance.Normal>

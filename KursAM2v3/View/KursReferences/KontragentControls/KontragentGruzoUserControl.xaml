@@ -8,8 +8,6 @@
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
-    <dxlc:LayoutControl Name="LayoutControl" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-        <dxlc:LayoutGroup VerticalAlignment="Stretch">
             <dxg:GridControl Name="gruzoGridControl"
                              Style="{StaticResource GridControl.Base}"
                              dx:DXSerializer.SerializationID="resultGridControl"
@@ -32,6 +30,4 @@
                                    ShowAutoFilterRow="True" />
                 </dxg:GridControl.View>
             </dxg:GridControl>
-        </dxlc:LayoutGroup>
-    </dxlc:LayoutControl>
 </UserControl>

@@ -2,6 +2,7 @@
 using Core.ViewModel.Base;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.DialogUserControl.ViewModel
@@ -15,7 +16,7 @@ namespace KursAM2.View.DialogUserControl.ViewModel
         {
             InitializeComponent(); 
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, gridControlSearch);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, gridControlSearch);
             LayoutControl = gridControlSearch;
             Loaded += StockHolderSelectUC_Loaded;
             Unloaded += StockHolderSelectUC_Unloaded;

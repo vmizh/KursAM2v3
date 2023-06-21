@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using DevExpress.Xpf.Core;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Base
@@ -21,7 +22,7 @@ namespace KursAM2.View.Base
         public GridAutoWithLayoutContyWithLayoutConrol(string layoutName, object data, object currentItem) : this()
         {
             LayoutManagerName = layoutName;
-            LayoutManager = new LayoutManager.LayoutManager(LayoutManagerName, grid);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),LayoutManagerName, grid);
             grid.ItemsSource = data;
             grid.CurrentItem = currentItem;
         }

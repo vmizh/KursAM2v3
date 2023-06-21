@@ -9,7 +9,7 @@
     <Style x:Key="GridControl.Base" TargetType="dxg:GridControl">
         <Setter Property="ShowBorder" Value="False" />
         <Setter Property="EnableSmartColumnsGeneration" Value="True" />
-        <Setter Property="AutoGenerateColumns" Value="RemoveOld" />
+        <Setter Property="AutoGenerateColumns" Value="AddNew" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
         <Setter Property="MaxHeight" Value="10000" />

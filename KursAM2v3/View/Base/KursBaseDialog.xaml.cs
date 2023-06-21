@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using DevExpress.Xpf.Core;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Base
@@ -27,7 +28,7 @@ namespace KursAM2.View.Base
             if (DataContext != null)
             {
                 LayoutManagerName = DataContext.GetType() + "_Dialog";
-                LayoutManager = new LayoutManager.LayoutManager(LayoutManagerName,this,null,null);
+                LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),LayoutManagerName,this,null,null);
                 LayoutManager.Load();
             }
         }

@@ -3,6 +3,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.View.Helper;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Finance.UC
@@ -17,10 +18,10 @@ namespace KursAM2.View.Finance.UC
             InitializeComponent(); 
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             LayoutManagerDebitor = new LayoutManager.LayoutManager(
-                "KursAM2.View.Finance.UC.MutualAccountingDataTablesUC.gridControlDebitor",
+                GlobalOptions.KursSystem(),"KursAM2.View.Finance.UC.MutualAccountingDataTablesUC.gridControlDebitor",
                 gridControlDebitor);
             LayoutManagerCreditor = new LayoutManager.LayoutManager(
-                "KursAM2.View.Finance.UC.MutualAccountingDataTablesUC.gridControlCreditor",
+                GlobalOptions.KursSystem(),"KursAM2.View.Finance.UC.MutualAccountingDataTablesUC.gridControlCreditor",
                 gridControlCreditor);
             //LayoutManager = new LayoutManager.LayoutManager(
             //        "KursAM2.View.Finance.UC.MutualAccountingDataTablesUC",

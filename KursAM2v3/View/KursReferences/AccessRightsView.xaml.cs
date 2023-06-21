@@ -2,6 +2,7 @@
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.KursReferences
@@ -17,7 +18,7 @@ namespace KursAM2.View.KursReferences
         {
             InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, MainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, MainLayoutControl);
             Loaded += ContryView_Loaded;
             Unloaded += ContryView_Unloaded;
         }

@@ -91,17 +91,20 @@
     <DockPanel Margin="0" Style="{StaticResource DXServicesDialogOnly}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <dxlc:LayoutControl Orientation="Vertical" Padding="0" x:Name="mainLayoutControl">
-            <dxlc:LayoutGroup Orientation="Vertical">
+            <dxlc:LayoutGroup Orientation="Vertical" Name="Group_1">
                 <dxlc:LayoutGroup DockPanel.Dock="Top" Height="40">
                     <TextBox BorderThickness="0" FontSize="20" FontWeight="Bold" Text="{Binding Kontragent.Name}"
                              DockPanel.Dock="Left" />
                 </dxlc:LayoutGroup>
-                <dxlc:LayoutGroup HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                    <dxlc:LayoutItem Width="200" VerticalAlignment="Top">
+                <dxlc:LayoutGroup HorizontalAlignment="Stretch" 
+                                  VerticalAlignment="Stretch"
+                                  Name="Group_2">
+                    <dxlc:LayoutItem Width="200" VerticalAlignment="Top"  Name="Item_1">
                         <dxnav:TileBar Width="200" x:Name="tileBarMenu" Padding="0" Margin="0 -10 0 0"
                                        AllowItemSelection="True"
                                        Orientation="Vertical"
-                                       SelectedItem="{Binding SelectedTab, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}">
+                                       SelectedItem="{Binding SelectedTab, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
+                                       >
                             <dxnav:TileBarItem x:Name="mainTab" Content="Основные" Width="200"
                                                FontSize="16" Height="36"
                                                Padding="10,0,0,0"
@@ -130,7 +133,7 @@
                         </dxnav:TileBar>
                     </dxlc:LayoutItem>
                     <dxlc:LayoutItem VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Margin="0"
-                                     Padding="0 0 0 5">
+                                     Padding="0 0 0 5" Name="Item_2">
                         <dxwui:NavigationFrame x:Name="frame"
                                                Padding="0"
                                                Margin="0"

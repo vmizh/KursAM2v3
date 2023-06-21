@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
+using Data;
 using DevExpress.Xpf.Core.Serialization;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
@@ -20,9 +21,10 @@ namespace LayoutManager
 
         public WindowsScreenState BaseWin;
 
-        public LayoutManager(string fname, Window win, DependencyObject ctrl,
+        public LayoutManager(KursSystemEntities context, string fname, Window win, DependencyObject ctrl,
             List<LayoutManagerGridAutoGenerationColumns> ctrlLayouts = null, bool isWindowOnly = false)
         {
+            Context = context;
             FileName = fname;
             Win = win;
             SetWindowState();
@@ -40,8 +42,9 @@ namespace LayoutManager
                 }
         }
 
-        public LayoutManager(string fname, DependencyObject ctrl)
+        public LayoutManager(KursSystemEntities context, string fname, DependencyObject ctrl)
         {
+            Context = context;
             FileName = fname;
             Win = null;
             LayoutControl = ctrl;

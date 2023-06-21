@@ -1,216 +1,29 @@
 ﻿<UserControl x:Class="KursAM2.View.Management.ProfitAndLossesControls.ProfitAndLossExtendVzaimozchetUI"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <dxg:GridControl
-                    Name="GridControlExtend"
-                    AutoGenerateColumns="None"
-                    EnableSmartColumnsGeneration="True"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Stretch"
-                    dx:DXSerializer.SerializationID="gridSecond"
-                    dx:DXSerializer.StoreLayoutMode="All"
-                    dxg:DataControlSerializationOptions.AddNewColumns="True"
-                    dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                    SelectionMode="Row"
-                    ItemsSource="{Binding ExtendActual, Mode=OneWay}"
-                    CurrentItem="{Binding CurrentExtend}"
-                    CurrentColumn="{Binding CurrentColumn, Mode=OneWay}">
-            <dxg:GridControl.Bands>
-                <dxg:GridControlBand Name="MainBand"  Header="Основные данные">
-                    <dxg:GridColumn Name="col1" FieldName="Name" Header="Наименование" ReadOnly="True"/>
-                    <dxg:GridColumn Name="col12" FieldName="Date" Header="Дата"   ReadOnly="True"/>
-                    <dxg:GridColumn Name="col126" FieldName="DocNum" Header="№"  ReadOnly="True"/>
-                    <dxg:GridColumn Name="col125" FieldName="CurrencyName" Header="Валюта"  ReadOnly="True"/>
-                    <dxg:GridColumn Name="col124" FieldName="AktZachetResult" Header="Результат"
-                                            Visible="True" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" IsTextEditable="False"/>
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    
-                </dxg:GridControlBand>
-                <dxg:GridControlBand Name="bandgr_1" Header="RUB">
-                    <dxg:GridColumn Name="col4" FieldName="ProfitRUB" Header="Доход" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    <dxg:GridColumn Name="col5" FieldName="LossRUB" Header="Расход" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    <dxg:GridColumn Name="col6" FieldName="ResultRUB" Header="Результат" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                </dxg:GridControlBand>
-                <dxg:GridControlBand Name="bandgr_2" Header="USD">
-                    <dxg:GridColumn Name="colu4" FieldName="ProfitUSD" Header="Доход" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    <dxg:GridColumn Name="xcolu5" FieldName="LossUSD" Header="Расход" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    <dxg:GridColumn Name="colu6" FieldName="ResultUSD" Header="Результат" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                </dxg:GridControlBand>
-                <dxg:GridControlBand Name="bandgr_3" Header="EUR">
-                    <dxg:GridColumn Name="cole4" FieldName="ProfitEUR" Header="Доход" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    <dxg:GridColumn Name="cole5" FieldName="LossEUR" Header="Расход" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings> 
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    <dxg:GridColumn Name="cole6" FieldName="ResultEUR" Header="Результат" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                </dxg:GridControlBand>
-                <dxg:GridControlBand Name="bandgr_4" Header="GBP">
-                    <dxg:GridColumn Name="colg4" FieldName="ProfitGBP" Header="Доход" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    <dxg:GridColumn Name="colg5" FieldName="LossGBP" Header="Расход" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    <dxg:GridColumn Name="colg6" FieldName="ResultGBP" Header="Результат" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                </dxg:GridControlBand>
-                <dxg:GridControlBand Name="bandgr_6" Header="CHF">
-                    <dxg:GridColumn Name="colc4" FieldName="ProfitCHF" Header="Доход" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    <dxg:GridColumn Name="colc5" FieldName="LossCHF" Header="Расход" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    <dxg:GridColumn Name="colc6" FieldName="ResultCHF" Header="Результат" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                </dxg:GridControlBand>
-                <dxg:GridControlBand Name="bandgr_7" Header="SEK">
-                    <dxg:GridColumn Name="cols4" FieldName="ProfitSEK" Header="Доход" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    <dxg:GridColumn Name="cols5" FieldName="LossSEK" Header="Расход" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                    <dxg:GridColumn Name="cols6" FieldName="ResultSEK" Header="Результат" ReadOnly="True" SortMode="Value">
-                        <dxg:GridColumn.EditSettings>
-                            <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                        </dxg:GridColumn.EditSettings>
-                    </dxg:GridColumn>
-                </dxg:GridControlBand>
-                <dxg:GridControlBand Name="bandgr_ext">
-                    <dxg:GridColumn Name="col7" FieldName="Note" Header="Примечания"
-                                            AutoFilterCondition="Contains" 
-                                            />
-                </dxg:GridControlBand>
-            </dxg:GridControl.Bands>
-            <dxg:GridControl.TotalSummary>
-                <dxg:GridSummaryItem FieldName="AktZachetResult" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="ProfitRUB" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="LossRUB" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="ResultRUB" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="ProfitUSD" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="LossUSD" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="ResultUSD" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="ProfitEUR" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="LossEUR" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="ResultEUR" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="ProfitGBP" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="LossGBP" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="ResultGBP" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="ProfitCHF" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="LossCHF" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="ResultCHF" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="ProfitSEK" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="LossSEK" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-                <dxg:GridSummaryItem FieldName="ResultSEK" SummaryType="Sum"
-                                             DisplayFormat="n2" />
-            </dxg:GridControl.TotalSummary>
+            Name="GridControlExtend"
+            Style="{StaticResource GridControl.Base}"
+            dx:DXSerializer.SerializationID="GridControlExtend"
+            SelectionMode="Row"
+            ItemsSource="{Binding ExtendActual, Mode=OneWay}"
+            CurrentItem="{Binding CurrentExtend}"
+            CurrentColumn="{Binding CurrentColumn, Mode=OneWay}"
+            AutoGeneratingColumn="Grid_OnAutoGeneratingColumn"
+            AutoGeneratedColumns="GridControlExtend_OnAutoGeneratedColumns">
             <dxg:GridControl.View>
-                <dxg:TableView x:Name="gridExtend"
-                                       UseIndicatorForSelection="True"
-                                       AllowPerPixelScrolling="True"
-                                       ShowTotalSummary="True"
-                                       ShowCriteriaInAutoFilterRow="True"
-                                       >
+                <dxg:TableView x:Name="gridViewExtend"
+                               Style="{StaticResource TableView.Standart}"
+                               UseIndicatorForSelection="True"
+                               AllowPerPixelScrolling="True">
                     <dxg:TableView.FormatConditions>
                         <dxg:FormatCondition ApplyToRow="True" Expression="[AktZachet]='red'">
                             <!-- ReSharper disable once ObsoleteElement -->
@@ -224,22 +37,22 @@
                     <dxg:TableView.ContextMenu>
                         <ContextMenu>
                             <MenuItem Header="Открыть документ"
-                                              Command="{Binding DocumentOpenCommand}" />
+                                      Command="{Binding DocumentOpenCommand}" />
                             <MenuItem Header="Показать расчет себестоимости номенклатуры"
-                                              Command="{Binding NomenklCalcCommand}" />
+                                      Command="{Binding NomenklCalcCommand}" />
                             <Separator />
                             <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
-                                              CommandParameter="{Binding Path=PlacementTarget, 
+                                      CommandParameter="{Binding Path=PlacementTarget, 
                            RelativeSource={RelativeSource Mode=FindAncestor,
                                             AncestorType={x:Type ContextMenu}}}">
                                 <MenuItem.Icon>
                                     <Image
-                                                Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                        Source="pack://siteoforigin:,,,/Images/export1.png" />
                                 </MenuItem.Icon>
                             </MenuItem>
                             <MenuItem Header="Копировать итоговую сумму"
-                                              Command="{Binding GetColumnSummaCommand}"
-                                              CommandParameter="{Binding Path=PlacementTarget, 
+                                      Command="{Binding GetColumnSummaCommand}"
+                                      CommandParameter="{Binding Path=PlacementTarget, 
                            RelativeSource={RelativeSource Mode=FindAncestor,
                                             AncestorType={x:Type ContextMenu}}}" />
                         </ContextMenu>
@@ -247,161 +60,18 @@
                 </dxg:TableView>
             </dxg:GridControl.View>
             <dxg:GridControl.DetailDescriptor>
-                <dxg:DataControlDetailDescriptor ItemsSourcePath = "VzaimozachetInfo">
+                <dxg:DataControlDetailDescriptor ItemsSourcePath="VzaimozachetInfo">
                     <dxg:GridControl
                         Name="GridControlInfo"
-                        AutoGenerateColumns="None"
-                        EnableSmartColumnsGeneration="True"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
+                        Style="{StaticResource GridControl.Base}"
                         dx:DXSerializer.SerializationID="gridInfo"
-                        dx:DXSerializer.StoreLayoutMode="All"
-                        dxg:DataControlSerializationOptions.AddNewColumns="True"
-                        dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                        SelectionMode="Row"
-                        >
-                        <dxg:GridControl.Bands>
-                            <dxg:GridControlBand Header="Основные данные">
-                                <dxg:GridColumn Name="colz1" FieldName="Kontragent" Header="Контрагент" ReadOnly="True"/>
-                            <dxg:GridColumn Name="colz2" FieldName="SDRSchet" Header="Счет доходов/расходов"
-                                                            SortMode="DisplayText"  ReadOnly="True"/>
-                            <dxg:GridColumn Name="colz4" FieldName="CurrencyName" Header="Валюта"  ReadOnly="True"/>
-                            <dxg:GridColumn Name="colz5" FieldName="Summa" Header="Сумма"  ReadOnly="True">
-                                <dxg:GridColumn.EditSettings>
-                                    <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                                          Mask="n2" />
-                                </dxg:GridColumn.EditSettings>
-                            </dxg:GridColumn>
-                            <dxg:GridColumn Name="colz6" FieldName="Note" Header="Примечание"  ReadOnly="True"/>
-                            </dxg:GridControlBand>
-                            <dxg:GridControlBand Name="xbandgr_1" Header="RUB">
-                                <dxg:GridColumn Name="xcol4" FieldName="ProfitRUB" Header="Доход" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="xcol5" FieldName="LossRUB" Header="Расход" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="xcol6" FieldName="ResultRUB" Header="Результат" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                            </dxg:GridControlBand>
-                            <dxg:GridControlBand Name="xbandgr_2" Header="USD">
-                                <dxg:GridColumn Name="xcolu4" FieldName="ProfitUSD" Header="Доход" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="colu5" FieldName="LossUSD" Header="Расход" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="xcolu6" FieldName="ResultUSD" Header="Результат" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                            </dxg:GridControlBand>
-                            <dxg:GridControlBand Name="xbandgr_3" Header="EUR">
-                                <dxg:GridColumn Name="xcole4" FieldName="ProfitEUR" Header="Доход" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="xcole5" FieldName="LossEUR" Header="Расход" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="xcole6" FieldName="ResultEUR" Header="Результат" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                            </dxg:GridControlBand>
-                            <dxg:GridControlBand Name="xbandgr_4" Header="GBP">
-                                <dxg:GridColumn Name="xcolg4" FieldName="ProfitGBP" Header="Доход" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="xcolg5" FieldName="LossGBP" Header="Расход" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="xcolg6" FieldName="ResultGBP" Header="Результат" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                            </dxg:GridControlBand>
-                            <dxg:GridControlBand Name="xbandgr_6" Header="CHF">
-                                <dxg:GridColumn Name="xcolc4" FieldName="ProfitCHF" Header="Доход" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="xcolc5" FieldName="LossCHF" Header="Расход" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="xcolc6" FieldName="ResultCHF" Header="Результат" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                            </dxg:GridControlBand>
-                            <dxg:GridControlBand Name="xbandgr_7" Header="SEK">
-                                <dxg:GridColumn Name="xcols4" FieldName="ProfitSEK" Header="Доход" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="xcols5" FieldName="LossSEK" Header="Расход" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                                <dxg:GridColumn Name="xcols6" FieldName="ResultSEK" Header="Результат" ReadOnly="True">
-                                    <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings DisplayFormat="n2" AllowDefaultButton="False"
-                                                          Mask="n2" />
-                                    </dxg:GridColumn.EditSettings>
-                                </dxg:GridColumn>
-                            </dxg:GridControlBand>
-                        </dxg:GridControl.Bands>
-                            <dxg:GridControl.View>
+                        SelectionMode="Row">
+                        <dxg:GridControl.View>
                             <dxg:TableView x:Name="gridZachetInfo"
-                                                       UseIndicatorForSelection="True"
-                                                       AllowPerPixelScrolling="True"
-                                                       ShowTotalSummary="False"
-                                                       ShowGroupPanel="False"
-                                                       />
+                                           UseIndicatorForSelection="True"
+                                           AllowPerPixelScrolling="True"
+                                           ShowTotalSummary="False"
+                                           ShowGroupPanel="False" />
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxg:DataControlDetailDescriptor>

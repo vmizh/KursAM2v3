@@ -88,9 +88,11 @@ namespace KursAM2.ViewModel.Personal
             {
                 if (mySumma == value) return;
                 mySumma = value;
+                myNachEmpRate = mySumma;
                 var p = Parent as PayRollVedomostEmployeeViewModel;
                 p?.CalcSumma();
                 RaisePropertyChanged();
+                RaisePropertyChanged(nameof(NachEmpRate));
             }
         }
 

@@ -3,6 +3,7 @@ using Core.ViewModel.Base;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.DialogUserControl
@@ -16,7 +17,7 @@ namespace KursAM2.View.DialogUserControl
         {
             InitializeComponent(); 
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, gridControlSearch);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, gridControlSearch);
             LayoutControl = gridControlSearch;
             Loaded += KontragentSelectDialogUC_Loaded;
             Unloaded += KontragentSelectDialogUC_Unloaded;

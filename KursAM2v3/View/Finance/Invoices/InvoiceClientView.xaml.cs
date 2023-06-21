@@ -2,7 +2,6 @@
 using System.Windows;
 using Core.WindowsManager;
 using DevExpress.Data;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -19,18 +18,17 @@ namespace KursAM2.View.Finance.Invoices
     /// </summary>
     public partial class InvoiceClientView
     {
+        static InvoiceClientView()
+        {
+            GridControlLocalizer.Active = new CustomDXGridLocalizer();
+        }
         //public ButtonEdit KontrSelectButton;
 
         public InvoiceClientView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
-        static InvoiceClientView()
-        {
-            GridControlLocalizer.Active = new CustomDXGridLocalizer();
-        }
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public ComboBoxEdit CurrencyItem { set; get; }
         private ClientWindowViewModel viewModel => DataContext as ClientWindowViewModel;
@@ -97,7 +95,7 @@ namespace KursAM2.View.Finance.Invoices
             var doc = ctx.Document;
             if (doc == null)
                 return;
-            var nomenkls = StandartDialogs.SelectNomenkls();
+            var nomenkls = StandartDialogs.SelectNomenkls(ctx.Document.Currency);
             if (nomenkls == null || nomenkls.Count <= 0) return;
             ctx.CurrentRow.Nomenkl = nomenkls.First();
         }

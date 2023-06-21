@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using DevExpress.Xpf.Core;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Logistiks
@@ -14,8 +15,7 @@ namespace KursAM2.View.Logistiks
         public PurchaseInvoicesOverheadsView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Loaded += PurchaseInvoicesOverheadsView_Loaded;
             Closing += PurchaseInvoicesOverheadsView_Closing;
         }

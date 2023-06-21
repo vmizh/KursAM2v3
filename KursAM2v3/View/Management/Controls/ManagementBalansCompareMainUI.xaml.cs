@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Windows;
 using DevExpress.Xpf.Core;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Management.Controls
@@ -17,7 +18,7 @@ namespace KursAM2.View.Management.Controls
             Loaded += ManagementBalansCompareMainUI_Loaded;
             Unloaded += ManagementBalansCompareMainUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager(
-                "KursAM2.View.Management.Controls.ManagementBalansCompareMainUI", treeListBalans);
+                GlobalOptions.KursSystem(),"KursAM2.View.Management.Controls.ManagementBalansCompareMainUI", treeListBalans);
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

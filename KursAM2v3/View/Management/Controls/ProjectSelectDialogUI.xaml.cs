@@ -11,6 +11,7 @@ using DevExpress.Xpf.Grid;
 using DevExpress.XtraGrid;
 using KursAM2.View.DialogUserControl;
 using KursAM2.ViewModel.Management.Projects;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using LayoutManager;
 
@@ -26,7 +27,7 @@ namespace KursAM2.View.Management.Controls
         {
             InitializeComponent(); 
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, gridDocument);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, gridDocument);
             LayoutControl = LayoutControl;
             gridDocuments = new LayoutManagerGridAutoGenerationColumns(GetType().Name, gridDocument);
             Loaded += ProjectSelectDialogUI_Loaded;

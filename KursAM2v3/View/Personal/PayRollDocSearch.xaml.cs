@@ -22,8 +22,7 @@ namespace KursAM2.View.Personal
         public PayRollDocSearch()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, mainLayoutControl);
             Loaded += PayRollDocSearch_Loaded;
             Closing += PayRollDocSearch_Closing;
         }

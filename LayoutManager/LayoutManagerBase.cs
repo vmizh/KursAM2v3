@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using Data;
 using DevExpress.Data;
 using DevExpress.Xpf.Core.Serialization;
+using DevExpress.Xpf.Docking;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
@@ -33,6 +34,8 @@ namespace LayoutManager
                 return spath;
             }
         }
+
+        public KursSystemEntities Context { get; set; }
 
         [DataMember(IsRequired = false)] public XDocument OptionsData { set; get; }
 
@@ -58,12 +61,33 @@ namespace LayoutManager
             {
                 var saveLayout = WindowSave();
                 var sb = new StringBuilder();
+                var isSave = false;
                 if (!IsWindowOnly)
                 {
                     var ms = new MemoryStream();
                     if (LayoutControl != null && !(LayoutControl is DataLayoutControl))
                     {
-                        DXSerializer.Serialize(LayoutControl, ms, "Kurs");
+                        if (LayoutControl is GridControl grid)
+                        {
+                            grid.SaveLayoutToStream(ms);
+                            isSave = true;
+                        }
+                        if (LayoutControl is TreeListControl tr)
+                        {
+                            ms.Position = 0;
+                            tr.SaveLayoutToStream(ms);
+                            isSave = true;
+                        }
+                        if (LayoutControl is DockLayoutManager dl)
+                        {
+                            ms.Position = 0;
+                            dl.SaveLayoutToStream(ms);
+                            isSave = true;
+                        }
+                        if(!isSave)
+                        {
+                            DXSerializer.Serialize(LayoutControl, ms, "Kurs");
+                        }
                         saveLayout.Layout = ms.ToArray();
                     }
 
@@ -76,49 +100,41 @@ namespace LayoutManager
                     }
                 }
 
-                var connString = new SqlConnectionStringBuilder
-                {
-                    DataSource = "172.16.1.1",
-                    InitialCatalog = "KursSystem",
-                    UserID = "sa",
-                    Password = "CbvrfFhntvrf65"
-                }.ToString();
-                using (var ctx = new KursSystemEntities(connString))
-                {
-                    if (CurrentUser.UserInfo == null) return;
-                    var w = Win != null ? Win.GetType().Name : "Control";
-                    var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
-                                                               && _.FormName == w && _.ControlName == FileName);
-                    try
-                    {
-                        if (l == null)
-                        {
-                            ctx.FormLayout.Add(new FormLayout
-                            {
-                                Id = Guid.NewGuid(),
-                                UpdateDate = DateTime.Now,
-                                UserId = CurrentUser.UserInfo.KursId,
-                                FormName = w,
-                                ControlName = FileName,
-                                Layout = sb.ToString()
-                            });
-                        }
-                        else
-                        {
-                            l.UpdateDate = DateTime.Now;
-                            l.UserId = CurrentUser.UserInfo.KursId;
-                            l.FormName = w;
-                            l.ControlName = FileName;
-                            l.Layout = sb.ToString();
-                        }
 
-                        ctx.SaveChanges();
-                    }
-                    catch (Exception ex)
+                if (CurrentUser.UserInfo == null) return;
+                var w = Win != null ? Win.GetType().Name : "Control";
+                var l = Context.FormLayout.FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
+                                                           && _.FormName == w && _.ControlName == FileName);
+                try
+                {
+                    if (l == null)
                     {
-                        MessageBox.Show($"Ошибка сохранения разметки {w} / {FileName}" + $"{ex}");
+                        Context.FormLayout.Add(new FormLayout
+                        {
+                            Id = Guid.NewGuid(),
+                            UpdateDate = DateTime.Now,
+                            UserId = CurrentUser.UserInfo.KursId,
+                            FormName = w,
+                            ControlName = FileName,
+                            Layout = sb.ToString()
+                        });
                     }
+                    else
+                    {
+                        l.UpdateDate = DateTime.Now;
+                        l.UserId = CurrentUser.UserInfo.KursId;
+                        l.FormName = w;
+                        l.ControlName = FileName;
+                        l.Layout = sb.ToString();
+                    }
+
+                    Context.SaveChanges();
                 }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Ошибка сохранения разметки {w} / {FileName}" + $"{ex}");
+                }
+
             }
 #pragma warning disable 168
             catch (Exception ex)
@@ -160,20 +176,13 @@ namespace LayoutManager
         public virtual void Load(bool autoSummary = false)
         {
             if (CurrentUser.UserInfo == null) return;
-            var connString = new SqlConnectionStringBuilder
-            {
-                DataSource = "172.16.1.1",
-                InitialCatalog = "KursSystem",
-                UserID = "sa",
-                Password = "CbvrfFhntvrf65"
-            }.ToString();
+           
             string layoutData = null;
-            using (var ctx = new KursSystemEntities(connString))
-            {
+            
                 var w = Win != null ? Win.GetType().Name : "Control";
                 try
                 {
-                    var l = ctx.FormLayout.FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
+                    var l = Context.FormLayout.FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
                                                                && _.FormName == w && _.ControlName == FileName);
                     if (l != null) layoutData = l.Layout;
                 }
@@ -181,7 +190,7 @@ namespace LayoutManager
                 {
                     MessageBox.Show($"Ошибка загрузки разметки {w} " + ex.Message);
                 }
-            }
+            
 
             if (!IsLayoutExists() && layoutData == null) return;
             try
@@ -234,11 +243,39 @@ namespace LayoutManager
                     Win.Top = p.FormTop < 0 ? 0 : p.FormTop;
                 }
 
+                var isLoad = false;
                 if (p.Layout == null || IsWindowOnly) return;
                 var ms = new MemoryStream(p.Layout);
-                //var doc = XDocument.Load(ms);
+                var doc = XDocument.Load(ms);
                 if (LayoutControl != null)
-                    DXSerializer.Deserialize(LayoutControl, ms, "Kurs");
+                {
+                    if (LayoutControl is GridControl grid)
+                    {
+                        ms.Position = 0;
+                        grid.RestoreLayoutFromStream(ms);
+                        isLoad = true;
+                    }
+
+                    if (LayoutControl is TreeListControl tr)
+                    {
+                        ms.Position = 0;
+                        tr.RestoreLayoutFromStream(ms);
+                        isLoad = true;
+                    }
+
+                    if (LayoutControl is DockLayoutManager dl)
+                    {
+                        ms.Position = 0;
+                        dl.RestoreLayoutFromStream(ms);
+                        isLoad = true;
+                    }
+
+                    if (!isLoad)
+                    {
+                        DXSerializer.Deserialize(LayoutControl, ms, "Kurs");
+                    }
+                }
+
                 var grids = WindowHelper.GetLogicalChildCollection<GridControl>(LayoutControl);
                 var trees = WindowHelper.GetLogicalChildCollection<TreeListControl>(LayoutControl);
                 if (grids != null && grids.Count > 0)
@@ -365,11 +402,17 @@ namespace LayoutManager
                     Win.Width = 800;
                 }
             }
-            catch
+            catch (XmlException xmlEx)
             {
-                if (!File.Exists($"{AppDataPath}\\{FileName}.xml"))
-                    File.Delete($"{AppDataPath}\\{FileName}.xml");
-                ResetLayout();
+                return;
+            }
+            catch(Exception ex) 
+            {
+                MessageBox.Show(ex.Message,
+                    "Ошибка",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                //ResetLayout();
             }
         }
     }

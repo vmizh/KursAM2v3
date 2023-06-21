@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using DevExpress.Xpf.Core;
 using KursAM2.ViewModel.Logistiks;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Logistiks.UC
@@ -15,7 +16,7 @@ namespace KursAM2.View.Logistiks.UC
         {
             InitializeComponent(); 
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, treeListWarehouse);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, treeListWarehouse);
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

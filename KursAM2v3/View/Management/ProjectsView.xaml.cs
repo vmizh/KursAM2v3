@@ -23,8 +23,7 @@ namespace KursAM2.View.Management
         public ProjectsView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, mainLayoutControl);
             Loaded += ProjectsView_Loaded;
             Closing += ProjectsView_Closing;
         }

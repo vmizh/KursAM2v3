@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using DevExpress.Xpf.Core;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Period
@@ -13,8 +14,7 @@ namespace KursAM2.View.Period
         public PeriodCloseManagementView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Loaded += PeriodCloseManagemen_Loaded;
             Closing += PeriodCloseManagemen_Closing;
         }

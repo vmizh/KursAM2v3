@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using DevExpress.Xpf.Core;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.KursReferences.UC
@@ -13,7 +14,7 @@ namespace KursAM2.View.KursReferences.UC
         {
             InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, gridControlStore);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, gridControlStore);
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

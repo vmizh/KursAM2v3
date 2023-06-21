@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using KursDomain.References;
 
@@ -11,13 +12,16 @@ public interface IInvoiceClientRow
     [Display(AutoGenerateField = false)] public Guid Id { set; get; }
     [Display(AutoGenerateField = false)] public Guid DocId { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Номенклатура")]
+    [Display(AutoGenerateField = true, Name = "Номенклатура"), ReadOnly(true)]
     public Nomenkl Nomenkl { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Ном.№")]
+    [Display(AutoGenerateField = true, Name = "Ном.№"), ReadOnly(true)]
     public string NomNomenkl { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Услуга")]
+    [Display(AutoGenerateField = true, Name = "Ед.Изм"), ReadOnly(true)]
+    Unit Unit { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Услуга"), ReadOnly(true)]
     public bool IsUsluga { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Кол-во")]
@@ -28,7 +32,7 @@ public interface IInvoiceClientRow
     [DisplayFormat(DataFormatString = "n2")]
     public decimal Price { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Сумма")]
+    [Display(AutoGenerateField = true, Name = "Сумма"), ReadOnly(true)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal Summa { set; get; }
 
@@ -40,11 +44,11 @@ public interface IInvoiceClientRow
     [DisplayFormat(DataFormatString = "n4")]
     public decimal Shipped { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Остаток")]
+    [Display(AutoGenerateField = true, Name = "Остаток"), ReadOnly(true)]
     [DisplayFormat(DataFormatString = "n4")]
     public decimal Rest { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Текущий остаток")]
+    [Display(AutoGenerateField = true, Name = "Текущий остаток"), ReadOnly(true)]
     [DisplayFormat(DataFormatString = "n4")]
     public decimal CurrentRemains { set; get; }
 

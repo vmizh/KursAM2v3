@@ -32,7 +32,7 @@ namespace KursAM2.View.KursReferences
                 IsTextEditable = false
             };
             myBnEditor.DefaultButtonClick += MyBnEditor_DefaultButtonClick;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, treeListControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, treeListControl);
             Loaded += ProjectReferenceView_Loaded;
             Unloaded += ProjectReferenceView_Unloaded;
         }

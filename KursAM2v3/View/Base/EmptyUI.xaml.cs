@@ -1,4 +1,4 @@
-﻿using DevExpress.Xpf.Core;
+﻿using KursDomain;
 
 namespace KursAM2.View.Base
 {
@@ -9,8 +9,10 @@ namespace KursAM2.View.Base
     {
         public EmptyUI()
         {
-            InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent();
+          
         }
+
+        
     }
 }

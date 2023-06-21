@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using DevExpress.Xpf.Core;
+using KursDomain;
 using LayoutManager;
 using ILayout = DevExpress.Xpf.Charts.Native.ILayout;
 
@@ -17,7 +18,7 @@ namespace KursAM2.View.KursReferences.KontragentControls
             InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             SizeChanged += delegate { SetSizeOfFrame(); };
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Loaded += KontragentCardView_OnLoaded;
             Loaded += MutualAccountingSearchView_Loaded;
             Unloaded += MutualAccountingSearchView_Unloaded;

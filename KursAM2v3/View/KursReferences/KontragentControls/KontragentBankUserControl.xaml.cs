@@ -4,6 +4,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.Grid.LookUp;
 using KursAM2.ViewModel.Reference.Kontragent;
+using KursDomain;
 using KursDomain.Documents.CommonReferences.Kontragent;
 using LayoutManager;
 
@@ -19,7 +20,7 @@ namespace KursAM2.View.KursReferences.KontragentControls
         {
             InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, LayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, bankGridControl);
             Loaded += MutualAccountingSearchView_Loaded;
             Unloaded += MutualAccountingSearchView_Unloaded;
         }

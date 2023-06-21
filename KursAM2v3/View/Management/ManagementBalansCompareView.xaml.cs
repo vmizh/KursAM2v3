@@ -5,6 +5,7 @@ using System.Windows.Input;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.WindowsUI.Navigation;
 using KursAM2.View.Behaviors;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Management
@@ -17,8 +18,7 @@ namespace KursAM2.View.Management
         public ManagementBalansCompareView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Closing += ManagementBalansCompareView_Closing;
             Loaded += ManagementBalansCompareView_Loaded;
         }

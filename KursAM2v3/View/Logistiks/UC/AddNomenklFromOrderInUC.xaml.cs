@@ -4,6 +4,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Logistiks.UC
@@ -21,7 +22,7 @@ namespace KursAM2.View.Logistiks.UC
             LayoutName = layoutName;
             InitializeComponent(); 
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, mainControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, mainControl);
             LayoutControl = mainControl;
             Loaded += UserControl_Loaded;
             Unloaded += UserControl_Unloaded;

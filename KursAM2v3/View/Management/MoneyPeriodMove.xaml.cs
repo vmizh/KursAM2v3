@@ -4,6 +4,7 @@ using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using KursAM2.ViewModel.Management;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Management
@@ -18,8 +19,8 @@ namespace KursAM2.View.Management
 
         public MoneyPeriodMove()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            InitializeComponent();
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Loaded += MoneyPeriodMove_Loaded;
             Closing += MoneyPeriodMove_Closing;
             myTimer = new Timer();

@@ -33,9 +33,8 @@ namespace KursAM2.View.Logistiks.Warehouse
         public WaybillView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             gridRowsLayout = new LayoutManagerGridAutoGenerationColumns(GetType().Name, gridRows);
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, null);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, null);
             Loaded += WaybillClientView_Loaded;
             Closing += WaybillClientView_Closing;
         }

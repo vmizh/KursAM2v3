@@ -102,7 +102,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     gridRows.TotalSummary.Add(summary);
                 }
 
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, gridRows);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, gridRows);
         }
 
         private void LayoutItems_OnAutoGeneratingItem(object sender, DataLayoutControlAutoGeneratingItemEventArgs e)

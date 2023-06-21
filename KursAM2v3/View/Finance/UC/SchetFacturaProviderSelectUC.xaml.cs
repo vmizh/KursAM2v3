@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using DevExpress.Xpf.Core;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Finance.UC
@@ -13,7 +14,7 @@ namespace KursAM2.View.Finance.UC
         {
             InitializeComponent(); 
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, mainLyoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, mainLyoutControl);
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

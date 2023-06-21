@@ -29,7 +29,7 @@ namespace KursAM2.View.KursReferences
         {
             InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             gridCashLayout = new LayoutManagerGridAutoGenerationColumns(GetType().Name, gridCash);
             gridBankLayout = new LayoutManagerGridAutoGenerationColumns(GetType().Name, gridBank);
             Closing += CashAndBanksReferenceView_Closing;

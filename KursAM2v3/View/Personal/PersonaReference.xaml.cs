@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using DevExpress.Xpf.Core;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Personal
@@ -13,8 +14,7 @@ namespace KursAM2.View.Personal
         public PersonaReference()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, gridControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, gridControl);
             Loaded += PersonaReference_Loaded;
             Closing += PersonaReference_Closing;
         }

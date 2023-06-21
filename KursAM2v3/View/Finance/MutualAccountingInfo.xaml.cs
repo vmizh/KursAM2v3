@@ -6,6 +6,7 @@ using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.ViewModel.Finance;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Finance
@@ -19,7 +20,7 @@ namespace KursAM2.View.Finance
         {
             InitializeComponent(); 
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Closing += Form_Closing;
             Loaded += Form_Loaded;
         }

@@ -6,6 +6,7 @@ using System.Windows;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using Helper;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
@@ -44,7 +45,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Documents = new ObservableCollection<IInvoiceProvider>();
             SelectedDocs = new ObservableCollection<IInvoiceProvider>();
             EndDate = DateTime.Today;
-            StartDate = EndDate.AddDays(-30);
         }
 
         public SearchInvoiceProviderViewModel(Window form) : base(form)
@@ -169,7 +169,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 frm.gridDocumentsTableView.ShowTotalSummary = true;
             }
-           
+            StartDate = DateHelper.GetFirstDate();
         }
     }
 }

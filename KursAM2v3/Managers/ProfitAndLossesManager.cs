@@ -352,7 +352,7 @@ namespace KursAM2.Managers
                         Kontragent = e.Kontragent,
                         CurrencyName = ((IName)e.Kontr.Currency).Name,
                         Nomenkl = e.Nomenkl,
-                        DocTypeCode = DocumentType.Waybill
+                        DocTypeCode = DocumentType.Waybill,
                     };
                     SetCurrenciesValue(newOp, ((IDocCode)e.Kontr.Currency).DocCode, e.Profit,
                         e.Loss * GetRate(MyRates, ((IDocCode)e.Nomenkl.Currency).DocCode,

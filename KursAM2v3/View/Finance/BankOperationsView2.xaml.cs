@@ -5,6 +5,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
+using KursDomain;
 using KursDomain.Documents.Bank;
 using LayoutManager;
 
@@ -24,7 +25,7 @@ namespace KursAM2.View.Finance
         public BankOperationsView2()
         {
             InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, null);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, null);
             groupLayout = new LayoutManagerGridAutoGenerationColumns(GetType().Name, Group);
             Loaded += Bank_Loaded;
             Closing += Bank_Closing;

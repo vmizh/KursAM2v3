@@ -4,6 +4,7 @@ using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Personal;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Personal
@@ -20,8 +21,7 @@ namespace KursAM2.View.Personal
         public PersonalPaysView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Loaded += PersonalPaysView_Loaded;
             Closing += PersonalPaysView_Closing;
         }

@@ -4,6 +4,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Management.Controls
@@ -20,7 +21,7 @@ namespace KursAM2.View.Management.Controls
             Loaded += BalansCompareMoneyInPathUI_Loaded;
             Unloaded += BalansCompareMoneyInPathUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager(
-                "KursAM2.View.Management.Controls.BalansCompareMoneyInPathUI",
+                GlobalOptions.KursSystem(),"KursAM2.View.Management.Controls.BalansCompareMoneyInPathUI",
                 gridMoneyInPath);
         }
 

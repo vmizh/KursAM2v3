@@ -519,16 +519,28 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     Document.Entity.TD_24.Remove(row.Entity);
                 }
         }
+        //OpenMainSchetCommand
+
+        public ICommand OpenMainSchetCommand
+        {
+            get { return new Command(OpenMainSchet, _ => Document.InvoiceClientViewModel != null); }
+        }
+
+        private void OpenMainSchet(object obj)
+        {
+            // ReSharper disable once PossibleInvalidOperationException
+            DocumentsOpenManager.Open(DocumentType.InvoiceClient, Document.InvoiceClientViewModel.DocCode);
+        }
 
         public ICommand OpenSchetCommand
         {
-            get { return new Command(OpenSchet, _ => Document.InvoiceClientViewModel != null); }
+            get { return new Command(OpenSchet, _ => CurrentNomenklRow?.SchetLinkedRowViewModel != null); }
         }
 
         private void OpenSchet(object obj)
         {
             // ReSharper disable once PossibleInvalidOperationException
-            DocumentsOpenManager.Open(DocumentType.InvoiceClient, Document.InvoiceClientViewModel.DocCode);
+            DocumentsOpenManager.Open(DocumentType.InvoiceClient,  CurrentNomenklRow.SchetLinkedRowViewModel.DocCode);
         }
 
         public ICommand DeleteSchetCommand

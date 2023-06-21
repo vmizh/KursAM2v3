@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Logistiks
@@ -11,8 +12,8 @@ namespace KursAM2.View.Logistiks
     {
         public NomenklMove()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            InitializeComponent(); 
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Loaded += NomenklMove_Loaded;
             Closing += NomenklMove_Closing;
         }

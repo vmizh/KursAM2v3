@@ -31,15 +31,16 @@
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
-    <DockPanel Style="{StaticResource DXServicesDialogOnly}">
+    <DockPanel Style="{StaticResource DXServices}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
-        <DockPanel Margin="0,5,5,5" DockPanel.Dock="Top" LastChildFill="False">
+        <StackPanel Margin="0,5,5,5" DockPanel.Dock="Top">
             <dxlc:LayoutItem Label="Поиск"
                              ToolTip="Строка поиска по полям документов"
                              Height="26"
-                             Name="TextSearch"
+                             x:Name="TextSearch"
                              Width="350"
-                             HorizontalAlignment="Right">
+                             HorizontalAlignment="Right"
+                             >
                 <dxe:ButtonEdit AllowDefaultButton="False"
                                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
                     <dxe:ButtonEdit.Buttons>
@@ -52,48 +53,48 @@
                     </dxmvvm:Interaction.Behaviors>
                 </dxe:ButtonEdit>
             </dxlc:LayoutItem>
-        </DockPanel>
+        </StackPanel>
         <dxlc:LayoutControl x:Name="mainLayoutControl"
                             Orientation="Horizontal" Padding="0"
-                            dx:DXSerializer.SerializationID="mainLayoutControl"
-                            dx:DXSerializer.StoreLayoutMode="All">
+                            >
             <dxlc:LayoutGroup View="Group"
+                              Name="Group_1"
                               dxlc:LayoutControl.AllowHorizontalSizing="True"
-                              dx:DXSerializer.SerializationID="Group"
-                              dx:DXSerializer.StoreLayoutMode="All"
                               IsEnabled="{Binding IsGroupEnabled, UpdateSourceTrigger=PropertyChanged}"
                               VerticalAlignment="Stretch"
                               HorizontalAlignment="Left">
                 <dxg:TreeListControl x:Name="treeListCategory"
-                                     AutoGenerateColumns="None"
-                                     EnableSmartColumnsGeneration="True"
-                                     VerticalAlignment="Stretch"
-                                     HorizontalAlignment="Stretch"
+                                     ShowBorder="False"
+                                     dx:DXSerializer.Enabled="True"
                                      dx:DXSerializer.SerializationID="treeListCategory"
                                      dx:DXSerializer.StoreLayoutMode="All"
                                      dxg:DataControlSerializationOptions.AddNewColumns="True"
                                      dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                     MaxHeight="10000"
+                                     MaxWidth="10000"
+                                     EnableSmartColumnsGeneration="True"
+                                     AutoGenerateColumns="RemoveOld"
+                                     HorizontalAlignment="Stretch"
+                                     VerticalAlignment="Stretch"
+                                     UseFieldNameForSerialization="True"
+                                     SelectionMode="None"
                                      ItemsSource="{Binding Groups}"
                                      CurrentItem="{Binding CurrentGroup, Mode=TwoWay}"
-                                     ShowBorder="False"
-                                     IsEnabled="{Binding IsGroupEnabled, UpdateSourceTrigger=PropertyChanged}">
-                    <dxg:TreeListControl.Columns>
-                        <dxg:TreeListColumn x:Name="tcol_1"
-                                            Header="Наименование"
-                                            FieldName="Name"
-                                            AllowEditing="False" />
-                    </dxg:TreeListControl.Columns>
+                                     IsEnabled="{Binding IsGroupEnabled, UpdateSourceTrigger=PropertyChanged}"
+                                     AutoGeneratingColumn="TreeListCategory_OnAutoGeneratingColumn">
                     <dxg:TreeListControl.View>
                         <dxg:TreeListView x:Name="treeListViewCategory"
-                                          AllowPerPixelScrolling="True"
+                                          ShowTotalSummary="False"
+                                          ShowAutoFilterRow="False"
+                                          AllowSorting="False"
+                                          NavigationStyle="Cell"
                                           KeyFieldName="EG_ID"
                                           ParentFieldName="EG_PARENT_ID"
-                                          NavigationStyle="Cell"
                                           SearchPanelFindFilter="Contains"
                                           ShowHorizontalLines="False"
                                           ShowVerticalLines="False"
                                           ShowFilterPanelMode="Never"
-                                          ShowIndicator="False">
+                                          ShowIndicator="False" ShowCriteriaInAutoFilterRow="False">
                             <dxg:TreeListView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Добавить в корень" Command="{Binding TreeAddInRootCommand}" />
@@ -137,21 +138,13 @@
                                   HorizontalAlignment="Stretch"
                                   dxlc:LayoutControl.AllowVerticalSizing="True">
                     <dxg:GridControl x:Name="gridControlKontragent"
-                                     AutoGenerateColumns="AddNew"
-                                     EnableSmartColumnsGeneration="True"
-                                     VerticalAlignment="Stretch"
-                                     HorizontalAlignment="Stretch"
-                                     MaxHeight="10000"
-                                     MaxWidth="10000"
+                                     Style="{StaticResource GridControl.Base}"
                                      dx:DXSerializer.SerializationID="gridControlKontragent"
-                                     dx:DXSerializer.StoreLayoutMode="All"
-                                     dxg:DataControlSerializationOptions.AddNewColumns="True"
-                                     dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                      ItemsSource="{Binding KontragentsInGroup}"
                                      CurrentItem="{Binding CurrentKontragent,Mode=TwoWay}"
                                      SelectionMode="Row"
                                      AutoGeneratingColumn="GridControlKontragent_OnAutoGeneratingColumn">
-                        <dxg:GridControl.Columns>
+                        <!--<dxg:GridControl.Columns>
                             <dxg:GridColumn Name="col_1_1" Header="Наименование" FieldName="Name" ReadOnly="True" />
                             <dxg:GridColumn Name="col_1_2" Header="Валюта" FieldName="BalansCurrency" ReadOnly="True" />
                             <dxg:GridColumn Name="col_1_3" Header="Ответственный" FieldName="OtvetstLico"
@@ -161,9 +154,10 @@
                             <dxg:GridColumn Name="col_1_5" Header="Включен в баланс" FieldName="IsBalans"
                                             ReadOnly="True" />
                             <dxg:GridColumn Name="col_1_6" Header="ИНН" FieldName="INN" ReadOnly="True" />
-                        </dxg:GridControl.Columns>
+                        </dxg:GridControl.Columns>-->
                         <dxg:GridControl.View>
                             <dxg:TableView x:Name="tableControlKontragent"
+                                           Style="{StaticResource TableView.Standart}"
                                            AllowPerPixelScrolling="True"
                                            ShowTotalSummary="False">
                                 <dxg:TableView.ContextMenu>
@@ -212,69 +206,69 @@
                                             Orientation="Vertical"
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Stretch" Padding="0">
-                            <dxlc:LayoutItem Margin="0,0,0,5" Label="Краткое наименование">
+                            <dxlc:LayoutItem Margin="0,0,0,5" Label="Краткое наименование"  x:Name="item_1">
                                 <dxe:TextEdit
                                     EditValue="{Binding CurrentKontragent.Name, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem>
+                            <dxlc:LayoutItem x:Name="item_2"> 
                                 <Label FontSize="20" Content="Наименование и баланс" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Margin="0,0,0,5" HorizontalAlignment="Stretch" Label="Полное наименование">
+                            <dxlc:LayoutItem Margin="0,0,0,5" HorizontalAlignment="Stretch" Label="Полное наименование" x:Name="item_3">
                                 <TextBox
                                     Text="{Binding CurrentKontragent.NAME_FULL, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}"
                                     TextWrapping="Wrap" Height="50" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Margin="0,0,0,5" Label="Категория">
+                            <dxlc:LayoutItem Margin="0,0,0,5" Label="Категория" x:Name="item_4">
                                 <dxe:ComboBoxEdit
                                     DisplayMember="Name"
                                     AutoComplete="True"
                                     EditValue="{Binding Category, Mode=TwoWay}"
                                     ItemsSource="{Binding Categories, Mode=OneWay}" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Margin="0,0,0,5" Label="Ответственное лицо">
+                            <dxlc:LayoutItem Margin="0,0,0,5" Label="Ответственное лицо" x:Name="item_5">
                                 <dxe:ComboBoxEdit
                                     DisplayMember="Name"
                                     AutoComplete="True"
                                     EditValue="{Binding OtvetstLico, Mode=TwoWay}"
                                     ItemsSource="{Binding Employees, Mode=OneWay}" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutGroup Orientation="Horizontal">
-                                <dxlc:LayoutItem Margin="1,0,0,5" HorizontalAlignment="Left" Label="Включать в баланс ">
+                            <dxlc:LayoutGroup Orientation="Horizontal" x:Name="group_9">
+                                <dxlc:LayoutItem Margin="1,0,0,5" HorizontalAlignment="Left" Label="Включать в баланс " x:Name="item_6">
                                     <dxe:CheckEdit
                                         IsChecked="{Binding CurrentKontragent.IsBalans, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" />
                                 </dxlc:LayoutItem>
-                                <dxlc:LayoutItem Margin="5,0,0,5" Label="с ">
+                                <dxlc:LayoutItem Margin="5,0,0,5" Label="с " x:Name="item_7">
                                     <dxe:DateEdit Width="100"
                                                   EditValue="{Binding CurrentKontragent.START_BALANS, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" />
                                 </dxlc:LayoutItem>
-                                <dxlc:LayoutItem Margin="5 0 0 5" Label="Валюта">
+                                <dxlc:LayoutItem Margin="5 0 0 5" Label="Валюта" x:Name="item_8">
                                     <dxe:ComboBoxEdit Width="100"
                                                       EditValue="{Binding CurrentCurrencies, Mode=TwoWay}"
                                                       ItemsSource="{Binding Currencies, Mode=OneWay}" />
                                 </dxlc:LayoutItem>
                             </dxlc:LayoutGroup>
-                            <dxlc:LayoutItem HorizontalAlignment="Right" Margin="5,0,0,5"
+                            <dxlc:LayoutItem HorizontalAlignment="Right" Margin="5,0,0,5" x:Name="item_9"
                                              Label="Сумма на начало (+ нам должны/ - - мы должны)">
                                 <dxe:PopupCalcEdit Width="100"
                                                    EditValue="{Binding CurrentKontragent.START_SUMMA, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem HorizontalAlignment="Right"
+                            <dxlc:LayoutItem HorizontalAlignment="Right" x:Name="item_10"
                                              Label="Максимальный кредит">
                                 <dxe:PopupCalcEdit Width="100"
                                                    EditValue="{Binding CurrentKontragent.MAX_KREDIT_SUM, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem HorizontalAlignment="Center">
+                            <dxlc:LayoutItem HorizontalAlignment="Center" x:Name="item_11">
                                 <dxe:CheckEdit Content="Физическое лицо"
                                                IsChecked="{Binding CurrentKontragent.IsPhysEmployes, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True, UpdateSourceTrigger=PropertyChanged}" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Label="Сотрудник" Margin="0 0 0 5">
+                            <dxlc:LayoutItem Label="Сотрудник" Margin="0 0 0 5" x:Name="item_12">
                                 <dxe:ComboBoxEdit
                                     ItemsSource="{Binding Employees, Mode=OneWay}"
                                     EditValue="{Binding CurrentEmployees, Mode=TwoWay}"
                                     DisplayMember="Name"
                                     AutoComplete="True" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Label="Примечание">
+                            <dxlc:LayoutItem Label="Примечание" x:Name="item_13">
                                 <TextBox TextWrapping="Wrap"
                                          Text="{Binding CurrentKontragent.NOTES, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
                                          Height="50" />
@@ -283,48 +277,48 @@
                     </dxlc:LayoutGroup>
                     <dxlc:LayoutGroup x:Name="layoutGroupContact" Header="Контакты">
                         <dxlc:LayoutGroup Orientation="Vertical" HorizontalAlignment="Stretch">
-                            <dxlc:LayoutItem Label="Контактное лицо " Margin="0,0,0,5">
+                            <dxlc:LayoutItem Label="Контактное лицо " Margin="0,0,0,5" x:Name="item_14">
                                 <dxe:TextEdit
                                     EditValue="{Binding CurrentKontragent.CONTAKT_LICO, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutGroup Orientation="Horizontal">
+                            <dxlc:LayoutGroup Orientation="Horizontal" x:Name="item_15">
                                 <dxlc:LayoutItem Label="Телефон " Margin="0,0,0,5">
                                     <dxe:TextEdit
                                         EditValue="{Binding CurrentKontragent.TEL, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
                                 </dxlc:LayoutItem>
-                                <dxlc:LayoutItem Label="Факс " Margin="10,0,0,5">
+                                <dxlc:LayoutItem Label="Факс " Margin="10,0,0,5" x:Name="item_16">
                                     <dxe:TextEdit
                                         EditValue="{Binding CurrentKontragent.FAX, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
                                 </dxlc:LayoutItem>
                             </dxlc:LayoutGroup>
-                            <dxlc:LayoutItem Label="Почтовый адрес" Margin="0,0,0,5" MinWidth="500">
+                            <dxlc:LayoutItem Label="Почтовый адрес" Margin="0,0,0,5" MinWidth="500" x:Name="item_17">
                                 <TextBox
                                     Text="{Binding CurrentKontragent.ADDRESS, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                                     Height="50" TextWrapping="Wrap" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Label="Пасспорт">
+                            <dxlc:LayoutItem Label="Пасспорт" x:Name="item_18">
                                 <TextBox
                                     Text="{Binding CurrentKontragent.PASSPORT, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                                     TextWrapping="Wrap" Height="50" />
                             </dxlc:LayoutItem>
                         </dxlc:LayoutGroup>
-                        <dxlc:LayoutGroup Orientation="Vertical" MinWidth="400">
-                            <dxlc:LayoutItem Label="Руководитель" Margin="0,0,0,5">
+                        <dxlc:LayoutGroup Orientation="Vertical" MinWidth="400" x:Name="group_12">
+                            <dxlc:LayoutItem Label="Руководитель" Margin="0,0,0,5" x:Name="item_19">
                                 <dxe:TextEdit
                                     EditValue="{Binding CurrentKontragent.HEADER, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}" />
                             </dxlc:LayoutItem>
                             <dxlc:LayoutGroup>
-                                <dxlc:LayoutItem Label="Гл.бухгалтер">
+                                <dxlc:LayoutItem Label="Гл.бухгалтер" x:Name="item_20">
                                     <dxe:TextEdit
                                         EditValue="{Binding CurrentKontragent.GLAVBUH, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}" />
                                 </dxlc:LayoutItem>
-                                <dxlc:LayoutItem Label="Кассир" Margin="10,0,0,5">
+                                <dxlc:LayoutItem Label="Кассир" Margin="10,0,0,5" x:Name="item_21">
                                     <dxe:TextEdit
                                         EditValue="{Binding CurrentKontragent.KASSIR, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}" />
                                 </dxlc:LayoutItem>
                             </dxlc:LayoutGroup>
-                            <dxlc:LayoutGroup>
-                                <dxlc:LayoutItem Label="EMail" Margin="0,0,0,0">
+                            <dxlc:LayoutGroup x:Name="group_15">
+                                <dxlc:LayoutItem Label="EMail" Margin="0,0,0,0" x:Name="item_22">
                                     <dxe:TextEdit
                                         EditValue="{Binding CurrentKontragent.E_MAIL, 
                         NotifyOnSourceUpdated=True,
@@ -339,29 +333,29 @@
                             </dxlc:LayoutGroup>
                         </dxlc:LayoutGroup>
                     </dxlc:LayoutGroup>
-                    <dxlc:LayoutGroup Orientation="Vertical">
+                    <dxlc:LayoutGroup Orientation="Vertical" x:Name="Group_25" Header="Реквизиты">
                         <dxlc:LayoutGroup Orientation="Vertical">
-                            <dxlc:LayoutItem Label="ИНН">
+                            <dxlc:LayoutItem Label="ИНН" x:Name="item_31">
                                 <dxe:TextEdit
                                     Text="{Binding CurrentKontragent.INN,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                                     HorizontalAlignment="Left" Width="250" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Label="КПП">
+                            <dxlc:LayoutItem Label="КПП" x:Name="item_32">
                                 <dxe:TextEdit
                                     Text="{Binding CurrentKontragent.KPP,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                                     HorizontalAlignment="Left" Width="250" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Label="ОКПО">
+                            <dxlc:LayoutItem Label="ОКПО" x:Name="item_33">
                                 <dxe:TextEdit
                                     Text="{Binding CurrentKontragent.OKPO,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                                     HorizontalAlignment="Left" Width="250" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Label="ОКОНХ">
+                            <dxlc:LayoutItem Label="ОКОНХ" x:Name="item_34">
                                 <dxe:TextEdit
                                     Text="{Binding CurrentKontragent.OKONH,NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                                     HorizontalAlignment="Left" Width="250" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Label="Регион">
+                            <dxlc:LayoutItem Label="Регион" x:Name="item_35">
                                 <dxe:ComboBoxEdit
                                     ItemsSource="{Binding Regions}"
                                     EditValue="{Binding CurrentRegions, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"

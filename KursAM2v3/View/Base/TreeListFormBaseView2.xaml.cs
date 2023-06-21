@@ -5,6 +5,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Reference;
+using KursDomain;
 
 namespace KursAM2.View.Base
 {
@@ -37,7 +38,7 @@ namespace KursAM2.View.Base
         private void TreeListFormBaseView_Loaded(object sender, RoutedEventArgs e)
         {
             if (LayoutManager == null)
-                LayoutManager = new LayoutManager.LayoutManager(GetType().Name + "." + (LayoutManagerName ?? "base"),
+                LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name + "." + (LayoutManagerName ?? "base"),
                     this, gridDocuments);
             LayoutManager.Load();
         }

@@ -49,7 +49,7 @@ namespace KursAM2.View.Base
             if (LayoutManager == null)
             {
                 var ctrl = DataContext as IDataUserControl;
-                LayoutManager = new LayoutManager.LayoutManager($"{GetType().Name}.{DataContext.GetType()}", this,
+                LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),$"{GetType().Name}.{DataContext.GetType()}", this,
                     ctrl?.LayoutControl);
             }
             //LayoutManager.Load();

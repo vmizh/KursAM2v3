@@ -15,8 +15,7 @@ namespace KursAM2.View.KursReferences.KontragentControls
         {
             InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            //Loaded += (o, args) => LayoutManagerOld.Load(myLayoutFileName, KontragentMainLayoutControl);
-            //Unloaded += (o, args) => LayoutManagerOld.Save(myLayoutFileName, KontragentMainLayoutControl);
+
         }
     }
 }

@@ -19,8 +19,7 @@ namespace KursAM2.View.Management
         public ProjectProviderPrihodView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, mainLayoutControl);
             Loaded += ProjectProviderPrihodView_Loaded;
             Closing += ProjectProviderPrihodView_Closing;
         }

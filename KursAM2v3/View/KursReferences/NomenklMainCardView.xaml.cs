@@ -3,6 +3,7 @@ using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using KursAM2.ViewModel.Reference.Nomenkl;
+using KursDomain;
 using KursDomain.ICommon;
 using LayoutManager;
 
@@ -17,7 +18,7 @@ namespace KursAM2.View.KursReferences
         {
             InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Loaded += NomenklMainCardView_Loaded;
             Closing += NomenklMainCardView_Closing;
             DataContextChanged += NomenklMainCardView_DataContextChanged;

@@ -6,6 +6,7 @@ using DevExpress.Xpf.Grid;
 using DevExpress.XtraGrid;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.ManagementBalans;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Management.Controls
@@ -27,7 +28,7 @@ namespace KursAM2.View.Management.Controls
             Loaded += BalansComareKontragentOperationsUI_Loaded;
             Unloaded += BalansComareKontragentOperationsUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager(
-                "KursAM2.View.Management.Controls.BalansComareKontragentOperationsUI",
+                GlobalOptions.KursSystem(),"KursAM2.View.Management.Controls.BalansComareKontragentOperationsUI",
                 gridControlKontrOperations);
         }
 

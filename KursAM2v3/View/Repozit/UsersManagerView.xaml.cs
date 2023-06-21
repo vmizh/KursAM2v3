@@ -2,6 +2,7 @@
 using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Repozit
@@ -14,8 +15,7 @@ namespace KursAM2.View.Repozit
         public UsersManagerView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, LayoutControlMain);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, LayoutControlMain);
             Loaded += UsersManagerView_Loaded;
             Closing += UsersManagerView_Closing;
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Transactions;
 using System.Windows;
@@ -19,6 +20,7 @@ using KursDomain.References;
 
 namespace KursAM2.ViewModel.Reference.Kontragent
 {
+    [SuppressMessage("ReSharper", "UnusedParameter.Local")]
     public class KontragentReferenceWindowViewModel : RSWindowViewModelBase
     {
         private KontragentViewModel _myCurrentKontragent;
@@ -35,6 +37,10 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             RefreshData(null);
             IsGroupEnabled = true;
         }
+
+        public override string WindowName => "Справочник контрагентов";
+        public override string LayoutName => "KontragentReferenceWindowViewModel";
+
 
         //public List<Kontragent> Kontragents => MainReferences.AllKontragents.Values.ToList();
         public ObservableCollection<KontragentViewModel> Kontragents { set; get; } =
@@ -568,7 +574,40 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         private void KontragentAddCopy(object obj)
         {
-            WindowManager.ShowFunctionNotReleased();
+            SD_43 doc = null;
+            using (var context = GlobalOptions.GetEntities())
+            {
+                doc = context.SD_43.Include(_ => _.TD_43)
+                    .Include(_ => _.UD_43)
+                    .Include(_ => _.SD_148)
+                    .Include(_ => _.SD_43_GRUZO)
+                    .Include("TD_43.SD_44")
+                    .AsNoTracking()
+                    .FirstOrDefault(_ => _.DOC_CODE == CurrentKontragent.DOC_CODE);
+                if (doc == null) return;
+            }
+
+            var form = new KontragentCardView { Owner = Application.Current.MainWindow };
+            var ctx = new KontragentCardWindowViewModel
+            {
+                Kontragent = new KontragentViewModel(doc),
+                Form = form
+            };
+            ctx.Kontragent.DOC_CODE = -1;
+            ctx.Kontragent.BalansCurrency = ctx.Currencies.FirstOrDefault(_ => _.DocCode == doc.VALUTA_DC);
+            ctx.CurrentCurrencies = ctx.Kontragent.BalansCurrency;
+            ctx.Kontragent.Name += "(новый)";
+            //ctx.Kontragent.FullName = string.IsNullOrWhiteSpace(ctx.Kontragent.FullName) ? null : ctx.Kontragent.FullName + "(новый)";
+            ctx.Kontragent.DELETED = 0;
+            //ctx.Kontragent.NAME_FULL = string.IsNullOrWhiteSpace(ctx.Kontragent.NAME_FULL) ? null : ctx.Kontragent.NAME_FULL + "(новый)";
+            ctx.Kontragent.START_SUMMA = 0;
+            ctx.Kontragent.State = RowStatus.NewRow;
+            ctx.Kontragent.Group = CurrentGroup;
+            ctx.Kontragent.IsBalans = true;
+            ctx.Kontragent.START_BALANS = DateTime.Today;
+            form.DataContext = ctx;
+            form.ShowDialog();
+            SetKontragentsInGroup();
         }
 
         public ICommand KontragentDeleteCommand

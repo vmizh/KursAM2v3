@@ -5,6 +5,7 @@ using System.Windows;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Management;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Management
@@ -17,8 +18,7 @@ namespace KursAM2.View.Management
         public ProjectProfitAndLossView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Closing += OnClosing;
             Loaded += ProfitAndLosses_Loaded;
             DataContextChanged += ManagementBalansView_DataContextChanged;

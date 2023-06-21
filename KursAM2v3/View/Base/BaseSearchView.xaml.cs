@@ -4,6 +4,7 @@ using DevExpress.Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Base
@@ -16,8 +17,8 @@ namespace KursAM2.View.Base
         public BaseSearchView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, gridDocuments);
+            //ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, gridDocuments);
             Loaded += ProviderSearchView_Loaded;
             Closing += ProviderSearchView_Closing;
         }

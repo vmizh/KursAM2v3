@@ -2,6 +2,7 @@
 using System.Windows;
 using DevExpress.Xpf.Core;
 using KursAM2.ViewModel.Personal;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Personal
@@ -16,8 +17,7 @@ namespace KursAM2.View.Personal
         public PayRollTypeReference()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
-            LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             //DataContext = myData;
             Loaded += PayRollTypeReference_Loaded;
             Closing += PayRollTypeReference_Closing;

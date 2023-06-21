@@ -4,6 +4,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Management.ManagementBalans;
+using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Management.Controls
@@ -25,7 +26,7 @@ namespace KursAM2.View.Management.Controls
             Loaded += BalansCompareKontragentUI_Loaded;
             Unloaded += BalansCompareKontragentUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager(
-                "KursAM2.View.Management.Controls.BalansCompareKontragentUI",
+                GlobalOptions.KursSystem(),"KursAM2.View.Management.Controls.BalansCompareKontragentUI",
                 gridKontragent);
         }
 
