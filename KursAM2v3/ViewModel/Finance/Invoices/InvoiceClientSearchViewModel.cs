@@ -157,7 +157,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get => myCurrentDocument;
             set
             {
-                if (Equals(myCurrentDocument, value)) return;
+                if (myCurrentDocument?.DocCode == value?.DocCode) return;
                 myCurrentDocument = value;
                 if (myCurrentDocument != null)
                 {

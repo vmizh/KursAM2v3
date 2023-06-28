@@ -78,7 +78,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             set
             {
                 // ReSharper disable once PossibleUnintendedReferenceComparison
-                if (myCurrentDocument == value) return;
+                if (myCurrentDocument?.DocCode == value?.DocCode) return;
                 myCurrentDocument = value;
                 if (myCurrentDocument != null)
                 {

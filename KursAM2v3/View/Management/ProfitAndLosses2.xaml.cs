@@ -4,11 +4,8 @@ using System.Windows;
 using System.Windows.Media;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
-using DevExpress.Xpf.WindowsUI;
 using DevExpress.Xpf.WindowsUI.Navigation;
-using KursAM2.View.Base;
 using KursAM2.View.Behaviors;
-using KursAM2.View.Management.ProfitAndLossesControls;
 using KursAM2.ViewModel.Management;
 using KursDomain;
 using LayoutManager;
@@ -25,7 +22,8 @@ namespace KursAM2.View.Management
         public ProfitAndLosses2()
         {
             InitializeComponent();
-            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),"ProfitAndLosses.Main", this, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), "ProfitAndLosses.Main", this,
+                mainLayoutControl);
             //Closing += OnClosing;
             //Loaded += ProfitAndLosses_Loaded;
         }
@@ -34,7 +32,7 @@ namespace KursAM2.View.Management
 
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
-       
+
         private void ProfitAndLosses_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
@@ -54,13 +52,9 @@ namespace KursAM2.View.Management
         public void NavigateTo(Type view)
         {
             if (DataContext is ProfitAndLossesWindowViewModel2 dtx)
-            {
                 if (dtx.ExtendActual.Count > 0)
-                {
                     if (navigationProfitFrame.Content is ILayout v)
                         v.LayoutManager.Save();
-                }
-            }
 
             INavigator navigator = new FrameProfitNavigator();
             navigator.Navigate(view);
@@ -106,6 +100,7 @@ namespace KursAM2.View.Management
                 b.Name = "Band_" + i;
                 i++;
             }
+
             var j = 0;
             foreach (var b in treeListMainNach1.Bands)
             {

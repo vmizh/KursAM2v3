@@ -232,9 +232,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             else
             {
                 foreach (var item in Document.Rows.Cast<InvoiceProviderRow>())
-                {
                     UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
-                }
                 Document.Entity.TD_26.Clear();
                 Document.Rows.Clear();
                 Document.SF_FACT_SUMMA = 0;
@@ -1411,20 +1409,44 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (res == MessageBoxResult.Yes) Document.IsAccepted = true;
             }
 
+            var isOldExist = false;
+            var isCreateNum = true;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                isOldExist = ctx.SD_26.Any(_ => _.DOC_CODE == Document.DocCode);
+            }
+
+            if (!isOldExist)
+            {
+                var res = WinManager.ShowWinUIMessageBox("Документ уже удален! Сохранить заново?", "Предупреждение",
+                    MessageBoxButton.YesNoCancel,MessageBoxImage.Question);
+                switch (res)
+                {
+                    case MessageBoxResult.No:
+                        Form?.Close();
+                        break;
+                    case MessageBoxResult.Cancel:
+                        return;
+                }
+                Document.State = RowStatus.NewRow;
+                isCreateNum = false;
+            }
+
             UnitOfWork.CreateTransaction();
             try
             {
                 if (Document.State == RowStatus.NewRow || Document.DocCode < 0)
-                {
-                    Document.SF_IN_NUM = UnitOfWork.Context.SD_26.Any()
-                        ? UnitOfWork.Context.SD_26.Max(_ => _.SF_IN_NUM) + 1
-                        : 1;
-                    Document.DocCode = UnitOfWork.Context.SD_26.Any()
-                        ? UnitOfWork.Context.SD_26.Max(_ => _.DOC_CODE) + 1
-                        : 10260000001;
-                    foreach (var row in Document.Rows) row.DocCode = Document.DocCode;
-                    //genericProviderRepository.Insert(Document.Entity);
-                }
+                    if (isCreateNum)
+                    {
+                        Document.DocCode = UnitOfWork.Context.SD_26.Any()
+                            ? UnitOfWork.Context.SD_26.Max(_ => _.DOC_CODE) + 1
+                            : 10260000001;
+                        foreach (var row in Document.Rows) row.DocCode = Document.DocCode;
+
+                        Document.SF_IN_NUM = UnitOfWork.Context.SD_26.Any()
+                            ? UnitOfWork.Context.SD_26.Max(_ => _.SF_IN_NUM) + 1
+                            : 1;
+                    }
 
                 if (Document.SF_CRS_RATE == null) Document.SF_CRS_RATE = 1;
 
@@ -1574,7 +1596,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
             else
             {
                 var isDistr = UnitOfWork.Context.DistributeNakladInfo.Any(_ => _.InvoiceNakladId == Document.Id);
-                var str = !isDistr
+                var isRowDistr = Document.Rows.Any(r =>
+                    UnitOfWork.Context.DistributeNakladRow.Any(_ => _.TovarInvoiceRowId == r.Id));
+                var str = !isDistr && !isRowDistr
                     ? "Вы уверены, что хотите удалить данный документ?"
                     : "Документ участвует в распределении накладных.\nВы уверены, что хотите удалить данный документ?";
                 var res = WinManager.ShowWinUIMessageBox(str, "Запрос",
@@ -1586,7 +1610,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     case MessageBoxResult.Yes:
                         var dc = Document.DocCode;
                         var docdate = Document.DocDate;
-                        //InvoicesManager.DeleteProvider(Document.DocCode);
+                        var DistributeDocs = new List<Guid>();
                         UnitOfWork.CreateTransaction();
                         try
                         {
@@ -1601,8 +1625,65 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                     UnitOfWork.Context.DistributeNakladInvoices.Remove(din);
                             }
 
+
+                            if (isRowDistr)
+                                foreach (var row in Document.Rows.Cast<InvoiceProviderRow>())
+                                {
+                                    foreach (var d2 in row.Entity.TD_26_CurrencyConvert)
+                                    {
+                                        foreach (var d1 in d2.DistributeNakladRow)
+                                        {
+                                            foreach (var irow in d1.DistributeNakladInfo)
+                                                UnitOfWork.Context.DistributeNakladInfo.Remove(irow);
+                                            UnitOfWork.Context.DistributeNakladRow.Remove(d1);
+                                        }
+
+                                        UnitOfWork.Context.TD_26_CurrencyConvert.Remove(d2);
+                                    }
+
+                                    foreach (var d1 in UnitOfWork.Context.DistributeNakladRow.Where(_ =>
+                                                 _.TovarInvoiceRowId == row.Id).ToList())
+                                    {
+                                        foreach (var irow in UnitOfWork.Context.DistributeNakladInfo.Where(_ =>
+                                                     _.RowId == d1.Id))
+                                            UnitOfWork.Context.DistributeNakladInfo.Remove(irow);
+
+                                        UnitOfWork.Context.DistributeNakladRow.Remove(d1);
+                                        DistributeDocs.Add(row.DocId);
+                                    }
+                                }
+
+                            var pays = new List<ProviderInvoicePay>();
+                            foreach (var pay in Document.Entity.ProviderInvoicePay)
+                            {
+                                if (pay.SD_34 != null)
+                                {
+                                    pay.SD_34.SPOST_DC = null;
+                                    pay.SD_34.SPOST_CRS_DC = null;
+                                    pay.SD_34.SPOST_CRS_RATE = null;
+                                    pay.SD_34.SPOST_OPLACHENO = null;
+                                }
+
+                                if (pay.TD_101 != null) pay.TD_101.VVT_SFACT_POSTAV_DC = null;
+
+                                if (pay.TD_110 != null) pay.TD_110.VZT_SPOST_DC = null;
+                                pays.Add(pay);
+                            }
+
+                            foreach (var p in pays)
+                                UnitOfWork.Context.ProviderInvoicePay.Remove(p);
                             GenericProviderRepository.Delete(Document.Entity);
                             UnitOfWork.Save();
+                            foreach (var id in DistributeDocs)
+                            {
+                                var doc = UnitOfWork.Context.DistributeNaklad.FirstOrDefault(_ => _.Id == id);
+                                if (doc == null) continue;
+                                var vm = new DistributeNakladViewModel(doc);
+                                vm.Load(doc.Id);
+                                vm.RecalcAllResult();
+                                vm.Save();
+                            }
+
                             UnitOfWork.Commit();
                             DocumentsOpenManager.DeleteFromLastDocument(null, Document.DocCode);
                         }

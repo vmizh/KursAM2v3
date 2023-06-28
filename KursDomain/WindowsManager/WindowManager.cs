@@ -235,9 +235,9 @@ public class WindowManager : IWindowManager
             : errText.Append($"{errText} \n Внутрення ошибка:\n {StringBuilder(ex.InnerException)}");
     }
 
-    public void ShowWinUIMessageBox(string messageBoxText, string caption)
+    public MessageBoxResult ShowWinUIMessageBox(string messageBoxText, string caption)
     {
-        WinUIMessageBox.Show(
+        return WinUIMessageBox.Show(
             Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
             messageBoxText,
             caption,

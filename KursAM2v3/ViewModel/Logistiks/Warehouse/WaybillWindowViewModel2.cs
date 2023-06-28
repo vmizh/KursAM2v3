@@ -184,25 +184,56 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void SaveData(object data)
         {
+            var WinManager = new WindowManager();
+            var isOldExist = false;
+            var isCreateNum = true;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                isOldExist = ctx.SD_26.Any(_ => _.DOC_CODE == Document.DocCode);
+            }
+
+            if (!isOldExist)
+            {
+                var res = WinManager.ShowWinUIMessageBox("Документ уже удален! Сохранить заново?", "Предупреждение",
+                    MessageBoxButton.YesNoCancel,MessageBoxImage.Question);
+                switch (res)
+                {
+                    case MessageBoxResult.No:
+                        Form?.Close();
+                        break;
+                    case MessageBoxResult.Cancel:
+                        return;
+                }
+                Document.State = RowStatus.NewRow;
+                UnitOfWork.Context.Entry(Document.Entity).State = EntityState.Added;
+                foreach (var r in Document.Entity.TD_24)
+                {
+                    UnitOfWork.Context.Entry(r).State = EntityState.Added;
+                }
+                isCreateNum = false;
+            }
             try
             {
                 if (Document.State == RowStatus.NewRow)
                 {
-                    Document.DD_IN_NUM = UnitOfWork.Context.SD_24.Any(_ => _.DD_TYPE_DC == 2010000012)
-                        ? UnitOfWork.Context.SD_24.Where(_ => _.DD_TYPE_DC == 2010000012).Max(_ => _.DD_IN_NUM) + 1
-                        : 1;
-                    Document.DocCode = UnitOfWork.Context.SD_24.Any()
-                        ? UnitOfWork.Context.SD_24.Max(_ => _.DOC_CODE) + 1
-                        : 1;
-                    Document.Id = Guid.NewGuid();
-                    var code = 1;
-                    foreach (var r in Document.Rows)
+                    if (isCreateNum)
                     {
-                        r.DOC_CODE = Document.DocCode;
-                        r.Code = code;
-                        r.Id = Guid.NewGuid();
-                        r.DocId = Document.Id;
-                        code++;
+                        Document.DD_IN_NUM = UnitOfWork.Context.SD_24.Any(_ => _.DD_TYPE_DC == 2010000012)
+                            ? UnitOfWork.Context.SD_24.Where(_ => _.DD_TYPE_DC == 2010000012).Max(_ => _.DD_IN_NUM) + 1
+                            : 1;
+                        Document.DocCode = UnitOfWork.Context.SD_24.Any()
+                            ? UnitOfWork.Context.SD_24.Max(_ => _.DOC_CODE) + 1
+                            : 1;
+                        Document.Id = Guid.NewGuid();
+                        var code = 1;
+                        foreach (var r in Document.Rows)
+                        {
+                            r.DOC_CODE = Document.DocCode;
+                            r.Code = code;
+                            r.Id = Guid.NewGuid();
+                            r.DocId = Document.Id;
+                            code++;
+                        }
                     }
                 }
 

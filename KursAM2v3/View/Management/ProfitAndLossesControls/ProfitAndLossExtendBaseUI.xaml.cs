@@ -62,7 +62,7 @@ namespace KursAM2.View.Management.ProfitAndLossesControls
             if (dtx.ExtendActual.Count > 0)
                 LayoutManager.Load(true);
             var cols = GridControlExtend.Columns
-                .Where(col => col.FieldName == "DocNum" || col.FieldName == "AktZachetResult").ToList();
+                .Where(col => col.FieldName == "AktZachetResult").ToList();
             foreach (var col in cols)
             {
                col.Visible = false;

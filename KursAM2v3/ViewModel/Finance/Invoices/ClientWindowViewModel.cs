@@ -65,6 +65,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ClientWindowViewModel()
         {
+            ShipmentRowDeleted =  new List<ShipmentRowViewModel>();
             GenericClientRepository = new GenericKursDBRepository<SD_84>(UnitOfWork);
             InvoiceClientRepository = new InvoiceClientRepository(UnitOfWork);
             // ReSharper disable once ObjectCreationAsStatement
@@ -122,7 +123,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Properties
 
-        public List<ShipmentRowViewModel> ShipmentRowDeleted => new List<ShipmentRowViewModel>();
+        public List<ShipmentRowViewModel> ShipmentRowDeleted { set; get; }
 
         
         public List<Currency> CurrencyList => GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>()
@@ -841,19 +842,51 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (res == MessageBoxResult.Yes) Document.IsAccepted = true;
             }
 
+            var isOldExist = false;
+            var isCreateNum = true;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                isOldExist = ctx.SD_84.Any(_ => _.DOC_CODE == Document.DocCode);
+            }
+
+            if (!isOldExist)
+            {
+                var res = WinManager.ShowWinUIMessageBox("Документ уже удален! Сохранить заново?", "Предупреждение",
+                    MessageBoxButton.YesNoCancel,MessageBoxImage.Question);
+                switch (res)
+                {
+                    case MessageBoxResult.No:
+                        Form?.Close();
+                        break;
+                    case MessageBoxResult.Cancel:
+                        return;
+                }
+                    
+                Document.State = RowStatus.NewRow;
+                UnitOfWork.Context.Entry(Document.Entity).State = EntityState.Added;
+                foreach (var r in Document.Entity.TD_84)
+                {
+                    UnitOfWork.Context.Entry(r).State = EntityState.Added;
+                }
+                isCreateNum = false;
+            }
+
             UnitOfWork.CreateTransaction();
             // ReSharper disable once CollectionNeverUpdated.Local
             try
             {
                 if (Document.State == RowStatus.NewRow || Document.DocCode < 0)
                 {
-                    Document.InnerNumber = UnitOfWork.Context.SD_84.Any()
-                        ? UnitOfWork.Context.SD_84.Max(_ => _.SF_IN_NUM) + 1
-                        : 1;
-                    Document.DocCode = UnitOfWork.Context.SD_84.Any()
-                        ? UnitOfWork.Context.SD_84.Max(_ => _.DOC_CODE) + 1
-                        : 10840000001;
-                    foreach (var row in Document.Rows) row.DocCode = Document.DocCode;
+                    if (isCreateNum)
+                    {
+                        Document.InnerNumber = UnitOfWork.Context.SD_84.Any()
+                            ? UnitOfWork.Context.SD_84.Max(_ => _.SF_IN_NUM) + 1
+                            : 1;
+                        Document.DocCode = UnitOfWork.Context.SD_84.Any()
+                            ? UnitOfWork.Context.SD_84.Max(_ => _.DOC_CODE) + 1
+                            : 10840000001;
+                        foreach (var row in Document.Rows) row.DocCode = Document.DocCode;
+                    }
                 }
 
                 if (Document.SF_CRS_RATE == 0) Document.SF_CRS_RATE = 1;
@@ -869,12 +902,16 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var row in Document.Rows.Cast<InvoiceClientRowViewModel>())
                     if (row.Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS == null)
                         row.Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = row.Summa;
-                foreach (var old in ShipmentRowDeleted.Select(shDel => UnitOfWork.Context.TD_24.FirstOrDefault(_ =>
-                             _.DOC_CODE == shDel.DOC_CODE && _.CODE == shDel.Code)).Where(old => old != null))
+                foreach (var nakl in ShipmentRowDeleted)
                 {
-                    old.DDT_SFACT_DC = null;
-                    old.DDT_SFACT_ROW_CODE = null;
+                    foreach (var old in UnitOfWork.Context.TD_24.Where(_ => _.DDT_SFACT_DC == nakl.DDT_SFACT_DC
+                                                                            && _.DDT_SFACT_ROW_CODE == nakl.DDT_SFACT_ROW_CODE))
+                    {
+                        old.DDT_SFACT_DC = null;
+                        old.DDT_SFACT_ROW_CODE = null;
+                    }
                 }
+
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
@@ -1026,6 +1063,29 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     try
                     {
                         UnitOfWork.CreateTransaction();
+
+                        foreach (var cash in Document.Entity.SD_33)
+                        {
+                            cash.SFACT_DC = null;
+                            cash.SFACT_CRS_DC = null;
+                            cash.SFACT_CRS_RATE = null;
+                        }
+
+                        foreach (var bank in Document.Entity.TD_101)
+                        {
+                            bank.VVT_SFACT_CLIENT_DC = null;
+                        }
+                          
+                        foreach (var zach in Document.Entity.TD_110)
+                        {
+                            zach.VZT_SFACT_DC = null;
+                        }
+
+                        foreach (var nakl in Document.Entity.SD_24)
+                        {
+                            nakl.DD_SFACT_DC = null;
+                        }
+
                         GenericClientRepository.Delete(Document.Entity);
                         UnitOfWork.Save();
                         UnitOfWork.Commit();

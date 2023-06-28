@@ -692,16 +692,17 @@ namespace KursAM2.Managers
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = ProfitAndLossesMainRowViewModel.NomenklCurrencyChanges,
-                        Name = nom.NomenklNumber + " " + nom.Name,
+                        DocNum = $"{n.TD_26.SD_26.SF_IN_NUM}/{n.TD_26.SD_26.SF_POSTAV_NUM}",
+                        Name = nom?.NomenklNumber + " " + nom?.Name,
                         Note = n.Note,
                         DocCode = n.DOC_CODE ?? 0,
                         Quantity = n.Quantity,
                         Price = n.Price,
                         Date = n.Date,
-                        Kontragent = kontr.Name,
-                        DocTypeCode = 0,
+                        Kontragent = kontr?.Name,
+                        DocTypeCode = DocumentType.InvoiceProvider,
                         Nomenkl = nom,
-                        KontragentName = kontr.Name,
+                        KontragentName = kontr?.Name,
                         Currency =
                             GlobalOptions.ReferencesCache.GetCurrency(((IDocCode)nom.Currency).DocCode) as Currency,
                         CurrencyName =
@@ -718,13 +719,14 @@ namespace KursAM2.Managers
                     {
                         GroupId = ProfitAndLossesMainRowViewModel.NomenklCurrencyChanges,
                         Name = nom1.NomenklNumber + " " + nom1.Name,
+                        DocNum = $"{n.TD_26.SD_26.SF_IN_NUM}/{n.TD_26.SD_26.SF_POSTAV_NUM}",
                         Note = n.Note,
                         DocCode = n.DOC_CODE ?? 0,
                         Quantity = n.Quantity,
                         Price = n.TD_26.SFT_ED_CENA ?? 0,
                         Date = n.Date,
                         Kontragent = kontr.Name,
-                        DocTypeCode = 0,
+                        DocTypeCode = DocumentType.InvoiceProvider,
                         Nomenkl = nom1,
                         KontragentName = kontr.Name,
                         Currency =
