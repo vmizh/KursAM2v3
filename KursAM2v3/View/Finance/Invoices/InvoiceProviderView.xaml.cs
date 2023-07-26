@@ -13,6 +13,7 @@ using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
+using KursAM2.View.Helper;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursDomain;
 using KursDomain.Documents.Invoices;
@@ -127,6 +128,24 @@ namespace KursAM2.View.Finance.Invoices
                     SummaryType = listSummaryFields[c.FieldName],
                     DisplayFormat = "n2"
                 });
+            }
+        }
+
+        private void GridLayoutHelper_Trigger(object sender, MyEventArgs e)
+        {
+            var maxWidith = new GridColumnWidth(800);
+           
+            if (e.LayoutChangedTypes.Contains(LayoutChangedType.ColumnWidth))
+            {
+                if (sender is GridLayoutHelper m)
+                {
+                    if(m.AssociatedObject is GridControl grid)
+                        foreach(var col in grid.Columns)
+                            if (col.Width.Value > maxWidith.Value )
+                            {
+                                col.Width = maxWidith;
+                            }
+                }
             }
         }
 

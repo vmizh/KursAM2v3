@@ -189,13 +189,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var isCreateNum = true;
             using (var ctx = GlobalOptions.GetEntities())
             {
-                isOldExist = ctx.SD_26.Any(_ => _.DOC_CODE == Document.DocCode);
+                isOldExist = ctx.SD_24.Any(_ => _.DOC_CODE == Document.DocCode);
             }
 
-            if (!isOldExist)
+            if (!isOldExist && Document.State != RowStatus.NewRow)
             {
                 var res = WinManager.ShowWinUIMessageBox("Документ уже удален! Сохранить заново?", "Предупреждение",
-                    MessageBoxButton.YesNoCancel,MessageBoxImage.Question);
+                    MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                 switch (res)
                 {
                     case MessageBoxResult.No:
@@ -204,18 +204,16 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     case MessageBoxResult.Cancel:
                         return;
                 }
+
                 Document.State = RowStatus.NewRow;
                 UnitOfWork.Context.Entry(Document.Entity).State = EntityState.Added;
-                foreach (var r in Document.Entity.TD_24)
-                {
-                    UnitOfWork.Context.Entry(r).State = EntityState.Added;
-                }
+                foreach (var r in Document.Entity.TD_24) UnitOfWork.Context.Entry(r).State = EntityState.Added;
                 isCreateNum = false;
             }
+
             try
             {
                 if (Document.State == RowStatus.NewRow)
-                {
                     if (isCreateNum)
                     {
                         Document.DD_IN_NUM = UnitOfWork.Context.SD_24.Any(_ => _.DD_TYPE_DC == 2010000012)
@@ -235,7 +233,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             code++;
                         }
                     }
-                }
 
                 Document.Entity.DD_OTRPAV_NAME = Document.Sender;
                 Document.Entity.DD_POLUCH_NAME = Document.Receiver;
@@ -571,7 +568,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private void OpenSchet(object obj)
         {
             // ReSharper disable once PossibleInvalidOperationException
-            DocumentsOpenManager.Open(DocumentType.InvoiceClient,  CurrentNomenklRow.SchetLinkedRowViewModel.DocCode);
+            DocumentsOpenManager.Open(DocumentType.InvoiceClient, CurrentNomenklRow.SchetLinkedRowViewModel.DocCode);
         }
 
         public ICommand DeleteSchetCommand

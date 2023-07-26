@@ -30,8 +30,10 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
         DocCode = -1;
     }
 
+    [Display(AutoGenerateField = false, Name = "DocCode")]
     public decimal DocCode { get; set; }
 
+    [Display(AutoGenerateField = false, Name = "Id")]
     public Guid Id { get; set; }
 
     public bool Equals(Kontragent other)
@@ -92,7 +94,7 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
     [Display(AutoGenerateField = true, Name = "Вкл.в баланс")]
     public bool IsBalans { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Валюта")]
+    [Display(AutoGenerateField = true, Name = "Валюта", Order = 1)]
     public ICurrency Currency { get; set; }
 
     [Display(AutoGenerateField = true, Name = "Нач.Сумма")]
@@ -114,7 +116,7 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
     [Display(AutoGenerateField = false, Name = "")]
     public int OrderCount { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Наименование")]
+    [Display(AutoGenerateField = true, Name = "Наименование", Order = 0)]
     public string Name { get; set; }
 
     [Display(AutoGenerateField = true, Name = "Примечание")]
@@ -147,6 +149,8 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
     {
         if (entity == null) return;
         DocCode = entity.DOC_CODE;
+        StartBalans = entity.START_BALANS ?? new DateTime(2000,1,1);
+        ResponsibleEmployee = refCache.GetEmployee(entity.OTVETSTV_LICO);
         Name = entity.NAME;
         Group = refCache?.GetKontragentGroup(entity.EG_ID);
         Notes = entity.NOTES;

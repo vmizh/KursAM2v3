@@ -132,6 +132,11 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
             return;
         }
 
+        if (entity.DOC_CODE == 10830062692)
+        {
+            var i = 1;
+        }
+
         DocCode = entity.DOC_CODE;
         Id = entity.Id;
         Name = entity.NOM_NAME;
@@ -148,7 +153,8 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
         UpdateDate = entity.UpdateDate ?? DateTime.MinValue;
         MainId = entity.MainId ?? Guid.Empty;
         NomenklMain = refCache.GetNomenklMain(entity.MainId);
-
+        if (NomenklMain.IsCurrencyTransfer != IsCurrencyTransfer)
+            IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer;
         Unit = refCache.GetUnit(entity.NOM_ED_IZM_DC);
         Currency = refCache.GetCurrency(entity.NOM_SALE_CRS_DC);
         Group = refCache.GetNomenklGroup(entity.NOM_CATEG_DC);

@@ -1,5 +1,4 @@
 ﻿using System.Windows;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 
 namespace KursAM2.View.DialogUserControl.Standart
@@ -12,7 +11,6 @@ namespace KursAM2.View.DialogUserControl.Standart
         public TableWithSearch()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridControlSearch_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

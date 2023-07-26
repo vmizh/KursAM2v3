@@ -353,7 +353,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void AddAccrual(object obj)
         {
-            var k = StandartDialogs.SelectNomenkls();
+            var k = StandartDialogs.SelectNomenkls(Document.Currency);
             if (k != null)
                 foreach (var item in k)
                 {

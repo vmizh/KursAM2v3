@@ -46,7 +46,11 @@ namespace KursAM2.Dialogs
         {
             //MainReferences.CheckUpdateKontragentAndLoad();
             var ctx = new KontragentSelectDialog(crs, false, isBalans);
-            var dlg = new SelectDialogView {DataContext = ctx};
+            var dlg = new SelectDialogView
+            {
+                IsUsedViewLayout = false,
+                DataContext = ctx
+            };
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentKontragent;
@@ -420,8 +424,11 @@ namespace KursAM2.Dialogs
             bool isUseAccepted)
         {
             if (cashIn == null) return null;
-            var ctx = new InvoiceClientSearchDialog(cashIn.Document.KONTRAGENT_DC ?? 0, isUsePayment, isUseAccepted);
-            var dlg = new SelectDialogView {DataContext = ctx};
+            InvoiceClientSearchDialog ctx = null;
+            ctx = cashIn.Document.KONTRAGENT_DC != null
+                ? new InvoiceClientSearchDialog(cashIn.Document.KONTRAGENT_DC ?? 0, isUsePayment, isUseAccepted)
+                : new InvoiceClientSearchDialog(isUsePayment, isUseAccepted, cashIn.Document.Currency);
+            var dlg = new SelectDialogView { DataContext = ctx };
             ctx.Form = dlg;
             dlg.ShowDialog();
             return !ctx.DialogResult ? null : ctx.CurrentItem;

@@ -10,7 +10,7 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-    Title="{Binding WindowName}" MinHeight="450" MinWidth="1200">
+    Title="{Binding WindowName}" MinHeight="450" MinWidth="200">
     <dx:ThemedWindow.Resources>
         <native:RenderTemplate
             x:Key="{themes:InplaceBaseEditThemeKey ResourceKey=CriticalErrorTemplate, IsThemeIndependent=True}">

@@ -374,7 +374,6 @@ namespace KursAM2.ViewModel.Finance
             var param = obj as CellValueChangedEventArgs;
             if (param == null || param.Column.Name != "VZT_CRS_SUMMA") return;
             if (Document == null) return;
-            var state = Document.State;
             CurrentDebitor.VZT_CRS_SUMMA = (decimal)param.Value;
             if (IsNotOld)
             {
@@ -400,7 +399,6 @@ namespace KursAM2.ViewModel.Finance
             var param = obj as CellValueChangedEventArgs;
             if (param == null || param.Column.Name != "VZT_CRS_SUMMA") return;
             if (Document == null) return;
-            var state = Document.State;
             CurrentCreditor.VZT_CRS_SUMMA = (decimal)param.Value;
             if (IsNotOld)
             {
@@ -502,6 +500,7 @@ namespace KursAM2.ViewModel.Finance
 
         public override void DocDelete(object form)
         {
+            IsDeleting = true;
             var res = MessageBox.Show("Вы уверены, что хотите удалить документ?", "Запрос",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);

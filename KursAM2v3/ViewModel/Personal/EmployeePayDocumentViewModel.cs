@@ -56,7 +56,7 @@ namespace KursAM2.ViewModel.Personal
         [DataMember]
         public DateTime DocDate { set; get; }
 
-        public new string Id { set; get; }
+        //public string StringId { set; get; }
         public decimal DocSumma { set; get; }
         public decimal USD { set; get; }
         public decimal EUR { set; get; }

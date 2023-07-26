@@ -39,7 +39,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
                 OuterNumber = doc.OuterNumber;
                 Client = GlobalOptions.ReferencesCache.GetKontragent(doc.ClientDC) as Kontragent;
                 Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CurrencyDC) as Currency;
-                SummaOtgruz = Math.Round(doc.SummaOtgruz ?? 0, 2);
+                SummaOtgruz = Math.Round(invList.Sum(_ => _.SummaOtgruz), 2);
                 DilerSumma = Math.Round(doc.DilerSumma, 2);
                 Note = doc.Note;
                 Diler = GlobalOptions.ReferencesCache.GetKontragent(doc.DilerDC) as Kontragent;
@@ -99,9 +99,9 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public InvoiceClientRowBase(InvoiceClientQuery row)
         {
             DocCode = row.DocCode;
-            Code = row.RowCode;
-            Id = row.Row2d;
-            DocId = row.DocId;
+            Code = row.RowCode ?? 0;
+            Id = row.Row2d ?? Guid.Empty;
+            DocId = row.DocId ?? Guid.Empty;
             Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.NomenklDC) as Nomenkl;
             NomNomenkl = Nomenkl?.NomenklNumber;
             IsUsluga = Nomenkl?.IsUsluga ?? false;

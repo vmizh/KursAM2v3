@@ -33,7 +33,7 @@ namespace Data
         public string Client { get; set; }
         public decimal CurrencyDC { get; set; }
         public string Currency { get; set; }
-        public Nullable<decimal> SummaOtgruz { get; set; }
+        public decimal SummaOtgruz { get; set; }
         public decimal DilerSumma { get; set; }
         public string Note { get; set; }
         public Nullable<decimal> DilerDC { get; set; }
@@ -43,10 +43,10 @@ namespace Data
         public string CREATOR { get; set; }
         public Nullable<bool> IsNDSIncludeInPrice { get; set; }
         public Nullable<decimal> PaySumma { get; set; }
-        public int RowCode { get; set; }
-        public System.Guid Row2d { get; set; }
-        public System.Guid DocId { get; set; }
-        public decimal NomenklDC { get; set; }
+        public Nullable<int> RowCode { get; set; }
+        public Nullable<System.Guid> Row2d { get; set; }
+        public Nullable<System.Guid> DocId { get; set; }
+        public Nullable<decimal> NomenklDC { get; set; }
         public string Nomenkl { get; set; }
         public string NomNomenkl { get; set; }
         public Nullable<bool> IsUsluga { get; set; }

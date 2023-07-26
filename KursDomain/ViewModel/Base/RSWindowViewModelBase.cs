@@ -69,6 +69,8 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         myIsCanRefresh = true;
     }
 
+    protected bool IsDeleting = false;
+
     [Display(AutoGenerateField = false)]
     protected IDispatcherService DispatcherService => this.GetService<IDispatcherService>();
 
@@ -440,7 +442,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
 
     public virtual void CloseWindow(object form)
     {
-        if (IsCanSaveData)
+        if (IsCanSaveData && !IsDeleting)
         {
             var res = MessageBox.Show("В документ были внесены изменения, сохранить?", "Запрос",
                 MessageBoxButton.YesNoCancel,

@@ -28,16 +28,6 @@ public class WarehouseOrderIn : SD_24ViewModel
     public WarehouseOrderIn(SD_24 entity) : base(entity)
     {
         biling = new ObservableCollection<InvoiceProviderRow>();
-        //if (Entity.DD_SKLAD_POL_DC != null)
-        //    WarehouseIn = MainReferences.Warehouses[Entity.DD_SKLAD_POL_DC.Value];
-        //if (Entity.DD_KONTR_OTPR_DC != null)
-        //    KontragentSender = MainReferences.GetKontragent(Entity.DD_KONTR_OTPR_DC);
-        //if (Entity.DD_SKLAD_OTPR_DC != null)
-        //    WarehouseOut = MainReferences.Warehouses[Entity.DD_SKLAD_OTPR_DC.Value];
-        //if (WarehouseOut != null)
-        //    WarehouseSenderType = WarehouseSenderType.Store;
-        //if (KontragentSender != null)
-        //    WarehouseSenderType = WarehouseSenderType.Kontragent;
         var rtemp = new List<WarehouseOrderInRow>();
         if (Entity.TD_24 != null && Entity.TD_24.Count != 0)
             foreach (var item in Entity.TD_24)

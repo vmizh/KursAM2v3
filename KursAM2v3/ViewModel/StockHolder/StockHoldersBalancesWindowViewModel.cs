@@ -520,9 +520,14 @@ namespace KursAM2.ViewModel.StockHolder
 
         #endregion
 
-        #region IDataErrorInfo
-
-        #endregion
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            if (Form is StockHoldersBalancesView frm)
+            {
+                frm.TableViewStockHolderMove.ShowTotalSummary = true;
+            }
+        }
     }
 
     [SuppressMessage("ReSharper", "UnusedMember.Local")]

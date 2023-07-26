@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Core;
@@ -17,9 +16,14 @@ namespace KursAM2.View.Base
     /// </summary>
     public partial class SelectDialogView : ILayout
     {
+        /// <summary>
+        ///     Используется kayout из view, false - из viewmodel
+        /// </summary>
+        public bool IsUsedViewLayout = true;
+
         public SelectDialogView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             DataContextChanged += SelectDialogView_DataContextChanged;
             Loaded += SelectDialogView_Loaded;
@@ -36,20 +40,22 @@ namespace KursAM2.View.Base
 
         private void SelectDialogView_Loaded(object sender, RoutedEventArgs e)
         {
-            LayoutManager.Load();
+            LayoutManager?.Load();
         }
 
         private void SelectDialogView_Closing(object sender, CancelEventArgs e)
         {
-            LayoutManager.Save();
+            LayoutManager?.Save();
         }
 
         private void SelectDialogView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
+            if (!IsUsedViewLayout) return;   
             if (LayoutManager == null)
             {
                 var ctrl = DataContext as IDataUserControl;
-                LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),$"{GetType().Name}.{DataContext.GetType()}", this,
+                LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),
+                    $"{GetType().Name}.{DataContext.GetType()}", this,
                     ctrl?.LayoutControl);
             }
             //LayoutManager.Load();

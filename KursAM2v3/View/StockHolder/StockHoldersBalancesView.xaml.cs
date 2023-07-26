@@ -6,11 +6,12 @@ namespace KursAM2.View.StockHolder
     /// <summary>
     ///     Interaction logic for StockHoldersBalancesView.xaml
     /// </summary>
-    public partial class StockHoldersBalancesView : ThemedWindow
+    public partial class StockHoldersBalancesView 
     {
         public StockHoldersBalancesView()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent();
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridControlStockHolder_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

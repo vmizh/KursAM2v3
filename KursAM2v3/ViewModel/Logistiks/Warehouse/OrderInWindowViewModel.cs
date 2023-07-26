@@ -5,7 +5,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -109,13 +108,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
         }
 
-        private void RaiseAll()
-        {
-            Document.RaisePropertyAllChanged();
-            foreach (var r in Document.Rows) r.RaisePropertyAllChanged();
-        }
-
-        #region Properties
+       #region Properties
 
         public List<KursDomain.References.Warehouse>
             WarehouseList { set; get; } = GlobalOptions.ReferencesCache.GetWarehousesAll()
@@ -255,10 +248,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             DocCode = -1,
                             Nomenkl = nom,
                             DDT_KOL_PRIHOD = row.Quantity,
-                            Unit = (Unit)nom.Unit,
+                            Unit = nom?.Unit as Unit,
                             DDT_SPOST_DC = row.DocCode,
                             LinkInvoice = schetRow,
                             DDT_SPOST_ROW_CODE = row.CODE,
+                            // ReSharper disable once PossibleNullReferenceException
                             DDT_CRS_DC = ((IDocCode)nom.Currency).DocCode,
                             State = RowStatus.NewRow
                         });
@@ -384,11 +378,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     return;
                 }
             }
-            var doc = SD_24Repository.GetByDC(Document.DocCode);
-            Document = new WarehouseOrderIn(doc);
-            {
-                State = RowStatus.NotEdited;
-            }
+            
+            foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
+            Document.State = RowStatus.NotEdited;
             if (Document != null)
                 WindowName = Document.ToString();
             if (Document.Entity.DD_SPOST_DC != null)
@@ -399,13 +391,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
             Document.Rows.ForEach(_ => _.State = RowStatus.NotEdited);
             Document.State = RowStatus.NotEdited;
-
-            //EntityManager.EntityReload(UnitOfWork.Context);
-            //foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
-            //RaiseAll();
-            //foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
-            //Document.myState = RowStatus.NotEdited;
-            //Document.RaisePropertyChanged("State");
         }
 
         public override void SaveData(object data)
@@ -599,7 +584,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             Code = newCode,
                             Nomenkl = nom,
                             DDT_KOL_PRIHOD = n.DDT_KOL_RASHOD,
-                            Unit = (Unit)nom.Unit,
+                            Unit = nom?.Unit as Unit,
+                            // ReSharper disable once PossibleNullReferenceException
                             Currency = (Currency)nom.Currency,
                             DDT_SKLAD_OTPR_DC = n.SD_24.DD_SKLAD_OTPR_DC,
                             DDT_RASH_ORD_DC = n.DOC_CODE,

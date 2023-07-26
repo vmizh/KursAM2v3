@@ -13,6 +13,7 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.Data;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.Native;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -837,6 +838,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     });
             }
 
+            Document.SummaFact = 0;
+            foreach (var f in Document.Facts)
+            {
+                var r = Document.Rows.First(_ => _.Nomenkl.DocCode == f.Nomenkl.DocCode);
+                Document.SummaFact += Math.Round(r.Summa * r.Quantity / f.DDT_KOL_PRIHOD,2);
+            }
+
             foreach (var r in Document.Rows.Cast<InvoiceProviderRow>())
             {
                 foreach (var cr in r.CurrencyConvertRows)
@@ -1182,9 +1190,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private void AddNomenklSimple(object obj)
         {
             decimal defaultNDS;
-            var dtx = new TableSearchWindowViewMovel<Nomenkl>(LoadNomenkl, "Выбор номенклатур", "NomenklSipleListView");
+            var dtx = new TableSearchWindowViewMove<Nomenkl>(LoadNomenkl, "Выбор номенклатур", "NomenklSipleListView");
             var service = this.GetService<IDialogService>("DialogServiceUI");
-            if (service.ShowDialog(MessageButton.OKCancel, "Выбор счетов фактур", dtx) == MessageResult.OK
+            if (service.ShowDialog(MessageButton.OKCancel, "Выбор номенклатур", dtx) == MessageResult.OK
                 || dtx.DialogResult)
             {
                 using (var entctx = GlobalOptions.GetEntities())
@@ -1416,7 +1424,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 isOldExist = ctx.SD_26.Any(_ => _.DOC_CODE == Document.DocCode);
             }
 
-            if (!isOldExist)
+            if (!isOldExist  && Document.State != RowStatus.NewRow)
             {
                 var res = WinManager.ShowWinUIMessageBox("Документ уже удален! Сохранить заново?", "Предупреждение",
                     MessageBoxButton.YesNoCancel,MessageBoxImage.Question);

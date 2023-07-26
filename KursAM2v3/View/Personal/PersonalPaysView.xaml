@@ -1,12 +1,12 @@
 ﻿<dx:ThemedWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
-             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-             xmlns:control1="clr-namespace:Core.Control;assembly=KursDomain"
-             x:Class="KursAM2.View.Personal.PersonalPaysView"
-             Title="Заработная плата сотрудников" Height="800" Width="1200">
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+                 xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+                 xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+                 xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:control1="clr-namespace:Core.Control;assembly=KursDomain"
+                 x:Class="KursAM2.View.Personal.PersonalPaysView"
+                 Title="Заработная плата сотрудников" Height="800" Width="1200">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
                    Foreground="{Binding DatabaseColor}"
@@ -72,8 +72,8 @@
                     <dxg:GridControl.View>
                         <dxg:TableView ShowTotalSummary="True"
                                        Name="tableViewEmployee"
-                                       
-                                       
+
+
                                        ShowAutoFilterRow="True"
                                        AllowEditing="False" />
                     </dxg:GridControl.View>
@@ -124,7 +124,7 @@
                             <dxg:TreeListControlBand Name="bandt2" Header="По валютам операций">
                                 <dxg:TreeListControlBand.Bands>
                                     <dxg:TreeListControlBand Header="RUB">
-                                       <dxg:TreeListColumn Name="colt9_1" FieldName="StartRUB" Header="Начало"
+                                        <dxg:TreeListColumn Name="colt9_1" FieldName="StartRUB" Header="Начало"
                                                             ReadOnly="True">
                                             <dxg:TreeListColumn.EditSettings>
                                                 <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2" />
@@ -311,9 +311,34 @@
                             <dxg:TableView ShowTotalSummary="True"
                                            Name="tableViewDocuments"
                                            ShowAutoFilterRow="True"
-                                           AllowEditing="False"
-                                           
-                                           />
+                                           AllowEditing="False">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Открыть документ"
+                                                  Command="{Binding OpenDocumentCommand}">
+                                            <MenuItem.Icon>
+                                                <Image
+                                                    Source="{StaticResource DogovorDrawingImage}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <Separator />
+                                        <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                                  CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}">
+                                            <MenuItem.Icon>
+                                                <Image
+                                                    Source="{StaticResource ExportDrawingImage}" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Копировать итоговую сумму"
+                                                  Command="{Binding GetColumnSummaCommand}"
+                                                  CommandParameter="{Binding Path=PlacementTarget, 
+                           RelativeSource={RelativeSource Mode=FindAncestor,
+                                            AncestorType={x:Type ContextMenu}}}" />
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                            </dxg:TableView>
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>

@@ -7,6 +7,7 @@ using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
+using KursAM2.View.Helper;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
@@ -24,6 +25,24 @@ namespace KursAM2.View.Logistiks.Warehouse
         {
             InitializeComponent();
             ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+        }
+
+        private void GridLayoutHelper_Trigger(object sender, MyEventArgs e)
+        {
+            var maxWidith = new GridColumnWidth(800);
+           
+            if (e.LayoutChangedTypes.Contains(LayoutChangedType.ColumnWidth))
+            {
+                if (sender is GridLayoutHelper m)
+                {
+                    if(m.AssociatedObject is GridControl grid)
+                        foreach(var col in grid.Columns)
+                            if (col.Width.Value > maxWidith.Value )
+                            {
+                                col.Width = maxWidith;
+                            }
+                }
+            }
         }
 
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

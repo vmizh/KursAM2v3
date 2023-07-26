@@ -1112,7 +1112,10 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     {
         if (Entity.DogovorOfSupplier != null)
             Contract = new DogovorOfSupplierViewModel(Entity.DogovorOfSupplier);
-        Rows = new ObservableCollection<IInvoiceProviderRow>();
+        if(Rows ==  null)
+            Rows = new ObservableCollection<IInvoiceProviderRow>();
+        else
+            Rows.Clear();
         if (Entity.TD_26 != null && Entity.TD_26.Count > 0)
             foreach (var t in Entity.TD_26)
             {
@@ -1126,7 +1129,10 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
                                  t.TD_24.Sum(_ => _.DDT_KOL_PRIHOD);
             }
 
-        PaymentDocs = new ObservableCollection<ProviderInvoicePayViewModel>();
+        if(PaymentDocs == null)
+            PaymentDocs = new ObservableCollection<ProviderInvoicePayViewModel>();
+        else 
+            PaymentDocs.Clear();
         if (Entity.ProviderInvoicePay != null && Entity.ProviderInvoicePay.Count > 0)
             foreach (var pay in Entity.ProviderInvoicePay)
             {
@@ -1139,8 +1145,10 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
             SummaFact += (from q in Entity.TD_26
                 from d in q.TD_24
                 select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
-
-        Facts = new ObservableCollection<WarehouseOrderInRow>();
+        if (Facts == null)
+            Facts = new ObservableCollection<WarehouseOrderInRow>();
+        else
+            Facts.Clear();
         if (Entity.TD_26 != null && Entity.TD_26.Count > 0)
             foreach (var r in Entity.TD_26)
                 if (r.TD_24 != null && r.TD_24.Count > 0)

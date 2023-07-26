@@ -11,8 +11,10 @@ using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using KursAM2.Managers;
 using KursAM2.View.Personal;
 using KursDomain;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
@@ -198,7 +200,7 @@ namespace KursAM2.ViewModel.Personal
                             SummaEmp = nach.SUMMA,
                             PlatSummaEmp = 0,
                             PlatDocNotes = nach.NOTES,
-                            PlatDocName = "Платежная ведомость",
+                            PlatDocName = $"Платежная ведомость от {nach.EMP_PR_DOC.Date}",
                             PayType = "Начисление",
                             NachRUB =
                                 ((IName)GlobalOptions.ReferencesCache.GetCurrency(nach.CRS_DC)).Name == "RUB" ||
@@ -210,7 +212,7 @@ namespace KursAM2.ViewModel.Personal
                             RUB = 0,
                             USD = 0,
                             EUR = 0,
-                            Id = nach.ID
+                            StringId = nach.ID,
                         };
                         Documents.Add(newItem);
                     }
@@ -259,7 +261,8 @@ namespace KursAM2.ViewModel.Personal
                                         ? p.SUMM_ORD
                                         : 0),
                                 USD = (decimal)(crs.Name == "USD" ? p.SUMM_ORD : 0),
-                                EUR = (decimal)(crs.Name == "EUR" ? p.SUMM_ORD : 0)
+                                EUR = (decimal)(crs.Name == "EUR" ? p.SUMM_ORD : 0),
+                                DocCode =p.DOC_CODE
                                 // ReSharper restore PossibleInvalidOperationException
                             };
                             if (persRight.Any(t => t == s.Employee.DocCode))
@@ -321,7 +324,10 @@ namespace KursAM2.ViewModel.Personal
                         // ReSharper disable PossibleInvalidOperationException
                         RUB = r.RUB,
                         USD = r.USD,
-                        EUR = r.EUR
+                        EUR = r.EUR,
+                        StringId = r.StringId,
+                        DocCode = r.DocCode
+
                     };
                     tempList.Add(newItem);
                 }
@@ -548,6 +554,29 @@ namespace KursAM2.ViewModel.Personal
             RaisePropertyChanged(nameof(EmployeeMain));
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             //if (mySelEmp == null) return;
+        }
+
+        public ICommand OpenDocumentCommand
+        {
+            get { return new Command(OpenDocument, _ => CurrentPayDocument != null); }
+        }
+
+        private void OpenDocument(object obj)
+        {
+            switch (CurrentPayDocument.PayType)
+            {
+                case "Начисление":
+                    if (string.IsNullOrWhiteSpace(CurrentPayDocument.StringId)) return;
+                    var ctx = new PayRollVedomostWindowViewModel(CurrentPayDocument.Id);
+                    var form = new PayRollVedomost { Owner = Form };
+                    form.Show();
+                    form.DataContext = ctx;
+                    break;
+                case "Выплата":
+                    if(CurrentPayDocument.DocCode > 0 )
+                        DocumentsOpenManager.Open(DocumentType.CashOut, CurrentPayDocument.DocCode);
+                    break;
+            }
         }
     }
 }

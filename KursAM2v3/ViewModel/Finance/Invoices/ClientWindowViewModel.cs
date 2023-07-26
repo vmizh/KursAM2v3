@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
@@ -11,6 +12,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.DataAccess.Native.ObjectBinding;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using Helper;
@@ -589,21 +591,42 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get { return new Command(AddNomenklSimple, _ => Document?.Currency != null); }
         }
 
-        private IEnumerable<Nomenkl> LoadNomenkl(string srchText)
+        private IEnumerable<NomenklInfo> LoadNomenkl(string srchText)
         {
-            return GlobalOptions.ReferencesCache.GetNomenklsAll()
-                .Where(_ => ((IDocCode)_.Currency).DocCode == Document.Currency.DocCode).Cast<Nomenkl>().Where(_ =>
-                    (_.Name + _.NomenklNumber + _.FullName).ToUpper().Contains(srchText.ToUpper()))
-                .OrderBy(_ => _.Name);
+            List<NomenklInfo> ret = new List<NomenklInfo>();
+            var sql = @"SELECT np.NOM_DC AS DocCode, sum(np.KOL_IN)- sum(np.KOL_OUT) AS Quantity, max(np.DATE) as LastOperation
+                                FROM NOM_PRICE np
+                                GROUP BY np.NOM_DC
+                                HAVING sum(np.KOL_IN) - sum(np.KOL_OUT) > 0";
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var noms = GlobalOptions.ReferencesCache.GetNomenklsAll()
+                    .Where(_ => ((IDocCode)_.Currency).DocCode == Document.Currency.DocCode).Cast<Nomenkl>().Where(_ =>
+                        (_.Name + _.NomenklNumber + _.FullName).ToUpper().Contains(srchText.ToUpper()))
+                    .OrderBy(_ => _.Name).ToList();
+
+                var quans = ctx.Database.SqlQuery<NomenklQuantityInfo>(sql).ToList();
+                foreach (var n in noms)
+                {
+                    var item = new NomenklInfo(n);
+                    var q = quans.FirstOrDefault(_ => _.DocCode == n.DocCode);
+                    if (q != null)
+                    {
+                        item.QuantityOnStores = q.Quantity;
+                        item.LastOperationDate = (DateTime)q.LastOperation;
+                    }
+                    ret.Add(item);
+                }
+
+                return ret.OrderByDescending(_ => _.QuantityOnStores).ThenBy(_ => _.Name);
+            }
         }
-
-
         private void AddNomenklSimple(object obj)
         {
-            var dtx = new TableSearchWindowViewMovel<Nomenkl>(LoadNomenkl, "Выбор номенклатур",
+            var dtx = new TableSearchWindowViewMove<NomenklInfo>(LoadNomenkl, "Выбор номенклатур",
                 "NomenklSipmleListView");
             var service = this.GetService<IDialogService>("DialogServiceUI");
-            if (service.ShowDialog(MessageButton.OKCancel, "Выбор счетов фактур", dtx) == MessageResult.OK
+            if (service.ShowDialog(MessageButton.OKCancel, "Выбор номенклатур", dtx) == MessageResult.OK
                 || dtx.DialogResult)
             {
                 var newCode = Document?.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
@@ -849,7 +872,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 isOldExist = ctx.SD_84.Any(_ => _.DOC_CODE == Document.DocCode);
             }
 
-            if (!isOldExist)
+            if (!isOldExist && Document.State != RowStatus.NewRow)
             {
                 var res = WinManager.ShowWinUIMessageBox("Документ уже удален! Сохранить заново?", "Предупреждение",
                     MessageBoxButton.YesNoCancel,MessageBoxImage.Question);
@@ -1020,6 +1043,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 ShipmentRowDeleted.Add(CurrentShipmentRow);
                 Document.ShipmentRows.Remove(CurrentShipmentRow);
+                var t = Document.Entity.TD_84.Single(_ => _.CODE == CurrentShipmentRow.Code).TD_24;
+                t.Remove(t.First());
+                //Document.RaisePropertyAllChanged();
+                RaisePropertyChanged(nameof(Document));
                 if(Document.myState != RowStatus.NewRow)
                     Document.myState = RowStatus.Edited;
             }
@@ -1510,6 +1537,49 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public string Error { get; } = null;
 
+        #endregion
+
+        #region Helper class
+
+        internal class  NomenklInfo : Nomenkl
+        {
+            public NomenklInfo(Nomenkl nom)
+            {
+                Name = nom.Name;
+                DocCode = nom.DocCode;
+                Currency =  nom.Currency;
+                SDRSchet = nom.SDRSchet;
+                Group = nom.Group;
+                FullName = nom.FullName;
+                Id = nom.Id;
+                Unit = nom.Unit;
+                DefaultNDSPercent = nom.DefaultNDSPercent;
+                IsCurrencyTransfer = nom.IsCurrencyTransfer;
+                IsDeleted = nom.IsDeleted;
+                IsNakladExpense = nom.IsNakladExpense;
+                IsProguct = nom.IsProguct;
+                IsUsluga = nom.IsUsluga;
+                IsUslugaInRentabelnost = nom.IsUslugaInRentabelnost;
+                MainId = nom.MainId;
+                NomenklMain = nom.NomenklMain;
+                NomenklNumber = nom.NomenklNumber;
+                NomenklType = nom.NomenklType;
+                Notes = nom.Notes;
+            }
+
+            [Display(AutoGenerateField = true, Name = "Кол-во", Description = "кол-во на всех складах")]
+            public decimal QuantityOnStores { set; get;}
+
+            [Display(AutoGenerateField = true, Name = "Посл. операц.")]
+            public DateTime LastOperationDate { set; get; }
+        }
+
+        private class NomenklQuantityInfo
+        {
+            public decimal DocCode { set; get; }
+            public decimal Quantity { set; get; }
+            public DateTime? LastOperation { set; get; }
+        }
         #endregion
     }
 }

@@ -66,7 +66,8 @@
                         <dx:DXMessageBoxService />
                         <dx:DialogService x:Name="DialogService" ViewTemplate="{StaticResource dialogServiceTemplate}" 
                                           DialogWindowStartupLocation="CenterScreen" 
-                                          SetWindowOwner="False">
+                                          SetWindowOwner="False"
+                                          >
                             <dx:DialogService.DialogStyle>
                                 <Style TargetType="dx:DXDialogWindow">
                                     <Setter Property="WindowStyle" Value="SingleBorderWindow" />

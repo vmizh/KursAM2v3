@@ -187,19 +187,9 @@ namespace KursAM2.ViewModel.Finance.Cash
                 using (var context = GlobalOptions.GetEntities())
                 {
                     CashManager.InsertDocument(CashDocumentType.CashIn, Document);
+                    context.Database.ExecuteSqlCommand(
+                            $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SFACT_DC ?? 0)}");
                     if (!(BookView?.DataContext is CashBookWindowViewModel ctx)) return;
-                    var newKontrDC = Document.KONTRAGENT_DC;
-                    if (oldKontrDC != null)
-                    {
-                        context.Database.ExecuteSqlCommand(
-                            $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(oldKontrDC)}");
-                    }
-
-                    if (newKontrDC != null && newKontrDC != oldKontrDC)
-                    {
-                        context.Database.ExecuteSqlCommand(
-                            $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(newKontrDC)}");
-                    } 
                     ctx.RefreshActual(Document);
                 }
 
@@ -210,8 +200,13 @@ namespace KursAM2.ViewModel.Finance.Cash
             if (Document.State != RowStatus.Edited) return;
             {
                 CashManager.UpdateDocument(CashDocumentType.CashIn, Document, oldDate);
-                if (BookView?.DataContext is CashBookWindowViewModel ctx)
-                    ctx.RefreshActual(Document);
+                using (var context = GlobalOptions.GetEntities())
+                {
+                    context.Database.ExecuteSqlCommand(
+                        $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SFACT_DC ?? 0)}");
+                    if (BookView?.DataContext is CashBookWindowViewModel ctx)
+                        ctx.RefreshActual(Document);
+                }
             }
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.CashIn), null,
                 Document.DocCode, null, (string)Document.ToJson());
@@ -233,6 +228,12 @@ namespace KursAM2.ViewModel.Finance.Cash
                 case MessageBoxResult.Yes:
                     var ctx = BookView?.DataContext as CashBookWindowViewModel;
                     CashManager.DeleteDocument(CashDocumentType.CashIn, Document);
+                    using (var context = GlobalOptions.GetEntities())
+                    {
+                        context.Database.ExecuteSqlCommand(
+                            $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SFACT_DC ?? 0)}");
+                    }
+
                     if (Document.KONTRAGENT_DC != null)
                         RecalcKontragentBalans.CalcBalans((decimal)Document.KONTRAGENT_DC,
                             // ReSharper disable once PossibleInvalidOperationException

@@ -489,6 +489,8 @@ namespace KursAM2.Managers
                                 if (oldrow == null)
                                 {
                                     code++;
+                                    r.DocCode = newDC;
+                                    r.Code = code;
                                     ctx.TD_24.Add(new TD_24
                                     {
                                         DOC_CODE = newDC,

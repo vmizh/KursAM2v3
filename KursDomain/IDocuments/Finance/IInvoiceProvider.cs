@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using KursDomain.Documents.Invoices;
 using KursDomain.References;
 
 namespace KursDomain.IDocuments.Finance;
@@ -12,11 +11,12 @@ public interface IInvoiceProvider
 
     [Display(AutoGenerateField = false)] Guid Id { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Нкал. расходы")]
+    [Display(AutoGenerateField = true, Name = "Накл. расходы") ]
+    [DisplayFormat(DataFormatString = "n2")]
     decimal? NakladDistributedSumma { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Ответственный")]
-    References.Employee PersonaResponsible { set; get; }
+    Employee PersonaResponsible { set; get; }
 
     [Display(AutoGenerateField = true, Name = "№")]
     int? SF_IN_NUM { set; get; }
@@ -37,7 +37,7 @@ public interface IInvoiceProvider
     decimal SummaFact { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Валюта")]
-    References.Currency Currency { set; get; }
+    Currency Currency { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Оплачен")]
     bool IsPay { set; get; }

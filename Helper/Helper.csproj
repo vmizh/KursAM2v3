@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BindingHelper.cs" />
+    <Compile Include="GridLayoutHelper.cs" />
     <Compile Include="CustomDXGridLocalizer.cs" />
     <Compile Include="DateHelper.cs" />
     <Compile Include="DevExpressHelper.cs" />

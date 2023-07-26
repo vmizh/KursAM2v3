@@ -363,6 +363,9 @@
     <Compile Include="View\DialogUserControl\Invoices\UserControls\InvoiceListView.xaml.cs">
       <DependentUpon>InvoiceListView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\DialogUserControl\Invoices\UserControls\NomenklWithQuantitySearch.xaml.cs">
+      <DependentUpon>NomenklWithQuantitySearch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\DialogUserControl\Invoices\ViewModels\InvoiceClient.cs" />
     <Compile Include="View\DialogUserControl\Invoices\ViewModels\InvoiceClientSearchDialogViewModel.cs" />
     <Compile Include="View\DialogUserControl\Invoices\ViewModels\InvoicePovider.cs" />
@@ -378,7 +381,7 @@
     <Compile Include="View\DialogUserControl\Standart\SelectInvoiceMultipleDialogView.xaml.cs">
       <DependentUpon>SelectInvoiceMultipleDialogView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\DialogUserControl\Standart\TableSearchWindowViewMovel.cs" />
+    <Compile Include="View\DialogUserControl\Standart\TableSearchWindowViewMove.cs" />
     <Compile Include="View\DialogUserControl\Standart\TableWithSearch.xaml.cs">
       <DependentUpon>TableWithSearch.xaml</DependentUpon>
     </Compile>
@@ -400,6 +403,7 @@
     <Compile Include="View\Finance\UC\InvoiceClientSelectRowsView.xaml.cs">
       <DependentUpon>InvoiceClientSelectRowsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Helper\GridLayoutHelper.cs" />
     <Compile Include="View\KursReferences\UC\CurrencyReferenceUC.xaml.cs">
       <DependentUpon>CurrencyReferenceUC.xaml</DependentUpon>
     </Compile>
@@ -647,7 +651,6 @@
     <Compile Include="View\Finance\UC\SchetFacturaProviderSelectUC.xaml.cs">
       <DependentUpon>SchetFacturaProviderSelectUC.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Helper\GridLayoutHelper.cs" />
     <Compile Include="View\KursReferences\AccessRightsView.xaml.cs">
       <DependentUpon>AccessRightsView.xaml</DependentUpon>
     </Compile>
@@ -1199,6 +1202,10 @@
     <Page Include="View\DialogUserControl\Invoices\UserControls\InvoiceListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\DialogUserControl\Invoices\UserControls\NomenklWithQuantitySearch.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\DialogUserControl\StandartDialogSelectUC3.xaml">
       <Generator>MSBuild:Compile</Generator>

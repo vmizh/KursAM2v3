@@ -978,12 +978,10 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         set { }
         get
         {
-            decimal sum = 0;
-            if (Entity.TD_84 is { Count: > 0 })
-                sum += (from d in Entity.TD_84
-                    from o in d.TD_24
-                    select o.DDT_KOL_RASHOD * ((d.SFT_SUMMA_K_OPLATE ?? 0) / (decimal)d.SFT_KOL)).Sum();
-            return sum;
+            return (from s in ShipmentRows
+                where s.DDT_KOL_RASHOD > 0
+                let r = Rows.First(_ => _.Nomenkl.DocCode == s.Nomenkl.DocCode)
+                select r.Summa * r.Quantity / s.DDT_KOL_RASHOD).Sum();
         }
     }
 
@@ -1133,7 +1131,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
             Rows = new ObservableCollection<IInvoiceClientRow>();
         else
             Rows.Clear();
-        Rows = new ObservableCollection<IInvoiceClientRow>();
+        //Rows = new ObservableCollection<IInvoiceClientRow>();
         if (Entity.TD_84 != null && Entity.TD_84.Count > 0)
             foreach (var t in Entity.TD_84)
             {
@@ -1143,65 +1141,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                 };
                 Rows.Add(newRow);
             }
-
-        //if (context != null)
-        //{
-        //    if (isLoadPayment)
-        //    {
-        //        PaymentDocs.Clear();
-        //        foreach (var c in Entity.SD_33)
-        //            PaymentDocs.Add(new InvoicePaymentDocument
-        //            {
-        //                DocCode = c.DOC_CODE,
-        //                Code = 0,
-        //                DocumentType = DocumentType.CashIn,
-        //                // ReSharper disable once PossibleInvalidOperationException
-        //                DocumentName =
-        //                    $"{c.NUM_ORD} от {c.DATE_ORD.Value.ToShortDateString()} на {c.CRS_SUMMA:n2} " +
-        //                    // ReSharper disable once PossibleInvalidOperationException
-        //                    $"{GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC)} ({c.CREATOR})",
-        //                // ReSharper disable once PossibleInvalidOperationException
-        //                Summa = (decimal)c.SUMM_ORD,
-        //                Currency = GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC) as References.Currency,
-        //                Note = c.NOTES_ORD
-        //            });
-        //        foreach (var c in Entity.TD_101)
-        //            PaymentDocs.Add(new InvoicePaymentDocument
-        //            {
-        //                DocCode = c.DOC_CODE,
-        //                Code = c.CODE,
-        //                DocumentType = DocumentType.Bank,
-        //                DocumentName =
-        //                    // ReSharper disable once PossibleInvalidOperationException
-        //                    $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD:n2} " +
-        //                    $"{GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
-        //                Summa = (decimal)c.VVT_VAL_PRIHOD,
-        //                Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as References.Currency,
-        //                Note = c.VVT_DOC_NUM
-        //            });
-        //        foreach (var c in Entity.TD_110)
-        //            PaymentDocs.Add(new InvoicePaymentDocument
-        //            {
-        //                DocCode = c.DOC_CODE,
-        //                Code = c.CODE,
-        //                DocumentType = DocumentType.MutualAccounting,
-        //                DocumentName =
-        //                    // ReSharper disable once PossibleInvalidOperationException
-        //                    $"Взаимозачет №{c.SD_110.VZ_NUM} от {c.SD_110.VZ_DATE.ToShortDateString()} на {c.VZT_CRS_SUMMA:n2}",
-        //                // ReSharper disable once PossibleInvalidOperationException
-        //                Summa = (decimal)c.VZT_CRS_SUMMA,
-        //                Currency =
-        //                    GlobalOptions.ReferencesCache.GetCurrency(c.SD_110.CurrencyFromDC) as References.Currency,
-        //                Note = c.VZT_DOC_NOTES
-        //            });
-        //    }
-        //    else
-        //    {
-        //        CashPaySumma = context.Context.CashSFClient.FirstOrDefault(_ => _.Id == Entity.Id)?.Payed ?? 0;
-        //    }
-        //}
-        //else
-        //{
+        
         using (var ctx = GlobalOptions.GetEntities())
         {    
             PaymentDocs.Clear();
@@ -1264,7 +1204,8 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                 CashPaySumma = p != null ? p.Payed : 0;
             }
         }
-        ShipmentRows = new ObservableCollection<ShipmentRowViewModel>();
+        //ShipmentRows = new ObservableCollection<ShipmentRowViewModel>();
+        ShipmentRows.Clear();
         if (Entity.TD_84 is not { Count: > 0 }) return;
         
         using (var ctx = GlobalOptions.GetEntities())

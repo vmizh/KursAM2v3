@@ -2116,8 +2116,6 @@
         <AssociationConnector Association="ALFAMEDIA.FK_DistributeNakladInfo_FinanceDocId" />
         <EntityTypeShape EntityType="ALFAMEDIA.CashSFClient" Width="1.5" PointX="46.375" PointY="45.75" />
         <EntityTypeShape EntityType="ALFAMEDIA.CashSFProvider" Width="1.5" PointX="47.375" PointY="0.75" />
-        <EntityTypeShape EntityType="ALFAMEDIA.InvoiceClientQuery" Width="1.5" PointX="46.375" PointY="20.75" />
-        <EntityTypeShape EntityType="ALFAMEDIA.InvoicePostQuery" Width="1.5" PointX="46.375" PointY="31.75" />
         <EntityTypeShape EntityType="ALFAMEDIA.RefundFromClient" Width="1.5" PointX="65" PointY="758.25" />
         <EntityTypeShape EntityType="ALFAMEDIA.RefundFromClientRow" Width="1.5" PointX="51.75" PointY="766" />
         <EntityTypeShape EntityType="ALFAMEDIA.RefundToProvider" Width="1.5" PointX="63" PointY="754.25" />
@@ -2130,6 +2128,8 @@
         <AssociationConnector Association="ALFAMEDIA.FK_RefundToProvider_StoreDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_RefundToProviderRow_DocId" />
         <AssociationConnector Association="ALFAMEDIA.FK_RefundToProviderRow_NomenklDC" />
+        <EntityTypeShape EntityType="ALFAMEDIA.InvoiceClientQuery" Width="1.5" PointX="46.375" PointY="20.75" />
+        <EntityTypeShape EntityType="ALFAMEDIA.InvoicePostQuery" Width="1.5" PointX="46.375" PointY="31.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

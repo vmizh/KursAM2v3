@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
@@ -64,6 +63,8 @@ namespace KursAM2.View.DialogUserControl
             LoadKontragentFromReference();
         }
 
+        public override string LayoutName => "KontragentSelectDialog";
+
         public Currency Currency
         {
             get => myCurrency;
@@ -94,7 +95,7 @@ namespace KursAM2.View.DialogUserControl
             get => myCurrentKontragent;
             set
             {
-                if (Equals(myCurrentKontragent,value)) return;
+                if (Equals(myCurrentKontragent, value)) return;
                 myCurrentKontragent = value;
                 RaisePropertyChanged();
             }
@@ -124,12 +125,13 @@ namespace KursAM2.View.DialogUserControl
                             IsBalans = k.IsBalans,
                             INN = k.INN,
                             IsDeleted = k.IsDeleted,
-                            Notes = k.Notes
+                            Notes = k.Notes,
+                            StartBalans = k.StartBalans
                         });
                     }
                 else
                     foreach (var k in KontragentManager.GetAllKontragentSortedByUsed()
-                                 .Where(_ => ((IName) _.Currency).Name == Currency.Name))
+                                 .Where(_ => ((IName)_.Currency).Name == Currency.Name))
                     {
                         if (k.IsDeleted) continue;
                         var kontr = new Kontragent
@@ -142,7 +144,8 @@ namespace KursAM2.View.DialogUserControl
                             IsBalans = k.IsBalans,
                             INN = k.INN,
                             IsDeleted = k.IsDeleted,
-                            Notes = k.Notes
+                            Notes = k.Notes,
+                            StartBalans = k.StartBalans
                         };
                         KontrList.Add(kontr);
                     }
@@ -185,7 +188,7 @@ namespace KursAM2.View.DialogUserControl
                     }
                 else
                     foreach (var k in KontragentManager.GetAllKontragentSortedByUsed()
-                                 .Where(_ => ((IName) _.Currency).Name == Currency.Name))
+                                 .Where(_ => ((IName)_.Currency).Name == Currency.Name))
                     {
                         if (k.IsDeleted) continue;
                         var kontr = new Kontragent
@@ -222,8 +225,8 @@ namespace KursAM2.View.DialogUserControl
             {
                 foreach (var k in GlobalOptions.ReferencesCache.GetKontragentsAll().Cast<Kontragent>())
                     if (k.Name.ToUpper().Contains(SearchText.ToUpper())
-                        || ((IName) k.Currency).Name.ToUpper().Contains(SearchText.ToUpper())
-                        || (k.ResponsibleEmployee != null && ((IName) k.ResponsibleEmployee).Name.ToUpper()
+                        || ((IName)k.Currency).Name.ToUpper().Contains(SearchText.ToUpper())
+                        || (k.ResponsibleEmployee != null && ((IName)k.ResponsibleEmployee).Name.ToUpper()
                             .Contains(SearchText.ToUpper()))
                         || (k.FullName != null && k.FullName.ToUpper().Contains(SearchText.ToUpper()))
                         || (k.INN != null && k.INN.ToUpper().Contains(SearchText.ToUpper())))
@@ -244,7 +247,7 @@ namespace KursAM2.View.DialogUserControl
                         }
                         else
                         {
-                            if (((IName) k.Currency).Name == Currency?.Name)
+                            if (((IName)k.Currency).Name == Currency?.Name)
                                 KontragentCollection.Add(new Kontragent
                                 {
                                     DocCode = k.DocCode,
@@ -267,9 +270,15 @@ namespace KursAM2.View.DialogUserControl
             }
         }
 
-        public override void ResetLayout(object form)
+        protected override void OnWindowLoaded(object obj)
         {
-            myDataUserControl?.LayoutManager.ResetLayout();
+            base.OnWindowLoaded(obj);
+
         }
+
+        //public override void ResetLayout(object form)
+        //{
+        //    myDataUserControl?.LayoutManager.ResetLayout();
+        //}
     }
 }

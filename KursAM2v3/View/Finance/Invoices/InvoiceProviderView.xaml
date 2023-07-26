@@ -7,147 +7,151 @@
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm" 
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=KursDomain"
     xmlns:iCommon="clr-namespace:KursDomain.ICommon;assembly=KursDomain"
-    x:Class="KursAM2.View.Finance.Invoices.InvoiceProviderView" 
+    xmlns:helper="clr-namespace:KursAM2.View.Helper"
+    x:Class="KursAM2.View.Finance.Invoices.InvoiceProviderView"
     mc:Ignorable="d"
-    Title="{Binding WindowName}" 
+    Title="{Binding WindowName}"
     Icon="{Binding Source={StaticResource InvoiceProviderDrawingImage},
     Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
-    MinHeight="450" 
+    MinHeight="450"
     Height="600"
     MinWidth="800">
     <dx:ThemedWindow.HeaderItems>
-                <TextBlock Text="{Binding DatabaseName}" Foreground="{Binding DatabaseColor}" 
-                           FontFamily="Seqoe UI Light" 
-                           FontSize="15" FontStyle="Italic" FontWeight="Bold" 
-                           VerticalAlignment="Center" HorizontalAlignment="Right"/>
+        <TextBlock Text="{Binding DatabaseName}" Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light"
+                   FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <DockPanel Style="{StaticResource DXServices}">
-        <control:WindowMenu Height="60" DockPanel.Dock="Top"/>
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <dxlc:LayoutControl x:Name="mainLayoutControl" Orientation="Vertical" DockPanel.Dock="Top"
-            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-            dx:DXSerializer.SerializationID="mainLayoutControl">
+                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                            dx:DXSerializer.SerializationID="mainLayoutControl">
             <dxlc:LayoutGroup HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                dxlc:LayoutControl.AllowVerticalSizing="True" MinHeight="200"
-                x:Name="mainLayoutControl1"
-                dx:DXSerializer.SerializationID="mainLayoutControl1">
+                              dxlc:LayoutControl.AllowVerticalSizing="True" MinHeight="200"
+                              x:Name="mainLayoutControl1"
+                              dx:DXSerializer.SerializationID="mainLayoutControl1">
                 <dxlc:LayoutGroup Orientation="Vertical" dxlc:LayoutControl.AllowVerticalSizing="True">
                     <dxlc:LayoutItem>
                         <DockPanel LastChildFill="False">
-                        <Label Content="№:" DockPanel.Dock="Left"/>
-                        <dxe:TextEdit EditValue="{Binding Document.SF_IN_NUM}" IsReadOnly="True"
-                                      DockPanel.Dock="Left" MinWidth="40"
-                                      Margin="5,0"/>
-                        <Label Content="Внеш.№:" Margin="5,0"/>
-                        <dxe:TextEdit EditValue="{Binding Document.SF_POSTAV_NUM, 
-                            UpdateSourceTrigger=PropertyChanged }" Margin="5,0" MinWidth="80"/>
-                        <Label Content="Дата:" Margin="5,0"/> 
-                            <dxe:DateEdit EditValue="{Binding Document.DocDate, 
-                                UpdateSourceTrigger=PropertyChanged}" Margin="5,0 " MinWidth="80"/>
-                       
+                            <Label Content="№:" DockPanel.Dock="Left" />
+                            <dxe:TextEdit EditValue="{Binding Document.SF_IN_NUM}" IsReadOnly="True"
+                                          DockPanel.Dock="Left" MinWidth="40"
+                                          Margin="5,0" />
+                            <Label Content="Внеш.№:" Margin="5,0" />
+                            <dxe:TextEdit
+                                EditValue="{Binding Document.SF_POSTAV_NUM, 
+                            UpdateSourceTrigger=PropertyChanged }"
+                                Margin="5,0" MinWidth="80" />
+                            <Label Content="Дата:" Margin="5,0" />
+                            <dxe:DateEdit
+                                EditValue="{Binding Document.DocDate, 
+                                UpdateSourceTrigger=PropertyChanged}"
+                                Margin="5,0 " MinWidth="80" />
+
                             <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
-                                          IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }"
-                                          >
-                            <dxmvvm:Interaction.Behaviors>
-                                <dxmvvm:EnumItemsSourceBehavior EnumType="{x:Type iCommon:RowStatus}"/>
-                            </dxmvvm:Interaction.Behaviors>
-                        </dxe:ComboBoxEdit>
-                        <Label Content="Статус: " DockPanel.Dock="Right"/>
-                        <dxe:TextEdit EditValue= "{Binding Document.CREATOR}" IsReadOnly="True"
-                                      DockPanel.Dock="Right" MinWidth="80" Margin="0 0 5 0 "/>
-                        <Label Content="Создатель: "
-                               DockPanel.Dock="Right"/>
+                                              IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EnumItemsSourceBehavior EnumType="{x:Type iCommon:RowStatus}" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxe:ComboBoxEdit>
+                            <Label Content="Статус: " DockPanel.Dock="Right" />
+                            <dxe:TextEdit EditValue="{Binding Document.CREATOR}" IsReadOnly="True"
+                                          DockPanel.Dock="Right" MinWidth="80" Margin="0 0 5 0 " />
+                            <Label Content="Создатель: "
+                                   DockPanel.Dock="Right" />
                         </DockPanel>
                     </dxlc:LayoutItem>
                     <dxlc:LayoutGroup Header="Основные данные" View="GroupBox" Orientation="Vertical">
                         <dxlc:LayoutItem>
                             <DockPanel LastChildFill="False">
-                                <Label Content="Контрагент: "/>
-                                <dxe:ButtonEdit 
+                                <Label Content="Контрагент: " />
+                                <dxe:ButtonEdit
                                     Style="{StaticResource ButtonEditWithError}"
                                     Margin="5 0"
                                     MinWidth="200"
                                     EditValue="{Binding Document.Kontragent, 
                                     ValidatesOnDataErrors=True,
                                     UpdateSourceTrigger=PropertyChanged}"
-                                    IsTextEditable="False"
-                                >
+                                    IsTextEditable="False">
                                     <dxmvvm:Interaction.Behaviors>
-                                        <dxmvvm:EventToCommand EventName="DefaultButtonClick" 
+                                        <dxmvvm:EventToCommand EventName="DefaultButtonClick"
                                                                Command="{Binding KontragentSelectCommand}" />
                                     </dxmvvm:Interaction.Behaviors>
                                 </dxe:ButtonEdit>
-                                <Label Content="Тип продукции: "/>
+                                <Label Content="Тип продукции: " />
                                 <dxe:ComboBoxEdit
                                     Style="{StaticResource ComboBoxEditWithError}"
                                     Margin="5 0"
                                     MinWidth="200"
-                                    AutoComplete = "True"
+                                    AutoComplete="True"
                                     ItemsSource="{Binding VzaimoraschetTypeList, UpdateSourceTrigger=PropertyChanged}"
                                     EditValue="{Binding Document.VzaimoraschetType, Mode=TwoWay,
                                     UpdateSourceTrigger=PropertyChanged,
                                     NotifyOnValidationError=True,
-                                    ValidatesOnDataErrors=True}"
-                                />
+                                    ValidatesOnDataErrors=True}" />
                                 <Label Content="Акцептован: " Margin="5 0" />
-                                <dxe:CheckEdit EditValue="{Binding Document.IsAccepted,
-                                    UpdateSourceTrigger=PropertyChanged}"/>
-                                <Label Content="НДС в цене: " Margin="5 0"/>
-                                <dxe:CheckEdit EditValue="{Binding Document.IsNDSInPrice,
-                                    UpdateSourceTrigger=PropertyChanged}" EditValueChanged="CheckEdit_EditValueChanged"/>
+                                <dxe:CheckEdit
+                                    EditValue="{Binding Document.IsAccepted,
+                                    UpdateSourceTrigger=PropertyChanged}" />
+                                <Label Content="НДС в цене: " Margin="5 0" />
+                                <dxe:CheckEdit
+                                    EditValue="{Binding Document.IsNDSInPrice,
+                                    UpdateSourceTrigger=PropertyChanged}"
+                                    EditValueChanged="CheckEdit_EditValueChanged" />
                             </DockPanel>
                         </dxlc:LayoutItem>
                         <dxlc:LayoutGroup Orientation="Horizontal">
                             <dxlc:LayoutItem>
                                 <DockPanel LastChildFill="False">
-                                    <Label Content="Получатель:"/>
-                                    <dxe:ButtonEdit 
+                                    <Label Content="Получатель:" />
+                                    <dxe:ButtonEdit
                                         Style="{StaticResource ButtonEditWithError}"
                                         Margin="6 0"
                                         MinWidth="200"
                                         EditValue="{Binding Document.KontrReceiver, UpdateSourceTrigger=PropertyChanged}"
                                         IsTextEditable="False">
                                         <dxmvvm:Interaction.Behaviors>
-                                            <dxmvvm:EventToCommand EventName="DefaultButtonClick" 
+                                            <dxmvvm:EventToCommand EventName="DefaultButtonClick"
                                                                    Command="{Binding ReceiverSelectCommand}" />
                                         </dxmvvm:Interaction.Behaviors>
                                     </dxe:ButtonEdit>
-                                    <Label Content="Центр ответственности: "/>
+                                    <Label Content="Центр ответственности: " />
                                     <dxe:ComboBoxEdit
                                         Style="{StaticResource ComboBoxEditWithError}"
                                         Margin="5 0"
                                         MinWidth="100"
-                                        AutoComplete = "True"
+                                        AutoComplete="True"
                                         ItemsSource="{Binding COList, UpdateSourceTrigger=PropertyChanged}"
                                         EditValue="{Binding Document.CO, Mode=TwoWay,
                                     UpdateSourceTrigger=PropertyChanged,
                                     NotifyOnValidationError=True,
-                                    ValidatesOnDataErrors=True}"/>
-                                    <Label Content= "Договор поставки: "/> 
-                                    <dxe:ButtonEdit 
+                                    ValidatesOnDataErrors=True}" />
+                                    <Label Content="Договор поставки: " />
+                                    <dxe:ButtonEdit
                                         AcceptsReturn="True"
                                         Margin="6 0"
                                         MinWidth="200"
                                         EditValue="{Binding Document.Contract, UpdateSourceTrigger=PropertyChanged}"
                                         IsTextEditable="False"
-                                        AllowDefaultButton="False"
-                                        >
+                                        AllowDefaultButton="False">
                                         <dxe:ButtonEdit.Buttons>
-                                            <dxe:ButtonInfo 
+                                            <dxe:ButtonInfo
                                                 GlyphKind="Regular"
                                                 ToolTip="Выбрать договор поставщика"
-                                                Command="{Binding DogovorSelectCommand}"/>
-                                            <dxe:ButtonInfo 
+                                                Command="{Binding DogovorSelectCommand}" />
+                                            <dxe:ButtonInfo
                                                 GlyphKind="Edit"
                                                 ToolTip="Открыть договор поставщика"
-                                                Command="{Binding DogovorOpenCommand}"/>
-                                            <dxe:ButtonInfo 
+                                                Command="{Binding DogovorOpenCommand}" />
+                                            <dxe:ButtonInfo
                                                 GlyphKind="Cancel"
                                                 ToolTip="Удалить связь с договором поставщика"
-                                                Command="{Binding DogovorDeleteLinkCommand}"/>
+                                                Command="{Binding DogovorDeleteLinkCommand}" />
                                         </dxe:ButtonEdit.Buttons>
                                     </dxe:ButtonEdit>
                                 </DockPanel>
@@ -156,76 +160,74 @@
                     </dxlc:LayoutGroup>
                     <dxlc:LayoutGroup Header="Деньги" View="GroupBox" Orientation="Vertical">
                         <dxlc:LayoutGroup>
-                            <dxlc:LayoutItem Label="Сумма:" >
-                                <dxe:PopupCalcEdit 
+                            <dxlc:LayoutItem Label="Сумма:">
+                                <dxe:PopupCalcEdit
                                     IsReadOnly="True"
-                                    EditValue="{Binding Document.Summa, Mode=OneWay}" 
+                                    EditValue="{Binding Document.Summa, Mode=OneWay}"
                                     DisplayFormatString="n2"
-                                    MaskUseAsDisplayFormat="True"/>
+                                    MaskUseAsDisplayFormat="True" />
                             </dxlc:LayoutItem>
                             <dxlc:LayoutItem Label="Валюта:">
                                 <dxe:ComboBoxEdit
                                     Style="{StaticResource ComboBoxEditWithError}"
-                                    AutoComplete = "True"
+                                    AutoComplete="True"
                                     IsEnabled="{Binding IsCurrencyEnabled, UpdateSourceTrigger=PropertyChanged}"
                                     ItemsSource="{Binding CurrencyList, UpdateSourceTrigger=PropertyChanged}"
                                     EditValue="{Binding Document.Currency, 
                                     UpdateSourceTrigger=PropertyChanged,
                                     NotifyOnValidationError=True,
-                                    ValidatesOnDataErrors=True}" 
-                                    />
+                                    ValidatesOnDataErrors=True}" />
                             </dxlc:LayoutItem>
                             <dxlc:LayoutItem Label="Счет накладных:">
-                                <dxe:CheckEdit EditValue="{Binding Document.IsInvoiceNakald, 
-                                    UpdateSourceTrigger=PropertyChanged}"/>
+                                <dxe:CheckEdit
+                                    EditValue="{Binding Document.IsInvoiceNakald, 
+                                    UpdateSourceTrigger=PropertyChanged}" />
                             </dxlc:LayoutItem>
                             <dxlc:LayoutItem Label="Распределно(накл):">
-                                <dxe:PopupCalcEdit 
+                                <dxe:PopupCalcEdit
                                     EditValue="{Binding Document.NakladDistributedSumma, Mode=OneWay}"
                                     AllowDefaultButton="False"
                                     DisplayFormatString="n2"
                                     MaskUseAsDisplayFormat="True"
-                                    IsReadOnly="True"/>
+                                    IsReadOnly="True" />
                             </dxlc:LayoutItem>
                             <dxlc:LayoutItem Label="Условия оплаты:">
                                 <dxe:ComboBoxEdit
                                     Style="{StaticResource ComboBoxEditWithError}"
-                                    AutoComplete = "True"
+                                    AutoComplete="True"
                                     ItemsSource="{Binding PayConditionList, UpdateSourceTrigger=PropertyChanged}"
                                     EditValue="{Binding Document.PayCondition, Mode=TwoWay,
                                     UpdateSourceTrigger=PropertyChanged,
                                     NotifyOnValidationError=True,
-                                    ValidatesOnDataErrors=True}"
-                                />
+                                    ValidatesOnDataErrors=True}" />
                             </dxlc:LayoutItem>
                         </dxlc:LayoutGroup>
                         <dxlc:LayoutGroup Header="LayoutGroup" View="Group">
                             <dxlc:LayoutItem Label="Оплачено:">
-                                <dxe:PopupCalcEdit 
+                                <dxe:PopupCalcEdit
                                     EditValue="{Binding Document.PaySumma, Mode=OneWay}"
                                     AllowDefaultButton="False"
                                     DisplayFormatString="n2"
                                     MaskUseAsDisplayFormat="True"
-                                    IsReadOnly="True"/>
+                                    IsReadOnly="True" />
                             </dxlc:LayoutItem>
                             <dxlc:LayoutItem Label="Фактурирование:">
-                                <dxe:PopupCalcEdit 
+                                <dxe:PopupCalcEdit
                                     EditValue="{Binding Document.SummaFact, Mode=OneWay}"
                                     AllowDefaultButton="False"
                                     DisplayFormatString="n2"
                                     MaskUseAsDisplayFormat="True"
-                                    IsReadOnly="True"/>
+                                    IsReadOnly="True" />
                             </dxlc:LayoutItem>
                             <dxlc:LayoutItem Label="Форма расчетов:">
                                 <dxe:ComboBoxEdit
                                     Style="{StaticResource ComboBoxEditWithError}"
-                                    AutoComplete = "True"
+                                    AutoComplete="True"
                                     ItemsSource="{Binding FormRaschetList}"
                                     EditValue="{Binding Document.FormRaschet,
                                     NotifyOnValidationError=True,
                                     ValidatesOnDataErrors=True,
-                                    UpdateSourceTrigger=PropertyChanged}"
-                                />
+                                    UpdateSourceTrigger=PropertyChanged}" />
                             </dxlc:LayoutItem>
                         </dxlc:LayoutGroup>
                     </dxlc:LayoutGroup>
@@ -233,125 +235,129 @@
 
                         <dxlc:LayoutGroup Header="Ответственный" View="GroupBox">
                             <dxlc:LayoutItem Label="Таб.№:" HorizontalAlignment="Left">
-                                <dxe:TextEdit EditValue="{Binding Document.EmployeeTabelNumber,
+                                <dxe:TextEdit
+                                    EditValue="{Binding Document.EmployeeTabelNumber,
                                     Mode=OneWay}"
-                                    IsReadOnly="True"/>
+                                    IsReadOnly="True" />
                             </dxlc:LayoutItem>
                             <dxlc:LayoutItem Label="Имя:">
                                 <dxe:ComboBoxEdit
                                     Style="{StaticResource ComboBoxEditWithError}"
                                     MinWidth="150"
-                                    AutoComplete = "True"
+                                    AutoComplete="True"
                                     ItemsSource="{Binding EmployeeList, UpdateSourceTrigger=PropertyChanged}"
                                     EditValue="{Binding Document.Employee, Mode=TwoWay,
                                     UpdateSourceTrigger=PropertyChanged, 
                                     NotifyOnValidationError=True,
-                                    ValidatesOnDataErrors=True}"
-                                    />
+                                    ValidatesOnDataErrors=True}" />
                             </dxlc:LayoutItem>
                         </dxlc:LayoutGroup>
-                            <dxlc:LayoutItem VerticalAlignment="Stretch" Label="Примечание:">
-                                <dxe:TextEdit 
-                                    Style="{StaticResource NoteStyle}"
-                                    EditValue="{Binding Document.Note,
-                                    UpdateSourceTrigger=PropertyChanged}"
-                                    />
-                            </dxlc:LayoutItem>
+                        <dxlc:LayoutItem VerticalAlignment="Stretch" Label="Примечание:">
+                            <dxe:TextEdit
+                                Style="{StaticResource NoteStyle}"
+                                EditValue="{Binding Document.Note,
+                                    UpdateSourceTrigger=PropertyChanged}" />
+                        </dxlc:LayoutItem>
                     </dxlc:LayoutGroup>
                     <dxlc:LayoutGroup Header="Грузовые реквизиты:" View="GroupBox">
                         <dxlc:LayoutItem Label="Грузоотправитель:">
-                            <dxe:TextEdit EditValue="{Binding Document.SF_GRUZOOTPRAVITEL, UpdateSourceTrigger=PropertyChanged}"/>
+                            <dxe:TextEdit
+                                EditValue="{Binding Document.SF_GRUZOOTPRAVITEL, UpdateSourceTrigger=PropertyChanged}" />
                         </dxlc:LayoutItem>
                         <dxlc:LayoutItem Label="Грузополучатель">
-                            <dxe:TextEdit EditValue="{Binding Document.SF_GRUZOPOLUCHATEL, UpdateSourceTrigger=PropertyChanged}"/>
+                            <dxe:TextEdit
+                                EditValue="{Binding Document.SF_GRUZOPOLUCHATEL, UpdateSourceTrigger=PropertyChanged}" />
                         </dxlc:LayoutItem>
                     </dxlc:LayoutGroup>
                 </dxlc:LayoutGroup>
             </dxlc:LayoutGroup>
             <dxlc:LayoutGroup View="Tabs" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                dxlc:LayoutControl.AllowVerticalSizing="True" x:Name="mainLayoutControl2"
-                dx:DXSerializer.SerializationID="mainLayoutControl2">
-                <dxlc:LayoutGroup HeaderTemplate="{StaticResource RowsLayoutGroupHeader}" 
+                              dxlc:LayoutControl.AllowVerticalSizing="True" x:Name="mainLayoutControl2"
+                              dx:DXSerializer.SerializationID="mainLayoutControl2">
+                <dxlc:LayoutGroup HeaderTemplate="{StaticResource RowsLayoutGroupHeader}"
                                   x:Name="mainLayoutControl3"
                                   dx:DXSerializer.SerializationID="mainLayoutControl3">
                     <dxg:GridControl x:Name="gridRows"
                                      Style="{StaticResource GridControl.Base}"
-                        ItemsSource="{Binding Document.Rows, NotifyOnSourceUpdated=True}"
-                        CurrentItem="{Binding CurrentRow, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedItems="{Binding SelectedRows, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
-                        AutoGeneratingColumn="GridRows_OnAutoGeneratingColumn"
-                        AutoGeneratedColumns="GridRows_OnAutoGeneratedColumns"
-                        MasterRowExpanding="gridRows_MasterRowExpanding">
+                                     ItemsSource="{Binding Document.Rows, NotifyOnSourceUpdated=True}"
+                                     CurrentItem="{Binding CurrentRow, UpdateSourceTrigger=PropertyChanged}"
+                                     SelectedItems="{Binding SelectedRows, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                     AutoGeneratingColumn="GridRows_OnAutoGeneratingColumn"
+                                     AutoGeneratedColumns="GridRows_OnAutoGeneratedColumns"
+                                     MasterRowExpanding="gridRows_MasterRowExpanding">
+                        <dxmvvm:Interaction.Behaviors>
+                            <helper:GridLayoutHelper LayoutChanged="GridLayoutHelper_Trigger" />
+                        </dxmvvm:Interaction.Behaviors>
                         <dxg:GridControl.View>
                             <dxg:TableView x:Name="tableViewRows"
                                            Style="{StaticResource TableView.Standart}"
-                                CellValueChanged="TableView_CellValueChanged">
+                                           CellValueChanged="TableView_CellValueChanged">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Добавить номенклатуру"
-                                            Command="{Binding AddNomenklCommand}"/>
-                                        <MenuItem Header="Добавить номенклатуру(упрощ)" Command="{Binding AddNomenklSimpleCommand}">
+                                                  Command="{Binding AddNomenklCommand}" />
+                                        <MenuItem Header="Добавить номенклатуру(упрощ)"
+                                                  Command="{Binding AddNomenklSimpleCommand}">
                                             <MenuItem.Icon>
                                                 <Image
                                                     Source="{StaticResource AddSimpleDrawingImage}" />
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Header="Добавить услугу"
-                                            Command="{Binding AddUslugaCommand}"/>
+                                                  Command="{Binding AddUslugaCommand}" />
                                         <MenuItem Header="Удалить номенклатуру"
-                                            Command="{Binding DeleteRowCommand}"/>
-                                        <Separator/>
+                                                  Command="{Binding DeleteRowCommand}" />
+                                        <Separator />
                                         <MenuItem Header="Добавить из договора"
-                                            Command="{Binding AddFromDogovorCommand}"/>
+                                                  Command="{Binding AddFromDogovorCommand}" />
                                         <MenuItem Header="Валютная таксировка">
                                             <MenuItem Header="Добавить таксировку"
-                                                Command="{Binding AddNomenklCrsConvertCommand}"/>
+                                                      Command="{Binding AddNomenklCrsConvertCommand}" />
                                             <MenuItem Header="Удалить таксировку"
-                                                Command="{Binding DeleteNomenklCrsConvertCommand}"/>
+                                                      Command="{Binding DeleteNomenklCrsConvertCommand}" />
                                         </MenuItem>
-                                        <Separator/>
+                                        <Separator />
                                         <MenuItem Header="Экспорт"
-                                            Command="{Binding VisualControlExportCommand}"
-                                            CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}">
+                                                  Command="{Binding VisualControlExportCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}">
                                             <MenuItem.Icon>
                                                 <Image
-                                                  Source="pack://siteoforigin:,,,/Images/export1.png"
-                                                />
+                                                    Source="pack://siteoforigin:,,,/Images/export1.png" />
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Header="Копировать итоговую сумму"
-                                            Command="{Binding GetColumnSummaCommand}"
-                                            CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}"
-                                        />
+                                                  Command="{Binding GetColumnSummaCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}" />
                                     </ContextMenu>
                                 </dxg:TableView.ContextMenu>
                                 <dxmvvm:Interaction.Behaviors>
                                     <dxmvvm:EventToCommand EventName="CellValueChanging"
-                                        Command="{Binding UpdateCalcRowSummaCommand}"/>
+                                                           Command="{Binding UpdateCalcRowSummaCommand}" />
                                 </dxmvvm:Interaction.Behaviors>
                             </dxg:TableView>
                         </dxg:GridControl.View>
                         <dxg:GridControl.DetailDescriptor>
                             <dxg:DataControlDetailDescriptor ShowHeader="False"
-                                ItemsSourceBinding="{Binding CurrencyConvertRows, UpdateSourceTrigger=PropertyChanged}">
+                                                             ItemsSourceBinding="{Binding CurrencyConvertRows, UpdateSourceTrigger=PropertyChanged}">
                                 <dxg:GridControl AutoGenerateColumns="AddNew"
+                                                 Name ="CurrencyConvertGridControl"
                                                  EnableSmartColumnsGeneration="True"
-                                    HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
-                                    MaxHeight="10000" MaxWidth="10000"
-                                    dx:DXSerializer.SerializationID="gridDetailRows"
-                                    dx:DXSerializer.StoreLayoutMode="All"
-                                    dxg:DataControlSerializationOptions.AddNewColumns="True"
-                                    dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                                    CurrentItem="{Binding CurrentCrsConvertItem}"
-                                    >
+                                                 HorizontalAlignment="Stretch" 
+                                                 VerticalAlignment="Stretch"
+                                                 MaxHeight="10000" 
+                                                 MaxWidth="10000"
+                                                 dx:DXSerializer.SerializationID="gridDetailRows"
+                                                 dx:DXSerializer.StoreLayoutMode="All"
+                                                 dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                                 dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                                 CurrentItem="{Binding CurrentCrsConvertItem}">
                                     <dxg:GridControl.View>
                                         <dxg:TableView VerticalScrollbarVisibility="Auto"
-                                            NavigationStyle="Row" 
-                                            ShowAutoFilterRow="False"
-                                            DetailHeaderContent="С/ф"
-                                            ShowFixedTotalSummary="True"
-                                            CellValueChanged="TableView_CellValueChanged"
-                                            />
+                                                       NavigationStyle="Row"
+                                                       ShowAutoFilterRow="False"
+                                                       DetailHeaderContent="С/ф"
+                                                       ShowFixedTotalSummary="True"
+                                                       CellValueChanged="TableView_CellValueChanged" />
                                     </dxg:GridControl.View>
                                 </dxg:GridControl>
                             </dxg:DataControlDetailDescriptor>
@@ -360,45 +366,45 @@
                 </dxlc:LayoutGroup>
                 <dxlc:LayoutGroup HeaderTemplate="{StaticResource FactsLayoutGroupHeader}" x:Name="mainLayoutControl4">
                     <dxg:GridControl x:Name="gridFacts" Margin="0,10,0,0" AutoGenerateColumns="AddNew"
-                        EnableSmartColumnsGeneration="True" HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch" MaxHeight="1000" MaxWidth="2000"
-                        dx:DXSerializer.SerializationID="gridFacts"
-                        dx:DXSerializer.StoreLayoutMode="All"
-                        dxg:DataControlSerializationOptions.AddNewColumns="False"
-                        dxg:DataControlSerializationOptions.RemoveOldColumns="False"
-                        SelectionMode="Row"
-                        ItemsSource="{Binding Document.Facts, NotifyOnSourceUpdated=True}"
-                        CurrentItem="{Binding CurrentFact, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
-                        SelectedItems="{Binding SelectedFacts, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
-                        AutoGeneratingColumn="GridFacts_OnAutoGeneratingColumn"
-                        AutoGeneratedColumns="GridFacts_OnAutoGeneratedColumns"
-                        >
+                                     EnableSmartColumnsGeneration="True" HorizontalAlignment="Stretch"
+                                     VerticalAlignment="Stretch" MaxHeight="1000" MaxWidth="2000"
+                                     dx:DXSerializer.SerializationID="gridFacts"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="False"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="False"
+                                     SelectionMode="Row"
+                                     ItemsSource="{Binding Document.Facts, NotifyOnSourceUpdated=True}"
+                                     CurrentItem="{Binding CurrentFact, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                     SelectedItems="{Binding SelectedFacts, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                     AutoGeneratingColumn="GridFacts_OnAutoGeneratingColumn"
+                                     AutoGeneratedColumns="GridFacts_OnAutoGeneratedColumns">
+                        <dxmvvm:Interaction.Behaviors>
+                            <helper:GridLayoutHelper LayoutChanged="GridLayoutHelper_Trigger" />
+                        </dxmvvm:Interaction.Behaviors>
                         <dxg:GridControl.View>
                             <dxg:TableView ShowTotalSummary="True" x:Name="tableViewFacts"
-                                ShowAutoFilterRow="True">
+                                           ShowAutoFilterRow="True">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Вставить связь"
-                                            Command="{Binding AddStoreLinkCommand}"/>
+                                                  Command="{Binding AddStoreLinkCommand}" />
                                         <MenuItem Header="Удалить связь"
-                                            Command="{Binding DeleteStoreLinkCommand}"/>
-                                        <Separator/>
+                                                  Command="{Binding DeleteStoreLinkCommand}" />
+                                        <Separator />
                                         <MenuItem Header="Открыть документ"
-                                            Command="{Binding OpenStoreLinkDocumentCommand}"/>
-                                        <Separator/>
+                                                  Command="{Binding OpenStoreLinkDocumentCommand}" />
+                                        <Separator />
                                         <MenuItem Header="Экспорт"
-                                            Command="{Binding VisualControlExportCommand}"
-                                            CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}">
+                                                  Command="{Binding VisualControlExportCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}">
                                             <MenuItem.Icon>
                                                 <Image
-                                                  Source="pack://siteoforigin:,,,/Images/export1.png"
-                                                />
+                                                    Source="pack://siteoforigin:,,,/Images/export1.png" />
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Header="Копировать итоговую сумму"
-                                            Command="{Binding GetColumnSummaCommand}"
-                                            CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}"
-                                        />
+                                                  Command="{Binding GetColumnSummaCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}" />
                                     </ContextMenu>
                                 </dxg:TableView.ContextMenu>
                             </dxg:TableView>
@@ -407,60 +413,60 @@
                 </dxlc:LayoutGroup>
                 <dxlc:LayoutGroup HeaderTemplate="{StaticResource PaysLayoutGroupHeader}" x:Name="mainLayoutControl5">
                     <dxg:GridControl x:Name="gridPays" Margin="0,10,0,0" AutoGenerateColumns="AddNew"
-                        EnableSmartColumnsGeneration="True" HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch" MaxHeight="1000" MaxWidth="2000"
-                        dx:DXSerializer.SerializationID="gridPays"
-                        dx:DXSerializer.StoreLayoutMode="All"
-                        dxg:DataControlSerializationOptions.AddNewColumns="True"
-                        dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                        SelectionMode="Cell"
-                        ItemsSource="{Binding Document.PaymentDocs, NotifyOnSourceUpdated=True}"
-                        CurrentItem="{Binding CurrentPaymentDoc, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
-                        SelectedItems="{Binding SelectedDocs, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
-                        AutoGeneratingColumn="GridPays_OnAutoGeneratingColumn"
-                        AutoGeneratedColumns="GridPays_OnAutoGeneratedColumns"
-                        >
+                                     EnableSmartColumnsGeneration="True" HorizontalAlignment="Stretch"
+                                     VerticalAlignment="Stretch" MaxHeight="1000" MaxWidth="2000"
+                                     dx:DXSerializer.SerializationID="gridPays"
+                                     dx:DXSerializer.StoreLayoutMode="All"
+                                     dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                     dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                     SelectionMode="Cell"
+                                     ItemsSource="{Binding Document.PaymentDocs, NotifyOnSourceUpdated=True}"
+                                     CurrentItem="{Binding CurrentPaymentDoc, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                     SelectedItems="{Binding SelectedDocs, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
+                                     AutoGeneratingColumn="GridPays_OnAutoGeneratingColumn"
+                                     AutoGeneratedColumns="GridPays_OnAutoGeneratedColumns">
+                        <dxmvvm:Interaction.Behaviors>
+                            <helper:GridLayoutHelper LayoutChanged="GridLayoutHelper_Trigger" />
+                        </dxmvvm:Interaction.Behaviors>
                         <dxg:GridControl.View>
                             <dxg:TableView ShowTotalSummary="True" x:Name="tableViewPay"
-                                ShowAutoFilterRow="True"
-                                CellValueChanged="TableViewPay_OnCellValueChanged">
+                                           ShowAutoFilterRow="True"
+                                           CellValueChanged="TableViewPay_OnCellValueChanged">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Добавить оплату">
                                             <MenuItem Header="Банк"
-                                                Command="{Binding AddPaymentFromBankCommand}"/>
+                                                      Command="{Binding AddPaymentFromBankCommand}" />
                                             <MenuItem Header="Касса"
-                                                Command="{Binding AddPaymentFromCashCommand}"/>
+                                                      Command="{Binding AddPaymentFromCashCommand}" />
                                             <MenuItem Header="Акт взаимозачета"
-                                                Command="{Binding AddPaymentFromVZCommand}"/>
+                                                      Command="{Binding AddPaymentFromVZCommand}" />
                                         </MenuItem>
                                         <MenuItem Header="Открыть документ"
-                                            Command="{Binding OpenPayDocumentCommand}"/>
-                                        <Separator/>
+                                                  Command="{Binding OpenPayDocumentCommand}" />
+                                        <Separator />
                                         <MenuItem Header="Удалить связь с оплатой"
-                                            Command="{Binding DeletePaymentDocumentCommand}"/>
-                                        <Separator/>
+                                                  Command="{Binding DeletePaymentDocumentCommand}" />
+                                        <Separator />
                                         <MenuItem Header="Экспорт"
-                                            Command="{Binding VisualControlExportCommand}"
-                                            CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}">
+                                                  Command="{Binding VisualControlExportCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}">
                                             <MenuItem.Icon>
                                                 <Image
-                                                  Source="pack://siteoforigin:,,,/Images/export1.png"
-                                                />
+                                                    Source="pack://siteoforigin:,,,/Images/export1.png" />
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Header="Копировать итоговую сумму"
-                                            Command="{Binding GetColumnSummaCommand}"
-                                            CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}"
-                                        />
+                                                  Command="{Binding GetColumnSummaCommand}"
+                                                  CommandParameter="{Binding PlacementTarget, RelativeSource={RelativeSource AncestorType={x:Type ContextMenu}, Mode=FindAncestor}}" />
                                     </ContextMenu>
                                 </dxg:TableView.ContextMenu>
                             </dxg:TableView>
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>
-                </dxlc:LayoutGroup>
-                
+            </dxlc:LayoutGroup>
+
         </dxlc:LayoutControl>
     </DockPanel>
 </dx:ThemedWindow>
