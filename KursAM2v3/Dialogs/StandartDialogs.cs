@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm;
@@ -495,7 +496,7 @@ namespace KursAM2.Dialogs
                     if (ctx.CurrentClientItem != null)
                     {
                         var doc = new InvoiceClientViewModel(dbctx.SD_84.First(_ =>
-                            _.DOC_CODE == ctx.CurrentClientItem.DocCode));
+                            _.DOC_CODE == ctx.CurrentClientItem.DocCode), new UnitOfWork<ALFAMEDIAEntities>(GlobalOptions.GetEntities()), isUsePayment);
                         return doc;
                     }
 
@@ -503,6 +504,9 @@ namespace KursAM2.Dialogs
                     {
                         var d = dbctx.SD_26
                             .Include(_ => _.TD_26)
+                            .Include(_ => _.TD_110)
+                            .Include(_ => _.TD_101)
+                            .Include(_ => _.SD_34)
                             .Include(_ => _.ProviderInvoicePay)
                             .Include(_ => _.ProviderInvoicePay.Select(x => x.TD_101))
                             .Include(_ => _.ProviderInvoicePay.Select(x => x.SD_34))
@@ -529,7 +533,7 @@ namespace KursAM2.Dialogs
                     if (ctx.CurrentClientItem != null)
                     {
                         var doc = new InvoiceClientViewModel(dbctx.SD_84.First(_ =>
-                            _.DOC_CODE == ctx.CurrentClientItem.DocCode));
+                            _.DOC_CODE == ctx.CurrentClientItem.DocCode), new UnitOfWork<ALFAMEDIAEntities>(GlobalOptions.GetEntities()),isUsePayment);
                         return doc;
                     }
 
@@ -537,6 +541,9 @@ namespace KursAM2.Dialogs
                     {
                         var d = dbctx.SD_26
                             .Include(_ => _.TD_26)
+                            .Include(_ => _.TD_110)
+                            .Include(_ => _.TD_101)
+                            .Include(_ => _.SD_34)
                             .Include(_ => _.ProviderInvoicePay)
                             .Include(_ => _.ProviderInvoicePay.Select(x => x.TD_101))
                             .Include(_ => _.ProviderInvoicePay.Select(x => x.SD_34))

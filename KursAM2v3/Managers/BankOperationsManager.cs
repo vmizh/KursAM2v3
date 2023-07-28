@@ -257,7 +257,7 @@ namespace KursAM2.Managers
                     var old = data.FirstOrDefault(_ => _.Date == date);
                     if (old != null)
                     {
-                        old.SummaOut += sumOut;
+                        old.SummaOut -= sumOut;
                     }
                     else
                     {

@@ -157,22 +157,40 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                if (Document.State == RowStatus.Edited)
-                    CashManager.UpdateDocument(CashDocumentType.CashOut, Document, oldDate);
-                if (Document.State == RowStatus.NewRow)
-                    CashManager.InsertDocument(CashDocumentType.CashOut, Document);
-                var newKontrDC = Document.KONTRAGENT_DC;
-                if (oldKontrDC != null)
+                using (var context = GlobalOptions.GetEntities())
                 {
-                    ctx.Database.ExecuteSqlCommand(
-                        $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(oldKontrDC)}");
-                }
+                    var old = context.SD_34.FirstOrDefault(_ => _.DOC_CODE == Document.DocCode);
+                    var sfDC = old?.SPOST_DC;
+                    if (Document.State == RowStatus.Edited)
+                        CashManager.UpdateDocument(CashDocumentType.CashOut, Document, oldDate);
+                    if (Document.State == RowStatus.NewRow)
+                        CashManager.InsertDocument(CashDocumentType.CashOut, Document);
+                    //CashManager.InsertDocument(CashDocumentType.CashIn, Document);
+                    if (Document.SPOST_DC != null)
+                    {
+                        context.Database.ExecuteSqlCommand(
+                            $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SPOST_DC.Value)}");
+                    }
+                    if (sfDC != null && Document.SPOST_DC != sfDC)
+                    {
+                        context.Database.ExecuteSqlCommand(
+                            $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(sfDC)}");
+                    }
 
-                if (newKontrDC != null && newKontrDC != oldKontrDC)
-                {
-                    ctx.Database.ExecuteSqlCommand(
-                        $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(newKontrDC)}");
                 }
+                //var newKontrDC = Document.KONTRAGENT_DC;
+
+                //if (oldKontrDC != null)
+                //{
+                //    ctx.Database.ExecuteSqlCommand(
+                //        $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(oldKontrDC)}");
+                //}
+
+                //if (newKontrDC != null && newKontrDC != oldKontrDC)
+                //{
+                //    ctx.Database.ExecuteSqlCommand(
+                //        $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(newKontrDC)}");
+                //}
             }
 
             if (BookView is CashBookView bw)
@@ -207,6 +225,14 @@ namespace KursAM2.ViewModel.Finance.Cash
                             case MessageBoxResult.Yes:
                                 var ctx = BookView?.DataContext as CashBookWindowViewModel;
                                 CashManager.DeleteDocument(CashDocumentType.CashOut, Document);
+                                if (Document.SPOST_DC != null)
+                                {
+                                    using (var context = GlobalOptions.GetEntities())
+                                    {
+                                        context.Database.ExecuteSqlCommand(
+                                            $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SPOST_DC.Value)}");
+                                    }
+                                }
                                 if (Document.KONTRAGENT_DC != null)
                                     RecalcKontragentBalans.CalcBalans((decimal)Document.KONTRAGENT_DC,
                                         // ReSharper disable once PossibleInvalidOperationException
@@ -221,6 +247,14 @@ namespace KursAM2.ViewModel.Finance.Cash
 
                     var ctx1 = BookView?.DataContext as CashBookWindowViewModel;
                     CashManager.DeleteDocument(CashDocumentType.CashOut, Document);
+                    if (Document.SPOST_DC != null)
+                    {
+                        using (var context = GlobalOptions.GetEntities())
+                        {
+                            context.Database.ExecuteSqlCommand(
+                                $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SPOST_DC.Value)}");
+                        }
+                    }
                     ctx1?.RefreshActual(Document);
                     CloseWindow(Form);
                     if (BookView is AccruedAmountOfSupplierView bw)

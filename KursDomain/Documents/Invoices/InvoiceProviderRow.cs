@@ -812,21 +812,6 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
             RaisePropertyChanged();
         }
     }
-
-    //public decimal? SFT_SHPZ_DC
-    //{
-    //    get => Entity.SFT_SHPZ_DC;
-    //    set
-    //    {
-    //        if (Entity.SFT_SHPZ_DC == value) return;
-    //        Entity.SFT_SHPZ_DC = value;
-    //        if (Entity.SFT_SHPZ_DC != null && MainReferences.SDRSchets.ContainsKey(Entity.SFT_SHPZ_DC.Value))
-    //            mySDRSchet = MainReferences.SDRSchets[Entity.SFT_SHPZ_DC.Value];
-    //        RaisePropertyChanged(nameof(SFT_SHPZ_DC.Value));
-    //        RaisePropertyChanged();
-    //    }
-    //}
-
     public SDRSchet SDRSchet
     {
         get => mySDRSchet;
@@ -863,7 +848,7 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
         throw new NotImplementedException();
     }
 
-    private void LoadReference()
+    public void LoadReference()
     {
         myNomenkl = GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC) as Nomenkl;
         myPostUnit = GlobalOptions.ReferencesCache.GetUnit(Entity.SFT_POST_ED_IZM_DC) as Unit;

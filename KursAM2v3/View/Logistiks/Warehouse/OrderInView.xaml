@@ -92,11 +92,12 @@
                                                        Command="{Binding SenderSelectCommand}" />
                             </dxmvvm:Interaction.Behaviors>
                         </dxe:ButtonEdit>
-                        <Label Margin="5 0" Content="Счет: " />
-                        <dxe:ButtonEdit MinWidth="200"
+                        <dxe:ButtonEdit 
+                            Margin="10 0"
                                         IsTextEditable="False"
                                         AllowDefaultButton="False"
-                                        EditValue="{Binding Schet, ValidatesOnDataErrors=True, Mode=OneWay}">
+                                        EditValue="Выбор счета"
+                                        BorderThickness="0">
                             <dxe:ButtonEdit.Buttons>
                                 <dxe:ButtonInfo GlyphKind="Regular"
                                                 ToolTip="Установить связь со счетом"

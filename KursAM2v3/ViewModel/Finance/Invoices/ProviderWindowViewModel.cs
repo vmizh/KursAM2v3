@@ -825,11 +825,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.PaymentDocs.Add(new ProviderInvoicePayViewModel(p));
             if (Document.PaymentDocs.Count > 0)
                 rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
-
+            
             Document.Facts.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var facts = ctx.TD_24.Include(_ => _.TD_26).Where(_ => _.DDT_SPOST_DC == Document.DocCode)
+                var facts = ctx.TD_24.Include(_ => _.TD_26)
+                    .Include(_ => _.TD_26.SD_26)
+                    .Where(_ => _.DDT_SPOST_DC == Document.DocCode)
                     .AsNoTracking().ToList();
                 foreach (var fact in facts)
                     Document.Facts.Add(new WarehouseOrderInRow(fact)
@@ -1417,7 +1419,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (res == MessageBoxResult.Yes) Document.IsAccepted = true;
             }
 
-            var isOldExist = false;
+            bool isOldExist;
             var isCreateNum = true;
             using (var ctx = GlobalOptions.GetEntities())
             {

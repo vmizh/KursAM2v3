@@ -389,7 +389,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Schet = $"№{sf.SF_IN_NUM}/{sf.SF_POSTAV_NUM} от {sf.SF_POSTAV_DATE.ToShortDateString()}";
             }
 
-            Document.Rows.ForEach(_ => _.State = RowStatus.NotEdited);
+            foreach (var r in Document.Rows)
+            {
+                if(r.TD_26 != null)
+                    r.LinkInvoice = new InvoiceProviderRow(r.TD_26);
+                r.State = RowStatus.NotEdited;
+
+            }
             Document.State = RowStatus.NotEdited;
         }
 
@@ -427,6 +433,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 r.InvoiceProviderRow = null;
                 r.DDT_TAX_EXECUTED = 0;
                 r.DDT_FACT_EXECUTED = 0;
+                r.RaisePropertyChanged(nameof(r.Taksirovka));
+                r.RaisePropertyChanged(nameof(r.Factur));
             }
         }
 

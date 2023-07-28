@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Windows;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using Data;
 using KursDomain.Repository;
 using JetBrains.Annotations;
 using KursAM2.Managers.Invoices;
@@ -27,7 +29,6 @@ namespace KursAM2.View.DialogUserControl
         private InvoiceClientViewModel myCurrentItem;
         private StandartDialogSelectUC myDataUserControl;
         private readonly Currency currency;
-
         private readonly List<decimal> _ExcludeSfDCs;
 
         public InvoiceClientSearchDialog(bool isPaymentUse, bool isUseAcepted, Currency crs = null)
@@ -423,7 +424,7 @@ namespace KursAM2.View.DialogUserControl
                             }
                         }
                     else
-                        foreach (var d in InvoicesManager.GetInvoicesProvider(DateTime.Today.AddDays(-365),
+                        foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1),
                                      DateTime.Today,
                                      true,
                                      kontragentDC, isAccepted))

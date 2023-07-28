@@ -62,7 +62,7 @@ namespace KursAM2.Managers.Invoices
         /// <returns></returns>
         public static InvoiceProvider GetInvoiceProvider(decimal dc)
         {
-            var doc = new InvoiceProvider(new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>());
+            var doc = new InvoiceProvider(new UnitOfWork<ALFAMEDIAEntities>());
             // ReSharper disable once CollectionNeverQueried.Local
             var pDocs = new List<InvoicePaymentDocument>();
             try
@@ -136,7 +136,7 @@ namespace KursAM2.Managers.Invoices
                     if (i?.SD_24 != null)
                         sum += (from q in i.TD_26 from d in q.TD_24 select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
                     // ReSharper disable once AssignNullToNotNullAttribute
-                    doc = new InvoiceProvider(i, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>())
+                    doc = new InvoiceProvider(i, new UnitOfWork<ALFAMEDIAEntities>())
                     {
                         SummaFact = sum,
                         myState = RowStatus.NotEdited
@@ -221,7 +221,7 @@ namespace KursAM2.Managers.Invoices
             if (i?.SD_24 != null)
                 sum += (from q in i.TD_26 from d in q.TD_24 select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
             // ReSharper disable once AssignNullToNotNullAttribute
-            doc = new InvoiceProvider(i, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>())
+            doc = new InvoiceProvider(i, new UnitOfWork<ALFAMEDIAEntities>())
             {
                 SummaFact = sum,
                 myState = RowStatus.NotEdited
@@ -262,7 +262,7 @@ namespace KursAM2.Managers.Invoices
 
         public static InvoiceProvider NewProviderCopy(InvoiceProvider doc)
         {
-            var ret = new InvoiceProvider(doc?.Entity, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>())
+            var ret = new InvoiceProvider(doc?.Entity, new UnitOfWork<ALFAMEDIAEntities>())
             {
                 DocCode = -1,
                 SF_POSTAV_NUM = null,
@@ -1147,7 +1147,7 @@ namespace KursAM2.Managers.Invoices
                     var pays = ctx.Database.SqlQuery<InvoicePayment>(sql).ToList();
                     foreach (var d in data.OrderByDescending(_ => _.SF_POSTAV_DATE))
                     {
-                        var newDoc = new InvoiceProvider(d, new KursDomain.Repository.UnitOfWork<ALFAMEDIAEntities>());
+                        var newDoc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>());
                         if (isUsePayment)
                         {
                             var pd = pays.FirstOrDefault(_ => _.DocCode == newDoc.DocCode);
@@ -1162,6 +1162,51 @@ namespace KursAM2.Managers.Invoices
             }
 
             return ret.OrderByDescending(_ => _.DocDate).ToList();
+        }
+
+        public class InvoiceClientSearchCondition
+        {
+            public ALFAMEDIAEntities context { get; set; }
+
+            public DateTime? DateStart { get; set; }
+            public DateTime? DateEnd { get; set; }
+            public decimal? KontragentDC { get; set; }
+            public bool? IsPaymentUse { get; set; }
+            public bool? IsUseAccepted { get; set; } = true;
+            private Currency Currency { get; set; }
+            public List<decimal> ExcludeSFDocCodes { get; set; }
+            public Waybill Waybill { get; set; }
+
+            //    public  IQueryable<SD_84> GetWhere()
+            //    {
+            //        var conditionList = new List<Expression<Func<InvoiceClientSearchCondition, bool>>>();
+            //        IQueryable<SD_84> query = context.Set<SD_84>().Include(_ => _.TD_84)
+            //            .Include(_ => _.SD_431)
+            //            .Include(_ => _.SD_432)
+            //            .Include(_ => _.TD_84)
+            //            .Include(_ => _.TD_101)
+            //            .Include("TD_84.SD_175")
+            //            .Include("TD_84.SD_83")
+            //            .Include("TD_84.SD_83.SD_175")
+            //            .Include(_ => _.SD_24)
+            //            .Include("SD_24.TD_24")
+            //            .Include(_ => _.SD_179)
+            //            .Include(_ => _.SD_77)
+            //            .Include(_ => _.SD_189)
+            //            .Include("TD_84.TD_24")
+            //            .Include("TD_84.TD_24.SD_24")
+            //            .Include("TD_84.TD_24.SD_24.SD_201")
+            //            .Include("TD_84.SD_303");
+            //        //Expression<Func<InvoiceClientSearchCondition, bool>> ret;
+            //        if (KontragentDC != null)
+            //        {
+            //            Expression<Func<InvoiceClientSearchCondition, bool>> c1 = p => p.KontragentDC == KontragentDC;
+            //            conditionList.Add(c1);
+            //        }
+            //        if(IsPaymentUse != null)
+
+            //        return query;
+            //    }
         }
 
         public static List<IInvoiceProvider> GetInvoicesProvider(DateTime dateStart, DateTime dateEnd,
