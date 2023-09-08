@@ -16,6 +16,7 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.Native;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
+using DevExpress.XtraSpreadsheet.Model.History;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -830,6 +831,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var facts = ctx.TD_24.Include(_ => _.TD_26)
+                    .Include(_ => _.SD_24)
                     .Include(_ => _.TD_26.SD_26)
                     .Where(_ => _.DDT_SPOST_DC == Document.DocCode)
                     .AsNoTracking().ToList();
@@ -1063,6 +1065,24 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void AddNomenklCrsConvert(object obj)
         {
+            //if (CurrentRow.CurrencyConvertRows.Any(_ => _.State == RowStatus.Edited))
+            //{
+            //    myWManager.ShowWinUIMessageBox(
+            //        "В валютную таксировку внесены изменения. Небходимо сохранение.",
+            //        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+            //    return;
+            //}
+
+            var factnom = Document.Facts
+                .FirstOrDefault(_ => _.DDT_NOMENKL_DC == CurrentRow.Nomenkl.DocCode);
+            if (factnom == null)
+            {
+                myWManager.ShowWinUIMessageBox(
+                    "Товар по этому счету не принят на склад, валютная таксировка не возможна.",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             //GlobalOptions.ReferencesCache.UpdateNomenklForMain(CurrentRow.Nomenkl.MainId);
             var noms = GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>().Where(_ =>
                     _.MainId == CurrentRow.Nomenkl.MainId
@@ -1090,15 +1110,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (n == null) return;
             AddUsedNomenkl(n.DocCode);
             DateTime dt;
-            var factnom = Document.Facts
-                .FirstOrDefault(_ => _.DDT_NOMENKL_DC == CurrentRow.Nomenkl.DocCode);
-            if (factnom == null)
-            {
-                myWManager.ShowWinUIMessageBox(
-                    "Товар по этому счету не принят на склад, валютная таксировка не возможна.",
-                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
+            //factnom = Document.Facts
+            //    .FirstOrDefault(_ => _.DDT_NOMENKL_DC == CurrentRow.Nomenkl.DocCode);
+            //if (factnom == null)
+            //{
+            //    myWManager.ShowWinUIMessageBox(
+            //        "Товар по этому счету не принят на склад, валютная таксировка не возможна.",
+            //        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+            //    return;
+            //}
 
             var crsrates = new CurrencyRates(Document.DocDate <= factnom.SD_24.DD_DATE
                 ? Document.DocDate.AddDays(-5)
@@ -1115,28 +1135,73 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 ((IDocCode)n.Currency).DocCode, dt), 4);
             if (Document.PaymentDocs.Count > 0)
                 rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
-            var newItem = new InvoiceProviderRowCurrencyConvertViewModel
+
+            // Новый алгоритм
+            var prihod = (from t in UnitOfWork.Context.TD_24.Where(_ => _.DDT_SPOST_DC == Document.DocCode)
+                join s in UnitOfWork.Context.SD_24 on t.DOC_CODE equals s.DOC_CODE
+                select new
+                {
+                    Date = s.DD_DATE,
+                    SkladDC = s.DD_SKLAD_POL_DC,
+                    Quantity = t.DDT_KOL_PRIHOD
+                }).ToList();
+
+            var currConv = (from c in CurrentRow.CurrencyConvertRows
+                select new
+                {
+                    Id = c.Id,
+                    SkladDC = c.StoreDC,
+                    Quantity = c.Quantity
+                }).ToList();
+
+            var conv = (from t in UnitOfWork.Context.TD_26_CurrencyConvert.Where(_ => _.DOC_CODE == Document.DocCode)
+                select new
+                {
+                    Id = t.Id,
+                    SkladDC = t.StoreDC,
+                    Quantity = t.Quantity
+                });
+            
+            var isAllOut = true;
+            foreach (decimal sklDC in prihod.Select(_ => _.SkladDC).Distinct())
             {
-                Id = Guid.NewGuid(),
-                DocCode = CurrentRow.DocCode,
-                Code = CurrentRow.Code,
-                NomenklId = n.Id,
-                Date = dt,
-                // ReSharper disable once PossibleInvalidOperationException
-                OLdPrice = CurrentRow.Price,
-                OLdNakladPrice = Math.Round(CurrentRow.Price +
-                                            // ReSharper disable once PossibleInvalidOperationException
-                                            (CurrentRow.SummaNaklad ?? 0) / CurrentRow.Quantity,
-                    2),
-                Quantity = CurrentRow.Quantity - oldQuan,
-                Rate = rate,
-                // ReSharper disable once PossibleInvalidOperationException
-                StoreDC = (decimal)store.DD_SKLAD_POL_DC
-            };
-            CurrentRow.Entity.TD_26_CurrencyConvert.Add(newItem.Entity);
-            newItem.CalcRow(DirectCalc.Rate);
-            CurrentRow.CurrencyConvertRows.Add(newItem);
-            CurrentRow.State = RowStatus.Edited;
+                var q = prihod.Where(_ => _.SkladDC == sklDC).Sum(_ => _.Quantity) -
+                        currConv.Where(_ => _.SkladDC == sklDC).Sum(_ => _.Quantity) ;
+                if (q > 0)
+                {
+
+                    var newItem = new InvoiceProviderRowCurrencyConvertViewModel
+                    {
+                        Id = Guid.NewGuid(),
+                        DocCode = CurrentRow.DocCode,
+                        Code = CurrentRow.Code,
+                        NomenklId = n.Id,
+                        Date = dt,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        OLdPrice = CurrentRow.Price,
+                        OLdNakladPrice = Math.Round(CurrentRow.Price +
+                                                    // ReSharper disable once PossibleInvalidOperationException
+                                                    (CurrentRow.SummaNaklad ?? 0) / CurrentRow.Quantity,
+                            2),
+                        Quantity = q,
+                        Rate = rate,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        StoreDC = sklDC
+                    };
+                    CurrentRow.Entity.TD_26_CurrencyConvert.Add(newItem.Entity);
+                    newItem.CalcRow(DirectCalc.Rate);
+                    CurrentRow.CurrencyConvertRows.Add(newItem);
+                    CurrentRow.State = RowStatus.Edited;
+                    isAllOut = false;
+                }
+            }
+
+            if (isAllOut)
+            {
+                myWManager.ShowWinUIMessageBox(
+                        "Все поступившие товары сконвертированы.",
+                        "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
         }
 
         public InvoiceProviderRowCurrencyConvertViewModel CurrentCrsConvertItem
@@ -1400,6 +1465,23 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void SaveData(object data)
         {
             var WinManager = new WindowManager();
+
+            // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
+            foreach (InvoiceProviderRow r in Document.Rows)
+            {
+
+                var facts = Document.Facts.Where(_ => _.DDT_NOMENKL_DC == r.Nomenkl.DocCode).ToList();
+                if (facts.Sum(_ => _.DDT_KOL_PRIHOD) < r.CurrencyConvertRows.Sum(_ => _.Quantity))
+                {
+                    myWManager.ShowWinUIMessageBox(
+                        $"По номенклатуре {r.Nomenkl.Name} ({r.Nomenkl.NomenklNumber}) " +
+                        $"приход {facts.Sum(_ => _.DDT_KOL_PRIHOD):n4} " +
+                        $"меньше, чем валютной таксировки {r.CurrencyConvertRows.Sum(_ => _.Quantity):n4}",
+                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+
             var closePeriod = UnitOfWork.Context.PERIOD_CLOSED
                 .SingleOrDefault(_ => _.CLOSED_DOC_TYPE.ID.ToString() == "b57d269e-e17f-4dc2-86da-821db51bcc9e");
             if (closePeriod != null && Document.DocDate < closePeriod.DateClosed)
@@ -1747,7 +1829,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (res != MessageBoxResult.Yes) return;
             switch (CurrentPaymentDoc.DocName)
             {
-                case "Банковский платеж":
+                case "Банковская транзакция":
                     var old = UnitOfWork.Context.TD_101.SingleOrDefault(_ =>
                         _.CODE == CurrentPaymentDoc.BankCode);
                     if (old != null) old.VVT_SFACT_POSTAV_DC = null;
@@ -1804,6 +1886,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     var old = ctx.TD_101
                         .Include(_ => _.SD_101)
                         .Include(_ => _.SD_101.SD_114)
+                        .AsNoTracking()
                         .Single(_ => _.CODE == oper.Code);
                     if (old != null) old.VVT_SFACT_POSTAV_DC = Document.DocCode;
                     else return;
@@ -1816,7 +1899,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             ? oper.Remainder
                             : Document.Summa - Document.PaySumma,
                         // ReSharper disable once PossibleInvalidOperationException
-                        Rate = old.CurrencyRateForReference ?? 1
+                        Rate = old.CurrencyRateForReference ?? 1,
+                        
                     };
                     Document.PaymentDocs.Add(newItem);
                     Document.Entity.ProviderInvoicePay.Add(newItem.Entity);

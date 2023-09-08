@@ -36,7 +36,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             DocDate = doc.Date;
             Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.PostDC) as Kontragent;
             Summa = doc.Summa ?? 0;
-            SummaFact = doc.ShippedSumma;
+            SummaFact = invList.Sum(g => g.ShippedSumma);
             Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CurrencyDC) as Currency;
             PaySumma = doc.PaySumma;
             IsPay = Summa <= PaySumma;
@@ -47,6 +47,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(doc.FormRaschetDC) as PayForm;
             IsNDSInPrice = doc.IsNDSInPrice ?? false;
             CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(doc.CO_DC) as CentrResponsibility;
+            KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(doc.PoluchatDC) as Kontragent;
             if (!isLoadDetails) return;
             Rows = new ObservableCollection<IInvoiceProviderRow>();
             foreach (var r in invList) Rows.Add(new InvoiceProviderRowBase(r));

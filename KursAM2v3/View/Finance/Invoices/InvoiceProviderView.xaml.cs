@@ -332,5 +332,10 @@ namespace KursAM2.View.Finance.Invoices
         {
             gridRows.UpdateTotalSummary();
         }
+
+        private void CurrencyConvertGridControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+        {
+           
+        }
     }
 }

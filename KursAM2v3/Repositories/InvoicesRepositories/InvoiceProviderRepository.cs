@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using Core;
 using Data;
 using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain;
@@ -133,6 +132,65 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         public List<IInvoiceProvider> GetAllByDates(DateTime dateStart, DateTime dateEnd)
         {
+            /*var data = (from s in Context.SD_84
+                join Rows in Context.TD_84 on s.DOC_CODE equals Rows.DOC_CODE
+                join Rows2 in Context.TD_84 on s.DOC_CODE equals Rows2.DOC_CODE into rows
+                join cash in Context.CashSFClient on s.Id equals cash.Id into cashSFClients
+                join Nom in Context.SD_83 on Rows.SFT_NEMENKL_DC equals Nom.DOC_CODE
+                join Otgruz in Context.TD_24 on new { DocCode = Rows.DOC_CODE, Code = Rows.CODE } equals new
+                    { DocCode = (decimal)Otgruz.DDT_SFACT_DC, Code = (int)Otgruz.DDT_SFACT_ROW_CODE } into otgruz
+                join Ship in Context.TD_24 on new { DocCode = Rows.DOC_CODE, Code = Rows.CODE } equals new
+                    { DocCode = (decimal)Ship.DDT_SFACT_DC, Code = (int)Ship.DDT_SFACT_ROW_CODE }
+                join Receiver in Context.SD_43 on s.SF_RECEIVER_KONTR_DC equals Receiver.DOC_CODE into receiver
+                join CO in Context.SD_40 on s.SF_CENTR_OTV_DC equals CO.DOC_CODE into co
+                join VzaimType in Context.SD_77 on s.SF_VZAIMOR_TYPE_DC equals VzaimType.DOC_CODE into vzaimType
+                join FormRaschet in Context.SD_189 on s.SF_FORM_RASCH_DC equals FormRaschet.DOC_CODE into formRaschet
+                join PayCondition in Context.SD_179 on s.SF_PAY_COND_DC equals PayCondition.DOC_CODE into payCondition
+                join Client in Context.SD_43 on s.SF_CLIENT_DC equals Client.DOC_CODE
+                join Diler in Context.SD_43 on s.SF_DILER_DC equals Diler.DOC_CODE into diler
+                join Shpz in Context.SD_303 on Rows.SFT_SHPZ_DC equals Shpz.DOC_CODE into shpz
+                join Crs in Context.SD_301 on s.SF_CRS_DC equals Crs.DOC_CODE
+
+                //where s.SF_DATE >= new DateTime(2023,5,1)
+                orderby s.SF_DATE
+                select new InvoicePostQuery
+                {
+                    DocCode = s.DOC_CODE,
+                    Id = s.Id,
+                    //NakladDistributedSumma = s.NakladDistributedSumma;
+                    PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(s.PersonalResponsibleDC) as Employee,
+                    SF_IN_NUM = s.InNum,
+                    SF_POSTAV_NUM = s.PostavNum,
+                    sDate = s.Date,
+                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(s.PostDC) as Kontragent,
+                    Summa = s.Summa ?? 0;
+                    SummaFact = invList.GroupBy(_ => _.NomenklDC).Sum(g => SummaFact);
+                    Currency = GlobalOptions.ReferencesCache.GetCurrency(s.CurrencyDC) as Currency;
+                    PaySumma = s.PaySumma;
+                    IsPay = Summa <= PaySumma;
+                    PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(s.SF_PAY_COND_DC) as PayCondition;
+                    IsAccepted = s.IsAccepted ?? false;
+                    Note = s.Note;
+                    CREATOR = s.Creator;
+                    FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(s.FormRaschetDC) as PayForm;
+                    IsNDSInPrice = s.IsNDSInPrice ?? false;
+                    CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(s.CO_DC) as CentrResponsibility;
+                    if (!isLoadDetails) return;
+                    Rows = new ObservableCollection<IInvoiceProviderRow>();
+                    foreach (var r in invList) Rows.Add(new InvoiceProviderRowBase(r));
+                }).ToList();
+
+            var ret = new List<IInvoiceProvider>();
+            foreach (var dc in data.Select(_ => _.DocCode).Distinct())
+            {
+                var d2 = data.Where(_ => _.DocCode == dc).ToList();
+                var newItem = new InvoiceProviderBase()
+                {
+
+                };
+                ret.Add(newItem);
+            }
+            return ret.OrderByDescending(_ => _.DocDate).ToList();*/
             var data = Context.InvoicePostQuery.Where(_ => _.Date >= dateStart && _.Date <= dateEnd)
                 .OrderByDescending(_ => _.Date).ToList();
             return data.Select(_ => _.DocCode).Distinct()

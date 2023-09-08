@@ -31,9 +31,11 @@ public interface IInvoiceProvider
     Kontragent Kontragent { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Сумма")]
+    [DisplayFormat(DataFormatString = "n2")]
     decimal Summa { get; }
 
     [Display(AutoGenerateField = true, Name = "Отгружено")]
+    [DisplayFormat(DataFormatString = "n2")]
     decimal SummaFact { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Валюта")]
@@ -43,6 +45,7 @@ public interface IInvoiceProvider
     bool IsPay { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Сумма оплаты")]
+    [DisplayFormat(DataFormatString = "n2")]
     decimal PaySumma { get; }
 
     [Display(AutoGenerateField = true, Name = "Усл.платежа")]

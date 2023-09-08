@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows;
@@ -78,7 +77,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             set
             {
                 // ReSharper disable once PossibleUnintendedReferenceComparison
-                if (myCurrentDocument?.DocCode == value?.DocCode) return;
+                if (myCurrentDocument == value) return;
                 myCurrentDocument = value;
                 if (myCurrentDocument != null)
                 {
@@ -106,14 +105,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 frm?.Dispatcher.Invoke(() =>
                 {
                     frm.loadingIndicator.Visibility = Visibility.Hidden;
-                    foreach (var d in result)
-                    {
-                        Documents.Add(d);
-                    }
+                    foreach (var d in result) Documents.Add(d);
                 });
                 GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             });
-            frm.gridDocuments.RefreshData();
+            frm?.gridDocuments.RefreshData();
         }
 
         public override void DocumentOpen(object obj)
@@ -125,7 +121,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void DocNewEmpty(object form)
         {
-            var view = new InvoiceProviderView {Owner = Application.Current.MainWindow};
+            var view = new InvoiceProviderView { Owner = Application.Current.MainWindow };
             var ctx = new ProviderWindowViewModel(null)
             {
                 Form = view
@@ -165,10 +161,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         protected override void OnWindowLoaded(object obj)
         {
             base.OnWindowLoaded(obj);
-            if (Form is StandartSearchView frm)
-            {
-                frm.gridDocumentsTableView.ShowTotalSummary = true;
-            }
+            if (Form is StandartSearchView frm) frm.gridDocumentsTableView.ShowTotalSummary = true;
             StartDate = DateHelper.GetFirstDate();
         }
     }

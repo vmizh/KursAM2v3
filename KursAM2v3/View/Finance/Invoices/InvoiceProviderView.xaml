@@ -350,7 +350,8 @@
                                                  dx:DXSerializer.StoreLayoutMode="All"
                                                  dxg:DataControlSerializationOptions.AddNewColumns="True"
                                                  dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                                                 CurrentItem="{Binding CurrentCrsConvertItem}">
+                                                 CurrentItem="{Binding CurrentCrsConvertItem}"
+                                                 AutoGeneratingColumn="CurrencyConvertGridControl_OnAutoGeneratingColumn">
                                     <dxg:GridControl.View>
                                         <dxg:TableView VerticalScrollbarVisibility="Auto"
                                                        NavigationStyle="Row"

@@ -75,5 +75,6 @@ namespace Data
         public Nullable<System.Guid> SchetRowNakladRashodId { get; set; }
         public decimal SchetRowNakladSumma { get; set; }
         public decimal SchetRowNakladRate { get; set; }
+        public Nullable<decimal> PoluchatDC { get; set; }
     }
 }
