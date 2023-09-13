@@ -105,8 +105,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public InvoiceProviderRowBase()
         {
         }
-
-
+        
         public decimal DocCode { get; set; }
         public int Code { get; set; }
         public Guid Id { get; set; }

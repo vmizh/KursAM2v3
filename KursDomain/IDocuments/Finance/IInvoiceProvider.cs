@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using KursDomain.Documents.Invoices;
+using KursDomain.ICommon;
 using KursDomain.References;
 
 namespace KursDomain.IDocuments.Finance;
 
-public interface IInvoiceProvider
+public interface IInvoiceProvider : IDocCode, IDocGuid
 {
-    [Display(AutoGenerateField = false)] decimal DocCode { set; get; }
+    //[Display(AutoGenerateField = false)] decimal DocCode { set; get; }
 
-    [Display(AutoGenerateField = false)] Guid Id { set; get; }
+    //[Display(AutoGenerateField = false)] Guid Id { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Накл. расходы") ]
     [DisplayFormat(DataFormatString = "n2")]
@@ -73,5 +73,5 @@ public interface IInvoiceProvider
     [Display(AutoGenerateField = true, Name = "Получатель")]
     Kontragent KontrReceiver { set; get; }
 
-    ObservableCollection<InvoiceProviderRow> Rows { set; get; }
+    ObservableCollection<IInvoiceProviderRow> Rows { set; get; }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace KursDomain.ICommon;
 
@@ -7,5 +8,6 @@ namespace KursDomain.ICommon;
 /// </summary>
 public interface IDocGuid
 {
+    [Display(AutoGenerateField = false)]
     Guid Id { get; set; }
 }

@@ -255,7 +255,7 @@ namespace KursAM2.Managers.Invoices
                 Currency = GlobalOptions.SystemProfile.MainCurrency,
                 SF_POSTAV_NUM = null,
                 myState = RowStatus.NewRow,
-                Rows = new ObservableCollection<InvoiceProviderRow>()
+                Rows = new ObservableCollection<IInvoiceProviderRow>()
             };
             return ret;
         }

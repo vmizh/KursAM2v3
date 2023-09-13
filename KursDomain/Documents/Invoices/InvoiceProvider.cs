@@ -159,8 +159,8 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     public ObservableCollection<ProviderInvoicePayViewModel> PaymentDocs { set; get; } =
         new ObservableCollection<ProviderInvoicePayViewModel>();
 
-    public ObservableCollection<InvoiceProviderRow> Rows { set; get; } =
-        new ObservableCollection<InvoiceProviderRow>();
+    public ObservableCollection<IInvoiceProviderRow> Rows { set; get; } =
+        new ObservableCollection<IInvoiceProviderRow>();
 
     public ObservableCollection<WarehouseOrderInRow> Facts { set; get; } =
         new ObservableCollection<WarehouseOrderInRow>();
@@ -172,7 +172,6 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         $"С/ф поставщика №{SF_IN_NUM}/{SF_POSTAV_NUM} от {DocDate.ToShortDateString()} " +
         $"{Kontragent} на {Summa} {Currency} " +
         $"{Note}";
-
 
     public override decimal DocCode
     {
@@ -1115,7 +1114,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         if (Entity.DogovorOfSupplier != null)
             Contract = new DogovorOfSupplierViewModel(Entity.DogovorOfSupplier);
         if(Rows ==  null)
-            Rows = new ObservableCollection<InvoiceProviderRow>();
+            Rows = new ObservableCollection<IInvoiceProviderRow>();
         else
             Rows.Clear();
         if (Entity.TD_26 != null && Entity.TD_26.Count > 0)

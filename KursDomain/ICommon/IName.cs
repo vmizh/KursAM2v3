@@ -1,8 +1,10 @@
-﻿namespace KursDomain.ICommon;
+﻿using System.ComponentModel.DataAnnotations;
 
-public interface IName
+namespace KursDomain.ICommon;
+
+public interface IName : IDescription
 {
+    [Display(AutoGenerateField = true, Name = "Наименование")]
     string Name { set; get; }
-    string Notes { set; get; }
-    string Description {  get; }
+    
 }
