@@ -13,10 +13,8 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.Data;
 using DevExpress.Mvvm;
-using DevExpress.Mvvm.Native;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
-using DevExpress.XtraSpreadsheet.Model.History;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -826,7 +824,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.PaymentDocs.Add(new ProviderInvoicePayViewModel(p));
             if (Document.PaymentDocs.Count > 0)
                 rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
-            
+
             Document.Facts.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -846,7 +844,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             foreach (var f in Document.Facts)
             {
                 var r = Document.Rows.First(_ => _.Nomenkl.DocCode == f.Nomenkl.DocCode);
-                Document.SummaFact += Math.Round(r.Summa * r.Quantity / f.DDT_KOL_PRIHOD,2);
+                Document.SummaFact += Math.Round(r.Summa * r.Quantity / f.DDT_KOL_PRIHOD, 2);
             }
 
             foreach (var r in Document.Rows.Cast<InvoiceProviderRow>())
@@ -1149,27 +1147,26 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var currConv = (from c in CurrentRow.CurrencyConvertRows
                 select new
                 {
-                    Id = c.Id,
+                    c.Id,
                     SkladDC = c.StoreDC,
-                    Quantity = c.Quantity
+                    c.Quantity
                 }).ToList();
 
-            var conv = (from t in UnitOfWork.Context.TD_26_CurrencyConvert.Where(_ => _.DOC_CODE == Document.DocCode)
+            var conv = from t in UnitOfWork.Context.TD_26_CurrencyConvert.Where(_ => _.DOC_CODE == Document.DocCode)
                 select new
                 {
-                    Id = t.Id,
+                    t.Id,
                     SkladDC = t.StoreDC,
-                    Quantity = t.Quantity
-                });
-            
+                    t.Quantity
+                };
+
             var isAllOut = true;
             foreach (decimal sklDC in prihod.Select(_ => _.SkladDC).Distinct())
             {
                 var q = prihod.Where(_ => _.SkladDC == sklDC).Sum(_ => _.Quantity) -
-                        currConv.Where(_ => _.SkladDC == sklDC).Sum(_ => _.Quantity) ;
+                        currConv.Where(_ => _.SkladDC == sklDC).Sum(_ => _.Quantity);
                 if (q > 0)
                 {
-
                     var newItem = new InvoiceProviderRowCurrencyConvertViewModel
                     {
                         Id = Guid.NewGuid(),
@@ -1197,11 +1194,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
 
             if (isAllOut)
-            {
                 myWManager.ShowWinUIMessageBox(
-                        "Все поступившие товары сконвертированы.",
-                        "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
+                    "Все поступившие товары сконвертированы.",
+                    "Сообщение", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         public InvoiceProviderRowCurrencyConvertViewModel CurrentCrsConvertItem
@@ -1469,7 +1464,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
             foreach (InvoiceProviderRow r in Document.Rows)
             {
-
                 var facts = Document.Facts.Where(_ => _.DDT_NOMENKL_DC == r.Nomenkl.DocCode).ToList();
                 if (facts.Sum(_ => _.DDT_KOL_PRIHOD) < r.CurrencyConvertRows.Sum(_ => _.Quantity))
                 {
@@ -1508,10 +1502,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 isOldExist = ctx.SD_26.Any(_ => _.DOC_CODE == Document.DocCode);
             }
 
-            if (!isOldExist  && Document.State != RowStatus.NewRow)
+            if (!isOldExist && Document.State != RowStatus.NewRow)
             {
                 var res = WinManager.ShowWinUIMessageBox("Документ уже удален! Сохранить заново?", "Предупреждение",
-                    MessageBoxButton.YesNoCancel,MessageBoxImage.Question);
+                    MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
                 switch (res)
                 {
                     case MessageBoxResult.No:
@@ -1520,8 +1514,18 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     case MessageBoxResult.Cancel:
                         return;
                 }
+
                 Document.State = RowStatus.NewRow;
                 isCreateNum = false;
+            }
+
+            foreach (var entry in UnitOfWork.Context.ChangeTracker.Entries())
+            {
+                if ((entry.Entity is SD_101 || entry.Entity is TD_101 || entry.Entity is SD_114) &&
+                    entry.State == EntityState.Added)
+                {
+                    entry.State = EntityState.Unchanged;
+                }
             }
 
             UnitOfWork.CreateTransaction();
@@ -1599,6 +1603,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         vm.Save();
                     }
                 }
+
 
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
@@ -1900,7 +1905,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             : Document.Summa - Document.PaySumma,
                         // ReSharper disable once PossibleInvalidOperationException
                         Rate = old.CurrencyRateForReference ?? 1,
-                        
+                        TD_101 = old
                     };
                     Document.PaymentDocs.Add(newItem);
                     Document.Entity.ProviderInvoicePay.Add(newItem.Entity);

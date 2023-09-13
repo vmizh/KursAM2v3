@@ -978,10 +978,10 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         set { }
         get
         {
-            return (from s in ShipmentRows
-                where s.DDT_KOL_RASHOD > 0
-                let r = Rows.First(_ => _.Nomenkl.DocCode == s.Nomenkl.DocCode)
-                select r.Summa * r.Quantity / s.DDT_KOL_RASHOD).Sum();
+            return (from r in ShipmentRows
+                where r.DDT_KOL_RASHOD > 0
+                let nom = Rows.First(_ => _.Nomenkl.DocCode == r.Nomenkl.DocCode)
+                select nom.Summa * r.DDT_KOL_RASHOD / nom.Quantity).Sum();
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using KursDomain.Documents.Invoices;
 using KursDomain.References;
 
 namespace KursDomain.IDocuments.Finance;
@@ -72,5 +73,5 @@ public interface IInvoiceProvider
     [Display(AutoGenerateField = true, Name = "Получатель")]
     Kontragent KontrReceiver { set; get; }
 
-    ObservableCollection<IInvoiceProviderRow> Rows { set; get; }
+    ObservableCollection<InvoiceProviderRow> Rows { set; get; }
 }

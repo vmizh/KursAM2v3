@@ -117,7 +117,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
             get
             {
                 if (myStart == DateTime.MinValue)
-                    Start = DateTime.Today;
+                    Start = new DateTime(DateTime.Today.Year,1,1);
                 return myStart;
             }
             set
