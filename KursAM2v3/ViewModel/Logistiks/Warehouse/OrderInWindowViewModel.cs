@@ -378,8 +378,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     return;
                 }
             }
-            
+
             foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) entity.Reload();
+            Document.RaisePropertyAllChanged();
+            Document.Rows.ForEach(_ => _.RaisePropertyAllChanged());
             Document.State = RowStatus.NotEdited;
             if (Document != null)
                 WindowName = Document.ToString();

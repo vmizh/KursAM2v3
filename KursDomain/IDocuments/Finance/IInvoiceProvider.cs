@@ -56,6 +56,7 @@ public interface IInvoiceProvider : IDocCode, IDocGuid
     bool IsAccepted { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Примечание")]
+    [MaxLength(100)]
     string Note { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Создатель")]
