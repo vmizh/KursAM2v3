@@ -19,7 +19,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
     private TD_84 myEntity;
 
     // ReSharper disable once RedundantDefaultMemberInitializer
-    public bool myIsNDSInPrice = false;
+    public bool myIsNDSInPrice = true;
     private decimal myRest;
     private decimal myShipped;
 
@@ -585,7 +585,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
     }
 
     /// <summary>
-    ///     остаток для отгрузки по счету
+    ///     остаток для отгрузки по счету тест !!! 123
     /// </summary>
     public decimal Rest
     {

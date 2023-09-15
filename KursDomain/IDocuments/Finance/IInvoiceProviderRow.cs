@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.References;
 
@@ -19,11 +20,11 @@ public interface IInvoiceProviderRow : IRowDC, IRowId
     [ReadOnly(true)]
     Nomenkl Nomenkl { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Кол-во", Order = 3)]
+    [Display(AutoGenerateField = true, Name = "Кол-во", Order = 4)]
     [DisplayFormat(DataFormatString = "n2")]
     decimal Quantity { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Ед.Изм", Order = 4)]
+    [Display(AutoGenerateField = true, Name = "Ед.Изм", Order = 3)]
     [ReadOnly(true)]
     Unit Unit { set; get; }
 
@@ -39,29 +40,30 @@ public interface IInvoiceProviderRow : IRowDC, IRowId
     [ReadOnly(true)]
     decimal? SummaNaklad { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Примечание")]
+    [Display(AutoGenerateField = true, Name = "Примечание", Order = 8)]
+    [MaxLength(100)]
     string Note { set; get; }
 
 
-    [Display(AutoGenerateField = true, Name = "% НДС")]
+    [Display(AutoGenerateField = true, Name = "% НДС", Order = 9)]
     decimal NDSPercent { set; get; }
 
 
-    [Display(AutoGenerateField = true, Name = "Сумма НДС")]
+    [Display(AutoGenerateField = true, Name = "Сумма НДС", Order = 10)]
     decimal? NDSSumma { set; get; }
 
 
-    [Display(AutoGenerateField = true, Name = "Услуга")]
+    [Display(AutoGenerateField = true, Name = "Услуга", Order = 11)]
     [ReadOnly(true)]
     bool IsUsluga { get; }
 
-    [Display(AutoGenerateField = true, Name = "Накл.расход")]
+    [Display(AutoGenerateField = true, Name = "Накл.расход", Order = 12)]
     [ReadOnly(true)]
     bool IsNaklad { get; }
 
     [Display(AutoGenerateField = false)] bool IsIncludeInPrice { set; get; }
 
 
-    [Display(AutoGenerateField = true, Name = "Счет дох/расх")]
+    [Display(AutoGenerateField = true, Name = "Счет дох/расх", Order = 13)]
     SDRSchet SDRSchet { set; get; }
 }
