@@ -366,14 +366,10 @@
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>
                 <dxlc:LayoutGroup HeaderTemplate="{StaticResource FactsLayoutGroupHeader}" x:Name="mainLayoutControl4">
-                    <dxg:GridControl x:Name="gridFacts" Margin="0,10,0,0" AutoGenerateColumns="AddNew"
-                                     EnableSmartColumnsGeneration="True" HorizontalAlignment="Stretch"
-                                     VerticalAlignment="Stretch" MaxHeight="1000" MaxWidth="2000"
+                    <dxg:GridControl x:Name="gridFacts" 
+                                     Style="{StaticResource GridControl.Base}"
+                                     Margin="0,10,0,0" 
                                      dx:DXSerializer.SerializationID="gridFacts"
-                                     dx:DXSerializer.StoreLayoutMode="All"
-                                     dxg:DataControlSerializationOptions.AddNewColumns="False"
-                                     dxg:DataControlSerializationOptions.RemoveOldColumns="False"
-                                     SelectionMode="Row"
                                      ItemsSource="{Binding Document.Facts, NotifyOnSourceUpdated=True}"
                                      CurrentItem="{Binding CurrentFact, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
                                      SelectedItems="{Binding SelectedFacts, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"

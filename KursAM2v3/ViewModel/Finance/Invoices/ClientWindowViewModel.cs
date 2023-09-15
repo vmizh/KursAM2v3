@@ -115,6 +115,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 };
                 if (Document != null)
                     WindowName = Document.ToString();
+                UpdateShipped();
                 Document.myState = RowStatus.NotEdited;
                 foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>()) r.myState = RowStatus.NotEdited;
                 SetVisualOnStart();
@@ -532,6 +533,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
             });
         }
 
+        private void UpdateShipped()
+        {
+            foreach (var row in Document.Rows)
+            {
+                row.Shipped = Document.ShipmentRows.Where(_ => _.Nomenkl.DocCode == row.Nomenkl.DocCode)
+                    .Sum(_ => _.DDT_KOL_RASHOD);
+            }
+        }
+
         #endregion
 
         #region Command
@@ -541,6 +551,20 @@ namespace KursAM2.ViewModel.Finance.Invoices
             // ReSharper disable once RedundantArgumentDefaultValue
             DocumentHistoryManager.LoadHistory(DocumentType.InvoiceClient, null, Document.DocCode, null);
         }
+
+        public ICommand AddStoreLinkCommand
+        {
+            get { return new Command(AddStoreLink, _ => true); }
+        }
+
+        private void AddStoreLink(object obj)
+        {
+            var winManager = new WindowManager();
+            var res = winManager.ShowWinUIMessageBox("Функция не реализована", "Сообщение",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
 
         public ICommand UpdateCalcRowSummaCommand
         {
@@ -768,7 +792,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     r.myState = RowStatus.NotEdited;
                     AddUsedNomenkl(r.Nomenkl.DocCode);
                 }
-
+                UpdateShipped();
                 RaiseAll();
                 Document.DeletedRows.Clear();
                 Document.myState = RowStatus.NotEdited;
@@ -1045,6 +1069,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.ShipmentRows.Remove(CurrentShipmentRow);
                 var t = Document.Entity.TD_84.Single(_ => _.CODE == CurrentShipmentRow.Code).TD_24;
                 t.Remove(t.First());
+                UpdateShipped();
                 //Document.RaisePropertyAllChanged();
                 RaisePropertyChanged(nameof(Document));
                 if(Document.myState != RowStatus.NewRow)
