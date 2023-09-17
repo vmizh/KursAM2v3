@@ -5,7 +5,7 @@ using KursDomain.ICommon;
 using KursDomain.References;
 
 namespace KursDomain.IDocuments.Finance;
-
+// Счет фактура от поставщика
 public interface IInvoiceProviderRow : IRowDC, IRowId
 {
     [Display(AutoGenerateField = false)] Unit PostUnit { set; get; }

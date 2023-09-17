@@ -27,7 +27,9 @@
     <dxmvvm:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" HiddenInsteadOfCollapsed="True" />
 
    <Style x:Key="NoteStyle" TargetType="dxe:TextEdit">
-        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Top"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+        <Setter Property="AcceptsReturn" Value="True"/>
         <Setter Property="SelectAllOnMouseUp" Value="True"/>
         <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
             <Setter.Value>

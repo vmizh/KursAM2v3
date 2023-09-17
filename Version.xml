@@ -1,8 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Version>
   <Major>3</Major>
   <Minor>1</Minor>
   <Version>639</Version>
-  <ServerPath>\\main9\Kurs\KursAM2v3</ServerPath>
+  <ServerPath>\\KURSAPP\Release</ServerPath>
   <CopyType>full</CopyType>
 </Version>

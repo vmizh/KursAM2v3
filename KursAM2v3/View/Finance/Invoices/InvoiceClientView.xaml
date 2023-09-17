@@ -209,12 +209,15 @@
                                     NotifyOnValidationError=True,
                                     ValidatesOnDataErrors=True}" />
                         </dxlc:LayoutItem>
-                        <dxlc:LayoutItem Label="Примечание">
+                        <dxlc:LayoutItem Label="Примечание"
+                                         VerticalAlignment="Top" 
+                                         LabelVerticalAlignment="Top"
+                                         Margin="10,0,0,0" >
                             <dxe:TextEdit
                                 EditValue="{Binding Document.Note,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                                 MinHeight="60"
                                 AcceptsReturn="True"
-                                AcceptsTab="True" />
+                                AcceptsTab="True" TextWrapping="Wrap" VerticalContentAlignment="Top" />
                         </dxlc:LayoutItem>
                     </dxlc:LayoutGroup>
                 </dxlc:LayoutGroup>

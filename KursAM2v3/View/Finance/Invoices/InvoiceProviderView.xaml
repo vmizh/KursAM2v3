@@ -238,6 +238,7 @@
                                 <dxe:TextEdit
                                     EditValue="{Binding Document.EmployeeTabelNumber,
                                     Mode=OneWay}"
+                                    MinWidth="20"
                                     IsReadOnly="True" />
                             </dxlc:LayoutItem>
                             <dxlc:LayoutItem Label="Имя:">
@@ -251,13 +252,18 @@
                                     NotifyOnValidationError=True,
                                     ValidatesOnDataErrors=True}" />
                             </dxlc:LayoutItem>
-                        </dxlc:LayoutGroup>
-                        <dxlc:LayoutItem VerticalAlignment="Stretch" Label="Примечание:">
+                       <dxlc:LayoutItem  Label="Примечание:"
+                                          VerticalAlignment="Top" 
+                                          MinHeight="60"
+                                          LabelVerticalAlignment="Top"
+                                          Margin="10,0,0,0" >
                             <dxe:TextEdit
                                 Style="{StaticResource NoteStyle}"
                                 EditValue="{Binding Document.Note,
                                     UpdateSourceTrigger=PropertyChanged}" />
-                        </dxlc:LayoutItem>
+                        </dxlc:LayoutItem>                        
+                        </dxlc:LayoutGroup>
+ 
                     </dxlc:LayoutGroup>
                     <dxlc:LayoutGroup Header="Грузовые реквизиты:" View="GroupBox">
                         <dxlc:LayoutItem Label="Грузоотправитель:">

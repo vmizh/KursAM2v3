@@ -587,7 +587,7 @@ namespace KursAM2.ViewModel.StartLogin
             if (ver != null)
             {
                 GlobalOptions.Version = $"Версия {ver.Major}.{ver.Minor}.{ver.Ver}";
-                GlobalOptions.VersionType = ver.Serverpath.Contains("Work") ? "(бета версия)" : null;
+                GlobalOptions.VersionType = ver.Serverpath.Contains("KURSAPP") ? "(бета версия)" : null;
                 VersionValue = $"{ver.Major}.{ver.Minor}.{ver.Ver} {GlobalOptions.VersionType}";
             }
 
