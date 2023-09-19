@@ -2130,6 +2130,20 @@
         <AssociationConnector Association="ALFAMEDIA.FK_RefundToProviderRow_NomenklDC" />
         <EntityTypeShape EntityType="ALFAMEDIA.InvoiceClientQuery" Width="1.5" PointX="46.375" PointY="20.75" />
         <EntityTypeShape EntityType="ALFAMEDIA.InvoicePostQuery" Width="1.5" PointX="46.375" PointY="31.75" />
+        <EntityTypeShape EntityType="ALFAMEDIA.ClientServiceAct" Width="1.5" PointX="66.25" PointY="720.5" />
+        <EntityTypeShape EntityType="ALFAMEDIA.ClientServiceActRow" Width="1.5" PointX="68.5" PointY="731.125" />
+        <EntityTypeShape EntityType="ALFAMEDIA.ProviderServiceAct" Width="1.5" PointX="55.75" PointY="690.125" />
+        <EntityTypeShape EntityType="ALFAMEDIA.ProviderServiceActRow" Width="1.5" PointX="63" PointY="696.5" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ClientServiceAct_DogovorId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ClientServiceAct_InvoiceDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ClientServiceAct_KontragentDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ClientServiceActRow_DocId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ClientServiceActRow" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProviderServiceAct_DogovorId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProviderServiceAct_InvoiceDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProviderServiceAct_KontragentDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProviderServiceActRow_DocId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProviderServiceActRow" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

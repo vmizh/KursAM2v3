@@ -32,6 +32,7 @@ namespace Data
             this.UD_84 = new HashSet<UD_84>();
             this.VD_60 = new HashSet<VD_60>();
             this.VD_84 = new HashSet<VD_84>();
+            this.ClientServiceAct = new HashSet<ClientServiceAct>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -145,5 +146,7 @@ namespace Data
         public virtual ICollection<VD_60> VD_60 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VD_84> VD_84 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ClientServiceAct> ClientServiceAct { get; set; }
     }
 }

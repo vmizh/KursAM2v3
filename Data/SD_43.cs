@@ -110,6 +110,8 @@ namespace Data
             this.YD_43 = new HashSet<YD_43>();
             this.ZD_43 = new HashSet<ZD_43>();
             this.SD_396 = new HashSet<SD_396>();
+            this.ClientServiceAct = new HashSet<ClientServiceAct>();
+            this.ProviderServiceAct = new HashSet<ProviderServiceAct>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -361,5 +363,9 @@ namespace Data
         public virtual ICollection<ZD_43> ZD_43 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_396> SD_396 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ClientServiceAct> ClientServiceAct { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProviderServiceAct> ProviderServiceAct { get; set; }
     }
 }
