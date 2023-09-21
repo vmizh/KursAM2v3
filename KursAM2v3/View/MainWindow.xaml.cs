@@ -138,7 +138,7 @@ namespace KursAM2.View
         {
             myVersionUpdateTimer.Dispose();
             var ver = new VersionManager();
-            ver.CheckVersion();
+            ver.CheckVersion(2);
             myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, 1000 * 60, Timeout.Infinite);
         }
 
@@ -1345,7 +1345,7 @@ namespace KursAM2.View
             LayoutManager.Save();
         }
 
-        private void BarButtonItem4_OnItemClick(object sender, ItemClickEventArgs e)
+        private void BarButtonItem6_OnItemClick(object sender, ItemClickEventArgs e)
         {
             LayoutManager.ResetLayout();
         }
@@ -1386,6 +1386,14 @@ namespace KursAM2.View
         private void LayoutPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             LayoutManager.Save();
+        }
+
+        private void BarButtonItem4_OnItemClick(object sender, ItemClickEventArgs e)
+        {
+            var e01 = e;
+            var Vers = new VersionManager();
+            var Ver = Vers.CheckVersion(1);
+
         }
     }
 }

@@ -11,7 +11,7 @@
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                  xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=KursDomain"
                  xmlns:iCommon="clr-namespace:KursDomain.ICommon;assembly=KursDomain"
-                 xmlns:helper="clr-namespace:KursAM2.View.Helper"
+                 xmlns:helper="clr-namespace:KursAM2.View.Helper" xmlns:invoices="clr-namespace:KursDomain.Documents.Invoices;assembly=KursDomain" d:DataContext="{d:DesignInstance Type=invoices:InvoiceClientViewModel}"
                  mc:Ignorable="d"
                  Icon="{Binding Source={StaticResource InvoiceClientDrawingImage},
                  Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"

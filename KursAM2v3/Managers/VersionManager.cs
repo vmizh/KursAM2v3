@@ -19,6 +19,10 @@ namespace KursAM2.Managers
         public string Smajor { set; get; }
         public string Sminor { set; get; }
         public string Sver { set; get; }
+        public string CopyType { set; get; }
+        public string CrVersion { set; get; }
+        public string SCopyType { set; get; }
+        public string SCrVersion { set; get; }
     }
 
     public class VersionManager
@@ -42,15 +46,36 @@ namespace KursAM2.Managers
                 "Запрос на обновление программы", MessageBoxButton.YesNo);
         }
 
-        public Version CheckVersion()
+        public void KursUpdate()
         {
+//            ShowMsgResult = MessageBox.Show(
+//                $" Идет обновление версии {Version.Ver} ..... ",
+//                "Процесс обновления", MessageBoxButton.OK);
+
+#if (!DEBUG)
+                            var procId = Process.GetCurrentProcess().Id;
+                            string copytype = null ;
+                            Process.Start("Updater.exe",
+                                "KursAM2v4.exe " + Version.Serverpath + " " + "\"" + Directory.GetCurrentDirectory() + "\"" +
+                                $" {copytype}" + " " + procId);
+                            Process.GetCurrentProcess().Kill();
+#endif
+        }
+
+        public Version CheckVersion(int typeOfcall)
+            // 0 - вызов из StartLogin
+            // 1 - вызов из меню Система
+            // 2 - вызов по таймеру
+        {
+            string FullVersion;
+            string SFullVersion;
             var xmlDoc = new XmlDocument();
             try
             {
                 xmlDoc.Load("Version.xml");
 
-                // ReSharper disable once NotAccessedVariable
-                string copytype = null;
+                 string copytype = null; 
+
                 if (xmlDoc.DocumentElement != null)
                 {
                     var nodeList = xmlDoc.DocumentElement.ChildNodes;
@@ -68,6 +93,12 @@ namespace KursAM2.Managers
                                 break;
                             case "ServerPath":
                                 Version.Serverpath = node.InnerText;
+                                break;
+                            case "CopyType":
+                                Version.CopyType = node.InnerText;
+                                break;
+                            case "CrVersion":
+                                Version.CrVersion = node.InnerText;
                                 break;
                         }
                 }
@@ -92,27 +123,46 @@ namespace KursAM2.Managers
                                     Version.Sver = node.InnerText;
                                     break;
                                 case "CopyType":
-                                    // ReSharper disable once RedundantAssignment
-                                    copytype = node.InnerText;
+                                    Version.SCopyType = node.InnerText;
+                                    break;
+                                case "CrVersion":
+                                    Version.SCrVersion = node.InnerText;
                                     break;
                             }
                     }
-#if (!DEBUG)
+
+                    FullVersion = $"{Version.Major}.{Version.Minor}.{Version.Ver}";
+                    SFullVersion = $"{Version.Smajor}.{Version.Sminor}.{Version.Sver}";
+
                     if (Version.Sver != Version.Ver)
                     {
-                        ShowMsgResult = MessageBox.Show(
-                            $"Версия программы {Version.Ver} отличается от новой версии {Version.Sver}. \nОбновить программу?",
-                            "Запрос на обновление программы", MessageBoxButton.YesNo);
-                        if (ShowMsgResult == MessageBoxResult.Yes)
+                        if (int.Parse(Version.SCrVersion) > int.Parse(Version.Ver))
+                            //проверка на критическое обновление
                         {
-                            var procId = Process.GetCurrentProcess().Id;
-                            Process.Start("Updater.exe",
-                                "KursAM2v4.exe " + Version.Serverpath + " " + "\"" + Directory.GetCurrentDirectory() + "\"" +
-                                $" {copytype}" + " " + procId);
-                            Process.GetCurrentProcess().Kill();
+                            ShowMsgResult = MessageBox.Show(
+                                $"Для вашей версии {FullVersion} выпущено критическое обновление!\n Для дальнейшей работы необходимо обновить программу.\n Выполнить обновление?",
+                                "Запрос на обновление программы", MessageBoxButton.YesNo);
+
+                            if (ShowMsgResult == MessageBoxResult.Yes) KursUpdate();
+                        }
+                        else
+                        {
+                            if (typeOfcall == 1)
+                            {
+                                ShowMsgResult = MessageBox.Show(
+                                    $"Версия программы {FullVersion} отличается от новой версии {SFullVersion}. \nОбновить программу?",
+                                    "Запрос на обновление программы", MessageBoxButton.YesNo);
+                                if (ShowMsgResult == MessageBoxResult.Yes) KursUpdate();
+                            }
                         }
                     }
-#endif
+                    else
+                    {
+                        if (typeOfcall == 1)
+                            ShowMsgResult = MessageBox.Show(
+                                $"Версия программы {FullVersion} является актуальной. Обновления не требуется ",
+                                "Обновление программы", MessageBoxButton.OK);
+                    }
                 }
 
                 return Version;
