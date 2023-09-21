@@ -37,7 +37,7 @@
                                ItemClick="BarButtonItem5_OnItemClick" />-->
             <dxb:BarButtonItem x:Name="barButtonItem5" Content="Обновить версию"
                                ItemClick="BarButtonItem4_OnItemClick" 
-                               Glyph="{dx:DXImage SvgImages/Business Objects/BO_Audit_ChangeHistory.svg}"/>
+                               Glyph="{dx:DXImage SvgImages/XAF/Action_Refresh.svg}"/>
             <dxb:BarButtonItem x:Name="barButtonItem6" Content="Сбросить разметку"
                                ItemClick="BarButtonItem4_OnItemClick"
                                Glyph="{dx:DXImage SvgImages/Dashboards/FullExtent.svg}" />
