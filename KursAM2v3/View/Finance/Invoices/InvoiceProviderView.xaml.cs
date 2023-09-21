@@ -129,6 +129,7 @@ namespace KursAM2.View.Finance.Invoices
                     DisplayFormat = "n2"
                 });
             }
+
         }
 
         private void GridLayoutHelper_Trigger(object sender, MyEventArgs e)

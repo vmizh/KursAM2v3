@@ -62,3 +62,5 @@ bin
 /Version.xml
 /VersionGenerate.exe
 /Updater/Updater.csproj.user
+/error.txt
+/.gitignore

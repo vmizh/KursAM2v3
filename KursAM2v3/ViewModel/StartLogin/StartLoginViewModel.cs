@@ -572,7 +572,7 @@ namespace KursAM2.ViewModel.StartLogin
 
                     if (!string.IsNullOrWhiteSpace(Settings.Default.LastDataBase))
                         CurrentBoxItem = Settings.Default.LastDataBase;
-                }
+                }                                                                                                
             }
             catch (Exception ex)
             {
@@ -583,12 +583,12 @@ namespace KursAM2.ViewModel.StartLogin
 
             //Version cache
             var vers = new VersionManager();
-            var ver = vers.CheckVersion();
+            var ver = vers.CheckVersion(0);
             if (ver != null)
             {
                 GlobalOptions.Version = $"Версия {ver.Major}.{ver.Minor}.{ver.Ver}";
                 GlobalOptions.VersionType = ver.Serverpath.Contains("KURSAPP") ? "(бета версия)" : null;
-                VersionValue = $"{ver.Major}.{ver.Minor}.{ver.Ver} {GlobalOptions.VersionType}";
+                VersionValue = $"Версия {ver.Major}.{ver.Minor}.{ver.Ver} {GlobalOptions.VersionType}";
             }
 
             LoadDataSources();

@@ -24,8 +24,8 @@
                 <dxb:BarButtonItemLink BarItemName="barButtonItem1" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem2" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem4" />
-                <dxb:BarButtonItemLink BarItemName="barButtonItem3" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem5" />
+                <dxb:BarButtonItemLink BarItemName="barButtonItem3" />
             </dxb:BarSubItem>
             <dxb:BarButtonItem x:Name="barButtonItem1" Content="Настройки пользователя"
                                ItemClick="BarButtonItem1_OnItemClick"
@@ -35,7 +35,10 @@
                                Glyph="{dx:DXImage SvgImages/Business Objects/BO_Audit_ChangeHistory.svg}" />
             <!--<dxb:BarButtonItem x:Name="barButtonItem5" Content="Сохранить историю"
                                ItemClick="BarButtonItem5_OnItemClick" />-->
-            <dxb:BarButtonItem x:Name="barButtonItem4" Content="Сбросить разметку"
+            <dxb:BarButtonItem x:Name="barButtonItem5" Content="Обновить версию"
+                               ItemClick="BarButtonItem4_OnItemClick" 
+                               Glyph="{dx:DXImage SvgImages/Business Objects/BO_Audit_ChangeHistory.svg}"/>
+            <dxb:BarButtonItem x:Name="barButtonItem6" Content="Сбросить разметку"
                                ItemClick="BarButtonItem4_OnItemClick"
                                Glyph="{dx:DXImage SvgImages/Dashboards/FullExtent.svg}" />
             <dxb:BarButtonItem x:Name="barButtonItem3" Content="Выход" ItemClick="BarButtonItem3_OnItemClick"

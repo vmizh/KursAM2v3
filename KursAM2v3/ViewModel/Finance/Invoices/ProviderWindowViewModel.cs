@@ -478,6 +478,17 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var col = frm.gridFacts.Columns.FirstOrDefault(_ => _.FieldName == "LinkOrder");
                 if (col != null)
                     frm.gridFacts.Columns.Remove(col);
+                GridSummaryItem g = null;
+                foreach (var s in frm.gridRows.TotalSummary)
+                {
+                    if (s.FieldName != "NDSPercent") continue;
+                    g = s;
+                    break;
+                }
+                if (g != null)
+                {
+                    frm.gridRows.TotalSummary.Remove(g);
+                }
             }
         }
 
