@@ -22,7 +22,7 @@ public interface IInvoiceClientRow
     [Display(AutoGenerateField = true, Name = "Ед.Изм", Order = 3), ReadOnly(true)]
     Unit Unit { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Услуга", Order = 10), ReadOnly(true)]
+    [Display(AutoGenerateField = true, Name = "Услуга", Order = 11), ReadOnly(true)]
     public bool IsUsluga { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Кол-во", Order = 4)]
@@ -33,41 +33,45 @@ public interface IInvoiceClientRow
     [DisplayFormat(DataFormatString = "n2")]
     public decimal Price { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Сумма", Order = 6), ReadOnly(true)]
+    [Display(AutoGenerateField = true, Name = "Цена с НДС", Order = 6)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal PriceWithNDS { get; }
+
+    [Display(AutoGenerateField = true, Name = "Сумма", Order = 7), ReadOnly(true)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal Summa { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Наценка дилера на единицу", Order = 11)]
+    [Display(AutoGenerateField = true, Name = "Наценка дилера на единицу", Order = 12)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal? SFT_NACENKA_DILERA { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Отгружено", Order = 12)]
+    [Display(AutoGenerateField = true, Name = "Отгружено", Order = 13)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal Shipped { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Остаток", Order = 13), ReadOnly(true)]
+    [Display(AutoGenerateField = true, Name = "Остаток", Order = 14), ReadOnly(true)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal Rest { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Текущий остаток", Order = 14), ReadOnly(true)]
+    [Display(AutoGenerateField = true, Name = "Текущий остаток", Order = 15), ReadOnly(true)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal CurrentRemains { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Примечание", Order = 7)]
+    [Display(AutoGenerateField = true, Name = "Примечание", Order = 8)]
     public string Note { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "НДС %", Order = 8)]
+    [Display(AutoGenerateField = true, Name = "НДС %", Order = 9)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal NDSPercent { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Сумма НДС", Order = 9)]
+    [Display(AutoGenerateField = true, Name = "Сумма НДС", Order = 10)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal? SFT_SUMMA_NDS { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Счет дох./расх.", Order = 15)]
+    [Display(AutoGenerateField = true, Name = "Счет дох./расх.", Order = 16)]
     public SDRSchet SDRSchet { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Груз. декларация", Order = 16)]
+    [Display(AutoGenerateField = true, Name = "Груз. декларация", Order = 17)]
     public string GruzoDeclaration { set; get; }
 
 

@@ -1088,6 +1088,8 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
             {
                 r.IsNDSInPrice = (Entity.SF_NDS_1INCLUD_0NO ?? 0) == 1;
                 r.CalcRow();
+                r.RaisePropertyChanged(nameof(r.PriceWithNDS));
+                r.RaisePropertyChanged(nameof(r.Summa));
             }
 
             RaisePropertyChanged();

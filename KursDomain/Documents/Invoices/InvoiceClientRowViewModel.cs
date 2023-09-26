@@ -62,7 +62,31 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         return false;
     }
 
-    public decimal? SFT_ACCIZ
+    public decimal PriceWithNDS
+    {
+        get
+        {
+            if (!IsNDSInPrice)
+            {
+                var n = Price * NDSPercent / 100;
+                Entity.SFT_SUMMA_K_OPLATE = Quantity * (Price + n);
+                return Price + n;
+            }
+
+            if (Quantity <= 0)
+            {
+                Entity.SFT_SUMMA_K_OPLATE = 0;
+                return 0;
+            }
+
+            Entity.SFT_SUMMA_K_OPLATE = Quantity * Price;
+            return  Price;
+
+        }
+}
+
+
+public decimal? SFT_ACCIZ
     {
         get => Entity.SFT_ACCIZ;
         set
