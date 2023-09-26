@@ -1075,21 +1075,18 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
             RaisePropertyChanged();
         }
     }
-
-    public bool IsNDSIncludeInPrice
+ 
     // изменил НДС в цене на вкл ***
-    {
-        get => (SF_NDS_1INCLUD_0NO ?? 1) == 1;
-    //  get => (SF_NDS_1INCLUD_0NO ?? 0) == 1;
-
+    public bool IsNDSIncludeInPrice
+   {
+        get => (Entity.SF_NDS_1INCLUD_0NO ?? 0) == 1;
         set
         {
-            // if ((SF_NDS_1INCLUD_0NO ?? 0) == 1 == value) return;
-            if ((SF_NDS_1INCLUD_0NO ?? 1) == 1 == value) return;
-            SF_NDS_1INCLUD_0NO = (short?)((SF_NDS_1INCLUD_0NO ?? 0) == 1 ? 0 : 1);
+            if ((Entity.SF_NDS_1INCLUD_0NO ?? 0) == 1 == value) return;
+            Entity.SF_NDS_1INCLUD_0NO = (short?)((Entity.SF_NDS_1INCLUD_0NO ?? 0) == 1 ? 0 : 1);
             foreach (var r in Rows.Cast<InvoiceClientRowViewModel>())
             {
-                r.IsNDSInPrice = (SF_NDS_1INCLUD_0NO ?? 0) == 1;
+                r.IsNDSInPrice = (Entity.SF_NDS_1INCLUD_0NO ?? 0) == 1;
                 r.CalcRow();
             }
 
