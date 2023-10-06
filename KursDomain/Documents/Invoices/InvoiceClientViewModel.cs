@@ -11,6 +11,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Mvvm.Native;
 using Helper;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
@@ -32,6 +33,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
     private readonly UnitOfWork<ALFAMEDIAEntities> context;
     private readonly bool isLoadPayment;
     private SD_84 myEntity;
+    private decimal mySumma;
 
     public InvoiceClientViewModel()
     {
@@ -1052,17 +1054,36 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         }
     }
 
+    public void CalcDoc()
+    {
+        Entity.SF_CRS_SUMMA_K_OPLATE = Rows.Sum(_ => _.Summa);
+        RaisePropertyChanged("Summa");
+    }
+
     public decimal Summa
     {
-        set { }
-        get
+        set
         {
-            var s = Rows == null || Rows.Count == 0 ? 0 : Rows.Sum(_ => _.Summa);
-            Entity.SF_CRS_SUMMA_K_OPLATE = s;
-            Entity.SF_FACT_SUMMA = s;
-            Entity.SF_KONTR_CRS_SUMMA = s;
-            return s;
+            if (Entity.SF_CRS_SUMMA_K_OPLATE == value) return;
+            Entity.SF_CRS_SUMMA_K_OPLATE = value;
+            RaisePropertyChanged();
         }
+        get => (decimal)Entity.SF_CRS_SUMMA_K_OPLATE;
+        //var state = State;
+        //if (Rows.Count > 0)
+        //{
+        //    foreach (var invoiceClientRow in Rows)
+        //    {
+        //        var r = (InvoiceClientRowViewModel)invoiceClientRow;
+        //        r.CalcRow();
+        //    }
+        //}
+        //var s = Rows == null || Rows.Count == 0 ? 0 : Rows.Sum(_ => _.Summa);
+        //Entity.SF_CRS_SUMMA_K_OPLATE = s;
+        //Entity.SF_FACT_SUMMA = s;
+        //Entity.SF_KONTR_CRS_SUMMA = s;
+        //State = state;
+        //return s;
     }
 
     public string CREATOR

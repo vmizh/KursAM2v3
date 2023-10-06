@@ -39,7 +39,7 @@ namespace Updater
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    //MessageBox.Show(ex.Message);
                 }
                 Console.WriteLine(args[2]);
                 var programpath = @""+ args[2];//@"c:\Users\Vadim\WorkProject\KursAM2v3\KursAM2v3\bin\Release";

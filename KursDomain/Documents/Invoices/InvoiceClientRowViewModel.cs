@@ -667,7 +667,6 @@ public decimal? SFT_ACCIZ
 
         RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
         RaisePropertyChanged(nameof(Summa));
-        if (Parent is InvoiceClientViewModel p) p.RaisePropertyChanged("Summa");
     }
 
     private void LoadReference()
