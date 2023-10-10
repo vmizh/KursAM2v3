@@ -158,6 +158,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public bool IsUsluga { get; set; }
         public decimal Quantity { get; set; }
         public decimal Price { get; set; }
+        public decimal PriceWithNDS { get; }
         public decimal Summa { get; set; }
         public decimal? SFT_NACENKA_DILERA { get; set; }
         public decimal Shipped { get; set; }

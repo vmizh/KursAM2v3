@@ -830,8 +830,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     public bool IsNDSInPrice
     {
-        get => (Entity.SF_NDS_VKL_V_CENU ?? 1) == 1;
-        //  get => Entity.SF_NDS_VKL_V_CENU == 1;
+        get => Entity.SF_NDS_VKL_V_CENU == 1;
         // изменил НДС в цене на вкл ***
         set
         {

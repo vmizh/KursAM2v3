@@ -19,6 +19,7 @@ namespace Data
         {
             this.DogovorClientRow = new HashSet<DogovorClientRow>();
             this.SD_84 = new HashSet<SD_84>();
+            this.ClientServiceAct = new HashSet<ClientServiceAct>();
         }
     
         public System.Guid Id { get; set; }
@@ -44,5 +45,7 @@ namespace Data
         public virtual ICollection<DogovorClientRow> DogovorClientRow { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_84> SD_84 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ClientServiceAct> ClientServiceAct { get; set; }
     }
 }

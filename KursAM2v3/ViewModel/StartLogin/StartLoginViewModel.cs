@@ -140,9 +140,16 @@ namespace KursAM2.ViewModel.StartLogin
                 string.IsNullOrEmpty(CurrentPassword)
                 || SelectedDataSource == null)
             {
-                WindowManager.ShowMessage(view, "Имя пользователя и пароль должны быть обязательно заполнены.",
-                    "Ошибка",
-                    MessageBoxImage.Question);
+                //WindowManager.ShowMessage(view, "Имя пользователя и пароль должны быть обязательно заполнены.",
+                //    "Ошибка",
+                //    MessageBoxImage.Question);
+
+                //WindowManager(view, "Имя пользователя и пароль должны быть обязательно заполнены.",
+                //    "Ошибка",
+                //    MessageBoxImage.Question);
+                var wm = new WindowManager();
+                wm.ShowKursDialog("Имя пользователя и пароль должны быть обязательно заполнены.",
+                    WindowManager.SaveCancel);
                 return;
             }
 

@@ -59,10 +59,8 @@
 obj
 bin
 /KursAM2v3/App.config
-/VersionGenerate.exe
 /Version.xml
+/VersionGenerate.exe
+/Updater/Updater.csproj.user
 /error.txt
 /.gitignore
-/error.txt
-/Version.xml
-/VersionGenerate.exe

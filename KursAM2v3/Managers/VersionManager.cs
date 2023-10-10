@@ -57,8 +57,8 @@ namespace KursAM2.Managers
                             string copytype = null ;
                             Process.Start("Updater.exe",
                                 "KursAM2v4.exe " + Version.Serverpath + " " + "\"" + Directory.GetCurrentDirectory() + "\"" +
-                                $" {copytype}" + " " + procId);
-                            Process.GetCurrentProcess().Kill();
+                                $" {0}" + " " + procId);
+                            //Process.GetCurrentProcess().Kill();
 #endif
         }
 

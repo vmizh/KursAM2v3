@@ -301,6 +301,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     SF_PAY_FLAG = 0,
                     SF_FACT_SUMMA = 0,
                     SF_EXECUTED = 0,
+                    SF_NDS_VKL_V_CENU = 1,
+                    SF_KONTR_CRS_SUMMA = 0,
+                    SF_SUMMA_V_UCHET_VALUTE = 0,
+                    SF_KONTR_CRS_RATE = 1,
                     TD_26 = new List<TD_26>()
                 };
                 UnitOfWork.Context.SD_26.Add(doc);
@@ -478,6 +482,17 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var col = frm.gridFacts.Columns.FirstOrDefault(_ => _.FieldName == "LinkOrder");
                 if (col != null)
                     frm.gridFacts.Columns.Remove(col);
+                GridSummaryItem g = null;
+                foreach (var s in frm.gridRows.TotalSummary)
+                {
+                    if (s.FieldName != "NDSPercent") continue;
+                    g = s;
+                    break;
+                }
+                if (g != null)
+                {
+                    frm.gridRows.TotalSummary.Remove(g);
+                }
             }
         }
 

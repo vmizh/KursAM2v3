@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -8,11 +9,41 @@ using Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.WindowsUI;
 using KursDomain;
+using KursDomain.WindowsManager;
 
 namespace Core.WindowsManager;
 
 public class WindowManager : IWindowManager
 {
+    public static KursDialogResult YesNo = KursDialogResult.Yes | KursDialogResult.No;
+    public static KursDialogResult YesNoCancel = KursDialogResult.Yes | KursDialogResult.No | KursDialogResult.Cancel;
+    public static KursDialogResult SaveCancel = KursDialogResult.Save | KursDialogResult.Cancel;
+    public static KursDialogResult SaveNotSaveCancel = KursDialogResult.Save | KursDialogResult.NotSave | KursDialogResult.Cancel;
+    public static KursDialogResult Confirm = KursDialogResult.Confirm;
+
+    public WindowManager()
+    {
+        DialogResultNames.Add(KursDialogResult.Yes,"Да");
+        DialogResultNames.Add(KursDialogResult.Save,"Сохранить");
+        DialogResultNames.Add(KursDialogResult.NotSave,"Не сохранять");
+        DialogResultNames.Add(KursDialogResult.Cancel,"Отмена");
+        DialogResultNames.Add(KursDialogResult.No,"Нет");
+        DialogResultNames.Add(KursDialogResult.Confirm,"Подтвердить");
+    }
+
+    [Flags]
+    public enum KursDialogResult
+    {
+        Save = 1,
+        NotSave = 2,
+        Cancel = 4,
+        Yes = 8,
+        No = 16,
+        Confirm = 32
+    }
+
+    public readonly Dictionary<KursDialogResult, string> DialogResultNames = new Dictionary<KursDialogResult, string>();
+
     public MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button)
     {
         return DXMessageBox.Show(messageBoxText, caption, button);
@@ -21,6 +52,13 @@ public class WindowManager : IWindowManager
     public void ShowMessageBox(string messageBoxText, string caption)
     {
         DXMessageBox.Show(messageBoxText, caption);
+    }
+
+    public KursDialogResult ShowKursDialog(string text, KursDialogResult result)
+    {
+        var dlg = new KursDialogViewModel(text, result, DialogResultNames);
+        dlg.Show();
+        return dlg.DialogResult;
     }
 
     public MessageBoxResult ShowWinUIMessageBox(string messageBoxText, string caption,
