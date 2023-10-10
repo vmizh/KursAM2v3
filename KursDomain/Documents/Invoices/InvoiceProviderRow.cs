@@ -693,6 +693,28 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
         }
     }
 
+    public decimal PriceWithNDS
+    {
+        get
+        {
+            if (!IsIncludeInPrice)
+            {
+                var n = Price * NDSPercent / 100;
+                Entity.SFT_SUMMA_K_OPLATE = Quantity * (Price + n);
+                return Price + n;
+            }
+
+            if (Quantity <= 0)
+            {
+                Entity.SFT_SUMMA_K_OPLATE = 0;
+                return 0;
+            }
+
+            Entity.SFT_SUMMA_K_OPLATE = Quantity * Price;
+            return Price;
+        }
+    }
+
     public decimal Quantity
     {
         get => Entity.SFT_KOL;
@@ -921,6 +943,7 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
 
             RaisePropertyChanged(nameof(NDSSumma));
             RaisePropertyChanged(nameof(Summa));
+            RaisePropertyChanged(nameof(PriceWithNDS));
             p.RaisePropertyChanged("Summa");
         }
     }

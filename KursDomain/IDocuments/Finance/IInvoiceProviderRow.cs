@@ -32,38 +32,42 @@ public interface IInvoiceProviderRow : IRowDC, IRowId
     [DisplayFormat(DataFormatString = "n2")]
     decimal Price { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Сумма", Order = 6)]
+    [Display(AutoGenerateField = true, Name = "Цена с НДС", Order = 6)]
+    [DisplayFormat(DataFormatString = "n2")]
+    decimal PriceWithNDS { get; }
+
+    [Display(AutoGenerateField = true, Name = "Сумма", Order = 7)]
     [ReadOnly(true)]
     decimal Summa { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Сумма накл.", Order = 7)]
+    [Display(AutoGenerateField = true, Name = "Сумма накл.", Order = 8)]
     [ReadOnly(true)]
     decimal? SummaNaklad { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Примечание", Order = 8)]
+    [Display(AutoGenerateField = true, Name = "Примечание", Order = 9)]
     [MaxLength(100)]
     string Note { set; get; }
 
 
-    [Display(AutoGenerateField = true, Name = "% НДС", Order = 9)]
+    [Display(AutoGenerateField = true, Name = "% НДС", Order = 10)]
     decimal NDSPercent { set; get; }
 
 
-    [Display(AutoGenerateField = true, Name = "Сумма НДС", Order = 10)]
+    [Display(AutoGenerateField = true, Name = "Сумма НДС", Order = 11)]
     decimal? NDSSumma { set; get; }
 
 
-    [Display(AutoGenerateField = true, Name = "Услуга", Order = 11)]
+    [Display(AutoGenerateField = true, Name = "Услуга", Order = 12)]
     [ReadOnly(true)]
     bool IsUsluga { get; }
 
-    [Display(AutoGenerateField = true, Name = "Накл.расход", Order = 12)]
+    [Display(AutoGenerateField = true, Name = "Накл.расход", Order = 13)]
     [ReadOnly(true)]
     bool IsNaklad { get; }
 
     [Display(AutoGenerateField = false)] bool IsIncludeInPrice { set; get; }
 
 
-    [Display(AutoGenerateField = true, Name = "Счет дох/расх", Order = 13)]
+    [Display(AutoGenerateField = true, Name = "Счет дох/расх", Order = 14)]
     SDRSchet SDRSchet { set; get; }
 }
