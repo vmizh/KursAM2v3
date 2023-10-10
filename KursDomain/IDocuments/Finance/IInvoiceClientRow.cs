@@ -64,9 +64,9 @@ public interface IInvoiceClientRow
     [DisplayFormat(DataFormatString = "n2")]
     public decimal NDSPercent { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Сумма НДС", Order = 10)]
+    [Display(AutoGenerateField = true, Name = "Сумма НДС", Order = 10), ReadOnly(true)]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal? SFT_SUMMA_NDS { set; get; }
+    public decimal? SFT_SUMMA_NDS { get; }
 
     [Display(AutoGenerateField = true, Name = "Счет дох./расх.", Order = 16)]
     public SDRSchet SDRSchet { set; get; }

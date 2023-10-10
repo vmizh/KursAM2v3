@@ -305,8 +305,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     UnitOfWork.Context.Entry(item.Entity).State = EntityState.Detached;
                     Document.Entity.TD_84.Clear();
                 }
-
                 Document.Rows.Clear();
+                Document.Summa = 0;
             }
         }
 

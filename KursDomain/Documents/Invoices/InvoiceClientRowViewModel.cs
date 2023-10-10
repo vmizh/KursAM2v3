@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Core.Helper;
 using Core.ViewModel.Base;
@@ -39,6 +38,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         {
             Entity = entity;
             LoadReference();
+            CalcRow();
         }
 
         IsNDSInPrice = isNDSInPrice;
@@ -56,37 +56,8 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         }
     }
 
-    private bool GetValue(bool value)
-    {
-        if (myIsNDSInPrice == value) return true;
-        return false;
-    }
 
-    public decimal PriceWithNDS
-    {
-        get
-        {
-            if (!IsNDSInPrice)
-            {
-                var n = Price * NDSPercent / 100;
-                Entity.SFT_SUMMA_K_OPLATE = Quantity * (Price + n);
-                return Price + n;
-            }
-
-            if (Quantity <= 0)
-            {
-                Entity.SFT_SUMMA_K_OPLATE = 0;
-                return 0;
-            }
-
-            Entity.SFT_SUMMA_K_OPLATE = Quantity * Price;
-            return  Price;
-
-        }
-}
-
-
-public decimal? SFT_ACCIZ
+    public decimal? SFT_ACCIZ
     {
         get => Entity.SFT_ACCIZ;
         set
@@ -412,13 +383,39 @@ public decimal? SFT_ACCIZ
         };
     }
 
+    public decimal PriceWithNDS
+    {
+        get
+        {
+            if (!IsNDSInPrice)
+            {
+                var n = Price * NDSPercent / 100;
+                Entity.SFT_SUMMA_K_OPLATE = Quantity * (Price + n);
+                return Price + n;
+            }
+
+            if (Quantity <= 0)
+            {
+                Entity.SFT_SUMMA_K_OPLATE = 0;
+                return 0;
+            }
+
+            Entity.SFT_SUMMA_K_OPLATE = Quantity * Price;
+            return Price;
+        }
+    }
+
     public string NomNomenkl
     {
         set { }
         get => Nomenkl?.NomenklNumber;
     }
 
-    public Unit Unit { get => Nomenkl?.Unit as Unit; set{} }
+    public Unit Unit
+    {
+        get => Nomenkl?.Unit as Unit;
+        set { }
+    }
 
     public Guid DocId
     {
@@ -543,11 +540,7 @@ public decimal? SFT_ACCIZ
         }
     }
 
-    public decimal? SFT_SUMMA_NDS
-    {
-        set { }
-        get => Entity.SFT_SUMMA_NDS;
-    }
+    public decimal? SFT_SUMMA_NDS => Entity.SFT_SUMMA_NDS;
 
     public decimal Summa
     {
@@ -639,6 +632,12 @@ public decimal? SFT_ACCIZ
         }
     }
 
+    private bool GetValue(bool value)
+    {
+        if (myIsNDSInPrice == value) return true;
+        return false;
+    }
+
     public List<TD_84> LoadList()
     {
         throw new NotImplementedException();
@@ -647,12 +646,8 @@ public decimal? SFT_ACCIZ
     public void CalcRow()
     {
         if (IsNDSInPrice)
-        {
- //           var s = (decimal)Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0;//
- //           Entity.SFT_SUMMA_NDS = Math.Round(s - s * 100 / (100 + (decimal)Entity.SFT_NDS_PERCENT), 2);
-//            Entity.SFT_SUMMA_K_OPLATE = s;
-//            Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = s;
-
+        {   var s = (decimal)Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0;
+            Entity.SFT_SUMMA_NDS = Math.Round(s - s * 100 / (100 + (decimal)Entity.SFT_NDS_PERCENT), 2);
         }
         else
         {

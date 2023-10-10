@@ -118,6 +118,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public string NomenklNumber { get; set; }
         public Unit Unit { get; set; }
         public decimal Price { get; set; }
+        public decimal PriceWithNDS { get; }
         public decimal Quantity { get; set; }
         public decimal NDSPercent { get; set; }
         public decimal? SummaNaklad { get; set; }
