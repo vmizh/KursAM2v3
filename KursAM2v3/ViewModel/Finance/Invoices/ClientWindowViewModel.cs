@@ -99,7 +99,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Id = Guid.NewGuid(),
                     SF_CRS_SUMMA_K_OPLATE = 0,
                     SF_PAY_FLAG = 0,
-                    SF_FACT_SUMMA = 0
+                    SF_FACT_SUMMA = 0,
+                    SF_NDS_1INCLUD_0NO = 1,
+                    SF_KONTR_CRS_SUMMA = 0,
+                    SF_DILER_SUMMA = 0,
+                    SF_SUMMA_V_UCHET_VALUTE = 0,
+                    SF_RUB_SUMMA_K_OPLATE = 0
                 };
                 UnitOfWork.Context.SD_84.Add(doc);
                 Document = new InvoiceClientViewModel(doc, UnitOfWork, isLoadPay)
