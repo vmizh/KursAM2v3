@@ -55,6 +55,7 @@ namespace KursAM2.Managers
 #if (!DEBUG)
                             var procId = Process.GetCurrentProcess().Id;
                             string copytype = null ;
+                            File.Copy($@"{Version.Serverpath}\Updater.exe", $@"{Directory.GetCurrentDirectory()}\Updater.exe");
                             Process.Start("Updater.exe",
                                 "KursAM2v4.exe " + Version.Serverpath + " " + "\"" + Directory.GetCurrentDirectory() + "\"" +
                                 $" {0}" + " " + procId);
