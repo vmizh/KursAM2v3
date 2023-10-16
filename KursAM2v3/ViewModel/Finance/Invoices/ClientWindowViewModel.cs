@@ -15,6 +15,8 @@ using Data;
 using DevExpress.DataAccess.Native.ObjectBinding;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
+using DevExpress.Xpf.Grid;
+using DevExpress.Xpf.PivotGrid;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -30,6 +32,7 @@ using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
+using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
@@ -340,6 +343,25 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 frm.gridRows.RefreshData();
                 frm.gridRows.UpdateTotalSummary();
                 RaisePropertyChanged(nameof(Document));
+            }
+        }
+
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            if (Form is InvoiceClientView frm)
+            {
+                List<GridSummaryItem> delList = new List<GridSummaryItem>();
+                foreach (var s in frm.gridRows.TotalSummary)
+                {
+                    if(s.FieldName is nameof(IInvoiceClientRow.Price) or nameof(IInvoiceClientRow.PriceWithNDS) or nameof(IInvoiceClientRow.NDSPercent))
+                        delList.Add(s);
+                }
+
+                foreach (var s in delList)
+                {
+                    frm.gridRows.TotalSummary.Remove(s);
+                }
             }
         }
 
