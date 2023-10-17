@@ -147,7 +147,8 @@
                                     >
                         <dxe:ButtonEdit.Buttons>
                             <dxe:ButtonInfo GlyphKind="Cancel"
-                                            Command="{Binding SFNameRemoveCommand}"/>
+                                            Click="PaymentCancel_OnClick"
+                                            />
                         </dxe:ButtonEdit.Buttons>
                     </dxe:ButtonEdit>
                 </dxlc:LayoutItem>

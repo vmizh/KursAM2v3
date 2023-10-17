@@ -39,11 +39,14 @@ namespace KursAM2.View.Finance.Invoices
         {
             e.Column.Name = e.Column.FieldName;
             if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(e.Column.FieldType))
+            {
                 e.Column.EditSettings = new CalcEditSettings
                 {
                     DisplayFormat = "n2",
-                    Name = e.Column.FieldName + "Calc"
+                    Name = e.Column.FieldName + "Calc",
                 };
+            }
+
             var ctx = DataContext as ClientWindowViewModel;
             var doc = ctx?.Document;
             if (doc == null)
@@ -65,11 +68,6 @@ namespace KursAM2.View.Finance.Invoices
                     break;
                 case nameof(inv.Note):
                     break;
-                //case nameof(inv.SFT_NACENKA_DILERA):
-                //    e.Column.ReadOnly = ctx.Document.Diler == null;
-                //    if(e.Column.EditSettings is CalcEditSettings ed)
-                //        ed.IsTextEditable = ctx.Document.Diler == null;
-                //    break;
                 case nameof(inv.SDRSchet):
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
@@ -206,5 +204,6 @@ namespace KursAM2.View.Finance.Invoices
                 }
             }
         }
+
     }
 }

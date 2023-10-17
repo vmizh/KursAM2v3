@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -52,14 +53,15 @@ namespace KursAM2.ViewModel.Finance.controls
         // ReSharper disable once UnusedParameter.Local
         public AddBankOperionUC(decimal docCode, BankOperationsViewModel row, BankAccount bankAcc, bool isNew) : this()
         {
-            decimal rate = 1;
             // ReSharper disable once ConvertIfStatementToNullCoalescingAssignment
             if (row.Currency == null)
                 row.Currency = bankAcc.Currency as Currency;
             if (row.Currency.DocCode != GlobalOptions.SystemProfile.NationalCurrency.DocCode)
             {
                 var rates = CurrencyRate.GetRate(DateTime.Today);
-                if (rates.ContainsKey(row.Currency)) rate = rates[row.Currency];
+                if (rates.ContainsKey(row.Currency))
+                {
+                }
             }
 
             using (var ctx = GlobalOptions.GetEntities())
@@ -478,8 +480,24 @@ namespace KursAM2.ViewModel.Finance.controls
 
         private void SFNameRemove(object obj)
         {
-            CurrentBankOperations.VVT_SFACT_CLIENT_DC = null;
-            CurrentBankOperations.VVT_SFACT_POSTAV_DC = null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                if (CurrentBankOperations.VVT_SFACT_POSTAV_DC != null)
+                {
+                    ctx.Database.ExecuteSqlCommand(
+                        $"EXEC dbo.GenerateSFProviderCash {Convert.ToString(CurrentBankOperations.VVT_SFACT_POSTAV_DC.Value, CultureInfo.InvariantCulture).Replace(",", ".")}");
+                    CurrentBankOperations.VVT_SFACT_POSTAV_DC = null;
+                    CurrentBankOperations.VVT_VAL_RASHOD = 0;
+                }
+
+                if (CurrentBankOperations.VVT_SFACT_CLIENT_DC != null)
+                {
+                    ctx.Database.ExecuteSqlCommand(
+                        $"EXEC dbo.GenerateSFClientCash {Convert.ToString(CurrentBankOperations.VVT_SFACT_CLIENT_DC.Value, CultureInfo.InvariantCulture).Replace(",", ".")}");
+                    CurrentBankOperations.VVT_SFACT_CLIENT_DC = null;
+                    CurrentBankOperations.VVT_VAL_PRIHOD = 0;
+                }
+            }
             SFName = null;
         }
 

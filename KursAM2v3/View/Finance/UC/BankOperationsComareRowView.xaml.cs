@@ -486,7 +486,7 @@ namespace KursAM2.View.Finance.UC
                     if (dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC != null)
                     {
                         ctx.Database.ExecuteSqlCommand(
-                            $"EXEC dbo.GenerateSFProviderCash {Convert.ToString(dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC.Value, CultureInfo.InvariantCulture).Replace(",", ".")}");
+                            $"EXEC dbo.GenerateSFClientCash {Convert.ToString(dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC.Value, CultureInfo.InvariantCulture).Replace(",", ".")}");
                     }
                 }
 
@@ -494,6 +494,9 @@ namespace KursAM2.View.Finance.UC
                 dtx.CurrentBankOperations.VVT_SFACT_POSTAV_DC = null;
                 dtx.SFName = null;
                 dtx.Payment = null;
+
+                dtx.VVT_VAL_RASHOD = 0;
+                dtx.VVT_VAL_PRIHOD = 0;
             }
 
             if (dtx2 != null)
@@ -510,7 +513,7 @@ namespace KursAM2.View.Finance.UC
                     if (dtx2.VVT_SFACT_CLIENT_DC != null)
                     {
                         ctx.Database.ExecuteSqlCommand(
-                            $"EXEC dbo.GenerateSFProviderCash {Convert.ToString(dtx2.VVT_SFACT_CLIENT_DC.Value,CultureInfo.InvariantCulture).Replace(",", ".")}");
+                            $"EXEC dbo.GenerateSFClientCash {Convert.ToString(dtx2.VVT_SFACT_CLIENT_DC.Value,CultureInfo.InvariantCulture).Replace(",", ".")}");
                     }
                 }
 
@@ -518,6 +521,8 @@ namespace KursAM2.View.Finance.UC
                 dtx2.VVT_SFACT_POSTAV_DC = null;
                 dtx2.SFName = null;
                 dtx2.Payment = null;
+                dtx2.VVT_VAL_RASHOD = 0;
+                dtx2.VVT_VAL_PRIHOD = 0;
             }
         }
 
