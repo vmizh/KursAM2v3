@@ -44,6 +44,7 @@ namespace KursAM2.View.Finance.Invoices
                 {
                     DisplayFormat = "n2",
                     Name = e.Column.FieldName + "Calc",
+                    
                 };
             }
 

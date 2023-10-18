@@ -163,6 +163,7 @@ namespace KursAM2.Managers
         public WarehouseOrderIn NewOrderInCopy(decimal dc)
         {
             var doc = GetOrderIn(dc);
+            var newId = Guid.NewGuid();
             var res = new WarehouseOrderIn(doc.Entity)
             {
                 DocCode = -1,
@@ -170,12 +171,15 @@ namespace KursAM2.Managers
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
                 Date = DateTime.Today,
-                CREATOR = GlobalOptions.UserInfo.Name
+                CREATOR = GlobalOptions.UserInfo.Name,
+                Id = newId
             };
             foreach (var r in res.Rows)
             {
                 r.DocCode = -1;
                 r.State = RowStatus.NewRow;
+                r.Id = Guid.NewGuid();
+                r.DocId = newId;
             }
 
             return res;
@@ -183,23 +187,6 @@ namespace KursAM2.Managers
 
         public WarehouseOrderIn NewOrderInRecuisite(WarehouseOrderIn doc)
         {
-            //var newEnt = (SD_24)doc?.Entity.Clone();
-            //var ret = new WarehouseOrderIn(newEnt)
-            //{
-            //    DocCode = -1,
-            //    State = RowStatus.NewRow,
-            //    DD_IN_NUM = -1,
-            //    DD_EXT_NUM = null,
-            //    Date = DateTime.Today,
-            //    Note = null,
-            //    CREATOR = GlobalOptions.UserInfo.Name,
-            //    InvoiceProvider = null,
-            //    InvoiceClientViewModel = null,
-            //    DD_SCHET = null
-            //};
-            //ret.Rows.Clear();
-            //ret.Entity.TD_24.Clear();
-            //ret.Entity.TD_24_2.Clear();
             return NewOrderInRecuisite(doc.DocCode);
         }
 
@@ -216,7 +203,8 @@ namespace KursAM2.Managers
                 CREATOR = GlobalOptions.UserInfo.Name,
                 InvoiceProvider = null,
                 InvoiceClientViewModel = null,
-                DD_SCHET = null
+                DD_SCHET = null,
+                Id = Guid.NewGuid()
             };
             ret.Rows.Clear();
             ret.Entity.TD_24.Clear();
@@ -727,6 +715,345 @@ namespace KursAM2.Managers
                 }
             }
         }
+
+        public decimal SaveOrderIn(WarehouseOrderIn doc, ALFAMEDIAEntities ctx)
+        {
+            var newDC = doc.DocCode;
+            ctx.Database.CommandTimeout = 120;
+            using (var transaction = ctx.Database.BeginTransaction())
+            {
+                try
+                {
+                    foreach (var d in doc.DeletedRows)
+                    {
+                        var oldrow = ctx.TD_24.FirstOrDefault(_ => _.DOC_CODE == d.DocCode && _.CODE == d.Code);
+                        if (oldrow == null) continue;
+                        ctx.TD_24.Remove(oldrow);
+                    }
+
+                    if (doc.DocCode == -1)
+                    {
+                        var guidId = Guid.NewGuid();
+                        var inNum = ctx.SD_24.Any() ? ctx.SD_24.Max(_ => _.DD_IN_NUM) + 1 : 1;
+                        newDC = ctx.SD_24.Any() ? ctx.SD_24.Max(_ => _.DOC_CODE) + 1 : 10240000001;
+                        doc.DocCode = newDC;
+                        doc.DD_IN_NUM = inNum;
+                        //ctx.SD_24.Add(new SD_24
+                        //{
+                            /*DOC_CODE = newDC,
+                            DD_TYPE_DC = doc.Entity.DD_TYPE_DC,
+                            DD_DATE = doc.Date,
+                            DD_IN_NUM = inNum,
+                            DD_EXT_NUM = doc.DD_EXT_NUM,
+                            DD_SKLAD_OTPR_DC = doc.Entity.DD_SKLAD_OTPR_DC,
+                            DD_SKLAD_POL_DC = doc.Entity.DD_SKLAD_POL_DC,
+                            DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC,
+                            DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC,
+                            DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN,
+                            DD_EXECUTED = (short)(doc.IsExecuted ? 1 : 0),
+                            DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN,
+                            DD_OTRPAV_NAME = doc.Sender,
+                            DD_POLUCH_NAME = doc.Receiver,
+                            DD_KTO_SDAL_TN = doc.DD_KTO_SDAL_TN,
+                            DD_KOMU_PEREDANO = doc.DD_KOMU_PEREDANO,
+                            DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO,
+                            DD_GRUZOOTPRAVITEL = doc.DD_GRUZOOTPRAVITEL,
+                            DD_GRUZOPOLUCHATEL = doc.DD_GRUZOPOLUCHATEL,
+                            DD_OTPUSK_NA_SKLAD_DC = doc.Entity.DD_OTPUSK_NA_SKLAD_DC,
+                            DD_PRIHOD_SO_SKLADA_DC = doc.Entity.DD_PRIHOD_SO_SKLADA_DC,
+                            DD_SHABLON = doc.DD_SHABLON,
+                            DD_VED_VIDACH_DC = doc.DD_VED_VIDACH_DC,
+                            DD_PERIOD_DC = doc.Entity.DD_PERIOD_DC,
+                            DD_TREB_NUM = doc.DD_TREB_NUM,
+                            DD_TREB_DATE = doc.DD_TREB_DATE,
+                            DD_TREB_DC = doc.DD_TREB_DC,
+                            CREATOR = doc.CREATOR,
+                            DD_PODTVERZHDEN = doc.DD_PODTVERZHDEN,
+                            DD_OSN_OTGR_DC = doc.DD_OSN_OTGR_DC,
+                            DD_SCHET = doc.DD_SCHET,
+                            DD_DOVERENNOST = doc.DD_DOVERENNOST,
+                            DD_NOSZATR_ID = doc.DD_NOSZATR_ID,
+                            DD_NOSZATR_DC = doc.DD_NOSZATR_DC,
+                            DD_DOGOVOR_POKUPKI_DC = doc.DD_DOGOVOR_POKUPKI_DC,
+                            DD_NOTES = doc.Note,
+                            DD_KONTR_CRS_DC = doc.DD_KONTR_CRS_DC,
+                            DD_KONTR_CRS_RATE = doc.DD_KONTR_CRS_RATE,
+                            DD_UCHET_VALUTA_DC = doc.DD_UCHET_VALUTA_DC,
+                            DD_UCHET_VALUTA_RATE = doc.DD_UCHET_VALUTA_RATE,
+                            DD_SPOST_DC = doc.Entity.DD_SPOST_DC,
+                            DD_SFACT_DC = doc.Entity.DD_SFACT_DC,
+                            DD_VOZVRAT = doc.Entity.DD_VOZVRAT,
+                            DD_OTPRAV_TYPE = doc.DD_OTPRAV_TYPE,
+                            DD_POLUCH_TYPE = doc.DD_POLUCH_TYPE,
+                            DD_LISTOV_SERVIFICATOV = doc.DD_LISTOV_SERVIFICATOV,
+                            DD_VIEZD_FLAG = doc.DD_VIEZD_FLAG,
+                            DD_VIEZD_MASHINE = doc.DD_VIEZD_MASHINE,
+                            DD_VIEZD_CREATOR = doc.DD_VIEZD_CREATOR,
+                            DD_VIEZD_DATE = doc.DD_VIEZD_DATE,
+                            DD_KONTR_POL_FILIAL_DC = doc.DD_KONTR_POL_FILIAL_DC,
+                            DD_KONTR_POL_FILIAL_CODE = doc.DD_KONTR_POL_FILIAL_CODE,
+                            DD_PROZV_PROCESS_DC = doc.DD_PROZV_PROCESS_DC,
+                            TSTAMP = doc.TSTAMP,
+                            OWNER_ID = doc.OWNER_ID,
+                            OWNER_TEXT = doc.OWNER_TEXT,
+                            CONSIGNEE_ID = doc.CONSIGNEE_ID,
+                            CONSIGNEE_TEXT = doc.CONSIGNEE_TEXT,
+                            BUYER_ID = doc.BUYER_ID,
+                            BUYER_TEXT = doc.BUYER_TEXT,
+                            SHIPMENT_ID = doc.SHIPMENT_ID,
+                            SHIPMENT_TEXT = doc.SHIPMENT_TEXT,
+                            SUPPLIER_ID = doc.SUPPLIER_ID,
+                            SUPPLIER_TEXT = doc.SUPPLIER_TEXT,
+                            GRUZO_INFO_ID = doc.GRUZO_INFO_ID,
+                            GROZO_REQUISITE = doc.GROZO_REQUISITE,*/
+                            doc.Id = guidId;
+                    //});
+                        if (doc.Rows.Count > 0)
+                        {
+                            var code = 1;
+                            foreach (var item in doc.Rows)
+                            {
+                                item.DOC_CODE = newDC;
+                                item.Code = code;
+                                item.Id = Guid.NewGuid();
+                                item.DocId = guidId;
+                                code++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        var old = ctx.SD_24.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
+                        if (old == null) return doc.DocCode;
+                        old.DD_TYPE_DC = doc.Entity.DD_TYPE_DC;
+                        old.DD_DATE = doc.Date;
+                        old.DD_IN_NUM = doc.DD_IN_NUM;
+                        old.DD_EXT_NUM = doc.DD_EXT_NUM;
+                        old.DD_SKLAD_OTPR_DC = doc.Entity.DD_SKLAD_OTPR_DC;
+                        old.DD_SKLAD_POL_DC = doc.Entity.DD_SKLAD_POL_DC;
+                        old.DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC;
+                        old.DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC;
+                        old.DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN;
+                        old.DD_EXECUTED = (short)(doc.IsExecuted ? 1 : 0);
+                        old.DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN;
+                        old.DD_OTRPAV_NAME = doc.Sender;
+                        old.DD_POLUCH_NAME = doc.Receiver;
+                        old.DD_KTO_SDAL_TN = doc.DD_KTO_SDAL_TN;
+                        old.DD_KOMU_PEREDANO = doc.DD_KOMU_PEREDANO;
+                        old.DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO;
+                        old.DD_GRUZOOTPRAVITEL = doc.DD_GRUZOOTPRAVITEL;
+                        old.DD_GRUZOPOLUCHATEL = doc.DD_GRUZOPOLUCHATEL;
+                        old.DD_OTPUSK_NA_SKLAD_DC = doc.Entity.DD_OTPUSK_NA_SKLAD_DC;
+                        old.DD_PRIHOD_SO_SKLADA_DC = doc.Entity.DD_PRIHOD_SO_SKLADA_DC;
+                        old.DD_SHABLON = doc.DD_SHABLON;
+                        old.DD_VED_VIDACH_DC = doc.DD_VED_VIDACH_DC;
+                        old.DD_PERIOD_DC = doc.Entity.DD_PERIOD_DC;
+                        old.DD_TREB_NUM = doc.DD_TREB_NUM;
+                        old.DD_TREB_DATE = doc.DD_TREB_DATE;
+                        old.DD_TREB_DC = doc.DD_TREB_DC;
+                        old.CREATOR = doc.CREATOR;
+                        old.DD_PODTVERZHDEN = doc.DD_PODTVERZHDEN;
+                        old.DD_OSN_OTGR_DC = doc.DD_OSN_OTGR_DC;
+                        old.DD_SCHET = doc.DD_SCHET;
+                        old.DD_DOVERENNOST = doc.DD_DOVERENNOST;
+                        old.DD_NOSZATR_ID = doc.DD_NOSZATR_ID;
+                        old.DD_NOSZATR_DC = doc.DD_NOSZATR_DC;
+                        old.DD_DOGOVOR_POKUPKI_DC = doc.DD_DOGOVOR_POKUPKI_DC;
+                        old.DD_NOTES = doc.Note;
+                        old.DD_KONTR_CRS_DC = doc.DD_KONTR_CRS_DC;
+                        old.DD_KONTR_CRS_RATE = doc.DD_KONTR_CRS_RATE;
+                        old.DD_UCHET_VALUTA_DC = doc.DD_UCHET_VALUTA_DC;
+                        old.DD_UCHET_VALUTA_RATE = doc.DD_UCHET_VALUTA_RATE;
+                        old.DD_SPOST_DC = doc.Entity.DD_SPOST_DC;
+                        old.DD_SFACT_DC = doc.Entity.DD_SFACT_DC;
+                        old.DD_VOZVRAT = doc.Entity.DD_VOZVRAT;
+                        old.DD_OTPRAV_TYPE = doc.DD_OTPRAV_TYPE;
+                        old.DD_POLUCH_TYPE = doc.DD_POLUCH_TYPE;
+                        old.DD_LISTOV_SERVIFICATOV = doc.DD_LISTOV_SERVIFICATOV;
+                        old.DD_VIEZD_FLAG = doc.DD_VIEZD_FLAG;
+                        old.DD_VIEZD_MASHINE = doc.DD_VIEZD_MASHINE;
+                        old.DD_VIEZD_CREATOR = doc.DD_VIEZD_CREATOR;
+                        old.DD_VIEZD_DATE = doc.DD_VIEZD_DATE;
+                        old.DD_KONTR_POL_FILIAL_DC = doc.DD_KONTR_POL_FILIAL_DC;
+                        old.DD_KONTR_POL_FILIAL_CODE = doc.DD_KONTR_POL_FILIAL_CODE;
+                        old.DD_PROZV_PROCESS_DC = doc.DD_PROZV_PROCESS_DC;
+                        old.TSTAMP = doc.TSTAMP;
+                        old.OWNER_ID = doc.OWNER_ID;
+                        old.OWNER_TEXT = doc.OWNER_TEXT;
+                        old.CONSIGNEE_ID = doc.CONSIGNEE_ID;
+                        old.CONSIGNEE_TEXT = doc.CONSIGNEE_TEXT;
+                        old.BUYER_ID = doc.BUYER_ID;
+                        old.BUYER_TEXT = doc.BUYER_TEXT;
+                        old.SHIPMENT_ID = doc.SHIPMENT_ID;
+                        old.SHIPMENT_TEXT = doc.SHIPMENT_TEXT;
+                        old.SUPPLIER_ID = doc.SUPPLIER_ID;
+                        old.SUPPLIER_TEXT = doc.SUPPLIER_TEXT;
+                        old.GRUZO_INFO_ID = doc.GRUZO_INFO_ID;
+                        old.GROZO_REQUISITE = doc.GROZO_REQUISITE;
+                        var codes = ctx.TD_24.Where(_ => _.DOC_CODE == doc.DocCode).ToList();
+                        var code = codes.Count > 0 ? codes.Max(_ => _.CODE) : 0;
+                        foreach (var r in doc.Rows)
+                        {
+                            var oldrow = ctx.TD_24.FirstOrDefault(_ =>
+                                _.DOC_CODE == r.DocCode && _.CODE == r.Code);
+                            if (oldrow == null)
+                            {
+                                code++;
+                                r.DocCode = newDC;
+                                r.Code = code;
+                                r.Id = Guid.NewGuid();
+                                r.DocId = old.Id;
+                            }
+                            else
+                            {
+                                oldrow.DDT_KOL_PRIHOD = r.DDT_KOL_PRIHOD;
+                                oldrow.DDT_KOL_ZATREBOVANO = r.DDT_KOL_ZATREBOVANO;
+                                oldrow.DDT_KOL_RASHOD = r.DDT_KOL_RASHOD;
+                                oldrow.DDT_KOL_PODTVERZHDENO = (double?)r.DDT_KOL_PODTVERZHDENO;
+                                oldrow.DDT_KOL_SHAB_PRIHOD = (double?)r.DDT_KOL_SHAB_PRIHOD;
+                                oldrow.DDT_ED_IZM_DC = r.DDT_ED_IZM_DC;
+                                oldrow.DDT_SPOST_DC = r.DDT_SPOST_DC;
+                                oldrow.DDT_SPOST_ROW_CODE = r.DDT_SPOST_ROW_CODE;
+                                oldrow.DDT_CRS_DC = r.DDT_CRS_DC;
+                                oldrow.DDT_SFACT_DC = r.DDT_SFACT_DC;
+                                oldrow.DDT_SFACT_ROW_CODE = r.DDT_SFACT_ROW_CODE;
+                                oldrow.DDT_OSTAT_STAR = (double?)r.DDT_OSTAT_STAR;
+                                oldrow.DDT_OSTAT_NOV = (double?)r.DDT_OSTAT_NOV;
+                                oldrow.DDT_TAX_CRS_CENA = r.DDT_TAX_CRS_CENA;
+                                oldrow.DDT_TAX_CENA = r.DDT_TAX_CENA;
+                                oldrow.DDT_TAX_EXECUTED = r.DDT_TAX_EXECUTED;
+                                oldrow.DDT_TAX_IN_SFACT = r.DDT_TAX_IN_SFACT;
+                                oldrow.DDT_FACT_CRS_CENA = r.DDT_FACT_CRS_CENA;
+                                oldrow.DDT_FACT_CENA = r.DDT_FACT_CENA;
+                                oldrow.DDT_FACT_EXECUTED = r.DDT_FACT_EXECUTED;
+                                oldrow.DDT_TREB_DC = r.DDT_TREB_DC;
+                                oldrow.DDT_TREB_CODE = r.DDT_TREB_CODE;
+                                oldrow.DDT_NOSZATR_DC = r.DDT_NOSZATR_DC;
+                                oldrow.DDT_NOSZATR_ROW_CODE = r.DDT_NOSZATR_ROW_CODE;
+                                oldrow.DDT_POST_ED_IZM_DC = r.DDT_POST_ED_IZM_DC;
+                                oldrow.DDT_KOL_POST_PRIHOD = (double?)r.DDT_KOL_POST_PRIHOD;
+                                oldrow.DDT_PRICHINA_SPISANIA = r.DDT_PRICHINA_SPISANIA;
+                                oldrow.DDT_VOZVRAT_TREBOVINIA = r.DDT_VOZVRAT_TREBOVINIA;
+                                oldrow.DDT_VOZVRAT_PRICHINA = r.DDT_VOZVRAT_PRICHINA;
+                                oldrow.DDT_TOV_CHECK_DC = r.DDT_TOV_CHECK_DC;
+                                oldrow.DDT_TOV_CHECK_CODE = r.DDT_TOV_CHECK_CODE;
+                                oldrow.DDT_ACT_GP_PROD_CODE = r.DDT_ACT_GP_PROD_CODE;
+                                oldrow.DDT_SHPZ_DC = r.DDT_SHPZ_DC;
+                                oldrow.DDT_KONTR_CRS_SUMMA = r.DDT_KONTR_CRS_SUMMA;
+                                oldrow.DDT_SUMMA_V_UCHET_VALUTE = r.DDT_SUMMA_V_UCHET_VALUTE;
+                                oldrow.DDT_CENA_V_UCHET_VALUTE = r.DDT_CENA_V_UCHET_VALUTE;
+                                oldrow.DDT_SKLAD_OTPR_DC = r.DDT_SKLAD_OTPR_DC;
+                                oldrow.DDT_NOM_CRS_RATE = (double?)r.DDT_NOM_CRS_RATE;
+                                oldrow.DDT_PROIZV_PLAN_DC = r.DDT_PROIZV_PLAN_DC;
+                                oldrow.DDT_RASH_ORD_DC = r.DDT_RASH_ORD_DC;
+                                oldrow.DDT_RASH_ORD_CODE = r.DDT_RASH_ORD_CODE;
+                                oldrow.DDT_VOZVR_OTGR_CSR_DC = r.DDT_VOZVR_OTGR_CSR_DC;
+                                oldrow.DDT_VOZVR_UCH_CRS_RATE = (double?)r.DDT_VOZVR_UCH_CRS_RATE;
+                                oldrow.DDT_VOZVR_OTGR_CRS_TAX_CENA = r.DDT_VOZVR_OTGR_CRS_TAX_CENA;
+                                oldrow.DDT_SBORSCHIK_TN = r.DDT_SBORSCHIK_TN;
+                                oldrow.DDT_KOL_IN_ONE = (double?)r.DDT_KOL_IN_ONE;
+                                oldrow.DDT_OS_DC = r.DDT_OS_DC;
+                                oldrow.DDT_GARANT_DC = r.DDT_GARANT_DC;
+                                oldrow.DDT_GARANT_ROW_CODE = r.DDT_GARANT_ROW_CODE;
+                                oldrow.DDT_ACT_RAZ_PROC_STOIM = (double?)r.DDT_ACT_RAZ_PROC_STOIM;
+                                oldrow.DDT_PROIZV_PLAN_ROW_CODE = r.DDT_PROIZV_PLAN_ROW_CODE;
+                                oldrow.DDT_APGP_TO_EXECUTE = (double?)r.DDT_APGP_TO_EXECUTE;
+                                oldrow.DDT_APGP_NOT_EXECUTE = r.DDT_APGP_NOT_EXECUTE;
+                                oldrow.DDT_DILER_DC = r.DDT_DILER_DC;
+                                oldrow.DDT_DILER_SUM = r.DDT_DILER_SUM;
+                                oldrow.DDT_VHOD_KONTR_EXECUTE = r.DDT_VHOD_KONTR_EXECUTE;
+                                oldrow.DDT_VHOD_KONTR_NOTE = r.DDT_VHOD_KONTR_NOTE;
+                                oldrow.DDT_VHOD_KONTR_USER = r.DDT_VHOD_KONTR_USER;
+                                oldrow.DDT_ZAIAVKA_DC = r.DDT_ZAIAVKA_DC;
+                                oldrow.DDT_RASHOD_DATE = r.DDT_RASHOD_DATE;
+                                oldrow.DDT_VOZVRAT_TREB_CREATOR = r.DDT_VOZVRAT_TREB_CREATOR;
+                                oldrow.DDT_VOZVRAT_SFACT_OPLAT_DC = r.DDT_VOZVRAT_SFACT_OPLAT_DC;
+                                oldrow.DDT_VOZVRAT_SFACT_CRS_DC = r.DDT_VOZVRAT_SFACT_CRS_DC;
+                                oldrow.DDT_VOZVRAT_SFACT_SUM = r.DDT_VOZVRAT_SFACT_SUM;
+                                oldrow.DDT_VOZVRAT_SFACT_CRS_RATE = r.DDT_VOZVRAT_SFACT_CRS_RATE;
+                                oldrow.DDT_PROIZV_PROC_NOMENKL_DC = r.DDT_PROIZV_PROC_NOMENKL_DC;
+                                oldrow.DDT_PROIZV_PARTIA_DC = r.DDT_PROIZV_PARTIA_DC;
+                                oldrow.DDT_PROIZV_PARTIA_CODE = r.DDT_PROIZV_PARTIA_CODE;
+                                oldrow.DDT_DAVAL_SIRIE = r.DDT_DAVAL_SIRIE;
+                                oldrow.DDT_MEST_TARA = (double?)r.DDT_MEST_TARA;
+                                oldrow.DDT_TARA_DC = r.DDT_TARA_DC;
+                                oldrow.DDT_TARA_FLAG = r.DDT_TARA_FLAG;
+                                oldrow.DDT_PART_NUMBER = r.DDT_PART_NUMBER;
+                                oldrow.DDT_VNPER_UD_POINT_UCHVAL_PRICE = r.DDT_VNPER_UD_POINT_UCHVAL_PRICE;
+                                oldrow.DDT_SKIDKA_CREDIT_NOTE = r.DDT_SKIDKA_CREDIT_NOTE;
+                                oldrow.DDT_CALC_NOM_TAX_PRICE = r.DDT_CALC_NOM_TAX_PRICE;
+                                oldrow.DDT_CALC_UCHET_TAX_PRICE = r.DDT_CALC_UCHET_TAX_PRICE;
+                            }
+                        }
+                    }
+
+                    ctx.SaveChanges();
+                    var wManager = new WindowManager();
+                    foreach (var r in doc.Rows.Where(_ => _.DDT_SPOST_DC != null))
+                    {
+                        var schets = ctx.TD_26.First(_ => _.DOC_CODE == r.DDT_SPOST_DC
+                                                          && _.CODE == r.DDT_SPOST_ROW_CODE);
+                        if (r.DDT_KOL_PRIHOD > schets.SFT_KOL)
+                        {
+                            var res = wManager.ShowWinUIMessageBox($"По товару {r.NomNomenkl} {r.Nomenkl} " +
+                                                                   "Приход превысил кол-во по счету ",
+                                "Превышение кол-ва прихода над кол-вом в счете", MessageBoxButton.YesNo,
+                                MessageBoxImage.Warning);
+                            switch (res)
+                            {
+                                case MessageBoxResult.Yes:
+                                    continue;
+                                case MessageBoxResult.No:
+                                    transaction.Rollback();
+                                    return -1;
+                            }
+                        }
+                    }
+
+                    var calc = new NomenklCostMediumSliding(ctx);
+                    foreach (var n in doc.Rows.Select(_ => _.Nomenkl.DocCode))
+                    {
+                        var ops = calc.GetOperations(n);
+                        if (ops != null && ops.Count > 0)
+                            calc.Save(ops);
+                        var c = NomenklCalculationManager.NomenklRemain(ctx, DateTime.Today, n,
+                            // ReSharper disable once PossibleInvalidOperationException
+                            (decimal)doc.Entity.DD_SKLAD_POL_DC);
+                        if (c < 0)
+                        {
+                            var nom = GlobalOptions.ReferencesCache.GetNomenkl(n) as KursDomain.References.Nomenkl;
+                            var res = wManager.ShowWinUIMessageBox($"По товару {nom.NomenklNumber} {nom.Name} " +
+                                                                   $"склад {GlobalOptions.ReferencesCache.GetWarehouse(doc.Entity.DD_SKLAD_POL_DC)} в кол-ве {c}." +
+                                                                   "Все равно сохранить?",
+                                "Отрицательные остатки", MessageBoxButton.YesNo,
+                                MessageBoxImage.Warning);
+                            switch (res)
+                            {
+                                case MessageBoxResult.Yes:
+                                    continue;
+                                case MessageBoxResult.No:
+                                    transaction.Rollback();
+                                    return -1;
+                            }
+                        }
+                    }
+
+                    transaction.Commit();
+                    doc.myState = RowStatus.NotEdited;
+                    foreach (var r in doc.Rows) r.myState = RowStatus.NotEdited;
+                    doc.DeletedRows.Clear();
+                    return newDC;
+                }
+                catch (Exception ex)
+                {
+                    if (transaction.UnderlyingTransaction.Connection != null)
+                        transaction.Rollback();
+                    WindowManager.ShowError(ex);
+                    return -1;
+                }
+            }
+        }
+
 
         public void DeleteOrderIn(WarehouseOrderIn doc, WarehouseOrderInSearchViewModel inSearchWindow = null)
         {

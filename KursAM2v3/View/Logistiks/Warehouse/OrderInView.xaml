@@ -185,8 +185,9 @@
                                 </ContextMenu>
                             </dxg:TableView.ContextMenu>
                             <dxmvvm:Interaction.Behaviors>
-                                <dxmvvm:EventToCommand EventName="CellValueChanging"
-                                                       Command="{Binding UpdateCalcRowSummaCommand}" />
+                                <dxmvvm:EventToCommand EventName="CellValueChanged"
+                                                       Command="{Binding UpdateCalcRowSummaCommand}"
+                                                       PassEventArgsToCommand="True"/>
                             </dxmvvm:Interaction.Behaviors>
                         </dxg:TableView>
                     </dxg:GridControl.View>

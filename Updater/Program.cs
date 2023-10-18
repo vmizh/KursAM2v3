@@ -24,12 +24,12 @@ namespace Updater
                 var procs = Process.GetProcessesByName(process);
                 if (procs.Length > 0)
                 {
-                    var ShowMsgResult = MessageBox.Show(
-                        "Есть открытые экземпляры KursAM2v4. Закройте их вручную и продолжите обновление, " +
-                        "при подтверждении они будут закрыты автоматически. Продолжить обновление?",
-                        "Запрос на обновление программы", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
-                    if (ShowMsgResult == DialogResult.Cancel)
-                        return;
+                    //var ShowMsgResult = MessageBox.Show(
+                    //    "Есть открытые экземпляры KursAM2v4. Закройте их вручную и продолжите обновление, " +
+                    //    "при подтверждении они будут закрыты автоматически. Продолжить обновление?",
+                    //    "Запрос на обновление программы", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+                    //if (ShowMsgResult == DialogResult.Cancel)
+                    //    return;
 
                     foreach (var p in procs)
                     {

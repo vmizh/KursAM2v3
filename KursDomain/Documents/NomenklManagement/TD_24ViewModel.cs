@@ -116,16 +116,21 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public Nomenkl Nomenkl
     {
-        get => myNomenkl;
+        get => GlobalOptions.ReferencesCache.GetNomenkl(DDT_NOMENKL_DC) as Nomenkl;
         set
         {
-            if (myNomenkl == value) return;
-            myNomenkl = value;
-            if (myNomenkl != null)
+            if (GlobalOptions.ReferencesCache.GetNomenkl(DDT_NOMENKL_DC) == value) return;
+            if (value != null)
             {
-                DDT_NOMENKL_DC = myNomenkl.DocCode;
-                DDT_ED_IZM_DC = ((IDocCode)myNomenkl.Unit).DocCode;
-                DDT_POST_ED_IZM_DC = ((IDocCode)myNomenkl.Unit).DocCode;
+                DDT_NOMENKL_DC = value.DocCode;
+                DDT_ED_IZM_DC = ((IDocCode)value.Unit).DocCode;
+                DDT_POST_ED_IZM_DC = ((IDocCode)value.Unit).DocCode;
+            }
+            else
+            {
+                DDT_NOMENKL_DC = 0;
+                DDT_ED_IZM_DC = 0;
+                DDT_POST_ED_IZM_DC = null;
             }
 
             RaisePropertyChanged();
@@ -201,14 +206,12 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public virtual Unit Unit
     {
-        get => myUnit;
+        get => GlobalOptions.ReferencesCache.GetUnit(DDT_ED_IZM_DC) as Unit;
         set
         {
             // ReSharper disable once PossibleUnintendedReferenceComparison
-            if (myUnit == value) return;
-            myUnit = value;
-            if (myUnit != null)
-                DDT_ED_IZM_DC = myUnit.DocCode;
+            if (GlobalOptions.ReferencesCache.GetUnit(DDT_ED_IZM_DC) == value) return;
+            DDT_ED_IZM_DC = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }
     }
@@ -601,13 +604,13 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public SDRSchet SDRSchet
     {
-        get => mySDRSchet;
+        get => (DDT_SHPZ_DC != null ? GlobalOptions.ReferencesCache.GetSDRSchet(DDT_SHPZ_DC) : null) as SDRSchet;
         set
         {
             if (mySDRSchet != null && mySDRSchet.Equals(value)) return;
-            mySDRSchet = value;
-            if (mySDRSchet != null)
-                DDT_SHPZ_DC = mySDRSchet.DocCode;
+            //mySDRSchet = value;
+            if (value != null)
+                DDT_SHPZ_DC = value.DocCode;
             RaisePropertyChanged();
         }
     }

@@ -24,7 +24,6 @@ namespace KursAM2.View.Logistiks.Warehouse
         public OrderInView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         private void GridLayoutHelper_Trigger(object sender, MyEventArgs e)
@@ -64,12 +63,18 @@ namespace KursAM2.View.Logistiks.Warehouse
             var inv = new WarehouseOrderInRow();
             switch (e.Column.Name)
             {
+                case nameof(inv.DocDate):
+                case nameof(inv.DocInNum):
+                case nameof(inv.DocExtNum):
+                case nameof(inv.Warehouse):
+                    e.Column.Visible = false;
+                    break;
                 case nameof(inv.NomNomenkl):
                     e.Column.ReadOnly = true;
-                    e.Column.EditSettings = new TextEditSettings
-                    {
-                        HorizontalContentAlignment = EditSettingsHorizontalAlignment.Center
-                    };
+                    //e.Column.EditSettings = new TextEditSettings
+                    //{
+                    //    HorizontalContentAlignment = EditSettingsHorizontalAlignment.Center
+                    //};
                     break;
                 case nameof(inv.Nomenkl):
                     var nomenklEdit = new ButtonEditSettings

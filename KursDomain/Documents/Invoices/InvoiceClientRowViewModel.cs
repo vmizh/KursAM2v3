@@ -488,16 +488,21 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         get => (decimal)Entity.SFT_KOL;
         set
         {
-            if (value <= 0)
+            if (value <= (decimal)0.01 || value < Shipped)
+            {
                 //WindowManager.ShowMessage("Кол-во должно быть больше нуля", "Ошибка",
                 //    MessageBoxImage.Error);
+                Entity.SFT_KOL = 1;
+                CalcRow();
+                RaisePropertyChanged();
                 return;
+            }
 
-            if (Math.Abs(Entity.SFT_KOL - (double)value) < 0.00001) return;
-            if (value < Shipped)
-                //WindowManager.ShowMessage($"Отгружено {Shipped}. Уменьшить кол-во в счете нельзя", "Ошибка",
-                //    MessageBoxImage.Error);
-                return;
+            //if (Math.Abs(Entity.SFT_KOL - (double)value) < 0.00001) return;
+            //if ()
+            //    //WindowManager.ShowMessage($"Отгружено {Shipped}. Уменьшить кол-во в счете нельзя", "Ошибка",
+            //    //    MessageBoxImage.Error);
+            //    return;
 
             Entity.SFT_KOL = (double)value;
             CalcRow();

@@ -200,9 +200,14 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             var frm = new OrderInView {Owner = Application.Current.MainWindow};
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                "WarehouseOrderIn", true)) {Form = frm};
-            frm.Show();
+                "WarehouseOrderIn", true))
+            {
+                Form = frm
+            };
+            ctx.Document.myState = RowStatus.NewRow;
             frm.DataContext = ctx;
+            frm.Show();
+            
         }
 
         public override void DocNewCopy(object obj)
@@ -213,8 +218,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     "WarehouseOrderIn", true))
                 {Form = frm};
             ctx.Document = orderManager.NewOrderInCopy(CurrentDocument);
-            frm.Show();
+            ctx.Document.myState = RowStatus.NewRow;
             frm.DataContext = ctx;
+            frm.Show();
+            
         }
 
         public override void DocNewCopyRequisite(object obj)
@@ -224,9 +231,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderIn", true))
                 {Form = frm};
-            ctx.Document = orderManager.NewOrderInRecuisite(CurrentDocument);
-            frm.Show();
+            ctx.Document = orderManager.NewOrderInRecuisite(CurrentDocument); 
+            ctx.Document.myState = RowStatus.NewRow;
             frm.DataContext = ctx;
+            frm.Show();
+           
         }
 
         #endregion
