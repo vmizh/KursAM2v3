@@ -120,6 +120,19 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             }
         }
 
+        private bool myIsNotCanSelected;
+
+        public bool IsNotCanSelected
+        {
+            get => myIsNotCanSelected;
+            set
+            {
+                if (myIsNotCanSelected == value) return;
+                myIsNotCanSelected = value;
+                OnPropertyChanged();
+            }
+        }
+
         public Guid? CurrencyConvertId { set; get; }
 
         public event PropertyChangedEventHandler PropertyChanged;

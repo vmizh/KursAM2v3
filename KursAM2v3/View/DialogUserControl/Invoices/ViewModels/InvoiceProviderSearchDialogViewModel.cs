@@ -62,6 +62,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 
         #region Properties
 
+        public List<Tuple<decimal, decimal, int>> ExistingRows { set; get; }
+
         private List<InvoicePostQuery> Data = new List<InvoicePostQuery>();
 
         public ObservableCollection<InvoiceProviderHead> ItemsCollection { set; get; } =
@@ -260,7 +262,11 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     // ReSharper disable once PossibleNullReferenceException
-                    Data = ctx.Database.SqlQuery<InvoicePostQuery>(sqlBase).ToList();
+                    Data = ctx.Database.SqlQuery<InvoicePostQuery>(sqlBase).Where(h => ExistingRows == null ||
+                        !ExistingRows.Any(_ =>
+                            _.Item1 == h.NomenklDC && _.Item2 == h.DocCode
+                                                   && _.Item3 == h.CODE)).ToList();
+
                     if (IsLoadNotDistributeCurrencyConvert)
                     {
                         var convData = new List<TD_26_CurrencyConvert>();
@@ -291,6 +297,10 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                         foreach (var c in convData)
                         {
                             var nom = GlobalOptions.ReferencesCache.GetNomenkl(c.NomenklId) as Nomenkl;
+                            if (ExistingRows != null && ExistingRows.Any(d => d.Item1 == nom.DocCode &&
+                                                                              d.Item2 == c.TD_26.SD_26.DOC_CODE
+                                                                              && d.Item3 == (c.CODE ?? 0)))
+                                continue;
                             Data.Add(new InvoicePostQueryConvertCurrency
                             {
                                 Currency = ((IName)nom.Currency)?.Name,
@@ -325,10 +335,11 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 foreach (var d in Data)
                 {
                     if (ItemsCollection.Any(_ => _.DocCode == d.DocCode)) continue;
-                    ItemsCollection.Add(new InvoiceProviderHead(d)
+                    var newItem = new InvoiceProviderHead(d)
                     {
                         IsSelected = false
-                    });
+                    };
+                    ItemsCollection.Add(newItem);
                 }
             }
             catch (Exception ex)
@@ -422,7 +433,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             ItemPositionsCollection.Clear();
             if (CurrentItem == null) return;
             foreach (var pos in Data.Where(_ => _.DocCode == CurrentItem.DocCode))
-                ItemPositionsCollection.Add(new InvoiceProviderRow
+            {
+                var newItem = new InvoiceProviderRow
                 {
                     IsSelected = SelectedItems.Any(_ => _.RowId == pos.RowId),
                     PostDC = pos.PostDC,
@@ -441,7 +453,10 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                     SHPZ = pos.SHPZ,
                     NomenklDC = pos.NomenklDC,
                     Note = pos.RowNote
-                });
+                };
+                newItem.IsNotCanSelected = ExistingRows.Any(_ => _.Item1 == pos.NomenklDC);
+                ItemPositionsCollection.Add(newItem);
+            }
         }
 
         #endregion

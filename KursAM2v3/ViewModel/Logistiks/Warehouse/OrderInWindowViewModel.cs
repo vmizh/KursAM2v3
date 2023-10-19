@@ -229,6 +229,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 LayoutName = "InvoiceProviderSearchMulti",
                 KontragentDC = Document.KontragentSender?.DocCode
             };
+            dtx.ExistingRows = Document.Rows.Select(r => new Tuple<decimal, decimal, int>(r.Nomenkl.DocCode, r.LinkInvoice.DocCode, r.LinkInvoice.Code)).ToList();
             dtx.RefreshData(null);
             var dialog = new SelectInvoiceMultipleDialogView
             {
@@ -538,8 +539,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             get
             {
-                return new Command(AddFromDocument, _ => Document?.WarehouseIn != null &&
-                                                         Document?.KontragentSender != null);
+                return new Command(AddFromDocument, _ => CurrentRow != null && CurrentRow.LinkInvoice != null);
             }
         }
 
@@ -551,12 +551,19 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void AddFromDocument(object obj)
         {
-            var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
-            var ctx = new AddNomenklFromInvoiceProviderRowViewModel(Document.WarehouseIn,
-                Document.KontragentSender);
-            var dlg = new SelectDialogView { DataContext = ctx };
+            var ctx = new AddNomenklFromInvoiceProviderRowViewModel(Document.WarehouseIn, CurrentRow.LinkInvoice.DocCode)
+            {
+                RowCodes = new List<int>(Document.Rows.Select(_ => _.Code))
+            };
+            var dlg = new SelectDialogView
+            {
+                DataContext = ctx,
+               
+            };
             ctx.Form = dlg;
             if (dlg.ShowDialog() == false) return;
+            
+            var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             foreach (var r in ctx.Nomenkls.Where(_ => _.IsChecked))
             {
                 var old = Document.Rows.FirstOrDefault(_ => _.Nomenkl.DocCode == r.Nomenkl.DocCode);
@@ -686,8 +693,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             get
             {
-                return new Command(DeleteNomenkl, _ => CurrentRow != null && (CurrentRow.State == RowStatus.NewRow
-                                                                              || CurrentRow.LinkInvoice == null));
+                return new Command(DeleteNomenkl, _ => CurrentRow != null);
             }
         }
 
@@ -707,15 +713,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void DocDelete(object form)
         {
-            if (Document.State != RowStatus.NewRow)
-                foreach (var r in Document.Rows)
-                {
-                    if (r.LinkInvoice == null) continue;
-                    MessageBox.Show("В ордере есть строки привязанные к счету, удаление не возможно.", "Запрос",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Stop);
-                    return;
-                }
+            //if (Document.State != RowStatus.NewRow)
+            //    foreach (var r in Document.Rows)
+            //    {
+            //        if (r.LinkInvoice == null) continue;
+            //        MessageBox.Show("В ордере есть строки привязанные к счету, удаление не возможно.", "Запрос",
+            //            MessageBoxButton.OK,
+            //            MessageBoxImage.Stop);
+            //        return;
+            //    }
 
             var res = MessageBox.Show("Вы уверены, что хотите удалить данный документ?", "Запрос",
                 MessageBoxButton.YesNo,
@@ -748,7 +754,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
                     RecalcKontragentBalans.CalcBalans(dc, docdate);
                     //orderManager.DeleteOrderIn(Document);
-                    if (Form != null) Form.Close();
+                    Form?.Close();
                     break;
                 case MessageBoxResult.No:
                     break;

@@ -102,13 +102,6 @@
                                 <dxe:ButtonInfo GlyphKind="Regular"
                                                 ToolTip="Установить связь со счетом"
                                                 Command="{Binding LinkToSchetCommand}" />
-                                <dxe:ButtonInfo GlyphKind="Cancel"
-                                                ToolTip="Удалить связь со счетом"
-                                                Command="{Binding DeleteLinkSchetCommand}" />
-                                <dxe:ButtonInfo GlyphKind="Edit"
-                                                ToolTip="Открыть счет"
-                                                Command="{Binding OpenLinkSchetCommand}" />
-
                             </dxe:ButtonEdit.Buttons>
                         </dxe:ButtonEdit>
                     </StackPanel>
@@ -158,13 +151,10 @@
                                        ShowAutoFilterRow="True">
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
-                                    <MenuItem Header="Добавить номенклатуру" Command="{Binding AddNomenklCommand}" />
-                                    <MenuItem Header="Удалить номенклатуру" Command="{Binding DeleteNomenklCommand}" />
+                                     <MenuItem Header="Удалить номенклатуру" Command="{Binding DeleteNomenklCommand}" />
                                     <Separator />
-                                    <MenuItem Header="Добавить из счетов или расходных ордеров"
+                                    <MenuItem Header="Добавить из счета по строке"
                                               Command="{Binding AddFromDocumentCommand}" />
-                                    <MenuItem Header="Удалить связку со счетом или ордером"
-                                              Command="{Binding DeleteLinkDocumentCommand}" />
                                     <MenuItem Header="Открыть связанный документ( счет,ордер)"
                                               Command="{Binding OpenLinkDocumentCommand}" />
                                     <Separator />
