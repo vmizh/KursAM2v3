@@ -5,13 +5,18 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
+using DevExpress.Xpf.Core.ConditionalFormatting;
+using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.View.DialogUserControl.Invoices.UserControls;
+using KursAM2.View.DialogUserControl.Standart;
+using KursAM2.View.Logistiks.Warehouse;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
@@ -175,6 +180,19 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 ((InvoiceListSearchView)CustomDataUserControl).rowListGroup.Visibility = Visibility.Collapsed;
                 ((InvoiceListSearchView)CustomDataUserControl).headListGroup.Height =
                     ((InvoiceListSearchView)CustomDataUserControl).Height - 2;
+            }
+
+            if (Form is SelectInvoiceMultipleDialogView frm)
+            {
+                var profitFormatCondition = new FormatCondition
+                {
+                   Expression = "[IsNotCanSelected]",
+                   Format = new Format
+                   {
+                       Foreground = Brushes.Red
+                   }
+                };
+                frm.gridViewPosition.FormatConditions.Add(profitFormatCondition);
             }
         }
 
@@ -352,6 +370,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                     context.Dispose();
             }
         }
+
+        
 
         #endregion
 

@@ -94,12 +94,12 @@
                                             </MenuItem>
                                         </ContextMenu>
                                     </dxg:TableView.ContextMenu>
-                                    <dxg:TableView.FormatConditions>
+                                    <!--<dxg:TableView.FormatConditions>
                                         <dxg:FormatCondition ApplyToRow="True" Expression="[IsNotCanSelected]"
                                                              FieldName="{x:Null}">
                                             <dx:Format Foreground="Red" />
                                         </dxg:FormatCondition>
-                                    </dxg:TableView.FormatConditions>
+                                    </dxg:TableView.FormatConditions>-->
                                 </dxg:TableView>
                             </dxg:GridControl.View>
                         </dxg:GridControl>
