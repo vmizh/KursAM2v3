@@ -119,18 +119,19 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         get => GlobalOptions.ReferencesCache.GetNomenkl(DDT_NOMENKL_DC) as Nomenkl;
         set
         {
-            if (GlobalOptions.ReferencesCache.GetNomenkl(DDT_NOMENKL_DC) == value) return;
             if (value != null)
             {
                 DDT_NOMENKL_DC = value.DocCode;
                 DDT_ED_IZM_DC = ((IDocCode)value.Unit).DocCode;
                 DDT_POST_ED_IZM_DC = ((IDocCode)value.Unit).DocCode;
+                DDT_CRS_DC = ((IDocCode)value.Currency).DocCode;
             }
             else
             {
                 DDT_NOMENKL_DC = 0;
                 DDT_ED_IZM_DC = 0;
                 DDT_POST_ED_IZM_DC = null;
+                DDT_CRS_DC = 0;
             }
 
             RaisePropertyChanged();
@@ -1520,10 +1521,6 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
     private void LoadReference()
     {
         myNomenkl = GlobalOptions.ReferencesCache.GetNomenkl(DDT_NOMENKL_DC) as Nomenkl;
-        Unit = (Unit)Nomenkl.Unit;
-        Currency = GlobalOptions.ReferencesCache.GetCurrency(DDT_CRS_DC) as References.Currency;
-        SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(DDT_SHPZ_DC) as SDRSchet;
-        Currency = GlobalOptions.ReferencesCache.GetCurrency(Entity.DDT_CRS_DC) as References.Currency;
     }
 
     public virtual void Save(TD_24 doc)

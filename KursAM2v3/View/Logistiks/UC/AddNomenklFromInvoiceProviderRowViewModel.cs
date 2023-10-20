@@ -19,6 +19,7 @@ namespace KursAM2.View.Logistiks.UC
         private readonly Kontragent myKontragent;
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
         private decimal? DocDC;
+        private List<decimal> RowCodes;
 
         #region Constructors
 
@@ -33,8 +34,9 @@ namespace KursAM2.View.Logistiks.UC
             RefreshData(null);
         }
 
-        public AddNomenklFromInvoiceProviderRowViewModel(KursDomain.References.Warehouse warehouse, decimal sfDC)
+        public AddNomenklFromInvoiceProviderRowViewModel(KursDomain.References.Warehouse warehouse, decimal sfDC, List<decimal> excludeDC)
         {
+            RowCodes = excludeDC;
             DocDC = sfDC;
             Warehouse = warehouse;
             LayoutControl = myDataUserControl = new AddNomenklFromInvoiceProviderRowUC(GetType().Name);
@@ -89,7 +91,7 @@ namespace KursAM2.View.Logistiks.UC
                     var rows = ctx.TD_26.Where(_ => _.DOC_CODE == DocDC).ToList();
                     foreach (var r in rows)
                     {
-                        if (RowCodes != null && RowCodes.Any(_ => _ == r.CODE))
+                        if (RowCodes != null && RowCodes.Any(_ => _ == r.SFT_NEMENKL_DC))
                             continue;
                         var s = data.FirstOrDefault(_ => _.DOC_CODE == DocDC && _.CODE == r.CODE);
                         if (s == null) continue;
@@ -141,8 +143,6 @@ namespace KursAM2.View.Logistiks.UC
         #endregion
 
         #region Properties
-
-        public List<int> RowCodes { set; get; }
 
         public ObservableCollection<InvoiceShortRow> Nomenkls { set; get; } =
             new ObservableCollection<InvoiceShortRow>();

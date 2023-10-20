@@ -379,6 +379,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override string WindowName =>
             Document?.DocCode > 0 ? Document.ToString() : "Счет-фактура поставщика (новая)";
 
+        public List<Tuple<decimal,int>> DeletedStoreLink = new List<Tuple<decimal,int>>();
+
         public List<InvoiceProviderRowCurrencyConvertViewModel> DeletedCrsConvertItems { set; get; } =
             new List<InvoiceProviderRowCurrencyConvertViewModel>();
 
@@ -722,43 +724,23 @@ namespace KursAM2.ViewModel.Finance.Invoices
             switch (res)
             {
                 case MessageBoxResult.Yes:
-                    using (var ctx = GlobalOptions.GetEntities())
+                    foreach (var item in SelectedFacts)
                     {
-                        var tran = ctx.Database.BeginTransaction();
-                        try
-                        {
-                            foreach (var item in SelectedFacts)
-                            {
-                                var ordRows = ctx.TD_24.Where(_ => _.DDT_SPOST_DC == item.DDT_SPOST_DC
-                                                                   && _.DDT_SPOST_ROW_CODE == item.DDT_SPOST_ROW_CODE);
-                                foreach (var row in ordRows)
-                                {
-                                    row.DDT_SPOST_DC = null;
-                                    row.DDT_SPOST_ROW_CODE = null;
-                                    row.DDT_TAX_IN_SFACT = 0;
-                                    row.DDT_TAX_EXECUTED = 0;
-                                }
 
-                                rowForRemove.Add(new Tuple<decimal, int>(item.DOC_CODE, item.Code));
-                            }
+                        // ReSharper disable PossibleInvalidOperationException
+                        DeletedStoreLink.Add(new Tuple<decimal, int>(item.DOC_CODE, item.Code));
+                        // ReSharper restore PossibleInvalidOperationException
+                        rowForRemove.Add(new Tuple<decimal, int>(item.DOC_CODE, item.Code));
 
-                            ctx.SaveChanges();
-                            tran.Commit();
-                            foreach (var rem in rowForRemove)
-                            {
-                                var old = Document.Facts.FirstOrDefault(_ => _.DOC_CODE == rem.Item1
-                                                                             && _.Code == rem.Item2);
-                                if (old != null)
-                                    Document.Facts.Remove(old);
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            tran.Rollback();
-                            WindowManager.ShowError(ex);
-                        }
                     }
 
+                    foreach (var ritem in rowForRemove
+                                 .Select(r =>
+                                     Document.Facts.FirstOrDefault(_ => _.DocCode == r.Item1 && _.Code == r.Item2))
+                                 .Where(ritem => ritem != null))
+                    {
+                        Document.Facts.Remove(ritem);
+                    }
                     UpdateVisualData();
                     return;
                 case MessageBoxResult.No:
@@ -1619,7 +1601,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     }
                 }
 
-
+                foreach (var row in DeletedStoreLink)
+                {
+                    var d = UnitOfWork.Context.TD_24.FirstOrDefault(_ =>
+                        _.DOC_CODE == row.Item1 && _.CODE == row.Item2);
+                    if (d != null )
+                        UnitOfWork.Context.TD_24.Remove(d);
+                }
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceProvider), null,
@@ -1643,6 +1631,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceProvider, Document.Id, Document.DocCode,
                     Document.CREATOR,
                     "", Document.Description);
+                DeletedStoreLink.Clear();
+                Document.DeletedRows.Clear();
             }
             catch (Exception ex)
             {

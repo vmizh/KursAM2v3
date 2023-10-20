@@ -70,11 +70,12 @@
                             Style="{StaticResource ComboBoxEditWithError}"
                             Margin="11 0"
                             MinWidth="120" DockPanel.Dock="Right"
-                            IsEnabled="{Binding IsSenderTypeEnabled, Mode=OneWay}"
+                            IsEnabled="{Binding IsCanChageKontragent, Mode=OneWay}"
                             EditValue="{Binding Document.WarehouseSenderType, ValidatesOnDataErrors=True,
-                             UpdateSourceTrigger=PropertyChanged}">
+                            UpdateSourceTrigger=PropertyChanged}"
+                            >
                             <dxmvvm:Interaction.Behaviors>
-                                <dxmvvm:EventToCommand EventName="ComboBoxEdit_EditValueChanged"
+                                <dxmvvm:EventToCommand EventName="EditValueChanged"
                                                        Command="{Binding KontragentTypeChangedCommand}" />
                                 <dxmvvm:EnumItemsSourceBehavior
                                     EnumType="{x:Type nomenklManagement1:WarehouseSenderType}" />
@@ -86,7 +87,8 @@
                             MinWidth="200"
                             IsTextEditable="False"
                             Text="{Binding Document.Sender, ValidatesOnDataErrors=True, Mode=OneWay}"
-                            EditValue="{Binding Document.Sender, ValidatesOnDataErrors=True, Mode=OneWay}">
+                            EditValue="{Binding Document.Sender, ValidatesOnDataErrors=True, Mode=OneWay}"
+                            IsEnabled="{Binding IsCanChageKontragent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <dxmvvm:Interaction.Behaviors>
                                 <dxmvvm:EventToCommand EventName="DefaultButtonClick"
                                                        Command="{Binding SenderSelectCommand}" />
