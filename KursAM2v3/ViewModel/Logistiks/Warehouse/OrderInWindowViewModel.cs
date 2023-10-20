@@ -55,10 +55,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             GenericOrderInRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
             SD_24Repository = new SD_24Repository(UnitOfWork);
-            IsDocNewCopyAllow = true;
-            IsDocNewCopyRequisiteAllow = true;
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
-            RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
+            RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this); 
+            IsDocNewCopyAllow = false;
+            IsDocNewCopyRequisiteAllow = true;
             orderManager = new WarehouseManager(errManager);
             var doc = new SD_24
             {
@@ -84,10 +84,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             GenericOrderInRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
             SD_24Repository = new SD_24Repository(UnitOfWork);
-            IsDocNewCopyAllow = true;
-            IsDocNewCopyRequisiteAllow = true;
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
+            IsDocNewCopyAllow = false;
+            IsDocNewCopyRequisiteAllow = true;
             orderManager = new WarehouseManager(errManager);
             var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
             prn?.SubMenu.Add(new MenuButtonInfo
@@ -446,6 +446,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void SaveData(object data)
         {
             Document.Entity.DD_TYPE_DC = 2010000001;
+            Document.Entity.DD_POLUCH_NAME = Document.Sender;
             var ent = UnitOfWork.Context.ChangeTracker.Entries().ToList();
             UnitOfWork.CreateTransaction();
             try
