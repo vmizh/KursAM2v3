@@ -219,6 +219,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     row.DocId = newId;
                     row.Code = newCode;
                     row.myState = RowStatus.NewRow;
+                    row.CurrencyConvertRows.Clear();
                     newCode++;
                 }
 
@@ -1132,7 +1133,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
 
             // Новый алгоритм
-            var prihod = (from t in UnitOfWork.Context.TD_24.Where(_ => _.DDT_SPOST_DC == Document.DocCode)
+            var prihod = (from t in UnitOfWork.Context.TD_24.Where(_ => _.DDT_SPOST_DC == Document.DocCode 
+                                                                        && _.DDT_NOMENKL_DC == CurrentRow.Nomenkl.DocCode)
                 join s in UnitOfWork.Context.SD_24 on t.DOC_CODE equals s.DOC_CODE
                 select new
                 {

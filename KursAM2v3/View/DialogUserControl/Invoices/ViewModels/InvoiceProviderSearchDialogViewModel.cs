@@ -474,7 +474,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                     NomenklDC = pos.NomenklDC,
                     Note = pos.RowNote
                 };
-                newItem.IsNotCanSelected = ExistingRows.Any(_ => _.Item1 == pos.NomenklDC);
+                newItem.IsNotCanSelected = ExistingRows != null && ExistingRows.Count != 0 && ExistingRows.Any(_ => _.Item1 == pos.NomenklDC);
                 ItemPositionsCollection.Add(newItem);
             }
         }
