@@ -30,7 +30,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             orderManager =
                 new WarehouseManager(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderInSearchViewModel"));
-            StartDate = DateTime.Today.AddDays(-30);
+            StartDate = new  DateTime( DateTime.Today.AddMonths(-1).Year, DateTime.Today.AddMonths(-1).Month,1);
             EndDate = DateTime.Today;
         }
 
@@ -145,7 +145,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         .ToList(); /*приходный складской ордер*/
                     foreach (var item in d)
                         rows.Add(new WarehouseOrderIn(item) { State = RowStatus.NotEdited });
-                    Documents = new ObservableCollection<WarehouseOrderIn>(rows);
+                    Documents.Clear();
+                    foreach(var item in rows)
+                    {Documents.Add(item);} 
+                    //Documents = new ObservableCollection<WarehouseOrderIn>(rows);
                     RaisePropertyChanged(nameof(Documents));
                 }
                 
