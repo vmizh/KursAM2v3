@@ -881,9 +881,6 @@
     <Compile Include="View\Logistiks\Warehouse\OrderOutView.xaml.cs">
       <DependentUpon>OrderOutView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Logistiks\Warehouse\WaybillView.xaml.cs">
-      <DependentUpon>WaybillView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\Logistiks\NomenklMove.xaml.cs">
       <DependentUpon>NomenklMove.xaml</DependentUpon>
     </Compile>
@@ -1710,10 +1707,6 @@
     <Page Include="View\Logistiks\Warehouse\OrderOutView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Logistiks\Warehouse\WaybillView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Logistiks\NomenklMove.xaml">
       <SubType>Designer</SubType>
