@@ -90,21 +90,20 @@
                             <Label Content="Счет: " Margin="20 0"/>
                             <dxe:ButtonEdit DockPanel.Dock="Left"
                                             Margin="5,0,0,0"
-                                            Style="{StaticResource ButtonEditWithError}"
-                                            EditValue="{Binding Document.InvoiceInfo, 
-                                            UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
-                                            IsTextEditable="False" MinWidth="300"
-                                            AllowDefaultButton="False">
+                                            IsTextEditable="False"
+                                            AllowDefaultButton="False"
+                                            EditValue="Выбор счета"
+                                            BorderThickness="0">
                                <dxe:ButtonEdit.Buttons>
                                    <dxe:ButtonInfo GlyphKind="Regular"
                                                    Command="{Binding SelectSchetCommand}"
                                                    ToolTip="Выбрать счет-фактуру клиенту"/>
-                                   <dxe:ButtonInfo GlyphKind="Cancel"
+                                   <!--<dxe:ButtonInfo GlyphKind="Cancel"
                                                    Command="{Binding DeleteSchetCommand}"
                                                    ToolTip="Удалить связь со счет-фактурой клиенту"/>
                                    <dxe:ButtonInfo GlyphKind="Edit"
                                                    Command="{Binding OpenMainSchetCommand}"
-                                                   ToolTip="Открыть счет-фактуру клиенту"/>
+                                                   ToolTip="Открыть счет-фактуру клиенту"/>-->
                                </dxe:ButtonEdit.Buttons>
                             </dxe:ButtonEdit>
                         </StackPanel>
@@ -159,10 +158,10 @@
                                     <MenuItem Header="Удалить строку"
                                               Command="{Binding DeleteNomenklCommand}" />
                                     <Separator />
-                                    <MenuItem Header="Добавить из счетов"
+                                    <MenuItem Header="Добавить из счета по строке"
                                               Command="{Binding AddFromDocumentCommand}" />
-                                    <MenuItem Header="Удалить связку со счетом"
-                                              Command="{Binding DeleteLinkDocumentCommand}" />
+                                    <!--<MenuItem Header="Удалить связку со счетом"
+                                              Command="{Binding DeleteLinkDocumentCommand}" />-->
                                     <Separator />
                                     <MenuItem Header="Открыть счет"
                                               Command="{Binding OpenSchetCommand}" />

@@ -196,13 +196,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             });
         }
 
-        //public override async void RefreshData(object data)
-        //{
-        //    SplashScreenService.ShowSplashScreen();
-        //    base.RefreshData(null);
-        //    await Load();
-        //}
-
         public override void DocumentOpen(object form)
         {
             DocumentsOpenManager.Open(DocumentType.Waybill, CurrentDocument.DocCode);

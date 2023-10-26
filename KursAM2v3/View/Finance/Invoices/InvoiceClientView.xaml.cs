@@ -175,6 +175,7 @@ namespace KursAM2.View.Finance.Invoices
             {
                 ctx.Document.CalcDoc();
                 ctx.Document.RaisePropertyChanged("DilerSumma");
+                ctx.Document.RaisePropertyChanged("Summa");
             }
         }
 
@@ -206,5 +207,16 @@ namespace KursAM2.View.Finance.Invoices
             }
         }
 
+        private void GridRows_OnCurrentItemChanged(object sender, CurrentItemChangedEventArgs e)
+        {
+            gridRows.UpdateTotalSummary();
+            if (DataContext is ClientWindowViewModel ctx)
+            {
+                var state = ctx.Document.State;
+                ctx.Document.CalcDoc();
+                ctx.Document.RaisePropertyChanged("DilerSumma");
+                ctx.Document.myState = state;
+            }
+        }
     }
 }

@@ -412,6 +412,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 }
             }
 
+            var delIds = new List<Guid>(Document.Rows.Where(_ => _.State == RowStatus.NewRow).Select(_ => _.Id));
+            foreach (var r in delIds.Select(id => Document.Rows.FirstOrDefault(_ => _.Id == id)).Where(r => r != null))
+            {
+                Document.Entity.TD_24.Remove(r.Entity);
+                Document.Rows.Remove(r);
+            }
+
             var rrows = UnitOfWork.Context.TD_24.Where(_ => _.DOC_CODE == Document.DocCode).ToList();
             foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) 
                 entity.Reload();

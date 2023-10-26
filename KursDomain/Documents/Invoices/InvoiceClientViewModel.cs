@@ -1064,11 +1064,26 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
     {
         set
         {
-            if (Entity.SF_CRS_SUMMA_K_OPLATE == value) return;
-            Entity.SF_CRS_SUMMA_K_OPLATE = value;
+            if (Rows.Count > 0)
+            {
+                Entity.SF_CRS_SUMMA_K_OPLATE = Rows.Sum(_ => _.Summa);
+            }
+            else
+            {
+                if (Entity.SF_CRS_SUMMA_K_OPLATE == value) return;
+                Entity.SF_CRS_SUMMA_K_OPLATE = value;
+            }
             RaisePropertyChanged();
         }
-        get => Entity.SF_CRS_SUMMA_K_OPLATE ?? 0;
+        get
+        {
+            if (Rows.Count > 0)
+            {
+                return Rows.Sum(_ => _.Summa);
+            } 
+            return Entity.SF_CRS_SUMMA_K_OPLATE ?? 0; 
+
+        }
         //var state = State;
         //if (Rows.Count > 0)
         //{
