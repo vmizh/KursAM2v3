@@ -127,13 +127,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void ExportSF(object obj)
         {
-            var ctx = new WaybillWindowViewModel(CurrentDocument.DocCode);
+            var ctx = new WaybillWindowViewModel2(CurrentDocument.DocCode);
             ctx.ExportWayBill(null);
         }
 
         private void PrintSF(object obj)
         {
-            var ctx = new WaybillWindowViewModel(CurrentDocument.DocCode);
+            var ctx = new WaybillWindowViewModel2(CurrentDocument.DocCode);
             ctx.PrintWaybill(null);
         }
 

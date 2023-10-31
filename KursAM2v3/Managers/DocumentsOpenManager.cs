@@ -366,7 +366,7 @@ namespace KursAM2.Managers
                     //OpenStoreIn(dc);
                     break;
                 case DocumentType.Waybill:
-                    if (vm is WaybillWindowViewModel wayBill)
+                    if (vm is WaybillWindowViewModel2 wayBill)
                         OpenWayBill(wayBill);
                     break;
                 case DocumentType.Bank:
@@ -759,7 +759,7 @@ namespace KursAM2.Managers
             return ctx;
         }
 
-        private static void OpenWayBill(WaybillWindowViewModel vm)
+        private static void OpenWayBill(WaybillWindowViewModel2 vm)
         {
             if (vm == null)
                 return;

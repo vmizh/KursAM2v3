@@ -707,7 +707,6 @@
     <Compile Include="ViewModel\Logistiks\KontragentGruzoInfoViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\KontragentGruzoInfoWindowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\NakladRowViewModel.cs" />
-    <Compile Include="ViewModel\Logistiks\Warehouse\WaybillWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\BreakEven\BreakEvenCOrGroupViewModel.cs" />
     <Compile Include="ViewModel\Management\BreakEven\BreakEvenKontrGroupViewModel.cs" />
     <Compile Include="ViewModel\Management\BreakEven\BreakEvenNomGroupViewModel.cs" />
