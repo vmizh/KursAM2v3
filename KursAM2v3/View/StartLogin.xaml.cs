@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Core;
@@ -11,7 +8,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using Helper;
 using KursAM2.ViewModel.StartLogin;
-using MessageBox = System.Windows.MessageBox;
+using Microsoft.Win32;
 
 // ReSharper disable InconsistentNaming
 namespace KursAM2.View
@@ -26,47 +23,48 @@ namespace KursAM2.View
 
         public StartLogin()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent();
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             DataContext = new StartLoginViewModel(this);
             pwdText.Focus();
-            dtx = (StartLoginViewModel) DataContext;
+            dtx = (StartLoginViewModel)DataContext;
         }
 
         private void MenuItem_OnClick(object sender, RoutedEventArgs e)
         {
             //Не переносить в ViewModel
-            using (var form = new OpenFileDialog())
+            var form = new OpenFileDialog
             {
-                form.Filter = @"Картинки(*.JPG;*.PNG)|*.JPG;*.PNG";
-                form.CheckFileExists = true;
-                form.Multiselect = false;
-                form.ShowDialog();
-                if (!string.IsNullOrEmpty(form.FileName))
+                Filter = @"Картинки(*.JPG;*.PNG)|*.JPG;*.PNG",
+                CheckFileExists = true,
+                Multiselect = false
+            };
+            form.ShowDialog();
+            if (!string.IsNullOrEmpty(form.FileName))
+            {
+                var source = Image.FromFile(form.FileName);
+                if (source.Height != source.Width)
                 {
-                    var source = Image.FromFile(form.FileName);
-                    if (source.Height != source.Width)
-                    {
-                        var cropSource = (Bitmap) source.Crop(new Rectangle(source.Width / 2 - source.Height / 2,
-                            0, source.Height, source.Height));
-                        var b =
-                            Imaging.CreateBitmapSourceFromHBitmap(
-                                cropSource.GetHbitmap(),
-                                IntPtr.Zero,
-                                Int32Rect.Empty,
-                                BitmapSizeOptions.FromEmptyOptions());
-                        AvatarObj.Source = b;
-                    }
-                    else
-                    {
-                        AvatarObj.Source = new BitmapImage(new Uri(form.FileName, UriKind.RelativeOrAbsolute));
-                    }
+                    var cropSource = (Bitmap)source.Crop(new Rectangle(source.Width / 2 - source.Height / 2,
+                        0, source.Height, source.Height));
+                    var b =
+                        Imaging.CreateBitmapSourceFromHBitmap(
+                            cropSource.GetHbitmap(),
+                            IntPtr.Zero,
+                            Int32Rect.Empty,
+                            BitmapSizeOptions.FromEmptyOptions());
+                    AvatarObj.Source = b;
+                }
+                else
+                {
+                    AvatarObj.Source = new BitmapImage(new Uri(form.FileName, UriKind.RelativeOrAbsolute));
                 }
             }
         }
 
         private void dataSources_EditValueChanged(object sender, EditValueChangedEventArgs e)
         {
-            if( dtx != null)
+            if (dtx != null)
                 dtx.SelectedDataSource = e.NewValue as DataSource;
         }
     }
