@@ -11,6 +11,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
+using DevExpress.XtraCharts.Native;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -154,6 +155,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
 
         public override bool IsCanSaveData => Document != null && Document.WarehouseOut != null
+                                                               && Document.Client != null
                                                                && (Document.State != RowStatus.NotEdited
                                                                    || Document.Rows.Any(_ =>
                                                                        _.State != RowStatus.NotEdited)

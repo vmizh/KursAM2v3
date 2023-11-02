@@ -267,7 +267,14 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                 foreach (var col in grid.Columns)
                 {
                     col.AutoFilterCondition = AutoFilterCondition.Contains;
+                    col.ColumnFilterMode = ColumnFilterMode.DisplayText;
+                    col.SortMode = ColumnSortMode.DisplayText;
                     col.Name = col.FieldName;
+                    if (col.FieldType == typeof(string))
+                        col.EditSettings = new TextEditSettings
+                        {
+                            SelectAllOnMouseUp = true
+                        };
                     if (col.FieldType == typeof(decimal) ||
                         col.FieldType == typeof(decimal?)
                         || col.FieldType == typeof(float) || col.FieldType == typeof(float?)
@@ -281,6 +288,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                             SummaryType = SummaryItemType.Sum,
                             ShowInColumn = col.FieldName
                         });
+                        continue;
                     }
 
                     if (col.FieldType == typeof(int) || col.FieldType == typeof(int?))
@@ -293,6 +301,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                             SummaryType = SummaryItemType.Count,
                             ShowInColumn = col.FieldName
                         });
+                        continue;
                     }
 
                     if (col.FieldType != typeof(decimal) && col.FieldType != typeof(decimal?)
@@ -311,12 +320,13 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                             {
                                 SelectAllOnMouseUp = true
                             };
+                        continue;
                     }
-                    else
-                    {
-                        col.SortMode = ColumnSortMode.Value;
-                        col.ColumnFilterMode = ColumnFilterMode.Value;
-                    }
+                    //else
+                    //{
+                    //    col.SortMode = ColumnSortMode.Value;
+                    //    col.ColumnFilterMode = ColumnFilterMode.Value;
+                    //}
                 }
             }
 
@@ -325,7 +335,14 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
             foreach (var col in t.Columns)
             {
                 col.AutoFilterCondition = AutoFilterCondition.Contains;
+                col.ColumnFilterMode = ColumnFilterMode.DisplayText;
+                col.SortMode = ColumnSortMode.DisplayText;
                 col.Name = col.FieldName;
+                if (col.FieldType == typeof(string))
+                    col.EditSettings = new TextEditSettings
+                    {
+                        SelectAllOnMouseUp = true
+                    };
                 if (col.FieldType != typeof(decimal) && col.FieldType != typeof(decimal?)
                                                      && col.FieldType != typeof(double) &&
                                                      col.FieldType != typeof(double?)
@@ -334,20 +351,15 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                                                      && col.FieldType != typeof(DateTime) &&
                                                      col.FieldType != typeof(DateTime?))
                 {
-                    col.SortMode = ColumnSortMode.DisplayText;
-                    col.ColumnFilterMode = ColumnFilterMode.DisplayText;
-                    col.SortMode = ColumnSortMode.DisplayText;
-                    if (col.FieldType == typeof(string))
-                        col.EditSettings = new TextEditSettings
-                        {
-                            SelectAllOnMouseUp = true
-                        };
-                }
-                else
-                {
                     col.SortMode = ColumnSortMode.Value;
                     col.ColumnFilterMode = ColumnFilterMode.Value;
+                    col.SortMode = ColumnSortMode.Value;
                 }
+                //else
+                //{
+                //    col.SortMode = ColumnSortMode.Value;
+                //    col.ColumnFilterMode = ColumnFilterMode.Value;
+                //}
             }
 
         ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;

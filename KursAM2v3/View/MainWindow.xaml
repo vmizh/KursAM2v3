@@ -36,10 +36,10 @@
             <!--<dxb:BarButtonItem x:Name="barButtonItem5" Content="Сохранить историю"
                                ItemClick="BarButtonItem5_OnItemClick" />-->
             <dxb:BarButtonItem x:Name="barButtonItem5" Content="Обновить версию"
-                               ItemClick="BarButtonItem4_OnItemClick" 
+                               Command="{Binding VersionUpdateCommand}"
                                Glyph="{dx:DXImage SvgImages/XAF/Action_Refresh.svg}"/>
             <dxb:BarButtonItem x:Name="barButtonItem6" Content="Сбросить разметку"
-                               ItemClick="BarButtonItem4_OnItemClick"
+                               ItemClick="BarButtonItem3_OnItemClick"
                                Glyph="{dx:DXImage SvgImages/Dashboards/FullExtent.svg}" />
             <dxb:BarButtonItem x:Name="barButtonItem3" Content="Выход" ItemClick="BarButtonItem3_OnItemClick"
                                Glyph="{dx:DXImage SvgImages/HybridDemoIcons/Editors/HybridDemo_Back Button.svg}" />

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Interop;
 using System.Windows.Media.Imaging;
 using Core;
@@ -12,8 +9,6 @@ using DevExpress.Xpf.Editors;
 using Helper;
 using KursAM2.ViewModel.StartLogin;
 using Microsoft.Win32;
-using MessageBox = System.Windows.MessageBox;
-using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 // ReSharper disable InconsistentNaming
 namespace KursAM2.View
@@ -28,10 +23,11 @@ namespace KursAM2.View
 
         public StartLogin()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent();
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             DataContext = new StartLoginViewModel(this);
             pwdText.Focus();
-            dtx = (StartLoginViewModel) DataContext;
+            dtx = (StartLoginViewModel)DataContext;
         }
 
         private void MenuItem_OnClick(object sender, RoutedEventArgs e)
@@ -49,7 +45,7 @@ namespace KursAM2.View
                 var source = Image.FromFile(form.FileName);
                 if (source.Height != source.Width)
                 {
-                    var cropSource = (Bitmap) source.Crop(new Rectangle(source.Width / 2 - source.Height / 2,
+                    var cropSource = (Bitmap)source.Crop(new Rectangle(source.Width / 2 - source.Height / 2,
                         0, source.Height, source.Height));
                     var b =
                         Imaging.CreateBitmapSourceFromHBitmap(
@@ -68,7 +64,7 @@ namespace KursAM2.View
 
         private void dataSources_EditValueChanged(object sender, EditValueChangedEventArgs e)
         {
-            if( dtx != null)
+            if (dtx != null)
                 dtx.SelectedDataSource = e.NewValue as DataSource;
         }
     }

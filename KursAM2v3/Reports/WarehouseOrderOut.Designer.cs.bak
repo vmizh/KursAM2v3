@@ -93,7 +93,7 @@ namespace KursAM2.Reports
             this.Title.BorderColor = System.Drawing.Color.Black;
             this.Title.Borders = DevExpress.XtraPrinting.BorderSide.None;
             this.Title.BorderWidth = 1F;
-            this.Title.Font = new DevExpress.Drawing.DXFont("Arial", 14.25F);
+            this.Title.Font = new System.Drawing.Font("Arial", 14.25F);
             this.Title.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(75)))), ((int)(((byte)(75)))));
             this.Title.Name = "Title";
             // 
@@ -103,7 +103,7 @@ namespace KursAM2.Reports
             this.DetailCaption1.BorderColor = System.Drawing.Color.White;
             this.DetailCaption1.Borders = DevExpress.XtraPrinting.BorderSide.Left;
             this.DetailCaption1.BorderWidth = 2F;
-            this.DetailCaption1.Font = new DevExpress.Drawing.DXFont("Arial", 8.25F, DevExpress.Drawing.DXFontStyle.Bold);
+            this.DetailCaption1.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold);
             this.DetailCaption1.ForeColor = System.Drawing.Color.White;
             this.DetailCaption1.Name = "DetailCaption1";
             this.DetailCaption1.Padding = new DevExpress.XtraPrinting.PaddingInfo(15, 15, 0, 0, 254F);
@@ -114,7 +114,7 @@ namespace KursAM2.Reports
             this.DetailData1.BorderColor = System.Drawing.Color.Transparent;
             this.DetailData1.Borders = DevExpress.XtraPrinting.BorderSide.Left;
             this.DetailData1.BorderWidth = 2F;
-            this.DetailData1.Font = new DevExpress.Drawing.DXFont("Arial", 8.25F);
+            this.DetailData1.Font = new System.Drawing.Font("Arial", 8.25F);
             this.DetailData1.ForeColor = System.Drawing.Color.Black;
             this.DetailData1.Name = "DetailData1";
             this.DetailData1.Padding = new DevExpress.XtraPrinting.PaddingInfo(15, 15, 0, 0, 254F);
@@ -126,7 +126,7 @@ namespace KursAM2.Reports
             this.DetailData3_Odd.BorderColor = System.Drawing.Color.Transparent;
             this.DetailData3_Odd.Borders = DevExpress.XtraPrinting.BorderSide.None;
             this.DetailData3_Odd.BorderWidth = 1F;
-            this.DetailData3_Odd.Font = new DevExpress.Drawing.DXFont("Arial", 8.25F);
+            this.DetailData3_Odd.Font = new System.Drawing.Font("Arial", 8.25F);
             this.DetailData3_Odd.ForeColor = System.Drawing.Color.Black;
             this.DetailData3_Odd.Name = "DetailData3_Odd";
             this.DetailData3_Odd.Padding = new DevExpress.XtraPrinting.PaddingInfo(15, 15, 0, 0, 254F);
@@ -134,7 +134,7 @@ namespace KursAM2.Reports
             // 
             // PageInfo
             // 
-            this.PageInfo.Font = new DevExpress.Drawing.DXFont("Arial", 8.25F, DevExpress.Drawing.DXFontStyle.Bold);
+            this.PageInfo.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Bold);
             this.PageInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(75)))), ((int)(((byte)(75)))), ((int)(((byte)(75)))));
             this.PageInfo.Name = "PageInfo";
             this.PageInfo.Padding = new DevExpress.XtraPrinting.PaddingInfo(5, 5, 0, 0, 254F);
@@ -161,7 +161,7 @@ namespace KursAM2.Reports
             // xrLabel9
             // 
             this.xrLabel9.Dpi = 254F;
-            this.xrLabel9.Font = new DevExpress.Drawing.DXFont("Arial", 14F);
+            this.xrLabel9.Font = new System.Drawing.Font("Arial", 14F);
             this.xrLabel9.LocationFloat = new DevExpress.Utils.PointFloat(1334.511F, 170.7519F);
             this.xrLabel9.Name = "xrLabel9";
             this.xrLabel9.SizeF = new System.Drawing.SizeF(243.3336F, 70.07854F);
@@ -186,7 +186,7 @@ namespace KursAM2.Reports
             // xrLabel8
             // 
             this.xrLabel8.Dpi = 254F;
-            this.xrLabel8.Font = new DevExpress.Drawing.DXFont("Arial", 14F);
+            this.xrLabel8.Font = new System.Drawing.Font("Arial", 14F);
             this.xrLabel8.LocationFloat = new DevExpress.Utils.PointFloat(25F, 170.7519F);
             this.xrLabel8.Name = "xrLabel8";
             this.xrLabel8.SizeF = new System.Drawing.SizeF(243.3336F, 70.07854F);
@@ -232,7 +232,7 @@ namespace KursAM2.Reports
             this.xrLabel7.Dpi = 254F;
             this.xrLabel7.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
             new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[Poluchatel]")});
-            this.xrLabel7.Font = new DevExpress.Drawing.DXFont("Arial", 14F);
+            this.xrLabel7.Font = new System.Drawing.Font("Arial", 14F);
             this.xrLabel7.LocationFloat = new DevExpress.Utils.PointFloat(355.0833F, 250.1269F);
             this.xrLabel7.Multiline = true;
             this.xrLabel7.Name = "xrLabel7";
@@ -246,7 +246,7 @@ namespace KursAM2.Reports
             this.xrLabel6.Dpi = 254F;
             this.xrLabel6.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
             new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[Corporate]")});
-            this.xrLabel6.Font = new DevExpress.Drawing.DXFont("Arial", 14F);
+            this.xrLabel6.Font = new System.Drawing.Font("Arial", 14F);
             this.xrLabel6.LocationFloat = new DevExpress.Utils.PointFloat(355.0833F, 153.113F);
             this.xrLabel6.Multiline = true;
             this.xrLabel6.Name = "xrLabel6";
@@ -258,7 +258,7 @@ namespace KursAM2.Reports
             // xrLabel5
             // 
             this.xrLabel5.Dpi = 254F;
-            this.xrLabel5.Font = new DevExpress.Drawing.DXFont("Arial", 14F);
+            this.xrLabel5.Font = new System.Drawing.Font("Arial", 14F);
             this.xrLabel5.LocationFloat = new DevExpress.Utils.PointFloat(25F, 250.1269F);
             this.xrLabel5.Name = "xrLabel5";
             this.xrLabel5.SizeF = new System.Drawing.SizeF(296.2503F, 75.38409F);
@@ -269,7 +269,7 @@ namespace KursAM2.Reports
             // xrLabel4
             // 
             this.xrLabel4.Dpi = 254F;
-            this.xrLabel4.Font = new DevExpress.Drawing.DXFont("Arial", 14F);
+            this.xrLabel4.Font = new System.Drawing.Font("Arial", 14F);
             this.xrLabel4.LocationFloat = new DevExpress.Utils.PointFloat(25F, 153.113F);
             this.xrLabel4.Name = "xrLabel4";
             this.xrLabel4.SizeF = new System.Drawing.SizeF(296.2503F, 70.07854F);
@@ -287,7 +287,7 @@ namespace KursAM2.Reports
             // xrLabel3
             // 
             this.xrLabel3.Dpi = 254F;
-            this.xrLabel3.Font = new DevExpress.Drawing.DXFont("Arial", 18F);
+            this.xrLabel3.Font = new System.Drawing.Font("Arial", 18F);
             this.xrLabel3.LocationFloat = new DevExpress.Utils.PointFloat(1382.995F, 15.99999F);
             this.xrLabel3.Multiline = true;
             this.xrLabel3.Name = "xrLabel3";
@@ -301,7 +301,7 @@ namespace KursAM2.Reports
             this.xrLabel2.Dpi = 254F;
             this.xrLabel2.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
             new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[Num]")});
-            this.xrLabel2.Font = new DevExpress.Drawing.DXFont("Arial", 18F);
+            this.xrLabel2.Font = new System.Drawing.Font("Arial", 18F);
             this.xrLabel2.LocationFloat = new DevExpress.Utils.PointFloat(970.7082F, 15.99999F);
             this.xrLabel2.Multiline = true;
             this.xrLabel2.Name = "xrLabel2";
@@ -315,7 +315,7 @@ namespace KursAM2.Reports
             this.xrLabel1.Dpi = 254F;
             this.xrLabel1.ExpressionBindings.AddRange(new DevExpress.XtraReports.UI.ExpressionBinding[] {
             new DevExpress.XtraReports.UI.ExpressionBinding("BeforePrint", "Text", "[DD_DATE]")});
-            this.xrLabel1.Font = new DevExpress.Drawing.DXFont("Arial", 18F);
+            this.xrLabel1.Font = new System.Drawing.Font("Arial", 18F);
             this.xrLabel1.LocationFloat = new DevExpress.Utils.PointFloat(1478.245F, 16F);
             this.xrLabel1.Multiline = true;
             this.xrLabel1.Name = "xrLabel1";
@@ -327,7 +327,7 @@ namespace KursAM2.Reports
             // label1
             // 
             this.label1.Dpi = 254F;
-            this.label1.Font = new DevExpress.Drawing.DXFont("Arial", 18F);
+            this.label1.Font = new System.Drawing.Font("Arial", 18F);
             this.label1.LocationFloat = new DevExpress.Utils.PointFloat(25.00001F, 15.99999F);
             this.label1.Name = "label1";
             this.label1.SizeF = new System.Drawing.SizeF(945.7082F, 84.2036F);
@@ -422,7 +422,7 @@ namespace KursAM2.Reports
             | DevExpress.XtraPrinting.BorderSide.Right) 
             | DevExpress.XtraPrinting.BorderSide.Bottom)));
             this.table2.Dpi = 254F;
-            this.table2.Font = new DevExpress.Drawing.DXFont("Arial", 12F);
+            this.table2.Font = new System.Drawing.Font("Arial", 12F);
             this.table2.LocationFloat = new DevExpress.Utils.PointFloat(0F, 0F);
             this.table2.Name = "table2";
             this.table2.OddStyleName = "DetailData3_Odd";
@@ -586,12 +586,12 @@ namespace KursAM2.Reports
             this.jsonDataSource2});
             this.DataSource = this.jsonDataSource2;
             this.Dpi = 254F;
-            this.Font = new DevExpress.Drawing.DXFont("Arial", 9.75F);
+            this.Font = new System.Drawing.Font("Arial", 9.75F);
             this.Landscape = true;
-            this.Margins = new DevExpress.Drawing.DXMargins(100, 100, 100, 446);
+            this.Margins = new System.Drawing.Printing.Margins(100, 100, 100, 446);
             this.PageHeight = 2100;
             this.PageWidth = 2970;
-            this.PaperKind = DevExpress.Drawing.Printing.DXPaperKind.A4;
+            this.PaperKind = System.Drawing.Printing.PaperKind.A4;
             this.ReportUnit = DevExpress.XtraReports.UI.ReportUnit.TenthsOfAMillimeter;
             this.SnapGridSize = 25F;
             this.StyleSheet.AddRange(new DevExpress.XtraReports.UI.XRControlStyle[] {

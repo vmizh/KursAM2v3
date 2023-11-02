@@ -1,10 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
-using Core;
 using Core.EntityViewModel;
 using Core.ViewModel.Base;
 using DevExpress.Xpf.LayoutControl;
+using KursAM2.Managers;
 using KursAM2.View;
 using KursAM2.ViewModel.StartLogin;
 using KursDomain;
@@ -25,11 +25,9 @@ namespace KursAM2.ViewModel
         {
         }
 
-        public ObservableCollection<LastDocumentViewModel> LastDocuments { set; get; }
-            = new ObservableCollection<LastDocumentViewModel>();
+        public ObservableCollection<LastDocumentViewModel> LastDocuments { set; get; } = new();
 
-        public ObservableCollection<Tile> CurrentDocumentTiles { set; get; }
-            = new ObservableCollection<Tile>();
+        public ObservableCollection<Tile> CurrentDocumentTiles { set; get; } = new();
 
         public LastDocumentViewModel CurrentLastDocument
         {
@@ -39,6 +37,17 @@ namespace KursAM2.ViewModel
                 if (myCurrentLastDocument == value) return;
                 myCurrentLastDocument = value;
                 RaisePropertyChanged();
+            }
+        }
+
+        public bool IsCanVersionUpdate
+        {
+            get
+            {
+                var Vers = new VersionManager();
+                var Ver = Vers.GetCanUpdate(1);
+                if (Ver == 0) return false;
+                return true;
             }
         }
 
@@ -53,6 +62,7 @@ namespace KursAM2.ViewModel
             }
         }
 
+
         public Tile CurrentFavoriteMenu
         {
             get => myCurrentFavoriteMenu;
@@ -64,8 +74,22 @@ namespace KursAM2.ViewModel
             }
         }
 
-        public ObservableCollection<UserMenuFavoriteViewModel> FavoritesMenuItems { set; get; }
-            = new ObservableCollection<UserMenuFavoriteViewModel>();
+        public ICommand VersionUpdateCommand
+        {
+            get
+            {
+                return new Command(VersionUpdate, _ =>
+                {
+                    //TODO поправить перед коммитом
+                    //var Vers = new VersionManager();
+                    //var Ver = Vers.GetCanUpdate(1);
+                    //if (Ver == 0) return false;
+                    return true;
+                });
+            }
+        }
+
+        public ObservableCollection<UserMenuFavoriteViewModel> FavoritesMenuItems { set; get; } = new();
 
         public ICommand OpenLastDocumentDialogCommand
         {
@@ -79,6 +103,12 @@ namespace KursAM2.ViewModel
 
         public override bool IsCanSearch => !string.IsNullOrWhiteSpace(SearchText);
 
+        private void VersionUpdate(object obj)
+        {
+            var Vers = new VersionManager();
+            var Ver = Vers.CheckVersion(1);
+        }
+
         public override void Search(object obj)
         {
             if (Form is MainWindow frm)
@@ -87,19 +117,12 @@ namespace KursAM2.ViewModel
                 if (!string.IsNullOrWhiteSpace(SearchText) && SearchText.Length >= 3)
                 {
                     foreach (var tile in CurrentDocumentTiles)
-                    {
                         if (((string)tile.Header).ToUpper().Contains(SearchText.ToUpper()))
-                        {
                             frm.tileDocumentItems.Children.Add(tile);
-                        }
-                    }
                 }
                 else
                 {
-                    foreach (var tile in CurrentDocumentTiles)
-                    {
-                        frm.tileDocumentItems.Children.Add(tile);
-                    }
+                    foreach (var tile in CurrentDocumentTiles) frm.tileDocumentItems.Children.Add(tile);
                 }
             }
         }
@@ -110,10 +133,7 @@ namespace KursAM2.ViewModel
             if (Form is MainWindow frm)
             {
                 frm.tileDocumentItems.Children.Clear();
-                foreach (var tile in CurrentDocumentTiles)
-                {
-                    frm.tileDocumentItems.Children.Add(tile);
-                }
+                foreach (var tile in CurrentDocumentTiles) frm.tileDocumentItems.Children.Add(tile);
             }
         }
 
@@ -135,7 +155,7 @@ namespace KursAM2.ViewModel
                 LastDocuments.Clear();
                 foreach (var h in ctx.LastDocument.Where(_ => _.UserId == GlobalOptions.UserInfo.KursId
                                                               && _.DbId == GlobalOptions.DataBaseId)
-                    .OrderByDescending(_ => _.LastOpen))
+                             .OrderByDescending(_ => _.LastOpen))
                     LastDocuments.Add(new LastDocumentViewModel(h));
             }
         }
