@@ -134,6 +134,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Properties
 
+        public ObservableCollection<FormattingRule> Rules { get; } = new ObservableCollection<FormattingRule>
+        {
+            new FormattingRule(nameof(InvoiceClientRowViewModel.Shipped), ConditionRule.Equal, 0, true, FormattingType.Foreground),
+        };
+
         public List<ShipmentRowViewModel> ShipmentRowDeleted { set; get; }
 
         

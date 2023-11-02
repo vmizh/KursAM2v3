@@ -14,14 +14,14 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
 {
     public class WaybillExport : BaseReport
     {
-        public WaybillExport(WaybillWindowViewModel viewmodel)
+        public WaybillExport(WaybillWindowViewModel2 viewmodel)
         {
             ViewModel = viewmodel;
         }
 
         public override void GenerateReport(Worksheet sheet)
         {
-            if (!(ViewModel is WaybillWindowViewModel vm)) return;
+            if (!(ViewModel is WaybillWindowViewModel2 vm)) return;
             // ReSharper disable once UnusedVariable
             var document = vm.Document;
         }
@@ -29,11 +29,6 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
 
     public class WaybillTorg12 : BaseReport
     {
-        public WaybillTorg12(WaybillWindowViewModel viewmodel)
-        {
-            ViewModel = viewmodel;
-        }
-
         public WaybillTorg12(WaybillWindowViewModel2 viewmodel)
         {
             ViewModel = viewmodel;
@@ -71,7 +66,7 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
 
         public override void GenerateReport(Worksheet sheet)
         {
-            var vm = ViewModel as WaybillWindowViewModel;
+            var vm = ViewModel as WaybillWindowViewModel2;
             if (vm == null) return;
             var document = vm.Document;
             Kontragent receiver;

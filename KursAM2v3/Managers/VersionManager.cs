@@ -62,8 +62,6 @@ namespace KursAM2.Managers
                     string[] argList = { string.Empty, string.Empty };
                     var returnVal = Convert.ToInt32(obj.InvokeMethod("GetOwner", argList));
                     if (returnVal == 0)
-                        // return DOMAIN\user
-                        //                        return argList[1] + "\\" + argList[0];
                         return argList[0];
                 }
 

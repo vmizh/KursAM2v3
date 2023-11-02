@@ -9,6 +9,7 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq} {ParentDC,nq}")]
 public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>, IComparable
 {
+    
     public int CompareTo(object obj)
     {
         var c = obj as Unit;

@@ -80,9 +80,10 @@ namespace KursAM2.ViewModel
             {
                 return new Command(VersionUpdate, _ =>
                 {
-                    var Vers = new VersionManager();
-                    var Ver = Vers.GetCanUpdate(1);
-                    if (Ver == 0) return false;
+                    //TODO поправить перед коммитом
+                    //var Vers = new VersionManager();
+                    //var Ver = Vers.GetCanUpdate(1);
+                    //if (Ver == 0) return false;
                     return true;
                 });
             }

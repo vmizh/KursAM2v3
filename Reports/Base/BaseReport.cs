@@ -102,7 +102,7 @@ namespace Reports.Base
                 Workbook.EndUpdate();
                 worksheet.ActiveView.Orientation = PrintOptions.PageOrientation;
                 worksheet.ActiveView.ShowHeadings = false;
-                worksheet.ActiveView.PaperKind = PrintOptions.PaperKind;
+                //worksheet.ActiveView.PaperKind = PrintOptions.PaperKind;
 
                 var printOptions = worksheet.PrintOptions;
                 printOptions.BlackAndWhite = PrintOptions.BlackAndWhite;

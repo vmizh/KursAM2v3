@@ -19,15 +19,13 @@ namespace KursAM2.ViewModel.Reference
 
         public RegionRefViewModel()
         {
-            WindowName = "Справочник регионов";
+           
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
-            //var errorManager = new StandartErrorManager(GlobalOptions.GetEntities(), Name, true)
-            //{
-            //    FormName = "Справочник складов"
-            //};
             RefreshData(null);
         }
+
+        public override string WindowName => "Справочник регионов";
 
         public void SetGridColumn(GridColumn col)
         {
@@ -69,7 +67,18 @@ namespace KursAM2.ViewModel.Reference
 
         public override void RefreshData(object o)
         {
-            Rows = new List<Region>(GlobalOptions.ReferencesCache.GetRegionsAll().Cast<Region>());
+            Rows.Clear();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                foreach (var r in ctx.SD_23.ToList())
+                {
+                    Rows.Add(new Region(r)
+                    {
+                        myState = RowStatus.NotEdited
+                    });
+                }
+            }
+
             RaisePropertyChanged(nameof(Rows));
         }
 

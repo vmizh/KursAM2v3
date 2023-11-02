@@ -5,6 +5,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.IReferences;
 
 // ReSharper disable UnusedMember.Global
 namespace KursDomain.Documents.CommonReferences;
@@ -13,7 +14,7 @@ namespace KursDomain.Documents.CommonReferences;
 ///     Регионы - справочник
 /// </summary>
 [MetadataType(typeof(DataAnnotationsRegion))]
-public class Region : RSViewModelBase, IEntity<SD_23>
+public class Region : RSViewModelBase, IEntity<SD_23>, IRegion
 {
     private SD_23 myEntity;
 
@@ -26,6 +27,18 @@ public class Region : RSViewModelBase, IEntity<SD_23>
     {
         Entity = entity ?? DefaultValue();
     }
+
+    //public decimal Key
+    //{
+    //    get => DOC_CODE;
+    //    set
+    //    {
+    //        if (DOC_CODE == value) return;
+    //        DOC_CODE = value;
+    //        RaisePropertyChanged();
+    //    }
+
+    //}
 
     public decimal DOC_CODE
     {
@@ -70,6 +83,17 @@ public class Region : RSViewModelBase, IEntity<SD_23>
             RaisePropertyChanged();
         }
     }
+
+    //public decimal? ParentKey
+    //{
+    //    get => REG_PARENT_DC;
+    //    set
+    //    {
+    //        if (REG_PARENT_DC == value) return;
+    //        REG_PARENT_DC = value;
+    //        RaisePropertyChanged();
+    //    }
+    //}
 
     public decimal? REG_PARENT_DC
     {

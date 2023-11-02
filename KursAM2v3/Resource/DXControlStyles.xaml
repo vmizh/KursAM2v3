@@ -4,8 +4,9 @@
                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
                     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
-                    xmlns:dxlcs="clr-namespace:DevExpress.Xpf.LayoutControl.Serialization;assembly=DevExpress.Xpf.LayoutControl.v22.2"
-                    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors">
+                    xmlns:dxlcs="clr-namespace:DevExpress.Xpf.LayoutControl.Serialization;assembly=DevExpress.Xpf.LayoutControl.v23.1"
+                    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                    xmlns:dxci="http://schemas.devexpress.com/winfx/2008/xaml/core/internal">
     <Style x:Key="GridControl.Base" TargetType="dxg:GridControl">
         <Setter Property="ShowBorder" Value="False" />
         <Setter Property="EnableSmartColumnsGeneration" Value="True" />
@@ -18,7 +19,7 @@
         <Setter Property="dx:DXSerializer.StoreLayoutMode" Value="All" />
         <Setter Property="dxg:DataControlSerializationOptions.AddNewColumns" Value="True" />
         <Setter Property="dxg:DataControlSerializationOptions.RemoveOldColumns" Value="True" />
-        <Setter Property="UseFieldNameForSerialization" Value="True"/>
+        <Setter Property="UseFieldNameForSerialization" Value="True" />
         <Setter Property="SelectionMode" Value="None" />
     </Style>
     <Style x:Key="TreelistControl.Base" TargetType="dxg:TreeListControl">
@@ -33,7 +34,7 @@
         <Setter Property="dx:DXSerializer.StoreLayoutMode" Value="All" />
         <Setter Property="dxg:DataControlSerializationOptions.AddNewColumns" Value="True" />
         <Setter Property="dxg:DataControlSerializationOptions.RemoveOldColumns" Value="True" />
-        <Setter Property="UseFieldNameForSerialization" Value="True"/>
+        <Setter Property="UseFieldNameForSerialization" Value="True" />
         <Setter Property="SelectionMode" Value="None" />
     </Style>
 
@@ -70,7 +71,7 @@
         <Setter Property="ShowTotalSummary" Value="True" />
         <Setter Property="ShowAutoFilterRow" Value="True" />
         <Setter Property="EnableImmediatePosting" Value="True" />
-        <Setter Property="ShowCriteriaInAutoFilterRow" Value="True"/>
+        <Setter Property="ShowCriteriaInAutoFilterRow" Value="True" />
         <Setter Property="ShowGroupPanel" Value="True" />
         <Setter Property="ContextMenu">
             <Setter.Value>
@@ -209,7 +210,7 @@
         <Setter Property="ShowAutoFilterRow" Value="True" />
         <Setter Property="EnableImmediatePosting" Value="True" />
         <Setter Property="EditFormPostMode" Value="Immediate" />
-        <Setter Property="ShowCriteriaInAutoFilterRow" Value="True"/>
+        <Setter Property="ShowCriteriaInAutoFilterRow" Value="True" />
         <Setter Property="CellTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -231,11 +232,11 @@
         <Setter Property="ShowTotalSummary" Value="False" />
         <Setter Property="ShowAutoFilterRow" Value="False" />
         <Setter Property="EnableImmediatePosting" Value="False" />
-        <Setter Property="ShowCriteriaInAutoFilterRow" Value="False"/>
-        <Setter Property="KeyFieldName" Value="Id"/>
-        <Setter Property="ParentFieldName" Value="ParentId"/>
-        <Setter Property="AllowSorting" Value="False"/>
-        <Setter Property="NavigationStyle" Value="Row"/>
+        <Setter Property="ShowCriteriaInAutoFilterRow" Value="False" />
+        <Setter Property="KeyFieldName" Value="Id" />
+        <Setter Property="ParentFieldName" Value="ParentId" />
+        <Setter Property="AllowSorting" Value="False" />
+        <Setter Property="NavigationStyle" Value="Row" />
         <Setter Property="ContextMenu">
             <Setter.Value>
                 <ContextMenu>
@@ -257,7 +258,7 @@
         <Setter Property="ShowAutoFilterRow" Value="True" />
         <Setter Property="EnableImmediatePosting" Value="True" />
         <Setter Property="EditFormPostMode" Value="Immediate" />
-        <Setter Property="ShowCriteriaInAutoFilterRow" Value="True"/>
+        <Setter Property="ShowCriteriaInAutoFilterRow" Value="True" />
         <Setter Property="CellTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -336,4 +337,124 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <DataTemplate x:Key="ForegroundRedTemplate">
+        <ContentControl>
+            <dxg:FormatCondition 
+                FieldName="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).FieldName, RelativeSource={RelativeSource Self}}"
+                ValueRule="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ValueRule, RelativeSource={RelativeSource Self}, Converter={StaticResource FormatRuleConverter}}"
+                Value1="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).Value, RelativeSource={RelativeSource Self}}"
+                ApplyToRow="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ApplyToRow, RelativeSource={RelativeSource Self}}">
+                <dxg:FormatCondition.Format>
+                    <dx:Format Foreground="Red"/>
+                </dxg:FormatCondition.Format>
+            </dxg:FormatCondition>
+
+        </ContentControl>
+    </DataTemplate>
+    <DataTemplate x:Key="ForegroundLightRedTemplate">
+        <ContentControl>
+            <dxg:FormatCondition 
+                FieldName="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).FieldName, RelativeSource={RelativeSource Self}}"
+                ValueRule="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ValueRule, RelativeSource={RelativeSource Self}, Converter={StaticResource FormatRuleConverter}}"
+                Value1="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).Value, RelativeSource={RelativeSource Self}}"
+                ApplyToRow="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ApplyToRow, RelativeSource={RelativeSource Self}}">
+                <dxg:FormatCondition.Format>
+                    <dx:Format Foreground="PaleVioletRed"/>
+                </dxg:FormatCondition.Format>
+            </dxg:FormatCondition>
+
+        </ContentControl>
+    </DataTemplate>
+    <DataTemplate x:Key="ForegroundDarkRedTemplate">
+        <ContentControl>
+            <dxg:FormatCondition 
+                FieldName="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).FieldName, RelativeSource={RelativeSource Self}}"
+                ValueRule="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ValueRule, RelativeSource={RelativeSource Self}, Converter={StaticResource FormatRuleConverter}}"
+                Value1="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).Value, RelativeSource={RelativeSource Self}}"
+                ApplyToRow="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ApplyToRow, RelativeSource={RelativeSource Self}}">
+                <dxg:FormatCondition.Format>
+                    <dx:Format Foreground="DarkRed"/>
+                </dxg:FormatCondition.Format>
+            </dxg:FormatCondition>
+
+        </ContentControl>
+    </DataTemplate>
+    <DataTemplate x:Key="ForegroundGreenTemplate">
+        <ContentControl>
+            <dxg:FormatCondition 
+                FieldName="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).FieldName, RelativeSource={RelativeSource Self}}"
+                ValueRule="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ValueRule, RelativeSource={RelativeSource Self}, Converter={StaticResource FormatRuleConverter}}"
+                Value1="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).Value, RelativeSource={RelativeSource Self}}"
+                ApplyToRow="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ApplyToRow, RelativeSource={RelativeSource Self}}">
+                <dxg:FormatCondition.Format>
+                    <dx:Format Foreground="Green"/>
+                </dxg:FormatCondition.Format>
+            </dxg:FormatCondition>
+        </ContentControl>
+    </DataTemplate>
+    <DataTemplate x:Key="ForegroundLightGreenTemplate">
+        <ContentControl>
+            <dxg:FormatCondition 
+                FieldName="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).FieldName, RelativeSource={RelativeSource Self}}"
+                ValueRule="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ValueRule, RelativeSource={RelativeSource Self}, Converter={StaticResource FormatRuleConverter}}"
+                Value1="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).Value, RelativeSource={RelativeSource Self}}"
+                ApplyToRow="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ApplyToRow, RelativeSource={RelativeSource Self}}">
+                <dxg:FormatCondition.Format>
+                    <dx:Format Foreground="LightSeaGreen"/>
+                </dxg:FormatCondition.Format>
+            </dxg:FormatCondition>
+        </ContentControl>
+    </DataTemplate>
+    <DataTemplate x:Key="ForegroundDarkGreenTemplate">
+        <ContentControl>
+            <dxg:FormatCondition 
+                FieldName="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).FieldName, RelativeSource={RelativeSource Self}}"
+                ValueRule="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ValueRule, RelativeSource={RelativeSource Self}, Converter={StaticResource FormatRuleConverter}}"
+                Value1="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).Value, RelativeSource={RelativeSource Self}}"
+                ApplyToRow="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ApplyToRow, RelativeSource={RelativeSource Self}}">
+                <dxg:FormatCondition.Format>
+                    <dx:Format Foreground="DarkGreen"/>
+                </dxg:FormatCondition.Format>
+            </dxg:FormatCondition>
+        </ContentControl>
+    </DataTemplate>
+    <DataTemplate x:Key="ForegroundBlueTemplate">
+        <ContentControl>
+            <dxg:FormatCondition 
+                FieldName="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).FieldName, RelativeSource={RelativeSource Self}}"
+                ValueRule="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ValueRule, RelativeSource={RelativeSource Self}, Converter={StaticResource FormatRuleConverter}}"
+                Value1="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).Value, RelativeSource={RelativeSource Self}}"
+                ApplyToRow="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ApplyToRow, RelativeSource={RelativeSource Self}}">
+                <dxg:FormatCondition.Format>
+                    <dx:Format Foreground="Blue"/>
+                </dxg:FormatCondition.Format>
+            </dxg:FormatCondition>
+        </ContentControl>
+    </DataTemplate>
+    <DataTemplate x:Key="ForegroundLightBlueTemplate">
+        <ContentControl>
+            <dxg:FormatCondition 
+                FieldName="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).FieldName, RelativeSource={RelativeSource Self}}"
+                ValueRule="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ValueRule, RelativeSource={RelativeSource Self}, Converter={StaticResource FormatRuleConverter}}"
+                Value1="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).Value, RelativeSource={RelativeSource Self}}"
+                ApplyToRow="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ApplyToRow, RelativeSource={RelativeSource Self}}">
+                <dxg:FormatCondition.Format>
+                    <dx:Format Foreground="LightBlue"/>
+                </dxg:FormatCondition.Format>
+            </dxg:FormatCondition>
+        </ContentControl>
+    </DataTemplate>
+    <DataTemplate x:Key="ForegroundDarkBlueTemplate">
+        <ContentControl>
+            <dxg:FormatCondition 
+                FieldName="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).FieldName, RelativeSource={RelativeSource Self}}"
+                ValueRule="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ValueRule, RelativeSource={RelativeSource Self}, Converter={StaticResource FormatRuleConverter}}"
+                Value1="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).Value, RelativeSource={RelativeSource Self}}"
+                ApplyToRow="{Binding Path=(dxci:DependencyObjectExtensions.DataContext).ApplyToRow, RelativeSource={RelativeSource Self}}">
+                <dxg:FormatCondition.Format>
+                    <dx:Format Foreground="DarkBlue"/>
+                </dxg:FormatCondition.Format>
+            </dxg:FormatCondition>
+        </ContentControl>
+    </DataTemplate>
 </ResourceDictionary>

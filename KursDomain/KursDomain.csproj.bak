@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>10</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,20 +33,29 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <LangVersion>10</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="DevExpress.Data.Desktop.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Data.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Mvvm.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Controls.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Core.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Grid.v21.2, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Grid.v21.2.Core, Version=21.2.5.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="ControlzEx, Version=4.0.0.0, Culture=neutral, PublicKeyToken=69f1c32f803d307e, processorArchitecture=MSIL">
+      <HintPath>..\packages\ControlzEx.4.4.0\lib\net462\ControlzEx.dll</HintPath>
+    </Reference>
+    <Reference Include="DevExpress.Data.Desktop.v22.2, Version=22.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Drawing.v22.2, Version=22.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Printing.v22.2.Core, Version=22.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.v22.2, Version=22.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Mvvm.v22.2, Version=22.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Controls.v22.2, Version=22.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Core.v22.2, Version=22.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v22.2, Version=22.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v22.2.Core, Version=22.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.19\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -58,7 +68,10 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -132,6 +145,8 @@
     <Compile Include="Documents\Dogovora\Old\SD_9ViewModel.cs" />
     <Compile Include="Documents\Dogovora\Old\TD_9ViewModel.cs" />
     <Compile Include="Documents\Employee\EMP_PAYROLL_TYPEViewModel.cs" />
+    <Compile Include="Documents\Refund\RefundFromClientSimple.cs" />
+    <Compile Include="ICommon\ITreeReference.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNaklad.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladInfo.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladInvoice.cs" />
@@ -237,6 +252,9 @@
     <Compile Include="IDocuments\DistributeOverhead\DistributeNakladTypeEnum.cs" />
     <Compile Include="IDocuments\Finance\ISFProviderNomenklCurrencyConvert.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladRow.cs" />
+    <Compile Include="IDocuments\Refund\IRefundFromClient.cs" />
+    <Compile Include="Documents\Refund\RefundFromClientRowViewModel.cs" />
+    <Compile Include="Documents\Refund\RefundFromClientViewModel.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IConsumableWarehouseInvoice.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrder.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrderRow.cs" />
@@ -287,6 +305,7 @@
     <Compile Include="References\CashBox.cs" />
     <Compile Include="References\CentrResponsibility.cs" />
     <Compile Include="References\AccessRight.cs" />
+    <Compile Include="References\Class1.cs" />
     <Compile Include="References\ClientCategory.cs" />
     <Compile Include="References\ContractType.cs" />
     <Compile Include="References\Country.cs" />
@@ -362,6 +381,10 @@
     <Compile Include="ViewModel\DataAnnotationForFluentApiBase.cs" />
     <Compile Include="WindowsManager\ErrorMessageBase.cs" />
     <Compile Include="WindowsManager\IWindowManager.cs" />
+    <Compile Include="WindowsManager\KursDialog.xaml.cs">
+      <DependentUpon>KursDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsManager\KursDialogViewModel.cs" />
     <Compile Include="WindowsManager\StandartErrorManager.cs" />
     <Compile Include="WindowsManager\ThemedWindowLayoutManager.cs" />
     <Compile Include="WindowsManager\WindowLayoutManager.cs" />
@@ -400,6 +423,10 @@
     <Page Include="ViewModel\Base\SplashScreenView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WindowsManager\KursDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

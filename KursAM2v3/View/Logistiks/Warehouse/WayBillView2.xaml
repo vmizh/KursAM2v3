@@ -12,7 +12,7 @@
     xmlns:iCommon="clr-namespace:KursDomain.ICommon;assembly=KursDomain"
     xmlns:helper="clr-namespace:KursAM2.View.Helper"
     Title="{Binding WindowName}"
-    Height="800" Width="1000">
+    Height="800" Width="1000" Icon="{dx:DXImage DevAV/View/Sales_32x32.png}">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
                    Foreground="{Binding DatabaseColor}"
