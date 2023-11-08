@@ -36,7 +36,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             DocDate = doc.Date;
             Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.PostDC) as Kontragent;
             Summa = doc.Summa ?? 0;
-            SummaFact = invList.Sum(g => g.ShippedSumma);
+            SummaFact =  (invList.Where(_ => _.IsUsluga ?? false).Sum(_ => _.Summa) ?? 0) + invList.Sum(g => g.ShippedSumma);
             Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CurrencyDC) as Currency;
             PaySumma = doc.PaySumma;
             IsPay = Summa <= PaySumma;
@@ -130,5 +130,6 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public bool IsIncludeInPrice { get; set; }
         public decimal? SFT_SUMMA_K_OPLATE_KONTR_CRS { get; set; }
         public SDRSchet SDRSchet { get; set; }
+        public decimal Shipped { get; set; }
     }
 }

@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -14,6 +15,8 @@ using Data;
 using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
+using DevExpress.Mvvm.Xpf;
+using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
@@ -40,6 +43,7 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
 using Reports.Base;
+using ConditionRule = Helper.ConditionRule;
 using NomenklProductType = KursDomain.References.NomenklProductType;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -380,6 +384,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override string WindowName =>
             Document?.DocCode > 0 ? Document.ToString() : "Счет-фактура поставщика (новая)";
 
+        public ObservableCollection<FormattingRule> Rules { get; } = new ObservableCollection<FormattingRule>
+        {
+            new FormattingRule(nameof(InvoiceProviderRow.Shipped), ConditionRule.Equal, 0m, true,
+                FormattingType.Foreground)
+        };
+
         public List<Tuple<decimal,int>> DeletedStoreLink = new List<Tuple<decimal,int>>();
 
         public List<InvoiceProviderRowCurrencyConvertViewModel> DeletedCrsConvertItems { set; get; } =
@@ -496,6 +506,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     frm.gridRows.TotalSummary.Remove(g);
                 }
+                if (frm.tableViewRows.FormatConditions.Count != 0) return;
+                var cond = Rules.First().GetFormatCondition();
+                cond.Format = new Format()
+                {
+                    Foreground = Brushes.Red
+                };
+                frm.tableViewRows.FormatConditions.Add(cond);
             }
         }
 
@@ -1423,7 +1440,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         State = RowStatus.NewRow,
                         Note = " ",
                         IsIncludeInPrice = Document.IsNDSInPrice,
-                        Parent = Document
+                        Parent = Document,
+                        Shipped = 1
+                        
                     };
                     if (Document.IsNDSInPrice)
                         newRow.SFT_SUMMA_K_OPLATE = 0;
@@ -2064,6 +2083,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var frm = form as Window;
             frm?.Close();
         }
+
+        public ICommand RestColumnDataCommand
+        {
+            get { return new Command(RestColumnData, _ => true); }
+        }
+
+
+        private void RestColumnData(object obj)
+        {
+            if (obj is not UnboundColumnRowArgs args) return;
+            if (!args.IsGetData) return;
+            var item = (InvoiceProviderRow)args.Item;
+            args.Value = item.IsUsluga ? item.Quantity : item.Quantity - (item.Entity.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0);
+        }
+
 
         #endregion
 

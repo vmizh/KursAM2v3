@@ -46,6 +46,7 @@ public interface IInvoiceClientRow
     public decimal? SFT_NACENKA_DILERA { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Отгружено", Order = 13)]
+    [ReadOnly(true)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal Shipped { set; get; }
 

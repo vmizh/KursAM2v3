@@ -174,6 +174,18 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         get => myFooterText;
     }
 
+    [Display(AutoGenerateField = false)]
+    public ICommand UnboundColumnDataCommand
+    {
+        get { return new Command(UnboundColumnData, _ => true); }
+    }
+
+    protected virtual void UnboundColumnData(object obj)
+    {
+        
+    }
+
+
     [Display(AutoGenerateField = false)] public bool IsCanSave { get; set; }
 
     [Display(AutoGenerateField = false)]

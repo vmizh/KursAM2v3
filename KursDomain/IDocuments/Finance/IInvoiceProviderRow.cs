@@ -70,4 +70,8 @@ public interface IInvoiceProviderRow : IRowDC, IRowId
 
     [Display(AutoGenerateField = true, Name = "Счет дох/расх", Order = 14)]
     SDRSchet SDRSchet { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Получено", Order = 10)]
+    [ReadOnly(true)]
+    decimal Shipped { set; get; }
 }

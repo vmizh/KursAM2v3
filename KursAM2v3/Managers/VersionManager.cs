@@ -30,6 +30,8 @@ namespace KursAM2.Managers
 
     public class VersionManager
     {
+
+
         public const string processName = "KursAM2v4";
 
 //        public MessageBoxResult ShowMsgResult;

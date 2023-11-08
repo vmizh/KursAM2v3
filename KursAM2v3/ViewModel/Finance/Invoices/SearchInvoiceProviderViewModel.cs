@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Xpf.Core.ConditionalFormatting;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
@@ -15,6 +18,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
 using KursDomain.Repository;
+using ConditionRule = Helper.ConditionRule;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -62,6 +66,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
         }
 
         public override string WindowName => "Поиск счетов-фактур поставщиков";
+
+        public ObservableCollection<FormattingRule> Rules { get; } = new ObservableCollection<FormattingRule>
+        {
+            new FormattingRule(nameof(IInvoiceProvider.SummaFact), ConditionRule.Equal, 0m, true,
+                FormattingType.Foreground)
+        };
 
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<IInvoiceProvider> Documents { set; get; }
@@ -161,7 +171,19 @@ namespace KursAM2.ViewModel.Finance.Invoices
         protected override void OnWindowLoaded(object obj)
         {
             base.OnWindowLoaded(obj);
-            if (Form is StandartSearchView frm) frm.gridDocumentsTableView.ShowTotalSummary = true;
+            if (Form is StandartSearchView frm)
+            {
+                frm.gridDocumentsTableView.ShowTotalSummary = true;
+                if (frm.gridDocumentsTableView.FormatConditions.Count == 0)
+                {
+                    var cond = Rules.First().GetFormatCondition();
+                    cond.Format = new Format
+                    {
+                        Foreground = Brushes.Red
+                    };
+                    frm.gridDocumentsTableView.FormatConditions.Add(cond);
+                }
+            }
             StartDate = DateHelper.GetFirstDate();
         }
     }

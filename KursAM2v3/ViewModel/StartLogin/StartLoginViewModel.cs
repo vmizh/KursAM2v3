@@ -548,6 +548,7 @@ namespace KursAM2.ViewModel.StartLogin
                 Minimum = 0,
                 ExtendExtendedTextVisibility = Visibility.Visible
             };
+            if (SplashScreenService == null) return;
             SplashScreenService.ShowSplashScreen();
             SplashScreenService.SetSplashScreenState(vm);
         }

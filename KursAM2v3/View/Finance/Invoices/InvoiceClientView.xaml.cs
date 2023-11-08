@@ -39,14 +39,11 @@ namespace KursAM2.View.Finance.Invoices
         {
             e.Column.Name = e.Column.FieldName;
             if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(e.Column.FieldType))
-            {
                 e.Column.EditSettings = new CalcEditSettings
                 {
                     DisplayFormat = "n2",
-                    Name = e.Column.FieldName + "Calc",
-                    
+                    Name = e.Column.FieldName + "Calc"
                 };
-            }
 
             var ctx = DataContext as ClientWindowViewModel;
             var doc = ctx?.Document;
@@ -192,19 +189,13 @@ namespace KursAM2.View.Finance.Invoices
         private void GridLayoutHelper_Trigger(object sender, MyEventArgs e)
         {
             var maxWidith = new GridColumnWidth(800);
-           
+
             if (e.LayoutChangedTypes.Contains(LayoutChangedType.ColumnWidth))
-            {
                 if (sender is GridLayoutHelper m)
-                {
-                    if(m.AssociatedObject is GridControl grid)
-                        foreach(var col in grid.Columns)
-                            if (col.Width.Value > maxWidith.Value )
-                            {
+                    if (m.AssociatedObject is GridControl grid)
+                        foreach (var col in grid.Columns)
+                            if (col.Width.Value > maxWidith.Value)
                                 col.Width = maxWidith;
-                            }
-                }
-            }
         }
 
         private void GridRows_OnCurrentItemChanged(object sender, CurrentItemChangedEventArgs e)
