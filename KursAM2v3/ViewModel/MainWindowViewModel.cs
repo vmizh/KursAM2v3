@@ -1,5 +1,8 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using Core.EntityViewModel;
 using Core.ViewModel.Base;
@@ -40,16 +43,6 @@ namespace KursAM2.ViewModel
             }
         }
 
-        public bool IsCanVersionUpdate
-        {
-            get
-            {
-                var Vers = new VersionManager();
-                var Ver = Vers.GetCanUpdate(1);
-                if (Ver == 0) return false;
-                return true;
-            }
-        }
 
         public string SearchMenuString
         {
@@ -74,20 +67,14 @@ namespace KursAM2.ViewModel
             }
         }
 
-        public ICommand VersionUpdateCommand
+
+        public ICommand VersionUpdate
         {
             get
             {
-                return new Command(VersionUpdate, _ =>
-                {
-                    //TODO поправить перед коммитом
-                    //var Vers = new VersionManager();
-                    //var Ver = Vers.GetCanUpdate(1);
-                    //if (Ver == 0) return false;
-                    return true;
-                });
+                return new Command(VersionUpdateStart, _ => true);
             }
-        }
+  }        
 
         public ObservableCollection<UserMenuFavoriteViewModel> FavoritesMenuItems { set; get; } = new();
 
@@ -103,10 +90,18 @@ namespace KursAM2.ViewModel
 
         public override bool IsCanSearch => !string.IsNullOrWhiteSpace(SearchText);
 
-        private void VersionUpdate(object obj)
-        {
-            var Vers = new VersionManager();
-            var Ver = Vers.CheckVersion(1);
+         private void VersionUpdateStart(object obj)
+         {
+             var vers = new VersionManager(this);
+            if (vers.GetCanUpdate() ==true) vers.KursUpdate();
+            else
+            {
+                var ShowMsgResult = MessageBox.Show(
+                    $"Внимание! Обновления в системе приостановлены.Зарегестрированы работающие пользователи!\n" +
+                    "Повторите попытку позже или обратитесь к администратору.",
+                    "Запрос на обновление программы", MessageBoxButton.OK, MessageBoxImage.Exclamation); 
+                return;
+            }
         }
 
         public override void Search(object obj)
@@ -157,6 +152,20 @@ namespace KursAM2.ViewModel
                                                               && _.DbId == GlobalOptions.DataBaseId)
                              .OrderByDescending(_ => _.LastOpen))
                     LastDocuments.Add(new LastDocumentViewModel(h));
+            }
+        }
+
+
+        private bool _versionUpdateStatus;
+        
+
+        public bool IsVersionUpdateStatus
+        {
+            get => _versionUpdateStatus;
+            set {
+                 if (_versionUpdateStatus == value) return;
+                 _versionUpdateStatus = value;
+                RaisePropertyChanged();
             }
         }
     }

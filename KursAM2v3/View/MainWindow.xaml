@@ -24,7 +24,9 @@
                 <dxb:BarButtonItemLink BarItemName="barButtonItem1" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem2" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem4" />
+                <!--
                 <dxb:BarButtonItemLink BarItemName="barButtonItem5" />
+                -->
                 <dxb:BarButtonItemLink BarItemName="barButtonItem3" />
             </dxb:BarSubItem>
             <dxb:BarButtonItem x:Name="barButtonItem1" Content="Настройки пользователя"
@@ -33,15 +35,16 @@
             <dxb:BarButtonItem x:Name="barButtonItem2" Content="Обновить справочники"
                                ItemClick="BarButtonItem2_OnItemClick"
                                Glyph="{dx:DXImage SvgImages/Business Objects/BO_Audit_ChangeHistory.svg}" />
-            <!--<dxb:BarButtonItem x:Name="barButtonItem5" Content="Сохранить историю"
-                               ItemClick="BarButtonItem5_OnItemClick" />-->
-            <dxb:BarButtonItem x:Name="barButtonItem5" Content="Обновить версию"
+            <dxb:BarButtonItem x:Name="barButtonItem5" Content="Сохранить историю"
+                               ItemClick="BarButtonItem3_OnItemClick" />
+            <!--<dxb:BarButtonItem x:Name="barButtonItem4" Content="Обновить версию"
                                Command="{Binding VersionUpdateCommand}"
-                               Glyph="{dx:DXImage SvgImages/XAF/Action_Refresh.svg}"/>
+                               Glyph="{dx:DXImage SvgImages/XAF/Action_Refresh.svg}"/>-->
+
             <dxb:BarButtonItem x:Name="barButtonItem6" Content="Сбросить разметку"
-                               ItemClick="BarButtonItem3_OnItemClick"
+                               ItemClick="BarButtonItem5_OnItemClick"
                                Glyph="{dx:DXImage SvgImages/Dashboards/FullExtent.svg}" />
-            <dxb:BarButtonItem x:Name="barButtonItem3" Content="Выход" ItemClick="BarButtonItem3_OnItemClick"
+            <dxb:BarButtonItem x:Name="barButtonItem3" Content="Выход" ItemClick="BarButtonItem6_OnItemClick"
                                Glyph="{dx:DXImage SvgImages/HybridDemoIcons/Editors/HybridDemo_Back Button.svg}" />
         </dxb:BarManager.Items>
         <dxb:BarManager.Bars>
@@ -55,7 +58,12 @@
                                    BarItemDisplayMode="ContentAndGlyph"
                                    Command="{Binding OpenLastDocumentDialogCommand }"
                                    Alignment="Far"
-                                   LargeGlyph="{dx:DXImage SvgImages/Business Objects/BO_Audit_ChangeHistory.svg}" />
+                                   LargeGlyph="{dx:DXImage SvgImages/Business Objects/BO_Audit_ChangeHistory.svg}" IsEnabled="True" />
+                <dxb:BarButtonItem x:Name="BarUpdateItem"
+                                   BarItemDisplayMode="ContentAndGlyph"
+                                   Command="{Binding VersionUpdate}"
+                                   Alignment="Far" LargeGlyph="{dx:DXImage SvgImages/XAF/Action_Reload.svg}"
+                IsEnabled="{Binding  IsVersionUpdateStatus, UpdateSourceTrigger=PropertyChanged}" />
             </dxb:Bar>
             <dxb:Bar x:Name="statusBar" Caption="Status Bar" IsStatusBar="True" UseWholeRow="True"
                      ShowDragWidget="False" AllowHide="False" AllowQuickCustomization="False" AllowDrop="False">

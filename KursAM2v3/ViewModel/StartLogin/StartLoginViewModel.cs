@@ -7,6 +7,7 @@ using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -16,6 +17,7 @@ using Core.ViewModel.Base;
 using Core.ViewModel.Base.Dialogs;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Data.Browsing;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core;
@@ -49,6 +51,7 @@ namespace KursAM2.ViewModel.StartLogin
         }
 
         public IniFileManager UserIniFile { set; get; }
+
 
         public ObservableCollection<DataSource> ComboBoxItemSource { set; get; } =
             new ObservableCollection<DataSource>();
@@ -589,20 +592,23 @@ namespace KursAM2.ViewModel.StartLogin
             }
 
             //Version cache
-            var vers = new VersionManager();
-            var ver = vers.CheckVersion(0);
+            var vers = new VersionManager(null);
+            var ver = vers.CheckVersion();
             if (ver != null)
             {
                 GlobalOptions.Version = $"Версия {ver.Major}.{ver.Minor}.{ver.Ver}";
                 GlobalOptions.VersionType = ver.Serverpath.Contains("KURSAPP") ? "(бета версия)" : null;
                 VersionValue = $"Версия {ver.Major}.{ver.Minor}.{ver.Ver} {GlobalOptions.VersionType}";
+                if (ver.UpdateStatus == 2) vers.KursUpdate();
             }
+
 
             LoadDataSources();
             if (!string.IsNullOrWhiteSpace(UserIniFile.ReadINI("Start", "LastDataBase")))
                 SelectedDataSource =
                     ComboBoxItemSource.FirstOrDefault(_ => _.ShowName == UserIniFile.ReadINI("Start", "LastDataBase"));
         }
+
 
         public void SaveСache(ImageSource data)
         {

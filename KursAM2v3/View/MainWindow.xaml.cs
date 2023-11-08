@@ -14,6 +14,7 @@ using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Data.Browsing;
 using DevExpress.Xpf.Bars;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.LayoutControl;
@@ -72,7 +73,7 @@ namespace KursAM2.View
     public partial class MainWindow : ILayout
     {
         private int currentMainGroupId;
-
+        private const int TimeForCheckVersion = 1000 * 25;
 
         private Tile myCurrentTile;
 
@@ -85,10 +86,10 @@ namespace KursAM2.View
             try
             {
                 InitializeComponent();
-#if (!DEBUG)
-                myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, 1000 * 360 * 3, Timeout.Infinite);
+// #if (!DEBUG)
+//                myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, TimeForCheckVersion, Timeout.Infinite);
 
-#endif
+// #endif
                 LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),"MainWindow", this, dockLayout1);
                 Loaded += MainWindow_Loaded;
                 Closing += MainWindow_Closing;
@@ -127,6 +128,8 @@ namespace KursAM2.View
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+        private static Mutex _mutex = new();
+
 
         public void SaveLayout()
         {
@@ -137,9 +140,10 @@ namespace KursAM2.View
         private void CheckUpdateVersion()
         {
             myVersionUpdateTimer.Dispose();
-            var ver = new VersionManager();
-            ver.CheckVersion(2);
-            myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, 1000 * 60, Timeout.Infinite);
+            var ver = new VersionManager((MainWindowViewModel) DataContext);
+            ver.CheckVersion();
+            if (ver.CheckVersion().UpdateStatus == 2) ver.KursUpdate();
+            myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, TimeForCheckVersion, Timeout.Infinite);
         }
 
         private void ProgramClose(object obj)
@@ -173,7 +177,11 @@ namespace KursAM2.View
             LayoutManager.Load();
             DocumentLayoutPanel.Caption = "";
             if (DataContext is MainWindowViewModel dtx)
+            {
                 dtx.Form = this;
+            var vers = new VersionManager(dtx);
+            vers.CheckVersion();
+            }
         }
 
         public void OpenForm(Window win, Window owner, RSWindowViewModelBase datacontext)
@@ -1274,7 +1282,7 @@ namespace KursAM2.View
             OpenWindow(e.Tile.Header as string);
         }
 
-        private void BarButtonItem3_OnItemClick(object sender, ItemClickEventArgs e)
+        private void BarButtonItem6_OnItemClick(object sender, ItemClickEventArgs e)
         {
             Close();
         }
@@ -1345,7 +1353,7 @@ namespace KursAM2.View
             LayoutManager.Save();
         }
 
-        private void BarButtonItem6_OnItemClick(object sender, ItemClickEventArgs e)
+        private void BarButtonItem5_OnItemClick(object sender, ItemClickEventArgs e)
         {
             LayoutManager.ResetLayout();
         }
@@ -1365,9 +1373,9 @@ namespace KursAM2.View
 
         // ReSharper disable once UnusedParameter.Local
         // ReSharper disable once UnusedMember.Local
-        private void BarButtonItem5_OnItemClick(object sender, ItemClickEventArgs e)
+        private void BarButtonItem3_OnItemClick(object sender, ItemClickEventArgs e)
         {
-            // ReSharper disable once UnusedVariable
+            // ReSharper disable once UnusedVariable **
             var e1 = e;
             SaveHistoryStart.SaveHistory();
         }
@@ -1388,12 +1396,12 @@ namespace KursAM2.View
             LayoutManager.Save();
         }
 
-        private void BarButtonItem4_OnItemClick(object sender, ItemClickEventArgs e)
-        {
-            var e01 = e;
-            var Vers = new VersionManager();
-            var Ver = Vers.CheckVersion(1);
-
-        }
+        // private void BarButtonItem4_OnItemClick(object sender, ItemClickEventArgs e)
+        // {
+        //     var e01 = e;
+        //     var Vers = new VersionManager((MainWindowViewModel) DataContext);
+        //     var Ver = Vers.CheckVersion(1);
+        //
+        // }
     }
 }

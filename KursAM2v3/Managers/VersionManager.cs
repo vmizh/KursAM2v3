@@ -6,7 +6,11 @@ using System.Management;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using System.Windows.Markup.Localizer;
 using System.Xml;
+using DevExpress.Xpf.Printing.Native;
+using DevExpress.XtraSpreadsheet.Model;
+using KursAM2.ViewModel;
 
 //using MessageBox = System.Windows.MessageBox;
 
@@ -22,15 +26,25 @@ namespace KursAM2.Managers
         public string Smajor { set; get; }
         public string Sminor { set; get; }
         public string Sver { set; get; }
+
         public string CopyType { set; get; }
-        public string CrVersion { set; get; }
+
+        // public string CrVersion { set; get; }
         public string SCopyType { set; get; }
-        public string SCrVersion { set; get; }
+        public int UpdateStatus { set; get; } 
+        public string fullVersion { set; get;}
+        public string sfullVersion { set; get; }
+
     }
 
     public class VersionManager
     {
         public const string processName = "KursAM2v4";
+        private MainWindowViewModel _windowsViewModel;
+        public VersionManager(MainWindowViewModel model)
+        {
+            _windowsViewModel = model;
+        }
 
 //        public MessageBoxResult ShowMsgResult;
         private Version Version { get; } = new();
@@ -44,13 +58,10 @@ namespace KursAM2.Managers
             }).Start();
         }
 
-        public int GetCanUpdate(int callType)
+        public bool GetCanUpdate()
 
-            // 0 - нельзя обновляться
-            // 1 - можно 
-
-            // 0 - вызов местный
-            // 1 - вызов из меню система
+            // false - нельзя обновляться
+            // true - можно 
         {
             string GetProcessOwner(int processId)
             {
@@ -77,27 +88,44 @@ namespace KursAM2.Managers
                 {
                     var processIId = process.Id;
                     var ownerName = GetProcessOwner(processIId);
-                    if (ownerName != currentUserName) return 0;
+                    if (ownerName != currentUserName) return false;
                 }
                 catch (Exception ex)
                 {
                 }
-
-            if (callType == 1)
-                // проверка на наличие версии для обновлеия
-            {
-                var Vers = new VersionManager();
-                var Ver = Vers.CheckVersion(3);
-
-                if (Ver.Sver == Ver.Ver) return 0;
-            }
-
-            return 1;
+            return true;
         }
 
+        
 
-        public void KursUpdate()
-        {
+         public void KursUpdate()
+            {
+               VersionManager vers = new (_windowsViewModel);
+             var ver = vers.GetCanUpdate();
+             if (_windowsViewModel != null) _windowsViewModel.IsVersionUpdateStatus = ver;
+             if (ver == false ) return;
+             
+             var verCheck = vers.CheckVersion();
+
+             switch (verCheck.UpdateStatus)
+             {
+                 case 0:
+                     return;
+                 case 1:
+                     var ShowMsgResult = MessageBox.Show(
+                         $"Версия программы {verCheck.fullVersion} отличается от новой версии {verCheck.sfullVersion}.\nОбновить программу?",
+                         "Запрос на обновление программы", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                     if (ShowMsgResult == MessageBoxResult.No) return;
+                     break;
+                case 2:
+                     var showMsgResult = MessageBox.Show(
+                     $"Для вашей версии {verCheck.fullVersion} выпущено критическое обновление версии {verCheck.sfullVersion}.\n" +
+                     "Для дальнейшей работы необходимо обновить программу.\n Выполнить обновление?",
+                     "Запрос на обновление программы", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                 
+                 if (showMsgResult == MessageBoxResult.No) return;
+                    break;
+            }
             var procs = Process.GetProcessesByName(processName);
             if (procs.Length > 1)
             {
@@ -124,18 +152,16 @@ namespace KursAM2.Managers
 #endif
         }
 
-        public Version CheckVersion(int typeOfcall)
-            // 0 - вызов из StartLogin
-            // 1 - вызов из меню Система
-            // 2 - вызов по таймеру
-            // 3 - полурекурсия
+        public Version CheckVersion()
+            // 0 - нет обновлений
+            // 1 - простое
+            // 2 - критическое 
         {
+            Version.UpdateStatus = 0;
             var xmlDoc = new XmlDocument();
             try
             {
                 xmlDoc.Load("Version.xml");
-
-
                 if (xmlDoc.DocumentElement != null)
                 {
                     var nodeList = xmlDoc.DocumentElement.ChildNodes;
@@ -156,9 +182,6 @@ namespace KursAM2.Managers
                                 break;
                             case "CopyType":
                                 Version.CopyType = node.InnerText;
-                                break;
-                            case "CrVersion":
-                                Version.CrVersion = node.InnerText;
                                 break;
                         }
                 }
@@ -185,42 +208,46 @@ namespace KursAM2.Managers
                                 case "CopyType":
                                     Version.SCopyType = node.InnerText;
                                     break;
-                                case "CrVersion":
-                                    Version.SCrVersion = node.InnerText;
-                                    break;
                             }
                     }
 
-                    if (typeOfcall == 3) return Version;
-                    var fullVersion = $"{Version.Major}.{Version.Minor}.{Version.Ver}";
-                    var sFullVersion = $"{Version.Smajor}.{Version.Sminor}.{Version.Sver}";
+                    Version.fullVersion = $"{Version.Major}.{Version.Minor}.{Version.Ver}";
+                    Version.sfullVersion = $"{Version.Smajor}.{Version.Sminor}.{Version.Sver}";
 
-                    if (Version.Sver != Version.Ver)
-                        if (int.Parse(Version.SCrVersion) > int.Parse(Version.Ver))
-                            //проверка на критическое обновление
+                    while (true)
+                    {
+                        if (int.Parse(Version.Smajor) < int.Parse(Version.Major)) break;
+                            if (int.Parse(Version.Smajor) > int.Parse(Version.Major))
                         {
-                            if (GetCanUpdate(0) == 1)
-                            {
-                                var ShowMsgResult = MessageBox.Show(
-                                    $"Для вашей версии {fullVersion} выпущено критическое обновление!\n Для дальнейшей работы необходимо обновить программу.\n Выполнить обновление?",
-                                    "Запрос на обновление программы", MessageBoxButton.YesNo, MessageBoxImage.Question);
+                            Version.UpdateStatus = 2;
+                            break;
+                        }
+                        if (int.Parse(Version.Sminor) < int.Parse(Version.Minor)) break;
+                        if (int.Parse(Version.Sminor) > int.Parse(Version.Minor)) //проверка на критическое обновление
+                        {
+                            Version.UpdateStatus = 2;
+                            break;
+                        }
+                        if (int.Parse(Version.Sver) > int.Parse(Version.Ver))
+                        {
+                            Version.UpdateStatus = 1;
+                            break;
+                        }
+                        break;
+                    }
 
-                                if (ShowMsgResult == MessageBoxResult.Yes) KursUpdate();
-                            }
-                        }
-                        else
-                        {
-                            if (typeOfcall == 1)
-                            {
-                                var ShowMsgResult = MessageBox.Show(
-                                    $"Версия программы {fullVersion} отличается от новой версии {sFullVersion}. \nОбновить программу?",
-                                    "Запрос на обновление программы", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                                if (ShowMsgResult == MessageBoxResult.Yes) KursUpdate();
-                            }
-                        }
+                    if (Version.UpdateStatus == 0)
+                    {
+                        if (_windowsViewModel != null) _windowsViewModel.IsVersionUpdateStatus = false;
+                    }
+                    else
+                    {
+                        if (_windowsViewModel != null) _windowsViewModel.IsVersionUpdateStatus = true;
+                    }
+                    return Version;
+
                 }
 
-                return Version;
             }
             catch
                 (Exception ex)
