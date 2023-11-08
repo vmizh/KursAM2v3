@@ -76,10 +76,7 @@ namespace KursAM2.View
         private const int TimeForCheckVersion = 1000 * 25;
 
         private Tile myCurrentTile;
-
-        //private readonly string myLayoutFileName = $"{Environment.CurrentDirectory}\\Layout\\{"MainWindow"}.xml";
-
-        private Timer myVersionUpdateTimer;
+        private  System.Windows.Threading.DispatcherTimer myVersionUpdateTimer;
 
         public MainWindow()
         {
@@ -87,8 +84,12 @@ namespace KursAM2.View
             {
                 InitializeComponent();
 // #if (!DEBUG)
-//                myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, TimeForCheckVersion, Timeout.Infinite);
+               //myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, TimeForCheckVersion, Timeout.Infinite);
 
+               myVersionUpdateTimer = new System.Windows.Threading.DispatcherTimer();
+               myVersionUpdateTimer.Tick += new EventHandler(versionUpdater_Thick);
+               myVersionUpdateTimer.Interval = new TimeSpan(0,0,30);
+               myVersionUpdateTimer.Start();
 // #endif
                 LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),"MainWindow", this, dockLayout1);
                 Loaded += MainWindow_Loaded;
@@ -108,6 +109,13 @@ namespace KursAM2.View
 
                 MessageBox.Show(s.ToString());
             }
+        }
+
+        private void versionUpdater_Thick(object sender, EventArgs e)
+        {
+            var ver = new VersionManager((MainWindowViewModel) DataContext);
+            var res = ver.CheckVersion();
+            if (res != null && res.UpdateStatus == 2) ver.KursUpdate();
         }
 
         public Tile CurrentTile
@@ -136,16 +144,7 @@ namespace KursAM2.View
             LayoutManager.Save();
         }
 
-        // ReSharper disable once UnusedMember.Local
-        private void CheckUpdateVersion()
-        {
-            myVersionUpdateTimer.Dispose();
-            var ver = new VersionManager((MainWindowViewModel) DataContext);
-            ver.CheckVersion();
-            if (ver.CheckVersion().UpdateStatus == 2) ver.KursUpdate();
-            myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, TimeForCheckVersion, Timeout.Infinite);
-        }
-
+        
         private void ProgramClose(object obj)
         {
             Close();
