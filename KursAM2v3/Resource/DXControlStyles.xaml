@@ -337,6 +337,12 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <dxmvvm:ObjectToObjectConverter x:Key="FormatRuleConverter">
+        <dxmvvm:MapItem Source="Less" Target="Less"/>
+        <dxmvvm:MapItem Source="Greater" Target="Greater"/>
+        <dxmvvm:MapItem Source="Equal" Target="Equal"/>
+    </dxmvvm:ObjectToObjectConverter>
+    <dxmvvm:ToTypedCommandConverter x:Key="ToTypedCommandConverter"/>
     <DataTemplate x:Key="ForegroundRedTemplate">
         <ContentControl>
             <dxg:FormatCondition 

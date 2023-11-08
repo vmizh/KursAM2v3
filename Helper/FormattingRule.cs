@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using DevExpress.Mvvm;
+using DevExpress.Xpf.Grid;
 
 namespace Helper
 {
@@ -16,12 +17,13 @@ namespace Helper
     {
         Less,
         Greater,
-        Equal
+        Equal,
+        NotEqual
     }
 
-    public class FormattingRule : BindableBase
+    public sealed class FormattingRule : BindableBase
     {
-        public FormattingRule(string fieldname, ConditionRule valuerule, int value, bool applytorow,
+        public FormattingRule(string fieldname, ConditionRule valuerule, decimal value, bool applytorow,
             FormattingType type)
         {
             FieldName = fieldname;
@@ -31,11 +33,38 @@ namespace Helper
             Type = type;
         }
 
-        public virtual string FieldName { get; }
-        public virtual ConditionRule ValueRule { get; }
-        public virtual int Value { get; }
-        public virtual bool ApplyToRow { get; }
-        public virtual FormattingType Type { get; }
+        public string FieldName { get; }
+        public ConditionRule ValueRule { get; }
+        public decimal Value { get; }
+        public bool ApplyToRow { get; }
+        public FormattingType Type { get; }
+
+        public FormatCondition GetFormatCondition()
+        {
+            var ret = new FormatCondition
+            {
+                Value1 = Value,
+                ApplyToRow = ApplyToRow,
+                TypeName = "FormatCondition",
+                FieldName = FieldName
+            };
+            switch (ValueRule)
+            {
+                case ConditionRule.Less:
+                    ret.ValueRule = DevExpress.Xpf.Core.ConditionalFormatting.ConditionRule.Less;
+                    break;
+                case ConditionRule.Greater:
+                    ret.ValueRule = DevExpress.Xpf.Core.ConditionalFormatting.ConditionRule.Greater;
+                    break;
+                case ConditionRule.Equal:
+                    ret.ValueRule = DevExpress.Xpf.Core.ConditionalFormatting.ConditionRule.Equal;
+                    break;
+                case ConditionRule.NotEqual:
+                    ret.ValueRule = DevExpress.Xpf.Core.ConditionalFormatting.ConditionRule.NotEqual;
+                    break;
+            }
+            return ret;
+        }
     }
 
     public class FormatConditionSelector : DataTemplateSelector

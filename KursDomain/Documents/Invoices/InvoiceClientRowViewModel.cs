@@ -606,7 +606,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         {
             if (myShipped == value) return;
             myShipped = value;
-            myRest = (decimal)(Entity.SFT_KOL - (double)myShipped);
+            myRest = IsUsluga ? 0 : (decimal)(Entity.SFT_KOL - (double)myShipped);
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Rest));
         }
@@ -665,6 +665,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
             Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
         }
 
+        Shipped = IsUsluga ? Quantity : Entity.TD_24.Sum(_ => _.DDT_KOL_RASHOD);
         RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
         RaisePropertyChanged(nameof(Summa));
     }

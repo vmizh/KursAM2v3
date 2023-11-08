@@ -9,6 +9,8 @@
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:userControls="clr-namespace:KursAM2.View.UserControls"
+    xmlns:helper="clr-namespace:Helper;assembly=Helper"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     dx:DXSerializer.Enabled="True"
     dx:WindowRestoreLayoutOptions.AllowRestoreStateForDisplayedWindow="True"
     dx:DXSerializer.StoreLayoutMode="All"
@@ -22,6 +24,11 @@
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
+    <dx:ThemedWindow.Resources>
+        <helper:FormatConditionSelector x:Key="FormatConditionSelector" 
+                                        ForegroundTemplate ="{StaticResource ForegroundRedTemplate}"
+        />
+    </dx:ThemedWindow.Resources>
     <Grid>
         <DockPanel Style="{StaticResource DXServices}">
             <control:WindowMenu Height="60" DockPanel.Dock="Top" />
@@ -42,11 +49,20 @@
                 SelectedItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
                 SelectedItems="{Binding SelectedDocuments, UpdateSourceTrigger=PropertyChanged}"
                 CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
-                AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn">
+                AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn"
+                CustomUnboundColumnDataCommand="{Binding UnboundColumnDataCommand, Converter={StaticResource ToTypedCommandConverter}}"
+                >
+                <dxg:GridControl.Columns>               
+                    <dxg:GridColumn FieldName="ExtColumnDecimal" UnboundDataType="{x:Type sys:Decimal}" Visible="False"/>
+                    <dxg:GridColumn FieldName="ExtColumnBoolean" UnboundDataType="{x:Type sys:Boolean}" Visible="False"/>
+                    <dxg:GridColumn FieldName="ExtColumnString" UnboundDataType="{x:Type sys:String}" Visible="False"/>
+                </dxg:GridControl.Columns>
                 <dxg:GridControl.View>
                     <dxg:TableView
                         Name="gridDocumentsTableView"
-                        Style="{StaticResource TableView.Search}" />
+                        Style="{StaticResource TableView.Search}" 
+                        FormatConditionsSource="{Binding Rules}" 
+                        FormatConditionGeneratorTemplateSelector="{StaticResource FormatConditionSelector}" />
                 </dxg:GridControl.View>
             </dxg:GridControl>
         </DockPanel>

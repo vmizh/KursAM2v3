@@ -39,6 +39,8 @@ namespace KursAM2.Managers
 
     public class VersionManager
     {
+
+
         public const string processName = "KursAM2v4";
         private MainWindowViewModel _windowsViewModel;
         public VersionManager(MainWindowViewModel model)

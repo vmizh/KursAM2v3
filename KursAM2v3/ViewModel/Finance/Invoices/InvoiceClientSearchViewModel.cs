@@ -5,10 +5,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Core.ConditionalFormatting;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
@@ -21,6 +23,7 @@ using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
 using KursDomain.Repository;
+using ConditionRule = Helper.ConditionRule;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -152,6 +155,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override string LayoutName => "InvoiceClientSearchViewModel";
 
+        public ObservableCollection<FormattingRule> Rules { get; } = new ObservableCollection<FormattingRule>
+        {
+            new FormattingRule(nameof(IInvoiceClient.SummaOtgruz), ConditionRule.Equal, 0m, true,
+                FormattingType.Foreground)
+        };
+
+
         public IInvoiceClient CurrentDocument
         {
             get => myCurrentDocument;
@@ -224,6 +234,26 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             var ctx = new ClientWindowViewModel(CurrentDocument.DocCode);
             ctx.PrintSF(null);
+        }
+
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            if (Form is StandartSearchView frm)
+            {
+                frm.gridDocumentsTableView.ShowTotalSummary = true;
+                if (frm.gridDocumentsTableView.FormatConditions.Count == 0)
+                {
+                    var cond = Rules.First().GetFormatCondition();
+                    cond.Format = new Format
+                    {
+                        Foreground = Brushes.Red
+                    };
+                    frm.gridDocumentsTableView.FormatConditions.Add(cond);
+                }
+            }
+
+            StartDate = DateHelper.GetFirstDate();
         }
 
         #region Commands
@@ -362,14 +392,17 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #endregion
 
-        protected override void OnWindowLoaded(object obj)
-        {
-            base.OnWindowLoaded(obj);
-            if (Form is StandartSearchView frm)
-            {
-                frm.gridDocumentsTableView.ShowTotalSummary = true;
-            }
-            StartDate = DateHelper.GetFirstDate();
-        }
+        //protected override void UnboundColumnData(object obj)
+        //{
+        //    if (obj is not UnboundColumnRowArgs args) return;
+        //    if (!args.IsGetData) return; 
+        //    var item = (IInvoiceClient)args.Item;
+        //    switch (args.FieldName)
+        //    {
+        //        case "ExtColumnDecimal": 
+        //            args.Value = item. item;
+        //            break;
+        //    }
+        //}
     }
 }

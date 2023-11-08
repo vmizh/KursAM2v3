@@ -26,6 +26,7 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
     private Unit myPostUnit;
     private SDRSchet mySDRSchet;
     private Unit myUchUnit;
+    private decimal myShipped;
 
     public InvoiceProviderRow()
     {
@@ -848,6 +849,17 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
         }
     }
 
+    public decimal Shipped
+    {
+        get => myShipped;
+        set
+        {
+            if (myShipped == value) return;
+            myShipped = value;
+            RaisePropertyChanged();
+        }
+    }
+
     public Guid DocId
     {
         get => Entity.DocId ?? Guid.Empty;
@@ -892,6 +904,7 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
                 CurrencyConvertRows.Add(newItem);
             }
 
+        Shipped = Entity.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0 + (IsUsluga ? Quantity : 0);
         RaisePropertyAllChanged();
     }
 
