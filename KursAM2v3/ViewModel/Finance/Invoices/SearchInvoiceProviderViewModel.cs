@@ -8,6 +8,7 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
+using DevExpress.XtraGrid;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
@@ -18,6 +19,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
 using KursDomain.Repository;
+using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 using ConditionRule = DevExpress.Xpf.Core.ConditionalFormatting.ConditionRule;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -167,6 +169,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
             base.OnWindowLoaded(obj);
             if (Form is StandartSearchView frm)
             {
+                foreach (var col in frm.gridDocuments.Columns)
+                {
+                    if (col.FieldType != typeof(DateTime) &&
+                        col.FieldType != typeof(DateTime?)) continue;
+                    col.SortMode = ColumnSortMode.Value; 
+                    col.ColumnFilterMode = ColumnFilterMode.Value;
+                    col.SortMode = ColumnSortMode.Value;
+                }
+
                 frm.gridDocumentsTableView.ShowTotalSummary = true;
                 frm.gridDocumentsTableView.FormatConditions.Clear();
                 var notShippedFormatCondition = new FormatCondition()

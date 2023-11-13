@@ -324,9 +324,9 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                                                          && col.FieldType != typeof(DateTime) &&
                                                          col.FieldType != typeof(DateTime?))
                     {
-                        col.SortMode = ColumnSortMode.DisplayText;
-                        col.ColumnFilterMode = ColumnFilterMode.DisplayText;
-                        col.SortMode = ColumnSortMode.DisplayText;
+                        col.SortMode = ColumnSortMode.Value;
+                        col.ColumnFilterMode = ColumnFilterMode.Value;
+                        col.SortMode = ColumnSortMode.Value;
                         if (col.FieldType == typeof(string))
                             col.EditSettings = new TextEditSettings
                             {
@@ -334,11 +334,6 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                             };
                         continue;
                     }
-                    //else
-                    //{
-                    //    col.SortMode = ColumnSortMode.Value;
-                    //    col.ColumnFilterMode = ColumnFilterMode.Value;
-                    //}
                 }
             }
 
@@ -359,7 +354,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                                                      && col.FieldType != typeof(double) &&
                                                      col.FieldType != typeof(double?)
                                                      && col.FieldType != typeof(float) &&
-                                                     col.FieldType != typeof(float?)
+                                                     col.FieldType != typeof(float?)  
                                                      && col.FieldType != typeof(DateTime) &&
                                                      col.FieldType != typeof(DateTime?))
                 {
@@ -367,11 +362,8 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                     col.ColumnFilterMode = ColumnFilterMode.Value;
                     col.SortMode = ColumnSortMode.Value;
                 }
-                //else
-                //{
-                //    col.SortMode = ColumnSortMode.Value;
-                //    col.ColumnFilterMode = ColumnFilterMode.Value;
-                //}
+
+                  
             }
 
         ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
