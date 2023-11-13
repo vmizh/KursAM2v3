@@ -11,6 +11,7 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Core.ConditionalFormatting;
+using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
@@ -23,7 +24,6 @@ using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
 using KursDomain.Repository;
-using ConditionRule = Helper.ConditionRule;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -155,13 +155,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override string LayoutName => "InvoiceClientSearchViewModel";
 
-        public ObservableCollection<FormattingRule> Rules { get; } = new ObservableCollection<FormattingRule>
-        {
-            new FormattingRule(nameof(IInvoiceClient.SummaOtgruz), ConditionRule.Equal, 0m, true,
-                FormattingType.Foreground)
-        };
-
-
         public IInvoiceClient CurrentDocument
         {
             get => myCurrentDocument;
@@ -242,15 +235,41 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (Form is StandartSearchView frm)
             {
                 frm.gridDocumentsTableView.ShowTotalSummary = true;
-                if (frm.gridDocumentsTableView.FormatConditions.Count == 0)
+                frm.gridDocumentsTableView.FormatConditions.Clear();
+                var notShippedFormatCondition = new FormatCondition()
                 {
-                    var cond = Rules.First().GetFormatCondition();
-                    cond.Format = new Format
+                    //Expression = "[SummaFact] < [Summa]",
+                    FieldName = "SummaOtgruz",
+                    ApplyToRow = true,
+                    Format = new Format
                     {
                         Foreground = Brushes.Red
-                    };
-                    frm.gridDocumentsTableView.FormatConditions.Add(cond);
-                }
+                    },
+                    ValueRule = DevExpress.Xpf.Core.ConditionalFormatting.ConditionRule.Equal,
+                    Value1 = 0m
+                };
+                
+                var shippedFormatCondition = new FormatCondition()
+                {
+                    Expression = "[Summa] > [SummaOtgruz] and [SummaOtgruz] != 0m",
+                    FieldName = "SummaOtgruz",
+                    ApplyToRow = true,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Blue
+                    }
+                };
+                frm.gridDocumentsTableView.FormatConditions.Add(shippedFormatCondition);
+                frm.gridDocumentsTableView.FormatConditions.Add(notShippedFormatCondition);
+                //if (frm.gridDocumentsTableView.FormatConditions.Count == 0)
+                //{
+                //    var cond = Rules.First().GetFormatCondition();
+                //    cond.Format = new Format
+                //    {
+                //        Foreground = Brushes.Red
+                //    };
+                //    frm.gridDocumentsTableView.FormatConditions.Add(cond);
+                //}
             }
 
             StartDate = DateHelper.GetFirstDate();

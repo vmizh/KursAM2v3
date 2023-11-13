@@ -43,7 +43,6 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
 using Reports.Base;
-using ConditionRule = Helper.ConditionRule;
 using NomenklProductType = KursDomain.References.NomenklProductType;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -384,12 +383,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override string WindowName =>
             Document?.DocCode > 0 ? Document.ToString() : "Счет-фактура поставщика (новая)";
 
-        public ObservableCollection<FormattingRule> Rules { get; } = new ObservableCollection<FormattingRule>
-        {
-            new FormattingRule(nameof(InvoiceProviderRow.Shipped), ConditionRule.Equal, 0m, true,
-                FormattingType.Foreground)
-        };
-
         public List<Tuple<decimal,int>> DeletedStoreLink = new List<Tuple<decimal,int>>();
 
         public List<InvoiceProviderRowCurrencyConvertViewModel> DeletedCrsConvertItems { set; get; } =
@@ -506,13 +499,31 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     frm.gridRows.TotalSummary.Remove(g);
                 }
-                if (frm.tableViewRows.FormatConditions.Count != 0) return;
-                var cond = Rules.First().GetFormatCondition();
-                cond.Format = new Format()
+                frm.tableViewRows.FormatConditions.Clear();
+                var notShippedFormatCondition = new FormatCondition()
                 {
-                    Foreground = Brushes.Red
+                    FieldName = "Shipped",
+                    ApplyToRow = true,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Red
+                    },
+                    ValueRule = ConditionRule.Equal,
+                    Value1 = 0m
                 };
-                frm.tableViewRows.FormatConditions.Add(cond);
+                
+                var shippedFormatCondition = new FormatCondition()
+                {
+                    Expression = "[Quantity] > [Shipped]",
+                    FieldName = "Shipped",
+                    ApplyToRow = true,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Blue
+                    }
+                };
+                frm.tableViewRows.FormatConditions.Add(shippedFormatCondition);
+                frm.tableViewRows.FormatConditions.Add(notShippedFormatCondition);
             }
         }
 

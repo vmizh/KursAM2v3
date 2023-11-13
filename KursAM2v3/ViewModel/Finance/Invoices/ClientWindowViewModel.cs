@@ -38,7 +38,6 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
 using Reports.Base;
-using ConditionRule = Helper.ConditionRule;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -136,12 +135,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Properties
 
-        public ObservableCollection<FormattingRule> Rules { get; } = new ObservableCollection<FormattingRule>
-        {
-            new FormattingRule(nameof(InvoiceClientRowViewModel.Shipped), ConditionRule.Equal, 0m, true,
-                FormattingType.Foreground)
-        };
-
+       
         public List<ShipmentRowViewModel> ShipmentRowDeleted { set; get; }
 
 
@@ -367,13 +361,32 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         delList.Add(s);
 
                 foreach (var s in delList) frm.gridRows.TotalSummary.Remove(s);
-                if (frm.tableViewRows.FormatConditions.Count != 0) return;
-                var cond = Rules.First().GetFormatCondition();
-                cond.Format = new Format()
+                frm.tableViewRows.FormatConditions.Clear();
+                var notShippedFormatCondition = new FormatCondition()
                 {
-                    Foreground = Brushes.Red
+                    FieldName = "Shipped",
+                    ApplyToRow = true,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Red
+                    },
+                    ValueRule = ConditionRule.Equal,
+                    Value1 = 0m
                 };
-                frm.tableViewRows.FormatConditions.Add(cond);
+                
+                var shippedFormatCondition = new FormatCondition()
+                {
+                    Expression = "[Quantity] > [Shipped]",
+                    FieldName = "Shipped",
+                    ApplyToRow = true,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Blue
+                    }
+                };
+                frm.tableViewRows.FormatConditions.Add(shippedFormatCondition);
+                frm.tableViewRows.FormatConditions.Add(notShippedFormatCondition);
+                
             }
         }
 
