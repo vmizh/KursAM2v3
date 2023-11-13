@@ -5,10 +5,12 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Data.Entity;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -600,9 +602,13 @@ namespace KursAM2.ViewModel.StartLogin
                 GlobalOptions.Version = $"Версия {ver.Major}.{ver.Minor}.{ver.Ver}";
                 GlobalOptions.VersionType = ver.Serverpath.Contains("KURSAPP") ? "(бета версия)" : null;
                 VersionValue = $"Версия {ver.Major}.{ver.Minor}.{ver.Ver} {GlobalOptions.VersionType}";
-                if (ver.UpdateStatus == 2) vers.KursUpdate();
+                if (ver.UpdateStatus == 2)
+                {
+                    var verCheck = vers.GetCanUpdate();
+                    if (verCheck == false) return;
+                    vers.KursUpdate();
+                }
             }
-
 
             LoadDataSources();
             if (!string.IsNullOrWhiteSpace(UserIniFile.ReadINI("Start", "LastDataBase")))

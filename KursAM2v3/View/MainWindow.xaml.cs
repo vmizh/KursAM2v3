@@ -18,6 +18,7 @@ using DevExpress.Data.Browsing;
 using DevExpress.Xpf.Bars;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.LayoutControl;
+using DevExpress.XtraSpreadsheet.Import.OpenXml;
 using Helper;
 using KursAM2.Auxiliary;
 using KursAM2.Managers;
@@ -76,21 +77,20 @@ namespace KursAM2.View
         private const int TimeForCheckVersion = 1000 * 25;
 
         private Tile myCurrentTile;
-        private  System.Windows.Threading.DispatcherTimer myVersionUpdateTimer;
+        public  System.Windows.Threading.DispatcherTimer VersionUpdateTimer;
 
         public MainWindow()
         {
             try
             {
                 InitializeComponent();
-// #if (!DEBUG)
+#if (!DEBUG)
                //myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, TimeForCheckVersion, Timeout.Infinite);
 
-               myVersionUpdateTimer = new System.Windows.Threading.DispatcherTimer();
-               myVersionUpdateTimer.Tick += new EventHandler(versionUpdater_Thick);
-               myVersionUpdateTimer.Interval = new TimeSpan(0,0,30);
-               myVersionUpdateTimer.Start();
-// #endif
+               VersionUpdateTimer = new System.Windows.Threading.DispatcherTimer();
+               VersionUpdateTimer.Tick += new EventHandler(versionUpdater_Thick);
+               VersionUpdateTimer.Interval = new TimeSpan(0,15,0);
+#endif
                 LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),"MainWindow", this, dockLayout1);
                 Loaded += MainWindow_Loaded;
                 Closing += MainWindow_Closing;
@@ -114,6 +114,12 @@ namespace KursAM2.View
         private void versionUpdater_Thick(object sender, EventArgs e)
         {
             var ver = new VersionManager((MainWindowViewModel) DataContext);
+            var checkMultiUser = ver.GetCanUpdate();
+            if (checkMultiUser == false)
+            {
+             ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = checkMultiUser;
+                return;
+            } 
             var res = ver.CheckVersion();
             if (res != null && res.UpdateStatus == 2) ver.KursUpdate();
         }
@@ -180,7 +186,12 @@ namespace KursAM2.View
                 dtx.Form = this;
             var vers = new VersionManager(dtx);
             vers.CheckVersion();
+            var ver = vers.GetCanUpdate();
+            if (ver==false) ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = ver;
             }
+#if (!DEBUG)
+            VersionUpdateTimer.Start();
+#endif
         }
 
         public void OpenForm(Window win, Window owner, RSWindowViewModelBase datacontext)
