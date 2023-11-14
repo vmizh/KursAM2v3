@@ -5,12 +5,10 @@ using System.Collections.Specialized;
 using System.Configuration;
 using System.Data.Entity;
 using System.Data.SqlClient;
-using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Windows;
-using System.Windows.Forms.VisualStyles;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -19,9 +17,9 @@ using Core.ViewModel.Base;
 using Core.ViewModel.Base.Dialogs;
 using Core.WindowsManager;
 using Data;
-using DevExpress.Data.Browsing;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
+using DevExpress.Xpf.Charts;
 using DevExpress.Xpf.Core;
 using Helper;
 using KursAM2.Managers;
@@ -46,8 +44,20 @@ namespace KursAM2.ViewModel.StartLogin
 
         public StartLoginViewModel(Window formWindow)
         {
-            UserIniFile = new IniFileManager(Application.Current.Properties["DataPath"] + "\\User.ini");
-            InitIniFile(UserIniFile);
+            var iniFileName = Application.Current.Properties["DataPath"] + "\\User.ini";
+            try
+            {
+                UserIniFile = new IniFileManager(iniFileName);
+                InitIniFile(UserIniFile);
+            }
+            catch
+            {
+                if (File.Exists(iniFileName)) File.Delete(iniFileName);
+                UserIniFile = new IniFileManager(iniFileName);
+                InitIniFile(UserIniFile);
+            }
+
+
             Form = formWindow;
             CurrentUser = UserIniFile.ReadINI("Start", "Login");
         }
@@ -86,7 +96,7 @@ namespace KursAM2.ViewModel.StartLogin
             {
                 if (myCurrentUser == value) return;
                 myCurrentUser = value;
-                if (string.IsNullOrWhiteSpace(myCurrentUser)) return;
+                if (string.IsNullOrWhiteSpace(myCurrentUser) && !isUserExists(myCurrentUser)) return;
                 LoadDataSources();
                 GetDefaultCache();
                 RaisePropertyChanged();
@@ -484,6 +494,53 @@ namespace KursAM2.ViewModel.StartLogin
             }
         }
 
+        private bool isUserExists(string userName)
+        {
+            string hostName;
+            var section = ConfigurationManager.GetSection("appSettings") as NameValueCollection;
+#if DEBUG
+            hostName = section.Get("KursSystemDebugHost");
+#else
+            hostName = section.Get("KursSystemHost");
+#endif
+            
+            if (string.IsNullOrWhiteSpace(CurrentUser)) return false;
+            ComboBoxItemSource.Clear();
+            var connection = new SqlConnectionStringBuilder
+            {
+                DataSource = hostName,
+                InitialCatalog = "KursSystem",
+                UserID = "KursUser",
+                Password = "KursUser"
+            };
+            try
+            {
+                using (var conn = new SqlConnection(connection.ConnectionString))
+                {
+                    conn.Open();
+                    var command = new SqlCommand
+                    {
+                        CommandText =
+                            $"SELECT d.Name AS Name FROM Users u WHERE  UPPER(u.Name) = '{CurrentUser.ToUpper()}'  ",
+                            
+                        Connection = conn
+                    };
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows) return true;
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var errText = new StringBuilder(ex.Message);
+                while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
+                MessageBox.Show("LoadDataSource error.\n" + errText);
+                return false;
+            }
+        }
+
         private void LoadDataSources()
         {
             string hostName;
@@ -585,7 +642,7 @@ namespace KursAM2.ViewModel.StartLogin
 
                     if (!string.IsNullOrWhiteSpace(Settings.Default.LastDataBase))
                         CurrentBoxItem = Settings.Default.LastDataBase;
-                }                                                                                                
+                }
             }
             catch (Exception ex)
             {
