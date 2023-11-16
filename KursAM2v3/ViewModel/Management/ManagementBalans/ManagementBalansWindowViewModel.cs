@@ -448,7 +448,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 GetZarplata();
                 GetMoneyInPath();
                 GetTovarInPath();
-                CalcStockHolder();
+                //CalcStockHolder();
                 var ch = BalansStructure.Single(_ => _.Tag == BalansSection.Head);
                 //ch.Summa =
                 //    BalansStructure.Where(_ => _.ParentId == Guid.Parse("{9DC33178-1DAA-4A65-88BD-E1AD617B12D9}"))

@@ -769,7 +769,14 @@ namespace KursAM2.ViewModel.Management
                     ParentId = Rashod,
                     Name = @"Выплаты акционерам",
                     CalcType = TypeProfitAndLossCalc.IsLoss
-                }
+                },
+                //new ProfitAndLossesMainRowViewModel
+                //{
+                //    Id = StockHolderNach,
+                //    ParentId = Rashod,
+                //    Name = @"Начисления акционерам",
+                //    CalcType = TypeProfitAndLossCalc.IsLoss
+                //}
             };
             return res;
         }
@@ -831,6 +838,7 @@ namespace KursAM2.ViewModel.Management
 
         #endregion
 
+        
         #endregion
     }
 }
