@@ -149,18 +149,18 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaUSD = 0,
                     Tag = BalansSection.Salary
                 },
-                new ManagementBalanceGroupViewModel
-                {
-                    Id = ManagemenentBalansStructrue.StockHolders,
-                    ParentId = ManagemenentBalansStructrue.Root,
-                    Name = "Акционеры",
-                    Order = 1,
-                    Summa = 0,
-                    SummaEUR = 0,
-                    SummaRUB = 0,
-                    SummaUSD = 0,
-                    Tag = BalansSection.StockHolder
-                },
+                //new ManagementBalanceGroupViewModel
+                //{
+                //    Id = ManagemenentBalansStructrue.StockHolders,
+                //    ParentId = ManagemenentBalansStructrue.Root,
+                //    Name = "Акционеры",
+                //    Order = 1,
+                //    Summa = 0,
+                //    SummaEUR = 0,
+                //    SummaRUB = 0,
+                //    SummaUSD = 0,
+                //    Tag = BalansSection.StockHolder
+                //},
                 new ManagementBalanceGroupViewModel
                 {
                     Id = ManagemenentBalansStructrue.MoneyInPah,

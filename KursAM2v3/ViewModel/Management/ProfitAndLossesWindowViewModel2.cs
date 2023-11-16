@@ -1487,7 +1487,7 @@ namespace KursAM2.ViewModel.Management
                 Manager.CalcTovarTransfer();
                 Manager.CalcUslugi();
                 Manager.CalcFinance();
-                Manager.CalcOutBalans();
+                //Manager.CalcOutBalans();
                 Manager.SpisanieTovar();
                 Manager.CalcCurrencyChange();
                 Manager.CalcZarplata();
