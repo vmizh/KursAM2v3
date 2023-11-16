@@ -84,13 +84,7 @@ namespace KursAM2.View
             try
             {
                 InitializeComponent();
-#if (!DEBUG)
-               //myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, TimeForCheckVersion, Timeout.Infinite);
 
-               VersionUpdateTimer = new System.Windows.Threading.DispatcherTimer();
-               VersionUpdateTimer.Tick += new EventHandler(versionUpdater_Thick);
-               VersionUpdateTimer.Interval = new TimeSpan(0,15,0);
-#endif
                 LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),"MainWindow", this, dockLayout1);
                 Loaded += MainWindow_Loaded;
                 Closing += MainWindow_Closing;
@@ -189,9 +183,6 @@ namespace KursAM2.View
             var ver = vers.GetCanUpdate();
             if (ver==false) ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = ver;
             }
-#if (!DEBUG)
-            VersionUpdateTimer.Start();
-#endif
         }
 
         public void OpenForm(Window win, Window owner, RSWindowViewModelBase datacontext)
@@ -1232,6 +1223,14 @@ namespace KursAM2.View
                 }
                 else
                 {
+#if (!DEBUG)
+               //myVersionUpdateTimer = new Timer(_ => CheckUpdateVersion(), null, TimeForCheckVersion, Timeout.Infinite);
+
+               VersionUpdateTimer = new System.Windows.Threading.DispatcherTimer();
+               VersionUpdateTimer.Tick += new EventHandler(versionUpdater_Thick);
+               VersionUpdateTimer.Interval = new TimeSpan(0,15,0);
+            VersionUpdateTimer.Start();
+#endif
                     foreach (var tileGroup in GlobalOptions.UserInfo.MainTileGroups.OrderBy(_ => _.OrderBy))
                     {
                         var newTileGroup = new Tile { Tag = tileGroup.Id };
