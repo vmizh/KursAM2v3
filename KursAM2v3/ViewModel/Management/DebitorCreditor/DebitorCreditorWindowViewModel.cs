@@ -4,12 +4,14 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Bars;
 using DevExpress.Xpf.Grid;
+using DevExpress.XtraGrid;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.View.Management;
@@ -19,6 +21,7 @@ using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Menu;
 using KursDomain.References;
+using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 // ReSharper disable CollectionNeverQueried.Global
 namespace KursAM2.ViewModel.Management.DebitorCreditor
@@ -280,15 +283,17 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
             {
                 Creditors.Add(cred);
             }
-            //DebitorCreditorAll = new ObservableCollection<DebitorCreditorRow>(Load(Start, End));
-            //Debitors = new ObservableCollection<DebitorCreditorRow>(DebitorCreditorAll.Where(_ => _.KontrEnd > 0));
-            //Creditors = new ObservableCollection<DebitorCreditorRow>(DebitorCreditorAll.Where(_ => _.KontrEnd < 0));
             foreach (var kontr in DebitorCreditorAll.Where(_ => _.KontrEnd == 0))
             {
-                if (kontr.KontrStart < 0)
-                    Creditors.Add(kontr);
-                if (kontr.KontrStart > 0)
-                    Debitors.Add(kontr);
+                switch (kontr.KontrStart)
+                {
+                    case < 0:
+                        Creditors.Add(kontr);
+                        break;
+                    case > 0:
+                        Debitors.Add(kontr);
+                        break;
+                }
             }
 
             try
@@ -460,6 +465,24 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
             foreach (var c in cols)
             {
                 frm.KontrOperGrid.TotalSummary.Remove(c);
+            }
+
+            foreach (var col in frm.DebitorCreditorGrid.Columns)
+            {
+                col.SortMode = ColumnSortMode.Value;
+                col.ColumnFilterMode = ColumnFilterMode.Value;
+            }
+
+            foreach (var col in frm.DebitorGrid.Columns)
+            {
+                col.SortMode = ColumnSortMode.Value;
+                col.ColumnFilterMode = ColumnFilterMode.Value;
+            }
+
+            foreach (var col in frm.CreditorGrid.Columns)
+            {
+               col.SortMode = ColumnSortMode.Value;
+               col.ColumnFilterMode = ColumnFilterMode.Value;
             }
         }
 

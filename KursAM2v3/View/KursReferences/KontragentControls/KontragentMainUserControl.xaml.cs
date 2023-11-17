@@ -1,5 +1,6 @@
 ﻿using System;
 using DevExpress.Xpf.Core;
+using KursDomain;
 
 namespace KursAM2.View.KursReferences.KontragentControls
 {
@@ -14,7 +15,7 @@ namespace KursAM2.View.KursReferences.KontragentControls
         public KontragentMainUserControl()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            balansCheckEdit.IsEnabled = GlobalOptions.UserInfo.IsAdmin;
 
         }
     }

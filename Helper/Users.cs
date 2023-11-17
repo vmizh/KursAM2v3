@@ -49,6 +49,9 @@ namespace Helper
 
         [DataMember]
         public string Notes { set; get; }
+
+        [DataMember]
+        public bool IsAdmin { set; get; }
     }
 
     [DataContract]

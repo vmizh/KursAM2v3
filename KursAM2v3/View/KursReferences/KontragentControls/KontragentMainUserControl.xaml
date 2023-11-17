@@ -48,8 +48,8 @@
                 <dxlc:LayoutGroup Orientation="Vertical" HorizontalAlignment="Right">
                     <dxlc:LayoutGroup Orientation="Horizontal">
                         <dxlc:LayoutItem Margin="1,0,0,5" HorizontalAlignment="Left" Label="Включать в баланс ">
-                            <dxe:CheckEdit
-                                IsChecked="{Binding Kontragent.IsBalans, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
+                            <dxe:CheckEdit Name="balansCheckEdit"
+                               IsChecked="{Binding Kontragent.IsBalans, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
                         </dxlc:LayoutItem>
                         <dxlc:LayoutItem Margin="5,0,0,5" Label="с ">
                             <dxe:DateEdit Width="100"

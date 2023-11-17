@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.Data;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.IO;
@@ -97,7 +98,7 @@ namespace KursAM2.ViewModel.StartLogin
                 if (myCurrentUser == value) return;
                 myCurrentUser = value;
                 if (string.IsNullOrWhiteSpace(myCurrentUser) && !isUserExists(myCurrentUser)) return;
-                LoadDataSources();
+                //LoadDataSources();
                 GetDefaultCache();
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(ComboBoxItemSource));
@@ -444,13 +445,17 @@ namespace KursAM2.ViewModel.StartLogin
                         Notes = usr.USR_NOTES,
                         FullName = usr.USR_FULLNAME,
                         TabelNumber = usr.TABELNUMBER,
-                        Phone = usr.USR_PHONE
+                        Phone = usr.USR_PHONE,
+                        
                     };
                     using (var sysctx = GlobalOptions.KursSystem())
                     {
                         var u = sysctx.Users.FirstOrDefault(_ => _.Name == usr.USR_NICKNAME);
                         if (u != null)
+                        {
                             newUser.KursId = u.Id;
+                            newUser.IsAdmin = u.IsAdmin;
+                        }
                     }
                 }
             }
@@ -503,8 +508,8 @@ namespace KursAM2.ViewModel.StartLogin
 #else
             hostName = section.Get("KursSystemHost");
 #endif
-            
             if (string.IsNullOrWhiteSpace(CurrentUser)) return false;
+            
             ComboBoxItemSource.Clear();
             var connection = new SqlConnectionStringBuilder
             {
@@ -550,7 +555,6 @@ namespace KursAM2.ViewModel.StartLogin
 #else
             hostName = section.Get("KursSystemHost");
 #endif
-
             if (CurrentUser == null) return;
             ComboBoxItemSource.Clear();
             var connection = new SqlConnectionStringBuilder
@@ -559,10 +563,11 @@ namespace KursAM2.ViewModel.StartLogin
                 InitialCatalog = "KursSystem",
                 UserID = "KursUser",
                 Password = "KursUser"
-            };
+            }; 
+            SqlConnection conn = null;
             try
             {
-                using (var conn = new SqlConnection(connection.ConnectionString))
+                using (conn = new SqlConnection(connection.ConnectionString))
                 {
                     conn.Open();
                     var command = new SqlCommand
@@ -591,6 +596,7 @@ namespace KursAM2.ViewModel.StartLogin
                                 Id = reader.GetGuid(6)
                             });
                     }
+                    conn.Close();
                 }
             }
             catch (Exception ex)
@@ -598,6 +604,10 @@ namespace KursAM2.ViewModel.StartLogin
                 var errText = new StringBuilder(ex.Message);
                 while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
                 MessageBox.Show("LoadDataSource error.\n" + errText);
+                if (conn != null && conn.State == ConnectionState.Open)
+                {
+                    conn.Close();
+                }
             }
         }
 

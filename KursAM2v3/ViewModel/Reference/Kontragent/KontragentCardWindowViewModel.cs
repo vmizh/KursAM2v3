@@ -70,6 +70,8 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 NewData(groupId);
         }
 
+        public bool IsCanSetIncludeInBalans = GlobalOptions.UserInfo.IsAdmin;
+
         public ObservableCollection<KontragentClientCategory> Categories { set; get; }
             = new ObservableCollection<KontragentClientCategory>();
 
