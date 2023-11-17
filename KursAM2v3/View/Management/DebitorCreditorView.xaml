@@ -97,7 +97,7 @@
                                 <dxg:TableView Style="{StaticResource TableView.Standart}"
                                                x:Name="DebitorTableView"
                                                ShowGroupPanel="False"
-                                               UseIndicatorForSelection="True">
+                                               UseIndicatorForSelection="True" ShowCriteriaInAutoFilterRow="True">
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Открыть лицевой счет"
@@ -143,7 +143,7 @@
                             <dxg:GridControl.View>
                                 <dxg:TableView Style="{StaticResource TableView.Standart}"
                                                x:Name="CreditorTableView"
-                                               UseIndicatorForSelection="True">
+                                               UseIndicatorForSelection="True" ShowCriteriaInAutoFilterRow="True">
                                     <dxg:TableView.ContextMenu>
                                         <ContextMenu>
                                             <MenuItem Header="Открыть лицевой счет"
@@ -242,7 +242,7 @@
                         <dxg:TableView Style="{StaticResource TableView.Standart}"
                                        x:Name="KontrOperTableView"
                                        UseIndicatorForSelection="True"
-                                       EditorButtonShowMode="ShowForFocusedRow">
+                                       EditorButtonShowMode="ShowForFocusedRow" ShowCriteriaInAutoFilterRow="True">
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Открыть документ"

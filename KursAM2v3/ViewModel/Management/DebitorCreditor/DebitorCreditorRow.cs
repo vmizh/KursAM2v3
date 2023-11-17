@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Core.Helper;
 using Core.ViewModel.Base;
@@ -12,6 +13,12 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
     public class DebitorCreditorRow : RSViewModelBase
     {
         private bool myIsSelected;
+
+        public DebitorCreditorRow()
+        {
+            Id = Guid.NewGuid();
+            Name = Id.ToString();
+        }
 
         [DataMember] public KontragentViewModel KontrInfo { set; get; }
 

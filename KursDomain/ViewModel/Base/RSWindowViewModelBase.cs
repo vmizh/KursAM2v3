@@ -279,8 +279,8 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                 foreach (var col in grid.Columns)
                 {
                     col.AutoFilterCondition = AutoFilterCondition.Contains;
-                    col.ColumnFilterMode = ColumnFilterMode.DisplayText;
-                    col.SortMode = ColumnSortMode.DisplayText;
+                    col.ColumnFilterMode = ColumnFilterMode.Value;
+                    col.SortMode = ColumnSortMode.Value;
                     col.Name = col.FieldName;
                     if (col.FieldType == typeof(string))
                         col.EditSettings = new TextEditSettings
@@ -315,25 +315,6 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                         });
                         continue;
                     }
-
-                    if (col.FieldType != typeof(decimal) && col.FieldType != typeof(decimal?)
-                                                         && col.FieldType != typeof(double) &&
-                                                         col.FieldType != typeof(double?)
-                                                         && col.FieldType != typeof(float) &&
-                                                         col.FieldType != typeof(float?)
-                                                         && col.FieldType != typeof(DateTime) &&
-                                                         col.FieldType != typeof(DateTime?))
-                    {
-                        col.SortMode = ColumnSortMode.Value;
-                        col.ColumnFilterMode = ColumnFilterMode.Value;
-                        col.SortMode = ColumnSortMode.Value;
-                        if (col.FieldType == typeof(string))
-                            col.EditSettings = new TextEditSettings
-                            {
-                                SelectAllOnMouseUp = true
-                            };
-                        continue;
-                    }
                 }
             }
 
@@ -342,28 +323,14 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
             foreach (var col in t.Columns)
             {
                 col.AutoFilterCondition = AutoFilterCondition.Contains;
-                col.ColumnFilterMode = ColumnFilterMode.DisplayText;
-                col.SortMode = ColumnSortMode.DisplayText;
+                col.ColumnFilterMode = ColumnFilterMode.Value;
+                col.SortMode = ColumnSortMode.Value;
                 col.Name = col.FieldName;
                 if (col.FieldType == typeof(string))
                     col.EditSettings = new TextEditSettings
                     {
                         SelectAllOnMouseUp = true
                     };
-                if (col.FieldType != typeof(decimal) && col.FieldType != typeof(decimal?)
-                                                     && col.FieldType != typeof(double) &&
-                                                     col.FieldType != typeof(double?)
-                                                     && col.FieldType != typeof(float) &&
-                                                     col.FieldType != typeof(float?)  
-                                                     && col.FieldType != typeof(DateTime) &&
-                                                     col.FieldType != typeof(DateTime?))
-                {
-                    col.SortMode = ColumnSortMode.Value;
-                    col.ColumnFilterMode = ColumnFilterMode.Value;
-                    col.SortMode = ColumnSortMode.Value;
-                }
-
-                  
             }
 
         ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
