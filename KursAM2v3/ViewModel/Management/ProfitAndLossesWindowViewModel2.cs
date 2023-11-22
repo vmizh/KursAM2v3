@@ -320,6 +320,7 @@ namespace KursAM2.ViewModel.Management
                 {
                     var b = frm.treeListMain.Bands.FirstOrDefault(
                         _ => _.Columns.Any(c => c.FieldName == "RecalcResult"));
+                    // ReSharper disable once PossibleNullReferenceException
                     b.Header = $"Пересчет в {RecalcCurrency?.Name}";
                 }
 
@@ -1487,7 +1488,7 @@ namespace KursAM2.ViewModel.Management
                 Manager.CalcTovarTransfer();
                 Manager.CalcUslugi();
                 Manager.CalcFinance();
-                //Manager.CalcOutBalans();
+                Manager.CalcOutBalans();
                 Manager.SpisanieTovar();
                 Manager.CalcCurrencyChange();
                 Manager.CalcZarplata();

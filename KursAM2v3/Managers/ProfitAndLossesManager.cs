@@ -22,6 +22,7 @@ using KursDomain.References;
 namespace KursAM2.Managers
 {
     [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
+    [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
     public class ProfitAndLossesManager : RSWindowViewModelBase
     {
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
@@ -504,6 +505,7 @@ namespace KursAM2.Managers
                     var e = new
                     {
                         GroupId = newPrihodId,
+                        // ReSharper disable once PossibleNullReferenceException
                         nom.Name,
                         Note = "Ном.№ - " + nom.NomenklNumber,
                         nom.DocCode,
@@ -704,6 +706,7 @@ namespace KursAM2.Managers
                         Nomenkl = nom,
                         KontragentName = kontr?.Name,
                         Currency =
+                            // ReSharper disable once PossibleNullReferenceException
                             GlobalOptions.ReferencesCache.GetCurrency(((IDocCode)nom.Currency).DocCode) as Currency,
                         CurrencyName =
                             ((IName)GlobalOptions.ReferencesCache.GetCurrency(((IDocCode)nom.Currency).DocCode)).Name
@@ -718,6 +721,7 @@ namespace KursAM2.Managers
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = ProfitAndLossesMainRowViewModel.NomenklCurrencyChanges,
+                        // ReSharper disable once PossibleNullReferenceException
                         Name = nom1.NomenklNumber + " " + nom1.Name,
                         DocNum = $"{n.TD_26.SD_26.SF_IN_NUM}/{n.TD_26.SD_26.SF_POSTAV_NUM}",
                         Note = n.Note,
@@ -725,6 +729,7 @@ namespace KursAM2.Managers
                         Quantity = n.Quantity,
                         Price = n.TD_26.SFT_ED_CENA ?? 0,
                         Date = n.Date,
+                        // ReSharper disable once PossibleNullReferenceException
                         Kontragent = kontr.Name,
                         DocTypeCode = DocumentType.InvoiceProvider,
                         Nomenkl = nom1,
@@ -933,6 +938,7 @@ namespace KursAM2.Managers
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = spisanieTovara,
+                        // ReSharper disable once PossibleNullReferenceException
                         Name = nom.Name,
                         DocCode = nom.DocCode,
                         Quantity = d.DDT_KOL_PRIHOD,
@@ -972,10 +978,12 @@ namespace KursAM2.Managers
                     var newOp = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = Guid.Parse("{C5C36299-FDEF-4251-B525-3DF10C0E8CB9}"),
+                        // ReSharper disable PossibleNullReferenceException
                         Name = nom.Name,
                         DocCode = nom.DocCode,
                         Quantity = d.DDT_KOL_PRIHOD,
                         Kontragent = kontr.Name,
+                        // ReSharper restore PossibleNullReferenceException
                         Date = d.SD_24.DD_DATE,
                         Note = $"ном № - {nom.NomenklNumber}",
                         Nomenkl = nom,
@@ -1097,9 +1105,11 @@ namespace KursAM2.Managers
                     {
                         Date = d.SD_24.DD_DATE,
                         GroupId = Guid.Parse("{BA628F86-6AE4-4CF3-832B-C6F7388DD01B}"),
+                        // ReSharper disable once PossibleNullReferenceException
                         Name = nom.Name,
                         DocCode = d.TD_84.DOC_CODE,
                         Quantity = d.DDT_KOL_RASHOD,
+                        // ReSharper disable once PossibleNullReferenceException
                         Kontragent = kontr.Name,
                         DocTypeCode = (DocumentType)84
                     };
@@ -1113,6 +1123,7 @@ namespace KursAM2.Managers
             }
         }
 
+        [SuppressMessage("ReSharper", "PossibleNullReferenceException")]
         public void CalcUslugiDilers()
         {
             using (var ctx = GlobalOptions.GetEntities())
@@ -1967,7 +1978,7 @@ namespace KursAM2.Managers
                         Date = sd101.VV_START_DATE,
                         CrsDC = td101.VVT_CRS_DC,
                         Code = td101.CODE,
-                        Name = "Банковская выписка",
+                        Name = sd43.NAME ??  "Банковская выписка",
                         Note = "№" + td101.VVT_DOC_NUM + " Контрагент - " + sd43.NAME,
                         DocCode = sd101.DOC_CODE,
                         Price = td101.VVT_VAL_PRIHOD,
@@ -1993,7 +2004,7 @@ namespace KursAM2.Managers
                         Date = sd101.VV_START_DATE,
                         CrsDC = td101.VVT_CRS_DC,
                         Code = td101.CODE,
-                        Name = "Банковская выписка",
+                        Name = sd43.NAME ?? "Банковская выписка",
                         Note = "№" + td101.VVT_DOC_NUM + " Контрагент - " + sd43.NAME,
                         DocCode = sd101.DOC_CODE,
                         KontrDc = td101.VVT_KONTRAGENT,
@@ -2019,7 +2030,7 @@ namespace KursAM2.Managers
                         DocDC = sd33.DOC_CODE,
                         Date = sd33.DATE_ORD,
                         CrsDC = sd33.CRS_DC,
-                        Name = "Приходный кассовый ордер",
+                        Name =  sd43.NAME, //"Приходный кассовый ордер",
                         Note = "№" + sd33.NUM_ORD + " от " + sd33.DATE_ORD + " Контрагент - " + sd43.NAME,
                         DocCode = sd33.DOC_CODE,
                         Price = sd33.SUMM_ORD,
@@ -2045,7 +2056,7 @@ namespace KursAM2.Managers
                         DocDC = sd34.DOC_CODE,
                         Date = sd34.DATE_ORD,
                         CrsDC = sd34.CRS_DC,
-                        Name = "Расходный кассовый ордер",
+                        Name = sd43.NAME ?? "Расходный кассовый ордер",
                         Note = "№" + sd34.NUM_ORD + " от " + sd34.DATE_ORD + " Контрагент - " + sd43.NAME,
                         DocCode = sd34.DOC_CODE,
                         Price = sd34.SUMM_ORD,
@@ -2561,6 +2572,7 @@ namespace KursAM2.Managers
                 if (Project == null)
                     foreach (var d in data)
                     {
+                        if (!d.IsBalans) continue;
                         decimal sumLeft = 0, sumRight = 0;
                         foreach (var l in data.Where(_ => _.DocCode == d.DocCode && !_.IsProfit))
                             if (GlobalOptions.ReferencesCache.GetKontragent(l.KontrDC).IsBalans)
