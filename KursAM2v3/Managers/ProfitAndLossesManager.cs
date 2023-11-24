@@ -2570,9 +2570,8 @@ namespace KursAM2.Managers
                         IsBalans = (sd43.FLAG_BALANS ?? 0) != 0
                     }).ToList();
                 if (Project == null)
-                    foreach (var d in data)
+                    foreach (var d in data.Where(d => d.IsBalans))
                     {
-                        if (!d.IsBalans) continue;
                         decimal sumLeft = 0, sumRight = 0;
                         foreach (var l in data.Where(_ => _.DocCode == d.DocCode && !_.IsProfit))
                             if (GlobalOptions.ReferencesCache.GetKontragent(l.KontrDC).IsBalans)

@@ -391,16 +391,19 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
             {
                 var n = Price * NDSPercent / 100;
                 Entity.SFT_SUMMA_K_OPLATE = Quantity * (Price + n);
+                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
                 return Price + n;
             }
 
             if (Quantity <= 0)
             {
                 Entity.SFT_SUMMA_K_OPLATE = 0;
+                Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
                 return 0;
             }
 
             Entity.SFT_SUMMA_K_OPLATE = Quantity * Price;
+            Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
             return Price;
         }
     }
