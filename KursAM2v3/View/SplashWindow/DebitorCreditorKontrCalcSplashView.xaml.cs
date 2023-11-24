@@ -34,6 +34,7 @@ namespace KursAM2.View.SplashWindow
         public DebitorCreditorKontrCalcSplashView()
         {
             InitializeComponent(); 
+         //   ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
             Loaded += AnimationSecondIndicatorOne;
             ProgressLabelRepit.Opacity = 0;
         }
