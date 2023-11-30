@@ -982,12 +982,16 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 item.SummaUSD = i1?.SummaUSD ?? 0;
                 item.SummaGBP = i1?.SummaGBP ?? 0;
                 item.SummaSEK = i1?.SummaSEK ?? 0;
+                
                 item.SummaRUB2 = i2?.SummaRUB ?? 0;
                 item.SummaCHF2 = i2?.SummaCHF ?? 0;
                 item.SummaEUR2 = i2?.SummaEUR ?? 0;
                 item.SummaUSD2 = i2?.SummaUSD ?? 0;
                 item.SummaGBP2 = i2?.SummaGBP ?? 0;
                 item.SummaSEK2 = i2?.SummaSEK ?? 0;
+                
+                item.SummaCNY = i1?.SummaCNY ?? 0;
+                item.SummaCNY2 = i2?.SummaCNY ?? 0;
             }
 
             // Касса
@@ -1018,7 +1022,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaEUR2 = i2?.SummaEUR ?? 0,
                     SummaUSD2 = i2?.SummaUSD ?? 0,
                     SummaGBP2 = i2?.SummaGBP ?? 0,
-                    SummaSEK2 = i2?.SummaSEK ?? 0
+                    SummaSEK2 = i2?.SummaSEK ?? 0,
+
+                    SummaCNY = i1?.SummaCNY ?? 0,
+                    SummaCNY2 = i2?.SummaCNY ?? 0
                     // ReSharper restore ConstantConditionalAccessQualifier
                 };
                 Data.Add(newItem);
@@ -1039,12 +1046,14 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         SummaUSD = 0,
                         SummaGBP = 0,
                         SummaSEK = 0,
+                        SummaCNY = 0,
                         SummaRUB2 = i2?.SummaRUB ?? 0,
                         SummaCHF2 = i2?.SummaCHF ?? 0,
                         SummaEUR2 = i2?.SummaEUR ?? 0,
                         SummaUSD2 = i2?.SummaUSD ?? 0,
                         SummaGBP2 = i2?.SummaGBP ?? 0,
-                        SummaSEK2 = i2?.SummaSEK ?? 0
+                        SummaSEK2 = i2?.SummaSEK ?? 0,
+                        SummaCNY2 = i2?.SummaCNY ?? 0,
                     };
                     Data.Add(newItem);
                 }
@@ -1076,7 +1085,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaEUR2 = i2?.SummaEUR ?? 0,
                     SummaUSD2 = i2?.SummaUSD ?? 0,
                     SummaGBP2 = i2?.SummaGBP ?? 0,
-                    SummaSEK2 = i2?.SummaSEK ?? 0
+                    SummaSEK2 = i2?.SummaSEK ?? 0,
+                    
+                    SummaCNY = i1?.SummaCNY ?? 0,
+                    SummaCNY2 = i2?.SummaCNY ?? 0
                 };
                 Data.Add(newItem);
             }
@@ -1095,13 +1107,16 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         SummaEUR = 0,
                         SummaUSD = 0,
                         SummaGBP = 0,
-                        SummaSEK = 0,
+                        SummaSEK = 0,  
+                        SummaCNY = 0,
+
                         SummaRUB2 = i2?.SummaRUB ?? 0,
                         SummaCHF2 = i2?.SummaCHF ?? 0,
                         SummaEUR2 = i2?.SummaEUR ?? 0,
                         SummaUSD2 = i2?.SummaUSD ?? 0,
                         SummaGBP2 = i2?.SummaGBP ?? 0,
-                        SummaSEK2 = i2?.SummaSEK ?? 0
+                        SummaSEK2 = i2?.SummaSEK ?? 0,
+                        SummaCNY2 = i2?.SummaCNY ?? 0
                     };
                     Data.Add(newItem);
                 }
@@ -1134,7 +1149,11 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     SummaEUR2 = i2?.SummaEUR ?? 0,
                     SummaUSD2 = i2?.SummaUSD ?? 0,
                     SummaGBP2 = i2?.SummaGBP ?? 0,
-                    SummaSEK2 = i2?.SummaSEK ?? 0
+                    SummaSEK2 = i2?.SummaSEK ?? 0,
+
+                     
+                    SummaCNY = i1?.SummaCNY ?? 0,
+                    SummaCNY2 = i2?.SummaCNY ?? 0
                 };
                 Data.Add(newItem);
             }
@@ -1159,7 +1178,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         SummaEUR2 = i2?.SummaEUR ?? 0,
                         SummaUSD2 = i2?.SummaUSD ?? 0,
                         SummaGBP2 = i2?.SummaGBP ?? 0,
-                        SummaSEK2 = i2?.SummaSEK ?? 0
+                        SummaSEK2 = i2?.SummaSEK ?? 0,
+                        
+                        SummaCNY = 0,
+                        SummaCNY2 = i2?.SummaCNY ?? 0
                     };
                     Data.Add(newItem);
                 }
@@ -1216,6 +1238,13 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                             if (b != null)
                                 b.Visible = Data.Sum(_ => _.SummaSEK) != 0 || Data.Sum(_ => _.SummaSEK2) != 0;
                             break;
+                        case "SummaCNY":
+                            b =
+                                frm1.treeListBalans.Bands.FirstOrDefault(
+                                    _ => _.Columns.Any(c => c.FieldName == "SummaCNY"));
+                            if (b != null)
+                                b.Visible = Data.Sum(_ => _.SummaCNY) != 0 || Data.Sum(_ => _.SummaCNY2) != 0;
+                            break;
                     }
                 }
             }
@@ -1267,6 +1296,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             public decimal ResultCHF => ProfitCHF - LossCHF;
             public decimal ResultSEK => ProfitSEK - LossSEK;
 
+            public decimal LossCNY { get; set; }
+            public decimal ProfitCNY { get; set; }
+            public decimal ResultCNY => ProfitCNY - LossCNY;
+
             public void SetSumma(Currency crs, decimal summa, decimal summa2)
             {
                 switch (crs.Name)
@@ -1296,6 +1329,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         LossCHF = summa;
                         ProfitCHF = summa2;
                         return;
+                    case CurrencyCode.CNYName:
+                        LossCNY = summa;
+                        ProfitCNY = summa2;
+                        return;
                 }
             }
 
@@ -1321,6 +1358,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                         return;
                     case CurrencyCode.CHFName:
                         ProfitCHF = summa2;
+                        return;
+                    case CurrencyCode.CNYName:
+                        ProfitCNY = summa2;
                         return;
                 }
             }
@@ -1449,6 +1489,22 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     .ContainsProperty(_ => _.LossSEK)
                     .ContainsProperty(_ => _.ProfitSEK)
                     .ContainsProperty(_ => _.ResultSEK);
+
+                builder.Property(_ => _.LossCNY).ReadOnly().DisplayName("Приход").Description("").NumericMask("n2");
+                builder.Property(_ => _.ProfitCNY)
+                    .DisplayName("Расход")
+                    .Description("Расход CNY")
+                    .ReadOnly()
+                    .NumericMask("n2");
+                builder.Property(_ => _.ResultCNY)
+                    .DisplayName("Результат")
+                    .Description("Результат")
+                    .ReadOnly()
+                    .NumericMask("n2");
+                builder.Group("CNY")
+                    .ContainsProperty(_ => _.LossCNY)
+                    .ContainsProperty(_ => _.ProfitCNY)
+                    .ContainsProperty(_ => _.ResultCNY);
             }
         }
 
@@ -1590,6 +1646,22 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     .ContainsProperty(_ => _.SummaSEK)
                     .ContainsProperty(_ => _.SummaSEK2)
                     .ContainsProperty(_ => _.DeltaSEK);
+
+                builder.Property(_ => _.SummaCNY).ReadOnly().DisplayName("Приход").Description("").NumericMask("n2");
+                builder.Property(_ => _.SummaCNY2)
+                    .DisplayName("Расход")
+                    .Description("Расход CNY")
+                    .ReadOnly()
+                    .NumericMask("n2");
+                builder.Property(_ => _.DeltaCNY)
+                    .DisplayName("Результат")
+                    .Description("Результат")
+                    .ReadOnly()
+                    .NumericMask("n2");
+                builder.Group("CNY")
+                    .ContainsProperty(_ => _.SummaCNY)
+                    .ContainsProperty(_ => _.SummaCNY2)
+                    .ContainsProperty(_ => _.DeltaCNY);
             }
         }
 
@@ -1706,6 +1778,23 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     .ContainsProperty(_ => _.SummaSEK)
                     .ContainsProperty(_ => _.SummaSEK2)
                     .ContainsProperty(_ => _.DeltaSEK);
+
+                builder.Property(_ => _.SummaCNY).AutoGenerated().DisplayName("На начало").Description("")
+                    .NumericMask("n2");
+                builder.Property(_ => _.SummaCNY2)
+                    .DisplayName("На конец")
+                    .Description("На конец")
+                    .AutoGenerated()
+                    .NumericMask("n2");
+                builder.Property(_ => _.DeltaCNY)
+                    .DisplayName("Результат")
+                    .Description("Результат")
+                    .AutoGenerated()
+                    .NumericMask("n2");
+                builder.Group("CNY")
+                    .ContainsProperty(_ => _.SummaCNY)
+                    .ContainsProperty(_ => _.SummaCNY2)
+                    .ContainsProperty(_ => _.DeltaCNY);
             }
         }
 
