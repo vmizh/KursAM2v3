@@ -6,13 +6,11 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Calculates.Materials;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Data;
-using DevExpress.Mvvm.Native;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Managers;
@@ -24,7 +22,6 @@ using KursAM2.ViewModel.Management.Calculations;
 using KursAM2.ViewModel.Personal;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
@@ -37,6 +34,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
     {
         private readonly List<SD_114> myBanks;
         private readonly List<SD_22> myCashs;
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
         private ManagementBalansBuilder myBalansBuilder;
         private object myCompareDate;
         private ManagementBalanceGroupViewModel myCurrentBalansRow;
@@ -44,7 +42,6 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private DateTime myCurrentDate = DateTime.Today;
         private ManagementBalanceExtendRowViewModel myCurrentExtendItem;
         private Currency myRecalcCurrency;
-        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         public ManagementBalansWindowViewModel()
         {
@@ -1210,156 +1207,16 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             return d - (d - Math.Round(d, 4));
         }
 
-        //private Dictionary<Warehouse, List<NomenklMoveOnSkladViewModel>> GetNomenkl2()
-        //{
-        //    var ret = new Dictionary<Warehouse, List<NomenklMoveOnSkladViewModel>>();
-        //    using (var ctx = GlobalOptions.GetEntities())
-        //    {
-        //        var sklDCList = ctx.NomenklMoveForCalc.Select(_ => _.StoreDC).Distinct().AsNoTracking();
-        //        var skladsInfo = new Dictionary<decimal, List<NomenklQuantityInfo>>();
-        //        var moveInfo = new Dictionary<decimal, List<NomenklMoveInfo>>();
-        //        foreach (var dc in sklDCList)
-        //            // ReSharper disable once PossibleInvalidOperationException
-        //            skladsInfo.Add((decimal)dc, new List<NomenklQuantityInfo>());
-        //        foreach (var sklDC in sklDCList)
-        //        {
-        //            // ReSharper disable once PossibleInvalidOperationException
-        //            skladsInfo[(decimal)sklDC] =
-        //                nomenklManager.GetNomenklStoreQuantity((decimal)sklDC, CurrentDate, CurrentDate);
-        //            moveInfo[(decimal)sklDC] =
-        //                nomenklManager.GetNomenklStoreMove((decimal)sklDC, CurrentDate, CurrentDate);
-        //        }
-
-        //        var listTemp = new List<NomenklMoveOnSkladViewModel>();
-        //        foreach (var sklDC in skladsInfo.Keys)
-        //        foreach (var n in skladsInfo[sklDC])
-        //        {
-        //            var old = listTemp.FirstOrDefault(_ => _.Nomenkl.DocCode == n.NomDC);
-        //            if (old != null)
-        //            {
-        //                old.QuantityStart += n.StartQuantity;
-        //                old.QuantityEnd += n.OstatokQuantity;
-        //                old.QuantityIn += moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC).Sum(s => s.Prihod);
-        //                old.QuantityOut += moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC).Sum(s => s.Rashod);
-
-        //                switch (old.CurrencyName)
-        //                {
-        //                    case CurrencyCode.RUBName:
-        //                    case CurrencyCode.RURName:
-        //                        old.SummaRUBStart += n.StartSumma;
-        //                        old.SummaRUBEnd += n.OstatokSumma;
-        //                        old.SummaRUBIn += moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.PrihodSumma);
-        //                        old.SummaRUBOut += moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.RashodSumma);
-        //                        break;
-        //                    case CurrencyCode.USDName:
-        //                        old.SummaUSDStart += n.StartSumma;
-        //                        old.SummaUSDEnd += n.OstatokSumma;
-        //                        old.SummaUSDIn += moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.PrihodSumma);
-        //                        old.SummaUSDOut += moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.RashodSumma);
-        //                        break;
-        //                    case CurrencyCode.EURName:
-        //                        old.SummaEURStart += n.StartSumma;
-        //                        old.SummaEUREnd += n.OstatokSumma;
-        //                        old.SummaEURIn += moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.PrihodSumma);
-        //                        old.SummaEUROut += moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.RashodSumma);
-        //                        break;
-        //                    default:
-        //                        old.SummaAllStart += n.StartSumma;
-        //                        old.SummaAllEnd += n.OstatokSumma;
-        //                        old.SummaAllIn += moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.PrihodSumma);
-        //                        old.SummaAllOut += moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.RashodSumma);
-        //                        break;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                var newitem = new NomenklMoveOnSkladViewModel
-        //                {
-        //                    Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(n.NomDC) as Nomenkl,
-        //                    PriceEnd = n.OstatokQuantity != 0 ? Math.Round(n.OstatokSumma / n.OstatokQuantity, 2) : 0,
-        //                    PriceStart = n.StartQuantity != 0 ? Math.Round(n.StartSumma / n.StartQuantity, 2) : 0,
-        //                    QuantityEnd = n.OstatokQuantity,
-        //                    QuantityIn = moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC).Sum(s => s.Prihod),
-        //                    QuantityOut = moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC).Sum(s => s.Rashod),
-        //                    QuantityStart = n.StartQuantity
-        //                };
-        //                switch (newitem.CurrencyName)
-        //                {
-        //                    case CurrencyCode.RUBName:
-        //                    case CurrencyCode.RURName:
-        //                        newitem.SummaRUBStart = n.StartSumma;
-        //                        newitem.SummaRUBEnd = n.OstatokSumma;
-        //                        newitem.SummaRUBIn = moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.PrihodSumma);
-        //                        newitem.SummaRUBOut = moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.RashodSumma);
-        //                        break;
-        //                    case CurrencyCode.USDName:
-        //                        newitem.SummaUSDStart = n.StartSumma;
-        //                        newitem.SummaUSDEnd = n.OstatokSumma;
-        //                        newitem.SummaUSDIn = moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.PrihodSumma);
-        //                        newitem.SummaUSDOut = moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.RashodSumma);
-        //                        break;
-        //                    case CurrencyCode.EURName:
-        //                        newitem.SummaEURStart = n.StartSumma;
-        //                        newitem.SummaEUREnd = n.OstatokSumma;
-        //                        newitem.SummaEURIn = moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.PrihodSumma);
-        //                        newitem.SummaEUROut = moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.RashodSumma);
-        //                        break;
-        //                    default:
-        //                        newitem.SummaAllStart = n.StartSumma;
-        //                        newitem.SummaAllEnd = n.OstatokSumma;
-        //                        newitem.SummaAllIn = moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.PrihodSumma);
-        //                        newitem.SummaAllOut = moveInfo[sklDC].Where(_ => _.NomDC == n.NomDC)
-        //                            .Sum(s => s.RashodSumma);
-        //                        break;
-        //                }
-
-        //                listTemp.Add(newitem);
-        //            }
-
-        //            ret.Add((Warehouse)GlobalOptions.ReferencesCache.GetWarehouse(sklDC), listTemp);
-        //        }
-
-        //        var delList = new List<NomenklMoveOnSkladViewModel>(listTemp.Where(nl => nl.QuantityStart == 0
-        //            && nl.QuantityIn == 0 && nl.QuantityOut == 0 && nl.QuantityEnd == 0));
-        //        foreach (var nl in delList) listTemp.Remove(nl);
-
-        //        //NomenklMoveList = new ObservableCollection<NomenklMoveOnSkladViewModel>(listTemp);
-        //        //RaisePropertyChanged(nameof(NomenklMoveList));
-        //        GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
-        //        IsCanRefresh = true;
-        //    }
-
-        //    return ret;
-        //}
-    
-
-    private void GetNomenkl()
+       
+        private void GetNomenkl()
         {
+            calcNomenklBefore();
             var ch = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
                 .Single(t => t.Tag == BalansSection.Store)
                 .Id);
             ch.Summa = 0;
             var chNach = BalansStructure.Single(_ => _.Id == ch.Id);
             chNach.Summa = 0;
-            //var data = NomenklCalculationManager.GetNomenklStoreRemains(CurrentDate, true);
-            //if (data.Count == 0) return;
-            //if (data.Select(_ => _.StoreDC).ToList().Count == 0) return;
-            //var skl = data.Select(_ => _.StoreDC).Distinct().ToList();
             foreach (var s in GlobalOptions.ReferencesCache.GetWarehousesAll())
             {
                 //var n = GlobalOptions.ReferencesCache.GetWarehouse(s) as Warehouse;
@@ -1398,15 +1255,6 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 };
                 if (newSklad.CurrencyTotal == 0) continue;
                 BalansStructure.Add(newSklad);
-                //var s1 = s;
-                //var nomsDC = data.Where(_ => _.StoreDC == s1).Select(_ => _.NomenklDC).Distinct();
-                //foreach (var dd in (from nDC in nomsDC
-                //             let s2 = s
-                //             let dc = nDC
-                //             select data.FirstOrDefault(_ => _.StoreDC == s2 && _.NomenklDC == dc)
-                //             into dd
-                //             where dd != null
-                //             select dd).Where(dd => dd.Prihod != dd.Rashod))
                 foreach (var dd in data)
                 {
                     if (dd.OstatokQuantity == 0) continue;
@@ -1453,9 +1301,23 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             ch.SummaCNY =
                 BalansStructure.Where(_ => _.ParentId == ch.Id)
                     .Sum(_ => _.SummaCNY);
+            calcNomenklAfter();
         }
 
-        private void GetZarplata()
+        private void calcNomenklBefore()
+        {
+            using var ctx = GlobalOptions.GetEntities();
+            ctx.Database.ExecuteSqlCommand(@"dbo.NomenklBeforeCalc");
+        }
+
+        private void calcNomenklAfter()
+        {
+            using var ctx = GlobalOptions.GetEntities();
+            ctx.Database.ExecuteSqlCommand(@"dbo.NomenklAfterCalc");
+        }
+
+
+    private void GetZarplata()
         {
             var ch = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
                 .Single(t => t.Tag == BalansSection.Salary)
