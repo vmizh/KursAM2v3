@@ -105,6 +105,9 @@ namespace KursAM2.Managers
             switch (verCheck.UpdateStatus)
             {
                 case 0:
+                    MessageBox.Show(
+                        $"Установлена актуальная версия программы {verCheck.fullVersion}. Обновления не требуется.",
+                        "Запрос на обновление программы", MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 case 1:
                     var ShowMsgResult = MessageBox.Show(
@@ -114,14 +117,16 @@ namespace KursAM2.Managers
                     break;
                 case 2:
 #if (!DEBUG)
-                    if (_windowsViewModel != null && _windowsViewModel.Form != null) ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Stop();
+                    if (_windowsViewModel != null && _windowsViewModel.Form != null)
+                        ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Stop();
 #endif
                     var showMsgResult = MessageBox.Show(
                         $"Для вашей версии {verCheck.fullVersion} выпущено критическое обновление версии {verCheck.sfullVersion}.\n" +
                         "Для дальнейшей работы необходимо обновить программу.\n Выполнить обновление?",
                         "Запрос на обновление программы", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 #if (!DEBUG)
-                    if (_windowsViewModel != null && _windowsViewModel.Form != null) ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Start();
+                    if (_windowsViewModel != null && _windowsViewModel.Form != null)
+                        ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Start();
 #endif
                     if (showMsgResult == MessageBoxResult.No) return;
                     break;
@@ -131,14 +136,16 @@ namespace KursAM2.Managers
             if (userCopyCheck)
             {
 #if (!DEBUG)
-                if (_windowsViewModel != null && _windowsViewModel.Form != null) ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Stop();
+                if (_windowsViewModel != null && _windowsViewModel.Form != null)
+                    ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Stop();
 #endif
                 var ShowMsgResult = MessageBox.Show(
                     "В системе обнаружены работающие версии приложения. Все приложения будут автоматически закрыты." +
                     "Возможна потеря несохраненных данных. Продолжить обновление?",
                     "Запрос на обновление программы", MessageBoxButton.YesNo, MessageBoxImage.Warning);
 #if (!DEBUG)
-                if (_windowsViewModel != null && _windowsViewModel.Form != null) ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Start();
+                if (_windowsViewModel != null && _windowsViewModel.Form != null)
+                    ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Start();
 #endif
                 if (ShowMsgResult == MessageBoxResult.No) return;
             }

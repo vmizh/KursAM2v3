@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using DevExpress.Xpf.Core;
@@ -55,6 +56,19 @@ namespace KursAM2.View.Finance
             LayoutManager.Load();
             var gl = groupLayout.Load();
             Group.Width = gl.Width;
+            var sColList = new List<GridSummaryItem>();
+            foreach (var sCol in GridDocuments.TotalSummary)
+            {
+                if (sCol.FieldName == "CurrencyRateForReference") 
+                {
+                    sColList.Add(sCol);
+                }
+            }
+
+            foreach (var sColDel in sColList)
+            {
+                GridDocuments.TotalSummary.Remove(sColDel);
+            }
         }
 
         private void TreePeriods_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

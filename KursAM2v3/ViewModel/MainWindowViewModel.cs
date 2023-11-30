@@ -68,7 +68,7 @@ namespace KursAM2.ViewModel
         }
 
 
-        public ICommand VersionUpdate
+        public ICommand VersionUpdateCommand
         {
             get
             {
@@ -89,6 +89,8 @@ namespace KursAM2.ViewModel
         }
 
         public override bool IsCanSearch => !string.IsNullOrWhiteSpace(SearchText);
+
+       
 
          private void VersionUpdateStart(object obj)
          {

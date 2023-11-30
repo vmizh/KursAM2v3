@@ -24,9 +24,7 @@
                 <dxb:BarButtonItemLink BarItemName="barButtonItem1" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem2" />
                 <dxb:BarButtonItemLink BarItemName="barButtonItem4" />
-                <!--
                 <dxb:BarButtonItemLink BarItemName="barButtonItem5" />
-                -->
                 <dxb:BarButtonItemLink BarItemName="barButtonItem3" />
             </dxb:BarSubItem>
             <dxb:BarButtonItem x:Name="barButtonItem1" Content="Настройки пользователя"
@@ -35,12 +33,13 @@
             <dxb:BarButtonItem x:Name="barButtonItem2" Content="Обновить справочники"
                                ItemClick="BarButtonItem2_OnItemClick"
                                Glyph="{dx:DXImage SvgImages/Business Objects/BO_Audit_ChangeHistory.svg}" />
+            <!--
             <dxb:BarButtonItem x:Name="barButtonItem5" Content="Сохранить историю"
                                ItemClick="BarButtonItem3_OnItemClick" />
-            <!--<dxb:BarButtonItem x:Name="barButtonItem4" Content="Обновить версию"
+            -->
+            <dxb:BarButtonItem x:Name="barButtonItem4" Content="Обновить версию"
                                Command="{Binding VersionUpdateCommand}"
-                               Glyph="{dx:DXImage SvgImages/XAF/Action_Refresh.svg}"/>-->
-
+                               Glyph="{dx:DXImage SvgImages/XAF/Action_Refresh.svg}"/>
             <dxb:BarButtonItem x:Name="barButtonItem6" Content="Сбросить разметку"
                                ItemClick="BarButtonItem5_OnItemClick"
                                Glyph="{dx:DXImage SvgImages/Dashboards/FullExtent.svg}" />
