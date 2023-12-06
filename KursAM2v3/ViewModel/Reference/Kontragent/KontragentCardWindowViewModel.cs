@@ -683,6 +683,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                     Kontragent.myState = RowStatus.NotEdited;
                     foreach (var b in BankAndAccounts) b.myState = RowStatus.NotEdited;
                     foreach (var g in Kontragent.GruzoRequisities) g.myState = RowStatus.NotEdited;
+                    var k = GlobalOptions.ReferencesCache.GetKontragent(Kontragent.DocCode);
                 }
                 catch (Exception e)
                 {

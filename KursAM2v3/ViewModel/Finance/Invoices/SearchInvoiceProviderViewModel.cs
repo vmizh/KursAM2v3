@@ -106,12 +106,24 @@ namespace KursAM2.ViewModel.Finance.Invoices
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             Task.Run(() =>
             {
-                frm?.Dispatcher.Invoke(() => { frm.loadingIndicator.Visibility = Visibility.Visible; });
+                frm?.Dispatcher.Invoke(() =>
+                {
+                    if (frm.DataContext is SearchInvoiceProviderViewModel dtx)
+                    {
+                        dtx.IsCanRefresh = false;
+                    }
+                    frm.loadingIndicator.Visibility = Visibility.Visible; 
+                    
+                });
                 var result = InvoiceProviderRepository.GetAllByDates(StartDate, EndDate);
                 frm?.Dispatcher.Invoke(() =>
                 {
                     frm.loadingIndicator.Visibility = Visibility.Hidden;
                     foreach (var d in result) Documents.Add(d);
+                    if (frm.DataContext is SearchInvoiceProviderViewModel dtx)
+                    {
+                        dtx.IsCanRefresh = true;
+                    }
                 });
                 GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             });

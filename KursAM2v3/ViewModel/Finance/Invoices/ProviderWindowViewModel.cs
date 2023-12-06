@@ -1251,13 +1251,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
             DeletedCrsConvertItems.Add(CurrentCrsConvertItem);
             if (CurrentRow == null)
             {
-                row.Entity.TD_26_CurrencyConvert.Remove(CurrentCrsConvertItem.Entity);
+                //row.Entity.TD_26_CurrencyConvert.Remove(CurrentCrsConvertItem.Entity);
                 row.CurrencyConvertRows.Remove(CurrentCrsConvertItem);
                 row.State = RowStatus.Edited;
             }
             else
             {
-                CurrentRow.Entity.TD_26_CurrencyConvert.Remove(CurrentCrsConvertItem.Entity);
+                //CurrentRow.Entity.TD_26_CurrencyConvert.Remove(CurrentCrsConvertItem.Entity);
                 CurrentRow.CurrencyConvertRows.Remove(CurrentCrsConvertItem);
                 CurrentRow.State = RowStatus.Edited;
             }
@@ -1598,6 +1598,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var DistributeDocs = new List<Guid>();
                 foreach (var crsitem in DeletedCrsConvertItems)
                 {
+                    UnitOfWork.Context.TD_26_CurrencyConvert.Remove(crsitem.Entity);
                     var olditems = UnitOfWork.Context.DistributeNakladRow
                         .Include(_ => _.DistributeNakladInfo)
                         .Where(_ => _.TransferRowId == crsitem.Id).ToList();

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using Core;
 using Core.ViewModel.Base;
 using KursDomain.Documents.CommonReferences;

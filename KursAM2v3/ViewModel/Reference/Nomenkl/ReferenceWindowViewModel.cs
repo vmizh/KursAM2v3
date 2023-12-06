@@ -13,6 +13,7 @@ using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Mvvm.Xpf;
+using DevExpress.XtraCharts.GLGraphics;
 using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.DialogUserControl.ViewModel;
@@ -380,7 +381,6 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                     }
                 }
             }
-
             if (state == RowStatus.NewRow)
                 GlobalOptions.ReferencesCache.GetNomenkl(newDC);
         }

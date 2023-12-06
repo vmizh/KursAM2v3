@@ -317,6 +317,10 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         tnx.Commit();
                         NomenklMain.myState = RowStatus.NotEdited;
                         RaisePropertyChanged(nameof(IsCanSaveData));
+                        foreach (var nom in NomenklMain.NomenklCollection)
+                        {
+                            var n = GlobalOptions.ReferencesCache.GetNomenkl(nom.DocCode);
+                        }
                         //foreach (var n in dcs) MainReferences.LoadNomenkl(n);
                     }
                     catch (Exception ex)
