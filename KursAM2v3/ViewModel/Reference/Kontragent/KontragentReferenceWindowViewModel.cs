@@ -438,7 +438,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             var form = new KontragentCardView { Owner = Application.Current.MainWindow };
             if (CurrentGroup == null)
             {
-                WinManager.ShowWinUIMessageBox("Не выбрана категория.", "Ощибка");
+                WinManager.ShowWinUIMessageBox("Не выбрана категория.", "Ошибка");
                 return;
             }
 

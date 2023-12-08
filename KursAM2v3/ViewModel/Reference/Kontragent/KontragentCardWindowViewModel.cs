@@ -453,7 +453,8 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             Kontragent = new KontragentViewModel
             {
                 Id = Guid.NewGuid(),
-                Group = groupId != null ? new KontragentGroupViewModel { EG_ID = groupId.Value } : null
+                Group = groupId != null ? new KontragentGroupViewModel { EG_ID = groupId.Value } : null,
+                IsBalans = true
             };
         }
 
