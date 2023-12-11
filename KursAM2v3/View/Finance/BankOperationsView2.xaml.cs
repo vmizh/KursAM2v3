@@ -25,7 +25,7 @@ namespace KursAM2.View.Finance
 
         public BankOperationsView2()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent(); 
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, null);
             groupLayout = new LayoutManagerGridAutoGenerationColumns(GetType().Name, Group);
             Loaded += Bank_Loaded;

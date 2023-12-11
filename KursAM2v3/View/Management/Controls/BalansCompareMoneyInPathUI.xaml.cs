@@ -17,7 +17,7 @@ namespace KursAM2.View.Management.Controls
         public BalansCompareMoneyInPathUI()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             Loaded += BalansCompareMoneyInPathUI_Loaded;
             Unloaded += BalansCompareMoneyInPathUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager(

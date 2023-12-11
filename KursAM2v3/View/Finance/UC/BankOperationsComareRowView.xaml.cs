@@ -31,7 +31,7 @@ namespace KursAM2.View.Finance.UC
         public BankOperationsComareRowView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             DataContextChanged += BankOperationsView_DataContextChanged;
         }
 

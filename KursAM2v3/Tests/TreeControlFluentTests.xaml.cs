@@ -20,7 +20,6 @@ namespace KursAM2.Tests
         public TreeControlFluentTests()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

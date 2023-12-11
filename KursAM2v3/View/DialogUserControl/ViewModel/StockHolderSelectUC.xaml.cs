@@ -15,7 +15,7 @@ namespace KursAM2.View.DialogUserControl.ViewModel
         public StockHolderSelectUC()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, gridControlSearch);
             LayoutControl = gridControlSearch;
             Loaded += StockHolderSelectUC_Loaded;

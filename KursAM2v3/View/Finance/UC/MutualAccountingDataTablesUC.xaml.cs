@@ -16,7 +16,7 @@ namespace KursAM2.View.Finance.UC
         public MutualAccountingDataTablesUC()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManagerDebitor = new LayoutManager.LayoutManager(
                 GlobalOptions.KursSystem(),"KursAM2.View.Finance.UC.MutualAccountingDataTablesUC.gridControlDebitor",
                 gridControlDebitor);

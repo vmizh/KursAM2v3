@@ -12,7 +12,7 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
         public SelectExistNomenklOnSkladView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void gridNomenklRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

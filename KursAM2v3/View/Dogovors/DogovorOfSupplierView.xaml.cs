@@ -14,7 +14,7 @@ namespace KursAM2.View.Dogovors
         public DogovorOfSupplierView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

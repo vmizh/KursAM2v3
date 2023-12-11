@@ -14,7 +14,7 @@ namespace KursAM2.View.Logistiks
         public InventorySheetSearchView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Closing += InventorySheetSearchView_Closing;
             Loaded += InventorySheetSearchView_Loaded;

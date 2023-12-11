@@ -13,7 +13,7 @@ namespace KursAM2.View
         public KontragentGruzoInfoReferenceView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void GridKontr_OnCurrentItemChanged(object sender, CurrentItemChangedEventArgs e)

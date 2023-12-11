@@ -27,6 +27,7 @@ namespace KursDomain.Menu
         public bool IsSeparator { set; get; }
         public ObservableCollection<MenuButtonInfo> SubMenu { set; get; }
         public string ToolTip { set; get; }
+        public bool IsEnabled { set; get; } = true;
 
         public void MenuOpen(DependencyObject dp)
         {

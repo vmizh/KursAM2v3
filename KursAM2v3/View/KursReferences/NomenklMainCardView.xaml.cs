@@ -17,7 +17,7 @@ namespace KursAM2.View.KursReferences
         public NomenklMainCardView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Loaded += NomenklMainCardView_Loaded;
             Closing += NomenklMainCardView_Closing;

@@ -208,7 +208,14 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void SelectRashOrder()
         {
-            WindowManager.ShowFunctionNotReleased();
+            var WinManager = new WindowManager();
+            if (Document.WarehouseIn == null)
+            {
+                WinManager.ShowWinUIMessageBox("Не выбран склад.", "Ошибка", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+                return;
+            }
+
         }
 
         private void SelectSchet()

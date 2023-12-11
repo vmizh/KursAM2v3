@@ -13,7 +13,7 @@ namespace KursAM2.View.KursReferences.UC
         public EmployeesUC()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, mainControl);
             Loaded += UserControl_Loaded;
             Unloaded += UserControl_Unloaded;

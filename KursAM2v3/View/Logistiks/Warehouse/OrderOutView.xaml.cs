@@ -25,7 +25,7 @@ namespace KursAM2.View.Logistiks.Warehouse
         public OrderOutView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             Closing += OrderIn_Closing;
             Loaded += OrderIn_Loaded;
         }

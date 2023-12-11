@@ -24,7 +24,7 @@ namespace KursAM2.View.Finance
         public MutualAccountingView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, mainLayoutControl);
             Loaded += MutualAccountingView_Loaded;
             Unloaded += MutualAccountingView_Unloaded;

@@ -10,7 +10,7 @@ namespace KursAM2.View
         public MenuSearchView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
     }
 }

@@ -10,7 +10,7 @@ namespace KursAM2.View.Logistiks.UC
         public NomenklCardUC()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
     }
 }

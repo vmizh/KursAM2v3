@@ -12,7 +12,7 @@ namespace KursAM2.View.KursReferences.UC
         public SelectKursMainMenuItem()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void gridKursMenuItem_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

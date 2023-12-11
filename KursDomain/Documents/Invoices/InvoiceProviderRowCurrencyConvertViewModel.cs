@@ -161,8 +161,7 @@ public sealed class InvoiceProviderRowCurrencyConvertViewModel : RSViewModelBase
         set
         {
             if (Entity.Rate == value) return;
-            Entity.Rate = value;
-
+            Entity.Rate = value < 0 ? -value : value;
             RaisePropertyChanged();
         }
     }

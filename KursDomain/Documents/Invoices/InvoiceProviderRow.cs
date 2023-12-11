@@ -904,7 +904,12 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
                 CurrencyConvertRows.Add(newItem);
             }
 
-        Shipped = Entity.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0 + (IsUsluga ? Quantity : 0);
+        try
+        {
+            Shipped = Entity.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0 + (IsUsluga ? Quantity : 0);
+        }
+        catch { }
+
         RaisePropertyAllChanged();
     }
 

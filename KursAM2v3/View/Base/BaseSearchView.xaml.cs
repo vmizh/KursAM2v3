@@ -17,7 +17,7 @@ namespace KursAM2.View.Base
         public BaseSearchView()
         {
             InitializeComponent(); 
-            //ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            //
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, gridDocuments);
             Loaded += ProviderSearchView_Loaded;
             Closing += ProviderSearchView_Closing;

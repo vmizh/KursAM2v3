@@ -25,7 +25,7 @@ namespace KursAM2.View.Finance.Cash
         public CashCurrencyExchangeView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, layoutItems);
             Loaded += CashCurrencyExchangeView_Loaded;
             Unloaded += CashCurrencyExchangeView_Unloaded;

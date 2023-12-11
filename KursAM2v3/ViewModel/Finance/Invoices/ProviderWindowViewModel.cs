@@ -1089,14 +1089,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void AddNomenklCrsConvert(object obj)
         {
-            //if (CurrentRow.CurrencyConvertRows.Any(_ => _.State == RowStatus.Edited))
-            //{
-            //    myWManager.ShowWinUIMessageBox(
-            //        "В валютную таксировку внесены изменения. Небходимо сохранение.",
-            //        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //    return;
-            //}
-
             var factnom = Document.Facts
                 .FirstOrDefault(_ => _.DDT_NOMENKL_DC == CurrentRow.Nomenkl.DocCode);
             if (factnom == null)
@@ -1134,16 +1126,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (n == null) return;
             AddUsedNomenkl(n.DocCode);
             DateTime dt;
-            //factnom = Document.Facts
-            //    .FirstOrDefault(_ => _.DDT_NOMENKL_DC == CurrentRow.Nomenkl.DocCode);
-            //if (factnom == null)
-            //{
-            //    myWManager.ShowWinUIMessageBox(
-            //        "Товар по этому счету не принят на склад, валютная таксировка не возможна.",
-            //        "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //    return;
-            //}
-
+           
             var crsrates = new CurrencyRates(Document.DocDate <= factnom.SD_24.DD_DATE
                 ? Document.DocDate.AddDays(-5)
                 : factnom.SD_24.DD_DATE.AddDays(-5), DateTime.Today);

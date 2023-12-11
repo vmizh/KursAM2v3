@@ -15,7 +15,7 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
         public AktSpisaniyaView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             Loaded += AktSpisaniyaView_Loaded;
         }
 

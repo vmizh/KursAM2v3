@@ -13,7 +13,7 @@ namespace KursAM2.View.StockHolder
         public StockHolderAccrualTypeView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void GridControlStockHolderAccrual_OnAutoGeneratingColumn(object sender,

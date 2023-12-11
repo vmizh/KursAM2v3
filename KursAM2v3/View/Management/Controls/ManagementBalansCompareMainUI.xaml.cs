@@ -14,7 +14,7 @@ namespace KursAM2.View.Management.Controls
         public ManagementBalansCompareMainUI()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             Loaded += ManagementBalansCompareMainUI_Loaded;
             Unloaded += ManagementBalansCompareMainUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager(

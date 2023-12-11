@@ -10,7 +10,7 @@ namespace KursAM2.View.Repozit
         public UsersHorizontalRight()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
     }
 }

@@ -14,7 +14,7 @@ namespace KursAM2.View.Personal
         public EmploeeSelectUC()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void tableViewEmployee_MouseDoubleClick(object sender, MouseButtonEventArgs e)

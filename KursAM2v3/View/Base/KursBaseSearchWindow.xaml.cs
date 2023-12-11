@@ -13,7 +13,7 @@ namespace KursAM2.View.Base
         public KursBaseSearchWindow()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         //public ILayoutSerializationService LayoutSerializationService

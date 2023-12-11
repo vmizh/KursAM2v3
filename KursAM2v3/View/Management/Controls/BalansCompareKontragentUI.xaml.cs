@@ -22,7 +22,7 @@ namespace KursAM2.View.Management.Controls
         public BalansCompareKontragentUI()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             Loaded += BalansCompareKontragentUI_Loaded;
             Unloaded += BalansCompareKontragentUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager(

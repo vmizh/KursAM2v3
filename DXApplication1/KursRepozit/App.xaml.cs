@@ -29,7 +29,7 @@ namespace KursRepozit
 
         private static void Start(Action baseStart)
         {
-            ApplicationThemeHelper.ApplicationThemeName = "MetropolisLight";
+            ApplicationThemeHelper.ApplicationThemeName = Theme.Win11LightName;;
             ToolTipService.ShowOnDisabledProperty.OverrideMetadata(
                 typeof(Control),
                 new FrameworkPropertyMetadata(true));

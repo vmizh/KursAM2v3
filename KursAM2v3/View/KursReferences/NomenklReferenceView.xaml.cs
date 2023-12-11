@@ -22,7 +22,7 @@ namespace KursAM2.View.KursReferences
         public NomenklReferenceView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Loaded += NomenklReferenceView_Loaded;
             Closing += NomenklReferenceView_Closing;

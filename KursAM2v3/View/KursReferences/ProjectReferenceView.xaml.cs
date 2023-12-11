@@ -26,7 +26,7 @@ namespace KursAM2.View.KursReferences
         public ProjectReferenceView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             myBnEditor = new ButtonEditSettings
             {
                 IsTextEditable = false

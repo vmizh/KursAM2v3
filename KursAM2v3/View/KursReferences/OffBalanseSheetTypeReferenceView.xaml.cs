@@ -14,7 +14,7 @@ namespace KursAM2.View.KursReferences
         public OffBalanseSheetTypeReferenceView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, null);
             Loaded += myLoaded;
             Closing += myClosing;

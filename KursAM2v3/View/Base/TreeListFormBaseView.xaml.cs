@@ -18,7 +18,7 @@ namespace KursAM2.View.Base
         public TreeListFormBaseView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             Loaded += TreeListFormBaseView_Loaded;
             Closing += TreeListFormBaseView_Closing;
         }

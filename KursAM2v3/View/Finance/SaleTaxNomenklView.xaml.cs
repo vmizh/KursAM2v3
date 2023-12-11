@@ -23,7 +23,7 @@ namespace KursAM2.View.Finance
         public SaleTaxNomenklView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Loaded += SaleTaxNomenklView_Loaded;
             Closing += SaleTaxNomenklView_Closing;

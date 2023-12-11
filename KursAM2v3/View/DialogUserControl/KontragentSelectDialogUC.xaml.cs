@@ -14,7 +14,7 @@ namespace KursAM2.View.DialogUserControl
         public KontragentSelectDialogUC()
         {
             InitializeComponent();
-            //ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            //
             //LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, gridControlSearch);
             //LayoutControl = gridControlSearch;
             //Loaded += KontragentSelectDialogUC_Loaded;

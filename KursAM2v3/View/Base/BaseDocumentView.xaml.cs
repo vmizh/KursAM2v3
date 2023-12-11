@@ -15,7 +15,7 @@ namespace KursAM2.View.Base
         public BaseDocumentView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             GridControlLocalizer.Active = new CustomDXGridLocalizer();
             EditorLocalizer.Active = new CustomEditorsLocalizer();
 

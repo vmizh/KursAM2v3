@@ -16,7 +16,7 @@ namespace KursAM2.View.KursReferences.KontragentControls
         public KontragentCardView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             SizeChanged += delegate { SetSizeOfFrame(); };
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Loaded += KontragentCardView_OnLoaded;

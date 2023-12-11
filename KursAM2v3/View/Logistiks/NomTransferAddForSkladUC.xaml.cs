@@ -13,7 +13,7 @@ namespace KursAM2.View.Logistiks
         public NomTransferAddForSkladUC()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, gridControl);
         }
 

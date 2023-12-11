@@ -11,7 +11,7 @@ namespace KursAM2.View.Helper
         public DocHistoryList()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void GridControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using DevExpress.Mvvm.DataAnnotations;
-using KursDomain.Documents.Invoices;
 using KursDomain.References;
 
 namespace KursDomain.IDocuments.Finance;
@@ -25,7 +23,7 @@ public interface IInvoiceClient
     [Display(AutoGenerateField = true, Name = "Форма расчетов", Order = 15)]
     PayForm FormRaschet { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Условия оплаты",Order = 14) ]
+    [Display(AutoGenerateField = true, Name = "Условия оплаты", Order = 14)]
     PayCondition PayCondition { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Дата", Order = 1)]
@@ -41,7 +39,7 @@ public interface IInvoiceClient
     Kontragent Client { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Валюта", Order = 6)]
-    References.Currency Currency { set; get; }
+    Currency Currency { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Отгружено", Order = 8)]
     [DisplayFormat(DataFormatString = "n2", NullDisplayText = "0")]
@@ -75,7 +73,7 @@ public interface IInvoiceClient
     decimal PaySumma { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Ответственный", Order = 20)]
-    References.Employee PersonaResponsible { set; get; }
+    Employee PersonaResponsible { set; get; }
 
     [Display(AutoGenerateField = false)] ObservableCollection<IInvoiceClientRow> Rows { set; get; }
 }

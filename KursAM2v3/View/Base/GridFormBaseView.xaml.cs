@@ -17,7 +17,7 @@ namespace KursAM2.View.Base
         public GridFormBaseView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             Loaded += GridFormBaseView_Loaded;
             Closing += GridFormBaseView_Closing;
         }

@@ -12,7 +12,7 @@ namespace KursAM2.View.Logistiks.UC
         public AddNomenklUC()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void TreeListPermissionStruct_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

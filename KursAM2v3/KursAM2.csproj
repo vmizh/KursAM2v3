@@ -93,7 +93,9 @@
     <Reference Include="DevExpress.RichEdit.v23.1.Core, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Charts.v23.1.Core, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.Xpf.Themes.MetropolisLight.v23.1, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Themes.Win11Light.v23.1, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Themes.Win11Light.v23.1, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL">
+      <HintPath>..\packages\DevExpress.Wpf.Themes.Win11Light.23.1.6\lib\net452\DevExpress.Xpf.Themes.Win11Light.v23.1.dll</HintPath>
+    </Reference>
     <Reference Include="DevExpress.XtraCharts.v23.1, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="DevExpress.XtraReports.v23.1, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -243,6 +245,7 @@
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenklTitleWIndowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\DialogSelectExistNomOnSkaldViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\NomenklRemainsOnSkladWithPrice.cs" />
+    <Compile Include="ViewModel\Logistiks\Warehouse\NomenklInnerMoveQueryViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\Warehouse\WaybillWindowViewModel2.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOut.cs" />

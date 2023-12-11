@@ -16,7 +16,7 @@ namespace KursAM2.View.Finance.DistributeNaklad
         public DistributeNakladSearchView(Window parentForm)
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             DataContext = new DistributeNakladSearchViewModel(parentForm);
         }
 

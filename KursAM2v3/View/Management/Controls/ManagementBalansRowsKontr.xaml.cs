@@ -10,7 +10,7 @@ namespace KursAM2.View.Management.Controls
         public ManagementBalansRowsKontr()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
     }
 }

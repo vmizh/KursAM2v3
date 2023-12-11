@@ -24,7 +24,7 @@ namespace KursAM2.View.Management
         public KontragentBalansForm()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             //LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             myKontragentLookUpLayoutName =
                 $"{Environment.CurrentDirectory}\\Layout\\KontragentLookUpEdit.{Guid.NewGuid()}.xml";

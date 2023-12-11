@@ -13,7 +13,7 @@ namespace KursAM2.View.KursReferences.KontragentControls
         public KontragentGruzoUserControl()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),"KontragentGruzoUserControl", gruzoGridControl);
             Loaded += KontragentGruzo_Loaded;
             Unloaded += KontragentGruzo_Unloaded;

@@ -15,7 +15,8 @@
                     <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
                     <Button Template="{Binding Content}"
                             ToolTip="{Binding ToolTip}"
-                            Height="48"
+                            IsEnabled="{Binding IsEnabled}"
+                            Height="48" 
                             Width="48"
                             FontSize="12"
                             FontWeight="Bold"
@@ -37,6 +38,7 @@
                     <!-- ReSharper disable once Xaml.StaticResourceNotResolved -->
                     <Button Template="{Binding Content}"
                             ToolTip="{Binding ToolTip}"
+                            IsEnabled="{Binding IsEnabled}"
                             Height="48"
                             Width="48"
                             FontSize="12"

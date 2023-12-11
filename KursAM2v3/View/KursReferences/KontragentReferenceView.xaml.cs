@@ -22,7 +22,7 @@ namespace KursAM2.View.KursReferences
         public KontragentReferenceView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Loaded += MutualAccountingSearchView_Loaded;
             Unloaded += MutualAccountingSearchView_Unloaded;

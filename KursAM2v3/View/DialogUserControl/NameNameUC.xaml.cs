@@ -10,7 +10,7 @@ namespace KursAM2.View.DialogUserControl
         public NameNameUC()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
     }
 }

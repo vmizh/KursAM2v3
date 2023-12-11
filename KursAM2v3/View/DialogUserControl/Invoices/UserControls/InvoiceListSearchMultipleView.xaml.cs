@@ -16,7 +16,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.UserControls
     {
         public InvoiceListSearchMultipleView()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent(); 
         }
 
         private void GridControlSearch_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

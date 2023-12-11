@@ -20,7 +20,7 @@ namespace KursAM2.View.Finance.AccruedAmount
         public AccruedAmountOfSupplierView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void GridCashRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

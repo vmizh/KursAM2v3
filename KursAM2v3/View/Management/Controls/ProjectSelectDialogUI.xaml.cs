@@ -26,7 +26,7 @@ namespace KursAM2.View.Management.Controls
         public ProjectSelectDialogUI()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, gridDocument);
             LayoutControl = LayoutControl;
             gridDocuments = new LayoutManagerGridAutoGenerationColumns(GetType().Name, gridDocument);

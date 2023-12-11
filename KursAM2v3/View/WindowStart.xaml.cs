@@ -11,7 +11,7 @@ namespace KursAM2.View
         public WindowStart()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             Loaded += WindowStart_Loaded;
         }
 

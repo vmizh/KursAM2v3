@@ -20,7 +20,7 @@ namespace KursAM2.View.Finance.AccruedAmount
         public AccruedAmountForClientView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             Loaded += AccruedAmountForClientView_Loaded;
         }
 

@@ -252,6 +252,7 @@
     <Compile Include="IDocuments\DistributeOverhead\DistributeNakladTypeEnum.cs" />
     <Compile Include="IDocuments\Finance\ISFProviderNomenklCurrencyConvert.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladRow.cs" />
+    <Compile Include="IDocuments\IQueryResults\INomenklInnerMoveQueryResult.cs" />
     <Compile Include="IDocuments\Refund\IRefundFromClient.cs" />
     <Compile Include="Documents\Refund\RefundFromClientRowViewModel.cs" />
     <Compile Include="Documents\Refund\RefundFromClientViewModel.cs" />
