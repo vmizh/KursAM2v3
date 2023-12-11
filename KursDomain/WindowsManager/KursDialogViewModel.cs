@@ -6,50 +6,25 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core.ViewModel.Base;
+using DevExpress.Xpf.Editors;
 using static Core.WindowsManager.WindowManager;
 
 namespace KursDomain.WindowsManager;
 
 public class KursDialogViewModel : INotifyPropertyChanged
 {
-
-    #region Fields
-
-    private Dictionary<KursDialogResult, string> bNames;
-    private KursDialog dialog;
-    private string text;
-    private const double  buttonWidth = 120;
-    private readonly Thickness buttonMargin = new Thickness(0, 0, 20, 0);
-   
-    #endregion
-
-    #region Properties
-
-    public Brush BorderBrush { set; get; } = Brushes.Blue;
-    public List<Button> Buttons { set; get; } = new List<Button>();
-    public string Text {
-        set
-        {
-            text = value;
-            OnPropertyChanged();
-        }
-        get => text;
-    }
-
-    public KursDialogResult DialogResult;
-    
-    #endregion
-
     #region Constructors
-    
-    public KursDialogViewModel(string text, KursDialogResult result, Dictionary<KursDialogResult, string> buttonNames)
+
+    public KursDialogViewModel(string text, string titleText, KursDialogResult result,
+        Dictionary<KursDialogResult, string> buttonNames)
     {
         bNames = buttonNames;
+        TitleText = titleText;
         Text = text;
         dialog = new KursDialog();
+        var trigger = new Trigger();
 
         if ((result & KursDialogResult.Yes) == KursDialogResult.Yes)
-        {
             Buttons.Add(new Button
             {
                 Content = buttonNames[KursDialogResult.Yes],
@@ -58,9 +33,7 @@ public class KursDialogViewModel : INotifyPropertyChanged
                 Width = buttonWidth,
                 Margin = buttonMargin
             });
-        }
         if ((result & KursDialogResult.No) == KursDialogResult.No)
-        {
             Buttons.Add(new Button
             {
                 Content = buttonNames[KursDialogResult.No],
@@ -69,10 +42,8 @@ public class KursDialogViewModel : INotifyPropertyChanged
                 Width = buttonWidth,
                 Margin = buttonMargin
             });
-        }
-        
+
         if ((result & KursDialogResult.Save) == KursDialogResult.Save)
-        {
             Buttons.Add(new Button
             {
                 Content = buttonNames[KursDialogResult.Save],
@@ -81,9 +52,7 @@ public class KursDialogViewModel : INotifyPropertyChanged
                 Width = buttonWidth,
                 Margin = buttonMargin
             });
-        }
         if ((result & KursDialogResult.NotSave) == KursDialogResult.NotSave)
-        {
             Buttons.Add(new Button
             {
                 Content = buttonNames[KursDialogResult.NotSave],
@@ -92,9 +61,7 @@ public class KursDialogViewModel : INotifyPropertyChanged
                 Width = buttonWidth,
                 Margin = buttonMargin
             });
-        }
         if ((result & KursDialogResult.Cancel) == KursDialogResult.Cancel)
-        {
             Buttons.Add(new Button
             {
                 Content = buttonNames[KursDialogResult.Cancel],
@@ -103,28 +70,47 @@ public class KursDialogViewModel : INotifyPropertyChanged
                 Width = buttonWidth,
                 Margin = buttonMargin
             });
-        }
 
         if ((result & KursDialogResult.Confirm) == KursDialogResult.Confirm)
-        {
             Buttons.Add(new Button
             {
                 Content = buttonNames[KursDialogResult.Confirm],
                 Command = ButtonClickCommand,
                 CommandParameter = KursDialogResult.Confirm,
-                Width = buttonWidth,
+                Width = buttonWidth + 60,
                 Margin = buttonMargin
             });
+
+        if (Buttons.Count > 0)
+        {
+            foreach (var button1 in Buttons)
+            {
+                button1.MouseEnter += (s, e) =>
+                {
+                    BorderBrush = button1.Foreground;
+                    button1.Foreground = Brushes.White;
+                    button1.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#0167c0");
+                };
+                button1.MouseLeave += (s, e) =>
+                {
+                    button1.Background = Brushes.White;
+                    button1.Foreground = BorderBrush;
+                };
+            }
+            
+            Buttons[0].Focus();
         }
-    } 
+    }
 
     #endregion
+
+    public event PropertyChangedEventHandler PropertyChanged;
 
     #region Methods
 
     public void Show()
     {
-        dialog.Topmost = true; 
+        dialog.Topmost = true;
         dialog.DataContext = this;
         dialog.ShowDialog();
         OnPropertyChanged(nameof(Buttons));
@@ -132,23 +118,6 @@ public class KursDialogViewModel : INotifyPropertyChanged
     }
 
     #endregion
-
-    #region Commands
-
-    ICommand ButtonClickCommand
-    {
-        get { return new Command(ButonClick, _ => true); }
-    }
-
-    private void ButonClick(object obj)
-    {
-        DialogResult = (KursDialogResult)obj;
-        dialog?.Close();
-    }
-
-    #endregion
-
-    public event PropertyChangedEventHandler PropertyChanged;
 
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
     {
@@ -162,4 +131,51 @@ public class KursDialogViewModel : INotifyPropertyChanged
         OnPropertyChanged(propertyName);
         return true;
     }
+
+    #region Fields
+
+    private Dictionary<KursDialogResult, string> bNames;
+    private readonly KursDialog dialog;
+    private string text;
+    private const double buttonWidth = 120;
+    private readonly Thickness buttonMargin = new(0, 0, 20, 0);
+
+    #endregion
+
+    #region Properties
+
+    public Brush BorderBrush { set; get; }
+    public List<Button> Buttons { set; get; } = new();
+
+    public string Text
+    {
+        set
+        {
+            text = value;
+            OnPropertyChanged();
+        }
+        get => text;
+    }
+
+    public string TitleText { set; get; }
+    
+
+    public KursDialogResult DialogResult;
+
+    #endregion
+
+    #region Commands
+
+    private ICommand ButtonClickCommand
+    {
+        get { return new Command(ButonClick, _ => true); }
+    }
+
+    private void ButonClick(object obj)
+    {
+        DialogResult = (KursDialogResult)obj;
+        dialog?.Close();
+    }
+
+    #endregion
 }

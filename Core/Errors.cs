@@ -10,7 +10,7 @@ namespace Core
     {
         public static void ShowError(Exception ex)
         {
-            var WindowManager = new WindowManager();
+            var windowManager = new WindowManager();
             var errText = new StringBuilder(ex.Message);
             if (ex.InnerException != null)
             {
@@ -18,7 +18,7 @@ namespace Core
                 errText.Append(ex.InnerException.Message);
             }
 
-            WindowManager.ShowWinUIMessageBox(errText.ToString(), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error,
+            windowManager.ShowWinUIMessageBox(errText.ToString(), "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error,
                 MessageBoxResult.OK, MessageBoxOptions.None);
             DXMessageBox.Show(errText.ToString(), "Ошибка");
         }

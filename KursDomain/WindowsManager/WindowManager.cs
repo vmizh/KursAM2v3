@@ -28,7 +28,7 @@ public class WindowManager : IWindowManager
         DialogResultNames.Add(KursDialogResult.NotSave,"Не сохранять");
         DialogResultNames.Add(KursDialogResult.Cancel,"Отмена");
         DialogResultNames.Add(KursDialogResult.No,"Нет");
-        DialogResultNames.Add(KursDialogResult.Confirm,"Подтвердить");
+        DialogResultNames.Add(KursDialogResult.Confirm,"ОК");
     }
 
     [Flags]
@@ -54,9 +54,9 @@ public class WindowManager : IWindowManager
         DXMessageBox.Show(messageBoxText, caption);
     }
 
-    public KursDialogResult ShowKursDialog(string text, KursDialogResult result)
+    public KursDialogResult ShowKursDialog(string text,string titleText,  KursDialogResult result)
     {
-        var dlg = new KursDialogViewModel(text, result, DialogResultNames);
+        var dlg = new KursDialogViewModel(text,titleText,result,DialogResultNames);
         dlg.Show();
         return dlg.DialogResult;
     }

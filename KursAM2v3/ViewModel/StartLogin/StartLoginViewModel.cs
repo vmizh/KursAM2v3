@@ -164,8 +164,8 @@ namespace KursAM2.ViewModel.StartLogin
                 //    "Ошибка",
                 //    MessageBoxImage.Question);
                 var wm = new WindowManager();
-                wm.ShowKursDialog("Имя пользователя и пароль должны быть обязательно заполнены.",
-                    WindowManager.SaveCancel);
+                var dlgRslt= wm.ShowKursDialog(@"Имя пользователя и пароль должны быть обязательно заполнены.", "Вход в систему",
+                    WindowManager.Confirm);
                 return;
             }
 

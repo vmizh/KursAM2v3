@@ -60,7 +60,7 @@
                                    LargeGlyph="{dx:DXImage SvgImages/Business Objects/BO_Audit_ChangeHistory.svg}" IsEnabled="True" />
                 <dxb:BarButtonItem x:Name="BarUpdateItem"
                                    BarItemDisplayMode="ContentAndGlyph"
-                                   Command="{Binding VersionUpdate}"
+                                   Command="{Binding VersionUpdateCommand}"
                                    Alignment="Far" LargeGlyph="{dx:DXImage SvgImages/XAF/Action_Reload.svg}"
                 IsEnabled="{Binding  IsVersionUpdateStatus, UpdateSourceTrigger=PropertyChanged}" />
             </dxb:Bar>

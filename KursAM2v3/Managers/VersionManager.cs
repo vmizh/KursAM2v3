@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Xml;
+using Core.WindowsManager;
+using DevExpress.Skins;
+using DevExpress.XtraSpreadsheet.DocumentFormats.Xlsb;
 using KursAM2.View;
 using KursAM2.ViewModel;
 
@@ -38,6 +41,7 @@ namespace KursAM2.Managers
     {
         public const string processName = "KursAM2v4";
         private readonly MainWindowViewModel _windowsViewModel;
+        private readonly WindowManager winManager = new WindowManager();
 
         public VersionManager(MainWindowViewModel model)
         {
@@ -105,9 +109,12 @@ namespace KursAM2.Managers
             switch (verCheck.UpdateStatus)
             {
                 case 0:
-                    MessageBox.Show(
-                        $"Установлена актуальная версия программы {verCheck.fullVersion}. Обновления не требуется.",
-                        "Запрос на обновление программы", MessageBoxButton.OK, MessageBoxImage.Information);
+                     var msgDialog = @"Установлена актуальная версия программы " + verCheck.fullVersion + ".\nОбновления не требуется.";
+                    // winManager.ShowMessageBox(msgDialog, "Обновление версии", MessageBoxButton.OK,
+                    //     MessageBoxImage.Information);
+                    winManager.ShowKursDialog(msgDialog,"Обновление версии", WindowManager.Confirm);
+
+
                     return;
                 case 1:
                     var ShowMsgResult = MessageBox.Show(
