@@ -21,7 +21,7 @@ namespace KursAM2.View.Management
         public KontragentRightsControl()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             gridUsers.DataContext = myUser;
             Loaded += KontragentRightsControl_Loaded;
             Closing += KontragentRightsControl_Closing;

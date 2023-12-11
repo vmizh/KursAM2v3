@@ -14,7 +14,7 @@ namespace KursAM2.View.Logistiks
         public KontragentGruzoInfoView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void BtnClose_OnClick(object sender, RoutedEventArgs e)

@@ -11,7 +11,7 @@ namespace KursAM2.View.Repozit
     {
         public PasswordVerificationView()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent(); 
         }
     }
 }

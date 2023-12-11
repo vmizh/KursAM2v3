@@ -241,7 +241,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         {
             LayoutManager ??= new global::Helper.LayoutManager(Form, LayoutSerializationService,
                 LayoutName, null, GlobalOptions.KursSystemDBContext);
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
         else
         {
@@ -333,7 +333,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                     };
             }
 
-        ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+        
         UpdateVisualObjects();
         IsLayoutLoaded = true;
     }

@@ -10,7 +10,7 @@ namespace KursAM2.View.Logistiks
         public InventorySheetView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
     }
 }

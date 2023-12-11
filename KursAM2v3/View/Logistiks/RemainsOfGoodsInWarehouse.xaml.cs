@@ -10,7 +10,7 @@ namespace KursAM2.View.Logistiks
         public RemainsOfGoodsInWarehouse()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
     }
 }

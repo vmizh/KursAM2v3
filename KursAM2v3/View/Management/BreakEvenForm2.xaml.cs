@@ -16,7 +16,7 @@ namespace KursAM2.View.Management
         public BreakEvenForm2()
         {
             InitializeComponent();
-            //ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            //
             ////GridControlLocalizer.Active = new CustomDXGridLocalizer();
             ////EditorLocalizer.Active = new CustomEditorsLocalizer();
 

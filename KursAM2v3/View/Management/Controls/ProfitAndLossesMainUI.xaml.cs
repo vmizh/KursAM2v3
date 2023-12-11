@@ -25,7 +25,7 @@ namespace KursAM2.View.Management.Controls
     {
         public ProfitAndLossesMainUI()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent(); 
         }
         private void LayoutTabs_OnSelectedTabChildChanged(object sender, ValueChangedEventArgs<FrameworkElement> e)
         {

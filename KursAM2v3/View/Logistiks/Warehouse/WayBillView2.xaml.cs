@@ -13,7 +13,7 @@ namespace KursAM2.View.Logistiks.Warehouse
         public WayBillView2()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

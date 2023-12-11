@@ -20,7 +20,7 @@ namespace KursAM2.View.DialogUserControl
         {
             LayoutName = layoutName;
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, mainControl);
             LayoutControl = mainControl;
             Loaded += UserControl_Loaded;

@@ -14,7 +14,7 @@ namespace KursAM2.View.Base
         public GridAutoWithLayoutContyWithLayoutConrol()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             Unloaded += GridAutoWithLayoutConrol_Unloaded;
             Loaded += GridAutoWithLayoutConrol_Loaded;
         }

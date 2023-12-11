@@ -12,7 +12,6 @@ namespace KursAM2.Reports
         public HeadReport()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
         }
 
     }

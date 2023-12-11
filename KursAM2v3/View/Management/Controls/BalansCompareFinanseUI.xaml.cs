@@ -23,7 +23,7 @@ namespace KursAM2.View.Management.Controls
         public BalansCompareFinanseUI()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             Loaded += BalansCompareFinanseUI_Loaded;
             Unloaded += BalansCompareFinanseUI_Unloaded;
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),"KursAM2.View.Management.Controls.BalansCompareFinanseUI",

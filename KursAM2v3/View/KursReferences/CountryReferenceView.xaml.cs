@@ -14,7 +14,7 @@ namespace KursAM2.View.KursReferences
         public CountryReferenceView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, gridControl);
             Loaded += Layout_Loaded;
             Unloaded += Layout_Unloaded;

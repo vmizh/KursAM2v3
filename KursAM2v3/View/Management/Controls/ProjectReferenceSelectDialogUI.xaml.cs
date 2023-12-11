@@ -12,7 +12,7 @@ namespace KursAM2.View.Management.Controls
         public ProjectReferenceSelectDialogUI()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void TreeListControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

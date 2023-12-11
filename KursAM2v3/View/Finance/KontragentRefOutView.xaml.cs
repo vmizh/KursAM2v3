@@ -16,7 +16,7 @@ namespace KursAM2.View.Finance
         public KontragentRefOutView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             Loaded += SearchBaseView_Loaded;
             Closing += SearchBaseView_Closing;
         }

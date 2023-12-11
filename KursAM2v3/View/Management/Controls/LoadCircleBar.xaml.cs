@@ -39,7 +39,7 @@ namespace KursAM2.View.Management.Controls
         public LoadCircleBar()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         public new int FontSize

@@ -16,7 +16,7 @@ namespace KursAM2.View.DialogUserControl
         public CashSetRemainsUC()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, gridControlSearch);
             LayoutControl = gridControlSearch;
             Loaded += CashSetRemainsDialogUC_Loaded;

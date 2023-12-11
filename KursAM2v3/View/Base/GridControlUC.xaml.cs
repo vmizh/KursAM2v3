@@ -11,7 +11,7 @@ namespace KursAM2.View.Base
         public GridControlUC()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
     }
 }

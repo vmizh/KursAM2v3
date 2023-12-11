@@ -13,7 +13,7 @@ namespace KursAM2.View.Personal
         public DialogSelectPersona()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             Loaded += DialogSelectPersona_Loaded;
             Closing += DialogSelectPersona_Closing;
         }

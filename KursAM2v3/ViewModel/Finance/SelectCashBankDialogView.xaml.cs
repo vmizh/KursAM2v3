@@ -14,7 +14,7 @@ namespace KursAM2.ViewModel.Finance
         public SelectCashBankDialogView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void DataControlBase_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

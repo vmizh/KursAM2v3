@@ -23,7 +23,7 @@ namespace KursAM2.View.Management
     {
         public DebitorCreditorView()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent(); 
             //LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             //Closing += DebitorCreditorView_Closing;
             //Loaded += DebitorCreditorView_Loaded;

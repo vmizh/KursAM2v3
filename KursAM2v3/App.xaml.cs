@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Core.Serialization;
 using DevExpress.Xpf.Editors;
@@ -41,7 +42,7 @@ namespace KursAM2
         {
             try
             {
-                ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+                ApplicationThemeHelper.ApplicationThemeName = Theme.Win11LightName;
                 ToolTipService.ShowOnDisabledProperty.OverrideMetadata(
                     typeof(Control),
                     new FrameworkPropertyMetadata(true));
@@ -76,5 +77,12 @@ namespace KursAM2
                 MessageBoxImage.Error);
         }
 
+        private void Application_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
+        {
+            MessageBox.Show("Не предвиденная ошибка, обратитьсь к администратору."
+                            + Environment.NewLine + e.Exception.Message, "Непредвиденная ошибка");
+
+            e.Handled = true;
+        }
     }
 }

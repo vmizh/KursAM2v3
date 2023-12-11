@@ -27,7 +27,7 @@ namespace KursAM2.View.Finance
         public BankCurrencyChangeView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, layoutItems);
             Loaded += BankCurrencyChangeView_Loaded;
             Unloaded += BankCurrencyChangeView_Unloaded;

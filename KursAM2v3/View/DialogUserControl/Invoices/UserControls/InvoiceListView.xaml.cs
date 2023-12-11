@@ -13,7 +13,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.UserControls
         public InvoiceListView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void GridControlSearch_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

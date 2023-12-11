@@ -13,7 +13,7 @@ namespace KursAM2.View.Base
         public KursBaseWindow()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void MenuButton_OnClick(object sender, RoutedEventArgs e)

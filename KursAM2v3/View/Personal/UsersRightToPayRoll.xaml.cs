@@ -20,7 +20,7 @@ namespace KursAM2.View.Personal
         public UsersRightToPayRoll()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             gridUsers.DataContext = _user;
             gridEmployee.DataContext = _employe;
             Loaded += UsersRightToPayRollLoaded;

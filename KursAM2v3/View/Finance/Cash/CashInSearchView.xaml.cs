@@ -16,7 +16,7 @@ namespace KursAM2.View.Finance.Cash
         public CashInSearchView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
             Loaded += CashInSearchView_Loaded;
             Closing += CashInSearchView_Closing;

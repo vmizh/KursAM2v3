@@ -21,7 +21,7 @@ namespace KursAM2.View.Logistiks.UC
         {
             LayoutName = layoutName;
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, NomenklItemGrid);
             LayoutControl = mainControl;
             Loaded += UserControl_Loaded;

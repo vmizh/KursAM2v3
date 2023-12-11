@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Data.Entity;
@@ -6,6 +7,7 @@ using System.Data.Entity.Infrastructure;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
 using KursAM2.View.Finance.UC;
@@ -27,6 +29,7 @@ using KursDomain.Documents.Periods;
 using KursDomain.Documents.StockHolder;
 using KursDomain.Documents.Systems;
 using KursDomain.ICommon;
+using KursDomain.IDocuments.IQueryResults;
 using KursDomain.References;
 using KursDomain.Repository;
 
@@ -519,6 +522,20 @@ namespace KursAM2.Dialogs
                 }
 
             return null;
+        }
+
+
+        /// <summary>
+        /// Получить список отправленных на склад и не оприходованных товаров
+        /// </summary>
+        /// <param name="maxDate">Максимальная дата</param>
+        /// <param name="toStoreDC">Склад получатель (код)</param>
+        /// <returns></returns>
+        public static List<NomenklInnerMoveQueryResult> GetNomenklForInnerMove(DateTime maxDate, decimal toStoreDC)
+        {
+            var ret = new List<NomenklInnerMoveQueryResult>();
+
+            return ret;
         }
 
         public static RSViewModelBase SelectAllInvoiceClient(bool isUsePayment, bool isUseAccepted, Currency crs = null)

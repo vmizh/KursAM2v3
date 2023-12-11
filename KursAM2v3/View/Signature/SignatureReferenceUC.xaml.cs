@@ -14,7 +14,7 @@ namespace KursAM2.View.Signature
         public SignatureReferenceUC()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         private void gridSignatures_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)

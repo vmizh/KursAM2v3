@@ -17,7 +17,7 @@ namespace KursAM2.View.Dogovors
         public DogovorClientView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             EventManager.RegisterClassHandler(typeof(TextEdit), GotFocusEvent,
                 new RoutedEventHandler((s, e) =>
                 {

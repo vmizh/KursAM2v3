@@ -39,7 +39,7 @@ namespace KursAM2.View.Finance.Cash
         public CashOutView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, layoutItems);
             //Loaded += CashoutView_Loaded;
             //Unloaded += CashoutView_Unloaded;

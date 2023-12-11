@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,6 +12,7 @@ using Core.ViewModel.Base.Column;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Data;
+using DevExpress.Office.Utils;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Managers;
@@ -438,7 +440,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 BalansStructure.Add(r);
             try
             {
-                GetCash();
+                //GetCash();
+                GetCashAsync();
                 GetBank();
                 GetKontragent();
                 GetNomenkl();
@@ -961,8 +964,23 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         {
         }
 
-        private void GetCash()
+        public async Task GetCashAsync()
         {
+            var ret = new List<ManagementBalanceGroupViewModel>();
+            var res = await Task.Run(_GetCash);
+        }
+
+        public void GetCash()
+        {
+            foreach (var row in _GetCash())
+            {
+                BalansStructure.Add(row);
+            }
+        }
+
+        private List<ManagementBalanceGroupViewModel> _GetCash()
+        {
+            var ret = new List<ManagementBalanceGroupViewModel>();
             var ch = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
                 .Single(t => t.Tag == BalansSection.Cash)
                 .Id);
@@ -992,7 +1010,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     var d1 = d;
                     var s =
                         data.Where(_ => _.CashDC == d1);
-                    BalansStructure.Add(new ManagementBalanceGroupViewModel
+                   ret.Add(new ManagementBalanceGroupViewModel
                     {
                         Id = Guid.NewGuid(),
                         ParentId = ch.Id,
@@ -1014,27 +1032,29 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 }
 
                 ch.SummaEUR =
-                    BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    ret.Where(_ => _.ParentId == ch.Id)
                         .Sum(_ => _.SummaEUR);
                 ch.SummaRUB =
-                    BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    ret.Where(_ => _.ParentId == ch.Id)
                         .Sum(_ => _.SummaRUB);
                 ch.SummaUSD =
-                    BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    ret.Where(_ => _.ParentId == ch.Id)
                         .Sum(_ => _.SummaUSD);
                 ch.SummaGBP =
-                    BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    ret.Where(_ => _.ParentId == ch.Id)
                         .Sum(_ => _.SummaGBP);
                 ch.SummaCHF =
-                    BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    ret.Where(_ => _.ParentId == ch.Id)
                         .Sum(_ => _.SummaCHF);
                 ch.SummaSEK =
-                    BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    ret.Where(_ => _.ParentId == ch.Id)
                         .Sum(_ => _.SummaSEK);
                 ch.SummaCNY =
-                    BalansStructure.Where(_ => _.ParentId == ch.Id)
+                    ret.Where(_ => _.ParentId == ch.Id)
                         .Sum(_ => _.SummaCNY);
             }
+
+            return ret;
         }
 
         private void GetBank()

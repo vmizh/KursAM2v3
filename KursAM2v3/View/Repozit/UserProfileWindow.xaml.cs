@@ -22,7 +22,7 @@ namespace KursAM2.View.Repozit
     {
         public UserProfileWindow()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent(); 
         }
     }
 }

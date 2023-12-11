@@ -21,7 +21,7 @@ namespace KursAM2.View.Finance.Cash
 
         public CashBookView()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent(); 
             //LayoutManager = new LayoutManager.LayoutManager(GetType().Name, this, mainLayoutControl);
             //Loaded += CashBookView_Loaded;
             //Closing += CashBookView_Closing;

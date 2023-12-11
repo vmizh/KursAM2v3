@@ -10,7 +10,7 @@ namespace KursAM2.View.KursReferences.KontragentControls
         public KontragentPersonaUserControl()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
     }
 }

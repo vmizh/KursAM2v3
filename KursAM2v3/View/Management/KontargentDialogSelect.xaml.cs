@@ -10,7 +10,7 @@ namespace KursAM2.View.Management
         public KontargentDialogSelect()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
     }
 }

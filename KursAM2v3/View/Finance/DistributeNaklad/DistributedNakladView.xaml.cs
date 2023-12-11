@@ -22,7 +22,7 @@ namespace KursAM2.View.Finance.DistributeNaklad
         public DistributedNakladView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
 
         public GridColumn NakladSummaColumn { set; get; }

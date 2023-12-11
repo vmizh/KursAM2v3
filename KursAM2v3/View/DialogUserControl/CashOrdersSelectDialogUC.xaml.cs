@@ -19,7 +19,7 @@ namespace KursAM2.View.DialogUserControl
         public CashOrdersForBankSelectDialogUC()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, gridDocument);
             LayoutControl = gridDocument;
             Loaded += CashOrdersSelectDialogUC_Loaded;

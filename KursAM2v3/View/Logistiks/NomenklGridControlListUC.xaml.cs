@@ -9,7 +9,7 @@ namespace KursAM2.View.Logistiks
     {
         public NomenklGridControlListUC()
         {
-            InitializeComponent(); ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            InitializeComponent(); 
         }
     }
 }

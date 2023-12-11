@@ -24,7 +24,7 @@ namespace KursAM2.View.KursReferences
         public ReferenceOfResponsibilityCentersView()
         {
             InitializeComponent();
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
 
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, treeListControl);
             Loaded += ReferenceOfResponsibilityCentersView_Loaded;

@@ -13,7 +13,7 @@ namespace KursAM2.View.Base
         public KursBaseDialog()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             DataContextChanged += KursBaseDialog_DataContextChanged;
             Closing += KursBaseDialog_Closing;
         }

@@ -23,7 +23,7 @@ namespace KursAM2.View.DialogUserControl
         {
             LayoutName = layoutName;
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),LayoutName + "." + GetType().Name, mainLayoutControl);
             LayoutControl = gridControlSearch;
             Loaded += CashSelectDialogUC_Loaded;

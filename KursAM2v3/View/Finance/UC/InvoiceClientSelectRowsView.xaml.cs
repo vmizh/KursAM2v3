@@ -10,7 +10,7 @@ namespace KursAM2.View.Finance.UC
         public InvoiceClientSelectRowsView()
         {
             InitializeComponent(); 
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
+            
         }
     }
 }
