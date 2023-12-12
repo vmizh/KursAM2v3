@@ -66,6 +66,8 @@
                         AutoGenerateColumns="None"
                         EnableSmartColumnsGeneration="True"
                         HorizontalAlignment="Stretch"
+                        MaxHeight="10000"
+                        MaxWidth="10000"
                         VerticalAlignment="Stretch"
                         dx:DXSerializer.SerializationID="griMain"
                         dx:DXSerializer.LayoutVersion="1"
@@ -115,14 +117,14 @@
                                 <dxg:GridColumn Name="col1_9" FieldName="PriceStart" Header="Средняя цена (начало)"
                                                 ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n4"
+                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2"
                                                               Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
                                 <dxg:GridColumn Name="col1_10" FieldName="PriceEnd" Header="Средняя цена  (конец)"
                                                 ReadOnly="True">
                                     <dxg:GridColumn.EditSettings>
-                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n4"
+                                        <dxe:CalcEditSettings AllowDefaultButton="False" DisplayFormat="n2"
                                                               Mask="n2" />
                                     </dxg:GridColumn.EditSettings>
                                 </dxg:GridColumn>
@@ -300,8 +302,6 @@
                     <dxg:GridControl x:Name="gridControlOperation"
                                      AutoGenerateColumns="None"
                                      EnableSmartColumnsGeneration="True"
-                                     MaxHeight="10000"
-                                     MaxWidth="10000"
                                      VerticalAlignment="Stretch"
                                      HorizontalAlignment="Stretch"
                                      dx:DXSerializer.SerializationID="gridControlOperation"
@@ -312,22 +312,12 @@
                                      CurrentItem="{Binding CurrentDocument,Mode=TwoWay}"
                                      SelectionMode="Row">
                         <dxg:GridControl.Columns>
-                            <dxg:GridColumn Header="Документ" FieldName="DocumentName" ReadOnly="True" />
-                            <dxg:GridColumn Header="От кого" FieldName="From" ReadOnly="True" />
-                            <dxg:GridColumn Header="Кому" FieldName="To" ReadOnly="True" />
                             <dxg:GridColumn Header="Дата" FieldName="DocumentDate" ReadOnly="True" />
                             <dxg:GridColumn Header="№" FieldName="DocumentNum" ReadOnly="True" />
-                            <dxg:GridColumn Header="Приход (сумма)" FieldName="SummaIn" ReadOnly="True">
-                                <dxg:GridColumn.EditSettings>
-                                    <dxe:TextEditSettings DisplayFormat="n2" />
-                                </dxg:GridColumn.EditSettings>
-                            </dxg:GridColumn>
-                            <dxg:GridColumn Header="Приход (кол-во)" FieldName="QuantityIn" ReadOnly="True">
-                                <dxg:GridColumn.EditSettings>
-                                    <dxe:TextEditSettings DisplayFormat="n2" />
-                                </dxg:GridColumn.EditSettings>
-                            </dxg:GridColumn>
-                            <dxg:GridColumn Header="Расход (сумма)" FieldName="SummaOut" ReadOnly="True">
+                           <dxg:GridColumn Header="Документ" FieldName="DocumentName" ReadOnly="True" />
+                            <dxg:GridColumn Header="От кого" FieldName="From" ReadOnly="True" />
+                            <dxg:GridColumn Header="Кому" FieldName="To" ReadOnly="True" />
+                             <dxg:GridColumn Header="Приход (кол-во)" FieldName="QuantityIn" ReadOnly="True">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:TextEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
@@ -342,12 +332,22 @@
                                     <dxe:TextEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
-                            <dxg:GridColumn Header="Результат (сумма)" FieldName="SummaDelta" ReadOnly="True">
+                            <dxg:GridColumn Header="Накопительно" FieldName="Nakopit" ReadOnly="True">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:TextEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
-                            <dxg:GridColumn Header="Накопительно" FieldName="Nakopit" ReadOnly="True">
+                           <dxg:GridColumn Header="Приход (сумма)" FieldName="SummaIn" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Расход (сумма)" FieldName="SummaOut" ReadOnly="True">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
+                            <dxg:GridColumn Header="Результат (сумма)" FieldName="SummaDelta" ReadOnly="True">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:TextEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
