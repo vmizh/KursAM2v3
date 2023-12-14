@@ -248,6 +248,36 @@ namespace KursAM2.ViewModel.Logistiks
             return false;
         }
 
+        private string GetToName(TD_24 d)
+        {
+            if (d == null || d.SD_24 == null) return string.Empty;
+            if (d.SD_24.DD_SKLAD_POL_DC != null)
+            {
+                return ((IName)GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_POL_DC)).Name;
+            }
+
+            if (d.SD_24.DD_KONTR_POL_DC != null)
+            {
+                return ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_POL_DC)).Name;
+            }
+            return string.Empty;
+        }
+
+        private string GetFromName(TD_24 d)
+        {
+            if (d == null || d.SD_24 == null) return string.Empty;
+            if (d.SD_24.DD_SKLAD_OTPR_DC != null)
+            {
+                return ((IName)GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_OTPR_DC)).Name;
+            }
+
+            if (d.SD_24.DD_KONTR_OTPR_DC != null)
+            {
+                return ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC)).Name;
+            }
+            return string.Empty;
+        }
+
         private void LoadDocuments()
         {
             DocumentList.Clear();
@@ -277,10 +307,10 @@ namespace KursAM2.ViewModel.Logistiks
                         QuantityDelta = doc.DDT_KOL_PRIHOD - doc.DDT_KOL_RASHOD,
                         // ReSharper disable once PossibleInvalidOperationException
                         // ReSharper disable once AssignNullToNotNullAttribute
-                        From = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC))?.Name,
+                        From = GetFromName(doc),
                         // ReSharper disable once AssignNullToNotNullAttribute
                         // ReSharper disable once PossibleInvalidOperationException
-                        To = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC))?.Name,
+                        To = GetToName(doc),
                         SummaIn = (doc.DDT_KOL_PRIHOD > 0 ? doc.DDT_TAX_CRS_CENA ?? 0 : 0) * doc.DDT_KOL_PRIHOD,
                         SummaOut = (doc.DDT_KOL_RASHOD > 0 ? doc.DDT_TAX_CRS_CENA ?? 0 : 0) * doc.DDT_KOL_RASHOD,
                         SummaDelta = (doc.DDT_KOL_PRIHOD > 0 ? doc.DDT_TAX_CRS_CENA ?? 0 : 0) * doc.DDT_KOL_PRIHOD -
@@ -311,13 +341,10 @@ namespace KursAM2.ViewModel.Logistiks
                         QuantityIn = doc.DDT_KOL_PRIHOD,
                         QuantityOut = doc.DDT_KOL_RASHOD,
                         QuantityDelta = doc.DDT_KOL_PRIHOD - doc.DDT_KOL_RASHOD,
-                        From = doc.SD_24.DD_KONTR_OTPR_DC != null
-                            ? ((IName)GlobalOptions.ReferencesCache.GetKontragent(doc.SD_24.DD_KONTR_OTPR_DC))?.Name
-                            // ReSharper disable once PossibleInvalidOperationException
-                            : ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC))?.Name,
+                        From = GetFromName(doc),
                         // ReSharper disable once AssignNullToNotNullAttribute
                         // ReSharper disable once PossibleInvalidOperationException
-                        To = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC))?.Name
+                        To = GetToName(doc)
                     };
                     if (doc.TD_26 != null)
                     {
@@ -372,8 +399,8 @@ namespace KursAM2.ViewModel.Logistiks
                         QuantityDelta = doc.DDT_KOL_PRIHOD - doc.DDT_KOL_RASHOD,
                         // ReSharper disable once AssignNullToNotNullAttribute
                         // ReSharper disable once PossibleInvalidOperationException
-                        From = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC))?.Name,
-                        To = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_KONTR_POL_DC))?.Name,
+                        From = GetFromName(doc),
+                        To = GetToName(doc),
                         SummaIn = 0,
                         SummaOut = doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceStart,
                         SummaDelta = -doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceEnd,
@@ -407,10 +434,8 @@ namespace KursAM2.ViewModel.Logistiks
                         QuantityDelta = -doc.DDT_KOL_RASHOD,
                         // ReSharper disable once AssignNullToNotNullAttribute
                         // ReSharper disable once PossibleInvalidOperationException
-                        From = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC))?.Name,
-                        To = doc.SD_24.DD_KONTR_POL_DC != null
-                            ? ((IName)GlobalOptions.ReferencesCache.GetKontragent(doc.SD_24.DD_KONTR_POL_DC))?.Name
-                            : ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC))?.Name,
+                        From = GetFromName(doc),
+                        To = GetToName(doc),
                         SummaIn = 0,
                         SummaOut = doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceStart,
                         SummaDelta = -doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceEnd,
@@ -558,12 +583,8 @@ namespace KursAM2.ViewModel.Logistiks
                         QuantityIn = doc.DDT_KOL_PRIHOD,
                         QuantityOut = doc.DDT_KOL_RASHOD,
                         QuantityDelta = doc.DDT_KOL_PRIHOD - doc.DDT_KOL_RASHOD,
-                        // ReSharper disable once PossibleInvalidOperationException
-                        // ReSharper disable once AssignNullToNotNullAttribute
-                        From = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC))?.Name,
-                        // ReSharper disable once AssignNullToNotNullAttribute
-                        // ReSharper disable once PossibleInvalidOperationException
-                        To = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC))?.Name,
+                        From = GetFromName(doc),
+                        To = GetToName(doc),
                         SummaIn = doc.DDT_KOL_PRIHOD * prc,
                         SummaOut = doc.DDT_KOL_RASHOD * prc,
                         SummaDelta = (doc.DDT_KOL_PRIHOD - doc.DDT_KOL_RASHOD) * prc

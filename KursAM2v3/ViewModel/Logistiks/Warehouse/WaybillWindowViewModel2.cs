@@ -438,7 +438,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 SchetLinkedRowViewModel = r,
                                 State = RowStatus.NewRow,
                                 DDT_SFACT_DC = r.DocCode,
-                                DDT_SFACT_ROW_CODE = r.Code
+                                DDT_SFACT_ROW_CODE = r.Code,
+                                InvoiceClientViewModel = Document.InvoiceClientViewModel,
                             };
                             Document.Rows.Add(newItem);
                             Document.Entity.TD_24.Add(newItem.Entity);
@@ -473,7 +474,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             SchetLinkedRowViewModel = r,
                             State = RowStatus.NewRow,
                             DDT_SFACT_DC = r.DocCode,
-                            DDT_SFACT_ROW_CODE = r.Code
+                            DDT_SFACT_ROW_CODE = r.Code,
+                            InvoiceClientViewModel = Document.InvoiceClientViewModel,
                         };
                         Document.Rows.Add(newItem);
                         Document.Entity.TD_24.Add(newItem.Entity);
@@ -633,7 +635,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             SchetLinkedRowViewModel = r,
                             State = RowStatus.NewRow,
                             DDT_SFACT_DC = r.DocCode,
-                            DDT_SFACT_ROW_CODE = r.Code
+                            DDT_SFACT_ROW_CODE = r.Code,
+                            InvoiceClientViewModel = Document.InvoiceClientViewModel,
                         };
                         Document.Rows.Add(newItem);
                         Document.Entity.TD_24.Add(newItem.Entity);
@@ -666,7 +669,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         SchetLinkedRowViewModel = r,
                         State = RowStatus.NewRow,
                         DDT_SFACT_DC = r.DocCode,
-                        DDT_SFACT_ROW_CODE = r.Code
+                        DDT_SFACT_ROW_CODE = r.Code,
+                        InvoiceClientViewModel = Document.InvoiceClientViewModel,
                     };
                     Document.Rows.Add(newItem);
                     Document.Entity.TD_24.Add(newItem.Entity);

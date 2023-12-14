@@ -520,6 +520,7 @@ namespace KursAM2.ViewModel.Reference
 
                         foreach (var b in Banks) b.myState = RowStatus.NotEdited;
                         RaisePropertyChanged(nameof(IsCanSaveData));
+                        RaisePropertyChanged(nameof(IsCanUserRight));
                     }
                     catch (Exception ex)
                     {

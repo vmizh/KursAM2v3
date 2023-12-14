@@ -165,7 +165,7 @@ namespace KursAM2.ViewModel.Finance
                 }
             }
 
-            if (ParentForm != null)
+            if ( ParentForm?.CurrentBankOperations != null)
             {
                 var date = ParentForm.CurrentBankOperations.Date;
                 ParentForm.UpdateValueInWindow(ParentForm.CurrentBankOperations);
