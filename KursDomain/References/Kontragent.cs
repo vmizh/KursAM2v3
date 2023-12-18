@@ -288,29 +288,6 @@ public class KontragentViewModel : RSViewModelBase, IEntity<SD_43>, IDataErrorIn
                     Name + s + s1 + s2 + bank;
             }
 
-            //var banks =
-            //    GlobalOptions.GetEntities()
-            //        .TD_43.Include(_ => _.SD_44)
-            //        .Where(_ => _.DOC_CODE == Entity.DOC_CODE)
-            //        .ToList();
-            //if (banks.Count == 0)
-            //{
-            //}
-            //else
-            //{
-            //    var b = banks.FirstOrDefault(_ => (_.USE_FOR_TLAT_TREB ?? 0) == 1);
-            //    if (b != null)
-            //    {
-            //    }
-            //    else
-            //    {
-            //        var b1 = banks.First();
-            //        if (b1 != null)
-            //        {
-            //        }
-            //    }
-            //}
-
             var ddd = d.FirstOrDefault(_ => _.IsDefault == true);
             return ddd != null ? ddd.GRUZO_TEXT_NAKLAD : d.First().GRUZO_TEXT_NAKLAD;
         }

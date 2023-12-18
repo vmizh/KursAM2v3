@@ -12,7 +12,6 @@ using KursAM2.View.Base;
 using KursAM2.View.KursReferences;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
@@ -98,7 +97,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             }
         }
 
-        public bool IsMultyCurrency => NomenklMain?.NomenklCollection.Count == 1;
+        public bool IsMultyCurrency => NomenklMain?.NomenklCollection.Count == 1 || NomenklMain?.State == RowStatus.NewRow;
 
         public NomenklMainViewModel NomenklMain
         {

@@ -43,6 +43,9 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             Categories.Clear();
             foreach (var item in GlobalOptions.GetEntities().SD_148.ToList())
                 Categories.Add(new KontragentClientCategory(item));
+            Regions.Clear();
+            foreach (var item in GlobalOptions.GetEntities().SD_23.ToList())
+                Regions.Add(new Region(item));
         }
 
         public KontragentCardWindowViewModel(decimal dc) : this()

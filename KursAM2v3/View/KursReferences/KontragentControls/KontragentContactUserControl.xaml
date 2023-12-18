@@ -20,7 +20,7 @@
                 <dxlc:LayoutGroup Orientation="Horizontal">
                     <dxlc:LayoutItem Label="Телефон " Margin="0,0,0,5">
                         <dxe:TextEdit
-                            EditValue="{Binding Kontragent.TEL, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" MaxLength="15" />
+                            EditValue="{Binding Kontragent.TEL, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" MaxLength="200" />
                     </dxlc:LayoutItem>
                     <dxlc:LayoutItem Label="Факс " Margin="10,0,0,5">
                         <dxe:TextEdit
