@@ -247,6 +247,7 @@ namespace KursAM2.ViewModel.Reference
                                 ctx.SaveChanges();
                                 transaction.Commit();
                                 Banks.Remove(CurrentBank);
+                                
                             }
                             catch (Exception ex)
                             {

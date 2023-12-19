@@ -213,7 +213,7 @@ namespace KursAM2.View.Finance.UC
                         dtx.VVT_DOC_NUM = c1.First().ToString();
                         break;
                     case BankOperationType.BankIn:
-                        var bb = StandartDialogs.SelectBankAccount(dtx.BankAccount.DocCode);
+                        var bb = StandartDialogs.SelectBankAccount(dtx.BankAccount.DocCode, true);
                         if (bb == null) return;
                         dtx.VVT_VAL_RASHOD = 0;
                         dtx.VVT_DOC_NUM = bb.Name + " " + bb.RashAccount;
@@ -285,7 +285,7 @@ namespace KursAM2.View.Finance.UC
                         dtc.CurrentBankOperations.VVT_DOC_NUM = c1.First().ToString();
                         break;
                     case BankOperationType.BankIn:
-                        var bb = StandartDialogs.SelectBankAccount(dtc.BankAccount.DocCode);
+                        var bb = StandartDialogs.SelectBankAccount(dtc.BankAccount.DocCode, true);
                         if (bb == null) return;
                         dtc.VVT_VAL_RASHOD = 0;
                         dtc.VVT_DOC_NUM = bb.Name + " " + bb.RashAccount;

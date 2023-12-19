@@ -22,16 +22,6 @@ namespace KursAM2.View.DialogUserControl
         private Bank myCurrentItem;
         private StandartDialogSelectTwoTableUC myDataUserControl;
 
-        //public BankAccountSelectedDialog()
-        //{
-        //    LayoutControl = myDataUserControl = new StandartDialogSelectTwoTableUC(GetType().Name);
-        //    WindowName = "Выбор банковского счета";
-        //    ItemsCollection = new ObservableCollection<Bank>();
-        //    foreach (var b in MainReferences.BankAccounts.Values)
-        //        if (ItemsCollection.All(_ => _.DocCode != b.BankDC))
-        //            ItemsCollection.Add(b.Bank);
-        //}
-
         public BankAccountSelectedDialog(Currency crs)
         {
             currency = crs;
@@ -53,16 +43,24 @@ namespace KursAM2.View.DialogUserControl
             }
         }
 
-        public BankAccountSelectedDialog(decimal dcOut)
+        public BankAccountSelectedDialog(decimal dcOut, bool isMustSurrency)
         {
             excludeAccountDC = dcOut;
+
+            if (isMustSurrency)
+            {
+                currency = GlobalOptions.ReferencesCache.GetBankAccount(dcOut).Currency as Currency;
+            }
+
             LayoutControl = myDataUserControl = new StandartDialogSelectTwoTableUC(GetType().Name);
             WindowName = "Выбор банковского счета";
             ItemsCollection = new ObservableCollection<Bank>();
             foreach (var b in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>()
                          .Where(_ => _.DocCode != dcOut))
                 if (ItemsCollection.All(_ => _.DocCode != b.DocCode))
+                {
                     ItemsCollection.Add(b.Bank as Bank);
+                }
 
             CurrentItem = null;
         }
@@ -89,7 +87,15 @@ namespace KursAM2.View.DialogUserControl
                     foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(_ =>
                                  ((IDocCode)_.Bank).DocCode == myCurrentItem?.DocCode
                                  && ((IDocCode)_.Bank).DocCode != excludeAccountDC))
-                        ChildItemsCollection.Add(acc);
+                        if(currency == null)
+                            ChildItemsCollection.Add(acc);
+                        else
+                        {
+                            if (acc.Currency != null && ((IDocCode)acc.Currency).DocCode == currency?.DocCode)
+                            {
+                                ChildItemsCollection.Add(acc);
+                            }
+                        }
                 }
                 else
                 {
@@ -101,9 +107,9 @@ namespace KursAM2.View.DialogUserControl
                     else
                         foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(
                                      _ =>
-                                         ((IDocCode)_.Bank).DocCode == myCurrentItem.DocCode &&
-                                         Equals(currency, _.Currency)))
-                            ChildItemsCollection.Add(acc);
+                                         ((IDocCode)_.Bank).DocCode == myCurrentItem.DocCode))
+                            if(((IDocCode)acc.Currency).DocCode == currency.DocCode)
+                                ChildItemsCollection.Add(acc);
                 }
 
                 RaisePropertyChanged();

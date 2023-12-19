@@ -286,9 +286,9 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.CurrentChildItem;
         }
 
-        public static BankAccount SelectBankAccount(decimal dcOut)
+        public static BankAccount SelectBankAccount(decimal dcOut, bool isMustCurrency)
         {
-            var ctx = new BankAccountSelectedDialog(dcOut);
+            var ctx = new BankAccountSelectedDialog(dcOut, isMustCurrency);
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
