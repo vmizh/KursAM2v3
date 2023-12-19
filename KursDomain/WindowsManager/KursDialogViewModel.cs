@@ -7,6 +7,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Core.ViewModel.Base;
 using DevExpress.Xpf.Editors;
+using DevExpress.Xpf.Editors.Helpers;
 using static Core.WindowsManager.WindowManager;
 
 namespace KursDomain.WindowsManager;
@@ -14,15 +15,17 @@ namespace KursDomain.WindowsManager;
 public class KursDialogViewModel : INotifyPropertyChanged
 {
     #region Constructors
+    // public Brush TitleTextColor { get; set; }
 
-    public KursDialogViewModel(string text, string titleText, KursDialogResult result,
+    public KursDialogViewModel(string text, string titleText, Brush titleTextColor,  KursDialogResult result,
         Dictionary<KursDialogResult, string> buttonNames)
     {
         bNames = buttonNames;
         TitleText = titleText;
         Text = text;
+        TitleTextColor = titleTextColor ??  Brushes.Black;
+        
         dialog = new KursDialog();
-        var trigger = new Trigger();
 
         if ((result & KursDialogResult.Yes) == KursDialogResult.Yes)
             Buttons.Add(new Button
@@ -89,16 +92,19 @@ public class KursDialogViewModel : INotifyPropertyChanged
                 {
                     BorderBrush = button1.Foreground;
                     button1.Foreground = Brushes.White;
-                    button1.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#0167c0");
+                    button1.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#0067c0");
                 };
                 button1.MouseLeave += (s, e) =>
                 {
                     button1.Background = Brushes.White;
                     button1.Foreground = BorderBrush;
                 };
+                button1.PreviewMouseLeftButtonDown += (s, e) =>
+                {
+                    button1.Foreground = (SolidColorBrush)new BrushConverter().ConvertFrom("#d4d0c6");
+                    button1.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#477bd5");
+                };
             }
-            
-            Buttons[0].Focus();
         }
     }
 
@@ -112,6 +118,7 @@ public class KursDialogViewModel : INotifyPropertyChanged
     {
         dialog.Topmost = true;
         dialog.DataContext = this;
+        Buttons[0].Focus();
         dialog.ShowDialog();
         OnPropertyChanged(nameof(Buttons));
         OnPropertyChanged(nameof(Text));
@@ -145,6 +152,7 @@ public class KursDialogViewModel : INotifyPropertyChanged
     #region Properties
 
     public Brush BorderBrush { set; get; }
+    public Brush TitleTextColor { set; get; }
     public List<Button> Buttons { set; get; } = new();
 
     public string Text
@@ -168,10 +176,10 @@ public class KursDialogViewModel : INotifyPropertyChanged
 
     private ICommand ButtonClickCommand
     {
-        get { return new Command(ButonClick, _ => true); }
+        get { return new Command(ButtonClick, _ => true); }
     }
 
-    private void ButonClick(object obj)
+    private void ButtonClick(object obj)
     {
         DialogResult = (KursDialogResult)obj;
         dialog?.Close();

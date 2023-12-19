@@ -156,15 +156,10 @@ namespace KursAM2.ViewModel.StartLogin
                 string.IsNullOrEmpty(CurrentPassword)
                 || SelectedDataSource == null)
             {
-                //WindowManager.ShowMessage(view, "Имя пользователя и пароль должны быть обязательно заполнены.",
-                //    "Ошибка",
-                //    MessageBoxImage.Question);
-
-                //WindowManager(view, "Имя пользователя и пароль должны быть обязательно заполнены.",
-                //    "Ошибка",
-                //    MessageBoxImage.Question);
                 var wm = new WindowManager();
-                var dlgRslt= wm.ShowKursDialog(@"Имя пользователя и пароль должны быть обязательно заполнены.", "Вход в систему",
+                string showMess = @"Имя пользователя и пароль должны быть обязательно заполнены.";
+                string TitleText = "Ошибка входа в систему";
+                var dlgRslt= wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
                     WindowManager.Confirm);
                 return;
             }
@@ -468,14 +463,20 @@ namespace KursAM2.ViewModel.StartLogin
                     errText.Append($"\n {exx.InnerException.Message}");
                     exx = exx.InnerException;
                 }
+                string showMess = @"Недопустимые имя пользователя или пароль.";
+                string TitleText = "Ошибка входа в систему!";
+                var wm = new WindowManager();
+                var dlgRslt = wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
+                    WindowManager.Confirm);
 
-                var service = this.GetService<IDialogService>("errorDialogService");
-                service?.ShowDialog(MessageButton.OK, "Ошибка", new DialogErrorViewModel
-                {
-                    ErrorText = errText.ToString().Replace("The underlying provider failed on Open",
-                            "Не могу открыть базу данных")
-                        .Replace("Login failed for user", "Неправильный пользователь/пароль")
-                });
+
+                // var service = this.GetService<IDialogService>("errorDialogService");
+                // service?.ShowDialog(MessageButton.OK, "Ошибка", new DialogErrorViewModel
+                // {
+                //     ErrorText = errText.ToString().Replace("The underlying provider failed on Open",
+                //             "Не могу открыть базу данных")
+                //         .Replace("Login failed for user", "Неправильный пользователь/пароль")
+                // });
                 //MessageBox.Show("CheckAndSetUser error.\n" + errText);
                 newUser = null;
                 return false;

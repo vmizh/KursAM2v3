@@ -112,7 +112,7 @@ namespace KursAM2.Managers
                      var msgDialog = @"Установлена актуальная версия программы " + verCheck.fullVersion + ".\nОбновления не требуется.";
                     // winManager.ShowMessageBox(msgDialog, "Обновление версии", MessageBoxButton.OK,
                     //     MessageBoxImage.Information);
-                    winManager.ShowKursDialog(msgDialog,"Обновление версии", WindowManager.Confirm);
+                    winManager.ShowKursDialog(msgDialog,"Обновление версии", null, WindowManager.Confirm);
 
 
                     return;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows;
+using System.Windows.Media;
 using Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.WindowsUI;
@@ -54,9 +55,9 @@ public class WindowManager : IWindowManager
         DXMessageBox.Show(messageBoxText, caption);
     }
 
-    public KursDialogResult ShowKursDialog(string text,string titleText,  KursDialogResult result)
-    {
-        var dlg = new KursDialogViewModel(text,titleText,result,DialogResultNames);
+    public KursDialogResult ShowKursDialog(string text,string titleText, Brush titleTextColor,  KursDialogResult result)
+    { 
+        var dlg = new KursDialogViewModel(text,titleText, titleTextColor, result, DialogResultNames);
         dlg.Show();
         return dlg.DialogResult;
     }
