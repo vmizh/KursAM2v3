@@ -6,6 +6,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.Annotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
 
@@ -22,18 +23,18 @@ public class Bank : IBank, IDocCode, IName, IEquatable<Bank>, IComparable
         var c = obj as Unit;
         return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
     }
-    [Display(AutoGenerateField = true, Name = "Корр.счет")]
+    [Display(AutoGenerateField = true, Name = "Корр.счет", Order=3)]
     [MaxLength(30)]
     public string CorrAccount { get; set; }
 
     [MaxLength(10)]
-    [Display(AutoGenerateField = true, Name = "БИК")]
+    [Display(AutoGenerateField = true, Name = "БИК", Order = 4)]
     public string BIK { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Адрес")]
+    [Display(AutoGenerateField = true, Name = "Адрес",Order = 5)]
     public string Address { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Короткое имя")]
+    [Display(AutoGenerateField = true, Name = "Короткое имя", Order = 1)]
     public string NickName { get; set; }
 
     [Display(AutoGenerateField = false, Name = "Ид")]
@@ -46,13 +47,13 @@ public class Bank : IBank, IDocCode, IName, IEquatable<Bank>, IComparable
         return DocCode == other.DocCode;
     }
 
-    [Display(AutoGenerateField = true, Name = "Наименование")]
+    [Display(AutoGenerateField = true, Name = "Наименование", Order = 2)]
     public string Name { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Примечание")]
+    [Display(AutoGenerateField = true, Name = "Примечание",Order = 6)]
     public string Notes { get; set; }
 
-    [Display(AutoGenerateField = false, Name = "Описание")]
+    [Display(AutoGenerateField = false, Name = "Описание", Order = 6)]
     public string Description => $"Банк: {Name}";
 
     public override string ToString()

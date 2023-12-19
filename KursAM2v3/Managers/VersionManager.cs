@@ -6,10 +6,9 @@ using System.Management;
 using System.Text;
 using System.Threading;
 using System.Windows;
+using System.Windows.Media;
 using System.Xml;
 using Core.WindowsManager;
-using DevExpress.Skins;
-using DevExpress.XtraSpreadsheet.DocumentFormats.Xlsb;
 using KursAM2.View;
 using KursAM2.ViewModel;
 
@@ -41,7 +40,7 @@ namespace KursAM2.Managers
     {
         public const string processName = "KursAM2v4";
         private readonly MainWindowViewModel _windowsViewModel;
-        private readonly WindowManager winManager = new WindowManager();
+        private readonly WindowManager winManager = new();
 
         public VersionManager(MainWindowViewModel model)
         {
@@ -106,36 +105,36 @@ namespace KursAM2.Managers
 
             var verCheck = vers.CheckVersion();
 
+
             switch (verCheck.UpdateStatus)
             {
                 case 0:
-                     var msgDialog = @"Установлена актуальная версия программы " + verCheck.fullVersion + ".\nОбновления не требуется.";
-                    // winManager.ShowMessageBox(msgDialog, "Обновление версии", MessageBoxButton.OK,
-                    //     MessageBoxImage.Information);
-                    winManager.ShowKursDialog(msgDialog,"Обновление версии", null, WindowManager.Confirm);
-
-
+                    var msgDialog = @"Установлена актуальная версия программы " + verCheck.fullVersion +
+                                    ".\nОбновления не требуется.";
+                    winManager.ShowKursDialog(msgDialog, "Обновление версии", null, WindowManager.Confirm);
                     return;
                 case 1:
-                    var ShowMsgResult = MessageBox.Show(
-                        $"Версия программы {verCheck.fullVersion} отличается от новой версии {verCheck.sfullVersion}.\nОбновить программу?",
-                        "Запрос на обновление программы", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                    if (ShowMsgResult == MessageBoxResult.No) return;
+                    msgDialog = @"Версия программы " + verCheck.fullVersion + " отличается от новой версии " +
+                                verCheck.sfullVersion + "\nОбновить программу?";
+                    var showMsgResult = winManager.ShowKursDialog(msgDialog, "Запрос на обновление программы",
+                        Brushes.DarkBlue, WindowManager.YesNo);
+                    if (showMsgResult == WindowManager.KursDialogResult.No) return;
                     break;
                 case 2:
 #if (!DEBUG)
                     if (_windowsViewModel != null && _windowsViewModel.Form != null)
                         ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Stop();
 #endif
-                    var showMsgResult = MessageBox.Show(
-                        $"Для вашей версии {verCheck.fullVersion} выпущено критическое обновление версии {verCheck.sfullVersion}.\n" +
-                        "Для дальнейшей работы необходимо обновить программу.\n Выполнить обновление?",
-                        "Запрос на обновление программы", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                    msgDialog = @"Для версии " + verCheck.fullVersion + " выпущено критическое обновление " +
+                                verCheck.sfullVersion + ".\n" +
+                                "Для дальнейшей работы необходимо обновить программу.\nВыполнить обновление?";
+                    showMsgResult = winManager.ShowKursDialog(msgDialog, "Запрос на обновление программы", Brushes.Red,
+                        WindowManager.YesNo);
 #if (!DEBUG)
                     if (_windowsViewModel != null && _windowsViewModel.Form != null)
                         ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Start();
 #endif
-                    if (showMsgResult == MessageBoxResult.No) return;
+                    if (showMsgResult == WindowManager.KursDialogResult.No) return;
                     break;
             }
 
@@ -146,25 +145,29 @@ namespace KursAM2.Managers
                 if (_windowsViewModel != null && _windowsViewModel.Form != null)
                     ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Stop();
 #endif
-                var ShowMsgResult = MessageBox.Show(
-                    "В системе обнаружены работающие версии приложения. Все приложения будут автоматически закрыты." +
-                    "Возможна потеря несохраненных данных. Продолжить обновление?",
-                    "Запрос на обновление программы", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+                var msgDialog = @"В системе обнаружены работающие версии приложения.
+Все приложения будут автоматически закрыты.
+Возможна потеря несохраненных данных. Продолжить обновление?";
+                var showMsgResult = winManager.ShowKursDialog(msgDialog, "Запрос на обновление программы",
+                    Brushes.DarkBlue, WindowManager.YesNo);
+
 #if (!DEBUG)
                 if (_windowsViewModel != null && _windowsViewModel.Form != null)
                     ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Start();
 #endif
-                if (ShowMsgResult == MessageBoxResult.No) return;
+                if (showMsgResult == WindowManager.KursDialogResult.No) return;
             }
 
             var ver = vers.GetCanUpdate();
             if (_windowsViewModel != null) _windowsViewModel.IsVersionUpdateStatus = ver;
             if (ver == false)
             {
-                var showMsgResult = MessageBox.Show(
-                    "Внимание! Обновления в системе приостановлены.Зарегестрированы работающие пользователи!\n" +
-                    "Повторите попытку позже или обратитесь к администратору.",
-                    "Запрос на обновление программы", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                var msgDialog =
+                    @"Внимание! Обновления в системе приостановлены. Зарегестрированы работающие
+пользователи! Повторите попытку позже или обратитесь к администратору.";
+                winManager.ShowKursDialog(msgDialog, "Запрос на обновление программы", Brushes.Red,
+                    WindowManager.Confirm);
+                return;
             }
 
 

@@ -20,7 +20,7 @@
                     <dxe:TextEdit
                         EditValue="{Binding Kontragent.Name, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
                 </dxlc:LayoutItem>
-                <dxlc:LayoutItem Margin="0,0,0,5" HorizontalAlignment="Stretch" Label="Полное наименование">
+                <dxlc:LayoutItem Margin="0,0,0,5" HorizontalAlignment="Stretch" Label="Полное наименование" LabelVerticalAlignment="Top">
                     <TextBox
                         Text="{Binding Kontragent.NAME_FULL, UpdateSourceTrigger=PropertyChanged, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                         TextWrapping="Wrap" Height="50" />
@@ -87,7 +87,7 @@
                             DisplayMember="Name"
                             AutoComplete="True" />
                     </dxlc:LayoutItem>
-                    <dxlc:LayoutItem Label="Примечание">
+                    <dxlc:LayoutItem Label="Примечание" LabelVerticalAlignment="Top">
                         <TextBox TextWrapping="Wrap"
                                  Text="{Binding Kontragent.Note, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                                  Height="50" />

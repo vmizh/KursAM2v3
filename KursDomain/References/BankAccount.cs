@@ -21,54 +21,54 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
         var c = obj as BankAccount;
         return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
     }
-    [Display(AutoGenerateField = true, Name = "Корр.счет")]
+    [Display(AutoGenerateField = true, Name = "Корр.счет", Order = 6)]
     public string CorrAccount => Bank?.CorrAccount;
 
-    [Display(AutoGenerateField = true, Name = "БИК")]
+    [Display(AutoGenerateField = true, Name = "БИК", Order = 5)]
     public string BIK => Bank?.BIK;
 
     [Display(AutoGenerateField = false)] public int LastYearOperationsCount { get; set; }
 
     [Display(AutoGenerateField = false)] public int RashAccCode { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Счет №")]
+    [Display(AutoGenerateField = true, Name = "Счет №", Order = 3)]
     public string RashAccount { get; set; }
 
     [Display(AutoGenerateField = false)] public short BACurrency { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Контрагент")]
+    [Display(AutoGenerateField = true, Name = "Контрагент", Order = 7)]
     public IKontragent Kontragent { get; set; }
 
     [Display(AutoGenerateField = false)] public bool IsTransit { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Банк")]
+    [Display(AutoGenerateField = true, Name = "Банк", Order = 4)]
     public IBank Bank { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Отрицат.остатки")]
+    [Display(AutoGenerateField = true, Name = "Отрицат.остатки", Order = 8)]
     public bool IsNegativeRests { get; set; }
 
     [Display(AutoGenerateField = false)] public short? BABankAccount { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Короткое имя")]
+    [Display(AutoGenerateField = true, Name = "Короткое имя", Order = 1)]
     public string ShortName { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Центр ответственности")]
+    [Display(AutoGenerateField = true, Name = "Центр ответственности", Order = 8)]
     public ICentrResponsibility CentrResponsibility { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Валюта")]
+    [Display(AutoGenerateField = true, Name = "Валюта", Order = 2)]
     public ICurrency Currency { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Нач. учета")]
+    [Display(AutoGenerateField = true, Name = "Нач. учета", Order = 9)]
     public DateTime? StartDate { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Нач. сумма")]
+    [Display(AutoGenerateField = true, Name = "Нач. сумма", Order = 10)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal? StartSumma { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Удален")]
+    [Display(AutoGenerateField = true, Name = "Удален", Order = 11)]
     public bool IsDeleted { get; set; }
 
-    [Display(AutoGenerateField = true, Name = "Дата не меньше 0")]
+    [Display(AutoGenerateField = true, Name = "Дата не меньше 0", Order = 12)]
     public DateTime? DateNonZero { get; set; }
 
     [Display(AutoGenerateField = false)] public decimal DocCode { get; set; }

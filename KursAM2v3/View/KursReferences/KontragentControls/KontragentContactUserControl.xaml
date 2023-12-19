@@ -27,7 +27,7 @@
                             EditValue="{Binding Kontragent.FAX, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}" />
                     </dxlc:LayoutItem>
                 </dxlc:LayoutGroup>
-                <dxlc:LayoutItem Label="Почтовый адрес" Margin="0,0,0,5" MinWidth="500">
+                <dxlc:LayoutItem Label="Почтовый адрес" Margin="0,0,0,5" MinWidth="500" LabelVerticalAlignment="Top">
                     <TextBox
                         Text="{Binding Kontragent.ADDRESS, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                         Height="50" TextWrapping="Wrap" />
@@ -63,7 +63,7 @@
                     </dxlc:LayoutItem>
                 </dxlc:LayoutGroup>
             </dxlc:LayoutGroup>
-            <dxlc:LayoutItem Label="Паспорт">
+            <dxlc:LayoutItem Label="Паспорт" LabelVerticalAlignment="Top">
                 <TextBox Text="{Binding Kontragent.PASSPORT, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                          TextWrapping="Wrap" Height="50" />
             </dxlc:LayoutItem>
