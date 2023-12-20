@@ -1,124 +1,57 @@
-﻿<dx:ThemedWindow
+﻿<Window
     x:Class="KursDomain.WindowsManager.KursDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-    dx:ThemeManager.ThemeName="Win11Light"
-    Title="" Height="200" Width="480"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    Title="" Height="270" Width="600"
     WindowStartupLocation="CenterScreen"
-    WindowStyle="None"
-    ResizeMode="NoResize"
+    WindowStyle="SingleBorderWindow"
+    ResizeMode="CanResize" 
     BorderBrush="{Binding BorderBrush}"
-    Topmost="True"
+    Topmost="True" 
     Loaded="ThemedWindow_Loaded"
-    Padding="0,0,0,0"
-    Background="Transparent"
-    AllowsTransparency="True"
-    BorderThickness="0">
-    <!--
-    < dx:ThemedWindow.Resources>
-        <Style TargetType="Button">
-            <Style.Triggers>
-                <DataTrigger>
-                    <Setter Property ="Button."></Setter>
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-    </dx:ThemedWindow.Resources>
-    -->
-    <!--
-    <dxmvvm:Interaction.Behaviors>
-        <dxmvvm:KeyToCommand  KeyGesture="Esc"
-                              Command="{Binding ButtonClickCommand}"
-                              CommandParameter="Cancel" ProcessEventsFromDisabledEventOwner="False"/>
-        <dxmvvm:KeyToCommand  KeyGesture="Enter"
-                              Command="{Binding ButtonClickCommand}"
-                              CommandParameter="Enter" ProcessEventsFromDisabledEventOwner="False"/>
-    </dxmvvm:Interaction.Behaviors>
-    -->
-    <Border CornerRadius="5">
-        <Grid Margin="0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" MinWidth="480" />
-                <ColumnDefinition Width="0*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="50" />
-                <RowDefinition Height="70" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <TextBox Grid.Row="0"
-                     Grid.Column="0"
-                     Text="{Binding TitleText}"
-                     Focusable="False"
-                     IsReadOnly="True"
-                     TextWrapping="NoWrap"
-                     TextAlignment="Left"
-                     BorderThickness="0"
-                     FontSize="18"
-                     FontWeight="Bold"
-                     VerticalContentAlignment="Bottom"
-                     Background="White"
-                     Padding="25,0,0,0" 
-                     Foreground="{Binding  TitleTextColor}" />
-
-            <TextBox HorizontalContentAlignment="Left"
-                     Padding="25,10,0,0"
-                     VerticalContentAlignment="Top"
-                     Text="{Binding Text,NotifyOnSourceUpdated=True}"
-                     Grid.Column="0"
-                     Grid.Row="1"
-                     IsReadOnly="True"
-                     Focusable="False"
-                     TextWrapping="Wrap"
-                     TextAlignment="Left"
-                     BorderThickness="0"
-                     Background="White"
-                     FontSize="14"/>
-
-            <StackPanel Grid.Row="2" Grid.Column="0"
-                        Background="#F3F3F3F3" Margin="0,0,0,0" Focusable="False" >
-                <WrapPanel
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Focusable="False"
-                    Margin ="27">
-                    <ItemsControl
-                        IsTabStop="False"
-                        ItemsSource="{Binding Path=Buttons,NotifyOnSourceUpdated=True}"
-                        MinHeight="30">
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Focusable="False"  />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                        <!--
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate> 
-                                <Button MinWidth="10" Margin="0 0 0 0"
-                                        Background="BlueViolet" 
-                                        Style="{StaticResource DialogButton}">
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Border
-                                            x:Name="ButtonBorder"
-                                            BorderBrush="#93b3bd"
-                                            CornerRadius="5"
-                                            BorderThickness="0,0"
-                                            RenderTransformOrigin="0.0,0.0">
-                                            <ContentPresenter x:Name="ButtonContentPresenter"
-                                                              VerticalAlignment="Center"
-                                                              HorizontalAlignment="Center"
-                                                              TextBlock.Foreground="AntiqueWhite" />
-                                        </Border>
-                                    </ControlTemplate>
-                                </Button>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    -->
-                    </ItemsControl>
-                </WrapPanel>
-            </StackPanel>
-        </Grid>
-    </Border>
-</dx:ThemedWindow>
+    BorderThickness="1"
+    >
+    <Border CornerRadius="15">
+    <Grid Margin="0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TextBox HorizontalContentAlignment="Center" 
+                 VerticalContentAlignment="Center"
+                 Text="{Binding Text,NotifyOnSourceUpdated=True}" 
+                 Grid.Column="1" 
+                 Grid.Row="0" 
+                 MinHeight="200" 
+                 MinWidth="300"
+                 IsReadOnly="True"
+                 TextWrapping="Wrap"
+                 />
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Grid.Column="0" 
+                   HorizontalAlignment="Stretch" 
+                   VerticalAlignment="Stretch"
+                   Background="LightGray">
+            <ItemsControl ItemsSource="{Binding Path=Buttons,NotifyOnSourceUpdated=True}"
+                          MinHeight="40">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                        <Button Background="Blue"></Button>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>  
+            </ItemsControl>
+        </StackPanel>
+    </Grid>
+        </Border>
+</Window>

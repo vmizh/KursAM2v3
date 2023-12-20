@@ -1,25 +1,16 @@
 ﻿using System.Windows;
-using System.Windows.Input;
-using DevExpress.Xpf.Core;
 
 namespace KursDomain.WindowsManager;
 
 /// <summary>
 ///     Interaction logic for KursDialog.xaml
 /// </summary>
-public partial class KursDialog : ThemedWindow
+public partial class KursDialog
 {
     public KursDialog()
     {
         InitializeComponent();
-        RoundCorners = true;
-        Loaded += KursDialog_Loaded;
-    }
-
-    private void KursDialog_Loaded(object sender, RoutedEventArgs e)
-    {
-        // Set the default button to the "OK" button
-        if (DataContext is KursDialogViewModel vm) FocusManager.SetFocusedElement(this, vm.Buttons[0]);
+        //RoundCorners = true;
     }
 
     private void ThemedWindow_Loaded(object sender, RoutedEventArgs e)
