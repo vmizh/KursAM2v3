@@ -1,36 +1,28 @@
-﻿using DevExpress.Xpf.Core;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using DevExpress.Xpf.Core;
 
+namespace KursDomain.WindowsManager;
 
-namespace KursDomain.WindowsManager
+/// <summary>
+///     Interaction logic for KursDialog.xaml
+/// </summary>
+public partial class KursDialog : ThemedWindow
 {
-    /// <summary>
-    /// Interaction logic for KursDialog.xaml
-    /// </summary>
-    public partial class KursDialog : ThemedWindow
+    public KursDialog()
     {
-        public KursDialog()
-        {
-            InitializeComponent();
-            RoundCorners = true;
-            
-            
-        }
+        InitializeComponent();
+        RoundCorners = true;
+        Loaded += KursDialog_Loaded;
+    }
 
-        private void ThemedWindow_Loaded(object sender, RoutedEventArgs e)
-        {
+    private void KursDialog_Loaded(object sender, RoutedEventArgs e)
+    {
+        // Set the default button to the "OK" button
+        if (DataContext is KursDialogViewModel vm) FocusManager.SetFocusedElement(this, vm.Buttons[0]);
+    }
 
-        }
+    private void ThemedWindow_Loaded(object sender, RoutedEventArgs e)
+    {
     }
 }

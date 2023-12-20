@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core.ViewModel.Base;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Helpers;
 using static Core.WindowsManager.WindowManager;
@@ -105,7 +107,7 @@ public class KursDialogViewModel : INotifyPropertyChanged
                     button1.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#477bd5");
                 };
             }
-        }
+         }
     }
 
     #endregion
@@ -118,7 +120,7 @@ public class KursDialogViewModel : INotifyPropertyChanged
     {
         dialog.Topmost = true;
         dialog.DataContext = this;
-        Buttons[0].Focus();
+        Buttons.First().Focus();
         dialog.ShowDialog();
         OnPropertyChanged(nameof(Buttons));
         OnPropertyChanged(nameof(Text));
@@ -181,7 +183,24 @@ public class KursDialogViewModel : INotifyPropertyChanged
 
     private void ButtonClick(object obj)
     {
-        DialogResult = (KursDialogResult)obj;
+        if (obj is string p )
+        {
+            switch (p )
+            {
+                case "Enter":
+                    DialogResult = KursDialogResult.Yes;
+                    break;
+                case "Cancel":
+                    DialogResult = KursDialogResult.No;
+                    break;
+
+            }
+
+        }
+        else
+        {
+            DialogResult = (KursDialogResult)obj;
+        }
         dialog?.Close();
     }
 
