@@ -668,15 +668,6 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
             Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
         }
 
-        if (Parent is InvoiceClientViewModel p)
-        {
-            foreach (var f in p.ShipmentRows)
-            {
-                var r = p.Rows.First(_ => _.Nomenkl.DocCode == f.Nomenkl.DocCode);
-                p.SummaOtgruz += Math.Round(r.Summa * r.Quantity / f.DDT_KOL_RASHOD, 2);
-            }
-        }
-
         Shipped = IsUsluga ? Quantity : Entity.TD_24.Sum(_ => _.DDT_KOL_RASHOD);
         RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
         RaisePropertyChanged(nameof(Summa));

@@ -20,12 +20,12 @@ namespace KursAM2.View.DialogUserControl
         private readonly Currency currency;
         private BankAccount myCurrentChildItem;
         private Bank myCurrentItem;
-        private StandartDialogSelectUC myDataUserControl;
+        private StandartDialogSelectTwoTableUC myDataUserControl;
 
         public BankAccountSelectedDialog(Currency crs)
         {
             currency = crs;
-            LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
+            LayoutControl = myDataUserControl = new StandartDialogSelectTwoTableUC(GetType().Name);
             WindowName = "Выбор банковского счета";
             ItemsCollection = new ObservableCollection<Bank>();
             if (currency == null)
@@ -52,7 +52,7 @@ namespace KursAM2.View.DialogUserControl
                 currency = GlobalOptions.ReferencesCache.GetBankAccount(dcOut).Currency as Currency;
             }
 
-            LayoutControl = myDataUserControl = new StandartDialogSelectUC(GetType().Name);
+            LayoutControl = myDataUserControl = new StandartDialogSelectTwoTableUC(GetType().Name);
             WindowName = "Выбор банковского счета";
             ItemsCollection = new ObservableCollection<Bank>();
             foreach (var b in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>()
@@ -127,7 +127,7 @@ namespace KursAM2.View.DialogUserControl
             }
         }
 
-        public StandartDialogSelectUC DataUserControl
+        public StandartDialogSelectTwoTableUC DataUserControl
         {
             get => myDataUserControl;
             set

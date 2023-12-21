@@ -79,7 +79,6 @@ public class KursDialogViewModel : INotifyPropertyChanged
         if ((result & KursDialogResult.Confirm) == KursDialogResult.Confirm)
             Buttons.Add(new Button
             {
-                
                 Content = buttonNames[KursDialogResult.Confirm],
                 Command = ButtonClickCommand,
                 CommandParameter = KursDialogResult.Confirm,

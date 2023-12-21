@@ -787,17 +787,7 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
         {
             if (Entity.SFT_SUMMA_K_OPLATE == value) return;
             Entity.SFT_SUMMA_K_OPLATE = value;
-            Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = value;
             RaisePropertyChanged();
-            if (Parent is InvoiceProvider doc)
-            {
-                doc.SummaFact = 0;
-                foreach (var f in doc.Facts)
-                {
-                    var r = doc.Rows.First(_ => _.Nomenkl.DocCode == f.Nomenkl.DocCode);
-                    doc.SummaFact += Math.Round(r.Summa * r.Quantity / f.DDT_KOL_PRIHOD, 2);
-                }
-            }
         }
 
         get => Entity.SFT_SUMMA_K_OPLATE ?? 0;
@@ -967,13 +957,6 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
                 Entity.SFT_SUMMA_NDS = Entity.SFT_KOL * Entity.SFT_ED_CENA * Entity.SFT_NDS_PERCENT / 100;
                 Entity.SFT_SUMMA_K_OPLATE = Entity.SFT_KOL * Entity.SFT_ED_CENA + Entity.SFT_SUMMA_NDS;
                 Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_SUMMA_K_OPLATE;
-            }
-
-            p.SummaFact = 0;
-            foreach (var f in p.Facts)
-            {
-                var r = p.Rows.First(_ => _.Nomenkl.DocCode == f.Nomenkl.DocCode);
-                p.SummaFact += Math.Round(r.Summa * r.Quantity / f.DDT_KOL_PRIHOD, 2);
             }
 
             RaisePropertyChanged(nameof(NDSSumma));
