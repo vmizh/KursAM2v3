@@ -20,6 +20,7 @@ using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
+using KursAM2.Event;
 using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories.InvoicesRepositories;
@@ -42,6 +43,7 @@ using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
+using Prism.Events;
 using Reports.Base;
 using NomenklProductType = KursDomain.References.NomenklProductType;
 
@@ -1649,6 +1651,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     "", Document.Description);
                 DeletedStoreLink.Clear();
                 Document.DeletedRows.Clear();
+                MainWindowViewModel.EventAggregator.GetEvent<AFterSaveInvoiceProvideEvent>()
+                    .Publish(new AFterSaveInvoiceProvideEventArgs
+                    {
+                        Id = Document.Id,
+                        DocCode = Document.DocCode,
+                        Invoice = Document
+                    });
             }
             catch (Exception ex)
             {

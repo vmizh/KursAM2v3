@@ -333,11 +333,13 @@
     <Compile Include="References\Unit.cs" />
     <Compile Include="References\Warehouse.cs" />
     <Compile Include="Repository\Base\GenericRepository.cs" />
+    <Compile Include="Repository\Base\IBaseRepository.cs" />
     <Compile Include="Repository\CurrencyRepository\CurrencyRepository.cs" />
     <Compile Include="Repository\CurrencyRepository\ICurrencyRepository.cs" />
     <Compile Include="Repository\GenericKursDBRepository.cs" />
     <Compile Include="Repository\GenericKursSystemDBRepository.cs" />
     <Compile Include="Repository\IGenericRepository.cs" />
+    <Compile Include="Repository\InvoiceProviderRepository\IInvoiceProviderRepository.cs" />
     <Compile Include="Repository\IRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="UserMenuFavorites.cs" />

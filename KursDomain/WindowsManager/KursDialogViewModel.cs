@@ -7,9 +7,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core.ViewModel.Base;
-using DevExpress.Xpf.Core;
-using DevExpress.Xpf.Editors;
-using DevExpress.Xpf.Editors.Helpers;
 using static Core.WindowsManager.WindowManager;
 
 namespace KursDomain.WindowsManager;
@@ -17,16 +14,17 @@ namespace KursDomain.WindowsManager;
 public class KursDialogViewModel : INotifyPropertyChanged
 {
     #region Constructors
+
     // public Brush TitleTextColor { get; set; }
 
-    public KursDialogViewModel(string text, string titleText, Brush titleTextColor,  KursDialogResult result,
+    public KursDialogViewModel(string text, string titleText, Brush titleTextColor, KursDialogResult result,
         Dictionary<KursDialogResult, string> buttonNames)
     {
         bNames = buttonNames;
         TitleText = titleText;
         Text = text;
-        TitleTextColor = titleTextColor ??  Brushes.Black;
-        
+        TitleTextColor = titleTextColor ?? Brushes.Black;
+
         dialog = new KursDialog();
 
         if ((result & KursDialogResult.Yes) == KursDialogResult.Yes)
@@ -87,7 +85,6 @@ public class KursDialogViewModel : INotifyPropertyChanged
             });
 
         if (Buttons.Count > 0)
-        {
             foreach (var button1 in Buttons)
             {
                 button1.MouseEnter += (s, e) =>
@@ -107,7 +104,6 @@ public class KursDialogViewModel : INotifyPropertyChanged
                     button1.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#477bd5");
                 };
             }
-         }
     }
 
     #endregion
@@ -147,7 +143,7 @@ public class KursDialogViewModel : INotifyPropertyChanged
     private readonly KursDialog dialog;
     private string text;
     private const double buttonWidth = 120;
-    private readonly Thickness buttonMargin = new(0, 0, 20, 0);
+    private readonly Thickness buttonMargin = new Thickness(0, 0, 20, 0);
 
     #endregion
 
@@ -155,7 +151,7 @@ public class KursDialogViewModel : INotifyPropertyChanged
 
     public Brush BorderBrush { set; get; }
     public Brush TitleTextColor { set; get; }
-    public List<Button> Buttons { set; get; } = new();
+    public List<Button> Buttons { set; get; } = new List<Button>();
 
     public string Text
     {
@@ -168,7 +164,7 @@ public class KursDialogViewModel : INotifyPropertyChanged
     }
 
     public string TitleText { set; get; }
-    
+
 
     public KursDialogResult DialogResult;
 
@@ -183,9 +179,8 @@ public class KursDialogViewModel : INotifyPropertyChanged
 
     private void ButtonClick(object obj)
     {
-        if (obj is string p )
-        {
-            switch (p )
+        if (obj is string p)
+            switch (p)
             {
                 case "Enter":
                     DialogResult = KursDialogResult.Yes;
@@ -193,14 +188,10 @@ public class KursDialogViewModel : INotifyPropertyChanged
                 case "Cancel":
                     DialogResult = KursDialogResult.No;
                     break;
-
             }
-
-        }
         else
-        {
             DialogResult = (KursDialogResult)obj;
-        }
+
         dialog?.Close();
     }
 

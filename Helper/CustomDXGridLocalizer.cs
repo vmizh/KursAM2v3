@@ -1,9 +1,10 @@
-﻿using DevExpress.Xpf.Editors;
+﻿using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
 
 namespace Helper
 {
-     public class CustomDXGridLocalizer : GridControlLocalizer {
+    public class CustomDXGridLocalizer : GridControlLocalizer {
         protected override void PopulateStringTable() {
             base.PopulateStringTable();
             AddString(GridControlStringId.ColumnChooserCaption, "Выбор колонок");
@@ -66,6 +67,17 @@ namespace Helper
             AddString(EditorStringId.FilterClauseLessOrEqual, "Меньше или равно");
             AddString(EditorStringId.FilterClauseLike, "Похоже на");
             AddString(EditorStringId.FilterClauseNotLike, "Не похоже на");
+        }
+    }
+
+    public class CustomDXMessageBoxLocalizer : DXMessageBoxLocalizer
+    {
+        protected override void PopulateStringTable()
+        {
+            base.PopulateStringTable();
+            AddString(DXMessageBoxStringId.Yes, "Да");
+            AddString(DXMessageBoxStringId.No, "Нет");
+            AddString(DXMessageBoxStringId.Cancel, "Отмена");
         }
     }
 }

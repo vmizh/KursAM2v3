@@ -6,7 +6,6 @@ using System.Linq;
 using System.Windows;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -31,7 +30,7 @@ namespace KursAM2.View.Finance.UC
         public BankOperationsComareRowView()
         {
             InitializeComponent();
-            
+
             DataContextChanged += BankOperationsView_DataContextChanged;
         }
 
@@ -312,16 +311,15 @@ namespace KursAM2.View.Finance.UC
         private void Consumption_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
         {
             if (Consumption.Value > 0) Incoming.Value = 0;
-            if((decimal)e.NewValue > maxSumma) 
+            if ((decimal)e.NewValue > maxSumma)
                 Consumption.Value = maxSumma;
         }
 
         private void Incoming_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
         {
             if (Incoming.Value > 0) Consumption.Value = 0;
-            if((decimal)e.NewValue > maxSumma) 
+            if ((decimal)e.NewValue > maxSumma)
                 Incoming.Value = maxSumma;
-
         }
 
         private void BaseEdit_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
@@ -478,16 +476,12 @@ namespace KursAM2.View.Finance.UC
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     if (dtx.CurrentBankOperations.VVT_SFACT_POSTAV_DC != null)
-                    {
                         ctx.Database.ExecuteSqlCommand(
                             $"EXEC dbo.GenerateSFProviderCash {Convert.ToString(dtx.CurrentBankOperations.VVT_SFACT_POSTAV_DC.Value, CultureInfo.InvariantCulture).Replace(",", ".")}");
-                    }
 
                     if (dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC != null)
-                    {
                         ctx.Database.ExecuteSqlCommand(
                             $"EXEC dbo.GenerateSFClientCash {Convert.ToString(dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC.Value, CultureInfo.InvariantCulture).Replace(",", ".")}");
-                    }
                 }
 
                 dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC = null;
@@ -505,16 +499,12 @@ namespace KursAM2.View.Finance.UC
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     if (dtx2.VVT_SFACT_POSTAV_DC != null)
-                    {
                         ctx.Database.ExecuteSqlCommand(
                             $"EXEC dbo.GenerateSFProviderCash {Convert.ToString(dtx2.VVT_SFACT_POSTAV_DC.Value, CultureInfo.InvariantCulture).Replace(",", ".")}");
-                    }
 
                     if (dtx2.VVT_SFACT_CLIENT_DC != null)
-                    {
                         ctx.Database.ExecuteSqlCommand(
-                            $"EXEC dbo.GenerateSFClientCash {Convert.ToString(dtx2.VVT_SFACT_CLIENT_DC.Value,CultureInfo.InvariantCulture).Replace(",", ".")}");
-                    }
+                            $"EXEC dbo.GenerateSFClientCash {Convert.ToString(dtx2.VVT_SFACT_CLIENT_DC.Value, CultureInfo.InvariantCulture).Replace(",", ".")}");
                 }
 
                 dtx2.VVT_SFACT_CLIENT_DC = null;

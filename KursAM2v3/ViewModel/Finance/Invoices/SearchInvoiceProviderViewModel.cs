@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
@@ -10,12 +11,15 @@ using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using DevExpress.XtraGrid;
 using Helper;
+using KursAM2.Event;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.Invoices;
+using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
 using KursDomain.Repository;
@@ -50,6 +54,26 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Documents = new ObservableCollection<IInvoiceProvider>();
             SelectedDocs = new ObservableCollection<IInvoiceProvider>();
             EndDate = DateTime.Today;
+            MainWindowViewModel.EventAggregator.GetEvent<AFterSaveInvoiceProvideEvent>()
+                .Subscribe(OnAfterSaveInvoiceExecute);
+        }
+
+        private void OnAfterSaveInvoiceExecute(AFterSaveInvoiceProvideEventArgs args)
+        {
+            if (Documents.FirstOrDefault(_ => _.DocCode == args.DocCode) is InvoiceProviderBase inv)
+            {
+                inv.Summa = args.Invoice.Summa;
+                inv.CO = args.Invoice.CO;
+                inv.DocDate = args.Invoice.DocDate;
+                inv.FormRaschet = args.Invoice.FormRaschet;
+                inv.IsAccepted = args.Invoice.IsAccepted;
+                inv.IsNDSInPrice = args.Invoice.IsNDSInPrice;
+                inv.KontrReceiver = args.Invoice.KontrReceiver;
+                inv.Note = args.Invoice.Note;
+                inv.PayCondition = args.Invoice.PayCondition;
+                inv.PaySumma = args.Invoice.PaySumma;
+                inv.SF_POSTAV_NUM = args.Invoice.SF_POSTAV_NUM;
+            }
         }
 
         public SearchInvoiceProviderViewModel(Window form) : base(form)
@@ -64,6 +88,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             SelectedDocs = new ObservableCollection<IInvoiceProvider>();
             EndDate = DateTime.Today;
             StartDate = EndDate.AddDays(-30);
+            MainWindowViewModel.EventAggregator.GetEvent<AFterSaveInvoiceProvideEvent>()
+                .Subscribe(OnAfterSaveInvoiceExecute);
             //LoadLayout();
         }
 

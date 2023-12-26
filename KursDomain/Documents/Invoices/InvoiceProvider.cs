@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
 using Core.Helper;
@@ -26,6 +27,7 @@ namespace KursDomain.Documents.Invoices;
 ///     Счет-фактура от поставщика
 /// </summary>
 [MetadataType(typeof(SD_26LayoutData_FluentAPI))]
+[DebuggerDisplay("{DocCode} {Kontragent} {Summa}")]
 public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, IInvoiceProvider
 {
     public string this[string columnName]

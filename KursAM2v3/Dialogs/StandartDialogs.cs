@@ -292,7 +292,7 @@ namespace KursAM2.Dialogs
             var dlg = new SelectDialogView {DataContext = ctx};
             ctx.Form = dlg;
             dlg.ShowDialog();
-            return !ctx.DialogResult ? null : ctx.CurrentChildItem;
+            return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
 
         public static BankOperationForSelectDialog SelectBankStatement(decimal dcOut)

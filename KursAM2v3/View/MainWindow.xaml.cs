@@ -834,12 +834,6 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow,
                             DataContext = ctxAccessRight
                         };
-                        //var ctxAccessRight = new AccessRightsViewModel();
-                        //form = new AccessRightsView
-                        //{
-                        //    Owner = Application.Current.MainWindow,
-                        //    DataContext = ctxAccessRight
-                        //};
                         ctxAccessRight.Form = form2;
                         form2.Show();
                         break;
@@ -1404,13 +1398,5 @@ namespace KursAM2.View
         {
             LayoutManager.Save();
         }
-
-        // private void BarButtonItem4_OnItemClick(object sender, ItemClickEventArgs e)
-        // {
-        //     var e01 = e;
-        //     var Vers = new VersionManager((MainWindowViewModel) DataContext);
-        //     var Ver = Vers.CheckVersion(1);
-        //
-        // }
     }
 }

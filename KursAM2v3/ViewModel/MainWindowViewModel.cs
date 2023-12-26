@@ -1,7 +1,5 @@
 ﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Core.EntityViewModel;
@@ -12,13 +10,16 @@ using KursAM2.View;
 using KursAM2.ViewModel.StartLogin;
 using KursDomain;
 using KursDomain.Documents.Systems;
+using Prism.Events;
 
 namespace KursAM2.ViewModel
 {
     public class MainWindowViewModel : RSWindowViewModelBase
     {
+        private bool _versionUpdateStatus;
         private Tile myCurrentFavoriteMenu;
         private LastDocumentViewModel myCurrentLastDocument;
+        public static IEventAggregator EventAggregator;
 
 
         private string mySearchMenuString;
@@ -26,11 +27,13 @@ namespace KursAM2.ViewModel
         // ReSharper disable once EmptyConstructor
         public MainWindowViewModel()
         {
+            EventAggregator = new EventAggregator();
         }
 
-        public ObservableCollection<LastDocumentViewModel> LastDocuments { set; get; } = new();
+        public ObservableCollection<LastDocumentViewModel> LastDocuments { set; get; } =
+            new ObservableCollection<LastDocumentViewModel>();
 
-        public ObservableCollection<Tile> CurrentDocumentTiles { set; get; } = new();
+        public ObservableCollection<Tile> CurrentDocumentTiles { set; get; } = new ObservableCollection<Tile>();
 
         public LastDocumentViewModel CurrentLastDocument
         {
@@ -70,13 +73,11 @@ namespace KursAM2.ViewModel
 
         public ICommand VersionUpdateCommand
         {
-            get
-            {
-                return new Command(VersionUpdateStart, _ => true);
-            }
-  }        
+            get { return new Command(VersionUpdateStart, _ => true); }
+        }
 
-        public ObservableCollection<UserMenuFavoriteViewModel> FavoritesMenuItems { set; get; } = new();
+        public ObservableCollection<UserMenuFavoriteViewModel> FavoritesMenuItems { set; get; } =
+            new ObservableCollection<UserMenuFavoriteViewModel>();
 
         public ICommand OpenLastDocumentDialogCommand
         {
@@ -90,19 +91,32 @@ namespace KursAM2.ViewModel
 
         public override bool IsCanSearch => !string.IsNullOrWhiteSpace(SearchText);
 
-       
 
-         private void VersionUpdateStart(object obj)
-         {
-             var vers = new VersionManager(this);
-            if (vers.GetCanUpdate() ==true) vers.KursUpdate();
+        public bool IsVersionUpdateStatus
+        {
+            get => _versionUpdateStatus;
+            set
+            {
+                if (_versionUpdateStatus == value) return;
+                _versionUpdateStatus = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
+        private void VersionUpdateStart(object obj)
+        {
+            var vers = new VersionManager(this);
+            if (vers.GetCanUpdate())
+            {
+                vers.KursUpdate();
+            }
             else
             {
                 var ShowMsgResult = MessageBox.Show(
-                    $"Внимание! Обновления в системе приостановлены.Зарегестрированы работающие пользователи!\n" +
+                    "Внимание! Обновления в системе приостановлены.Зарегестрированы работающие пользователи!\n" +
                     "Повторите попытку позже или обратитесь к администратору.",
-                    "Запрос на обновление программы", MessageBoxButton.OK, MessageBoxImage.Exclamation); 
-                return;
+                    "Запрос на обновление программы", MessageBoxButton.OK, MessageBoxImage.Exclamation);
             }
         }
 
@@ -154,20 +168,6 @@ namespace KursAM2.ViewModel
                                                               && _.DbId == GlobalOptions.DataBaseId)
                              .OrderByDescending(_ => _.LastOpen))
                     LastDocuments.Add(new LastDocumentViewModel(h));
-            }
-        }
-
-
-        private bool _versionUpdateStatus;
-        
-
-        public bool IsVersionUpdateStatus
-        {
-            get => _versionUpdateStatus;
-            set {
-                 if (_versionUpdateStatus == value) return;
-                 _versionUpdateStatus = value;
-                RaisePropertyChanged();
             }
         }
     }
