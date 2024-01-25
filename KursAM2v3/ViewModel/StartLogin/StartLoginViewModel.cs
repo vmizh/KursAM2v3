@@ -15,12 +15,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Core;
 using Core.ViewModel.Base;
-using Core.ViewModel.Base.Dialogs;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
-using DevExpress.Mvvm.POCO;
-using DevExpress.Xpf.Charts;
 using DevExpress.Xpf.Core;
 using Helper;
 using KursAM2.Managers;
@@ -98,7 +95,6 @@ namespace KursAM2.ViewModel.StartLogin
                 if (myCurrentUser == value) return;
                 myCurrentUser = value;
                 if (string.IsNullOrWhiteSpace(myCurrentUser) && !isUserExists(myCurrentUser)) return;
-                //LoadDataSources();
                 GetDefaultCache();
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(ComboBoxItemSource));
@@ -157,9 +153,9 @@ namespace KursAM2.ViewModel.StartLogin
                 || SelectedDataSource == null)
             {
                 var wm = new WindowManager();
-                string showMess = @"Имя пользователя и пароль должны быть обязательно заполнены.";
-                string TitleText = "Ошибка входа в систему";
-                var dlgRslt= wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
+                var showMess = @"Имя пользователя и пароль должны быть обязательно заполнены.";
+                var TitleText = "Ошибка входа в систему";
+                var dlgRslt = wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
                     WindowManager.Confirm);
                 return;
             }
@@ -413,9 +409,10 @@ namespace KursAM2.ViewModel.StartLogin
                 {
                     DataSource = hostName,
                     InitialCatalog = "KursSystem",
-                    UserID = "sa",
-                    Password = "CbvrfFhntvrf65",
-                    ConnectTimeout = 0
+                    UserID = "KursUser",
+                    Password = "KursUser",
+                    ConnectTimeout = 0,
+                    ApplicationName = "KursAM"
                 }.ToString());
                 GlobalOptions.KursSystemDBUnitOfWork =
                     new UnitOfWork<KursSystemEntities>(GlobalOptions.KursSystemDBContext);
@@ -440,8 +437,7 @@ namespace KursAM2.ViewModel.StartLogin
                         Notes = usr.USR_NOTES,
                         FullName = usr.USR_FULLNAME,
                         TabelNumber = usr.TABELNUMBER,
-                        Phone = usr.USR_PHONE,
-                        
+                        Phone = usr.USR_PHONE
                     };
                     using (var sysctx = GlobalOptions.KursSystem())
                     {
@@ -463,21 +459,13 @@ namespace KursAM2.ViewModel.StartLogin
                     errText.Append($"\n {exx.InnerException.Message}");
                     exx = exx.InnerException;
                 }
-                string showMess = @"Недопустимые имя пользователя или пароль.";
-                string TitleText = "Ошибка входа в систему!";
+
+                var showMess = @"Недопустимые имя пользователя или пароль.";
+                var TitleText = "Ошибка входа в систему!";
                 var wm = new WindowManager();
                 var dlgRslt = wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
                     WindowManager.Confirm);
-
-
-                // var service = this.GetService<IDialogService>("errorDialogService");
-                // service?.ShowDialog(MessageButton.OK, "Ошибка", new DialogErrorViewModel
-                // {
-                //     ErrorText = errText.ToString().Replace("The underlying provider failed on Open",
-                //             "Не могу открыть базу данных")
-                //         .Replace("Login failed for user", "Неправильный пользователь/пароль")
-                // });
-                //MessageBox.Show("CheckAndSetUser error.\n" + errText);
+                
                 newUser = null;
                 return false;
             }
@@ -510,7 +498,7 @@ namespace KursAM2.ViewModel.StartLogin
             hostName = section.Get("KursSystemHost");
 #endif
             if (string.IsNullOrWhiteSpace(CurrentUser)) return false;
-            
+
             ComboBoxItemSource.Clear();
             var connection = new SqlConnectionStringBuilder
             {
@@ -528,7 +516,7 @@ namespace KursAM2.ViewModel.StartLogin
                     {
                         CommandText =
                             $"SELECT d.Name AS Name FROM Users u WHERE  UPPER(u.Name) = '{CurrentUser.ToUpper()}'  ",
-                            
+
                         Connection = conn
                     };
                     using (var reader = command.ExecuteReader())
@@ -564,7 +552,7 @@ namespace KursAM2.ViewModel.StartLogin
                 InitialCatalog = "KursSystem",
                 UserID = "KursUser",
                 Password = "KursUser"
-            }; 
+            };
             SqlConnection conn = null;
             try
             {
@@ -597,6 +585,7 @@ namespace KursAM2.ViewModel.StartLogin
                                 Id = reader.GetGuid(6)
                             });
                     }
+
                     conn.Close();
                 }
             }
@@ -605,10 +594,7 @@ namespace KursAM2.ViewModel.StartLogin
                 var errText = new StringBuilder(ex.Message);
                 while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
                 MessageBox.Show("LoadDataSource error.\n" + errText);
-                if (conn != null && conn.State == ConnectionState.Open)
-                {
-                    conn.Close();
-                }
+                if (conn != null && conn.State == ConnectionState.Open) conn.Close();
             }
         }
 

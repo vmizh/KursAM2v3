@@ -8,8 +8,8 @@ namespace KursRepozit.Auxiliary
         {
             DataSource = "172.16.1.1",
             InitialCatalog = "KursSystem",
-            UserID = "sa",
-            Password = "CbvrfFhntvrf65"
+            UserID = "KursUser",
+            Password = "KursUser"
         }.ToString();
     }
 }

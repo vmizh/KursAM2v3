@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -23,8 +25,11 @@ using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace Core.ViewModel.Base;
 
+
+
 [POCOViewModel]
-public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLayout, ISupportServices
+public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLayout, ISupportServices, KursDomain.ViewModel.Base2.IFormOperation, 
+    KursDomain.ViewModel.Base2.IDialogOperation
 {
     [Display(AutoGenerateField = false)] protected bool IsLayoutLoaded;
 
@@ -346,6 +351,21 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     public void Save()
     {
         //throw new NotImplementedException();
+    }
+
+    public bool CanSave()
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Load(object o)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool CanLoad(object o)
+    {
+        throw new NotImplementedException();
     }
 
     public bool Check()

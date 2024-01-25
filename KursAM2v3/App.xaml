@@ -8,12 +8,14 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resource\StandartIcon.xaml" />
+                <ResourceDictionary Source="Resource\DialogResorces.xaml"/>
                 <ResourceDictionary Source="Resource\StandartButtons.xaml" />
                 <ResourceDictionary Source="Resource\Menu.xaml" />
                 <ResourceDictionary Source="Resource\Error.xaml" />
                 <ResourceDictionary Source="Resource\ViewControlTemplate.xaml" />
                 <ResourceDictionary Source="Resource\Window.xaml" />
                 <ResourceDictionary Source="Resource\DXControlStyles.xaml"/>
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

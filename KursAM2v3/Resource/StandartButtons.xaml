@@ -155,7 +155,7 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
-    <ControlTemplate x:Key="buttonSave" TargetType="{x:Type menu1:KursButton}">
+    <ControlTemplate x:Key="buttonSave" TargetType="{x:Type Button}">
         <ContentControl ToolTip="Сохранить данные" ToolTipService.ShowOnDisabled="True">
             <Grid Name="gridbuttonAdd" Width="48" Height="48" Margin="0">
                 <Rectangle Name="Rect" Fill="White" Visibility="Hidden" Stretch="Fill" />

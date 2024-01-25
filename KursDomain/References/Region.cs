@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
@@ -9,14 +10,15 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq} {ParentDC,nq}")]
 public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>, IComparable
 {
-    
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
-        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+        return c == null ? 0 : string.Compare(Name, c.Name, StringComparison.Ordinal);
     }
-    public decimal DocCode { get; set; }
-    public Guid Id { get; set; }
+
+    [Display(AutoGenerateField = false)] public decimal DocCode { get; set; }
+
+    [Display(AutoGenerateField = false)] public Guid Id { get; set; }
 
     public bool Equals(Region other)
     {
@@ -25,10 +27,15 @@ public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>, IC
         return DocCode == other.DocCode;
     }
 
+    [Display(AutoGenerateField = true, Name = "Наименование")]
     public string Name { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Примечание")]
     public string Notes { get; set; }
-    public string Description => $"Регион: {Name}";
-    public decimal? ParentDC { get; set; }
+
+    [Display(AutoGenerateField = false)] public string Description => $"Регион: {Name}";
+
+    [Display(AutoGenerateField = false)] public decimal? ParentDC { get; set; }
 
     public override string ToString()
     {
@@ -53,7 +60,7 @@ public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>, IC
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((Region) obj);
+        return Equals((Region)obj);
     }
 
     public override int GetHashCode()

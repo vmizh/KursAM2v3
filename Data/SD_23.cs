@@ -24,6 +24,7 @@ namespace Data
             this.TD_437 = new HashSet<TD_437>();
             this.TD_4371 = new HashSet<TD_437>();
             this.XD_43 = new HashSet<XD_43>();
+            this.StorageLocations = new HashSet<StorageLocations>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -47,5 +48,7 @@ namespace Data
         public virtual ICollection<TD_437> TD_4371 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<XD_43> XD_43 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StorageLocations> StorageLocations { get; set; }
     }
 }

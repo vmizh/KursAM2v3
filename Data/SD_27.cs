@@ -59,6 +59,9 @@ namespace Data
             this.SD_40 = new HashSet<SD_40>();
             this.RefundFromClient = new HashSet<RefundFromClient>();
             this.RefundToProvider = new HashSet<RefundToProvider>();
+            this.TransferOutBalans = new HashSet<TransferOutBalans>();
+            this.TransferOutBalansRefund = new HashSet<TransferOutBalansRefund>();
+            this.StorageLocations = new HashSet<StorageLocations>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -163,5 +166,11 @@ namespace Data
         public virtual ICollection<RefundFromClient> RefundFromClient { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RefundToProvider> RefundToProvider { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TransferOutBalans> TransferOutBalans { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TransferOutBalansRefund> TransferOutBalansRefund { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<StorageLocations> StorageLocations { get; set; }
     }
 }

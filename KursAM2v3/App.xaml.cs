@@ -48,6 +48,7 @@ namespace KursAM2
                     new FrameworkPropertyMetadata(true));
                 GridControlLocalizer.Active = new CustomDXGridLocalizer();
                 EditorLocalizer.Active = new CustomEditorsLocalizer();
+                DXMessageBoxLocalizer.Active = new CustomDXMessageBoxLocalizer();
 
                 EventManager.RegisterClassHandler(typeof(GridColumn), DXSerializer.AllowPropertyEvent,
                     new AllowPropertyEventHandler((d, e) =>

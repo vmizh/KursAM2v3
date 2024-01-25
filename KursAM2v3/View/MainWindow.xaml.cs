@@ -1,4 +1,5 @@
 ﻿// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: http://www.viva64.com
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,19 +7,18 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Core;
+using System.Windows.Threading;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using DevExpress.Data.Browsing;
 using DevExpress.Xpf.Bars;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.LayoutControl;
-using DevExpress.XtraSpreadsheet.Import.OpenXml;
 using Helper;
 using KursAM2.Auxiliary;
 using KursAM2.Managers;
@@ -62,6 +62,8 @@ using KursAM2.ViewModel.Signatures;
 using KursAM2.ViewModel.StartLogin;
 using KursAM2.ViewModel.StockHolder;
 using KursDomain;
+using KursDomain.Repository.LayoutRepository;
+using KursDomain.Repository.StorageLocationsRepositury;
 using LayoutManager;
 using NomenklCostReset = KursAM2.View.Logistiks.NomenklCostReset;
 
@@ -73,11 +75,12 @@ namespace KursAM2.View
     /// </summary>
     public partial class MainWindow : ILayout
     {
-        private int currentMainGroupId;
         private const int TimeForCheckVersion = 1000 * 25;
+        private static Mutex _mutex = new Mutex();
+        private int currentMainGroupId;
 
         private Tile myCurrentTile;
-        public  System.Windows.Threading.DispatcherTimer VersionUpdateTimer;
+        public DispatcherTimer VersionUpdateTimer;
 
         public MainWindow()
         {
@@ -85,7 +88,8 @@ namespace KursAM2.View
             {
                 InitializeComponent();
 
-                LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),"MainWindow", this, dockLayout1);
+                LayoutManager =
+                    new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), "MainWindow", this, dockLayout1);
                 Loaded += MainWindow_Loaded;
                 Closing += MainWindow_Closing;
                 Closed += MainWindow_Closed;
@@ -103,19 +107,6 @@ namespace KursAM2.View
 
                 MessageBox.Show(s.ToString());
             }
-        }
-
-        private void versionUpdater_Thick(object sender, EventArgs e)
-        {
-            var ver = new VersionManager((MainWindowViewModel) DataContext);
-            var checkMultiUser = ver.GetCanUpdate();
-            if (checkMultiUser == false)
-            {
-             ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = checkMultiUser;
-                return;
-            } 
-            var res = ver.CheckVersion();
-            if (res != null && res.UpdateStatus == 2) ver.KursUpdate();
         }
 
         public Tile CurrentTile
@@ -136,7 +127,6 @@ namespace KursAM2.View
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
-        private static Mutex _mutex = new();
 
 
         public void SaveLayout()
@@ -144,7 +134,21 @@ namespace KursAM2.View
             LayoutManager.Save();
         }
 
-        
+        private void versionUpdater_Thick(object sender, EventArgs e)
+        {
+            var ver = new VersionManager((MainWindowViewModel)DataContext);
+            var checkMultiUser = ver.GetCanUpdate();
+            if (checkMultiUser == false)
+            {
+                ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = checkMultiUser;
+                return;
+            }
+
+            var res = ver.CheckVersion();
+            if (res != null && res.UpdateStatus == 2) ver.KursUpdate();
+        }
+
+
         private void ProgramClose(object obj)
         {
             Close();
@@ -163,8 +167,8 @@ namespace KursAM2.View
                 if (f is KursBaseSearchWindow s)
                     if (s.DataContext is DistributeNakladSearchViewModel ctx)
                         ctx.OnWindowClosing();
-                if (f is ILayout l) 
-                    
+                if (f is ILayout l)
+
                     l.SaveLayout();
                 f.Close();
             }
@@ -178,10 +182,10 @@ namespace KursAM2.View
             if (DataContext is MainWindowViewModel dtx)
             {
                 dtx.Form = this;
-            var vers = new VersionManager(dtx);
-            vers.CheckVersion();
-            var ver = vers.GetCanUpdate();
-            if (ver==false) ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = ver;
+                var vers = new VersionManager(dtx);
+                vers.CheckVersion();
+                var ver = vers.GetCanUpdate();
+                if (ver == false) ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = ver;
             }
         }
 
@@ -197,6 +201,11 @@ namespace KursAM2.View
                 Window form;
                 switch (formName)
                 {
+                    case "Справочник мест хранения":
+                        var slocCtx = new StorageLocationViewModel(new StorageLocationsRepository(GlobalOptions.GetEntities()));
+                        slocCtx.Show();
+                        Task.Run(slocCtx.OnRefreshData);
+                        break;
                     //Справочник валют
                     case "Справочник валют":
                         var crsref = new CurrencyReferenceWindowViewModel();
@@ -350,7 +359,7 @@ namespace KursAM2.View
                         break;
                     case "  Дебиторы / Кредиторы":
                         var dbctx = new DebitorCreditorWindowViewModel();
-                        form = new DebitorCreditorView { Owner = Application.Current.MainWindow }; 
+                        form = new DebitorCreditorView { Owner = Application.Current.MainWindow };
                         dbctx.Form = form;
                         form.DataContext = dbctx;
                         form.Show();
@@ -492,14 +501,14 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Справочник контрагентов":
-                        form = new KontragentReference2View { Owner = Application.Current.MainWindow }; 
+                        form = new KontragentReference2View { Owner = Application.Current.MainWindow };
                         var ctxRef = new KontragentReferenceWindowViewModel
                         {
                             Form = form
                         };
                         form.DataContext = ctxRef;
                         form.Show();
-                        
+
                         break;
                     case "Справочник складов":
                         var frm = new TreeListFormBaseView2
@@ -1320,6 +1329,7 @@ namespace KursAM2.View
                     i++;
                 }
             }
+
             LayoutManager.Save();
         }
 
@@ -1337,7 +1347,8 @@ namespace KursAM2.View
                     var menuItem = menuGroup?.TileItems.FirstOrDefault(_ => _.Id == (int)t.Tag);
                     if (menuItem != null) menuItem.OrderBy = i;
                     var old = ctx.UserMenuOrder.FirstOrDefault(_ => !_.IsGroup && _.TileId == (int)t.Tag
-                    && _.UserId == GlobalOptions.UserInfo.KursId);
+                                                                               && _.UserId == GlobalOptions.UserInfo
+                                                                                   .KursId);
                     if (old == null)
                         ctx.UserMenuOrder.Add(new UserMenuOrder
                         {
@@ -1353,6 +1364,7 @@ namespace KursAM2.View
                     i++;
                 }
             }
+
             LayoutManager.Save();
         }
 

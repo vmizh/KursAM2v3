@@ -801,6 +801,11 @@ namespace Data
         public virtual DbSet<ClientServiceActRow> ClientServiceActRow { get; set; }
         public virtual DbSet<ProviderServiceAct> ProviderServiceAct { get; set; }
         public virtual DbSet<ProviderServiceActRow> ProviderServiceActRow { get; set; }
+        public virtual DbSet<TransferOutBalans> TransferOutBalans { get; set; }
+        public virtual DbSet<TransferOutBalansRefund> TransferOutBalansRefund { get; set; }
+        public virtual DbSet<TransferOutBalansRefundRows> TransferOutBalansRefundRows { get; set; }
+        public virtual DbSet<TransferOutBalansRows> TransferOutBalansRows { get; set; }
+        public virtual DbSet<StorageLocations> StorageLocations { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

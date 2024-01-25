@@ -14,8 +14,8 @@ namespace KursDomain.Tests.Fakes
             {
                 DataSource = "localhost",
                 InitialCatalog = "AlfaTest",
-                UserID = "sa",
-                Password = "CbvrfFhntvrf65",
+                UserID = "KursUser",
+                Password = "KursUser",
                 IntegratedSecurity = false
             };
 

@@ -2144,7 +2144,22 @@
         <AssociationConnector Association="ALFAMEDIA.FK_ProviderServiceAct_KontragentDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProviderServiceActRow_DocId" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProviderServiceActRow" />
-      </Diagram>
+        <EntityTypeShape EntityType="ALFAMEDIA.TransferOutBalans" Width="1.5" PointX="28" PointY="717.5" />
+        <EntityTypeShape EntityType="ALFAMEDIA.TransferOutBalansRefund" Width="1.5" PointX="54" PointY="754.5" />
+        <EntityTypeShape EntityType="ALFAMEDIA.TransferOutBalansRefundRows" Width="1.5" PointX="53.75" PointY="758.25" />
+        <EntityTypeShape EntityType="ALFAMEDIA.TransferOutBalansRows" Width="1.5" PointX="51.75" PointY="774.25" />
+        <AssociationConnector Association="ALFAMEDIA.FK_TransferOutBalans_WarehouseDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_TransferOutBalansRefund_WarehouseDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_TransferOutBalansRefundRows_NomenklDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_TransferOutBalansRows_NomenklDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_TransferOutBalansRows_DocId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_TransferOutBalansRefundRows_DocId" />
+        <EntityTypeShape EntityType="ALFAMEDIA.StorageLocations" Width="1.5" PointX="24.75" PointY="698.5" />
+        <AssociationConnector Association="ALFAMEDIA.FK_StorageLocations_RegionDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_StorageLocations_WarehouseDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_TransferOutBalans_StorageLocationId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_TransferOutBalansRefund_StorageLocationId" />
+        </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
 </edmx:Edmx>

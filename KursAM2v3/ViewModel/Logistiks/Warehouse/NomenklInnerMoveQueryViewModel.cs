@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.Data.Entity;
 using System.Linq;
-using System.Linq.Expressions;
 using Core.ViewModel.Base;
-using Data;
 using KursDomain;
 using KursDomain.IDocuments.IQueryResults;
 using KursDomain.References;
@@ -13,14 +10,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public sealed class NomenklInnerMoveQueryViewModel : RSWindowViewModelBase
     {
-        public ObservableCollection<NomenklInnerMoveQueryResult> ItemsCollection { get; set; }
-            = new ObservableCollection<NomenklInnerMoveQueryResult>();
         public NomenklInnerMoveQueryViewModel(KursDomain.References.Warehouse warehouseTo, DateTime maxDate)
         {
             LayoutName = "NomenklInnerMoveQueryViewModel";
             WarehouseTo = warehouseTo;
             MaxDate = maxDate;
         }
+
+        public ObservableCollection<NomenklInnerMoveQueryResult> ItemsCollection { get; set; }
+            = new ObservableCollection<NomenklInnerMoveQueryResult>();
 
         public KursDomain.References.Warehouse WarehouseTo { get; }
         public DateTime MaxDate { get; }
@@ -55,14 +53,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 foreach (var d in data.ToList())
                 {
                     var nom = GlobalOptions.ReferencesCache.GetNomenkl(d.NomDC) as Nomenkl;
-                    var store = GlobalOptions.ReferencesCache.GetWarehouse(d.StoreFromDC) as KursDomain.References.Warehouse;
-                    string num = string.IsNullOrWhiteSpace(d.DocExtNum) ? d.DocInNum.ToString() : $"{d.DocInNum}/{d.DocExtNum}";
-                    ItemsCollection.Add(new NomenklInnerMoveQueryResult(d.DocDC, d.Code, nom, 
+                    var store =
+                        GlobalOptions.ReferencesCache.GetWarehouse(d.StoreFromDC) as KursDomain.References.Warehouse;
+                    var num = string.IsNullOrWhiteSpace(d.DocExtNum)
+                        ? d.DocInNum.ToString()
+                        : $"{d.DocInNum}/{d.DocExtNum}";
+                    ItemsCollection.Add(new NomenklInnerMoveQueryResult(d.DocDC, d.Code, nom,
                         d.Quantity, store, d.DocDate, num, d.Note));
                 }
-
             }
-
         }
     }
 }

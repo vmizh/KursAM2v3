@@ -58,8 +58,8 @@ public static class GlobalOptions
         {
             DataSource = HostName,
             InitialCatalog = "KursSystem",
-            UserID = "sa",
-            Password = "CbvrfFhntvrf65"
+            UserID = "KursUser",
+            Password = "KursUser"
         }.ToString();
         return new KursSystemEntities(SqlSystemConnectionString);
     }

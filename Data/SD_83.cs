@@ -106,6 +106,8 @@ namespace Data
             this.SD_821 = new HashSet<SD_82>();
             this.RefundFromClientRow = new HashSet<RefundFromClientRow>();
             this.RefundToProviderRow = new HashSet<RefundToProviderRow>();
+            this.TransferOutBalansRefundRows = new HashSet<TransferOutBalansRefundRows>();
+            this.TransferOutBalansRows = new HashSet<TransferOutBalansRows>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -369,5 +371,9 @@ namespace Data
         public virtual ICollection<RefundFromClientRow> RefundFromClientRow { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<RefundToProviderRow> RefundToProviderRow { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TransferOutBalansRefundRows> TransferOutBalansRefundRows { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<TransferOutBalansRows> TransferOutBalansRows { get; set; }
     }
 }

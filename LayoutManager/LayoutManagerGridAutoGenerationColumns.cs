@@ -93,8 +93,8 @@ namespace LayoutManager
             {
                 DataSource = "172.16.1.1",
                 InitialCatalog = "KursSystem",
-                UserID = "sa",
-                Password = "CbvrfFhntvrf65"
+                UserID = "KursUser",
+                Password = "KursUser"
             }.ToString();
             using (var ctx = new KursSystemEntities(connString))
             {
@@ -265,8 +265,8 @@ namespace LayoutManager
                 {
                     DataSource = "172.16.1.1",
                     InitialCatalog = "KursSystem",
-                    UserID = "sa",
-                    Password = "CbvrfFhntvrf65"
+                    UserID = "KursUser",
+                    Password = "KursUser"
                 }.ToString();
                 string layoutData = null;
                 using (var ctx = new KursSystemEntities(connString))

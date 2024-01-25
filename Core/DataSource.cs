@@ -41,7 +41,8 @@ namespace Core
                     InitialCatalog = DBName,
                     UserID = User,
                     Password = Password,
-                    ConnectTimeout = 0
+                    ConnectTimeout = 0,
+                    ApplicationName = "KursAM"
                 };
             return strConn.ConnectionString;
         }

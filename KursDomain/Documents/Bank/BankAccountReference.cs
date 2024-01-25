@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Web.UI;
 using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
@@ -127,6 +129,9 @@ public class BankAccountReference : RSViewModelBase, IEntity<SD_114>
         }
     }
 
+    [Browsable(true)]
+    [EditorBrowsable(EditorBrowsableState.Always)]
+    [DefaultValue(ValidateRequestMode.Enabled)]
     public References.Bank Bank
     {
         get => myBank;

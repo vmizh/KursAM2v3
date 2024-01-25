@@ -38,7 +38,7 @@ public interface IKursBaseControlViewModel
 }
 
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseControlViewModel, IKursDialog
+public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseControlViewModel, IKursDialog, KursDomain.ViewModel.Base2.IFormOperation
 {
     #region Fields
 
@@ -459,6 +459,8 @@ public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseCon
             RaisePropertyChanged();
         }
     }
+
+    public ICommand ShowHistoryCommand { get; }
 
     [Display(AutoGenerateField = false)]
     public virtual ICommand DoсDeleteCommand

@@ -29,8 +29,8 @@ namespace Core.WindowsManager
             {
                 DataSource = hostName,
                 InitialCatalog = "KursSystem",
-                UserID = "sa",
-                Password = "CbvrfFhntvrf65"
+                UserID = "KursUser",
+                Password = "KursUser"
             }.ToString();
             DBContext = new KursSystemEntities(connString);
             if (Window != null) window.SaveLayoutToStream(StartLayout);

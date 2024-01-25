@@ -1562,6 +1562,9 @@
     <Compile Include="StockHolderUserRights.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="StorageLocations.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="STORED_GTD.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -1917,6 +1920,18 @@
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="TransferNomenklRow.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TransferOutBalans.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TransferOutBalansRefund.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TransferOutBalansRefundRows.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TransferOutBalansRows.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="TTT.cs">

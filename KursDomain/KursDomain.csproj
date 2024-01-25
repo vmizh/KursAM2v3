@@ -39,29 +39,39 @@
     <Reference Include="ControlzEx, Version=4.0.0.0, Culture=neutral, PublicKeyToken=69f1c32f803d307e, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.4.4.0\lib\net462\ControlzEx.dll</HintPath>
     </Reference>
-    <Reference Include="DevExpress.Data.Desktop.v23.1, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Drawing.v23.1, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Printing.v23.1.Core, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Data.v23.1, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Mvvm.v23.1, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Controls.v23.1, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Core.v23.1, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Grid.v23.1, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
-    <Reference Include="DevExpress.Xpf.Grid.v23.1.Core, Version=23.1.6.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.Desktop.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Drawing.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Printing.v23.2.Core, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Mvvm.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Controls.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Core.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Xpf.Grid.v23.2.Core, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraCharts.v23.2, Version=23.2.3.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.4.4\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="MaterialDesignColors, Version=2.1.4.0, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignColors.2.1.4\lib\net462\MaterialDesignColors.dll</HintPath>
+    </Reference>
+    <Reference Include="MaterialDesignThemes.Wpf, Version=4.9.0.0, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MaterialDesignThemes.4.9.0\lib\net462\MaterialDesignThemes.Wpf.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.19\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.39\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="Prism, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Core.8.1.97\lib\net47\Prism.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -82,6 +92,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base\GridControlStartEditingService.cs" />
+    <Compile Include="Base\IStartEditingService.cs" />
     <Compile Include="Control\SearchButtonEditor.xaml.cs">
       <DependentUpon>SearchButtonEditor.xaml</DependentUpon>
     </Compile>
@@ -256,6 +268,7 @@
     <Compile Include="IDocuments\Refund\IRefundFromClient.cs" />
     <Compile Include="Documents\Refund\RefundFromClientRowViewModel.cs" />
     <Compile Include="Documents\Refund\RefundFromClientViewModel.cs" />
+    <Compile Include="IDocuments\TransferOut\ITransferOutBalans.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IConsumableWarehouseInvoice.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrder.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrderRow.cs" />
@@ -306,7 +319,7 @@
     <Compile Include="References\CashBox.cs" />
     <Compile Include="References\CentrResponsibility.cs" />
     <Compile Include="References\AccessRight.cs" />
-    <Compile Include="References\Class1.cs" />
+    <Compile Include="References\NomenklTree.cs" />
     <Compile Include="References\ClientCategory.cs" />
     <Compile Include="References\ContractType.cs" />
     <Compile Include="References\Country.cs" />
@@ -332,8 +345,10 @@
     <Compile Include="References\Region.cs" />
     <Compile Include="References\Unit.cs" />
     <Compile Include="References\Warehouse.cs" />
+    <Compile Include="Repository\Base\KursGenericRepository.cs" />
     <Compile Include="Repository\Base\GenericRepository.cs" />
     <Compile Include="Repository\Base\IBaseRepository.cs" />
+    <Compile Include="Repository\Base\IKursGenericRepository.cs" />
     <Compile Include="Repository\CurrencyRepository\CurrencyRepository.cs" />
     <Compile Include="Repository\CurrencyRepository\ICurrencyRepository.cs" />
     <Compile Include="Repository\GenericKursDBRepository.cs" />
@@ -341,8 +356,21 @@
     <Compile Include="Repository\IGenericRepository.cs" />
     <Compile Include="Repository\InvoiceProviderRepository\IInvoiceProviderRepository.cs" />
     <Compile Include="Repository\IRepository.cs" />
+    <Compile Include="Repository\LayoutRepository\ILayoutRepository.cs" />
+    <Compile Include="Repository\LayoutRepository\LayoutRepository.cs" />
+    <Compile Include="Repository\StorageLocationsRepositury\IStorageLocationsRepositiry.cs" />
+    <Compile Include="Repository\StorageLocationsRepositury\StorageLocationsRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="UserMenuFavorites.cs" />
+    <Compile Include="ViewModel\Base2\DialogViewModelBase.cs" />
+    <Compile Include="ViewModel\Base2\FormOperation.cs" />
+    <Compile Include="ViewModel\Base2\FormViewModelBase.cs" />
+    <Compile Include="ViewModel\Base2\IDialogOperation.cs" />
+    <Compile Include="ViewModel\Base2\IFormOperation.cs" />
+    <Compile Include="ViewModel\Base2\IFormMenu.cs" />
+    <Compile Include="ViewModel\Base2\ILayout.cs" />
+    <Compile Include="ViewModel\Base2\IForm.cs" />
+    <Compile Include="ViewModel\Base2\ViewModelBase.cs" />
     <Compile Include="ViewModel\Base\Column\ColumnHelper.cs" />
     <Compile Include="ViewModel\Base\Column\ColumnSummary.cs" />
     <Compile Include="ViewModel\Base\Column\GridColumnHelper.cs" />
@@ -382,6 +410,9 @@
     </Compile>
     <Compile Include="ViewModel\Base\SplashScreenViewModel.cs" />
     <Compile Include="ViewModel\DataAnnotationForFluentApiBase.cs" />
+    <Compile Include="View\Base\BaseWindow.xaml.cs">
+      <DependentUpon>BaseWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WindowsManager\ErrorMessageBase.cs" />
     <Compile Include="WindowsManager\IWindowManager.cs" />
     <Compile Include="WindowsManager\KursDialog.xaml.cs">
@@ -392,10 +423,14 @@
     <Compile Include="WindowsManager\ThemedWindowLayoutManager.cs" />
     <Compile Include="WindowsManager\WindowLayoutManager.cs" />
     <Compile Include="WindowsManager\WindowManager.cs" />
+    <Compile Include="Wrapper\Base\BaseWrapper.cs" />
+    <Compile Include="Wrapper\Base\ICalculateValues.cs" />
+    <Compile Include="Wrapper\Base\IUpdateReferences.cs" />
+    <Compile Include="Wrapper\Base\NotifyDataErrorInfoBase.cs" />
+    <Compile Include="Wrapper\NomenklOutBalans\TransferOutBalansWrapper.cs" />
+    <Compile Include="Wrapper\StorageLocationsWrapper.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Base\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj">
       <Project>{ae6bdc42-9b1e-4f09-8923-2295b1c87212}</Project>
@@ -427,6 +462,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\Base\BaseWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="WindowsManager\KursDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -439,6 +478,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.props'))" />
     <Error Condition="!Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.4.4\build\EntityFramework.targets'))" />
+    <Error Condition="!Exists('..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets'))" />
   </Target>
   <Import Project="..\packages\EntityFramework.6.4.4\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.4.4\build\EntityFramework.targets')" />
+  <Import Project="..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets" Condition="Exists('..\packages\MaterialDesignThemes.4.9.0\build\MaterialDesignThemes.targets')" />
 </Project>

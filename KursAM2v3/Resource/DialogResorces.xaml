@@ -2,7 +2,8 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-                    xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui">
+                    xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+                    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid">
     <DataTemplate x:Key="dialogUserControlTemplate">
         <ContentControl Content="{Binding DataUserControl}" />
     </DataTemplate>
@@ -20,4 +21,26 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <DataTemplate x:Key="RegionLookupEditTemplate">  
+        <ContentControl>  
+            <dxg:LookUpEditSettings ItemsSource="{Binding Regions}"  DisplayMember="Name">
+                <dxg:LookUpEditSettings.PopupContentTemplate>
+                    <ControlTemplate>
+                        <dxg:GridControl x:Name="PART_GridControl" AutoGenerateColumns="None">
+                            <dxg:GridControl.Columns>
+                                <dxg:GridColumn FieldName="Name" Header="Регион"/>
+                            </dxg:GridControl.Columns>
+                            <dxg:GridControl.View>
+                                <dxg:TreeListView AutoWidth="True" 
+                                                  AutoExpandAllNodes="True"
+                                                  KeyFieldName="DocCode"
+                                                  ParentFieldName="ParentDC"
+                                                  TreeDerivationMode="Selfreference"/>
+                            </dxg:GridControl.View>
+                        </dxg:GridControl>
+                    </ControlTemplate>
+                </dxg:LookUpEditSettings.PopupContentTemplate>
+            </dxg:LookUpEditSettings> 
+        </ContentControl>  
+    </DataTemplate>  
 </ResourceDictionary>
