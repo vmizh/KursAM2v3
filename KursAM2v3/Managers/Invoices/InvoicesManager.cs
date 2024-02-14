@@ -383,7 +383,7 @@ namespace KursAM2.Managers.Invoices
                                 SF_FACT_SUMMA = doc.SF_FACT_SUMMA,
                                 SF_OLE = doc.SF_OLE,
                                 SF_PAY_COND_DC = doc.SF_PAY_COND_DC,
-                                TABELNUMBER = doc.TABELNUMBER,
+                                TABELNUMBER = doc.EmployeeTabelNumber ?? 0,
                                 SF_EXECUTED = doc.SF_EXECUTED,
                                 SF_GRUZOOTPRAVITEL = doc.SF_GRUZOOTPRAVITEL,
                                 SF_GRUZOPOLUCHATEL = doc.SF_GRUZOPOLUCHATEL,
@@ -487,7 +487,7 @@ namespace KursAM2.Managers.Invoices
                             old.SF_FACT_SUMMA = doc.SF_FACT_SUMMA;
                             old.SF_OLE = doc.SF_OLE;
                             old.SF_PAY_COND_DC = doc.SF_PAY_COND_DC;
-                            old.TABELNUMBER = doc.TABELNUMBER;
+                            old.TABELNUMBER = doc.EmployeeTabelNumber ?? 0;
                             old.SF_EXECUTED = doc.SF_EXECUTED;
                             old.SF_GRUZOOTPRAVITEL = doc.SF_GRUZOOTPRAVITEL;
                             old.SF_GRUZOPOLUCHATEL = doc.SF_GRUZOPOLUCHATEL;

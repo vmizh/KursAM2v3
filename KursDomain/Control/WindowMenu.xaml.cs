@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using KursDomain.Menu;
 
-namespace Core.Control
+namespace KursDomain.Control
 {
     /// <summary>
     ///     Interaction logic for WindowMenu.xaml

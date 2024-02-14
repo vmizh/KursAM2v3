@@ -6,12 +6,13 @@
     xmlns:native="http://schemas.devexpress.com/winfx/2008/xaml/core/internal"
     xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=KursDomain"
     xmlns:iCommon="clr-namespace:KursDomain.ICommon;assembly=KursDomain"
+    xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
     Title="{Binding WindowName}" MinHeight="450" MinWidth="1200">
     <dx:ThemedWindow.Resources>
         <native:RenderTemplate
@@ -30,13 +31,6 @@
     </dx:ThemedWindow.HeaderItems>
     <DockPanel Style="{StaticResource DXServices}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />
-        <!--<dxb:BarManager Name="BarManager">
-            <dxb:BarManager.Items>
-        <dxb:BarSubItem x:Name="barSubItem1" Content="Система"
-                        BarItemDisplayMode="ContentAndGlyph" Glyph="{dx:DXImage SvgImages/Snap/InsertGroupFooter.svg}"
-                        />
-            </dxb:BarManager.Items>
-            </dxb:BarManager>-->
         <dxlc:LayoutControl x:Name="mainLayoutControl">
             <dxlc:LayoutGroup Orientation="Vertical" x:Name="LayoutGroup1">
                 <dxlc:LayoutGroup Header="Документ" View="GroupBox" x:Name="LayoutGroup2">

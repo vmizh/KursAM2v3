@@ -770,6 +770,13 @@ namespace KursAM2.ViewModel.Management
                     Name = @"Выплаты акционерам",
                     CalcType = TypeProfitAndLossCalc.IsLoss
                 },
+                new ProfitAndLossesMainRowViewModel
+                {
+                    Id = TransferOutBalans,
+                    ParentId = Rashod,
+                    Name = @"Перевод за баланс",
+                    CalcType = TypeProfitAndLossCalc.IsLoss
+                },
                 //new ProfitAndLossesMainRowViewModel
                 //{
                 //    Id = StockHolderNach,
@@ -812,6 +819,9 @@ namespace KursAM2.ViewModel.Management
 
         public static readonly Guid NomenklDohod = Guid.Parse("{334973B4-1652-4473-9DED-FD4B31B31FC1}");
         public static readonly Guid NomenklRashod = Guid.Parse("{D89B1E18-074E-4A7D-A0EE-9537DC1585D8}");
+
+        public static readonly Guid TransferOutBalans = Guid.Parse("{D21D9A76-5C9D-4C7B-BC2B-7E2D59452CBD}");
+
 
         #endregion
 

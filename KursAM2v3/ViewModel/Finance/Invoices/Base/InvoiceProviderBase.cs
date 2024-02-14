@@ -1,19 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Data;
 using KursDomain;
-using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 
 namespace KursAM2.ViewModel.Finance.Invoices.Base
 {
     [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-    public class InvoiceProviderBase : IInvoiceProvider
+    public class InvoiceProviderBase : IInvoiceProvider, INotifyPropertyChanged
     {
+        private int? mySFInNum;
+        private string mySFPostavNum;
+        private DateTime myDocDate;
+        private Kontragent myKontragent;
+        private decimal mySumma;
+        private decimal mySummaFact;
+        private bool myIsPay;
+        private decimal myPaySumma;
+        private PayCondition myPayCondition;
+        private bool myIsAccepted;
+        private string myNote;
+        private string myCreator;
+        private PayForm myFormRaschet;
+        private bool myIsNDSInPrice;
+        private CentrResponsibility myCo;
+        private Kontragent myKontrReceiver;
+        private Employee myPersonaResponsible;
+
         public InvoiceProviderBase()
         {
         }
@@ -30,13 +49,19 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             DocCode = doc.DocCode;
             Id = doc.Id;
             NakladDistributedSumma = doc.NakladDistributedSumma;
-            PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(doc.PersonalResponsibleDC) as Employee;
+            if(doc.PersonalResponsibleDC != null)
+                PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(doc.PersonalResponsibleDC) as Employee;
+            else
+            {
+                PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(doc.EmployeeTabelNumber) as Employee;
+            }
             SF_IN_NUM = doc.InNum;
             SF_POSTAV_NUM = doc.PostavNum;
             DocDate = doc.Date;
             Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.PostDC) as Kontragent;
             Summa = doc.Summa ?? 0;
-            SummaFact =  (invList.Where(_ => _.IsUsluga ?? false).Sum(_ => _.Summa) ?? 0) + invList.Sum(g => g.ShippedSumma);
+            SummaFact = (invList.Where(_ => _.IsUsluga ?? false).Sum(_ => _.Summa) ?? 0) +
+                        invList.Sum(g => g.ShippedSumma);
             Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CurrencyDC) as Currency;
             PaySumma = doc.PaySumma;
             IsPay = Summa <= PaySumma;
@@ -59,24 +84,212 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public decimal DocCode { get; set; }
         public Guid Id { get; set; }
         public decimal? NakladDistributedSumma { get; set; }
-        public Employee PersonaResponsible { get; set; }
-        public int? SF_IN_NUM { get; set; }
-        public string SF_POSTAV_NUM { get; set; }
-        public DateTime DocDate { get; set; }
-        public Kontragent Kontragent { get; set; }
-        public decimal Summa { get; set; }
-        public decimal SummaFact { get; set; }
-        public bool IsPay { get; set; }
-        public decimal PaySumma { get; set; }
-        public PayCondition PayCondition { get; set; }
-        public bool IsAccepted { get; set; }
-        public string Note { get; set; }
-        public string CREATOR { get; set; }
-        public PayForm FormRaschet { get; set; }
-        public bool IsNDSInPrice { get; set; }
-        public CentrResponsibility CO { get; set; }
-        public Kontragent KontrReceiver { get; set; }
+
+        public Employee PersonaResponsible
+        {
+            get => myPersonaResponsible;
+            set
+            {
+                if (Equals(value, myPersonaResponsible)) return;
+                myPersonaResponsible = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(EmployeeTabelNumber));
+            }
+        }
+
+        public int? EmployeeTabelNumber => PersonaResponsible?.TabelNumber;
+
+        public int? SF_IN_NUM
+        {
+            get => mySFInNum;
+            set
+            {
+                if (value == mySFInNum) return;
+                mySFInNum = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string SF_POSTAV_NUM
+        {
+            get => mySFPostavNum;
+            set
+            {
+                if (value == mySFPostavNum) return;
+                mySFPostavNum = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public DateTime DocDate
+        {
+            get => myDocDate;
+            set
+            {
+                if (value.Equals(myDocDate)) return;
+                myDocDate = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Kontragent Kontragent
+        {
+            get => myKontragent;
+            set
+            {
+                if (Equals(value, myKontragent)) return;
+                myKontragent = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public decimal Summa
+        {
+            get => mySumma;
+            set
+            {
+                if (value == mySumma) return;
+                mySumma = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public decimal SummaFact
+        {
+            get => mySummaFact;
+            set
+            {
+                if (value == mySummaFact) return;
+                mySummaFact = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsPay
+        {
+            get => myIsPay;
+            set
+            {
+                if (value == myIsPay) return;
+                myIsPay = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public decimal PaySumma
+        {
+            get => myPaySumma;
+            set
+            {
+                if (value == myPaySumma) return;
+                myPaySumma = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public PayCondition PayCondition
+        {
+            get => myPayCondition;
+            set
+            {
+                if (Equals(value, myPayCondition)) return;
+                myPayCondition = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsAccepted
+        {
+            get => myIsAccepted;
+            set
+            {
+                if (value == myIsAccepted) return;
+                myIsAccepted = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string Note
+        {
+            get => myNote;
+            set
+            {
+                if (value == myNote) return;
+                myNote = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public string CREATOR
+        {
+            get => myCreator;
+            set
+            {
+                if (value == myCreator) return;
+                myCreator = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public PayForm FormRaschet
+        {
+            get => myFormRaschet;
+            set
+            {
+                if (Equals(value, myFormRaschet)) return;
+                myFormRaschet = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public bool IsNDSInPrice
+        {
+            get => myIsNDSInPrice;
+            set
+            {
+                if (value == myIsNDSInPrice) return;
+                myIsNDSInPrice = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public CentrResponsibility CO
+        {
+            get => myCo;
+            set
+            {
+                if (Equals(value, myCo)) return;
+                myCo = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public Kontragent KontrReceiver
+        {
+            get => myKontrReceiver;
+            set
+            {
+                if (Equals(value, myKontrReceiver)) return;
+                myKontrReceiver = value;
+                OnPropertyChanged();
+            }
+        }
+
         public ObservableCollection<IInvoiceProviderRow> Rows { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+            field = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
     }
 
     public class InvoiceProviderRowBase : IInvoiceProviderRow
@@ -105,7 +318,10 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public InvoiceProviderRowBase()
         {
         }
-        
+
+        public decimal? SFT_SUMMA_K_OPLATE { get; set; }
+        public decimal? SFT_SUMMA_K_OPLATE_KONTR_CRS { get; set; }
+
         public decimal DocCode { get; set; }
         public int Code { get; set; }
         public Guid Id { get; set; }
@@ -123,12 +339,10 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public decimal NDSPercent { get; set; }
         public decimal? SummaNaklad { get; set; }
         public decimal? NDSSumma { get; set; }
-        public decimal? SFT_SUMMA_K_OPLATE { get; set; }
         public decimal Summa { get; set; }
         public bool IsUsluga { get; }
         public bool IsNaklad { get; }
         public bool IsIncludeInPrice { get; set; }
-        public decimal? SFT_SUMMA_K_OPLATE_KONTR_CRS { get; set; }
         public SDRSchet SDRSchet { get; set; }
         public decimal Shipped { get; set; }
     }

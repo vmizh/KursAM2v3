@@ -92,6 +92,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base\CurrencyValue.cs" />
     <Compile Include="Base\GridControlStartEditingService.cs" />
     <Compile Include="Base\IStartEditingService.cs" />
     <Compile Include="Control\SearchButtonEditor.xaml.cs">
@@ -158,6 +159,8 @@
     <Compile Include="Documents\Dogovora\Old\TD_9ViewModel.cs" />
     <Compile Include="Documents\Employee\EMP_PAYROLL_TYPEViewModel.cs" />
     <Compile Include="Documents\Refund\RefundFromClientSimple.cs" />
+    <Compile Include="ICommon\RowStatus.cs" />
+    <Compile Include="RepositoryHelper\NomenklStoreRemainItem.cs" />
     <Compile Include="ICommon\ITreeReference.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNaklad.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNakladInfo.cs" />
@@ -269,6 +272,9 @@
     <Compile Include="Documents\Refund\RefundFromClientRowViewModel.cs" />
     <Compile Include="Documents\Refund\RefundFromClientViewModel.cs" />
     <Compile Include="IDocuments\TransferOut\ITransferOutBalans.cs" />
+    <Compile Include="IDocuments\TransferOut\ITransferOutBalansRefund.cs" />
+    <Compile Include="IDocuments\TransferOut\ITransferOutBalansRefundRows.cs" />
+    <Compile Include="IDocuments\TransferOut\ITransferOutBalansRows.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IConsumableWarehouseInvoice.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrder.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrderRow.cs" />
@@ -351,23 +357,39 @@
     <Compile Include="Repository\Base\IKursGenericRepository.cs" />
     <Compile Include="Repository\CurrencyRepository\CurrencyRepository.cs" />
     <Compile Include="Repository\CurrencyRepository\ICurrencyRepository.cs" />
+    <Compile Include="Repository\DocHistoryRepository\DocHistoryRepository.cs" />
+    <Compile Include="Repository\DocHistoryRepository\IDocHistoryRepository.cs" />
     <Compile Include="Repository\GenericKursDBRepository.cs" />
     <Compile Include="Repository\GenericKursSystemDBRepository.cs" />
     <Compile Include="Repository\IGenericRepository.cs" />
     <Compile Include="Repository\InvoiceProviderRepository\IInvoiceProviderRepository.cs" />
     <Compile Include="Repository\IRepository.cs" />
+    <Compile Include="Repository\LastDocumentRepository\ILastDocumentRepository.cs" />
+    <Compile Include="Repository\LastDocumentRepository\LastDocumentRepository.cs" />
+    <Compile Include="Repository\NomenklRepository\INomenklRepository.cs" />
+    <Compile Include="Repository\NomenklRepository\NomenklRepository.cs" />
+    <Compile Include="Repository\WarehouseRepository\IWarehouseRepository.cs" />
     <Compile Include="Repository\LayoutRepository\ILayoutRepository.cs" />
     <Compile Include="Repository\LayoutRepository\LayoutRepository.cs" />
     <Compile Include="Repository\StorageLocationsRepositury\IStorageLocationsRepositiry.cs" />
     <Compile Include="Repository\StorageLocationsRepositury\StorageLocationsRepository.cs" />
+    <Compile Include="Repository\TransferOut\ITransferOutBalansRepository.cs" />
+    <Compile Include="Repository\TransferOut\TransferOutBalansRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
+    <Compile Include="Repository\WarehouseRepository\WarehouseRepository.cs" />
     <Compile Include="UserMenuFavorites.cs" />
     <Compile Include="ViewModel\Base2\DialogViewModelBase.cs" />
-    <Compile Include="ViewModel\Base2\FormOperation.cs" />
+    <Compile Include="ViewModel\Base2\DocumentNewState.cs" />
+    <Compile Include="ViewModel\Base2\FormCommands.cs" />
+    <Compile Include="ViewModel\Base2\FormSearchViewModelBase.cs" />
     <Compile Include="ViewModel\Base2\FormViewModelBase.cs" />
+    <Compile Include="ViewModel\Base2\IDialog.cs" />
+    <Compile Include="ViewModel\Base2\IDialogCommands.cs" />
     <Compile Include="ViewModel\Base2\IDialogOperation.cs" />
-    <Compile Include="ViewModel\Base2\IFormOperation.cs" />
     <Compile Include="ViewModel\Base2\IFormMenu.cs" />
+    <Compile Include="ViewModel\Base2\IFormCommands.cs" />
+    <Compile Include="ViewModel\Base2\IFormSearch.cs" />
+    <Compile Include="ViewModel\Base2\IFormSearchCommands.cs" />
     <Compile Include="ViewModel\Base2\ILayout.cs" />
     <Compile Include="ViewModel\Base2\IForm.cs" />
     <Compile Include="ViewModel\Base2\ViewModelBase.cs" />
@@ -410,8 +432,21 @@
     </Compile>
     <Compile Include="ViewModel\Base\SplashScreenViewModel.cs" />
     <Compile Include="ViewModel\DataAnnotationForFluentApiBase.cs" />
+    <Compile Include="ViewModel\Dialog\WarehouseRemainsViewModel.cs" />
+    <Compile Include="View\Base\BaseDialogWindow.xaml.cs">
+      <DependentUpon>BaseDialogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Base\BaseSearchWindow.xaml.cs">
+      <DependentUpon>BaseSearchWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Base\BaseWindow.xaml.cs">
       <DependentUpon>BaseWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Base\LoadingIndicator.xaml.cs">
+      <DependentUpon>LoadingIndicator.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\WarehouseRemainsView.xaml.cs">
+      <DependentUpon>WarehouseRemainsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="WindowsManager\ErrorMessageBase.cs" />
     <Compile Include="WindowsManager\IWindowManager.cs" />
@@ -427,8 +462,9 @@
     <Compile Include="Wrapper\Base\ICalculateValues.cs" />
     <Compile Include="Wrapper\Base\IUpdateReferences.cs" />
     <Compile Include="Wrapper\Base\NotifyDataErrorInfoBase.cs" />
-    <Compile Include="Wrapper\NomenklOutBalans\TransferOutBalansWrapper.cs" />
     <Compile Include="Wrapper\StorageLocationsWrapper.cs" />
+    <Compile Include="Wrapper\TransferOut\TransferOutBalansRowsWrapper.cs" />
+    <Compile Include="Wrapper\TransferOut\TransferOutBalansWrapper.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -462,7 +498,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\Base\BaseDialogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Base\BaseSearchWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\Base\BaseWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Base\LoadingIndicator.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\WarehouseRemainsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

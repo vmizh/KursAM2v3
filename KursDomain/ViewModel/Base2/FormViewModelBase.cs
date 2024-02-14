@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Xml;
+using Core.ViewModel.Base;
+using Core.WindowsManager;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.UI;
 using DevExpress.Xpf.Grid;
@@ -19,27 +22,61 @@ namespace KursDomain.ViewModel.Base2;
 
 public delegate void GridControlColumnsAutogenerating(object sender, AutoGeneratingColumnEventArgs e);
 
-public abstract class FormViewModelBase : ViewModelBase, IForm, ILayout
+public abstract class FormViewModelBase<T, I> : ViewModelBase, IForm, ILayout
 {
     #region Constructors
 
     public FormViewModelBase()
     {
         _layoutRepository = new LayoutRepository(GlobalOptions.KursSystem());
-         
+
         OnWindowClosingCommand = new DelegateCommand(OnWindowClosing);
         OnInitializeCommand = new DelegateCommand(OnInitialize);
         OnWindowLoadedCommand = new DelegateCommand(async () => await OnWindowLoaded());
-    }
 
-    public FormViewModelBase(ILayoutRepository layoutRepository) : this()
-    {
-        _layoutRepository = layoutRepository;
+        DocNewEmptyCommand = new DelegateCommand(async () => await OnDocNewEmptyExecueAsync(), CanDocNewEmpty);
+        DocNewCopyRequisiteCommand =
+            new DelegateCommand(async () => await OnDocNewCopyRequisiteExecueAsync(), CanDocNewCopyRequisite);
+        DocNewCopyCommand = new DelegateCommand(async () => await OnDocNewCopyExecueAsync(), CanNewCopyEmpty);
+        DoсDeleteCommand = new DelegateCommand(async () => await OnDoсDeleteExecuteAsync(), CanDoсDelete);
+        UndoCommand = new DelegateCommand(OnUndoExecute, CanUndo);
+
+        RefreshDataCommand = new DelegateCommand(async () => await OnRefreshDataAsync(), CanRefreshData);
+        SaveDataCommand = new DelegateCommand(async () => await OnSaveDataAsync(), CanSaveData);
+        CloseWindowCommand = new DelegateCommand(OnCloseWindow, CanCloseWindow);
+        ResetLayoutCommand = new DelegateCommand(OnResetLayoutExecute);
+
+        ShowHistoryCommand = new DelegateCommand(OnShowHistoryExecute);
     }
 
     #endregion
 
+    #region Fields
+
+    private bool _hasChanges;
+    private string _startLayout;
+
+    #endregion
+
     #region Properties
+
+    public I DocumentId { get; set; }
+
+    public T Document { set; get; }
+
+    public bool HasChanges
+    {
+        get => _hasChanges;
+        set
+        {
+            if (_hasChanges == value) return;
+            _hasChanges = value;
+            RaisePropertyChanged();
+            ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
+        }
+    }
+
+    public bool IsNewDocument { get; set; }
 
     public ILayoutSerializationService LayoutSerializationService => GetService<ILayoutSerializationService>();
     private ILayoutRepository _layoutRepository { get; }
@@ -52,6 +89,9 @@ public abstract class FormViewModelBase : ViewModelBase, IForm, ILayout
     #endregion
 
     #region Methods
+
+    public abstract Task InitializeAsync(I id, DocumentNewState newState = DocumentNewState.None);
+    public abstract void Initialize(I id, DocumentNewState newState = DocumentNewState.None);
 
     public virtual void Show()
     {
@@ -81,8 +121,10 @@ public abstract class FormViewModelBase : ViewModelBase, IForm, ILayout
     public ICommand OnInitializeCommand { get; }
     public ICommand OnWindowLoadedCommand { get; }
 
-    protected async Task OnWindowLoaded()
+    protected virtual async Task OnWindowLoaded()
     {
+        _startLayout = LayoutSerializationService.Serialize();
+        // ReSharper disable once PossibleNullReferenceException
         var l = await _layoutRepository.GetByFormNameAsync(LayoutName);
         if (l == null) return;
         LayoutSerializationService.Deserialize(l.Layout);
@@ -104,7 +146,7 @@ public abstract class FormViewModelBase : ViewModelBase, IForm, ILayout
     {
     }
 
-    protected  async void OnWindowClosing()
+    protected virtual async void OnWindowClosing()
     {
         string winState = null;
         var currentWindow = ((CurrentWindowService)ServiceContainer.GetService<ICurrentWindowService>()).Window;
@@ -121,7 +163,7 @@ public abstract class FormViewModelBase : ViewModelBase, IForm, ILayout
             var sb = new StringBuilder();
             var ser1 =
                 new DataContractSerializer(typeof(WindowsScreenState));
-            var writer = XmlWriter.Create(sb, new XmlWriterSettings()
+            var writer = XmlWriter.Create(sb, new XmlWriterSettings
             {
                 Async = true
             });
@@ -133,6 +175,150 @@ public abstract class FormViewModelBase : ViewModelBase, IForm, ILayout
         var layout = LayoutSerializationService.Serialize();
         // ReSharper disable once AssignNullToNotNullAttribute
         await _layoutRepository.SaveLayoutAsync(LayoutName, layout, winState);
+    }
+
+    protected virtual bool CanDelete()
+    {
+        return !IsNewDocument && !IsBusy;
+    }
+
+    protected bool IsBusy { get; set; }
+
+    protected virtual void OnDelete()
+    {
+    }
+
+    public ICommand CloseWindowCommand { get; }
+    public ICommand DocumentOpenCommand { get; }
+
+    public virtual bool CanCloseWindow()
+    {
+        return !IsBusy;
+    }
+
+    private async void OnCloseWindow()
+    {
+        if (HasChanges)
+        {
+            var wm = new WindowManager();
+            var dlgRslt = wm.ShowKursDialog("Внесены изменения, сохранить?", "Запрос",
+                Brushes.Blue, WindowManager.YesNoCancel);
+            switch (dlgRslt)
+            {
+                case WindowManager.KursDialogResult.Cancel:
+                    return;
+                case WindowManager.KursDialogResult.No:
+                    break;
+                case WindowManager.KursDialogResult.Yes:
+                    await OnSaveDataAsync();
+                    break;
+            }
+        }
+
+        Close();
+    }
+
+    public ICommand PrintCommand { get; }
+
+    public ICommand DocNewCommand { get; }
+
+
+    public ICommand DocNewEmptyCommand { get; }
+
+    protected virtual bool CanDocNewEmpty()
+    {
+        return true;
+    }
+
+    protected virtual async Task OnDocNewEmptyExecueAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public ICommand DocNewCopyRequisiteCommand { get; }
+
+    protected virtual async Task OnDocNewCopyRequisiteExecueAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    protected virtual bool CanDocNewCopyRequisite()
+    {
+        return false;
+    }
+
+    public ICommand DocNewCopyCommand { get; }
+
+    protected virtual bool CanNewCopyEmpty()
+    {
+        return true;
+    }
+
+    protected virtual async Task OnDocNewCopyExecueAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+    public ICommand RefreshDataCommand { get; }
+
+    protected virtual bool CanRefreshData()
+    {
+        return true;
+    }
+
+
+    public virtual async Task OnRefreshDataAsync()
+    {
+    }
+
+    public ICommand SaveDataCommand { get; }
+
+    protected virtual bool CanSaveData()
+    {
+        return false;
+    }
+
+    protected virtual async Task OnSaveDataAsync()
+    {
+        throw new NotImplementedException();
+    }
+
+
+    public ICommand ResetLayoutCommand { get; }
+
+    protected virtual void OnResetLayoutExecute()
+    {
+        LayoutSerializationService.Deserialize(_startLayout);
+    }
+
+    public ICommand ShowHistoryCommand { get; }
+
+    protected virtual void OnShowHistoryExecute()
+    {
+        
+    }
+
+    public ICommand DoсDeleteCommand { get; }
+
+    protected virtual bool CanDoсDelete()
+    {
+        return !IsNewDocument;
+    }
+
+    protected virtual async Task OnDoсDeleteExecuteAsync()
+    {
+    }
+
+    public ICommand UndoCommand { get; }
+
+    protected virtual bool CanUndo()
+    {
+        return _hasChanges;
+    }
+
+    protected virtual void OnUndoExecute()
+    {
+        throw new NotImplementedException();
     }
 
     #endregion

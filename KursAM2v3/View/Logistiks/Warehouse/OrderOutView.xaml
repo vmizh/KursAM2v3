@@ -3,10 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+             
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
              mc:Ignorable="d"
              Title="{Binding WindowName}" MinHeight="450" MinWidth="800">
     <dx:ThemedWindow.HeaderItems>

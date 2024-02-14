@@ -3,13 +3,14 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                 xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+                 
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                  xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                  xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                  xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
                  xmlns:dragAndDrop="clr-namespace:KursAM2.DragAndDrop"
+                 xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
                  mc:Ignorable="d"
                  Title="Справочник контрагентов" Height="450" Width="800">
     <dx:ThemedWindow.Resources>

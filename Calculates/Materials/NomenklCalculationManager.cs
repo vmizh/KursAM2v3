@@ -12,6 +12,7 @@ using Helper;
 using JetBrains.Annotations;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
+using KursDomain.RepositoryHelper;
 
 namespace Calculates.Materials
 {

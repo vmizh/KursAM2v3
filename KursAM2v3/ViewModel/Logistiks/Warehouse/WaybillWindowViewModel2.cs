@@ -11,7 +11,6 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
-using DevExpress.XtraCharts.Native;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -439,7 +438,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 State = RowStatus.NewRow,
                                 DDT_SFACT_DC = r.DocCode,
                                 DDT_SFACT_ROW_CODE = r.Code,
-                                InvoiceClientViewModel = Document.InvoiceClientViewModel,
+                                InvoiceClientViewModel = Document.InvoiceClientViewModel
                             };
                             Document.Rows.Add(newItem);
                             Document.Entity.TD_24.Add(newItem.Entity);
@@ -475,7 +474,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             State = RowStatus.NewRow,
                             DDT_SFACT_DC = r.DocCode,
                             DDT_SFACT_ROW_CODE = r.Code,
-                            InvoiceClientViewModel = Document.InvoiceClientViewModel,
+                            InvoiceClientViewModel = Document.InvoiceClientViewModel
                         };
                         Document.Rows.Add(newItem);
                         Document.Entity.TD_24.Add(newItem.Entity);
@@ -636,7 +635,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             State = RowStatus.NewRow,
                             DDT_SFACT_DC = r.DocCode,
                             DDT_SFACT_ROW_CODE = r.Code,
-                            InvoiceClientViewModel = Document.InvoiceClientViewModel,
+                            InvoiceClientViewModel = Document.InvoiceClientViewModel
                         };
                         Document.Rows.Add(newItem);
                         Document.Entity.TD_24.Add(newItem.Entity);
@@ -670,7 +669,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         State = RowStatus.NewRow,
                         DDT_SFACT_DC = r.DocCode,
                         DDT_SFACT_ROW_CODE = r.Code,
-                        InvoiceClientViewModel = Document.InvoiceClientViewModel,
+                        InvoiceClientViewModel = Document.InvoiceClientViewModel
                     };
                     Document.Rows.Add(newItem);
                     Document.Entity.TD_24.Add(newItem.Entity);

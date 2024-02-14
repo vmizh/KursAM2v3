@@ -3,7 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    
+    xmlns:control1="clr-namespace:KursDomain.Control;assembly=KursDomain"
     x:Class="KursAM2.View.Base.KursBaseSearchWindow"
     Icon="{Binding Source={StaticResource imageStandartSearch},
     Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
@@ -16,7 +17,7 @@
                    VerticalAlignment="Center" HorizontalAlignment="Right"/>
     </dx:ThemedWindow.HeaderItems>
     <DockPanel LastChildFill="True">
-        <control:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />
+        <control1:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />
         <!--<DockPanel LastChildFill="False" DockPanel.Dock="Top">
             <ItemsControl VerticalAlignment="Center" VerticalContentAlignment="Center" DockPanel.Dock="Left" Height="60"
                       ItemsSource="{Binding LeftMenuBar, Mode=TwoWay}">

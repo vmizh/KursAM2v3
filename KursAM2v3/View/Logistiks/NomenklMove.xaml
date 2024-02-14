@@ -4,9 +4,10 @@
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxpg="http://schemas.devexpress.com/winfx/2008/xaml/pivotgrid"
+    xmlns:control1="clr-namespace:KursDomain.Control;assembly=KursDomain"
     x:Class="KursAM2.View.Logistiks.NomenklMove"
     Title="Движение товара" Height="500" Width="800">
     <dx:ThemedWindow.HeaderItems>
@@ -16,7 +17,7 @@
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <DockPanel>
-        <control:WindowMenu DockPanel.Dock="Top" />
+        <control1:WindowMenu DockPanel.Dock="Top" />
          <dxlc:LayoutControl Padding="0" x:Name="mainLayoutControl">
             <dxlc:LayoutGroup View="Tabs">
                 <dxlc:LayoutGroup Header="Операции по движению товара" View="GroupBox" Orientation="Vertical">

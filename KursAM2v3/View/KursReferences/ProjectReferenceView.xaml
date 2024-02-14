@@ -5,9 +5,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:control1="clr-namespace:Core.Control;assembly=KursDomain"
+    xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
     x:Class="KursAM2.View.KursReferences.ProjectReferenceView"
     mc:Ignorable="d"
     Title="Справочник проектов" Height="300" Width="300">
@@ -18,7 +19,7 @@
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <DockPanel>
-        <control1:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <dxg:TreeListControl Name="treeListControl"
                              AutoGenerateColumns="AddNew"
                              EnableSmartColumnsGeneration="True"

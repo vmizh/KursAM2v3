@@ -3,12 +3,13 @@
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-                 xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+                 
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                  xmlns:helpers="http://schemas.devexpress.com/winfx/2008/xaml/editors/internal"
+                 xmlns:base="clr-namespace:KursDomain.View.Base;assembly=KursDomain"
+                 xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
                  Title="Движение товаров на складах" Height="350" Width="600"
-                 xmlns:controls="clr-namespace:KursAM2.View.UserControls"
                  Style="{StaticResource DXSplashServices}">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
@@ -390,7 +391,7 @@
             </dxlc:LayoutGroup>
         </dxlc:LayoutControl>
     </DockPanel>
-        <controls:LoadingIndicator x:Name="loadingIndicator" Visibility="Hidden" VerticalAlignment="Center"
+        <base:LoadingIndicator x:Name="loadingIndicator" Visibility="Hidden" VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
                                    Width="100"
                                    Height="100"

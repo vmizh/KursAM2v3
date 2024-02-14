@@ -5,7 +5,8 @@
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-             xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+             xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
+
              x:Class="KursAM2.View.Personal.PayRollDocSearch" Title="Список ведомостей з/п и шаблоны"
              Icon="pack://siteoforigin:,,,/Images/Info_Box_Blue.png">
     <dx:ThemedWindow.HeaderItems>

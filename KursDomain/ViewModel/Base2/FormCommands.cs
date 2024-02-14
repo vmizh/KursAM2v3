@@ -4,9 +4,9 @@ using Prism.Commands;
 
 namespace KursDomain.ViewModel.Base2;
 
-public abstract class FormOperation : IFormOperation
+public abstract class FormCommands : IFormCommands
 {
-    public FormOperation()
+    public FormCommands()
     {
         SaveDataCommand = new DelegateCommand(OnSaveData, CanSaveData);
         RefreshDataCommand = new DelegateCommand(OnRefreshData, CanRefreshData);
@@ -38,6 +38,10 @@ public abstract class FormOperation : IFormOperation
     public ICommand ResetLayoutCommand { get; }
     public ICommand ShowHistoryCommand { get; }
     public ICommand DoсDeleteCommand { get; }
+
+    public ICommand UndoCommand { get; }
+
+
     public ICommand RedoCommand { get; }
 
     private bool CanSaveData()

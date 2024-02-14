@@ -3,11 +3,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+    xmlns:control1="clr-namespace:KursDomain.Control;assembly=KursDomain"
     x:Class="KursAM2.View.KursReferences.NomenklReferenceView"
     Title="Номенклатурный справочник" Height="431.568" Width="800">
     <dx:ThemedWindow.HeaderItems>
@@ -21,7 +22,7 @@
         <dxwui:WinUIMessageBoxService />
     </dxmvvm:Interaction.Behaviors>
     <DockPanel>
-        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <control1:WindowMenu Height="60" DockPanel.Dock="Top" />
         <DockPanel Margin="0,5,5,5" DockPanel.Dock="Top" LastChildFill="False">
             <dxlc:LayoutItem Label="Поиск"
                              ToolTip="Строка поиска по полям документов"

@@ -4,9 +4,10 @@
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
-             xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+             
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+             xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
              Title="Справочник контрагентов" Height="396.739" Width="550">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Core.WindowsManager;
 using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
@@ -28,7 +29,7 @@ namespace Core.ViewModel.Base;
 
 
 [POCOViewModel]
-public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLayout, ISupportServices, KursDomain.ViewModel.Base2.IFormOperation, 
+public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLayout, ISupportServices, KursDomain.ViewModel.Base2.IFormCommands, 
     KursDomain.ViewModel.Base2.IDialogOperation
 {
     [Display(AutoGenerateField = false)] protected bool IsLayoutLoaded;
@@ -582,6 +583,10 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     {
         //WindowManager.ShowFunctionNotReleased();
     }
+    public virtual Task DocumentOpenAsync(object obj)
+    {
+        throw new NotImplementedException();
+    }
 
     private string mySaveInfo;
 
@@ -724,6 +729,8 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     {
         get { return new Command(DocDelete, _ => IsDocDeleteAllow); }
     }
+
+    public ICommand UndoCommand => throw new NotImplementedException();
 
     public virtual void DocDelete(object form)
     {

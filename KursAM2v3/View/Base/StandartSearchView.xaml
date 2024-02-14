@@ -4,14 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:userControls="clr-namespace:KursAM2.View.UserControls"
-    xmlns:helper="clr-namespace:Helper;assembly=Helper"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:invoices="clr-namespace:KursAM2.ViewModel.Finance.Invoices"
+    xmlns:base="clr-namespace:KursDomain.View.Base;assembly=KursDomain"
+    xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
     dx:DXSerializer.Enabled="True"
     dx:WindowRestoreLayoutOptions.AllowRestoreStateForDisplayedWindow="True"
     dx:DXSerializer.StoreLayoutMode="All"
@@ -25,23 +23,31 @@
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
-    <!--<dx:ThemedWindow.DataContext>
-        <invoices:SearchInvoiceProviderViewModel/>
-    </dx:ThemedWindow.DataContext>-->
     <Grid>
         <DockPanel Style="{StaticResource DXServices}">
             <control:WindowMenu Height="60" DockPanel.Dock="Top" />
-            <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <DockPanel DockPanel.Dock="Top" LastChildFill="False">
                 <dxe:DateEdit Width="120" EditValue="{Binding StartDate}"
-                              IsEnabled="{Binding IsDateEnabled}" />
+                              IsEnabled="{Binding IsDateEnabled}" 
+                              DockPanel.Dock="Left"/>
                 <Label Content="по" />
                 <dxe:DateEdit Width="120" EditValue="{Binding EndDate}"
-                              IsEnabled="{Binding IsDateEnabled}" />
-            </StackPanel>
+                              IsEnabled="{Binding IsDateEnabled}"
+                              DockPanel.Dock="Left"/>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <Label Content="Строка поиска:" Visibility="{Binding IsCanSearch, Converter={StaticResource booleanToVisibilityConverter}}"/>
+                    <dxe:TextEdit
+                        MinWidth="150"
+                        Margin="5 0"
+                        Visibility="{Binding IsCanSearch, Converter={StaticResource booleanToVisibilityConverter}}"
+                        EditValue="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ></dxe:TextEdit>
+                </StackPanel>
+            </DockPanel>
             <dxg:GridControl
                 Style="{StaticResource GridControl.Search}"
                 Name="gridDocuments"
-                Margin="0,10,0,0"
+                Margin="0,20,0,0"
                 dx:DXSerializer.SerializationID="gridDocuments"
                 ItemsSource="{Binding Documents, UpdateSourceTrigger=PropertyChanged}"
                 CurrentItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
@@ -60,7 +66,7 @@
                 </dxg:GridControl.View>
             </dxg:GridControl>
         </DockPanel>
-        <userControls:LoadingIndicator x:Name="loadingIndicator" Visibility="Hidden" VerticalAlignment="Center"
+        <base:LoadingIndicator x:Name="loadingIndicator" Visibility="Hidden" VerticalAlignment="Center"
                                    HorizontalAlignment="Center"
                                    Width="100"
                                    Height="100"

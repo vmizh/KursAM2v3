@@ -4,8 +4,9 @@
                  xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-                 xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+                 
                  xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+                 xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
                  x:Class="KursAM2.View.Management.KontragentBalansForm"
                  Title="Лицевой счет контрагента " Height="618.383" Width="1004.218"
                  Icon="pack://siteoforigin:,,,/Images/calculator.png">

@@ -44,6 +44,7 @@ using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Logistiks.AktSpisaniya;
+using KursAM2.ViewModel.Logistiks.TransferOut;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management;
 using KursAM2.ViewModel.Management.BreakEven;
@@ -201,10 +202,17 @@ namespace KursAM2.View
                 Window form;
                 switch (formName)
                 {
+                    case "Перевод за баланс":
+                        var transOut = new TransferOutBalansSearchViewModel();
+                        transOut.Show();
+                        break;
+                    case "Товары за балансом":
+                        break;
+
                     case "Справочник мест хранения":
                         var slocCtx = new StorageLocationViewModel(new StorageLocationsRepository(GlobalOptions.GetEntities()));
                         slocCtx.Show();
-                        Task.Run(slocCtx.OnRefreshData);
+                        Task.Run(() => slocCtx.OnRefreshDataAsync());
                         break;
                     //Справочник валют
                     case "Справочник валют":

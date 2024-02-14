@@ -4,12 +4,13 @@
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-             xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+             
+             xmlns:control1="clr-namespace:KursDomain.Control;assembly=KursDomain"
              x:Class="KursAM2.View.Finance.SaleTaxNomenklView"
              Title="Таксировка валютных продаж" Height="350" Width="525">
 
     <DockPanel>
-        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <control1:WindowMenu Height="60" DockPanel.Dock="Top" />
         <dxlc:LayoutControl x:Name="mainLayoutControl" Orientation="Vertical" Padding="0">
             <dxlc:LayoutGroup x:Name="groupControl" Header="LayoutGroup" View="Group">
                 <StackPanel Margin="0,5,0,0" Orientation="Horizontal" Height="30">

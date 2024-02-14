@@ -7,7 +7,7 @@ namespace KursDomain.ViewModel.Base2;
 [POCOViewModel]
 public class ViewModelBase : DevExpress.Mvvm.ViewModelBase, INotifyPropertyChanged
 {
-    public event PropertyChangedEventHandler PropertyChanged;
+    public new event PropertyChangedEventHandler PropertyChanged;
 
     protected virtual void OnPropertyChanged([CallerMemberName]string propertyName = null)
     {

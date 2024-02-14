@@ -674,7 +674,6 @@
         <EntityTypeShape EntityType="ALFAMEDIA.KONTR_IS_CALC_EXECUTING" Width="1.5" PointX="14.75" PointY="1.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.KURS_RAZNICA" Width="1.5" PointX="26.75" PointY="32.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.NOM_PRICE_ROWS" Width="1.5" PointX="31.75" PointY="29.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ALFAMEDIA.NOMENKL_RECALC" Width="1.5" PointX="31.75" PointY="32.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.OLAP_BALANS_KURS" Width="1.5" PointX="32.75" PointY="1.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.REMAINS_STATUS" Width="1.5" PointX="2.75" PointY="33.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.SD_176" Width="1.5" PointX="32.75" PointY="4.75" IsExpanded="true" />
@@ -2159,6 +2158,8 @@
         <AssociationConnector Association="ALFAMEDIA.FK_StorageLocations_WarehouseDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_TransferOutBalans_StorageLocationId" />
         <AssociationConnector Association="ALFAMEDIA.FK_TransferOutBalansRefund_StorageLocationId" />
+        <EntityTypeShape EntityType="ALFAMEDIA.EXT_SqlQueries" Width="1.5" PointX="47.375" PointY="3.75" />
+        <EntityTypeShape EntityType="ALFAMEDIA.NOMENKL_RECALC" Width="1.5" PointX="5.375" PointY="47.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

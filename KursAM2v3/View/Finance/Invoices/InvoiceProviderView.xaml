@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
@@ -14,6 +14,7 @@
     xmlns:helper="clr-namespace:KursAM2.View.Helper"
     xmlns:helper1="clr-namespace:Helper;assembly=Helper"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
     x:Class="KursAM2.View.Finance.Invoices.InvoiceProviderView"
     mc:Ignorable="d"
     Title="{Binding WindowName}"
@@ -249,7 +250,7 @@
                                     MinWidth="150"
                                     AutoComplete="True"
                                     ItemsSource="{Binding EmployeeList, UpdateSourceTrigger=PropertyChanged}"
-                                    EditValue="{Binding Document.Employee, Mode=TwoWay,
+                                    EditValue="{Binding Document.PersonaResponsible, Mode=TwoWay,
                                     UpdateSourceTrigger=PropertyChanged, 
                                     NotifyOnValidationError=True,
                                     ValidatesOnDataErrors=True}" />

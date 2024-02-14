@@ -134,5 +134,10 @@ public enum DocumentType
     StockHolderAccrual = 79,
 
     [Display(Name = "Распределение накладных расходов")]
-    Naklad = 1005
+    Naklad = 1005,
+
+    [Display(Name = "Перевод за баланс")]
+    TransferOutBalans = 1006
+
+
 }

@@ -7,11 +7,12 @@
                   xmlns:local="clr-namespace:KursAM2.View.Management"
                   xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
                   xmlns:base="clr-namespace:KursAM2.View.Base"
-                  xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+                  
                   xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
                   xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                   xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                   xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                  xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
                   mc:Ignorable="d"
                   Title="{Binding WindowName}" Height="450" Width="800">
     <dx:ThemedWindow.HeaderItems>

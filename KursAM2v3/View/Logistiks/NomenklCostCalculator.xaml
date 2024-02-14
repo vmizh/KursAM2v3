@@ -6,7 +6,8 @@
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-             xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+             xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
+
              Title="Расчет себестоимости товара" Height="385" Width="770">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"

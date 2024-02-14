@@ -4,9 +4,10 @@
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-             xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+             
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+             xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
              x:Class="KursAM2.View.Personal.PayRollVedomost" Title="Ведомость" Height="600" Width="800"
              Icon="pack://siteoforigin:,,,/Images/form_blue_big.png">
     <dx:ThemedWindow.HeaderItems>

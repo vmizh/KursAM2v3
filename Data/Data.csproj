@@ -458,6 +458,9 @@
     <Compile Include="EXT_SEARCH_CONDITION.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="EXT_SqlQueries.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="EXT_SUBSYSTEMS.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

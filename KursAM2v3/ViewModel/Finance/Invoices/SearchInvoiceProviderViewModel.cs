@@ -19,12 +19,10 @@ using KursAM2.View.Finance.Invoices;
 using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
 using KursDomain.Repository;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
-using ConditionRule = DevExpress.Xpf.Core.ConditionalFormatting.ConditionRule;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -56,24 +54,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             EndDate = DateTime.Today;
             MainWindowViewModel.EventAggregator.GetEvent<AFterSaveInvoiceProvideEvent>()
                 .Subscribe(OnAfterSaveInvoiceExecute);
-        }
-
-        private void OnAfterSaveInvoiceExecute(AFterSaveInvoiceProvideEventArgs args)
-        {
-            if (Documents.FirstOrDefault(_ => _.DocCode == args.DocCode) is InvoiceProviderBase inv)
-            {
-                inv.Summa = args.Invoice.Summa;
-                inv.CO = args.Invoice.CO;
-                inv.DocDate = args.Invoice.DocDate;
-                inv.FormRaschet = args.Invoice.FormRaschet;
-                inv.IsAccepted = args.Invoice.IsAccepted;
-                inv.IsNDSInPrice = args.Invoice.IsNDSInPrice;
-                inv.KontrReceiver = args.Invoice.KontrReceiver;
-                inv.Note = args.Invoice.Note;
-                inv.PayCondition = args.Invoice.PayCondition;
-                inv.PaySumma = args.Invoice.PaySumma;
-                inv.SF_POSTAV_NUM = args.Invoice.SF_POSTAV_NUM;
-            }
         }
 
         public SearchInvoiceProviderViewModel(Window form) : base(form)
@@ -123,6 +103,24 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
+        private void OnAfterSaveInvoiceExecute(AFterSaveInvoiceProvideEventArgs args)
+        {
+            if (Documents.FirstOrDefault(_ => _.DocCode == args.DocCode) is InvoiceProviderBase inv)
+            {
+                inv.Summa = args.Invoice.Summa;
+                inv.CO = args.Invoice.CO;
+                inv.DocDate = args.Invoice.DocDate;
+                inv.FormRaschet = args.Invoice.FormRaschet;
+                inv.IsAccepted = args.Invoice.IsAccepted;
+                inv.IsNDSInPrice = args.Invoice.IsNDSInPrice;
+                inv.KontrReceiver = args.Invoice.KontrReceiver;
+                inv.Note = args.Invoice.Note;
+                inv.PayCondition = args.Invoice.PayCondition;
+                inv.PaySumma = args.Invoice.PaySumma;
+                inv.SF_POSTAV_NUM = args.Invoice.SF_POSTAV_NUM;
+            }
+        }
+
         public override void RefreshData(object data)
         {
             var frm = Form as StandartSearchView;
@@ -134,22 +132,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 frm?.Dispatcher.Invoke(() =>
                 {
-                    if (frm.DataContext is SearchInvoiceProviderViewModel dtx)
-                    {
-                        dtx.IsCanRefresh = false;
-                    }
-                    frm.loadingIndicator.Visibility = Visibility.Visible; 
-                    
+                    if (frm.DataContext is SearchInvoiceProviderViewModel dtx) dtx.IsCanRefresh = false;
+                    frm.loadingIndicator.Visibility = Visibility.Visible;
                 });
                 var result = InvoiceProviderRepository.GetAllByDates(StartDate, EndDate);
                 frm?.Dispatcher.Invoke(() =>
                 {
                     frm.loadingIndicator.Visibility = Visibility.Hidden;
                     foreach (var d in result) Documents.Add(d);
-                    if (frm.DataContext is SearchInvoiceProviderViewModel dtx)
-                    {
-                        dtx.IsCanRefresh = true;
-                    }
+                    if (frm.DataContext is SearchInvoiceProviderViewModel dtx) dtx.IsCanRefresh = true;
                 });
                 GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             });
@@ -211,14 +202,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     if (col.FieldType != typeof(DateTime) &&
                         col.FieldType != typeof(DateTime?)) continue;
-                    col.SortMode = ColumnSortMode.Value; 
+                    col.SortMode = ColumnSortMode.Value;
                     col.ColumnFilterMode = ColumnFilterMode.Value;
                     col.SortMode = ColumnSortMode.Value;
                 }
 
                 frm.gridDocumentsTableView.ShowTotalSummary = true;
                 frm.gridDocumentsTableView.FormatConditions.Clear();
-                var notShippedFormatCondition = new FormatCondition()
+                var notShippedFormatCondition = new FormatCondition
                 {
                     //Expression = "[SummaFact] < [Summa]",
                     FieldName = "SummaFact",
@@ -230,8 +221,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     ValueRule = ConditionRule.Equal,
                     Value1 = 0m
                 };
-                
-                var shippedFormatCondition = new FormatCondition()
+
+                var shippedFormatCondition = new FormatCondition
                 {
                     Expression = "[Summa] > [SummaFact]",
                     FieldName = "SummaFact",
@@ -244,6 +235,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 frm.gridDocumentsTableView.FormatConditions.Add(shippedFormatCondition);
                 frm.gridDocumentsTableView.FormatConditions.Add(notShippedFormatCondition);
             }
+
             StartDate = DateHelper.GetFirstDate();
         }
     }

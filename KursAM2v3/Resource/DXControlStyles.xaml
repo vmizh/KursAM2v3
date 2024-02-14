@@ -19,7 +19,6 @@
         <Setter Property="dx:DXSerializer.StoreLayoutMode" Value="All" />
         <Setter Property="dxg:DataControlSerializationOptions.AddNewColumns" Value="True" />
         <Setter Property="dxg:DataControlSerializationOptions.RemoveOldColumns" Value="True" />
-        <Setter Property="UseFieldNameForSerialization" Value="True" />
         <Setter Property="SelectionMode" Value="None" />
     </Style>
     <Style x:Key="TreelistControl.Base" TargetType="dxg:TreeListControl">

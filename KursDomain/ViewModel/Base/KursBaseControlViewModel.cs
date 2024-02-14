@@ -38,7 +38,7 @@ public interface IKursBaseControlViewModel
 }
 
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseControlViewModel, IKursDialog, KursDomain.ViewModel.Base2.IFormOperation
+public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseControlViewModel, IKursDialog, KursDomain.ViewModel.Base2.IFormCommands
 {
     #region Fields
 
@@ -467,6 +467,9 @@ public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseCon
     {
         get { return new Command(DocDelete, param => IsDocDeleteAllow); }
     }
+
+    public ICommand UndoCommand { get; }
+
 
     public virtual void DocDelete(object form)
     {

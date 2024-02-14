@@ -8,6 +8,7 @@ using Helper;
 using JetBrains.Annotations;
 using KursDomain;
 using KursDomain.Documents.Currency;
+using KursDomain.Repository.NomenklRepository;
 
 namespace KursAM2.Managers.Nomenkl
 {
@@ -162,57 +163,5 @@ namespace KursAM2.Managers.Nomenkl
         }
     }
 
-    public class NomenklMoveInfo
-    {
-        public decimal NomDC { set; get; }
-        public string NomNomenkl { set; get; }
-        public string NomName { set; get; }
-        public decimal Prihod { set; get; }
-        public decimal PrihodSumma { set; get; }
-        public decimal PrihodNaklSumma { set; get; }
-        public decimal Rashod { set; get; }
-        public decimal RashodSumma { set; get; }
-        public decimal RashodNaklSumma { set; get; }
-    }
-
-    public class NomenklQuantityInfo
-    {
-        public decimal NomDC { set; get; }
-        public string NomNomenkl { set; get; }
-        public string NomName { set; get; }
-        public decimal StartQuantity { set; get; }
-        public decimal StartSumma { set; get; }
-        public decimal StartNaklSumma { set; get; }
-        public decimal PrihodStart { set; get; }
-        public decimal RashodStart { set; get; }
-        public decimal Prihod { set; get; }
-        public decimal Rashod { set; get; }
-        public decimal OstatokQuantity { set; get; }
-        public decimal OstatokSumma { set; get; }
-        public decimal OstatokNaklSumma { set; get; }
-
-    }
-
-    public class NomenklQuantityInfoExt : NomenklQuantityInfo
-    {
-        public NomenklQuantityInfoExt(NomenklQuantityInfo item)
-        {
-            NomDC = item.NomDC;
-            NomNomenkl = item.NomNomenkl;
-            NomName = item.NomName;
-            StartQuantity = item.StartQuantity;
-            StartSumma = item.StartSumma;
-            StartNaklSumma = item.StartNaklSumma;
-            PrihodStart = item.PrihodStart;
-            RashodStart = item.RashodStart;
-            Prihod = item.Prihod;
-            Rashod = item.Rashod;
-            OstatokQuantity = item.OstatokQuantity;
-            OstatokSumma = item.OstatokSumma;
-            OstatokNaklSumma = item.OstatokNaklSumma;
-            Nomenkl = (KursDomain.References.Nomenkl)GlobalOptions.ReferencesCache.GetNomenkl(item.NomDC);
-        }
-
-        public KursDomain.References.Nomenkl Nomenkl { set; get; }
-    }
+   
 }

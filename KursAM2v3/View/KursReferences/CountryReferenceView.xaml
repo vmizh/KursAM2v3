@@ -3,9 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+             
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:control1="clr-namespace:KursDomain.Control;assembly=KursDomain"
              mc:Ignorable="d"
              Title="Справочник стран" Height="450" Width="800">
     <dx:ThemedWindow.HeaderItems>
@@ -15,7 +16,7 @@
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <DockPanel>
-        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <control1:WindowMenu Height="60" DockPanel.Dock="Top" />
         <dxg:GridControl x:Name="gridControl"
                          AutoGenerateColumns="AddNew"
                          EnableSmartColumnsGeneration="True"

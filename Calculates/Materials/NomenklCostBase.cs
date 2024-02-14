@@ -6,6 +6,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using KursDomain;
 using KursDomain.References;
+using KursDomain.RepositoryHelper;
 
 namespace Calculates.Materials
 {

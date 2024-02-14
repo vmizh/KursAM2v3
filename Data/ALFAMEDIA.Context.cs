@@ -696,7 +696,6 @@ namespace Data
         public virtual DbSet<KONTR_IS_CALC_EXECUTING> KONTR_IS_CALC_EXECUTING { get; set; }
         public virtual DbSet<KURS_RAZNICA> KURS_RAZNICA { get; set; }
         public virtual DbSet<NOM_PRICE_ROWS> NOM_PRICE_ROWS { get; set; }
-        public virtual DbSet<NOMENKL_RECALC> NOMENKL_RECALC { get; set; }
         public virtual DbSet<OLAP_BALANS_KURS> OLAP_BALANS_KURS { get; set; }
         public virtual DbSet<REMAINS_STATUS> REMAINS_STATUS { get; set; }
         public virtual DbSet<SD_176> SD_176 { get; set; }
@@ -806,6 +805,8 @@ namespace Data
         public virtual DbSet<TransferOutBalansRefundRows> TransferOutBalansRefundRows { get; set; }
         public virtual DbSet<TransferOutBalansRows> TransferOutBalansRows { get; set; }
         public virtual DbSet<StorageLocations> StorageLocations { get; set; }
+        public virtual DbSet<EXT_SqlQueries> EXT_SqlQueries { get; set; }
+        public virtual DbSet<NOMENKL_RECALC> NOMENKL_RECALC { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

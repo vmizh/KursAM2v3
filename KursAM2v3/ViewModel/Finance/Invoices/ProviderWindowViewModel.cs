@@ -43,7 +43,6 @@ using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
-using Prism.Events;
 using Reports.Base;
 using NomenklProductType = KursDomain.References.NomenklProductType;
 
@@ -385,7 +384,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override string WindowName =>
             Document?.DocCode > 0 ? Document.ToString() : "Счет-фактура поставщика (новая)";
 
-        public List<Tuple<decimal,int>> DeletedStoreLink = new List<Tuple<decimal,int>>();
+        public List<Tuple<decimal, int>> DeletedStoreLink = new List<Tuple<decimal, int>>();
 
         public List<InvoiceProviderRowCurrencyConvertViewModel> DeletedCrsConvertItems { set; get; } =
             new List<InvoiceProviderRowCurrencyConvertViewModel>();
@@ -497,12 +496,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     g = s;
                     break;
                 }
-                if (g != null)
-                {
-                    frm.gridRows.TotalSummary.Remove(g);
-                }
+
+                if (g != null) frm.gridRows.TotalSummary.Remove(g);
                 frm.tableViewRows.FormatConditions.Clear();
-                var notShippedFormatCondition = new FormatCondition()
+                var notShippedFormatCondition = new FormatCondition
                 {
                     FieldName = "Shipped",
                     ApplyToRow = true,
@@ -513,8 +510,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     ValueRule = ConditionRule.Equal,
                     Value1 = 0m
                 };
-                
-                var shippedFormatCondition = new FormatCondition()
+
+                var shippedFormatCondition = new FormatCondition
                 {
                     Expression = "[Quantity] > [Shipped]",
                     FieldName = "Shipped",
@@ -757,21 +754,17 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 case MessageBoxResult.Yes:
                     foreach (var item in SelectedFacts)
                     {
-
                         // ReSharper disable PossibleInvalidOperationException
                         DeletedStoreLink.Add(new Tuple<decimal, int>(item.DOC_CODE, item.Code));
                         // ReSharper restore PossibleInvalidOperationException
                         rowForRemove.Add(new Tuple<decimal, int>(item.DOC_CODE, item.Code));
-
                     }
 
                     foreach (var ritem in rowForRemove
                                  .Select(r =>
                                      Document.Facts.FirstOrDefault(_ => _.DocCode == r.Item1 && _.Code == r.Item2))
                                  .Where(ritem => ritem != null))
-                    {
                         Document.Facts.Remove(ritem);
-                    }
                     UpdateVisualData();
                     return;
                 case MessageBoxResult.No:
@@ -1128,7 +1121,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (n == null) return;
             AddUsedNomenkl(n.DocCode);
             DateTime dt;
-           
+
             var crsrates = new CurrencyRates(Document.DocDate <= factnom.SD_24.DD_DATE
                 ? Document.DocDate.AddDays(-5)
                 : factnom.SD_24.DD_DATE.AddDays(-5), DateTime.Today);
@@ -1146,8 +1139,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 rate = Document.PaymentDocs.Sum(_ => _.Summa * _.Rate) / Document.PaymentDocs.Sum(_ => _.Summa);
 
             // Новый алгоритм
-            var prihod = (from t in UnitOfWork.Context.TD_24.Where(_ => _.DDT_SPOST_DC == Document.DocCode 
-                                                                        && _.DDT_NOMENKL_DC == CurrentRow.Nomenkl.DocCode)
+            var prihod = (from t in UnitOfWork.Context.TD_24.Where(_ => _.DDT_SPOST_DC == Document.DocCode
+                                                                        && _.DDT_NOMENKL_DC ==
+                                                                        CurrentRow.Nomenkl.DocCode)
                 join s in UnitOfWork.Context.SD_24 on t.DOC_CODE equals s.DOC_CODE
                 select new
                 {
@@ -1438,7 +1432,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         IsIncludeInPrice = Document.IsNDSInPrice,
                         Parent = Document,
                         Shipped = 1
-                        
                     };
                     if (Document.IsNDSInPrice)
                         newRow.SFT_SUMMA_K_OPLATE = 0;
@@ -1534,13 +1527,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
 
             foreach (var entry in UnitOfWork.Context.ChangeTracker.Entries())
-            {
                 if ((entry.Entity is SD_101 || entry.Entity is TD_101 || entry.Entity is SD_114) &&
                     entry.State == EntityState.Added)
-                {
                     entry.State = EntityState.Unchanged;
-                }
-            }
 
             UnitOfWork.CreateTransaction();
             try
@@ -1623,9 +1612,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     var d = UnitOfWork.Context.TD_24.FirstOrDefault(_ =>
                         _.DOC_CODE == row.Item1 && _.CODE == row.Item2);
-                    if (d != null )
+                    if (d != null)
                         UnitOfWork.Context.TD_24.Remove(d);
                 }
+
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceProvider), null,
@@ -2099,9 +2089,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (obj is not UnboundColumnRowArgs args) return;
             if (!args.IsGetData) return;
             var item = (InvoiceProviderRow)args.Item;
-            args.Value = item.IsUsluga ? item.Quantity : item.Quantity - (item.Entity.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0);
+            args.Value = item.IsUsluga
+                ? item.Quantity
+                : item.Quantity - (item.Entity.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0);
         }
-
 
         #endregion
 

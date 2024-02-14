@@ -7,15 +7,16 @@
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:control1="clr-namespace:KursDomain.Control;assembly=KursDomain"
     x:Class="KursAM2.View.Logistiks.NomAddNomenklToMoveUC"
     mc:Ignorable="d"
     d:DesignHeight="300" d:DesignWidth="300"
     Loaded="UserControl_Loaded"
     Unloaded="UserControl_Unloaded">
     <DockPanel>
-        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <control1:WindowMenu Height="60" DockPanel.Dock="Top" />
         <dxlc:LayoutControl x:Name="mainLayoutControl" Padding="0">
             <dxlc:LayoutGroup Orientation="Vertical" x:Name="layoutGroup">
                 <dxlc:LayoutGroup Header="Основная номенклатура" View="GroupBox"

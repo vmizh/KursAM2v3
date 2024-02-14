@@ -6,6 +6,7 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:control1="clr-namespace:Core.Control;assembly=KursDomain"
+    xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
     Title="Права доступа для пользователей" Height="350" Width="525">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
@@ -14,7 +15,7 @@
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <DockPanel>
-        <control1:WindowMenu DockPanel.Dock="Top" />
+        <control:WindowMenu DockPanel.Dock="Top" />
         <dxlc:LayoutControl Padding="0" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <dxlc:LayoutGroup Header="LayoutGroup" View="Tabs">
                 <dxlc:LayoutGroup Header="Документы">

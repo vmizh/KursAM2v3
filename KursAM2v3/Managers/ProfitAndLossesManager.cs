@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core.ViewModel.Base;
 using Data;
+using DevExpress.XtraExport.Helpers;
 using FinanceAnalitic;
 using Helper;
 using KursAM2.Managers.Nomenkl;
@@ -1016,36 +1017,6 @@ namespace KursAM2.Managers
 
         public void CalcStockHolders()
         {
-            //using (var ctx = GlobalOptions.GetEntities())
-            //{
-            //    var data = ctx.StockHolderAccrualRows
-            //        .Include(_ => _.StockHolderAccrual)
-            //        .Include(_ => _.StockHolders)
-            //        .Where(_ => _.StockHolderAccrual.Date >= DateStart && _.StockHolderAccrual.Date <= DateEnd)
-            //        .ToList();
-            //    foreach (var d in data)
-            //    {
-            //        var newOp = new ProfitAndLossesExtendRowViewModel
-            //        {
-            //            Date = d.StockHolderAccrual.Date,
-            //            GroupId = ProfitAndLossesMainRowViewModel.StockHolderNach,
-            //            Name = d.StockHolders.Name,
-            //            Id = d.DocId,
-            //            Quantity = 1,
-            //            Kontragent = null,
-            //            DocTypeCode = DocumentType.StockHolderAccrual,
-            //            Currency = GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC) as Currency,
-            //            CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.CurrencyDC)).Name,
-            //            DocNum = d.StockHolderAccrual.Num.ToString(),
-            //            Price = d.Summa ?? 0
-            //        };
-            //        SetCurrenciesValue(newOp, d.CurrencyDC, 0,
-            //            d.Summa);
-
-            //        Extend.Add(newOp);
-            //        ExtendNach.Add(newOp);
-            //    }
-            //}
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var data = ctx.SD_34.Include(_ => _.StockHolders)
@@ -1074,6 +1045,40 @@ namespace KursAM2.Managers
                     ExtendNach.Add(newOp);
                 }
             }
+        }
+
+        public void CalcTransferOutBalans()
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var data = ctx.TransferOutBalansRows.Include(_ => _.TransferOutBalans)
+                    .Where(_ => _.TransferOutBalans.DocDate >= DateStart && _.TransferOutBalans.DocDate <= DateEnd);
+                foreach (var d in data)
+                {
+                    var nom = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC);
+                    var newOp = new ProfitAndLossesExtendRowViewModel
+                    {
+                        Id = d.DocId,
+                        Date = d.TransferOutBalans.DocDate,
+                        GroupId = ProfitAndLossesMainRowViewModel.TransferOutBalans,
+                        Name = "Вывод за баланс",
+                        DocCode = 0,
+                        Quantity = d.Quatntity,
+                        Kontragent = null,
+                        DocTypeCode = DocumentType.TransferOutBalans,
+                        Currency = nom.Currency as Currency,
+                        CurrencyName = (nom?.Currency as Currency)?.Name,
+                        DocNum = d.TransferOutBalans.DocNum.ToString(),
+                        Price = d.Price
+                    };
+                    SetCurrenciesValue(newOp, ((IDocCode)nom.Currency).DocCode, 0,
+                        d.Quatntity*d.Price);
+
+                    Extend.Add(newOp);
+                    ExtendNach.Add(newOp);
+                }
+            }
+
         }
 
         public void CalcDilers()

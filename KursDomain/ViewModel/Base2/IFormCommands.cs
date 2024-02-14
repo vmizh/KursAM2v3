@@ -2,7 +2,7 @@
 
 namespace KursDomain.ViewModel.Base2;
 
-public interface IFormOperation
+public interface IFormCommands
 {
     ICommand CloseWindowCommand { get; }
     ICommand DocumentOpenCommand { get; }
@@ -16,5 +16,5 @@ public interface IFormOperation
     ICommand ResetLayoutCommand { get; }
     ICommand ShowHistoryCommand { get; }
     ICommand DoсDeleteCommand { get; }
-    ICommand RedoCommand { get; }
+    ICommand UndoCommand { get; }
 }

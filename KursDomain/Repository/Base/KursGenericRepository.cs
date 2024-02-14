@@ -1,7 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Threading.Tasks;
+using KursDomain.ICommon;
 
 namespace KursDomain.Repository.Base;
 
@@ -10,6 +12,7 @@ public class KursGenericRepository<TEntity, TContext, TIdentity> : IKursGenericR
     where TContext : DbContext
 {
     protected readonly TContext Context;
+    private DbContextTransaction _tran;
 
     protected KursGenericRepository(TContext context)
     {
@@ -43,7 +46,26 @@ public class KursGenericRepository<TEntity, TContext, TIdentity> : IKursGenericR
         Context.Set<TEntity>().Remove(model);
     }
 
-    public void Rollback()
+    public virtual RowStatus GetRowStatus(TEntity model)
+    {
+        return RowStatus.NotDefinition;
+    }
+
+    public void BeginTransaction()
+    {
+        _tran = Context.Database.BeginTransaction();
+    }
+
+    public void CommitTransaction()
+    {
+        if (_tran != null)
+        {
+            _tran.Commit();
+            _tran = null;
+        }
+    }
+
+    public void ContextRollback()
     {
         var changedEntries = Context.ChangeTracker.Entries()
             .Where(x => x.State != EntityState.Unchanged).ToList();
@@ -61,6 +83,22 @@ public class KursGenericRepository<TEntity, TContext, TIdentity> : IKursGenericR
                     entry.State = EntityState.Unchanged;
                     break;
             }
+    }
+
+    public void Rollback()
+    {
+        if (_tran != null) _tran.Rollback();
+        _tran = null;
+    }
+
+    public List<DbEntityEntry> GetEntites()
+    {
+        return Context.ChangeTracker.Entries().ToList();
+    }
+
+    public EntityState GetEntityState(object entity)
+    {
+        return Context.Entry(entity).State;
     }
 
     public async Task SaveAsync()

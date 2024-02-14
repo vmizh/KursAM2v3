@@ -1,11 +1,9 @@
-﻿using Domain.Wrapper.Base;
-
-namespace KursDomain.Wrapper.Base;
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
+using Domain.Wrapper.Base;
 
+namespace KursDomain.Wrapper.Base;
 
 public class BaseWrapper<T> : NotifyDataErrorInfoBase
 {
@@ -59,5 +57,8 @@ public class BaseWrapper<T> : NotifyDataErrorInfoBase
     {
         return null;
     }
-}
 
+    public virtual void StartLoad(bool isFullLoad = true)
+    {
+    }
+}

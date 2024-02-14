@@ -6,10 +6,11 @@
     xmlns:native="http://schemas.devexpress.com/winfx/2008/xaml/core/internal"
     xmlns:themes="http://schemas.devexpress.com/winfx/2008/xaml/editors/themekeys"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
     Title="{Binding WindowName}" MinHeight="450" MinWidth="200">
     <dx:ThemedWindow.Resources>
         <native:RenderTemplate
@@ -27,7 +28,6 @@
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <DockPanel Style="{StaticResource DXServices}">
-        <!--<control:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />-->
         <control:WindowMenu Height="60" DockPanel.Dock="Top" Margin="0,0,10,0" />
         <dxlc:LayoutControl Name="LayoutControlMain">
             <dxlc:LayoutGroup Orientation="Vertical">

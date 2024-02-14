@@ -6,7 +6,8 @@
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
+
     Title="Движение денежных средств" Height="350" Width="956">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"

@@ -5,11 +5,12 @@
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:local="clr-namespace:KursAM2.View.Management"
                  xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-                 xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+                 
                  xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                  xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+                 xmlns:control1="clr-namespace:KursDomain.Control;assembly=KursDomain"
                  mc:Ignorable="d"
                  Title="{Binding WindowName}" Height="450" Width="800">
     <dx:ThemedWindow.HeaderItems>
@@ -19,7 +20,7 @@
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <DockPanel Style="{StaticResource DXServices}">
-        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <control1:WindowMenu Height="60" DockPanel.Dock="Top" />
         <dxlc:LayoutControl HorizontalAlignment="Stretch" x:Name="mainLayoutControl" Padding="0" Width="Auto"
                             Orientation="Vertical" Margin="0,0,0,-1">
             <dxlc:LayoutGroup Name="LayoutGroup_1_1"

@@ -6,7 +6,8 @@
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
+
     x:Class="KursAM2.View.Management.ShopRentabelnost"
     Title="Рентабельность Shop" Height="520" Width="960">
     <dx:ThemedWindow.HeaderItems>

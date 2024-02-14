@@ -3,8 +3,9 @@
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-             xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+             
              xmlns:helper="clr-namespace:Helper;assembly=Helper"
+             xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
              x:Class="KursAM2.View.Personal.PayRollTypeReference"
              Title="Справочник начислений / удержаний для заработной платы" Height="300" Width="300"
              WindowStartupLocation="Manual"

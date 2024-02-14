@@ -4,12 +4,13 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-                 xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+                 
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                  xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                  xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                  xmlns:iCommon="clr-namespace:KursDomain.ICommon;assembly=KursDomain"
+                 xmlns:control1="clr-namespace:KursDomain.Control;assembly=KursDomain"
                  mc:Ignorable="d"
                  Icon="{Binding Source={StaticResource MutualDrawingImage},
                 Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
@@ -21,7 +22,7 @@
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <DockPanel>
-        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <control1:WindowMenu Height="60" DockPanel.Dock="Top" />
         <StackPanel DockPanel.Dock="Top" Orientation="Vertical" Margin="0 5 0 0">
             <DockPanel LastChildFill="False">
                 <StackPanel 

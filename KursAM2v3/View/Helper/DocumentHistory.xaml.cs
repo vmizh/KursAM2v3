@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.WindowsManager;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
@@ -25,8 +22,7 @@ namespace KursAM2.View.Helper
     {
         public DocumentHistory()
         {
-            InitializeComponent(); 
-            
+            InitializeComponent();
         }
 
         private void GridControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
@@ -55,6 +51,7 @@ namespace KursAM2.View.Helper
                     .ToList()
                     .Select(d => new DocHistoryViewModel(d)));
             }
+
             var form = new DocHistoryList
             {
                 Owner = Application.Current.MainWindow,
@@ -73,6 +70,7 @@ namespace KursAM2.View.Helper
                     .ToList()
                     .Select(d => new DocHistoryViewModel(d)));
             }
+
             var form = new DocHistoryList
             {
                 Owner = Application.Current.MainWindow,
@@ -91,6 +89,7 @@ namespace KursAM2.View.Helper
                     .ToList()
                     .Select(d => new DocHistoryViewModel(d)));
             }
+
             var form = new DocHistoryList
             {
                 Owner = Application.Current.MainWindow,
@@ -117,6 +116,7 @@ namespace KursAM2.View.Helper
                     case DocumentType.DogovorOfSupplier:
                     case DocumentType.AktSpisaniya:
                     case DocumentType.AccruedAmountOfSupplier:
+                    case DocumentType.TransferOutBalans:
                         if (id == null) return;
                         hdoclist.AddRange(ctx.DocHistory.Where(_ => _.DocId == id)
                             .OrderByDescending(_ => _.Date)
@@ -153,7 +153,7 @@ namespace KursAM2.View.Helper
                     if (p.Name == "Позиции") continue;
                     var newItem = new DataLayoutItem
                     {
-                        Label = p.Name.Replace("_"," "), Content = new TextEdit
+                        Label = p.Name.Replace("_", " "), Content = new TextEdit
                         {
                             Text = Convert.ToString(p.Value),
                             IsReadOnly = true
@@ -169,8 +169,10 @@ namespace KursAM2.View.Helper
                     form.LayoutTable.Height = 20;
                 }
                 else
+                {
                     form.gridControl.ItemsSource = rows.Value;
-                
+                }
+
                 form.Show();
             }
             catch (Exception ex)

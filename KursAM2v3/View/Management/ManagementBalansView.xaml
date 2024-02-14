@@ -5,8 +5,9 @@
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    
     xmlns:controls="clr-namespace:KursAM2.View.Management.Controls"
+    xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
     x:Class="KursAM2.View.Management.ManagementBalansView"
     Title="{Binding WindowName}" Height="550" Width="1500"
     Icon="pack://siteoforigin:,,,/Images/document_preferences.png">

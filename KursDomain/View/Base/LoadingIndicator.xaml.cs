@@ -1,4 +1,4 @@
-﻿namespace KursAM2.View.UserControls
+﻿namespace KursDomain.View.Base
 {
     /// <summary>
     ///     Interaction logic for View1.xaml

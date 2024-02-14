@@ -7,7 +7,7 @@ using KursDomain.Wrapper.Base;
 
 namespace KursDomain.Wrapper;
 
-public class StorageLocationsWrapper : BaseWrapper<StorageLocations>
+public class StorageLocationsWrapper : BaseWrapper<StorageLocations>, IEquatable<StorageLocationsWrapper>
 {
     public StorageLocationsWrapper(StorageLocations model) : base(model)
     {
@@ -31,7 +31,6 @@ public class StorageLocationsWrapper : BaseWrapper<StorageLocations>
         {
             if (Model.RegionDC == (value?.DocCode ?? 0)) return;
             SetValue(value?.DocCode ?? 0,nameof(StorageLocations.RegionDC));
-            //RaisePropertyChanged();
         }
     }
 
@@ -43,7 +42,6 @@ public class StorageLocationsWrapper : BaseWrapper<StorageLocations>
         {
             if (Model.WarehouseDC == (value?.DocCode ?? 0)) return;
             SetValue(value?.DocCode ?? 0,nameof(StorageLocations.WarehouseDC));
-            //RaisePropertyChanged();
         }
     }
 
@@ -71,5 +69,34 @@ public class StorageLocationsWrapper : BaseWrapper<StorageLocations>
     {
         get => GetValue<bool?>();
         set => SetValue(value);
+    }
+
+    public bool Equals(StorageLocationsWrapper other)
+    {
+        if (other == null) return false;
+        return Id == other.Id;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (ReferenceEquals(null, obj)) return false;
+        if (ReferenceEquals(this, obj)) return true;
+        if (obj.GetType() != this.GetType()) return false;
+        return Equals((StorageLocationsWrapper)obj);
+    }
+
+    public override int GetHashCode()
+    {
+        return Id.GetHashCode();
+    }
+
+    public static bool operator ==(StorageLocationsWrapper left, StorageLocationsWrapper right)
+    {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(StorageLocationsWrapper left, StorageLocationsWrapper right)
+    {
+        return !Equals(left, right);
     }
 }

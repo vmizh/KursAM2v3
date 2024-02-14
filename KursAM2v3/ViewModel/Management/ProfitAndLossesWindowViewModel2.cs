@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -22,11 +23,16 @@ using KursAM2.View.Management;
 using KursAM2.View.Management.ProfitAndLossesControls;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Logistiks;
+using KursAM2.ViewModel.Logistiks.TransferOut;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Management;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.Repository.DocHistoryRepository;
+using KursDomain.Repository.NomenklRepository;
+using KursDomain.Repository.StorageLocationsRepositury;
+using KursDomain.Repository.TransferOut;
 using static System.Math;
 
 namespace KursAM2.ViewModel.Management
@@ -914,6 +920,13 @@ namespace KursAM2.ViewModel.Management
                 case DocumentType.StockHolderAccrual:
                     DocumentsOpenManager.Open(DocumentType.StockHolderAccrual, 0, CurrentExtend.Id);
                     break;
+                case DocumentType.TransferOutBalans:
+                    var ctx = GlobalOptions.GetEntities();
+                    var doc = new TransferOutBalansViewModel(new TransferOutBalansRepository(ctx),
+                        new StorageLocationsRepository(ctx), new NomenklRepository(ctx), new DocHistoryRepository(ctx)); 
+                    doc.Show();
+                    doc.Initialize(CurrentExtend.Id);
+                    break;
                 default:
                     DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, CurrentExtend.DocCode);
                     break;
@@ -1497,6 +1510,7 @@ namespace KursAM2.ViewModel.Management
                 Manager.CalcNomenklCurrencyChanged();
                 Manager.CalcAccruedAmmount();
                 Manager.CalcStockHolders();
+                Manager.CalcTransferOutBalans();
                 //manager.CalcMoneyInWay();
                 //CalcCashAvans();
                 CalcTreeSumm();

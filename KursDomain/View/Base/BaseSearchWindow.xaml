@@ -1,0 +1,79 @@
+﻿<dx:ThemedWindow
+    x:Class="KursDomain.View.Base.BaseSearchWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+    xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+    xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:base="clr-namespace:KursDomain.View.Base"
+    xmlns:control="clr-namespace:KursDomain.Control"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+    dx:DXSerializer.Enabled="True"
+    dx:WindowRestoreLayoutOptions.AllowRestoreStateForDisplayedWindow="True"
+    dx:DXSerializer.StoreLayoutMode="All"
+    mc:Ignorable="d"
+    Title="{Binding WindowName}" MinHeight="450" Height="600" MinWidth="800"
+    >
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:LayoutSerializationService />
+        <dxmvvm:CurrentWindowService ClosingCommand="{Binding OnWindowClosingCommand}"
+                                     Window="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
+        <dxmvvm:EventToCommand EventName="Initialized" Command="{Binding OnInitializeCommand }" />
+        <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding OnWindowLoadedCommand}" />
+    </dxmvvm:Interaction.Behaviors>
+    <dx:ThemedWindow.HeaderItems>
+        <TextBlock Text="{Binding DatabaseName}" Foreground="{Binding DatabaseColor}"
+                   FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Right" />
+    </dx:ThemedWindow.HeaderItems>
+    <Grid>
+        <DockPanel>
+            <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+            <DockPanel DockPanel.Dock="Top" LastChildFill="False">
+                <dxe:DateEdit Width="120" EditValue="{Binding DateStart}"
+                              IsEnabled="{Binding IsDateEnabled}" 
+                              DockPanel.Dock="Left"/>
+                <Label Content="по" />
+                <dxe:DateEdit Width="120" EditValue="{Binding DateEnd}"
+                              IsEnabled="{Binding IsDateEnabled}"
+                              DockPanel.Dock="Left"/>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
+                    <Label Content="Строка поиска:" Visibility="{Binding IsCanSearch, Converter={StaticResource booleanToVisibilityConverter}}"/>
+                    <dxe:TextEdit
+                        MinWidth="250"
+                        Margin="5 0"
+                        Visibility="{Binding IsCanSearch, Converter={StaticResource booleanToVisibilityConverter}}"
+                        EditValue="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        ></dxe:TextEdit>
+                </StackPanel>
+            </DockPanel>
+            <dxg:GridControl
+                Style="{StaticResource GridControl.Search}"
+                Name="gridDocuments"
+                Margin="0,20,0,0"
+                dx:DXSerializer.SerializationID="gridDocuments"
+                ItemsSource="{Binding Documents, UpdateSourceTrigger=PropertyChanged}"
+                CurrentItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
+                SelectedItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
+                SelectedItems="{Binding SelectedDocuments, UpdateSourceTrigger=PropertyChanged}"
+                CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
+                AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn" x:FieldModifier="public">
+                <dxg:GridControl.View>
+                    <dxg:TableView
+                        Name="gridDocumentsTableView"
+                        Style="{StaticResource TableView.Search}">
+                        
+                       
+                    </dxg:TableView>
+                </dxg:GridControl.View>
+            </dxg:GridControl>
+        </DockPanel>
+        <base:LoadingIndicator x:Name="loadingIndicator" Visibility="Hidden" VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   Width="100"
+                                   Height="100"
+                                   RenderTransformOrigin="0.17,1.122" x:FieldModifier="public" />
+    </Grid>
+</dx:ThemedWindow>

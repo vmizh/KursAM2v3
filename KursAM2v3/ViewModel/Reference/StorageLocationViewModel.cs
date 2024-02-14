@@ -24,8 +24,7 @@ using Prism.Commands;
 
 namespace KursAM2.ViewModel.Reference
 {
-    [SuppressMessage("ReSharper", "AsyncVoidLambda")]
-    public class StorageLocationViewModel : FormViewModelBase, IFormMenu, IFormOperation
+    public class StorageLocationViewModel : FormViewModelBase<StorageLocationsWrapper,Guid>, IFormMenu
     {
         #region Constructors
 
@@ -42,11 +41,7 @@ namespace KursAM2.ViewModel.Reference
 
             FormControl = new TableAddDeleteUserControl(OnColumnGenerate);
             linkCommandToControl(FormControl as TableAddDeleteUserControl);
-
-            RefreshDataCommand = new DelegateCommand(async () => await OnRefreshData(), CanRefreshData);
-            SaveDataCommand = new DelegateCommand(async () => await OnSaveData(), CanSaveData);
-            CloseWindowCommand = new DelegateCommand(OnCloseWindow, CanCloseWindow);
-
+            
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
         }
@@ -100,7 +95,6 @@ namespace KursAM2.ViewModel.Reference
 
         #region Fields
 
-        private bool _hasChanges;
         private readonly IStorageLocationsRepositiry _StorageLocationsRepositiry;
 
         private StorageLocationsWrapper _CurrentItem;
@@ -109,18 +103,6 @@ namespace KursAM2.ViewModel.Reference
 
 
         #region Properties
-
-        public bool HasChanges
-        {
-            get => _hasChanges;
-            set
-            {
-                if (_hasChanges == value) return;
-                _hasChanges = value;
-                OnPropertyChanged();
-                ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
-            }
-        }
 
         public List<Region> Regions { get; private set; } =
             new List<Region>(GlobalOptions.ReferencesCache.GetRegionsAll().Cast<Region>());
@@ -145,7 +127,9 @@ namespace KursAM2.ViewModel.Reference
 
         #region Command
 
+        public readonly ICommand AddCommand;
         public readonly ICommand AddCopyCommand;
+        public readonly ICommand DeleteCommand;
 
         private bool CanAddCopy()
         {
@@ -173,9 +157,7 @@ namespace KursAM2.ViewModel.Reference
             HasChanges = _StorageLocationsRepositiry.HasChanges();
             ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
         }
-
-
-        public readonly ICommand AddCommand;
+        
 
         private bool CanAdd()
         {
@@ -198,15 +180,21 @@ namespace KursAM2.ViewModel.Reference
             ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
         }
 
-        public readonly ICommand DeleteCommand;
+        public override Task InitializeAsync(Guid id, DocumentNewState newState = DocumentNewState.None)
+        {
+            throw new NotImplementedException();
+        }
 
+        public override void Initialize(Guid id, DocumentNewState newState = DocumentNewState.None)
+        {
+            throw new NotImplementedException();
+        }
 
-        private bool CanDelete()
+        protected override bool CanDelete()
         {
             return CurrentItem != null;
         }
-
-        private void OnDelete()
+        protected override void OnDelete()
         {
             _StorageLocationsRepositiry.Remove(CurrentItem.Model);
             Rows.Remove(CurrentItem);
@@ -214,14 +202,21 @@ namespace KursAM2.ViewModel.Reference
             ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
         }
 
-        public ICommand CloseWindowCommand { get; }
-
-        private bool CanCloseWindow()
+        protected override bool CanSaveData()
         {
-            return true;
+            return _StorageLocationsRepositiry.HasChanges();
         }
 
-        private async void OnCloseWindow()
+        protected override async Task OnSaveDataAsync()
+        {
+            await _StorageLocationsRepositiry.SaveAsync();
+            HasChanges = false;
+            ((DelegateCommand)DeleteCommand).RaiseCanExecuteChanged();
+            ((DelegateCommand)AddCopyCommand).RaiseCanExecuteChanged();
+            ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
+        }
+
+        public override async Task OnRefreshDataAsync()
         {
             if (HasChanges)
             {
@@ -235,42 +230,7 @@ namespace KursAM2.ViewModel.Reference
                     case WindowManager.KursDialogResult.No:
                         break;
                     case WindowManager.KursDialogResult.Yes:
-                        await OnSaveData();
-                        break;
-                }
-            }
-
-            Close();
-        }
-
-        public ICommand DocumentOpenCommand { get; }
-        public ICommand PrintCommand { get; }
-        public ICommand DocNewCommand { get; }
-        public ICommand DocNewEmptyCommand { get; }
-        public ICommand DocNewCopyRequisiteCommand { get; }
-        public ICommand DocNewCopyCommand { get; }
-        public ICommand RefreshDataCommand { get; }
-
-        private bool CanRefreshData()
-        {
-            return true;
-        }
-
-        internal async Task OnRefreshData()
-        {
-            if (HasChanges)
-            {
-                var wm = new WindowManager();
-                var dlgRslt = wm.ShowKursDialog("В справочник внесены изменения, сохранить?", "Запрос",
-                    Brushes.Blue, WindowManager.YesNoCancel);
-                switch (dlgRslt)
-                {
-                    case WindowManager.KursDialogResult.Cancel:
-                        return;
-                    case WindowManager.KursDialogResult.No:
-                        break;
-                    case WindowManager.KursDialogResult.Yes:
-                        await OnSaveData();
+                        await OnSaveDataAsync();
                         break;
                 }
             }
@@ -286,31 +246,9 @@ namespace KursAM2.ViewModel.Reference
                     newItem.PropertyChanged += Wrapper_PropertyChanged;
                 }
             }));
-            _StorageLocationsRepositiry.Rollback();
-            _hasChanges = false;
+            HasChanges = false;
             ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
         }
-
-        public ICommand SaveDataCommand { get; }
-
-        private bool CanSaveData()
-        {
-            return _StorageLocationsRepositiry.HasChanges();
-        }
-
-        private async Task OnSaveData()
-        {
-            await _StorageLocationsRepositiry.SaveAsync();
-            _hasChanges = false;
-            ((DelegateCommand)DeleteCommand).RaiseCanExecuteChanged();
-            ((DelegateCommand)AddCopyCommand).RaiseCanExecuteChanged();
-            ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
-        }
-
-        public ICommand ResetLayoutCommand { get; }
-        public ICommand ShowHistoryCommand { get; }
-        public ICommand DoсDeleteCommand { get; }
-        public ICommand RedoCommand { get; }
 
         #endregion
     }

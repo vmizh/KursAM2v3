@@ -1,7 +1,4 @@
-﻿using System.Windows.Media;
-using DevExpress.Xpf.Core;
-using DevExpress.Xpf.Core.ConditionalFormatting;
-using DevExpress.Xpf.Grid;
+﻿using DevExpress.Xpf.Grid;
 using DevExpress.XtraGrid;
 using Helper;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
@@ -13,14 +10,14 @@ namespace KursAM2.View.Base
     /// </summary>
     public partial class StandartSearchView
     {
-        public StandartSearchView()
-        {
-            InitializeComponent();
-        }
-        
         static StandartSearchView()
         {
             GridControlLocalizer.Active = new CustomDXGridLocalizer();
+        }
+
+        public StandartSearchView()
+        {
+            InitializeComponent();
         }
 
 

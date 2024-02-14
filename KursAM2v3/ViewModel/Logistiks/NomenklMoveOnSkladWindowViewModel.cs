@@ -7,20 +7,19 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks;
-using KursAM2.View.UserControls;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.Repository.NomenklRepository;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -36,8 +35,8 @@ namespace KursAM2.ViewModel.Logistiks
         private Visibility myIsDataLoaded;
         private bool myIsShowAll;
         private int myProgressLoaded;
-        private DateTime myStartDate;
         private bool myShowProgress;
+        private DateTime myStartDate;
 
         public NomenklMoveOnSkladWindowViewModel()
         {
@@ -252,14 +251,10 @@ namespace KursAM2.ViewModel.Logistiks
         {
             if (d == null || d.SD_24 == null) return string.Empty;
             if (d.SD_24.DD_SKLAD_POL_DC != null)
-            {
                 return ((IName)GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_POL_DC)).Name;
-            }
 
             if (d.SD_24.DD_KONTR_POL_DC != null)
-            {
                 return ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_POL_DC)).Name;
-            }
             return string.Empty;
         }
 
@@ -267,14 +262,10 @@ namespace KursAM2.ViewModel.Logistiks
         {
             if (d == null || d.SD_24 == null) return string.Empty;
             if (d.SD_24.DD_SKLAD_OTPR_DC != null)
-            {
                 return ((IName)GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_OTPR_DC)).Name;
-            }
 
             if (d.SD_24.DD_KONTR_OTPR_DC != null)
-            {
                 return ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC)).Name;
-            }
             return string.Empty;
         }
 
@@ -353,7 +344,7 @@ namespace KursAM2.ViewModel.Logistiks
                                           doc.TD_26.SFT_KOL;
                         newItem.SummaOut = 0;
                         newItem.SummaDelta =
-                        // ReSharper disable once PossibleInvalidOperationException
+                            // ReSharper disable once PossibleInvalidOperationException
                             (decimal)(doc.TD_26.SFT_SUMMA_K_OPLATE / doc.TD_26.SFT_KOL * doc.DDT_KOL_PRIHOD);
                         newItem.Note = doc.SD_24.DD_NOTES + " / " + doc.TD_26.SD_26.SF_NOTES;
                     }
@@ -439,7 +430,8 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaIn = 0,
                         SummaOut = doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceStart,
                         SummaDelta = -doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceEnd,
-                        Note = doc.SD_24.DD_NOTES + " / " + (doc.TD_84 != null ? doc.TD_84?.SD_84.SF_NOTE : string.Empty)
+                        Note = doc.SD_24.DD_NOTES + " / " +
+                               (doc.TD_84 != null ? doc.TD_84?.SD_84.SF_NOTE : string.Empty)
                     });
                 }
 
@@ -1298,14 +1290,13 @@ namespace KursAM2.ViewModel.Logistiks
             NomenklMoveList.Clear();
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             IsCanRefresh = false;
-           // await Task.Run(() => RunPrgressBar());
+            // await Task.Run(() => RunPrgressBar());
             IsDataLoaded = Visibility.Collapsed;
             //ShowProgress = true;
             //if (CurrentSklad == null)
             //    await Task.Run(() => LoadForAllSklads4());
             //else
             //    await Task.Run(() => LoadForCurrentSklad4());
-            
         }
 
         public override void RefreshData(object obj)
@@ -1323,9 +1314,8 @@ namespace KursAM2.ViewModel.Logistiks
                     LoadForCurrentSklad4();
                 Form.Dispatcher.Invoke(() =>
                 {
-                    ((NomenklMoveOnSklad)Form).loadingIndicator.Visibility= Visibility.Hidden;
+                    ((NomenklMoveOnSklad)Form).loadingIndicator.Visibility = Visibility.Hidden;
                 });
-
             });
         }
 

@@ -13,6 +13,7 @@ using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.References;
+using KursDomain.RepositoryHelper;
 
 namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {

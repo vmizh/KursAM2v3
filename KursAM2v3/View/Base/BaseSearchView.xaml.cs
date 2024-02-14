@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows;
 using DevExpress.Data;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using KursDomain;
@@ -16,15 +15,17 @@ namespace KursAM2.View.Base
     {
         public BaseSearchView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
             //
-            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, gridDocuments);
+            LayoutManager =
+                new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, gridDocuments);
             Loaded += ProviderSearchView_Loaded;
             Closing += ProviderSearchView_Closing;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();
@@ -43,12 +44,11 @@ namespace KursAM2.View.Base
         private void GridDocuments_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
             foreach (var c in gridDocuments.Columns)
-            {
-                if(c.EditSettings == null) c.EditSettings = new TextEditSettings
-                {
-                    SelectAllOnMouseUp = true
-                };
-            }
+                if (c.EditSettings == null)
+                    c.EditSettings = new TextEditSettings
+                    {
+                        SelectAllOnMouseUp = true
+                    };
             e.Column.Name = e.Column.FieldName;
             e.Column.ReadOnly = true;
             switch (e.Column.FieldName)

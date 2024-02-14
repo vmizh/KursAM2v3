@@ -3,13 +3,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:base="clr-namespace:Core.ViewModel.Base;assembly=KursDomain"
     xmlns:iCommon="clr-namespace:KursDomain.ICommon;assembly=KursDomain"
+    xmlns:control1="clr-namespace:KursDomain.Control;assembly=KursDomain"
     Title="Инвентаризационная ведомость" Height="350" Width="525">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
@@ -18,7 +19,7 @@
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <DockPanel Style="{StaticResource DXServices }">
-        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <control1:WindowMenu Height="60" DockPanel.Dock="Top" />
         <dxlc:LayoutControl Name="mainLayoutControl1" Orientation="Vertical" Padding="0">
             <dxlc:LayoutGroup Header="LayoutGroup" View="Group" />
             <dxlc:LayoutGroup Margin="0,0,0,10">

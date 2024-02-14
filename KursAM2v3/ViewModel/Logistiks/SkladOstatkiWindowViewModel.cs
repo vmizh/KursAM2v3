@@ -14,6 +14,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.RepositoryHelper;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace KursAM2.ViewModel.Logistiks

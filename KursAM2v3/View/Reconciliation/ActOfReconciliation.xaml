@@ -6,7 +6,8 @@
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
-    xmlns:control="clr-namespace:Core.Control;assembly=KursDomain"
+    xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
+
     x:Class="KursAM2.View.Reconciliation.ActOfReconciliation"
     Title="Отчет по актам сверки">
     <dx:ThemedWindow.HeaderItems>

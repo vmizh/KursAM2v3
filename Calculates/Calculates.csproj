@@ -69,7 +69,6 @@
     <Compile Include="Materials\NomenklMoveOperationType.cs" />
     <Compile Include="Materials\NomenklOperation.cs" />
     <Compile Include="Materials\NomenklOperationType.cs" />
-    <Compile Include="Materials\NomenklStoreRemainItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -5,6 +5,7 @@
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                  xmlns:control1="clr-namespace:Core.Control;assembly=KursDomain"
+                 xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
                  x:Class="KursAM2.View.Personal.PersonalPaysView"
                  Title="Заработная плата сотрудников" Height="800" Width="1200">
     <dx:ThemedWindow.HeaderItems>
@@ -14,7 +15,7 @@
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <DockPanel>
-        <control1:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <dxlc:LayoutControl x:Name="mainLayoutControl" Padding="0" HorizontalAlignment="Stretch"
                             VerticalAlignment="Stretch" Orientation="Vertical" ScrollBars="None">
             <dxlc:LayoutGroup Header="Сотрудники"
