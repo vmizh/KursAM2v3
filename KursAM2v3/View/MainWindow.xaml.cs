@@ -207,8 +207,10 @@ namespace KursAM2.View
                         transOut.Show();
                         break;
                     case "Товары за балансом":
+                        var outBalans = new TransferOutBalansRemainsViewModel(); 
+                        outBalans.Show();
+                        Task.Run(() => outBalans.InitializeAsync(0));
                         break;
-
                     case "Справочник мест хранения":
                         var slocCtx = new StorageLocationViewModel(new StorageLocationsRepository(GlobalOptions.GetEntities()));
                         slocCtx.Show();

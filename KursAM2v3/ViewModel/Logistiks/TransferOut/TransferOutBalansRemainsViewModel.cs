@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Data;
+using DevExpress.Xpf.Editors;
 using Helper;
 using KursAM2.View.Logistiks.TransferOut;
 using KursDomain;
@@ -79,7 +80,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
         public override async Task InitializeAsync(decimal id, DocumentNewState newState = DocumentNewState.None)
         {
             var storageLoc = await _StorageLocationsRepositiry.GetAllAsync();
-            Form.Dispatcher.Invoke(() =>
+            (Form ?? App.Current.MainWindow).Dispatcher.Invoke(() =>
             {
                 StorageLocationList.Add(new StorageLocationsWrapper(new StorageLocations
                 {
