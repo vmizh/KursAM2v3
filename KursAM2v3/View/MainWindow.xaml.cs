@@ -63,7 +63,6 @@ using KursAM2.ViewModel.Signatures;
 using KursAM2.ViewModel.StartLogin;
 using KursAM2.ViewModel.StockHolder;
 using KursDomain;
-using KursDomain.Repository.LayoutRepository;
 using KursDomain.Repository.StorageLocationsRepositury;
 using LayoutManager;
 using NomenklCostReset = KursAM2.View.Logistiks.NomenklCostReset;
@@ -207,12 +206,13 @@ namespace KursAM2.View
                         transOut.Show();
                         break;
                     case "Товары за балансом":
-                        var outBalans = new TransferOutBalansRemainsViewModel(); 
+                        var outBalans = new TransferOutBalansRemainsViewModel();
                         outBalans.Show();
                         Task.Run(() => outBalans.InitializeAsync(0));
                         break;
                     case "Справочник мест хранения":
-                        var slocCtx = new StorageLocationViewModel(new StorageLocationsRepository(GlobalOptions.GetEntities()));
+                        var slocCtx =
+                            new StorageLocationViewModel(new StorageLocationsRepository(GlobalOptions.GetEntities()));
                         slocCtx.Show();
                         Task.Run(() => slocCtx.OnRefreshDataAsync());
                         break;

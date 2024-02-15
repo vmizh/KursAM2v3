@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using Data;
+using DevExpress.Mvvm.Native;
 using KursDomain.Base;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.TransferOut;
@@ -122,7 +123,9 @@ public sealed class TransferOutBalansWrapper : BaseWrapper<TransferOutBalans>, I
     {
         var ret = new StringBuilder();
         var currs = Rows.Select(_ => _.Currency).Distinct().ToList();
-        foreach (var crs in currs) ret.Append($"{crs.Name}: {Math.Round(Rows.Sum(_ => _.Summa), 2)} ");
+        foreach (var crs in currs)
+            ret.Append(
+                $"{crs.Name}: {Math.Round(Rows.Where(_ => _.Currency.DocCode == crs.DocCode).Sum(_ => _.Summa), 2)} ");
 
         return ret.ToString();
     }
