@@ -7,6 +7,7 @@
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <DockPanel>
@@ -23,27 +24,57 @@
                           MinWidth="80"
                           Margin="5  0"/>
         </StackPanel>
-        <dxg:GridControl
-            Style="{StaticResource GridControl.Search}"
-            Name="gridDocuments"
-            Margin="0,20,0,0"
-            dx:DXSerializer.SerializationID="gridDocuments"
-            ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}"
-            CurrentItem="{Binding CurrentItem, UpdateSourceTrigger=PropertyChanged}"
-            SelectedItem="{Binding CurrentItem, UpdateSourceTrigger=PropertyChanged}"
-            SelectedItems="{Binding SelectedItems, UpdateSourceTrigger=PropertyChanged}"
-            CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
-            AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn"
-        >
-            <dxg:GridControl.View>
-                <dxg:TableView
-                    Name="gridDocumentsTableView"
-                    Style="{StaticResource TableView.Search}">
-                    <dxmvvm:Interaction.Behaviors>
-                        <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding OkCommand }" />
-                    </dxmvvm:Interaction.Behaviors>
-                </dxg:TableView>
-            </dxg:GridControl.View>
-        </dxg:GridControl>
+        <dxlc:LayoutControl Orientation="Vertical">
+            <dxlc:LayoutGroup View="Group"
+                              dxlc:LayoutControl.AllowVerticalSizing="True" >
+                <dxg:GridControl
+                    Style="{StaticResource GridControl.Search}"
+                    Name="gridDocuments"
+                    Margin="0,20,0,0"
+                    dx:DXSerializer.SerializationID="gridDocuments"
+                    ItemsSource="{Binding Items, UpdateSourceTrigger=PropertyChanged}"
+                    CurrentItem="{Binding CurrentItem, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItem="{Binding CurrentItem, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItems="{Binding SelectedItems, UpdateSourceTrigger=PropertyChanged}"
+                    CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
+                    AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn"
+                >
+                    <dxg:GridControl.View>
+                        <dxg:TableView
+                            Name="gridDocumentsTableView"
+                            Style="{StaticResource TableView.SearchWithoutMenu}">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding IncludeCommand }" />
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxg:TableView>
+                    </dxg:GridControl.View>
+                </dxg:GridControl>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup View="Group"
+                              dxlc:LayoutControl.AllowVerticalSizing="True" ></dxlc:LayoutGroup>
+            <dxg:GridControl
+                Style="{StaticResource GridControl.Search}"
+                Name="gridSelectDocuments"
+                Margin="0,20,0,0"
+                dx:DXSerializer.SerializationID="gridSelectDocuments"
+                ItemsSource="{Binding SelectDocumentItems, UpdateSourceTrigger=PropertyChanged}"
+                CurrentItem="{Binding CurrentSelectDocumentItem, UpdateSourceTrigger=PropertyChanged}"
+                SelectedItem="{Binding CurrentSelectDocumentItem, UpdateSourceTrigger=PropertyChanged}"
+                SelectedItems="{Binding SelectedDocumentItems, UpdateSourceTrigger=PropertyChanged}"
+                CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
+                AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn"
+            >
+                <dxg:GridControl.View>
+                    <dxg:TableView
+                        Name="gridSelectDocumentsTableView"
+                        Style="{StaticResource TableView.SearchWithoutMenu}">
+                        <dxmvvm:Interaction.Behaviors>
+                            <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding ExcludeCommand }" />
+                        </dxmvvm:Interaction.Behaviors>
+                    </dxg:TableView>
+                </dxg:GridControl.View>
+            </dxg:GridControl>
+        </dxlc:LayoutControl>
+       
     </DockPanel>
 </UserControl>

@@ -37,7 +37,13 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
         public override async Task InitializeAsync(Guid id, DocumentNewState newState = DocumentNewState.None)
         {
             var storList = await _StorageLocationsRepository.GetAllAsync();
-            var disp =(Form ?? Application.Current.MainWindow).Dispatcher;
+            var disp =(Form ?? Application.Current.MainWindow)?.Dispatcher;
+            if (disp == null)
+            {
+                var wm = new WindowManager();
+                wm.ShowKursDialog("Form is null", "Ошибка", Brushes.Red, WindowManager.Confirm);
+                return;
+            }
             disp.Invoke(() =>
             {
                 StorageLocationList.Clear();
@@ -214,10 +220,6 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
 
         #region Properties
 
-        //public bool CanWarehouseChanged => Document != null && Document.Rows.Count == 0 &&
-        //                                   (Document.State == RowStatus.NotEdited ||
-        //                                    Document.State == RowStatus.NewRow);
-
         public List<KursDomain.References.Warehouse> WarehouseList { get; set; } = GlobalOptions.ReferencesCache
             .GetWarehousesAll().Cast<KursDomain.References.Warehouse>().ToList();
 
@@ -307,23 +309,28 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             switch (vm.Result)
             {
                 case KursDialogResult.Ok:
-                    var newItem = new TransferOutBalansRows
+                    foreach (var item in vm.SelectDocumentItems)
                     {
-                        DocId = Document.Id,
-                        Id = Guid.NewGuid(),
-                        NomenklDC = vm.CurrentItem.Nomenkl.DocCode,
-                        Price = vm.CurrentItem.Price,
-                        Quatntity = vm.CurrentItem.Remain
-                    };
-                    _transferOutBalansRepository.AddRow(newItem);
-                    var newRow = new TransferOutBalansRowsWrapper(newItem)
-                    {
-                        MaxCount = vm.CurrentItem.Remain,
-                        CostPrice = vm.CurrentItem.Price
-                    };
-                    newRow.PropertyChanged += Document_PropertyChanged;
+                        var newItem = new TransferOutBalansRows
+                        {
+                            DocId = Document.Id,
+                            Id = Guid.NewGuid(),
+                            NomenklDC = item.Nomenkl.DocCode,
+                            Price = item.Price,
+                            Quatntity = item.Remain
+                        };
+                        _transferOutBalansRepository.AddRow(newItem);
+                        var newRow = new TransferOutBalansRowsWrapper(newItem)
+                        {
+                            MaxCount = item.Remain,
+                            CostPrice = item.Price
+                        };
+                        newRow.PropertyChanged += Document_PropertyChanged;
 
-                    Document.Rows.Add(newRow);
+                        Document.Rows.Add(newRow);
+                    }
+
+
                     Document.State = _transferOutBalansRepository.GetRowStatus(Document.Model);
                     Document.UpdateSummaries();
                     HasChanges = true;

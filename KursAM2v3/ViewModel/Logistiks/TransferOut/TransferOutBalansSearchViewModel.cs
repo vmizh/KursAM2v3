@@ -51,7 +51,10 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             {
                 _TransferOutBalansRepository = new TransferOutBalansRepository(ctx);
                 List<TransferOutBalans> items;
-                Form.loadingIndicator.Visibility = Visibility.Visible;
+                Form.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    Form.loadingIndicator.Visibility = Visibility.Visible;
+                }));
                 if (!string.IsNullOrWhiteSpace(SearchText))
                     items = await _TransferOutBalansRepository.GetSearchTextAsync(SearchText, DateStart, DateEnd);
                 else
