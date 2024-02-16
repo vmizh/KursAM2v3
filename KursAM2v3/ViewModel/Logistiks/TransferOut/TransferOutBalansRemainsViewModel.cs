@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Data;
-using DevExpress.Xpf.Editors;
-using Helper;
 using KursAM2.View.Logistiks.TransferOut;
 using KursDomain;
 using KursDomain.IDocuments.TransferOut;
@@ -75,6 +73,31 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
     public sealed class TransferOutBalansRemainsViewModel : FormViewModelBase<NomenklStoreLocationItem, decimal>,
         IFormMenu
     {
+        #region Constructors
+
+        public TransferOutBalansRemainsViewModel()
+        {
+            var context = GlobalOptions.GetEntities();
+            _StorageLocationsRepositiry = new StorageLocationsRepository(context);
+            _TransferOutBalansRepository = new TransferOutBalansRepository(context);
+
+            LayoutName = "TransferOutBalansRemainsViewModel";
+            Title = "Товары за балансом";
+
+            FormControl = new TransferOutBalansRemainsView();
+
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+            RemainDate = DateTime.Today;
+            Remains = new ObservableCollection<NomenklStoreLocationItem>();
+            DocumentRows = new ObservableCollection<TransferOutBalansRemainsDocument>();
+            StorageLocationList = new ObservableCollection<StorageLocationsWrapper>();
+            OpenDocumentCommand = new DelegateCommand(async () => await OnOpenDocumentExecute(), CanOpenDocument);
+            RemainDateChangedCommand =  new DelegateCommand(async () => await OnRemainDateChangedAsync());
+        }
+
+        #endregion
+
         #region Methods
 
         public override async Task InitializeAsync(decimal id, DocumentNewState newState = DocumentNewState.None)
@@ -91,8 +114,6 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                     StorageLocationList.Add(new StorageLocationsWrapper(sl));
                 StorageLocation = StorageLocationList.First();
             });
-            RemainDateChangedCommand =
-                new DelegateCommand(async () => await OnRemainDateChangedAsync());
         }
 
         public override void Initialize(decimal id, DocumentNewState newState = DocumentNewState.None)
@@ -117,7 +138,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                         : $"{r.TransferOutBalans.Note} / {r.Note}";
                     DocumentRows.Add(new TransferOutBalansRemainsDocument
                     {
-                        TransferOutBalans =  doc,
+                        TransferOutBalans = doc,
                         Id = r.Id,
                         DocId = r.DocId,
                         Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(r.NomenklDC) as Nomenkl,
@@ -132,43 +153,19 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
 
         #endregion
 
-        #region Constructors
-
-        public TransferOutBalansRemainsViewModel()
-        {
-            var context = GlobalOptions.GetEntities();
-            _StorageLocationsRepositiry = new StorageLocationsRepository(context);
-            _TransferOutBalansRepository = new TransferOutBalansRepository(context);
-
-            LayoutName = "TransferOutBalansRemainsViewModel";
-            Title = "Товары за балансом";
-
-            FormControl = new TransferOutBalansRemainsView();
-
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
-            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            RemainDate = DateTime.Today;
-            Remains = new ObservableCollection<NomenklStoreLocationItem>();
-            DocumentRows = new ObservableCollection<TransferOutBalansRemainsDocument>();
-            StorageLocationList = new ObservableCollection<StorageLocationsWrapper>();
-            OpenDocumentCommand = new DelegateCommand(async () => await OnOpenDocumentExecute(), CanOpenDocument);
-        }
-
-        #endregion
-
         #region Commands
 
         public ICommand OpenDocumentCommand { get; }
+
         private async Task OnOpenDocumentExecute()
         {
             Form.loadingIndicator.Visibility = Visibility.Visible;
             var ctx = GlobalOptions.GetEntities();
             var doc = new TransferOutBalansViewModel(new TransferOutBalansRepository(ctx),
                 new StorageLocationsRepository(ctx), new NomenklRepository(ctx), new DocHistoryRepository(ctx));
-            await doc.InitializeAsync(CurrentDocumentRow.DocId); 
+            await doc.InitializeAsync(CurrentDocumentRow.DocId);
             Form.loadingIndicator.Visibility = Visibility.Hidden;
             doc.Show();
-           
         }
 
         private bool CanOpenDocument()
@@ -180,18 +177,16 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
         {
             return !IsBusy;
         }
+
         public override async Task OnRefreshDataAsync()
         {
             IsBusy = true;
-            Form.Dispatcher.Invoke(() =>
-            {
-                Form.loadingIndicator.Visibility = Visibility.Visible;
-            });
+            Form.Dispatcher.Invoke(() => { Form.loadingIndicator.Visibility = Visibility.Visible; });
             ((DelegateCommand)RefreshDataCommand).RaiseCanExecuteChanged();
             Guid? slId = null;
             Form.Dispatcher.Invoke(() =>
             {
-               slId = (StorageLocation?.Id ?? Guid.Empty) != Guid.Empty ? StorageLocation.Id : (Guid?)null;
+                slId = (StorageLocation?.Id ?? Guid.Empty) != Guid.Empty ? StorageLocation.Id : null;
             });
             var data = await _TransferOutBalansRepository.GetLocationStoreRemainAsync(slId, RemainDate);
             Form.Dispatcher.Invoke(() =>
@@ -204,18 +199,21 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                     d.StorageLocations = StorageLocationList.FirstOrDefault(_m => _m.Id == d.StorageLocationId);
                     Remains.Add(d);
                 }
+
                 Form.loadingIndicator.Visibility = Visibility.Hidden;
             });
-            
+
             IsBusy = false;
             ((DelegateCommand)RefreshDataCommand).RaiseCanExecuteChanged();
             ((DelegateCommand)OpenDocumentCommand).RaiseCanExecuteChanged();
+            isStart = false;
         }
 
         public ICommand RemainDateChangedCommand { get; set; }
 
         private async Task OnRemainDateChangedAsync()
         {
+            if (isStart) return;
             await OnRefreshDataAsync();
         }
 
@@ -229,6 +227,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
         private StorageLocationsWrapper myStorageLocation;
         private NomenklStoreLocationItem myCurrentRemain;
         private TransferOutBalansRemainsDocument myCurrentDocumentRow;
+        private bool isStart = true;
 
         #endregion
 

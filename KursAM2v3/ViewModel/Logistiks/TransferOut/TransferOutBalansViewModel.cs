@@ -112,6 +112,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             Document.State = _transferOutBalansRepository.GetRowStatus(Document.Model);
             Document.PropertyChanged += Document_PropertyChanged;
             ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
+            
         }
 
         public override void Initialize(Guid id, DocumentNewState newState = DocumentNewState.None)
@@ -168,6 +169,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             HasChanges = true;
             Document.UpdateSummaries();
             ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
+            ((DelegateCommand)AddNomenklCommand).RaiseCanExecuteChanged();
         }
 
         #region Constructors
