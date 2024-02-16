@@ -80,7 +80,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
         public override async Task InitializeAsync(decimal id, DocumentNewState newState = DocumentNewState.None)
         {
             var storageLoc = await _StorageLocationsRepositiry.GetAllAsync();
-            (Form ?? App.Current.MainWindow).Dispatcher.Invoke(() =>
+            Form.Dispatcher.Invoke(() =>
             {
                 StorageLocationList.Add(new StorageLocationsWrapper(new StorageLocations
                 {
@@ -91,7 +91,8 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                     StorageLocationList.Add(new StorageLocationsWrapper(sl));
                 StorageLocation = StorageLocationList.First();
             });
-            
+            RemainDateChangedCommand =
+                new DelegateCommand(async () => await OnRemainDateChangedAsync());
         }
 
         public override void Initialize(decimal id, DocumentNewState newState = DocumentNewState.None)
@@ -151,8 +152,6 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             DocumentRows = new ObservableCollection<TransferOutBalansRemainsDocument>();
             StorageLocationList = new ObservableCollection<StorageLocationsWrapper>();
             OpenDocumentCommand = new DelegateCommand(async () => await OnOpenDocumentExecute(), CanOpenDocument);
-            RemainDateChangedCommand =
-                new DelegateCommand(async () => await OnRemainDateChangedAsync());
         }
 
         #endregion

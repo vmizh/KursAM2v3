@@ -157,9 +157,9 @@ public class TransferOutBalansRepository : KursGenericRepository<TransferOutBala
 
     public async Task<TransferOutBalans> NewCopyRequisiteAsync(Guid id)
     {
-        var d = await GetByIdAsync(id);
-        SetNewValues(d);
+        var d = await GetByIdAsync(id); 
         Context.Entry(d).State = EntityState.Added;
+        SetNewValues(d);
         d.TransferOutBalansRows.Clear();
         return d;
     }
