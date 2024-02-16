@@ -40,7 +40,7 @@
                         Style="{StaticResource MaterialDesignRaisedAccentButton}"
                         DockPanel.Dock="Right" />
 
-                <Button Command="{Binding CancelCommand}"
+                <Button Command="{Binding ResetLayoutCommand}"
                         MinHeight="25"
                         Width="120"
                         Height="40"

@@ -38,14 +38,21 @@
                     SelectedItems="{Binding SelectedItems, UpdateSourceTrigger=PropertyChanged}"
                     CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
                     AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn"
+                    SelectionMode="Row"
                 >
                     <dxg:GridControl.View>
                         <dxg:TableView
                             Name="gridDocumentsTableView"
-                            Style="{StaticResource TableView.SearchWithoutMenu}">
+                            Style="{StaticResource TableView.SearchWithoutMenu}" 
+                            NavigationStyle="Row">
                             <dxmvvm:Interaction.Behaviors>
                                 <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding IncludeCommand }" />
                             </dxmvvm:Interaction.Behaviors>
+                            <dxg:TableView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Header="Добавить выделенные" Command ="{Binding IncludeSelectedCommand}" />
+                                </ContextMenu>
+                            </dxg:TableView.ContextMenu>
                         </dxg:TableView>
                     </dxg:GridControl.View>
                 </dxg:GridControl>
@@ -63,18 +70,25 @@
                 SelectedItems="{Binding SelectedDocumentItems, UpdateSourceTrigger=PropertyChanged}"
                 CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
                 AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn"
+                SelectionMode="Row"
             >
                 <dxg:GridControl.View>
                     <dxg:TableView
                         Name="gridSelectDocumentsTableView"
-                        Style="{StaticResource TableView.SearchWithoutMenu}">
+                        Style="{StaticResource TableView.SearchWithoutMenu}"
+                        NavigationStyle="Row"
+                        >
                         <dxmvvm:Interaction.Behaviors>
                             <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding ExcludeCommand }" />
                         </dxmvvm:Interaction.Behaviors>
+                        <dxg:TableView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Удалить выделенные" Command ="{Binding ExcludeSelectedCommand}" />
+                            </ContextMenu>
+                        </dxg:TableView.ContextMenu>
                     </dxg:TableView>
                 </dxg:GridControl.View>
             </dxg:GridControl>
         </dxlc:LayoutControl>
-       
     </DockPanel>
 </UserControl>

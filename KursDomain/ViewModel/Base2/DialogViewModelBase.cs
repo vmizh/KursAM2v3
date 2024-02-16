@@ -61,7 +61,7 @@ public abstract class DialogViewModelBase<T> : ViewModelBase, IDialog<T>, ILayou
 
     protected virtual void OnResetLayoutExecute()
     {
-        throw new NotImplementedException();
+        LayoutSerializationService.Deserialize(_startLayout);
     }
 
     protected virtual bool CanCancel()

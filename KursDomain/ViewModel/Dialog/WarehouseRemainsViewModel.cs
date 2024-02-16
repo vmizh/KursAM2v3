@@ -37,6 +37,9 @@ public class WarehouseRemainsViewModel : DialogViewModelBase<NomenklStoreRemainI
 
         IncludeCommand = new DelegateCommand(OnIncludeExecute, CanInclude);
         ExcludeCommand = new DelegateCommand(OnExcludeExecute, CanExclude);
+
+        IncludeSelectedCommand = new DelegateCommand(OnIncludeSelectedExecute, CanIncludeSelected);
+        ExcludeSelectedCommand = new DelegateCommand(OnExcludeSelectedExecute, CanExcludeSelected);
     }
 
     #region Methods
@@ -61,15 +64,50 @@ public class WarehouseRemainsViewModel : DialogViewModelBase<NomenklStoreRemainI
 
     public ICommand IncludeCommand { get; }
     public ICommand ExcludeCommand { get; }
+    public ICommand IncludeSelectedCommand { get; }
+    public ICommand ExcludeSelectedCommand { get; }
     private bool CanExclude()
     {
         return CurrentSelectDocumentItem != null;
+    }
+
+    private void OnExcludeSelectedExecute()
+    {
+        var items = SelectedDocumentItems.Select(_ => _.Nomenkl.DocCode).ToList();
+        foreach (var old in items.Select(item => SelectDocumentItems.FirstOrDefault(_ => _.Nomenkl.DocCode == item))
+                     .Where(old => old != null))
+        {
+            SelectDocumentItems.Remove(old);
+        }
+    }
+
+    private bool CanExcludeSelected()
+    {
+        return SelectedDocumentItems is { Count: > 0 };
     }
 
     private void OnExcludeExecute()
     {
         SelectDocumentItems.Remove(CurrentSelectDocumentItem);
     }
+
+
+    private bool CanIncludeSelected()
+    {
+        return SelectedItems is { Count: > 0 };
+    }
+
+    private void OnIncludeSelectedExecute()
+    {
+        foreach (var doc in SelectedItems)
+        {
+            var old = SelectDocumentItems.FirstOrDefault(_ => _.Nomenkl.DocCode == doc.Nomenkl.DocCode);
+            if(old == null) 
+                SelectDocumentItems.Add(doc);
+        }
+    }
+
+
 
     private bool CanInclude()
     {
@@ -98,6 +136,14 @@ public class WarehouseRemainsViewModel : DialogViewModelBase<NomenklStoreRemainI
 
     public ObservableCollection<NomenklStoreRemainItemWrapper> SelectDocumentItems { set; get; } =
         new ObservableCollection<NomenklStoreRemainItemWrapper>();
+
+    public ObservableCollection<NomenklStoreRemainItemWrapper> SelectedItems { set; get; } =
+        new ObservableCollection<NomenklStoreRemainItemWrapper>();
+
+    public ObservableCollection<NomenklStoreRemainItemWrapper> SelectedDocumentItems { set; get; } =
+        new ObservableCollection<NomenklStoreRemainItemWrapper>();
+
+
 
     public DateTime RemainDate { get; set; }
     public Warehouse Warehouse { get; private set; }
