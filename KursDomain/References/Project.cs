@@ -255,7 +255,7 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
                 return prj;
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //WindowManager.ShowError(ex);
         }
@@ -307,7 +307,7 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
 
             State = RowStatus.NotEdited;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //WindowManager.ShowError(ex);
         }
@@ -359,7 +359,7 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
 
             State = RowStatus.NotEdited;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //WindowManager.ShowError(ex);
         }
@@ -388,7 +388,7 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
                 ctx.SaveChanges();
             }
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             //WindowManager.ShowError(ex);
         }

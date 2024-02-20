@@ -16,6 +16,8 @@ public interface ITransferOutBalans
     public string Note { get; set; }
     public string Creator { get; set; }
 
+    public Currency Currency { get; set; }
+
     ObservableCollection<CurrencyValue> CurrenciesSummaries { get; set; }
 
     public Warehouse Warehouse { get; set; }

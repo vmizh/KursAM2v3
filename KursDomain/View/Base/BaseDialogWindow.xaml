@@ -14,7 +14,8 @@
         <dxmvvm:CurrentWindowService ClosingCommand="{Binding OnWindowClosingCommand}"
                                      Window="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" />
         <dxmvvm:EventToCommand EventName="Initialized" Command="{Binding OnInitializeCommand }" />
-        <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding OnWindowLoadedCommand}" />
+        <dxmvvm:EventToCommand EventName="Loaded" Command="{Binding OnWindowLoadedCommand}"/>
+        <dxmvvm:KeyToCommand KeyGesture="Enter" Command="{Binding KeyEnterCommand}"/>
     </dxmvvm:Interaction.Behaviors>
     <Grid>
         <DockPanel>

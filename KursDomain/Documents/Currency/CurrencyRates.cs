@@ -64,9 +64,8 @@ public class CurrencyRates
             if (f != null && s != null && s.RATE != 0)
                 return f.RATE / f.NOMINAL / (s.RATE / s.NOMINAL);
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            //WindowManager.ShowError(ex);
         }
 
         return -1;

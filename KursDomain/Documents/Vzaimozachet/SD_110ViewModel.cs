@@ -494,9 +494,8 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
                 }
             }
         }
-        catch (Exception ex)
+        catch
         {
-            //WindowManager.ShowError(ex);
         }
     }
 
@@ -530,9 +529,9 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
                 ctx.SaveChanges();
             }
         }
-        catch (Exception ex)
+        catch
         {
-            //WindowManager.ShowError(ex);
+            // ignored
         }
     }
 

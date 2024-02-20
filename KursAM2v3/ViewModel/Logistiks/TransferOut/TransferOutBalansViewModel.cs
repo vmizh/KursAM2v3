@@ -10,6 +10,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Data;
+using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Event;
 using KursAM2.View.Helper;
@@ -37,13 +39,14 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
         public override async Task InitializeAsync(Guid id, DocumentNewState newState = DocumentNewState.None)
         {
             var storList = await _StorageLocationsRepository.GetAllAsync();
-            var disp =(Form ?? Application.Current.MainWindow)?.Dispatcher;
+            var disp = (Form ?? Application.Current.MainWindow)?.Dispatcher;
             if (disp == null)
             {
                 var wm = new WindowManager();
                 wm.ShowKursDialog("Form is null", "Ошибка", Brushes.Red, WindowManager.Confirm);
                 return;
             }
+
             disp.Invoke(() =>
             {
                 StorageLocationList.Clear();
@@ -112,23 +115,23 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             Document.State = _transferOutBalansRepository.GetRowStatus(Document.Model);
             Document.PropertyChanged += Document_PropertyChanged;
             ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
-            
+            CanCurrencyChanged = Document.Rows.Count == 0;
+            CanWarehouseChanged = Document.Rows.Count == 0;
         }
 
         public override void Initialize(Guid id, DocumentNewState newState = DocumentNewState.None)
         {
             var storList = _StorageLocationsRepository.GetAll();
             StorageLocationList.Clear();
-                foreach (var stor in storList) StorageLocationList.Add(new StorageLocationsWrapper(stor));
+            foreach (var stor in storList) StorageLocationList.Add(new StorageLocationsWrapper(stor));
 
             switch (newState)
             {
                 case DocumentNewState.None:
                     var d = _transferOutBalansRepository.GetById(id);
                     Document = new TransferOutBalansWrapper(d);
-                        Document.StartLoad();
+                    Document.StartLoad();
                     break;
-                
             }
 
             using (var ctx = GlobalOptions.GetEntities())
@@ -162,6 +165,9 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             Document.State = _transferOutBalansRepository.GetRowStatus(Document.Model);
             Document.PropertyChanged += Document_PropertyChanged;
             ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
+            CanCurrencyChanged = Document.Rows.Count == 0;
+            CanWarehouseChanged = Document.Rows.Count == 0;
+
         }
 
         private void Document_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -217,6 +223,8 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
         private IWarehouseRepository _WarehouseRepository;
         private bool myCanRefreshData = true;
         private readonly List<Nomenkl> deleteNomenkls = new List<Nomenkl>();
+        private bool myCanWarehouseChanged;
+        private bool myCanCurrencyChanged;
 
         #endregion
 
@@ -224,6 +232,9 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
 
         public List<KursDomain.References.Warehouse> WarehouseList { get; set; } = GlobalOptions.ReferencesCache
             .GetWarehousesAll().Cast<KursDomain.References.Warehouse>().ToList();
+
+        public List<Currency> CurrencyList { get; set; } = GlobalOptions.ReferencesCache
+            .GetCurrenciesAll().Cast<Currency>().ToList();
 
         public List<StorageLocationsWrapper> StorageLocationList { get; set; } = new List<StorageLocationsWrapper>();
 
@@ -240,6 +251,29 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                 OnPropertyChanged();
                 ((DelegateCommand)DeleteRowCommand).RaiseCanExecuteChanged();
             }
+        }
+
+        public bool CanWarehouseChanged
+        {
+            set
+            {
+                if (value == myCanWarehouseChanged) return;
+                myCanWarehouseChanged = value;
+                OnPropertyChanged();
+            }
+            get => myCanWarehouseChanged;
+        }
+
+
+        public bool CanCurrencyChanged
+        {
+            set
+            {
+                if (value == myCanCurrencyChanged) return;
+                myCanCurrencyChanged = value;
+                OnPropertyChanged();
+            }
+            get => myCanCurrencyChanged;
         }
 
         #endregion
@@ -294,19 +328,21 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             Document.UpdateSummaries();
             HasChanges = true;
             ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
+            CanCurrencyChanged = Document.Rows.Count == 0;
+            CanWarehouseChanged = Document.Rows.Count == 0;
         }
 
         public ICommand AddNomenklCommand { get; }
 
         private bool CanAddNomenkl()
         {
-            return Document.Warehouse != null;
+            return Document.Warehouse != null && Document.Currency != null;
         }
 
         private async void OnAddNomenklExecute()
         {
             var vm = new WarehouseRemainsViewModel(Document.DocDate, Document.Warehouse,
-                new WarehouseRepository(GlobalOptions.GetEntities()));
+                new WarehouseRepository(GlobalOptions.GetEntities()), Document.Currency?.DocCode);
             await vm.ShowAsync();
             switch (vm.Result)
             {
@@ -341,12 +377,15 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                 case KursDialogResult.Cancel:
                     break;
             }
+            CanCurrencyChanged = Document.Rows.Count == 0;
+            CanWarehouseChanged = Document.Rows.Count == 0;
         }
 
         protected override bool CanSaveData()
         {
             if (IsBusy) return false;
-            return Document is { Warehouse: not null, StorageLocation: not null } && (HasChanges || IsNewDocument);
+            return Document is { Warehouse: not null, StorageLocation: not null, Currency: not null } &&
+                   (HasChanges || IsNewDocument);
         }
 
         protected override async Task OnSaveDataAsync()
@@ -485,6 +524,31 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
         protected override void OnShowHistoryExecute()
         {
             DocumentHistoryManager.LoadHistory(DocumentType.TransferOutBalans, Document.Id, 0);
+        }
+
+        protected override async Task OnWindowLoaded()
+        {
+            await base.OnWindowLoaded();
+            if (FormControl is TransferOutBalansView form)
+            {
+                form.gridRows.TotalSummary.Clear();
+                foreach (var col in form.gridRows.Columns)
+                {
+                    switch (col.FieldName)
+                    {
+                        case nameof(TransferOutBalansRowsWrapper.Summa):
+                        case nameof(TransferOutBalansRowsWrapper.CostPrice):
+                            var summ = new GridSummaryItem
+                            {
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Sum,
+                                DisplayFormat = "n2"
+                            };
+                            form.gridRows.TotalSummary.Add(summ);
+                            break;
+                    }
+                }
+            }
         }
 
         #endregion

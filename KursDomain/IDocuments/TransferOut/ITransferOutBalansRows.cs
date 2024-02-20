@@ -10,7 +10,9 @@ public interface ITransferOutBalansRows
     public Nomenkl Nomenkl { get; set; }
     public decimal Quatntity { get; set; }
     public decimal Price { get; set; }
+    public decimal CostPrice { get; set; }
     public decimal Summa { get; }
+    public decimal CostSumma { get; }
     public string Note { get; set; }
 
     public ITransferOutBalans TransferOutBalans { get; set; }

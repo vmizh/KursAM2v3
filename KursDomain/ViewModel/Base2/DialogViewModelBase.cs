@@ -52,6 +52,7 @@ public abstract class DialogViewModelBase<T> : ViewModelBase, IDialog<T>, ILayou
         CancelCommand = new DelegateCommand(OnCancelExecute, CanCancel);
 
         ResetLayoutCommand = new DelegateCommand(OnResetLayoutExecute, CanResetLayout);
+        KeyEnterCommand = new DelegateCommand(OnKeyEnterExecute);
     }
 
     protected virtual bool CanResetLayout()
@@ -135,6 +136,13 @@ public abstract class DialogViewModelBase<T> : ViewModelBase, IDialog<T>, ILayou
 
     #region Commands
 
+    public ICommand KeyEnterCommand { get; }
+
+    protected virtual void OnKeyEnterExecute()
+    {
+        
+    }
+
     public ICommand OnWindowClosingCommand { get; }
     public ICommand OnInitializeCommand { get; }
     public ICommand OnWindowLoadedCommand { get; }
@@ -160,6 +168,7 @@ public abstract class DialogViewModelBase<T> : ViewModelBase, IDialog<T>, ILayou
             currentWindow.Left = p.FormLeft < 0 ? 0 : p.FormLeft;
             currentWindow.Top = p.FormTop < 0 ? 0 : p.FormTop;
         }
+
     }
 
     protected virtual void OnInitialize()

@@ -27,10 +27,12 @@ namespace Data
         public string Note { get; set; }
         public string Creator { get; set; }
         public System.Guid StorageLocationId { get; set; }
+        public Nullable<decimal> CurrencyDC { get; set; }
     
         public virtual SD_27 SD_27 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TransferOutBalansRows> TransferOutBalansRows { get; set; }
         public virtual StorageLocations StorageLocations { get; set; }
+        public virtual SD_301 SD_301 { get; set; }
     }
 }

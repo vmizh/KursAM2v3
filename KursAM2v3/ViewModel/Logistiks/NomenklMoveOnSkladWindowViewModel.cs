@@ -13,13 +13,17 @@ using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks;
+using KursAM2.ViewModel.Logistiks.TransferOut;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.Repository.DocHistoryRepository;
 using KursDomain.Repository.NomenklRepository;
+using KursDomain.Repository.StorageLocationsRepositury;
+using KursDomain.Repository.TransferOut;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -614,6 +618,38 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = -doc.Quantity * prc
                     });
                 }
+
+                var docs7 = ctx.TransferOutBalansRows
+                    .Include(_ => _.TransferOutBalans)
+                    .Where(_ => _.TransferOutBalans.DocDate >= StartDate && _.TransferOutBalans.DocDate <= EndDate 
+                    && _.NomenklDC == CurrentNomenklMoveItem.Nomenkl.DocCode)
+                    .ToList();
+                foreach (var doc in docs7)
+                {
+                    var prc = nomenklManager.GetNomenklPrice(doc.NomenklDC, doc.TransferOutBalans.DocDate)
+                        .Price;
+                    DocumentList.Add(new NomPriceDocumentViewModel
+                    {
+                        DocCode = 0,
+                        Id = doc.DocId,
+                        DocumentName = "Перевод за баланс",
+                        DocumentNum = doc.TransferOutBalans.DocNum.ToString(),
+                        DocumentDate = doc.TransferOutBalans.DocDate,
+                        QuantityIn = 0,
+                        QuantityOut = doc.Quatntity,
+                        QuantityDelta = -doc.Quatntity,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        From = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.TransferOutBalans.WarehouseDC))
+                            .Name,
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        // ReSharper disable once PossibleInvalidOperationException
+                        To = "Списание",
+                        SummaIn = 0,
+                        SummaOut = doc.Quatntity * prc,
+                        SummaDelta = -doc.Quatntity * prc
+                    });
+                }
             }
 
             CalcNakopit();
@@ -986,6 +1022,38 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = -doc.Quantity * prc
                     });
                 }
+                var docs7 = ctx.TransferOutBalansRows
+                    .Include(_ => _.TransferOutBalans)
+                    .Where(_ => _.TransferOutBalans.DocDate >= StartDate && _.TransferOutBalans.DocDate <= EndDate
+                                                                         && _.NomenklDC == CurrentNomenklMoveItem.Nomenkl.DocCode
+                                                                         && _.TransferOutBalans.WarehouseDC == storeDC)
+                    .ToList();
+                foreach (var doc in docs7)
+                {
+                    var prc = nomenklManager.GetNomenklPrice(doc.NomenklDC, doc.TransferOutBalans.DocDate)
+                        .Price;
+                    DocumentList.Add(new NomPriceDocumentViewModel
+                    {
+                        DocCode = 0,
+                        Id = doc.DocId,
+                        DocumentName = "Перевод за баланс",
+                        DocumentNum = doc.TransferOutBalans.DocNum.ToString(),
+                        DocumentDate = doc.TransferOutBalans.DocDate,
+                        QuantityIn = 0,
+                        QuantityOut = doc.Quatntity,
+                        QuantityDelta = -doc.Quatntity,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        From = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.TransferOutBalans.WarehouseDC))
+                            .Name,
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        // ReSharper disable once PossibleInvalidOperationException
+                        To = "Списание",
+                        SummaIn = 0,
+                        SummaOut = doc.Quatntity * prc,
+                        SummaDelta = -doc.Quatntity * prc
+                    });
+                }
             }
 
             CalcNakopit();
@@ -1343,6 +1411,14 @@ namespace KursAM2.ViewModel.Logistiks
                     break;
                 case "Акт списания номенклатур":
                     DocumentsOpenManager.Open(DocumentType.AktSpisaniya, 0, CurrentDocument.Id);
+                    break;
+                case "Перевод за баланс":
+                    //DocumentsOpenManager.Open(DocumentType.AktSpisaniya, 0, CurrentDocument.Id);
+                    var ctx = GlobalOptions.GetEntities();
+                    var doc = new TransferOutBalansViewModel(new TransferOutBalansRepository(ctx),
+                        new StorageLocationsRepository(ctx), new NomenklRepository(ctx), new DocHistoryRepository(ctx));
+                    doc.Initialize(CurrentDocument.Id);
+                    doc.Show();
                     break;
             }
         }

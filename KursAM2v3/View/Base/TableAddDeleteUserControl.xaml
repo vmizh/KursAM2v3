@@ -49,7 +49,6 @@
                         dx:DXSerializer.StoreLayoutMode="All"
                         dxg:DataControlSerializationOptions.AddNewColumns="True"
                         dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                        UseFieldNameForSerialization="True"
                         ItemsSource="{Binding Rows}"
                         CurrentItem="{Binding CurrentItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding CurrentItem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -62,7 +61,6 @@
                               ShowCriteriaInAutoFilterRow="True"
                               CellValueChanging="tableView_CellValueChanging"
                               ShownEditor="tableView_ShownEditor"
-                              NewItemRowPosition="Bottom"
                               >
                    <dxg:TableView.ContextMenu>
                        <ContextMenu>

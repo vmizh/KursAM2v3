@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Data;
+using DevExpress.Data;
+using DevExpress.Xpf.Grid;
 using KursAM2.View.Logistiks.TransferOut;
 using KursDomain;
 using KursDomain.IDocuments.TransferOut;
@@ -58,9 +60,16 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
         [DisplayFormat(DataFormatString = "n2")]
         public decimal Price { get; set; }
 
+        [Display(AutoGenerateField = true, Name = "Себес-ть(ед)")]
+        public decimal CostPrice  { get; set; }
+ 
         [Display(AutoGenerateField = true, Name = "Сумма")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal Summa => Price * Quatntity;
+
+        [Display(AutoGenerateField = true, Name = "Себ-ть (сумма)")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal CostSumma => Quatntity*CostPrice;
 
         [Display(AutoGenerateField = true, Name = "Примечание")]
         [ReadOnly(true)]
@@ -171,6 +180,50 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
         private bool CanOpenDocument()
         {
             return CurrentDocumentRow != null;
+        }
+
+
+        protected override async Task OnWindowLoaded()
+        {
+            await base.OnWindowLoaded();
+            if (FormControl is TransferOutBalansRemainsView form)
+            {
+                form.gridRemainRows.TotalSummary.Clear();
+                form.gridDocumentRows.TotalSummary.Clear();
+                foreach (var col in form.gridRemainRows.Columns)
+                {
+                    switch (col.FieldName)
+                    {
+                        case nameof(NomenklStoreLocationItem.Summa):
+                            var summ = new GridSummaryItem
+                            {
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Sum,
+                                DisplayFormat = "n2"
+                            };
+                            form.gridRemainRows.TotalSummary.Add(summ);
+                            break;
+                    }
+                }
+                foreach (var col in form.gridDocumentRows.Columns)
+                {
+                    switch (col.FieldName)
+                    {
+                        case nameof(TransferOutBalansRemainsDocument.Summa):
+                        case nameof(TransferOutBalansRemainsDocument.CostSumma):
+                            var summ = new GridSummaryItem
+                            {
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Sum,
+                                DisplayFormat = "n2"
+                            };
+                            form.gridDocumentRows.TotalSummary.Add(summ);
+                            break;
+                    }
+                }
+
+            }
+
         }
 
         protected override bool CanRefreshData()

@@ -132,11 +132,6 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
             return;
         }
 
-        if (entity.DOC_CODE == 10830062692)
-        {
-            var i = 1;
-        }
-
         DocCode = entity.DOC_CODE;
         Id = entity.Id;
         Name = entity.NOM_NAME;

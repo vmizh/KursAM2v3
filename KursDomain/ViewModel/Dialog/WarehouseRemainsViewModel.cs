@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using DevExpress.Data;
+using DevExpress.Xpf.Grid;
 using KursDomain.References;
 using KursDomain.Repository.WarehouseRepository;
 using KursDomain.RepositoryHelper;
@@ -22,17 +25,22 @@ public class WarehouseRemainsViewModel : DialogViewModelBase<NomenklStoreRemainI
     private readonly IWarehouseRepository myWarehouseRepository;
     private NomenklStoreRemainItemWrapper myCurrentSelectDocumentItem;
 
+    private readonly decimal? _currencyDC;
+
     #endregion
     
 
-    public WarehouseRemainsViewModel(DateTime remainDate, Warehouse warehouse, IWarehouseRepository warehouseRepository)
+    public WarehouseRemainsViewModel(DateTime remainDate, Warehouse warehouse, IWarehouseRepository warehouseRepository, 
+        decimal? crsDC = null)
     {
         RemainDate = remainDate;
         Warehouse = warehouse;
         myWarehouseRepository = warehouseRepository;
+        _currencyDC = crsDC;
 
         LayoutName = "WarehouseRemainsViewModel";
-
+        Title = "Материалы за балансом по местам хранения";
+        
         FormControl = new WarehouseRemainsView();
 
         IncludeCommand = new DelegateCommand(OnIncludeExecute, CanInclude);
@@ -50,9 +58,19 @@ public class WarehouseRemainsViewModel : DialogViewModelBase<NomenklStoreRemainI
         Dialog.loadingIndicator.Visibility = Visibility.Visible;
         Items.Clear();
         var data = await myWarehouseRepository.GetNomenklsOnWarehouseAsync(RemainDate, Warehouse.DocCode);
-        foreach (var rem in data)
+        if (_currencyDC == null)
         {
-            Items.Add(new NomenklStoreRemainItemWrapper(rem));
+            foreach (var rem in data)
+            {
+                Items.Add(new NomenklStoreRemainItemWrapper(rem));
+            }
+        }
+        else
+        {
+            foreach (var rem in data.Where(_ => _.NomCurrencyDC == _currencyDC))
+            {
+                Items.Add(new NomenklStoreRemainItemWrapper(rem));
+            }
         }
 
         Dialog.loadingIndicator.Visibility = Visibility.Hidden;
@@ -73,6 +91,10 @@ public class WarehouseRemainsViewModel : DialogViewModelBase<NomenklStoreRemainI
 
     private void OnExcludeSelectedExecute()
     {
+        foreach (var sitem in SelectedDocumentItems)
+        {
+            Items.Add(sitem);
+        }
         var items = SelectedDocumentItems.Select(_ => _.Nomenkl.DocCode).ToList();
         foreach (var old in items.Select(item => SelectDocumentItems.FirstOrDefault(_ => _.Nomenkl.DocCode == item))
                      .Where(old => old != null))
@@ -88,6 +110,7 @@ public class WarehouseRemainsViewModel : DialogViewModelBase<NomenklStoreRemainI
 
     private void OnExcludeExecute()
     {
+        Items.Add(CurrentSelectDocumentItem);
         SelectDocumentItems.Remove(CurrentSelectDocumentItem);
     }
 
@@ -99,11 +122,19 @@ public class WarehouseRemainsViewModel : DialogViewModelBase<NomenklStoreRemainI
 
     private void OnIncludeSelectedExecute()
     {
+        var nomDC = new List<decimal>();
         foreach (var doc in SelectedItems)
         {
+            nomDC.Add(doc.Nomenkl.DocCode);
             var old = SelectDocumentItems.FirstOrDefault(_ => _.Nomenkl.DocCode == doc.Nomenkl.DocCode);
-            if(old == null) 
+            if (old == null)
                 SelectDocumentItems.Add(doc);
+        }
+
+        foreach (var o in nomDC.Select(dc => Items.FirstOrDefault(_ => _.Nomenkl.DocCode == dc))
+                     .Where(o => o != null))
+        {
+            Items.Remove(o);
         }
     }
 
@@ -121,13 +152,65 @@ public class WarehouseRemainsViewModel : DialogViewModelBase<NomenklStoreRemainI
         {
             return;
         }
-        SelectDocumentItems.Add(CurrentItem);
+        SelectDocumentItems.Add(CurrentItem); 
+        Items.Remove(CurrentItem);
     }
 
+    protected override void OnKeyEnterExecute()
+    {
+        OnOkExecute();
+    }
 
     protected override bool CanOk()
     {
-        return CurrentItem != null;
+        return SelectDocumentItems.Count > 0;
+    }
+
+    protected override async Task OnWindowLoaded()
+    {
+        await base.OnWindowLoaded();
+        if (FormControl is WarehouseRemainsView form)
+        {
+            form.gridDocuments.TotalSummary.Clear();
+            form.gridSelectDocuments.TotalSummary.Clear();
+            foreach (var col in form.gridDocuments.Columns)
+            {
+                switch (col.FieldName)
+                {
+                    case nameof(NomenklStoreRemainItemWrapper.Summa):
+                    case nameof(NomenklStoreRemainItemWrapper.SummaWithNaklad):
+                    {
+                        var summ = new GridSummaryItem
+                        {
+                            FieldName = col.FieldName,
+                            SummaryType = SummaryItemType.Sum,
+                            DisplayFormat = "n2"
+                        };
+                        form.gridDocuments.TotalSummary.Add(summ);
+                        break;
+                    }
+                }
+            }
+
+            foreach (var col in form.gridSelectDocuments.Columns)
+            {
+                switch (col.FieldName)
+                {
+                    case nameof(NomenklStoreRemainItemWrapper.Summa):
+                    case nameof(NomenklStoreRemainItemWrapper.SummaWithNaklad):
+                    {
+                        var summ = new GridSummaryItem
+                        {
+                            FieldName = col.FieldName,
+                            SummaryType = SummaryItemType.Sum,
+                            DisplayFormat = "n2"
+                        };
+                        form.gridSelectDocuments.TotalSummary.Add(summ);
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     #endregion

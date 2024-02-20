@@ -2160,6 +2160,7 @@
         <AssociationConnector Association="ALFAMEDIA.FK_TransferOutBalansRefund_StorageLocationId" />
         <EntityTypeShape EntityType="ALFAMEDIA.EXT_SqlQueries" Width="1.5" PointX="47.375" PointY="3.75" />
         <EntityTypeShape EntityType="ALFAMEDIA.NOMENKL_RECALC" Width="1.5" PointX="5.375" PointY="47.75" />
+        <AssociationConnector Association="ALFAMEDIA.FK_TransferOutBalans_CurrencyDC" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -130,6 +130,7 @@ namespace KursAM2.ViewModel.Reference
         public readonly ICommand AddCommand;
         public readonly ICommand AddCopyCommand;
         public readonly ICommand DeleteCommand;
+        private bool myRefresh;
 
         private bool CanAddCopy()
         {
@@ -216,8 +217,15 @@ namespace KursAM2.ViewModel.Reference
             ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
         }
 
+        protected override bool CanRefreshData()
+        {
+            return !myRefresh;
+        }
+
         public override async Task OnRefreshDataAsync()
         {
+            myRefresh = true;
+            ((DelegateCommand)RefreshDataCommand).RaiseCanExecuteChanged();
             if (HasChanges)
             {
                 var wm = new WindowManager();
@@ -228,13 +236,21 @@ namespace KursAM2.ViewModel.Reference
                     case WindowManager.KursDialogResult.Cancel:
                         return;
                     case WindowManager.KursDialogResult.No:
-                        break;
+                        _StorageLocationsRepositiry.ContextRollback();
+                        foreach (var r in Rows)
+                        {
+                            r.RaisePropertyAllChanged();
+                        }
+                        HasChanges = false;
+                        myRefresh = false; 
+                        ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
+                        ((DelegateCommand)RefreshDataCommand).RaiseCanExecuteChanged();
+                        return;
                     case WindowManager.KursDialogResult.Yes:
                         await OnSaveDataAsync();
                         break;
                 }
             }
-
             var items = await _StorageLocationsRepositiry.GetAllAsync();
             Form.Dispatcher.BeginInvoke(new Action(() =>
             {
@@ -247,7 +263,9 @@ namespace KursAM2.ViewModel.Reference
                 }
             }));
             HasChanges = false;
+            myRefresh = false; 
             ((DelegateCommand)SaveDataCommand).RaiseCanExecuteChanged();
+            ((DelegateCommand)RefreshDataCommand).RaiseCanExecuteChanged();
         }
 
         #endregion

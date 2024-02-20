@@ -69,6 +69,16 @@
                                Content="{Binding Document.PositionCount, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                                MinWidth="40"
                                HorizontalContentAlignment="Center" />
+                        <Label Content="Валюта:" />
+                        <dxe:ComboBoxEdit
+                            MinWidth="150"
+                            Height="30"
+                            VerticalAlignment="Top"
+                            Margin="5 0"
+                            IsEnabled="{Binding CanCurrencyChanged, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                            Style="{StaticResource ComboBoxEditWithError}"
+                            EditValue="{Binding Document.Currency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            ItemsSource="{Binding CurrencyList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <Label Content="На сумму:" />
                         <dxg:GridControl Name="gridSummariesRows"
                                          AutoGenerateColumns="AddNew"
