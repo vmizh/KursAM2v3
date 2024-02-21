@@ -135,7 +135,7 @@ public class NomenklStoreLocationItem
     public decimal Summa { set; get; }
     [Display(AutoGenerateField = true, Name = "Цена")]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal Price => Summa == 0 ? 0 : Quantity / Summa;
+    public decimal Price => Quantity == 0 ? 0 : Summa / Quantity;
     [Display(AutoGenerateField = true, Name = "Валюта")]
     public Currency Currency => Nomenkl?.Currency as Currency;
 }
