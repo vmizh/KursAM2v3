@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using Data;
-using DevExpress.Mvvm.Native;
 using KursDomain.Base;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.TransferOut;
@@ -42,6 +41,9 @@ public sealed class TransferOutBalansWrapper : BaseWrapper<TransferOutBalans>, I
     [Display(AutoGenerateField = true, Name = "Сумма")]
     [ReadOnly(true)]
     public string Summa => getSumma();
+
+    public override string Description =>
+        $"Перевод за баланс. №{DocNum} от {DocDate.ToShortDateString()} со склада {Warehouse?.Name}";
 
     public bool Equals(TransferOutBalansWrapper other)
     {
@@ -90,6 +92,16 @@ public sealed class TransferOutBalansWrapper : BaseWrapper<TransferOutBalans>, I
     public ObservableCollection<CurrencyValue> CurrenciesSummaries { get; set; } =
         new ObservableCollection<CurrencyValue>();
 
+    [Display(AutoGenerateField = true, Name = "Валюта")]
+    public Currency Currency
+    {
+        get => GlobalOptions.ReferencesCache.GetCurrency(Model.CurrencyDC) as Currency;
+        set
+        {
+            if (Model.CurrencyDC == (value?.DocCode ?? 0)) return;
+            SetValue(value?.DocCode ?? 0, nameof(TransferOutBalans.CurrencyDC));
+        }
+    }
 
     [Display(AutoGenerateField = true, Name = "Склад")]
     public Warehouse Warehouse
@@ -198,7 +210,4 @@ public sealed class TransferOutBalansWrapper : BaseWrapper<TransferOutBalans>, I
 
         return res;
     }
-
-    public override string Description =>
-        $"Перевод за баланс. №{DocNum} от {DocDate.ToShortDateString()} со склада {Warehouse?.Name}";
 }
