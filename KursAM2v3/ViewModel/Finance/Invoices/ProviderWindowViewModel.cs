@@ -347,8 +347,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 }
 
                 Document.myState = RowStatus.NotEdited;
-
-                //RaiseAll();
             }
         }
 
@@ -510,6 +508,17 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     ValueRule = ConditionRule.Equal,
                     Value1 = 0m
                 };
+                var serviceFormatCondition = new FormatCondition
+                {
+                    FieldName = "IsUsluga",
+                    ApplyToRow = true,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Black
+                    },
+                    ValueRule = ConditionRule.Equal,
+                    Value1 = true
+                };
 
                 var shippedFormatCondition = new FormatCondition
                 {
@@ -523,6 +532,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 };
                 frm.tableViewRows.FormatConditions.Add(shippedFormatCondition);
                 frm.tableViewRows.FormatConditions.Add(notShippedFormatCondition);
+                frm.tableViewRows.FormatConditions.Add(serviceFormatCondition);
             }
         }
 

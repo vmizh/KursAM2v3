@@ -285,9 +285,12 @@ namespace KursAM2.ViewModel.Logistiks
                 var clc = new NomenklCostMediumSliding(ctx);
                 NomenklOperations.Clear();
                 var data = clc.GetOperations(CurrentNomenklStore.Nomenkl.DocCode, false);
-                if (data != null && data.Count > 0)
-                    foreach (var op in data)
+                if (data == null || data.Count <= 0) return;
+                foreach (var op in data)
+                {
+                    if(CurrentWarehouse.DocCode == op.SkladIn?.DocCode || CurrentWarehouse.DocCode == op.SkladOut?.DocCode)
                         NomenklOperations.Add(op);
+                }
             }
         }
 

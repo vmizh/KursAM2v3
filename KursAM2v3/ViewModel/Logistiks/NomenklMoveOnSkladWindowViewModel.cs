@@ -1,14 +1,18 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
+using DevExpress.Data.Linq.Helpers;
 using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
@@ -165,7 +169,6 @@ namespace KursAM2.ViewModel.Logistiks
                 IsShowAll = myCurrentSklad == null;
                 NomenklMoveList.Clear();
                 RaisePropertyChanged(nameof(NomenklMoveList));
-                //RefreshData(null);
                 RaisePropertyChanged();
             }
         }
@@ -1204,6 +1207,158 @@ namespace KursAM2.ViewModel.Logistiks
                 }
         }
 
+        private async Task LoadForAllSklads4Async()
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var sklDCList = ctx.NomenklMoveForCalc.Select(_ => _.StoreDC).Distinct().AsNoTracking();
+                //var skladsInfo = new Dictionary<decimal, List<NomenklQuantityInfo>>();
+                var skladsDict = new ConcurrentDictionary<decimal, List<NomenklQuantityInfo>>();
+                //var moveInfo = new Dictionary<decimal, List<NomenklMoveInfo>>();
+                var moveDict = new ConcurrentDictionary<decimal, List<NomenklMoveInfo>>();
+                foreach (var dc in sklDCList)
+                    // ReSharper disable once PossibleInvalidOperationException
+                    skladsDict[(decimal)dc] = new List<NomenklQuantityInfo>();
+
+                List<Task> tasks = new List<Task>();
+                foreach (var sdc in sklDCList)
+                {
+                    tasks.Add( Task.Run(async () =>
+                    {
+                        skladsDict[(decimal)sdc] = await
+                            nomenklManager.GetNomenklStoreQuantityAsync((decimal)sdc, StartDate, EndDate);
+                        moveDict[(decimal)sdc] = await nomenklManager.GetNomenklStoreMoveAsync((decimal)sdc, StartDate, EndDate);
+                    }));
+                }
+
+                //Parallel.ForEach(tasks, task =>
+                //{
+                //    task.Start();
+                //});
+                await Task.WhenAll(tasks);
+
+                //foreach (var sklDC in sklDCList)
+                //{
+                //    // ReSharper disable once PossibleInvalidOperationException
+                //    skladsInfo[(decimal)sklDC] =
+                //        nomenklManager.GetNomenklStoreQuantity((decimal)sklDC, StartDate, EndDate);
+                //    moveInfo[(decimal)sklDC] = nomenklManager.GetNomenklStoreMove((decimal)sklDC, StartDate, EndDate);
+                //}
+
+                var listTemp = new List<NomenklMoveOnSkladViewModel>();
+                foreach (var sklDC in skladsDict.Keys)
+                foreach (var n in skladsDict[sklDC])
+                {
+                    var old = listTemp.FirstOrDefault(_ => _.Nomenkl.DocCode == n.NomDC);
+                    if (old != null)
+                    {
+                        old.QuantityStart += n.StartQuantity;
+                        old.QuantityEnd += n.OstatokQuantity;
+                        old.QuantityIn += moveDict[sklDC].Where(_ => _.NomDC == n.NomDC).Sum(s => s.Prihod);
+                        old.QuantityOut += moveDict[sklDC].Where(_ => _.NomDC == n.NomDC).Sum(s => s.Rashod);
+
+                        switch (old.CurrencyName)
+                        {
+                            case CurrencyCode.RUBName:
+                            case CurrencyCode.RURName:
+                                old.SummaRUBStart += n.StartSumma;
+                                old.SummaRUBEnd += n.OstatokSumma;
+                                old.SummaRUBIn += moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.PrihodSumma);
+                                old.SummaRUBOut += moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.RashodSumma);
+                                break;
+                            case CurrencyCode.USDName:
+                                old.SummaUSDStart += n.StartSumma;
+                                old.SummaUSDEnd += n.OstatokSumma;
+                                old.SummaUSDIn += moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.PrihodSumma);
+                                old.SummaUSDOut += moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.RashodSumma);
+                                break;
+                            case CurrencyCode.EURName:
+                                old.SummaEURStart += n.StartSumma;
+                                old.SummaEUREnd += n.OstatokSumma;
+                                old.SummaEURIn += moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.PrihodSumma);
+                                old.SummaEUROut += moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.RashodSumma);
+                                break;
+                            default:
+                                old.SummaAllStart += n.StartSumma;
+                                old.SummaAllEnd += n.OstatokSumma;
+                                old.SummaAllIn += moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.PrihodSumma);
+                                old.SummaAllOut += moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.RashodSumma);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        var newitem = new NomenklMoveOnSkladViewModel
+                        {
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(n.NomDC) as Nomenkl,
+                            PriceEnd = n.OstatokQuantity != 0 ? Math.Round(n.OstatokSumma / n.OstatokQuantity, 2) : 0,
+                            PriceStart = n.StartQuantity != 0 ? Math.Round(n.StartSumma / n.StartQuantity, 2) : 0,
+                            QuantityEnd = n.OstatokQuantity,
+                            QuantityIn = moveDict[sklDC].Where(_ => _.NomDC == n.NomDC).Sum(s => s.Prihod),
+                            QuantityOut = moveDict[sklDC].Where(_ => _.NomDC == n.NomDC).Sum(s => s.Rashod),
+                            QuantityStart = n.StartQuantity
+                        };
+                        switch (newitem.CurrencyName)
+                        {
+                            case CurrencyCode.RUBName:
+                            case CurrencyCode.RURName:
+                                newitem.SummaRUBStart = n.StartSumma;
+                                newitem.SummaRUBEnd = n.OstatokSumma;
+                                newitem.SummaRUBIn = moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.PrihodSumma);
+                                newitem.SummaRUBOut = moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.RashodSumma);
+                                break;
+                            case CurrencyCode.USDName:
+                                newitem.SummaUSDStart = n.StartSumma;
+                                newitem.SummaUSDEnd = n.OstatokSumma;
+                                newitem.SummaUSDIn = moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.PrihodSumma);
+                                newitem.SummaUSDOut = moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.RashodSumma);
+                                break;
+                            case CurrencyCode.EURName:
+                                newitem.SummaEURStart = n.StartSumma;
+                                newitem.SummaEUREnd = n.OstatokSumma;
+                                newitem.SummaEURIn = moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.PrihodSumma);
+                                newitem.SummaEUROut = moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.RashodSumma);
+                                break;
+                            default:
+                                newitem.SummaAllStart = n.StartSumma;
+                                newitem.SummaAllEnd = n.OstatokSumma;
+                                newitem.SummaAllIn = moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.PrihodSumma);
+                                newitem.SummaAllOut = moveDict[sklDC].Where(_ => _.NomDC == n.NomDC)
+                                    .Sum(s => s.RashodSumma);
+                                break;
+                        }
+
+                        listTemp.Add(newitem);
+                    }
+                }
+
+                var delList = new List<NomenklMoveOnSkladViewModel>(listTemp.Where(nl => nl.QuantityStart == 0
+                    && nl.QuantityIn == 0 && nl.QuantityOut == 0 && nl.QuantityEnd == 0));
+                foreach (var nl in delList) listTemp.Remove(nl);
+                NomenklMoveList = new ObservableCollection<NomenklMoveOnSkladViewModel>(listTemp);
+                RaisePropertyChanged(nameof(NomenklMoveList));
+                IsDataLoaded = Visibility.Visible;
+                ShowProgress = false;
+                GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+                IsCanRefresh = true;
+            }
+        }
+
         private void LoadForAllSklads4()
         {
             using (var ctx = GlobalOptions.GetEntities())
@@ -1214,6 +1369,8 @@ namespace KursAM2.ViewModel.Logistiks
                 foreach (var dc in sklDCList)
                     // ReSharper disable once PossibleInvalidOperationException
                     skladsInfo.Add((decimal)dc, new List<NomenklQuantityInfo>());
+
+
                 foreach (var sklDC in sklDCList)
                 {
                     // ReSharper disable once PossibleInvalidOperationException
@@ -1369,15 +1526,17 @@ namespace KursAM2.ViewModel.Logistiks
 
         public override void RefreshData(object obj)
         {
-            //RefreshDataAsync();
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 Form.Dispatcher.Invoke(() =>
                 {
                     ((NomenklMoveOnSklad)Form).loadingIndicator.Visibility = Visibility.Visible;
                 });
                 if (CurrentSklad == null)
+                {
+                    //await LoadForAllSklads4Async();
                     LoadForAllSklads4();
+                }
                 else
                     LoadForCurrentSklad4();
                 Form.Dispatcher.Invoke(() =>

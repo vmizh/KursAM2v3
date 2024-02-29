@@ -249,6 +249,7 @@ namespace KursAM2.ViewModel.Finance
                         .Distinct().ToList();
                     if (data.Count > 0)
                         ctx.Document.CurrencyFrom = GlobalOptions.ReferencesCache.GetCurrency(data.First()) as Currency;
+
                 }
                 catch (Exception e)
                 {

@@ -733,16 +733,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void DocDelete(object form)
         {
-            //if (Document.State != RowStatus.NewRow)
-            //    foreach (var r in Document.Rows)
-            //    {
-            //        if (r.LinkInvoice == null) continue;
-            //        MessageBox.Show("В ордере есть строки привязанные к счету, удаление не возможно.", "Запрос",
-            //            MessageBoxButton.OK,
-            //            MessageBoxImage.Stop);
-            //        return;
-            //    }
-
             var res = MessageBox.Show("Вы уверены, что хотите удалить данный документ?", "Запрос",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
@@ -773,7 +763,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     }
 
                     RecalcKontragentBalans.CalcBalans(dc, docdate);
-                    //orderManager.DeleteOrderIn(Document);
                     Form?.Close();
                     break;
                 case MessageBoxResult.No:

@@ -135,7 +135,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Properties
 
-       
         public List<ShipmentRowViewModel> ShipmentRowDeleted { set; get; }
 
 
@@ -362,7 +361,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
                 foreach (var s in delList) frm.gridRows.TotalSummary.Remove(s);
                 frm.tableViewRows.FormatConditions.Clear();
-                var notShippedFormatCondition = new FormatCondition()
+                var notShippedFormatCondition = new FormatCondition
                 {
                     FieldName = "Shipped",
                     ApplyToRow = true,
@@ -373,8 +372,19 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     ValueRule = ConditionRule.Equal,
                     Value1 = 0m
                 };
-                
-                var shippedFormatCondition = new FormatCondition()
+                var serviceFormatCondition = new FormatCondition
+                {
+                    FieldName = "IsUsluga",
+                    ApplyToRow = true,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Black
+                    },
+                    ValueRule = ConditionRule.Equal,
+                    Value1 = true
+                };
+
+                var shippedFormatCondition = new FormatCondition
                 {
                     Expression = "[Quantity] > [Shipped]",
                     FieldName = "Shipped",
@@ -386,7 +396,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 };
                 frm.tableViewRows.FormatConditions.Add(shippedFormatCondition);
                 frm.tableViewRows.FormatConditions.Add(notShippedFormatCondition);
-                
+                frm.tableViewRows.FormatConditions.Add(serviceFormatCondition);
             }
         }
 

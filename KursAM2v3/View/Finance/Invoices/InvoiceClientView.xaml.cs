@@ -168,8 +168,10 @@ namespace KursAM2.View.Finance.Invoices
         private void TableViewRows_OnCellValueChanged(object sender, CellValueChangedEventArgs e)
         {
             gridRows.UpdateTotalSummary();
+            tableViewRows.PostEditor();
             if (DataContext is ClientWindowViewModel ctx)
             {
+                ctx.CurrentRow.CalcRow();
                 ctx.Document.CalcDoc();
                 ctx.Document.RaisePropertyChanged("DilerSumma");
                 ctx.Document.RaisePropertyChanged("Summa");

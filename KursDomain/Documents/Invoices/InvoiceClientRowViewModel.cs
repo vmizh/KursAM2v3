@@ -675,6 +675,10 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
                 var r = p.Rows.First(_ => _.Nomenkl.DocCode == f.Nomenkl.DocCode);
                 p.SummaOtgruz += Math.Round(r.Summa * r.Quantity / f.DDT_KOL_RASHOD, 2);
             }
+
+            p.Entity.SF_KONTR_CRS_SUMMA = p.Rows.Sum(_ => _.Price*_.Quantity);
+            p.Entity.SF_CRS_SUMMA_K_OPLATE = p.Rows.Sum(_ => _.Price * _.Quantity);
+            p.Summa =  p.Rows.Sum(_ => _.Price*_.Quantity);
         }
 
         Shipped = IsUsluga ? Quantity : Entity.TD_24.Sum(_ => _.DDT_KOL_RASHOD);

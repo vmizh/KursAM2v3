@@ -402,7 +402,7 @@ namespace LayoutManager
                     Win.Width = 800;
                 }
             }
-            catch (XmlException xmlEx)
+            catch (XmlException)
             {
                 return;
             }

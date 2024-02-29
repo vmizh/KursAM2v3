@@ -59,12 +59,18 @@ namespace KursAM2.View.DialogUserControl
                          .Where(_ => _.DocCode != dcOut))
                 if (ItemsCollection.All(_ => _.DocCode != b.DocCode))
                 {
-                    ItemsCollection.Add(b);
+                    if (!isMustSurrency)
+                        ItemsCollection.Add(b);
+                    else if (((IDocCode)b.Currency).DocCode == currency?.DocCode)
+                    {
+                        ItemsCollection.Add(b);
+                    }
                 }
 
             CurrentItem = null;
         }
 
+        
 
         // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public ObservableCollection<BankAccount> ChildItemsCollection { set; get; }
@@ -80,38 +86,6 @@ namespace KursAM2.View.DialogUserControl
             {
                 if (Equals(myCurrentItem, value)) return;
                 myCurrentItem = value;
-                //ChildItemsCollection.Clear();
-                //if (myCurrentItem == null) return;
-                //if (excludeAccountDC != null)
-                //{
-                //    foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(_ =>
-                //                 ((IDocCode)_.Bank).DocCode == myCurrentItem?.DocCode
-                //                 && ((IDocCode)_.Bank).DocCode != excludeAccountDC))
-                //        if(currency == null)
-                //            ChildItemsCollection.Add(acc);
-                //        else
-                //        {
-                //            if (acc.Currency != null && ((IDocCode)acc.Currency).DocCode == currency?.DocCode)
-                //            {
-                //                ChildItemsCollection.Add(acc);
-                //            }
-                //        }
-                //}
-                //else
-                //{
-                //    if (currency == null)
-                //        foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(
-                //                     _ =>
-                //                         ((IDocCode)_.Bank).DocCode == myCurrentItem.DocCode))
-                //            ChildItemsCollection.Add(acc);
-                //    else
-                //        foreach (var acc in GlobalOptions.ReferencesCache.GetBankAccountAll().Cast<BankAccount>().Where(
-                //                     _ =>
-                //                         ((IDocCode)_.Bank).DocCode == myCurrentItem.DocCode))
-                //            if(((IDocCode)acc.Currency).DocCode == currency.DocCode)
-                //                ChildItemsCollection.Add(acc);
-                //}
-
                 RaisePropertyChanged();
             }
         }
@@ -142,7 +116,7 @@ namespace KursAM2.View.DialogUserControl
 
         public override bool IsOkAllow()
         {
-            return CurrentChildItem != null;
+            return CurrentItem != null;
         }
     }
 

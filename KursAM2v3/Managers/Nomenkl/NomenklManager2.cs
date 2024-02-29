@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Core;
 using Core.WindowsManager;
 using Data;
@@ -137,6 +138,45 @@ namespace KursAM2.Managers.Nomenkl
                 var ret = Context.Database.SqlQuery<NomenklQuantityInfo>(sql)
                     .ToList();
                 return ret;
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+                return null;
+            }
+        }
+        public async Task<List<NomenklQuantityInfo>> GetNomenklStoreQuantityAsync(decimal skladDC, DateTime dateStart,
+            DateTime dateEnd)
+        {
+            try
+            {
+                var sql = $"EXEC GetNomenklAllQuantityInfo {CustomFormat.DecimalToSqlDecimal(skladDC)}," +
+                          $"'{CustomFormat.DateToString(dateStart)}','{CustomFormat.DateToString(dateEnd)}'";
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    return await ctx.Database.SqlQuery<NomenklQuantityInfo>(sql)
+                        .ToListAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+                return null;
+            }
+        }
+
+        public async  Task<List<NomenklMoveInfo>> GetNomenklStoreMoveAsync(decimal skladDC, DateTime dateStart,
+            DateTime dateEnd)
+        {
+            try
+            {
+                var sql = $"EXEC GetNomenklAllMove {CustomFormat.DecimalToSqlDecimal(skladDC)}," +
+                          $"'{CustomFormat.DateToString(dateStart)}','{CustomFormat.DateToString(dateEnd)}'";
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    return await ctx.Database.SqlQuery<NomenklMoveInfo>(sql)
+                        .ToListAsync();
+                }
             }
             catch (Exception ex)
             {
