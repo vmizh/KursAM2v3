@@ -1,4 +1,6 @@
 using System;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Core.ViewModel.Base;
 using KursDomain.References;
 
@@ -33,7 +35,24 @@ namespace Calculates.Materials
         private decimal? myTovarDocDC;
         private string myTovarDocument;
         private int myTovarRowCode;
+        private string mySenderReceiverName;
         public int RowNumber { set; get; }
+
+        public ImageSource SenderReceiverIcon {
+            get;
+            set;
+        }
+
+        public string SenderReceiverName
+        {
+            get => mySenderReceiverName;
+            set
+            {
+                if (mySenderReceiverName == value) return;
+                mySenderReceiverName = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public int OperCode
         {

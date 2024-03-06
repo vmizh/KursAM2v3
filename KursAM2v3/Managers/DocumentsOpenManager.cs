@@ -243,6 +243,11 @@ namespace KursAM2.Managers
                     SaveLastOpenInfo(docType, osi.Document.Id, osi.Document.DocCode, osi.Document.CREATOR,
                         "", osi.Document.Description);
                     break;
+                case DocumentType.StoreOrderOut:
+                    var oso = OpenStoreOut(dc);
+                    SaveLastOpenInfo(docType, oso.Document.Id, oso.Document.DocCode, oso.Document.CREATOR,
+                        "", oso.Document.Description);
+                    break;
                 case DocumentType.Bank:
                     OpenBank(dc, parent);
                     break;
@@ -734,6 +739,22 @@ namespace KursAM2.Managers
         {
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(), null), dc);
             var form = new OrderInView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = form;
+            form.Show();
+            return ctx;
+        }
+        /// <summary>
+        ///     Расходный складской ордер
+        /// </summary>
+        /// <param name="dc"></param>
+        private static OrderOutWindowViewModel OpenStoreOut(decimal dc)
+        {
+            var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(), null), dc);
+            var form = new OrderOutView
             {
                 Owner = Application.Current.MainWindow,
                 DataContext = ctx

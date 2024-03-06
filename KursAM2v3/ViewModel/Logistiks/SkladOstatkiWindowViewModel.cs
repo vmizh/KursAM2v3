@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Calculates.Materials;
 using Core.ViewModel.Base;
+using DevExpress.Xpf.Core;
 using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks;
@@ -19,8 +23,13 @@ using KursDomain.RepositoryHelper;
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace KursAM2.ViewModel.Logistiks
 {
-    public class SkladOstatkiWindowViewModel : RSWindowViewModelBase
+    public sealed class SkladOstatkiWindowViewModel : RSWindowViewModelBase
     {
+
+        private readonly ImageSource KontrImage;
+
+        private readonly ImageSource StoreImage; 
+
         private NomenklOstatkiForSklad myCurrentNomenklForSklad;
         private NomenklOstatkiWithPrice myCurrentNomenklStore;
         private NomenklCalcCostOperation myCurrentOperation;
@@ -31,6 +40,20 @@ namespace KursAM2.ViewModel.Logistiks
 
         public SkladOstatkiWindowViewModel()
         {
+            LayoutName = "SkladOstatkiWindowViewModel";
+            WindowName = "Остатки товаров на складах";
+
+            SvgImageSourceExtension svgToImageSource = new SvgImageSourceExtension
+            {
+                Uri = new Uri(
+                    "pack://application:,,,/DevExpress.Images.v23.2;component/SvgImages/Business Objects/BO_Vendor.svg")
+            };
+            KontrImage = (ImageSource)svgToImageSource.ProvideValue(null);
+
+            svgToImageSource.Uri = new Uri(
+                "pack://application:,,,/DevExpress.Images.v23.2;component/SvgImages/Business Objects/BO_Order.svg");
+            StoreImage = (ImageSource)svgToImageSource.ProvideValue(null);
+
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             myIsPeriodSet = false;
@@ -239,6 +262,9 @@ namespace KursAM2.ViewModel.Logistiks
                     // ReSharper disable once PossibleInvalidOperationException
                     DocumentsOpenManager.Open(DocumentType.StoreOrderIn, (decimal)CurrentOperation.TovarDocDC);
                     break;
+                case 2:
+                    DocumentsOpenManager.Open(DocumentType.StoreOrderIn, (decimal)CurrentOperation.TovarDocDC);
+                    break;
                 case 5:
                     // ReSharper disable once PossibleInvalidOperationException
                     DocumentsOpenManager.Open(DocumentType.InventoryList, (decimal)CurrentOperation.TovarDocDC);
@@ -246,6 +272,12 @@ namespace KursAM2.ViewModel.Logistiks
                 case 12:
                     // ReSharper disable once PossibleInvalidOperationException
                     DocumentsOpenManager.Open(DocumentType.Waybill, (decimal)CurrentOperation.TovarDocDC);
+                    break;
+                case 19:
+                    DocumentsOpenManager.Open(DocumentType.NomenklTransfer, CurrentOperation.Id);
+                    break;
+                case 20:
+                    DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)CurrentOperation.FinDocumentDC);
                     break;
             }
         }
@@ -262,6 +294,13 @@ namespace KursAM2.ViewModel.Logistiks
                     // ReSharper disable once PossibleInvalidOperationException
                     DocumentsOpenManager.Open(DocumentType.InvoiceClient, (decimal)CurrentOperation.FinDocumentDC);
                     break;
+                case 20:
+                    DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)CurrentOperation.FinDocumentDC);
+                    break;
+                case 19:
+                    DocumentsOpenManager.Open(DocumentType.NomenklTransfer, CurrentOperation.Id);
+                    break;
+
             }
         }
 
@@ -286,10 +325,22 @@ namespace KursAM2.ViewModel.Logistiks
                 NomenklOperations.Clear();
                 var data = clc.GetOperations(CurrentNomenklStore.Nomenkl.DocCode, false);
                 if (data == null || data.Count <= 0) return;
-                foreach (var op in data)
+                decimal nakop = 0;
+                foreach (var op in data.OrderBy(_ => _.DocDate).ThenByDescending(_ => _.QuantityIn))
                 {
-                    if(CurrentWarehouse.DocCode == op.SkladIn?.DocCode || CurrentWarehouse.DocCode == op.SkladOut?.DocCode)
+                    op.SenderReceiverIcon = (op.KontrInName ?? op.KontrOutName) == null ? StoreImage : KontrImage;
+                    op.SenderReceiverName = (op.KontrInName ?? op.KontrOutName) ??
+                                            (op.SkladInName == CurrentWarehouse.Name
+                                                ? op.SkladOutName
+                                                : op.SkladInName);
+                    if ((CurrentWarehouse.DocCode == op.SkladIn?.DocCode && op.OperCode != 2) ||
+                        (CurrentWarehouse.DocCode == op.SkladOut?.DocCode && op.OperCode != 1))
+                    {
+                        nakop +=  op.QuantityIn - op.QuantityOut;
+                        op.QuantityNakopit = nakop;
                         NomenklOperations.Add(op);
+                    }
+
                 }
             }
         }

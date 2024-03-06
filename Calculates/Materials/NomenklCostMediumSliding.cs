@@ -59,7 +59,7 @@ namespace Calculates.Materials
                             CalcPrice = 0,
                             CalcPriceNaklad = 0,
                             DocDate = d.SD_24.DD_DATE,
-                            KontragentIn =
+                            KontragentIn =  
                                 (Kontragent) GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_POL_DC),
                             KontragentOut =
                                 (Kontragent) GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC),
@@ -186,7 +186,8 @@ namespace Calculates.Materials
                             SummaOutWithNaklad = d.PriceOut * d.Quantity,
                             QuantityNakopit = 0,
                             TovarDocDC = -1,
-                            NomenklDC = nomDC
+                            NomenklDC = nomDC,
+                            Id = d.DocId
                         };
                         ret.Operations.Add(newTransOper);
                     }
@@ -219,7 +220,8 @@ namespace Calculates.Materials
                                 SummaOutWithNaklad = 0,
                                 QuantityNakopit = 0,
                                 TovarDocDC = -1,
-                                NomenklDC = d.NomenklInDC
+                                NomenklDC = d.NomenklInDC,
+                                Id = d.DocId
                             };
                             ret.Operations.Add(newTransOper);
                         }
@@ -251,7 +253,8 @@ namespace Calculates.Materials
                                 SummaOutWithNaklad = d.PriceOut * d.Quantity,
                                 QuantityNakopit = 0,
                                 TovarDocDC = -1,
-                                NomenklDC = d.NomenklOutDC
+                                NomenklDC = d.NomenklOutDC,
+                                Id = d.DocId
                             };
                             ret.Operations.Add(newTransOper);
                         }
@@ -280,7 +283,7 @@ namespace Calculates.Materials
                         KontragentIn = null,
                         KontragentOut = null,
                         OperationName = "Валютный перевод товара(из счета)",
-                        OperCode = 19,
+                        OperCode = 20,
                         QuantityIn = d.Quantity,
                         QuantityOut = 0,
                         DocPrice = 0,
@@ -293,7 +296,9 @@ namespace Calculates.Materials
                         SummaOutWithNaklad = 0,
                         QuantityNakopit = 0,
                         TovarDocDC = -1,
-                        NomenklDC = nomDC
+                        NomenklDC = nomDC,
+                        FinDocumentDC = d.DOC_CODE
+
                     };
                     ret.Operations.Add(newTransOper);
                 }
@@ -311,7 +316,7 @@ namespace Calculates.Materials
                         KontragentIn = null,
                         KontragentOut = null,
                         OperationName = "Валютный перевод товара(из счета)",
-                        OperCode = 19,
+                        OperCode = 20,
                         QuantityIn = 0,
                         QuantityOut = d.Quantity,
                         DocPrice = 0,
@@ -324,7 +329,8 @@ namespace Calculates.Materials
                         SummaOutWithNaklad = 0,
                         QuantityNakopit = 0,
                         TovarDocDC = -1,
-                        NomenklDC = nomDC
+                        NomenklDC = nomDC,
+                        FinDocumentDC = d.DOC_CODE
                     };
                     ret.Operations.Add(newTransOper);
                 }
@@ -368,7 +374,7 @@ namespace Calculates.Materials
                         KontragentIn = null,
                         KontragentOut = null,
                         OperationName = "Акт списания товара",
-                        OperCode = 19,
+                        OperCode = 72,
                         QuantityIn = 0,
                         QuantityOut = d.QuantityOut,
                         DocPrice = 0,

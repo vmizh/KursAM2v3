@@ -3,10 +3,14 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Xpf.Core.ConditionalFormatting;
+using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
 using KursAM2.Managers.Base;
+using KursAM2.View.Base;
 using KursAM2.View.Finance;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
@@ -241,6 +245,40 @@ namespace KursAM2.ViewModel.Finance
             ctx.Document = ctx.Manager.New();
             frm.Show();
             frm.DataContext = ctx;
+        }
+
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            if (Form is StandartSearchView frm)
+            {
+                frm.gridDocumentsTableView.FormatConditions.Clear();
+                var resultMinus = new FormatCondition
+                {
+                    FieldName = "VZ_PRIBIL_UCH_CRS_SUM",
+                    ApplyToRow = false,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Red
+                    },
+                    ValueRule = ConditionRule.Less,
+                    Value1 = 0m
+                };
+                var resultPlus = new FormatCondition
+                {
+                    FieldName = "VZ_PRIBIL_UCH_CRS_SUM",
+                    ApplyToRow = false,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Green
+                    },
+                    ValueRule = ConditionRule.Greater,
+                    Value1 = 0m
+                };
+                frm.gridDocumentsTableView.FormatConditions.Add(resultMinus);
+                frm.gridDocumentsTableView.FormatConditions.Add(resultPlus);
+
+            }
         }
 
         #endregion
