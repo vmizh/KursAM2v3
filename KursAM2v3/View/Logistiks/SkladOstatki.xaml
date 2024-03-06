@@ -61,8 +61,7 @@
                                     <dxg:GridColumn Header="Остаток" FieldName="Quantity" Name="tbl1_col6"
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
-                                            <dxe:CalcEditSettings DisplayFormat="n2"
-                                                                  MaskUseAsDisplayFormat="True"
+                                            <dxe:CalcEditSettings DisplayFormat="n1"
                                                                   AllowDefaultButton="False"
                                                                   IsTextEditable="False" />
                                         </dxg:GridColumn.EditSettings>
@@ -73,7 +72,6 @@
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
                                             <dxe:CalcEditSettings DisplayFormat="n2"
-                                                                  MaskUseAsDisplayFormat="True"
                                                                   AllowDefaultButton="False"
                                                                   IsTextEditable="False" />
                                         </dxg:GridColumn.EditSettings>
@@ -82,7 +80,6 @@
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
                                             <dxe:CalcEditSettings DisplayFormat="n2"
-                                                                  MaskUseAsDisplayFormat="True"
                                                                   AllowDefaultButton="False"
                                                                   IsTextEditable="False" />
                                         </dxg:GridColumn.EditSettings>
@@ -91,7 +88,6 @@
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
                                             <dxe:CalcEditSettings DisplayFormat="n2"
-                                                                  MaskUseAsDisplayFormat="True"
                                                                   AllowDefaultButton="False"
                                                                   IsTextEditable="False" />
                                         </dxg:GridColumn.EditSettings>
@@ -100,7 +96,6 @@
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
                                             <dxe:CalcEditSettings DisplayFormat="n2"
-                                                                  MaskUseAsDisplayFormat="True"
                                                                   AllowDefaultButton="False"
                                                                   IsTextEditable="False" />
                                         </dxg:GridColumn.EditSettings>

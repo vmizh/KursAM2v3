@@ -234,9 +234,6 @@
     <Compile Include="Repositories\SignatureRepository.cs" />
     <Compile Include="Resource\ErrorContentConverter.cs" />
     <Compile Include="Resource\ErrorToBrushConverter.cs" />
-    <Compile Include="Tests\TreeControlFluentTests.xaml.cs">
-      <DependentUpon>TreeControlFluentTests.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ViewModel\Dogovora\DogovorOfSupplierWindowViewModel.cs" />
     <Compile Include="ViewModel\Dogovora\DogovorOfSupplierSearchViewModel.cs" />
     <Compile Include="ViewModel\Dogovora\DogovorResult.cs" />
@@ -1162,6 +1159,7 @@
   <ItemGroup>
     <Folder Include="Properties\DataSources\" />
     <Folder Include="Startup\" />
+    <Folder Include="Tests\" />
     <Folder Include="View\UserControls\" />
   </ItemGroup>
   <ItemGroup>
@@ -1196,10 +1194,6 @@
     <Page Include="Resource\Window.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Tests\TreeControlFluentTests.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ViewModel\Finance\SelectCashBankDialogView.xaml">
       <SubType>Designer</SubType>
