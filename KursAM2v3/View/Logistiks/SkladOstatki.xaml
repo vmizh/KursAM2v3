@@ -8,14 +8,14 @@
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:control1="clr-namespace:Core.Control;assembly=KursDomain"
     xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
-    Title="Остатки товаров по складам" Height="350" Width="578">
+    Title="{Binding WindowName}" Height="350" Width="578">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
                    Foreground="{Binding DatabaseColor}"
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
-    <DockPanel>
+    <DockPanel Style="{StaticResource DXServices}">
         <control:WindowMenu DockPanel.Dock="Top" />
             <StackPanel Margin="0,0,0,5"
                         DockPanel.Dock="Top"
@@ -157,7 +157,19 @@
                                                     ReadOnly="True" />
                                     <dxg:GridColumn Name="colk_31" Header="Товарный документ" FieldName="TovarDocument"
                                                     ReadOnly="True" />
-                                    <dxg:GridColumn Name="colk_3" Header="Склад (отправитель)" FieldName="SkladOutName"
+                                    <dxg:GridColumn Name="colk_4" Header="Отправитель/получатель" 
+                                                    ReadOnly="True">
+                                        <dxg:GridColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <Image Height="16" Width="16" Source="{Binding RowData.Row.SenderReceiverIcon}"/>
+                                                    <TextBlock Text="{Binding RowData.Row.SenderReceiverName}"/>  
+                                                </StackPanel>
+
+                                            </DataTemplate>
+                                        </dxg:GridColumn.CellTemplate>
+                                    </dxg:GridColumn>
+                                    <!--<dxg:GridColumn Name="colk_3" Header="Склад (отправитель)" FieldName="SkladOutName"
                                                     ReadOnly="True" />
                                     <dxg:GridColumn Name="colk_4" Header="Склад (получатель)" FieldName="SkladInName"
                                                     ReadOnly="True" />
@@ -166,7 +178,7 @@
                                                     ReadOnly="True" />
                                     <dxg:GridColumn Name="colk_6" Header="Контрагент (получатель)"
                                                     FieldName="KontrInName"
-                                                    ReadOnly="True" />
+                                                    ReadOnly="True" />-->
                                     <dxg:GridColumn Name="colk_7_1" Header="Цена" FieldName="DocPrice"
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>

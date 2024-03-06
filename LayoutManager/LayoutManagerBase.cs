@@ -269,7 +269,7 @@ namespace LayoutManager
                         dl.RestoreLayoutFromStream(ms);
                         isLoad = true;
                     }
-
+                    
                     if (!isLoad)
                     {
                         DXSerializer.Deserialize(LayoutControl, ms, "Kurs");

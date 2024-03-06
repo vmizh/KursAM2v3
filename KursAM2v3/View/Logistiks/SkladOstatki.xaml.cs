@@ -1,5 +1,4 @@
-﻿using DevExpress.Xpf.Core;
-using KursDomain;
+﻿using KursDomain;
 using LayoutManager;
 
 namespace KursAM2.View.Logistiks
@@ -11,14 +10,16 @@ namespace KursAM2.View.Logistiks
     {
         public SkladOstatki()
         {
-            InitializeComponent(); 
-            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
-            Closing += (o, e) => { LayoutManager.Save(); };
-            Loaded += (operGridControl, e) => { LayoutManager.Load(); };
+            InitializeComponent();
+            LayoutManager =
+                new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, mainLayoutControl);
+            //Closing += (o, e) => { LayoutManager.Save(); };
+            //Loaded += (operGridControl, e) => { LayoutManager.Load(); };
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
+
         public void SaveLayout()
         {
             LayoutManager.Save();

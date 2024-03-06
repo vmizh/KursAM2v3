@@ -53,6 +53,11 @@ public enum DocumentType
     /// </summary>
     [Display(Name = "Приходный складской ордер")]
     StoreOrderIn = 357,
+    /// <summary>
+    ///     Приходный складской ордер
+    /// </summary>
+    [Display(Name = "Приходный складской ордер")]
+    StoreOrderOut = 358,
 
     /// <summary>
     ///     Счет-фактура клиентам
