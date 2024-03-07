@@ -4,15 +4,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Entity;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
-using DevExpress.Data.Linq.Helpers;
 using KursAM2.Managers;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
@@ -39,12 +36,26 @@ namespace KursAM2.ViewModel.Logistiks
         private NomPriceDocumentViewModel myCurrentDocument;
         private NomenklMoveOnSkladViewModel myCurrentNomenklMoveItem;
         private KursDomain.References.Warehouse myCurrentSklad;
+
+        private ObservableCollection<NomPriceDocumentViewModel> myDocumentList =
+            new ObservableCollection<NomPriceDocumentViewModel>();
+
         private DateTime myEndDate;
         private Visibility myIsDataLoaded;
+        private bool myIsNotWorkExecute = true;
         private bool myIsShowAll;
+
+        private ObservableCollection<NomenklMoveOnSkladViewModel> myNomenklMoveList =
+            new ObservableCollection<NomenklMoveOnSkladViewModel>();
+
+        private ObservableCollection<NomenklMoveOnSkladViewModel> myNomenklMoveListTemp =
+            new ObservableCollection<NomenklMoveOnSkladViewModel>();
+
         private int myProgressLoaded;
         private bool myShowProgress;
+        private List<KursDomain.References.Warehouse> mySklads = new List<KursDomain.References.Warehouse>();
         private DateTime myStartDate;
+
 
         public NomenklMoveOnSkladWindowViewModel()
         {
@@ -86,6 +97,17 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
+        public bool IsNotWorkExecute
+        {
+            get => myIsNotWorkExecute;
+            set
+            {
+                if (value == myIsNotWorkExecute) return;
+                myIsNotWorkExecute = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public Visibility IsDataNotLoaded =>
             IsDataLoaded == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
 
@@ -112,17 +134,49 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public ObservableCollection<NomenklMoveOnSkladViewModel> NomenklMoveList { set; get; } =
-            new ObservableCollection<NomenklMoveOnSkladViewModel>();
+        public ObservableCollection<NomenklMoveOnSkladViewModel> NomenklMoveList
+        {
+            set
+            {
+                if (Equals(value, myNomenklMoveList)) return;
+                myNomenklMoveList = value;
+                RaisePropertyChanged();
+            }
+            get => myNomenklMoveList;
+        }
 
-        public ObservableCollection<NomenklMoveOnSkladViewModel> NomenklMoveListTemp { set; get; } =
-            new ObservableCollection<NomenklMoveOnSkladViewModel>();
+        public ObservableCollection<NomenklMoveOnSkladViewModel> NomenklMoveListTemp
+        {
+            set
+            {
+                if (Equals(value, myNomenklMoveListTemp)) return;
+                myNomenklMoveListTemp = value;
+                RaisePropertyChanged();
+            }
+            get => myNomenklMoveListTemp;
+        }
 
-        public ObservableCollection<NomPriceDocumentViewModel> DocumentList { get; set; } =
-            new ObservableCollection<NomPriceDocumentViewModel>();
+        public ObservableCollection<NomPriceDocumentViewModel> DocumentList
+        {
+            get => myDocumentList;
+            set
+            {
+                if (Equals(value, myDocumentList)) return;
+                myDocumentList = value;
+                RaisePropertyChanged();
+            }
+        }
 
-        public List<KursDomain.References.Warehouse> Sklads { set; get; } =
-            new List<KursDomain.References.Warehouse>();
+        public List<KursDomain.References.Warehouse> Sklads
+        {
+            set
+            {
+                if (Equals(value, mySklads)) return;
+                mySklads = value;
+                RaisePropertyChanged();
+            }
+            get => mySklads;
+        }
 
         public NomenklMoveOnSkladViewModel CurrentNomenklMoveItem
         {
@@ -624,8 +678,9 @@ namespace KursAM2.ViewModel.Logistiks
 
                 var docs7 = ctx.TransferOutBalansRows
                     .Include(_ => _.TransferOutBalans)
-                    .Where(_ => _.TransferOutBalans.DocDate >= StartDate && _.TransferOutBalans.DocDate <= EndDate 
-                    && _.NomenklDC == CurrentNomenklMoveItem.Nomenkl.DocCode)
+                    .Where(_ => _.TransferOutBalans.DocDate >= StartDate && _.TransferOutBalans.DocDate <= EndDate
+                                                                         && _.NomenklDC == CurrentNomenklMoveItem
+                                                                             .Nomenkl.DocCode)
                     .ToList();
                 foreach (var doc in docs7)
                 {
@@ -1025,10 +1080,12 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = -doc.Quantity * prc
                     });
                 }
+
                 var docs7 = ctx.TransferOutBalansRows
                     .Include(_ => _.TransferOutBalans)
                     .Where(_ => _.TransferOutBalans.DocDate >= StartDate && _.TransferOutBalans.DocDate <= EndDate
-                                                                         && _.NomenklDC == CurrentNomenklMoveItem.Nomenkl.DocCode
+                                                                         && _.NomenklDC == CurrentNomenklMoveItem
+                                                                             .Nomenkl.DocCode
                                                                          && _.TransferOutBalans.WarehouseDC == storeDC)
                     .ToList();
                 foreach (var doc in docs7)
@@ -1220,16 +1277,15 @@ namespace KursAM2.ViewModel.Logistiks
                     // ReSharper disable once PossibleInvalidOperationException
                     skladsDict[(decimal)dc] = new List<NomenklQuantityInfo>();
 
-                List<Task> tasks = new List<Task>();
+                var tasks = new List<Task>();
                 foreach (var sdc in sklDCList)
-                {
-                    tasks.Add( Task.Run(async () =>
+                    tasks.Add(Task.Run(async () =>
                     {
                         skladsDict[(decimal)sdc] = await
                             nomenklManager.GetNomenklStoreQuantityAsync((decimal)sdc, StartDate, EndDate);
-                        moveDict[(decimal)sdc] = await nomenklManager.GetNomenklStoreMoveAsync((decimal)sdc, StartDate, EndDate);
+                        moveDict[(decimal)sdc] =
+                            await nomenklManager.GetNomenklStoreMoveAsync((decimal)sdc, StartDate, EndDate);
                     }));
-                }
 
                 //Parallel.ForEach(tasks, task =>
                 //{
@@ -1530,18 +1586,20 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 Form.Dispatcher.Invoke(() =>
                 {
+                    IsNotWorkExecute = false;
+                    IsCanRefresh = false;
                     ((NomenklMoveOnSklad)Form).loadingIndicator.Visibility = Visibility.Visible;
                 });
                 if (CurrentSklad == null)
-                {
                     //await LoadForAllSklads4Async();
                     LoadForAllSklads4();
-                }
                 else
                     LoadForCurrentSklad4();
                 Form.Dispatcher.Invoke(() =>
                 {
                     ((NomenklMoveOnSklad)Form).loadingIndicator.Visibility = Visibility.Hidden;
+                    IsNotWorkExecute = true;
+                    IsCanRefresh = true;
                 });
             });
         }

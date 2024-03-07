@@ -31,13 +31,18 @@
                         x:Name="StartDate"
                         EditValue="{Binding StartDate, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                         HorizontalAlignment="Left"
-                        Margin="5,5,0,0" VerticalAlignment="Top" Width="150" />
+                        Margin="5,5,0,0" 
+                        VerticalAlignment="Top" Width="150"
+                        IsEnabled="{Binding IsNotWorkExecute}"/>
                     <Label VerticalAlignment="Center" Margin="5,5,0,0">по</Label>
                     <dxe:DateEdit
                         x:Name="EndDate"
                         EditValue="{Binding EndDate, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                         HorizontalAlignment="Left"
-                        Margin="5,5,0,0" VerticalAlignment="Top" Width="150" />
+                        Margin="5,5,0,0" 
+                        VerticalAlignment="Top" 
+                        Width="150"
+                        IsEnabled="{Binding IsNotWorkExecute}"/>
                 </StackPanel>
             </StackPanel>
             <StackPanel Margin="5,5,0,10" Orientation="Horizontal">
@@ -49,9 +54,11 @@
                     EditValue="{Binding CurrentSklad, UpdateSourceTrigger=PropertyChanged}"
                     DisplayMember="Name"
                     Width="400"
-                    Height="20" />
+                    Height="20"
+                    IsEnabled="{Binding IsNotWorkExecute}"/>
                 <dxe:CheckEdit Margin="10,0,0,0"
-                               EditValue="{Binding IsShowAll, UpdateSourceTrigger=PropertyChanged}">
+                               EditValue="{Binding IsShowAll, UpdateSourceTrigger=PropertyChanged}"
+                               IsEnabled="{Binding IsNotWorkExecute}">
                     Показать все
                 </dxe:CheckEdit>
             </StackPanel>

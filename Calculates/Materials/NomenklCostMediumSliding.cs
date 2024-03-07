@@ -68,7 +68,7 @@ namespace Calculates.Materials
                             QuantityIn = d.DDT_KOL_PRIHOD,
                             QuantityOut = d.DDT_KOL_RASHOD,
                             // ReSharper disable once PossibleInvalidOperationException
-                            DocPrice = (decimal) (d.SD_24.DD_TYPE_DC == 2010000005 ? d.DDT_TAX_CENA : 0),
+                            DocPrice = (decimal) (d.SD_24.DD_TYPE_DC == 2010000005 ? (d.DDT_TAX_CENA ?? 0) : 0),
                             Naklad = 0,
                             SkladIn =
                                 GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_POL_DC) as Warehouse,
@@ -79,8 +79,8 @@ namespace Calculates.Materials
                                     ? d.DDT_TAX_CRS_CENA ?? 0
                                     : d.TD_26 != null
                                         ? d.SD_24.DD_TYPE_DC == 2010000005
-                                            ? d.DDT_TAX_CENA * d.DDT_KOL_PRIHOD
-                                            : d.TD_26.SFT_SUMMA_K_OPLATE /
+                                            ? (d.DDT_TAX_CENA ?? 0) * d.DDT_KOL_PRIHOD
+                                            : (d.TD_26.SFT_SUMMA_K_OPLATE ?? 0) /
                                             (d.TD_26.SFT_KOL == 0 ? 1 : d.TD_26.SFT_KOL) * d.DDT_KOL_PRIHOD
                                         : 0),
                             SummaInWithNaklad =
@@ -88,8 +88,8 @@ namespace Calculates.Materials
                                     ? d.DDT_TAX_CRS_CENA ?? 0
                                     : d.TD_26 != null
                                         ? d.SD_24.DD_TYPE_DC == 2010000005
-                                            ? d.DDT_TAX_CENA * d.DDT_KOL_PRIHOD
-                                            : (d.TD_26.SFT_SUMMA_K_OPLATE + d.TD_26?.SFT_SUMMA_NAKLAD /
+                                            ? (d.DDT_TAX_CENA ?? 0) * d.DDT_KOL_PRIHOD
+                                            : ((d.TD_26.SFT_SUMMA_K_OPLATE ?? 0) + (d.TD_26?.SFT_SUMMA_NAKLAD ?? 0) /
                                                 (d.TD_26.SFT_KOL == 0 ? 1 : d.TD_26.SFT_KOL)) * d.DDT_KOL_PRIHOD
                                         : 0),
                             SummaOut = 0,
@@ -103,7 +103,7 @@ namespace Calculates.Materials
                             oper.FinDocument =
                                 $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}";
                             oper.Naklad = (d.TD_26.SFT_SUMMA_NAKLAD ?? 0) / d.TD_26.SFT_KOL;
-                            oper.DocPrice = (decimal) d.TD_26.SFT_ED_CENA;
+                            oper.DocPrice = d.TD_26.SFT_ED_CENA ?? 0;
                         }
 
                         if (d.TD_84 != null)

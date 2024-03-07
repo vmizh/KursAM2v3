@@ -333,10 +333,21 @@ namespace KursAM2.ViewModel.Logistiks
                                             (op.SkladInName == CurrentWarehouse.Name
                                                 ? op.SkladOutName
                                                 : op.SkladInName);
-                    if ((CurrentWarehouse.DocCode == op.SkladIn?.DocCode && op.OperCode != 2) ||
-                        (CurrentWarehouse.DocCode == op.SkladOut?.DocCode && op.OperCode != 1))
+                    if (string.IsNullOrEmpty(op.SenderReceiverName))
+                        op.SenderReceiverName = CurrentWarehouse.Name;
+                    if (op.OperCode == 2 || op.OperCode == 1)
                     {
-                        nakop +=  op.QuantityIn - op.QuantityOut;
+                        if ((CurrentWarehouse.DocCode == op.SkladIn?.DocCode && op.OperCode != 2) ||
+                            (CurrentWarehouse.DocCode == op.SkladOut?.DocCode && op.OperCode != 1))
+                        {
+                            nakop += op.QuantityIn - op.QuantityOut;
+                            op.QuantityNakopit = nakop;
+                            NomenklOperations.Add(op);
+                        }
+                    }
+                    else
+                    {
+                        nakop += op.QuantityIn - op.QuantityOut;
                         op.QuantityNakopit = nakop;
                         NomenklOperations.Add(op);
                     }
