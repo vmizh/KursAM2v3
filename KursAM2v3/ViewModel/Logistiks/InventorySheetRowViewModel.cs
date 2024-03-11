@@ -116,10 +116,20 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 if ((decimal)(Entity.DDT_OSTAT_NOV ?? 0) == value) return;
                 Entity.DDT_OSTAT_NOV = (double?)value;
-                if (Difference > 0)
-                    Entity.DDT_KOL_PRIHOD = Difference;
-                else
-                    Entity.DDT_KOL_RASHOD = Difference;
+                if (Difference != 0)
+                {
+                    if(Difference > 0)
+                    {
+                        Entity.DDT_KOL_PRIHOD = Difference;
+                        Entity.DDT_KOL_RASHOD = 0;
+                    }
+                    else
+                    {
+                        Entity.DDT_KOL_RASHOD = -Difference;
+                        Entity.DDT_KOL_PRIHOD = 0;
+                    }
+                }
+
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Difference));
                 RaisePropertyChanged(nameof(Summa));

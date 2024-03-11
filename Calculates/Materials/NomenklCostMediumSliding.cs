@@ -68,30 +68,30 @@ namespace Calculates.Materials
                             QuantityIn = d.DDT_KOL_PRIHOD,
                             QuantityOut = d.DDT_KOL_RASHOD,
                             // ReSharper disable once PossibleInvalidOperationException
-                            DocPrice = (decimal) (d.SD_24.DD_TYPE_DC == 2010000005 ? (d.DDT_TAX_CENA ?? 0) : 0),
+                            DocPrice = d.SD_24.DD_TYPE_DC == 2010000005 ? (d.DDT_TAX_CENA ?? 0) : 0,
                             Naklad = 0,
                             SkladIn =
                                 GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_POL_DC) as Warehouse,
                             SkladOut =
                                 GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_OTPR_DC) as Warehouse,
                             SummaIn =
-                                (decimal) ((d.SD_24.DD_VOZVRAT ?? 0) == 1
+                                (d.SD_24.DD_VOZVRAT ?? 0) == 1
                                     ? d.DDT_TAX_CRS_CENA ?? 0
                                     : d.TD_26 != null
                                         ? d.SD_24.DD_TYPE_DC == 2010000005
                                             ? (d.DDT_TAX_CENA ?? 0) * d.DDT_KOL_PRIHOD
                                             : (d.TD_26.SFT_SUMMA_K_OPLATE ?? 0) /
                                             (d.TD_26.SFT_KOL == 0 ? 1 : d.TD_26.SFT_KOL) * d.DDT_KOL_PRIHOD
-                                        : 0),
+                                        : 0,
                             SummaInWithNaklad =
-                                (decimal) ((d.SD_24.DD_VOZVRAT ?? 0) == 1
+                                (d.SD_24.DD_VOZVRAT ?? 0) == 1
                                     ? d.DDT_TAX_CRS_CENA ?? 0
                                     : d.TD_26 != null
                                         ? d.SD_24.DD_TYPE_DC == 2010000005
                                             ? (d.DDT_TAX_CENA ?? 0) * d.DDT_KOL_PRIHOD
                                             : ((d.TD_26.SFT_SUMMA_K_OPLATE ?? 0) + (d.TD_26?.SFT_SUMMA_NAKLAD ?? 0) /
                                                 (d.TD_26.SFT_KOL == 0 ? 1 : d.TD_26.SFT_KOL)) * d.DDT_KOL_PRIHOD
-                                        : 0),
+                                        : 0,
                             SummaOut = 0,
                             SummaOutWithNaklad = 0,
                             QuantityNakopit = 0,

@@ -23,6 +23,10 @@ using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
+using KursDomain.Repository.NomenklRepository;
+using KursDomain.Repository.WarehouseRepository;
+using KursDomain.ViewModel.Base2;
+using KursDomain.ViewModel.Dialog;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -35,6 +39,7 @@ namespace KursAM2.ViewModel.Logistiks
             get => myIsNomenklContains;
             set
             {
+                // ReSharper disable once RedundantCheckBeforeAssignment
                 if (myIsNomenklContains == value) return;
                 myIsNomenklContains = value;
             }
@@ -54,13 +59,15 @@ namespace KursAM2.ViewModel.Logistiks
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
-        private readonly NomenklManager myNomenklManager = new NomenklManager();
         private InventorySheetRowViewModel myCurrentNomenkl;
         private NomenklGroup2 myCurrentNomenklGroup;
+
         private InventorySheetViewModel myDocument;
-        private bool myIsAllNomekl;
+
+        //private bool myIsAllNomekl;
         private bool myIsGroupEnabled;
-        private ObservableCollection<InventorySheetRowViewModel> myRows;
+
+        private readonly INomenklRepository _NomenklRepository;
 
         #endregion
 
@@ -70,12 +77,14 @@ namespace KursAM2.ViewModel.Logistiks
         {
             GenericInventorySheetRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
             SD_24Repository = new SD_24Repository(UnitOfWork);
+            _NomenklRepository = new NomenklRepository(UnitOfWork.Context);
             // ReSharper disable once VirtualMemberCallInContructor
             IsDocNewCopyRequisiteAllow = true;
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
-            LoadNomenklGroup();
-            IsAllNomekl = true;
+            RefreshData();
+            //LoadNomenklGroup();
+            //IsAllNomekl = true;
         }
 
         public InventorySheetWindowViewModel(decimal? docCode = null) : this()
@@ -131,45 +140,46 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public bool IsAllNomekl
-        {
-            get => myIsAllNomekl;
-            set
-            {
-                if (myIsAllNomekl == value) return;
-                myIsAllNomekl = value;
-                IsGroupEnabled = !myIsAllNomekl;
-                if (!IsAllNomekl)
-                    UpdateNomenklGroupsForContainsNomenkls();
-                RaisePropertyChanged();
-                RaisePropertyChanged(nameof(Rows));
-            }
-        }
+        //public bool IsAllNomekl
+        //{
+        //    get => myIsAllNomekl;
+        //    set
+        //    {
+        //        if (myIsAllNomekl == value) return;
+        //        myIsAllNomekl = value;
+        //        IsGroupEnabled = !myIsAllNomekl;
+        //        if (!IsAllNomekl)
+        //            UpdateNomenklGroupsForContainsNomenkls();
+        //        RaisePropertyChanged();
+        //        RaisePropertyChanged(nameof(Rows));
+        //    }
+        //}
 
-        public ObservableCollection<InventorySheetRowViewModel> Rows
-        {
-            get
-            {
-                if (Document == null) return myRows;
-                if (IsAllNomekl)
-                    return Document.Rows;
-                if (CurrentNomenklGroup == null) return null;
-                var listDC = GetNomenklGroupChilds(CurrentNomenklGroup).Distinct().ToList();
-                var ret = new ObservableCollection<InventorySheetRowViewModel>();
-                foreach (var n in from dc in listDC
-                         from n in Document.Rows
-                         where ((IDocCode)n.Nomenkl.Group).DocCode == dc
-                         select n
-                        )
-                    ret.Add(n);
-                return ret;
-            }
-            set
-            {
-                myRows = value;
-                RaisePropertiesChanged();
-            }
-        }
+        public ObservableCollection<InventorySheetRowViewModel> Rows { get; set; } =
+            new ObservableCollection<InventorySheetRowViewModel>();
+        //{
+        //get
+        //{
+        //    if (Document == null) return myRows;
+        //    if (IsAllNomekl)
+        //        return Document.Rows;
+        //    if (CurrentNomenklGroup == null) return null;
+        //    var listDC = GetNomenklGroupChilds(CurrentNomenklGroup).Distinct().ToList();
+        //    var ret = new ObservableCollection<InventorySheetRowViewModel>();
+        //    foreach (var n in from dc in listDC
+        //             from n in Document.Rows
+        //             where ((IDocCode)n.Nomenkl.Group).DocCode == dc
+        //             select n
+        //            )
+        //        ret.Add(n);
+        //    return ret;
+        //}
+        //set
+        //{
+        //    myRows = value;
+        //    RaisePropertiesChanged();
+        //}
+        //}
 
         public ObservableCollection<NomenklGroup2> NomenklGroups { set; get; } =
             new ObservableCollection<NomenklGroup2>();
@@ -201,36 +211,36 @@ namespace KursAM2.ViewModel.Logistiks
 
         #region Methods
 
-        private List<decimal> GetNomenklGroupChilds(NomenklGroup2 grp)
-        {
-            var ret = new List<decimal>();
-            ret.AddRange(
-                Document.Rows.Where(_ => ((IDocCode)_.Nomenkl.Group).DocCode == grp.DocCode)
-                    .Select(_ => ((IDocCode)_.Nomenkl.Group).DocCode));
-            if (NomenklGroups.Count(_ => _.ParentDC == grp.DocCode) == 0) return ret;
-            foreach (var g in NomenklGroups.Where(_ => _.ParentDC == grp.DocCode))
-            {
-                var gg = GetNomenklGroupChilds(g);
-                if (gg != null && gg.Count > 0)
-                    ret.AddRange(gg);
-            }
+        //private List<decimal> GetNomenklGroupChilds(NomenklGroup2 grp)
+        //{
+        //    var ret = new List<decimal>();
+        //    ret.AddRange(
+        //        Document.Rows.Where(_ => ((IDocCode)_.Nomenkl.Group).DocCode == grp.DocCode)
+        //            .Select(_ => ((IDocCode)_.Nomenkl.Group).DocCode));
+        //    if (NomenklGroups.Count(_ => _.ParentDC == grp.DocCode) == 0) return ret;
+        //    foreach (var g in NomenklGroups.Where(_ => _.ParentDC == grp.DocCode))
+        //    {
+        //        var gg = GetNomenklGroupChilds(g);
+        //        if (gg != null && gg.Count > 0)
+        //            ret.AddRange(gg);
+        //    }
 
-            return ret;
-        }
+        //    return ret;
+        //}
 
-        private void LoadNomenklGroup()
-        {
-            NomenklGroups.Clear();
-            foreach (var ng in myNomenklManager.SelectNomenklGroups())
-                NomenklGroups.Add(new NomenklGroup2
-                {
-                    DocCode = ng.DocCode,
-                    Name = ng.Name,
-                    ParentDC = ng.ParentDC,
-                    IsNomenklContains = false
-                });
-            RaisePropertyChanged(nameof(NomenklGroups));
-        }
+        //private void LoadNomenklGroup()
+        //{
+        //    NomenklGroups.Clear();
+        //    foreach (var ng in myNomenklManager.SelectNomenklGroups())
+        //        NomenklGroups.Add(new NomenklGroup2
+        //        {
+        //            DocCode = ng.DocCode,
+        //            Name = ng.Name,
+        //            ParentDC = ng.ParentDC,
+        //            IsNomenklContains = false
+        //        });
+        //    RaisePropertyChanged(nameof(NomenklGroups));
+        //}
 
         private void SetIsContainNomenkl(NomenklGroup2 grp)
         {
@@ -239,20 +249,20 @@ namespace KursAM2.ViewModel.Logistiks
             SetIsContainNomenkl(NomenklGroups.FirstOrDefault(_ => _.DocCode == grp.ParentDC));
         }
 
-        private void UpdateNomenklGroupsForContainsNomenkls()
-        {
-            foreach (var ng in NomenklGroups)
-                ng.IsNomenklContains = false;
-            foreach (
-                var ng in
-                Document.Rows.Select(_ => ((IDocCode)_.Nomenkl.Group).DocCode)
-                    .Distinct()
-                    .ToList()
-                    .Select(ngDC => NomenklGroups.FirstOrDefault(_ => _.DocCode == ngDC))
-                    .Where(ng => ng != null))
-                SetIsContainNomenkl(ng);
-            RaisePropertyChanged(nameof(NomenklGroups));
-        }
+        //private void UpdateNomenklGroupsForContainsNomenkls()
+        //{
+        //    foreach (var ng in NomenklGroups)
+        //        ng.IsNomenklContains = false;
+        //    foreach (
+        //        var ng in
+        //        Document.Rows.Select(_ => ((IDocCode)_.Nomenkl.Group).DocCode)
+        //            .Distinct()
+        //            .ToList()
+        //            .Select(ngDC => NomenklGroups.FirstOrDefault(_ => _.DocCode == ngDC))
+        //            .Where(ng => ng != null))
+        //        SetIsContainNomenkl(ng);
+        //    RaisePropertyChanged(nameof(NomenklGroups));
+        //}
 
         #endregion
 
@@ -324,8 +334,9 @@ namespace KursAM2.ViewModel.Logistiks
 
             if (Document != null) Document = new InventorySheetViewModel(SD_24Repository.GetByDC(Document.DocCode));
 
-            LoadNomenklGroup();
+            //LoadNomenklGroup();
             CurrentNomenklGroup = null;
+            // ReSharper disable once PossibleNullReferenceException
             Document.myState = RowStatus.NotEdited;
         }
 
@@ -345,8 +356,28 @@ namespace KursAM2.ViewModel.Logistiks
                                                               && _.DD_DATE.Year == DateTime.Today.Year)
                             .Max(_ => _.DD_IN_NUM) + 1
                         : 1;
-                    foreach (var t in Document.Rows) t.DocCode = Document.DocCode;
                 }
+
+                foreach (var t in Document.Rows)
+                {
+                    t.DocCode = Document.DocCode;
+                    switch (t.Difference)
+                    {
+                        case 0:
+                            t.Entity.DDT_KOL_PRIHOD = 0;
+                            t.Entity.DDT_KOL_RASHOD = 0;
+                            break;
+                        case > 0:
+                            t.Entity.DDT_KOL_PRIHOD = t.Difference;
+                            t.Entity.DDT_KOL_RASHOD = 0;
+                            break;
+                        case < 0:
+                            t.Entity.DDT_KOL_PRIHOD = 0;
+                            t.Entity.DDT_KOL_RASHOD = -t.Difference;
+                            break;
+                    }
+                }
+
 
                 UnitOfWork.CreateTransaction();
 
@@ -508,7 +539,7 @@ namespace KursAM2.ViewModel.Logistiks
         {
             var noms = StandartDialogs.SelectNomenklsDialog();
             if (noms == null || noms.Count == 0) return;
-            IsAllNomekl = true;
+            //IsAllNomekl = true;
             if (Document.State != RowStatus.NewRow)
                 Document.myState = RowStatus.Edited;
             var code = Document.Rows.Any() ? Document.Rows.Max(_ => _.Code) + 1 : 1;
@@ -532,6 +563,45 @@ namespace KursAM2.ViewModel.Logistiks
                 Document.Rows.Add(newItem);
                 UnitOfWork.Context.TD_24.Add(newItem.Entity);
                 code++;
+            }
+        }
+
+        public ICommand AddWarehouseNomenklCommand
+        {
+            get { return new Command(AddWarehouseNomenkl, _ => Document.Warehouse != null && !Document.IsClosed); }
+        }
+
+        private void AddWarehouseNomenkl(object obj)
+        {
+            var code = Document.Rows.Any() ? Document.Rows.Max(_ => _.Code) + 1 : 1;
+            var vm = new WarehouseRemainsViewModel(Document.Date, Document.Warehouse,
+                new WarehouseRepository(GlobalOptions.GetEntities()));
+            vm.Show();
+            switch (vm.Result)
+            {
+                case KursDialogResult.Ok:
+                    foreach (var item in vm.SelectDocumentItems)
+                    {
+                        var newItem = new InventorySheetRowViewModel(new TD_24())
+                        {
+                            DocCode = Document.DocCode,
+                            Code = code,
+                            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(item.Nomenkl.DocCode) as Nomenkl,
+                            QuantityFact = item.Remain,
+                            QuantityCalc = item.Remain,
+                            State = RowStatus.NewRow,
+                            Id = Guid.NewGuid(),
+                            DocId = Document.Id,
+                            Parent = Document
+                        };
+                        Document.Rows.Add(newItem);
+                        UnitOfWork.Context.TD_24.Add(newItem.Entity);
+                        code++;
+                    }
+
+                    break;
+                case KursDialogResult.Cancel:
+                    break;
             }
         }
 
