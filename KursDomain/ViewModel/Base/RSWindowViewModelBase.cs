@@ -730,7 +730,14 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         get { return new Command(DocDelete, _ => IsDocDeleteAllow); }
     }
 
-    public ICommand UndoCommand => throw new NotImplementedException();
+    public ICommand UndoCommand {
+        get { return new Command(Undo, _ =>true); }
+    }
+
+    private void Undo(object obj)
+    {
+       
+    }
 
     public virtual void DocDelete(object form)
     {
