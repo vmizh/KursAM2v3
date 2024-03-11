@@ -122,6 +122,15 @@ public abstract class DialogViewModelBase<T> : ViewModelBase, IDialog<T>, ILayou
         Dialog.ShowDialog();
     }
 
+    public virtual void Show()
+    {
+        Dialog = new BaseDialogWindow
+        {
+            DataContext = this
+        };
+        Dialog.ShowDialog();
+    }
+
     public void Close()
     {
         Dialog.Close();

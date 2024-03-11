@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Core.WindowsManager;
 using Data;
-using DevExpress.Xpf.Core;
 using Helper;
 using KursDomain.Repository.Base;
 
@@ -118,6 +117,25 @@ public class NomenklRepository : KursGenericRepository<SD_83, ALFAMEDIAEntities,
 
             await SaveAsync();
             await Context.Database.ExecuteSqlCommandAsync(sql);
+    }
+
+    public void RecalcPrice(List<decimal> docCodes)
+    {
+        List<NOMENKL_RECALC> rows = docCodes
+            .Select(dc => new NOMENKL_RECALC() { NOM_DC = dc, OPER_DATE = startDate })
+            .ToList();
+        foreach (var r in from r in rows
+                 let old = Context.Set<NOMENKL_RECALC>().FirstOrDefault(_ => _.NOM_DC == r.NOM_DC)
+                 where old == null
+                 select r)
+        {
+            Context.Database.ExecuteSqlCommand($"INSERT INTO dbo.NOMENKL_RECALC(NOM_DC, OPER_DATE) " +
+                                               $"VALUES ({CustomFormat.DecimalToSqlDecimal(r.NOM_DC)}," +
+                                               $"'{CustomFormat.DateToString(r.OPER_DATE)}');");
+        }
+
+        Context.SaveChanges();
+        Context.Database.ExecuteSqlCommandAsync(sql);
     }
 
     public async Task<List<NomenklQuantityInfo>> GetNomenklQuantityAsync(decimal skladDC, decimal nomDC, DateTime dateStart, DateTime dateEnd)
