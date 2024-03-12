@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -22,29 +23,31 @@ namespace Helper
             image.Source = img;
             return image;
         }
+
         public static byte[] ImageToByteArray(System.Drawing.Image imageIn)
         {
             using (var ms = new MemoryStream())
             {
-                imageIn.Save(ms, System.Drawing.Imaging.ImageFormat.Gif);
+                imageIn.Save(ms, ImageFormat.Gif);
                 return ms.ToArray();
             }
         }
+
         public static ImageSource ByteToImageSource(byte[] imageData)
         {
-            BitmapImage biImg = new BitmapImage();
-            MemoryStream ms = new MemoryStream(imageData);
+            var biImg = new BitmapImage();
+            var ms = new MemoryStream(imageData);
             biImg.BeginInit();
             biImg.StreamSource = ms;
             biImg.EndInit();
             ImageSource imgSrc = biImg;
             return imgSrc;
         }
+
         public static byte[] ImageSourceToBytes(BitmapEncoder encoder, ImageSource imageSource)
         {
             byte[] bytes = null;
-            var bitmapSource = imageSource as BitmapSource;
-            if (bitmapSource != null)
+            if (imageSource is BitmapSource bitmapSource)
             {
                 encoder.Frames.Add(BitmapFrame.Create(bitmapSource));
                 using (var stream = new MemoryStream())
@@ -53,21 +56,23 @@ namespace Helper
                     bytes = stream.ToArray();
                 }
             }
+
             return bytes;
         }
 
         public static System.Drawing.Image Crop(this System.Drawing.Image image, Rectangle selection)
         {
-            Bitmap bmp = image as Bitmap;
             // Check if it is a bitmap:
-            if (bmp == null)
-                throw new ArgumentException("No valid bitmap");
+            if (image is Bitmap bmp)
+            {
+                var cropBmp = bmp.Clone(selection, bmp.PixelFormat);
+                // Release the resources:
+                image.Dispose();
+                return cropBmp;
+            }
+
             // Crop the image:
-            Bitmap cropBmp = bmp.Clone(selection, bmp.PixelFormat);
-            // Release the resources:
-            image.Dispose();
-            return cropBmp;
+            throw new ArgumentException("No valid bitmap");
         }
     }
-
 }

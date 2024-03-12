@@ -174,7 +174,7 @@ namespace KursAM2.ViewModel.Logistiks
                         // ReSharper disable once PossibleInvalidOperationException
                         To = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC)).Name
                     };
-                    newItem.SummaIn = (decimal)(doc.DDT_KOL_PRIHOD * doc.DDT_TAX_CRS_CENA);
+                    newItem.SummaIn = (decimal)(doc.DDT_KOL_PRIHOD * (doc.DDT_TAX_CRS_CENA ?? 0));
                     newItem.SummaOut = doc.DDT_KOL_PRIHOD *
                                        NomenklViewModel.PriceWithOutNaklad(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE);
                     newItem.SummaDelta = newItem.SummaIn - newItem.SummaOut;

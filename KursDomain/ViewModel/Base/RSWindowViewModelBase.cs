@@ -37,6 +37,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     // ReSharper disable once ArrangeObjectCreationWhenTypeEvident
     //public readonly WindowManager WinManager = new WindowManager();
     private bool myDialogResult;
+    private bool _versionUpdateStatus;
     public Window myForm;
 
     // ReSharper disable once MemberInitializerValueIgnored
@@ -73,6 +74,17 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         // ReSharper disable once VirtualMemberCallInConstructor
         Form = form;
         myIsCanRefresh = true;
+    }
+
+    public bool IsVersionUpdateStatus
+    {
+        get => _versionUpdateStatus;
+        set
+        {
+            if (_versionUpdateStatus == value) return;
+            _versionUpdateStatus = value;
+            RaisePropertyChanged();
+        }
     }
 
     protected bool IsDeleting = false;

@@ -727,7 +727,7 @@ namespace KursAM2.ViewModel.Logistiks
                         _ =>
                             _.DDT_NOMENKL_DC == CurrentNomenklMoveItem.Nomenkl.DocCode &&
                             _.SD_24.DD_DATE >= StartDate && _.SD_24.DD_DATE <= EndDate &&
-                            _.SD_24.DD_TYPE_DC == 2010000005 && _.DDT_KOL_PRIHOD > 0
+                            _.SD_24.DD_TYPE_DC == 2010000005 && (_.DDT_KOL_PRIHOD > 0 || _.DDT_KOL_RASHOD > 0)
                             && (_.SD_24.DD_SKLAD_POL_DC == storeDC || _.SD_24.DD_SKLAD_OTPR_DC == storeDC))
                     .ToList();
                 foreach (var doc in docs)

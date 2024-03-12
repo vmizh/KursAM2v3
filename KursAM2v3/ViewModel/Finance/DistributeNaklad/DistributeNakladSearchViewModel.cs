@@ -156,7 +156,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             get { return new Command(OnWindowLoaded, _ => true); }
         }
 
-        public void OnWindowLoaded()
+        public override void OnWindowLoaded(object obj)
         {
             LayoutManager = new Helper.LayoutManager(Form, LayoutSerializationService,
                 GetType().Name, null, GlobalOptions.KursSystemDBContext);

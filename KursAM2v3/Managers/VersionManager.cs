@@ -8,6 +8,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Media;
 using System.Xml;
+using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.View;
 using KursAM2.ViewModel;
@@ -39,10 +40,10 @@ namespace KursAM2.Managers
     public class VersionManager
     {
         public const string processName = "KursAM2v4";
-        private readonly MainWindowViewModel _windowsViewModel;
+        private readonly RSWindowViewModelBase _windowsViewModel;
         private readonly WindowManager winManager = new();
 
-        public VersionManager(MainWindowViewModel model)
+        public VersionManager(RSWindowViewModelBase model)
         {
             _windowsViewModel = model;
         }
