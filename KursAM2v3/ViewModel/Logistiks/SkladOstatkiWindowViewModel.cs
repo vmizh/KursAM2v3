@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Calculates.Materials;
 using Core.ViewModel.Base;
 using DevExpress.Xpf.Core;
@@ -25,10 +23,10 @@ namespace KursAM2.ViewModel.Logistiks
 {
     public sealed class SkladOstatkiWindowViewModel : RSWindowViewModelBase
     {
-
         private readonly ImageSource KontrImage;
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
-        private readonly ImageSource StoreImage; 
+        private readonly ImageSource StoreImage;
 
         private NomenklOstatkiForSklad myCurrentNomenklForSklad;
         private NomenklOstatkiWithPrice myCurrentNomenklStore;
@@ -36,14 +34,13 @@ namespace KursAM2.ViewModel.Logistiks
         private KursDomain.References.Warehouse myCurrentWarehouse;
         private bool myIsPeriodSet;
         private DateTime myOstatokDate;
-        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         public SkladOstatkiWindowViewModel()
         {
             LayoutName = "SkladOstatkiWindowViewModel";
             WindowName = "Остатки товаров на складах";
 
-            SvgImageSourceExtension svgToImageSource = new SvgImageSourceExtension
+            var svgToImageSource = new SvgImageSourceExtension
             {
                 Uri = new Uri(
                     "pack://application:,,,/DevExpress.Images.v23.2;component/SvgImages/Business Objects/BO_Vendor.svg")
@@ -300,7 +297,6 @@ namespace KursAM2.ViewModel.Logistiks
                 case 19:
                     DocumentsOpenManager.Open(DocumentType.NomenklTransfer, CurrentOperation.Id);
                     break;
-
             }
         }
 
@@ -326,7 +322,8 @@ namespace KursAM2.ViewModel.Logistiks
                 var data = clc.GetOperations(CurrentNomenklStore.Nomenkl.DocCode, false);
                 if (data == null || data.Count <= 0) return;
                 decimal nakop = 0;
-                foreach (var op in data.OrderBy(_ => _.DocDate).ThenByDescending(_ => _.QuantityIn))
+                foreach (var op in data.Where(_ => _.SkladIn?.DocCode == CurrentWarehouse.DocCode
+                         || _.SkladOut?.DocCode == CurrentWarehouse.DocCode).OrderBy(_ => _.DocDate).ThenByDescending(_ => _.QuantityIn))
                 {
                     op.SenderReceiverIcon = (op.KontrInName ?? op.KontrOutName) == null ? StoreImage : KontrImage;
                     op.SenderReceiverName = (op.KontrInName ?? op.KontrOutName) ??
@@ -351,7 +348,6 @@ namespace KursAM2.ViewModel.Logistiks
                         op.QuantityNakopit = nakop;
                         NomenklOperations.Add(op);
                     }
-
                 }
             }
         }

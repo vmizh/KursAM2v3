@@ -25,6 +25,7 @@ using KursDomain.Repository.DocHistoryRepository;
 using KursDomain.Repository.NomenklRepository;
 using KursDomain.Repository.StorageLocationsRepositury;
 using KursDomain.Repository.TransferOut;
+using Microsoft.Expression.Shapes;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -1114,6 +1115,42 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = -doc.Quatntity * prc
                     });
                 }
+                var docs8 = ctx.TD_24.Include(_ => _.SD_24)
+                    .Where(_ => _.SD_24.DD_TYPE_DC == 2010000014 && _.SD_24.DD_DATE >= StartDate &&
+                                _.SD_24.DD_DATE <= EndDate
+                                && _.DDT_NOMENKL_DC == CurrentNomenklMoveItem.Nomenkl.DocCode
+                                && _.SD_24.DD_SKLAD_POL_DC != _.SD_24.DD_SKLAD_OTPR_DC
+                                && (_.SD_24.DD_SKLAD_POL_DC == storeDC || _.SD_24.DD_SKLAD_OTPR_DC == storeDC));
+                foreach (var doc in docs8)
+                {
+                    var kol_in = doc.SD_24.DD_SKLAD_POL_DC == storeDC ? doc.DDT_KOL_PRIHOD : 0;
+                    var kol_out = doc.SD_24.DD_SKLAD_POL_DC == storeDC ? doc.DDT_KOL_PRIHOD : 0;
+                    var prc = nomenklManager.GetNomenklPrice(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE)
+                        .Price;
+                    DocumentList.Add(new NomPriceDocumentViewModel
+                    {
+                        DocCode = doc.DOC_CODE,
+                        Id = doc.DocId,
+                        DocumentName = "Перевод за баланс",
+                        DocumentNum = doc.SD_24.DD_IN_NUM + "/" + doc.SD_24.DD_EXT_NUM,
+                        DocumentDate = doc.SD_24.DD_DATE,
+                        QuantityIn = kol_in,
+                        QuantityOut = kol_out,
+                        QuantityDelta = kol_in-kol_out,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        From = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC))
+                            .Name,
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        // ReSharper disable once PossibleInvalidOperationException
+                        To = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC))
+                            .Name,
+                        SummaIn = kol_in*prc,
+                        SummaOut = kol_out * prc,
+                        SummaDelta = (kol_in - kol_out) * prc
+                    });
+                }
+
             }
 
             CalcNakopit();
