@@ -64,7 +64,7 @@
             </dxlc:LayoutItem>
             <dxlc:LayoutGroup>
                 <dxlc:LayoutGroup Header="LayoutGroup" View="Group" Orientation="Vertical">
-                    <dxlc:LayoutItem Label="Примечание" Margin="0,0,0,10">
+                    <dxlc:LayoutItem Label="Примечание" Margin="0,0,0,10" VerticalAlignment="Top" LabelVerticalAlignment="Top">
                         <dxe:TextEdit x:Name="memoNote"
                                       EditValue="{Binding Document.Note}"
                                       AcceptsReturn="True"
