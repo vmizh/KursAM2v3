@@ -85,8 +85,8 @@
                                  VerticalAlignment="Stretch"
                                  HorizontalAlignment="Stretch">
                     <dxg:GridControl.Columns>
-                        <dxg:GridColumn Name="col_1_1" Header="№" FieldName="Num" ReadOnly="True" />
-                        <dxg:GridColumn Name="col_2" Header="Дата" FieldName="Date" ReadOnly="True" />
+                         <dxg:GridColumn Name="col_2" Header="Дата" FieldName="Date" ReadOnly="True" />
+                       <dxg:GridColumn Name="col_1_1" Header="№" FieldName="Num" ReadOnly="True" />
                         <dxg:GridColumn Name="col_3_1" Header="Склад" FieldName="Warehouse" ReadOnly="True"
                                         SortMode="DisplayText" />
                         <dxg:GridColumn Name="col_4" Header="Примечание" FieldName="Note" ReadOnly="True" />

@@ -38,7 +38,7 @@ namespace KursAM2.ViewModel.Logistiks
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             DateEnd = DateTime.Today;
-            DateStart = DateEnd.AddYears(-1);
+            DateStart = new DateTime(DateTime.Now.Year, 1, 1);
         }
 
         public override bool IsDocNewCopyRequisiteAllow => CurrentRow != null;

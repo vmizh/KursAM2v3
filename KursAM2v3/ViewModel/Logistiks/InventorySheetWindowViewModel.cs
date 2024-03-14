@@ -80,6 +80,7 @@ namespace KursAM2.ViewModel.Logistiks
             _NomenklRepository = new NomenklRepository(UnitOfWork.Context);
             // ReSharper disable once VirtualMemberCallInContructor
             IsDocNewCopyRequisiteAllow = true;
+            IsDocNewCopyAllow = false;
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             RefreshData();
