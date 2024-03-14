@@ -33,7 +33,7 @@
                 <DockPanel LastChildFill="False">
                     <Label Content="№: " DockPanel.Dock="Left" />
                     <dxe:TextEdit MinWidth="80"
-                                  Margin="19,0,0,0"
+                                  Margin="55,0,0,0"
                                   EditValue="{Binding Document.Num, UpdateSourceTrigger=PropertyChanged}"
                                   DockPanel.Dock="Left" />
                     <Label Content="  Дата " DockPanel.Dock="Left" />
@@ -60,7 +60,7 @@
                     <Label Content="Склад: " />
                     <dxe:ComboBoxEdit x:Name="storecomboBox"
                                       DockPanel.Dock="Left"
-                                      Margin="0,0,0,0"
+                                      Margin="36,0,0,0"
                                       IsEnabled="{Binding IsCannotChangeStore}"
                                       ItemsSource="{Binding StoreCollection}"
                                       AutoComplete="True"
@@ -69,7 +69,7 @@
                                       HorizontalAlignment="Left"
                                       VerticalAlignment="Center" />
                 </DockPanel>
-                <dxlc:LayoutItem Label="Примечание" Margin="0,0,0,10">
+                <dxlc:LayoutItem Label="Примечание" Margin="0,0,0,10" LabelVerticalAlignment="Top">
                     <dxe:TextEdit x:Name="memoNote"
                                   EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
                                   AcceptsReturn="True"

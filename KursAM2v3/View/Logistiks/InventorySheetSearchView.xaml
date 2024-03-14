@@ -48,29 +48,18 @@
                 <dxlc:LayoutGroup Name="group3LayoutControl" Margin="10,0" Header="LayoutGroupDate" View="Group">
                     <dxlc:LayoutItem Name="itemStartDateLayoutControl" Label="Период с" HorizontalAlignment="Left">
                         <dxe:DateEdit Width="150"
+                                      IsEnabled="{Binding CanDateChanged, UpdateSourceTrigger=PropertyChanged}"
                                       DateTime="{Binding DateStart, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}" />
                     </dxlc:LayoutItem>
                     <dxlc:LayoutItem Name="itemEndDateLayoutControl" Label="По" Width="150">
                         <dxe:DateEdit
+                            IsEnabled="{Binding CanDateChanged, UpdateSourceTrigger=PropertyChanged}"
                             DateTime="{Binding DateEnd, Mode=TwoWay, NotifyOnSourceUpdated=True, 
                             NotifyOnTargetUpdated=True,
                             UpdateSourceTrigger=PropertyChanged}" />
                     </dxlc:LayoutItem>
                 </dxlc:LayoutGroup>
-                <dxlc:LayoutGroup Name="group4LayoutControl" Margin="10,0" Orientation="Vertical">
-                    <dxlc:LayoutItem Label="Строка поиска"
-                                     ToolTip="Часть наименования склада, номенклатуры или номенклатурного номера"
-                                     Height="26">
-                        <dxe:ButtonEdit AllowDefaultButton="False"
-                                        Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}">
-                            <dxe:ButtonEdit.Buttons>
-                                <dxe:ButtonInfo GlyphKind="Search" Command="{Binding SearchCommand}" />
-                                <dxe:ButtonInfo GlyphKind="Cancel" Command="{Binding SearchClearCommand}" />
-                            </dxe:ButtonEdit.Buttons>
-                        </dxe:ButtonEdit>
-                    </dxlc:LayoutItem>
-                </dxlc:LayoutGroup>
-
+                
             </dxlc:LayoutGroup>
             <dxlc:LayoutGroup Header="LayoutGroup" View="Group">
                 <dxg:GridControl AutoGenerateColumns="None"

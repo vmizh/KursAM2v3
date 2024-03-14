@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Core;
 using Core.WindowsManager;
 using Data;
 using Helper;
@@ -145,6 +144,7 @@ namespace KursAM2.Managers.Nomenkl
                 return null;
             }
         }
+
         public async Task<List<NomenklQuantityInfo>> GetNomenklStoreQuantityAsync(decimal skladDC, DateTime dateStart,
             DateTime dateEnd)
         {
@@ -165,7 +165,7 @@ namespace KursAM2.Managers.Nomenkl
             }
         }
 
-        public async  Task<List<NomenklMoveInfo>> GetNomenklStoreMoveAsync(decimal skladDC, DateTime dateStart,
+        public async Task<List<NomenklMoveInfo>> GetNomenklStoreMoveAsync(decimal skladDC, DateTime dateStart,
             DateTime dateEnd)
         {
             try
@@ -202,6 +202,4 @@ namespace KursAM2.Managers.Nomenkl
             }
         }
     }
-
-   
 }

@@ -266,10 +266,6 @@ namespace KursAM2.ViewModel.Logistiks
 
         #endregion
 
-        #region IDataErrorInfo
-
-        #endregion
-
         #region Commands
 
         public override bool IsRedoAllow => Document != null && Document.DeletedRows.Count > 0;
@@ -461,7 +457,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new InventorySheetView
+            var frm = new InventorySheetView2
             {
                 DataContext = new InventorySheetWindowViewModel
                 {
@@ -474,7 +470,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         public override void DocNewCopyRequisite(object form)
         {
-            var frm = new InventorySheetView
+            var frm = new InventorySheetView2
             {
                 DataContext = new InventorySheetWindowViewModel
                 {
@@ -487,7 +483,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         public override void DocNewCopy(object form)
         {
-            var frm = new InventorySheetView
+            var frm = new InventorySheetView2
             {
                 DataContext = new InventorySheetWindowViewModel
                 {

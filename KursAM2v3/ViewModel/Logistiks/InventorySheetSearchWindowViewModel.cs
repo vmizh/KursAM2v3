@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
-using Core;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.Repositories;
@@ -27,6 +27,7 @@ namespace KursAM2.ViewModel.Logistiks
         private InventorySheetViewModel myCurrentRow;
         private DateTime myDateEnd;
         private DateTime myDateStart;
+        private bool myCanDateChanged;
 
         public InventorySheetSearchWindowViewModel()
         {
@@ -39,6 +40,7 @@ namespace KursAM2.ViewModel.Logistiks
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             DateEnd = DateTime.Today;
             DateStart = DateEnd.AddYears(-1);
+            CanDateChanged = true;
         }
 
         public override bool IsDocNewCopyRequisiteAllow => CurrentRow != null;
@@ -75,6 +77,19 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 if (mySearchText == value) return;
                 mySearchText = value;
+                CanDateChanged = string.IsNullOrWhiteSpace(mySearchText);
+                IsCanSearch = !string.IsNullOrWhiteSpace(mySearchText);
+                RaisePropertyChanged();
+            }
+        }
+
+        public bool CanDateChanged
+        {
+            get => myCanDateChanged;
+            set
+            {
+                if (value == myCanDateChanged) return;
+                myCanDateChanged = value;
                 RaisePropertyChanged();
             }
         }
@@ -95,18 +110,25 @@ namespace KursAM2.ViewModel.Logistiks
         public override void RefreshData(object obj)
         {
             base.RefreshData(obj);
-            Documents.Clear();
-            foreach (var d in SD_24Repository.GetDocuments(MatearialDocumentType.InventorySheet, DateStart, DateEnd))
+            if (string.IsNullOrWhiteSpace(SearchText))
             {
-                var newItem = new InventorySheetViewModel(d)
+                Documents.Clear();
+                foreach (var newItem in SD_24Repository.GetDocuments(MatearialDocumentType.InventorySheet, DateStart,
+                             DateEnd).Select(d => new InventorySheetViewModel(d)
+                         {
+                             State = RowStatus.NotEdited,
+                             myState = RowStatus.NotEdited
+                         }))
                 {
-                    State = RowStatus.NotEdited,
-                    myState = RowStatus.NotEdited
-                };
-                Documents.Add(newItem);
-            }
+                    Documents.Add(newItem);
+                }
 
-            RaisePropertyChanged(nameof(Documents));
+                RaisePropertyChanged(nameof(Documents));
+            }
+            else
+            {
+                Search(null);
+            }
         }
 
         public override void DocumentOpen(object obj)
@@ -172,8 +194,26 @@ namespace KursAM2.ViewModel.Logistiks
             frm.Show();
         }
 
+
         #region Commands
 
+        public override void Search(object obj)
+        {
+            Documents.Clear();
+            foreach (var d in SD_24Repository.GetDocuments(MatearialDocumentType.InventorySheet, SearchText))
+            {
+                var newItem = new InventorySheetViewModel(d)
+                {
+                    State = RowStatus.NotEdited,
+                    myState = RowStatus.NotEdited
+                };
+                Documents.Add(newItem);
+            }
+
+            RaisePropertyChanged(nameof(Documents));
+            
+        }
+        
         #endregion
     }
 }

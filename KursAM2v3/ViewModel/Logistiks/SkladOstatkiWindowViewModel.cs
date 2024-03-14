@@ -323,7 +323,8 @@ namespace KursAM2.ViewModel.Logistiks
                 if (data == null || data.Count <= 0) return;
                 decimal nakop = 0;
                 foreach (var op in data.Where(_ => _.SkladIn?.DocCode == CurrentWarehouse.DocCode
-                         || _.SkladOut?.DocCode == CurrentWarehouse.DocCode).OrderBy(_ => _.DocDate).ThenByDescending(_ => _.QuantityIn))
+                                                   || _.SkladOut?.DocCode == CurrentWarehouse.DocCode)
+                             .OrderBy(_ => _.DocDate).ThenByDescending(_ => _.QuantityIn))
                 {
                     op.SenderReceiverIcon = (op.KontrInName ?? op.KontrOutName) == null ? StoreImage : KontrImage;
                     op.SenderReceiverName = (op.KontrInName ?? op.KontrOutName) ??
