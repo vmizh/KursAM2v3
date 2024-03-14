@@ -306,7 +306,6 @@
     <Compile Include="ViewModel\Logistiks\InventorySheetViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\InventorySheetRowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\InventorySheetWindowViewModel.cs" />
-    <Compile Include="ViewModel\Logistiks\NomenklMoveWindowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\NomenklAddNomenklForInViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\NomenklRemainWithPrice.cs" />
     <Compile Include="ViewModel\Logistiks\NomenklTransferSearchViewModel.cs" />
