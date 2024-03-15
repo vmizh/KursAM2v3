@@ -30,12 +30,12 @@
                 <dxe:DateEdit Width="120" EditValue="{Binding StartDate}"
                               IsEnabled="{Binding IsDateEnabled}" 
                               DockPanel.Dock="Left"/>
-                <Label Content="по" />
+                <Label Content="по" Margin="10,0,5,0" />
                 <dxe:DateEdit Width="120" EditValue="{Binding EndDate}"
                               IsEnabled="{Binding IsDateEnabled}"
                               DockPanel.Dock="Left"/>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                    <Label Content="Строка поиска:" Visibility="{Binding IsCanSearch, Converter={StaticResource booleanToVisibilityConverter}}"/>
+                    <Label Content="Строка поиска:" Visibility="{Binding IsCanSearch, Converter={StaticResource booleanToVisibilityConverter}}" Margin="0,0,5,0"/>
                     <dxe:TextEdit
                         MinWidth="150"
                         Margin="5 0"
