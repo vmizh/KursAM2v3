@@ -26,17 +26,20 @@ public class WarehouseRemainsViewModel : DialogViewModelBase<NomenklStoreRemainI
     private NomenklStoreRemainItemWrapper myCurrentSelectDocumentItem;
 
     private readonly decimal? _currencyDC;
+    private List<decimal> excludeNomDCs;
 
     #endregion
-    
 
-    public WarehouseRemainsViewModel(DateTime remainDate, Warehouse warehouse, IWarehouseRepository warehouseRepository, 
-        decimal? crsDC = null)
+
+    public WarehouseRemainsViewModel(DateTime remainDate, Warehouse warehouse, IWarehouseRepository warehouseRepository,
+        decimal? crsDC = null, List<decimal> excludes = null)
     {
         RemainDate = remainDate;
         Warehouse = warehouse;
         myWarehouseRepository = warehouseRepository;
         _currencyDC = crsDC;
+        if(excludes != null)
+            excludeNomDCs = excludes;
 
         LayoutName = "WarehouseRemainsViewModel";
         Title = "Материалы за балансом по местам хранения";
@@ -62,14 +65,34 @@ public class WarehouseRemainsViewModel : DialogViewModelBase<NomenklStoreRemainI
         {
             foreach (var rem in data)
             {
-                Items.Add(new NomenklStoreRemainItemWrapper(rem));
+                if (excludeNomDCs == null || excludeNomDCs.Count == 0)
+                {
+                    Items.Add(new NomenklStoreRemainItemWrapper(rem));
+                }
+                else
+                {
+                    if (!excludeNomDCs.Contains(rem.NomenklDC))
+                    {
+                        Items.Add(new NomenklStoreRemainItemWrapper(rem));
+                    }
+                }
             }
         }
         else
         {
             foreach (var rem in data.Where(_ => _.NomCurrencyDC == _currencyDC))
             {
-                Items.Add(new NomenklStoreRemainItemWrapper(rem));
+                if (excludeNomDCs == null || excludeNomDCs.Count == 0)
+                {
+                    Items.Add(new NomenklStoreRemainItemWrapper(rem));
+                }
+                else
+                {
+                    if (!excludeNomDCs.Contains(rem.NomenklDC))
+                    {
+                        Items.Add(new NomenklStoreRemainItemWrapper(rem));
+                    }
+                }
             }
         }
 
