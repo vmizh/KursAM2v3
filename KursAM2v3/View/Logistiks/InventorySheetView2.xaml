@@ -33,34 +33,34 @@
                 <DockPanel LastChildFill="False">
                     <Label Content="№: " DockPanel.Dock="Left" />
                     <dxe:TextEdit MinWidth="80"
-                                  Margin="55,0,0,0"
+                                  Margin="19,0,0,0"
                                   EditValue="{Binding Document.Num, UpdateSourceTrigger=PropertyChanged}"
                                   DockPanel.Dock="Left" />
                     <Label Content="  Дата " DockPanel.Dock="Left" />
                     <dxe:DateEdit MinWidth="100"
                                   DockPanel.Dock="Left"
-                                  Margin="5,0,0,0"
+                                  Margin="5,0,20,0"
                                   EditValue="{Binding Document.Date, UpdateSourceTrigger=PropertyChanged}" />
-                    <dxlc:LayoutItem Label="Закрыта">
+                    <dxlc:LayoutItem Label="Закрыта" Width="68">
                         <dxe:CheckEdit IsChecked="{Binding Document.IsClosed}" />
                     </dxlc:LayoutItem>
                     <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
-                                      IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay}">
+                                      IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay}" Width="85">
                         <dxmvvm:Interaction.Behaviors>
                             <dxmvvm:EnumItemsSourceBehavior
                                 EnumType="{x:Type iCommon:RowStatus}" />
                         </dxmvvm:Interaction.Behaviors>
                     </dxe:ComboBoxEdit>
-                    <Label Content="  Статус:" DockPanel.Dock="Right" />
-                    <dxe:TextEdit MinWidth="100" DockPanel.Dock="Right"
-                                  EditValue="{Binding Document.Creator}" IsReadOnly="True" />
-                    <Label Content="Создатель: " DockPanel.Dock="Right" />
+                    <Label Content="  Статус:" DockPanel.Dock="Right" Width="52" />
+                    <dxe:TextEdit MinWidth="100" DockPanel.Dock="Right" Margin="0,0,10,0"
+                                  EditValue="{Binding Document.Creator}" IsReadOnly="True" Height="22" Width="91" />
+                    <Label Content="Создатель: " DockPanel.Dock="Right" Width="65" />
                 </DockPanel>
                 <DockPanel LastChildFill="False">
-                    <Label Content="Склад: " />
+                    <Label Content="Склад: " VerticalContentAlignment="Center" />
                     <dxe:ComboBoxEdit x:Name="storecomboBox"
                                       DockPanel.Dock="Left"
-                                      Margin="36,0,0,0"
+                                      Margin="0,0,0,0"
                                       IsEnabled="{Binding IsCannotChangeStore}"
                                       ItemsSource="{Binding StoreCollection}"
                                       AutoComplete="True"
@@ -69,7 +69,7 @@
                                       HorizontalAlignment="Left"
                                       VerticalAlignment="Center" />
                 </DockPanel>
-                <dxlc:LayoutItem Label="Примечание" Margin="0,0,0,10" LabelVerticalAlignment="Top">
+                <dxlc:LayoutItem Label="Примечание" Margin="0,0,0,10">
                     <dxe:TextEdit x:Name="memoNote"
                                   EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
                                   AcceptsReturn="True"
@@ -131,8 +131,8 @@
                                  ItemsSource="{Binding Document.Rows, UpdateSourceTrigger=PropertyChanged}"
                                  SelectionMode="None">
                     <dxg:GridControl.Columns>
-                        <dxg:GridColumn x:Name="col1" Header="Наименование" FieldName="NomenklName" ReadOnly="True" />
                         <dxg:GridColumn x:Name="col2" Header="Номенкл.№" FieldName="NomenklNumber" ReadOnly="True" />
+                        <dxg:GridColumn x:Name="col1" Header="Наименование" FieldName="NomenklName" ReadOnly="True" />
                         <dxg:GridColumn x:Name="col10" Header="Валюта" FieldName="NomenklCrsName" ReadOnly="True" />
                         <dxg:GridColumn x:Name="col11" Header="Ед. измерения" FieldName="NomenklUnit"
                                         ReadOnly="True" />
@@ -165,6 +165,7 @@
                                 <dxe:CheckEditSettings />
                             </dxg:GridColumn.EditSettings>
                         </dxg:GridColumn>
+                        <dxg:GridColumn x:Name="col5" Header="Примечание" FieldName="Note" />
                         <dxg:GridColumn x:Name="col8" Header="Цена" FieldName="Price">
                             <dxg:GridColumn.EditSettings>
                                 <dxe:CalcEditSettings DisplayFormat="n2"
@@ -179,7 +180,6 @@
                                                       AllowDefaultButton="False" />
                             </dxg:GridColumn.EditSettings>
                         </dxg:GridColumn>
-                        <dxg:GridColumn x:Name="col5" Header="Примечание" FieldName="Note" />
                     </dxg:GridControl.Columns>
                     <dxg:GridControl.View>
                         <dxg:TableView AllowPerPixelScrolling="True"

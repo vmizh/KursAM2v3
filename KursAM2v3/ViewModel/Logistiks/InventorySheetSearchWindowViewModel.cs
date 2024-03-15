@@ -42,6 +42,7 @@ namespace KursAM2.ViewModel.Logistiks
             DateEnd = DateTime.Today;
             DateStart = DateEnd.AddYears(-1);
             CanDateChanged = true;
+            DateStart = new DateTime(DateTime.Now.Year, 1, 1);
         }
 
         public override bool IsDocNewCopyRequisiteAllow => CurrentRow != null;
