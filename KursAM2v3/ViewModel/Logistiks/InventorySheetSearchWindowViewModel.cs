@@ -36,10 +36,10 @@ namespace KursAM2.ViewModel.Logistiks
             WindowName = "Инвентаризационные ведомости";
             IsDocNewCopyRequisiteAllow = true;
             IsCanDocNew = true;
+            IsDocNewCopyAllow = false;
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             DateEnd = DateTime.Today;
-            DateStart = DateEnd.AddYears(-1);
             CanDateChanged = true;
             DateStart = new DateTime(DateTime.Now.Year, 1, 1);
         }
