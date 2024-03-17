@@ -41,7 +41,7 @@
                                       Margin="5,0,0,0"
                                       EditValue="{Binding Document.DD_IN_NUM, UpdateSourceTrigger=PropertyChanged}"
                                       DockPanel.Dock="Left" />
-                        <Label Content="  Дата " DockPanel.Dock="Left" />
+                        <Label Content="  Дата: " DockPanel.Dock="Left" />
                         <dxe:DateEdit MinWidth="100"
                                       DockPanel.Dock="Left"
                                       Margin="5,0,0,0"
@@ -54,10 +54,10 @@
                                     EnumType="{x:Type iCommon:RowStatus}" />
                             </dxmvvm:Interaction.Behaviors>
                         </dxe:ComboBoxEdit>
-                        <Label Content="  Статус:" DockPanel.Dock="Right" />
+                        <Label Content="  Статус:" DockPanel.Dock="Right" Margin="0,0,3,0" />
                         <dxe:TextEdit MinWidth="100" DockPanel.Dock="Right"
                                       EditValue="{Binding Document.CREATOR}" IsReadOnly="True" />
-                        <Label Content="Создатель: " DockPanel.Dock="Right" />
+                        <Label Content="Создатель: " DockPanel.Dock="Right" Margin="0,0,3,0" />
                     </DockPanel>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem>
@@ -88,7 +88,7 @@
                                         Command="{Binding KontragentSelectCommand}"/>
                                 </dxe:ButtonEdit.Buttons>
                             </dxe:ButtonEdit>
-                            <Label Content="Счет: " Margin="20 0"/>
+                            <Label Content="Счет: " Margin="30,0,5,0"/>
                             <dxe:ButtonEdit DockPanel.Dock="Left"
                                             Margin="5,0,0,0"
                                             IsTextEditable="False"
@@ -122,10 +122,11 @@
                     </StackPanel>
                 </dxlc:LayoutItem>
                 <StackPanel Orientation="Horizontal" MaxHeight="60">
-                    <Label Content="Примечания: " VerticalAlignment="Center" />
+                    <Label Content="Примечание: " VerticalAlignment="Top" />
                     <dxe:TextEdit MinHeight="40"
                                   MaxHeight="60"
                                   MinWidth="500"
+                                  VerticalContentAlignment="Top"
                                   Margin="16 0"
                                   EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
@@ -154,8 +155,10 @@
                                        CellValueChanged="TableViewRows_OnCellValueChanged">
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
+                                    <!--
                                     <MenuItem Header="Вставить строку"
                                               Command="{Binding AddNomenklCommand}" />
+                                    -->
                                     <MenuItem Header="Удалить строку"
                                               Command="{Binding DeleteNomenklCommand}" />
                                     <Separator />
