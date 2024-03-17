@@ -710,6 +710,9 @@
     <Compile Include="View\KursReferences\UC\UsersUC.xaml.cs">
       <DependentUpon>UsersUC.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Logistiks\InventorySheetView.xaml.cs">
+      <DependentUpon>InventorySheetView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\Logistiks\NomPriceDocumentViewModel.cs" />
     <Compile Include="View\Logistiks\NomenklMoveOnSklad.xaml.cs">
       <DependentUpon>NomenklMoveOnSklad.xaml</DependentUpon>
@@ -1572,6 +1575,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\KursReferences\UC\UsersUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\InventorySheetView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

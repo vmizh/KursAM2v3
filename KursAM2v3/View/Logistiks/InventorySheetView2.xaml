@@ -60,7 +60,7 @@
                     <Label Content="Склад: " VerticalContentAlignment="Center" />
                     <dxe:ComboBoxEdit x:Name="storecomboBox"
                                       DockPanel.Dock="Left"
-                                      Margin="0,4,0,0"
+                                      Margin="0,0,0,0"
                                       IsEnabled="{Binding IsCannotChangeStore}"
                                       ItemsSource="{Binding StoreCollection}"
                                       AutoComplete="True"
@@ -69,7 +69,7 @@
                                       HorizontalAlignment="Left"
                                       VerticalAlignment="Center" />
                 </DockPanel>
-                <dxlc:LayoutItem Label="Примечание" Margin="0,5,0,10" LabelVerticalAlignment="Top" >
+                <dxlc:LayoutItem Label="Примечание" Margin="0,0,0,10">
                     <dxe:TextEdit x:Name="memoNote"
                                   EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
                                   AcceptsReturn="True"
@@ -165,16 +165,18 @@
                                 <dxe:CheckEditSettings />
                             </dxg:GridColumn.EditSettings>
                         </dxg:GridColumn>
-                        <dxg:GridColumn x:Name="col5" Header="Примечание" FieldName="Note"  />
+                        <dxg:GridColumn x:Name="col5" Header="Примечание" FieldName="Note" />
                         <dxg:GridColumn x:Name="col8" Header="Цена" FieldName="Price">
                             <dxg:GridColumn.EditSettings>
                                 <dxe:CalcEditSettings DisplayFormat="n2"
+                                                      MaskUseAsDisplayFormat="True"
                                                       AllowDefaultButton="False" />
                             </dxg:GridColumn.EditSettings>
                         </dxg:GridColumn>
                         <dxg:GridColumn x:Name="col12" Header="Сумма" FieldName="Summa">
                             <dxg:GridColumn.EditSettings>
                                 <dxe:CalcEditSettings DisplayFormat="n2"
+                                                      MaskUseAsDisplayFormat="True"
                                                       AllowDefaultButton="False" />
                             </dxg:GridColumn.EditSettings>
                         </dxg:GridColumn>

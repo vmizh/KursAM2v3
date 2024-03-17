@@ -61,13 +61,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 });
             }
 
-            //StartDate = DateTime.Today.AddDays(-30);
-            //начальная дата поиска - 1-е число предыдущего месяца или 1-го января
-            StartDate = new DateTime(DateTime.Today.Year, ((DateTime.Today.Month != 1) ? (DateTime.Today.Month - 1) : 1), 1);
+            StartDate = DateTime.Today.AddDays(-30);
             EndDate = DateTime.Today;
         }
 
-        /*
         public WaybillSearchViewModel(Window form) : base(form)
         {
             GenericProviderRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
@@ -89,7 +86,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             StartDate = DateTime.Today.AddDays(-30);
             EndDate = DateTime.Today;
         }
-        */
 
         public WayBillShort CurrentDocument
         {

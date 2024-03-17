@@ -12,7 +12,6 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
-using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers.Nomenkl;
@@ -338,32 +337,6 @@ namespace KursAM2.ViewModel.Logistiks
             Document.myState = RowStatus.NotEdited;
         }
 
-        protected override void OnWindowLoaded(object obj)
-        {
-            base.OnWindowLoaded(obj);
-            // убираем лишние колонки из нижнего ряда суммирования (сумм)
-            // Разница и цена
-
-            if (Form is InventorySheetView2 prm)
-            {
-                List<GridSummaryItem> smmList= new List<GridSummaryItem>();
-                foreach (var colummItem in prm.gridNomenklRows.TotalSummary)
-                {
-                    if (colummItem.FieldName is nameof(InventorySheetRowViewModel.Difference) or nameof(InventorySheetRowViewModel.Price))
-                    {
-                        smmList.Add(colummItem);
-                    }   
-                }
-
-                foreach (var columnItem2 in smmList)
-                {
-                    prm.gridNomenklRows.TotalSummary.Remove(columnItem2);
-                }
-
-            }
-
-        }
-
         public override void SaveData(object data)
         {
             try
@@ -614,8 +587,6 @@ namespace KursAM2.ViewModel.Logistiks
                             QuantityFact = item.Remain,
                             QuantityCalc = item.Remain,
                             State = RowStatus.NewRow,
-                            // Price = item.PriceWithNaklad != 0 ? item.PriceWithNaklad : item.Price,
-                            Price = item.Price,
                             Id = Guid.NewGuid(),
                             DocId = Document.Id,
                             Parent = Document

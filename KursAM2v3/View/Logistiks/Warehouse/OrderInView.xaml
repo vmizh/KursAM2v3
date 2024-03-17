@@ -122,13 +122,12 @@
                     </StackPanel>
                 </dxlc:LayoutItem>
                 <StackPanel Orientation="Horizontal" MaxHeight="60">
-                    <Label Content="Примечание: " VerticalAlignment="Top" />
+                    <Label Content="Примечания: " VerticalAlignment="Center" />
                     <dxe:TextEdit EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
                                   MinHeight="40"
                                   MaxHeight="60"
                                   MinWidth="300"
-                                  Margin="33 0"
-                                  VerticalContentAlignment="Top"/>
+                                  Margin="33 0" />
                 </StackPanel>
             </dxlc:LayoutGroup>
             <dxlc:LayoutGroup View="Group"
