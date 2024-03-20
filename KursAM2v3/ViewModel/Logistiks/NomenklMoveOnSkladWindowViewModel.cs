@@ -69,7 +69,7 @@ namespace KursAM2.ViewModel.Logistiks
         {
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            StartDate = DateTime.Today;
+            StartDate = new DateTime(DateTime.Today.Year,1,1);
             IsShowAll = true;
             IsDataLoaded = Visibility.Visible;
             LoadReferences();
