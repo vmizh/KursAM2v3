@@ -1879,7 +1879,8 @@ namespace KursAM2.Managers
                 DD_IN_NUM = -1,
                 DD_EXT_NUM = null,
                 Date = DateTime.Today,
-                CREATOR = GlobalOptions.UserInfo.Name
+                CREATOR = GlobalOptions.UserInfo.Name,
+                InvoiceClientViewModel = null
             };
             ret.Rows.Clear();
             return ret;

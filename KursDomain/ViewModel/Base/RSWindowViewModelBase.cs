@@ -654,7 +654,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
 
     public virtual void DocNew(object obj)
     {
-        if (!IsDocNewCopyAllow && !IsDocNewCopyAllow)
+        if (!IsDocNewCopyAllow && !myIsDocNewCopyRequisiteAllow)
             DocNewEmpty(obj);
     }
 

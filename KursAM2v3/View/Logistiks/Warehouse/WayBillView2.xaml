@@ -46,6 +46,10 @@
                                       DockPanel.Dock="Left"
                                       Margin="5,0,0,0"
                                       EditValue="{Binding Document.Date, UpdateSourceTrigger=PropertyChanged}" />
+                        <Label Content ="Валюта:" DockPanel.Dock="Left" Margin="20,0,0,0" Foreground="Red" Visibility="{Binding DocCurrencyVisible}"/>
+                        <Label Content= "{Binding Document.DocCurrency, UpdateSourceTrigger=PropertyChanged}" Margin="8,0,0,0" 
+                               BorderThickness="1" MinWidth="60" BorderBrush="Red" Foreground="Red " Visibility="{Binding DocCurrencyVisible}" Width="70" HorizontalContentAlignment="Center"
+                               />
                         <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
                                           IsEnabled="False" 
                                           EditValue="{Binding Document.State, Mode=OneWay }">

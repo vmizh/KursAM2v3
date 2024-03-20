@@ -96,6 +96,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 };
                 UnitOfWork.Context.SD_24.Add(Document.Entity);
             }
+            DocCurrencyVisible = Document.Client != null ? Visibility.Visible : Visibility.Hidden;
         }
 
         #endregion
@@ -110,13 +111,60 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private WaybillRow myCurrentNomenklRow;
         private readonly NomenklManager2 nomenklManager;
+        private Waybill _document;
+        private ReportManager _reportManager;
+        private Visibility _docCurrencyVisible;
+        private ObservableCollection<string> _byWhomLicoList = new ObservableCollection<string>();
+        private ObservableCollection<WaybillRow> _selectedRows = new ObservableCollection<WaybillRow>();
 
         #endregion
 
         #region Properties
 
-        public Waybill Document { set; get; }
-        public ReportManager ReportManager { get; set; }
+        public Waybill Document
+        {
+            set
+            {
+                if (Equals(value, _document)) return;
+                _document = value;
+                RaisePropertyChanged();
+                RaisePropertyChanged(nameof(WindowName));
+                RaisePropertyChanged(nameof(IsDocDeleteAllow));
+                RaisePropertyChanged(nameof(IsCanRefresh));
+                RaisePropertyChanged(nameof(IsCanSaveData));
+                RaisePropertyChanged(nameof(IsDocNewCopyAllow));
+                RaisePropertyChanged(nameof(IsDocNewCopyRequisiteAllow));
+                RaisePropertyChanged(nameof(KontragentSelectCommand));
+                RaisePropertyChanged(nameof(AddFromDocumentCommand));
+                RaisePropertyChanged(nameof(AddNomenklCommand));
+                RaisePropertyChanged(nameof(OpenMainSchetCommand));
+                RaisePropertyChanged(nameof(DeleteSchetCommand));
+                RaisePropertyChanged(nameof(SelectSchetCommand));
+            }
+            get => _document;
+        }
+
+        public ReportManager ReportManager
+        {
+            get => _reportManager;
+            set
+            {
+                if (Equals(value, _reportManager)) return;
+                _reportManager = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public Visibility DocCurrencyVisible
+        {
+            get => _docCurrencyVisible;
+            set
+            {
+                if (value == _docCurrencyVisible) return;
+                _docCurrencyVisible = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public override string LayoutName => "WaybillWindowViewModel22";
 
@@ -126,14 +174,32 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 : $"Расходная накладня №{Document?.DD_IN_NUM} от {Document?.Date.ToShortDateString()} для {Document?.Client}";
 
         // ReSharper disable once MemberCanBePrivate.Global
-        public ObservableCollection<string> ByWhomLicoList { set; get; } = new ObservableCollection<string>();
+        public ObservableCollection<string> ByWhomLicoList
+        {
+            set
+            {
+                if (Equals(value, _byWhomLicoList)) return;
+                _byWhomLicoList = value;
+                RaisePropertyChanged();
+            }
+            get => _byWhomLicoList;
+        }
 
         public List<KursDomain.References.Warehouse> Sklads =>
             GlobalOptions.ReferencesCache.GetWarehousesAll().Where(_ => _.IsOutBalans != true && _.IsDeleted == false)
                 .Cast<KursDomain.References.Warehouse>().OrderBy(_ => _.Name).ToList();
 
         // ReSharper disable once CollectionNeverUpdated.Global
-        public ObservableCollection<WaybillRow> SelectedRows { set; get; } = new ObservableCollection<WaybillRow>();
+        public ObservableCollection<WaybillRow> SelectedRows
+        {
+            set
+            {
+                if (Equals(value, _selectedRows)) return;
+                _selectedRows = value;
+                RaisePropertyChanged();
+            }
+            get => _selectedRows;
+        }
 
         public WaybillRow CurrentNomenklRow
         {
@@ -160,7 +226,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                                                        _.State != RowStatus.NotEdited)
                                                                    || Document.DeletedRows.Count > 0);
 
-        public override bool IsDocNewCopyAllow => Document.State != RowStatus.NewRow;
+        // public override bool IsDocNewCopyAllow => Document.State != RowStatus.NewRow;
+        public override bool IsDocNewCopyAllow => false;
+        
         public override bool IsDocNewCopyRequisiteAllow => Document.State != RowStatus.NewRow;
         public override bool IsDocNewEmptyAllow => true;
 
@@ -181,6 +249,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var k = StandartDialogs.SelectKontragent();
             if (k != null)
                 Document.Client = k;
+            DocCurrencyVisible = Document.Client != null ? Visibility.Visible : Visibility.Hidden;
+            Document.RaisePropertyChanged("DocCurrency");
         }
 
         public override void SaveData(object data)
@@ -390,9 +460,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 DD_EXT_NUM = null,
                 DD_IN_NUM = -1,
                 CREATOR = GlobalOptions.UserInfo.NickName,
-                myState = RowStatus.NewRow
+                myState = RowStatus.NewRow,
+                InvoiceClientViewModel = null
             };
             frm.DataContext = ctx;
+            ctx.DocCurrencyVisible = Visibility.Visible;
             frm.Show();
         }
 

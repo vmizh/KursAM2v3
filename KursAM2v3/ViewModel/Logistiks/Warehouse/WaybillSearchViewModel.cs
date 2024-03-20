@@ -103,7 +103,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         }
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
-        public override bool IsDocNewCopyAllow => CurrentDocument != null;
+        
+        //public override bool IsDocNewCopyAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyAllow => false;
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
         public override bool IsPrintAllow => CurrentDocument != null;
 
@@ -234,6 +236,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 {Form = frm};
             ctx.Document = DocManager.NewWaybillRecuisite(CurrentDocument.DocCode);
             frm.DataContext = ctx;
+            ctx.DocCurrencyVisible =  Visibility.Visible;
+            
+            //ctx.Document.RaisePropertyChanged("DocCurrency");
+
             frm.Show();
         }
 
