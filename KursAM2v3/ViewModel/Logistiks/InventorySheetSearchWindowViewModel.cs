@@ -18,7 +18,7 @@ namespace KursAM2.ViewModel.Logistiks
         public readonly GenericKursDBRepository<SD_24> GenericInventorySheetRepository;
 
         // ReSharper disable once NotAccessedField.Local
-        public readonly ISD_24Repository SD_24Repository;
+        public ISD_24Repository SD_24Repository;
 
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
@@ -122,6 +122,7 @@ namespace KursAM2.ViewModel.Logistiks
                          }))
                 {
                     Documents.Add(newItem);
+                    newItem.RaisePropertyAllChanged();
                 }
 
                 RaisePropertyChanged(nameof(Documents));
