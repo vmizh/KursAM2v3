@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace KursAM2.ViewModel.Logistiks
 {
-    public class InventorySheetViewModel : RSViewModelData, IEntity<SD_24>
+    public class InventorySheetViewModel : RSViewModelBase, IEntity<SD_24>
     {
         public InventorySheetViewModel(SD_24 entity)
         {
@@ -156,6 +156,14 @@ namespace KursAM2.ViewModel.Logistiks
                         myState = RowStatus.NotEdited
                     });
         }
+
+        public override string Note { get => Entity.DD_NOTES;
+            set
+            {
+                if (Entity.DD_NOTES == value) return;
+                Entity.DD_NOTES = value;
+                RaisePropertyChanged();
+            } }
 
         public override object ToJson()
         {

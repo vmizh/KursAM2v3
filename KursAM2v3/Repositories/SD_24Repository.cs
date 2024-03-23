@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
+using AutoMapper;
 using Core.EntityViewModel.Base;
 using Data;
 using KursDomain;
@@ -55,12 +56,27 @@ namespace KursAM2.Repositories
 
         public SD_24 CreateNew()
         {
-            throw new NotImplementedException();
+            return new SD_24
+            {
+                DOC_CODE = -1,
+                DD_DATE = DateTime.Today,
+                CREATOR = GlobalOptions.UserInfo.NickName,
+                DD_IN_NUM = -1,
+                DD_EXT_NUM = null
+            };
         }
 
         public SD_24 CreateCopy(SD_24 ent)
         {
-            throw new NotImplementedException();
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<SD_24, SD_24>());
+            var mapper = new Mapper(config);
+            var ret = mapper.Map<SD_24>(ent);
+            ret.DOC_CODE = -1;
+            ret.DD_DATE = DateTime.Today;
+            ret.CREATOR = GlobalOptions.UserInfo.NickName;
+            ret.DD_IN_NUM = -1;
+            ret.DD_EXT_NUM = null;
+            return ret;
         }
 
         public SD_24 CreateCopy(Guid id)
@@ -226,7 +242,7 @@ namespace KursAM2.Repositories
                 .Include("TD_24.TD_26")
                 .Include("TD_24.TD_241")
                 .Where(_ => _.DD_DATE >= dateStart && _.DD_DATE <= dateEnd
-                                                   && _.DD_TYPE_DC == docType).ToList();
+                                                   && _.DD_TYPE_DC == docType).AsNoTracking().ToList();
         }
 
         public List<SD_24> GetDocuments(decimal docType, string searchText)
@@ -243,7 +259,8 @@ namespace KursAM2.Repositories
                 from s27_in in sklad_in.DefaultIfEmpty()
                 from s27_out in sklad_out.DefaultIfEmpty()
                 let s = s24.CREATOR + (s24.DD_EXT_NUM ?? string.Empty) + s24.DD_IN_NUM +
-                        (s24.DD_NOTES ?? string.Empty) + s83.NOM_NOMENKL + s83.NOM_NAME + (s83.NOM_NOTES ?? string.Empty)
+                        (s24.DD_NOTES ?? string.Empty) + s83.NOM_NOMENKL + s83.NOM_NAME +
+                        (s83.NOM_NOTES ?? string.Empty)
                         + (s43_in.NAME ?? string.Empty) + (s43_out.NAME ?? string.Empty) +
                         (s27_in.SKL_NAME ?? string.Empty) + (s27_out.SKL_NAME ?? string.Empty)
                 where s24.DD_TYPE_DC == docType && s.ToLower().Contains(searchText.ToLower())
