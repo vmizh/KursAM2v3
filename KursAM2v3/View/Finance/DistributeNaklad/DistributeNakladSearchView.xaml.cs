@@ -33,6 +33,12 @@ namespace KursAM2.View.Finance.DistributeNaklad
                     DisplayFormat = "n2",
                     Name = e.Column.FieldName + "Calc"
                 };
+            switch (e.Column.FieldName)
+            {
+                case "State":
+                    e.Column.Visible = false;
+                    break;
+            }
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

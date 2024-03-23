@@ -29,6 +29,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         private bool myIsAllowPositionSelected;
         private InvoiceClientRow myCurrentSelectedItem;
         private InvoiceClientRow myCurrentPosition;
+        private List<decimal> myExclude;
 
         #endregion
 
@@ -41,10 +42,11 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 
 
         public InvoiceClientSearchDialogViewModel(bool isAllowPosition, bool isAllowMultipleSchet,
-            InvoiceClientSearchType loadType, ALFAMEDIAEntities context = null) :
+            InvoiceClientSearchType loadType, List<decimal> exclude = null, ALFAMEDIAEntities context = null) :
             this(context)
         {
             this.loadType = loadType;
+            myExclude = exclude;
             IsAllowPositionSelected = isAllowPosition;
             if (isAllowMultipleSchet)
                 CustomDataUserControl = new InvoiceListSearchMultipleView();
@@ -224,10 +226,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 foreach (var d in Data)
                 {
                     if (ItemsCollection.Any(_ => _.DocCode == d.DocCode)) continue;
-                    ItemsCollection.Add(new InvoiceClientHead(d)
-                    {
-                        //SummaOtgruz = Data.Where(_ => _.DocCode == d.DocCode).Sum(_ => _.Price*_.Shipped)
-                    });
+                    //if (myExclude is { Count: > 0 } && myExclude.Any(_ => _ == d.NomenklDC)) continue; 
+                    ItemsCollection.Add(new InvoiceClientHead(d));
                 }
             }
             catch (Exception ex)
@@ -299,6 +299,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             ItemPositionsCollection.Clear();
             if (CurrentItem == null) return;
             foreach (var pos in Data.Where(_ => _.DocCode == CurrentItem.DocCode))
+            {
+                if (myExclude is {Count: > 0} && myExclude.Any( _=> _ == pos.NomenklDC)) continue;
                 ItemPositionsCollection.Add(new InvoiceClientRow
                 {
                     IsSelected = SelectedItems.Any(_ => _.Row2d == pos.Row2d),
@@ -327,6 +329,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                     DilerDC = pos.DilerDC,
                     NomenklDC = pos.NomenklDC
                 });
+            }
         }
 
         #endregion

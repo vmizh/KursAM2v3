@@ -166,8 +166,8 @@
                                     <MenuItem Header="Удалить строку"
                                               Command="{Binding DeleteNomenklCommand}" />
                                     <Separator />
-                                    <MenuItem Header="Добавить из счета по строке"
-                                              Command="{Binding AddFromDocumentCommand}" />
+                                    <MenuItem Header="Добавить строку"
+                                              Command="{Binding SelectSchetCommand}" />
                                     <!--<MenuItem Header="Удалить связку со счетом"
                                               Command="{Binding DeleteLinkDocumentCommand}" />-->
                                     <Separator />

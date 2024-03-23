@@ -19,6 +19,7 @@ using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursAM2.View.Base;
 
 namespace KursAM2.ViewModel.Finance.DistributeNaklad
 {
@@ -41,8 +42,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            DateEnd = DateTime.Today;
-            DateStart = DateEnd.AddDays(-30);
+            EndDate = DateTime.Today;
+            StartDate = new DateTime(DateTime.Now.Year, 1,1);
             baseRepository = new GenericKursDBRepository<Data.DistributeNaklad>(unitOfWork);
             distributeNakladRepository = new DistributeNakladRepository(unitOfWork);
         }
@@ -51,8 +52,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            DateEnd = DateTime.Today;
-            DateStart = DateEnd.AddDays(-30);
+            EndDate = DateTime.Today;
+            StartDate = EndDate.AddDays(-30);
             baseRepository = new GenericKursDBRepository<Data.DistributeNaklad>(unitOfWork);
             distributeNakladRepository = new DistributeNakladRepository(unitOfWork);
         }
@@ -95,6 +96,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         private new ILayoutSerializationService LayoutSerializationService
             => GetService<ILayoutSerializationService>();
 
+        /*
         public DateTime DateEnd
         {
             get => myDateEnd;
@@ -105,9 +107,10 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 RaisePropertyChanged();
                 if (myDateStart < myDateEnd) return;
                 myDateStart = myDateEnd;
-                RaisePropertyChanged(nameof(DateStart));
+                RaisePropertyChanged(nameof(StartDate));
             }
         }
+        */
 
         public ObservableCollection<DistributeNakladViewModel> Documents { get; set; } =
             new ObservableCollection<DistributeNakladViewModel>();
@@ -121,6 +124,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             set => SetValue(value);
         }
 
+        /*
         public DateTime DateStart
         {
             get => myDateStart;
@@ -134,6 +138,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 RaisePropertyChanged(nameof(DateEnd));
             }
         }
+        */
 
         #endregion
 
@@ -161,6 +166,21 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             LayoutManager = new Helper.LayoutManager(Form, LayoutSerializationService,
                 GetType().Name, null, GlobalOptions.KursSystemDBContext);
             LayoutManager.Load();
+            if (Form is KursBaseSearchWindow ctrl)
+            {
+                if (ctrl.modelViewControl.Content is DistributeNakladSearchView frm)
+                {
+                    foreach (var col in frm.resultGridControl.Columns)
+                    {
+                        switch (col.FieldName)
+                        {
+                            case "State":
+                                col.Visible = false;
+                                break;
+                        }
+                    }
+                }
+            }
         }
 
         public override void ResetLayout(object form)

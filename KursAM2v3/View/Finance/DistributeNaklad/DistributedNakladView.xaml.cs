@@ -7,6 +7,7 @@ using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
+using DevExpress.XtraRichEdit.API.Native;
 using Helper;
 using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursDomain;
@@ -39,23 +40,31 @@ namespace KursAM2.View.Finance.DistributeNaklad
                 e.Item.Visibility = Visibility.Hidden;
                 return;
             }
-
+            
             switch (e.PropertyName)
             {
                 case nameof(DistributeNakladViewModel.DocNum):
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
-                    var edit = new TextEdit();
-                    edit.Width = 50;
+                    e.Item.LabelHorizontalAlignment = HorizontalAlignment.Left;
+                    e.Item.MinWidth = 200;
+                    var edit = new TextEdit
+                    {
+                        IsReadOnly = true,
+                        HorizontalContentAlignment = HorizontalAlignment.Right,
+                    };
+                    //edit.Width = 50;
                     BindingHelper.CopyBinding(oldContent, edit, BaseEdit.EditValueProperty);
-                    e.Item.Content = edit;
+                    e.Item.Content = edit;                    
                     break;
                 case nameof(DistributeNakladViewModel.DocDate):
+                    e.Item.Margin = new Thickness(25, 0, 0, 0);
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
-                    e.Item.Width = 120;
+                    //e.Item.Width = 120;
                     break;
                 case nameof(DistributeNakladViewModel.Currency):
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
-                    e.Item.Width = 50;
+                    e.Item.Margin = new Thickness(155, 0, 0, 0);
+                    //e.Item.Width = 50;
                     CurrencyItem = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Currency, "Currency",
                         GlobalOptions.ReferencesCache.GetCurrenciesAll().ToList(), width: 50);
                     if (doc.Tovars.Count > 0 && doc.State != RowStatus.NewRow)
@@ -63,16 +72,25 @@ namespace KursAM2.View.Finance.DistributeNaklad
                     break;
                 case nameof(DistributeNakladViewModel.State):
                     e.Item.IsReadOnly = true;
+                    e.Item.Margin = new Thickness(5, 0, 0, 0);
                     if (e.Item.Content is ComboBoxEdit cbState) cbState.IsEnabled = false;
                     e.Item.HorizontalAlignment = HorizontalAlignment.Right;
                     break;
                 case nameof(DistributeNakladViewModel.Creator):
                     e.Item.HorizontalAlignment = HorizontalAlignment.Right;
-                    e.Item.Width = 150;
-                    e.Item.IsEnabled = false;
+                    e.Item.MinWidth = 150;
+                    e.Item.IsReadOnly = true;
+                    //e.Item.IsEnabled = false;
                     break;
                 case nameof(DistributeNakladViewModel.Note):
+                    e.Item.Margin = new Thickness(0, 5, 0, 0);
                     ViewFluentHelper.SetDefaultTextEdit(e.Item, HorizontalAlignment.Left, 600, 50);
+                    e.Item.LabelVerticalAlignment = VerticalAlignment.Top;
+                    break;
+                case nameof(DistributeNakladViewModel.DistributedSumma):
+                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                    e.Item.MaxWidth = 300;
+                    e.Item.MinWidth = 200;
                     break;
             }
 

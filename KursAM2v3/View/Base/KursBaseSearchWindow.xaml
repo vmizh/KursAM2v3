@@ -74,6 +74,6 @@
                           Width="120"
                           Margin="10,0,0,0"/>
         </StackPanel>
-        <ContentControl Name = "modelViewControl" />
+        <ContentControl Name = "modelViewControl" Margin="0,10,0,0" />
     </DockPanel>
 </dx:ThemedWindow>

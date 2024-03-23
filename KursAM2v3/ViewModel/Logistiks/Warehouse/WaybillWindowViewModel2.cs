@@ -754,7 +754,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var loadType = InvoiceClientSearchType.NotShipped;
             loadType |= InvoiceClientSearchType.OnlyAccepted;
             if (Document.Client != null) loadType |= InvoiceClientSearchType.OneKontragent;
-            var dtx = new InvoiceClientSearchDialogViewModel(true, true, loadType, UnitOfWork.Context)
+            //ToDo отслеживание вставленных позиций в диалоге выбора строк ***
+            var dtx = new InvoiceClientSearchDialogViewModel(true, true, loadType, Document.Rows.Select(_ => _.DDT_NOMENKL_DC).ToList() , UnitOfWork.Context)
             {
                 WindowName = "Выбор счетов фактур",
                 KontragentDC = Document.Client?.DocCode

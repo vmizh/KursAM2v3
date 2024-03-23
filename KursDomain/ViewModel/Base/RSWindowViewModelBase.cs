@@ -75,7 +75,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         Form = form;
         myIsCanRefresh = true;
     }
-
+    [Display(AutoGenerateField = false)]
     public bool IsVersionUpdateStatus
     {
         get => _versionUpdateStatus;
@@ -742,6 +742,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         get { return new Command(DocDelete, _ => IsDocDeleteAllow); }
     }
 
+    [Display(AutoGenerateField = false)]
     public ICommand UndoCommand {
         get { return new Command(Undo, _ =>true); }
     }

@@ -306,7 +306,7 @@ namespace KursAM2.Managers
             foreach (var t in dtx.Tovars) t.State = RowStatus.NotEdited;
 
             dsForm.Show();
-            dtx.myState = RowStatus.NotEdited;
+            dtx.State = RowStatus.NotEdited;
             return dtx;
         }
 
