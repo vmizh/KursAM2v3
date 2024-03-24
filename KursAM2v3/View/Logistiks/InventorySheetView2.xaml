@@ -196,7 +196,7 @@
                                     <MenuItem Header="Удалить номенклатуру"
                                               Command="{Binding RemoveNomenklCommand}" />
                                     <Separator />
-                                    <MenuItem Header="Добавить все"
+                                    <MenuItem Header="Добавить все номенклатуры со склада"
                                               ToolTip="Добавляет все позиции, кол-во которых не равно 0"
                                               Command="{Binding AddAllNomenklCommand}" />
                                     <Separator />

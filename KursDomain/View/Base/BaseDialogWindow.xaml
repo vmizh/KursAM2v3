@@ -22,37 +22,33 @@
             <DockPanel DockPanel.Dock="Bottom"
                        Height="60"
                        LastChildFill="False">
-                <Button Content="Отменить"
+                <Button Content="Отмена"
                         Command="{Binding CancelCommand}"
                         MinHeight="25"
                         Width="120"
                         Margin="10 "
                         VerticalAlignment="Top"
                         HorizontalAlignment="Stretch"
-                        Style="{StaticResource MaterialDesignRaisedAccentButton}"
                         DockPanel.Dock="Right" />
-                <Button Content="Подвердить"
+                <Button Content="ОК"
                         Command="{Binding OkCommand}"
                         MinHeight="25"
                         Width="120"
                         Margin="10 "
                         VerticalAlignment="Top"
                         HorizontalAlignment="Stretch"
-                        Style="{StaticResource MaterialDesignRaisedAccentButton}"
                         DockPanel.Dock="Right" />
 
                 <Button Command="{Binding ResetLayoutCommand}"
                         MinHeight="25"
                         Width="120"
-                        Height="40"
                         Margin="10 "
                         VerticalAlignment="Top"
                         HorizontalAlignment="Stretch"
-                        Style="{StaticResource MaterialDesignRaisedAccentButton}"
                         DockPanel.Dock="Left">
                     <TextBlock TextAlignment="Center"
                                FontSize="12">
-                        Обновить <LineBreak /> разметку
+                        Разметка
                     </TextBlock>
                 </Button>
 
