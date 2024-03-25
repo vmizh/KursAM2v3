@@ -2,6 +2,7 @@
 using System.Linq;
 using Core;
 using DevExpress.Spreadsheet;
+using DevExpress.Xpf.PivotGrid.Automation;
 using Helper;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursDomain;
@@ -45,23 +46,23 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
             sheet.Cells[$"AD{rowId}"].Value = Convert.ToDouble(item.DDT_KOL_RASHOD);
             sheet.Cells[$"AH{rowId}"].Value = Convert.ToDouble(item.DDT_KOL_RASHOD);
             sheet.Cells[$"AQ{rowId}"].Value = Convert.ToDouble(item.DDT_KOL_RASHOD);
-            sheet.Cells[$"AV{rowId}"].Value =
+            sheet.Cells[$"AV{rowId}"].Value = item.SchetLinkedRowViewModel != null ?
                 Math.Round(
                     Convert.ToDouble(item.SchetLinkedRowViewModel.Summa / item.SchetLinkedRowViewModel.Quantity),
-                    2);
-            sheet.Cells[$"BB{rowId}"].Value =
+                    2) : 0;
+            sheet.Cells[$"BB{rowId}"].Value = item.SchetLinkedRowViewModel != null ?
                 Math.Round(
                     Convert.ToDouble((item.SchetLinkedRowViewModel.Summa - item.SchetLinkedRowViewModel.SFT_SUMMA_NDS) /
-                        item.SchetLinkedRowViewModel.Quantity * item.DDT_KOL_RASHOD), 2);
-            sheet.Cells[$"BG{rowId}"].Value = item.SchetLinkedRowViewModel.NDSPercent;
-            sheet.Cells[$"BQ{rowId}"].Value =
+                        item.SchetLinkedRowViewModel.Quantity * item.DDT_KOL_RASHOD), 2) : 0;
+            sheet.Cells[$"BG{rowId}"].Value = item.SchetLinkedRowViewModel != null ? item.SchetLinkedRowViewModel.NDSPercent :0 ;
+            sheet.Cells[$"BQ{rowId}"].Value = item.SchetLinkedRowViewModel != null ?
                 Math.Round(
                     Convert.ToDouble(item.SchetLinkedRowViewModel.SFT_SUMMA_NDS *
-                                     (item.DDT_KOL_RASHOD / item.SchetLinkedRowViewModel.Quantity)), 2);
-            sheet.Cells[$"BV{rowId}"].Value =
+                                     (item.DDT_KOL_RASHOD / item.SchetLinkedRowViewModel.Quantity)), 2) : 0;
+            sheet.Cells[$"BV{rowId}"].Value = item.SchetLinkedRowViewModel != null ?
                 Math.Round(
                     Convert.ToDouble(item.SchetLinkedRowViewModel.Summa *
-                                     (item.DDT_KOL_RASHOD / item.SchetLinkedRowViewModel.Quantity)), 2);
+                                     (item.DDT_KOL_RASHOD / item.SchetLinkedRowViewModel.Quantity)), 2) :0;
         }
 
         public override void GenerateReport(Worksheet sheet)
@@ -111,11 +112,11 @@ namespace KursAM2.ReportManagers.SFClientAndWayBill
                 $"SUM(BQ{startTableRow}:BQ{document.Rows.Count + startTableRow - 1})";
             sheet.Cells[$"BV{document.Rows.Count + startTableRow}"].Formula =
                 $"SUM(BV{startTableRow}:BV{document.Rows.Count + startTableRow - 1})";
-            sheet.Cells[$"AH{document.Rows.Count + startTableRow + 1}"].Value = document.Rows.Count;
+            sheet.Cells[$"AH{document.Rows.Count + startTableRow + 1}"].Value = document.Rows.Count; 
             sheet.Cells[$"BB{document.Rows.Count + startTableRow + 1}"].Value =
                 Math.Round(Convert.ToDouble(
-                    document.Rows.Sum(_ => (_.SchetLinkedRowViewModel.Summa - _.SchetLinkedRowViewModel.SFT_SUMMA_NDS) *
-                                           (_.DDT_KOL_RASHOD / _.SchetLinkedRowViewModel.Quantity))), 2);
+                    document.Rows.Sum(_ => _.SchetLinkedRowViewModel != null ? (_.SchetLinkedRowViewModel.Summa - _.SchetLinkedRowViewModel.SFT_SUMMA_NDS) *
+                                           (_.DDT_KOL_RASHOD / _.SchetLinkedRowViewModel.Quantity):0)), 2);
             sheet.Cells[$"BQ{document.Rows.Count + startTableRow + 1}"].Value =
                 Math.Round(Convert.ToDouble(
                     document.Rows.Sum(_ => _.SchetLinkedRowViewModel.SFT_SUMMA_NDS *

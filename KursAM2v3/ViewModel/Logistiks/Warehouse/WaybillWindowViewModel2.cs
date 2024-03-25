@@ -810,7 +810,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 DDT_SFACT_DC = item.DocCode,
                                 DDT_SFACT_ROW_CODE = item.RowCode,
                                 Nomenkl = n,
-                                DDT_KOL_RASHOD = (item.Quantity ?? 0) <= m ? item.Quantity ?? 0 : m,
+                                DDT_KOL_RASHOD = (item.Quantity - item.Shipped ?? 0) <= m ? item.Quantity - item.Shipped ?? 0 : m,
                                 Unit = n.Unit as Unit,
                                 Currency = n.Currency as Currency,
                                 InvoiceClientViewModel = Document.InvoiceClientViewModel,
