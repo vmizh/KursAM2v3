@@ -814,7 +814,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 Unit = n.Unit as Unit,
                                 Currency = n.Currency as Currency,
                                 InvoiceClientViewModel = Document.InvoiceClientViewModel,
-                                State = RowStatus.NewRow
+                                State = RowStatus.NewRow,
+                                SchetLinkedRowViewModel =  Document.InvoiceClientViewModel.Rows.FirstOrDefault(_ => _.Code == item.RowCode) as
+                                    InvoiceClientRowViewModel
+
                             };
                             Document.Rows.Add(newItem);
                             Document.Entity.TD_24.Add(newItem.Entity);
