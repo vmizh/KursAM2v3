@@ -304,7 +304,6 @@ namespace KursAM2.Managers
             dsForm.DataContext = dtx;
 
             foreach (var t in dtx.Tovars) t.State = RowStatus.NotEdited;
-
             dsForm.Show();
             dtx.State = RowStatus.NotEdited;
             return dtx;
