@@ -73,6 +73,8 @@
                                        ShowTotalSummary="False">
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
+                                    <MenuItem Header="Скопировать доступ" Command="{Binding CopyRightStore}" />
+                                    <Separator/>
                                     <MenuItem Header="Экспорт"
                                               Command="{Binding VisualControlExportCommand}"
                                               CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,

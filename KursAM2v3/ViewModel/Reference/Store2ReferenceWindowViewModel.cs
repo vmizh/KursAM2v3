@@ -1,33 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
+using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
+using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.Repository.UserRepository;
 
 namespace KursAM2.ViewModel.Reference
 {
     public sealed class Store2ReferenceWindowViewModel : TreeReferenceBaseWindowViewModel, ILayoutFluentSetEditors
     {
-        #region Fields
-
-        private readonly StoreManager Manager;
-
-        #endregion
-
         #region Constructors
 
         public Store2ReferenceWindowViewModel()
         {
+            myUserRepository = new UserRepository(GlobalOptions.KursSystem());
+            var usrs = myUserRepository.GetAllUsers();
+            foreach (var u in usrs)
+            {
+                var u2 = myUserRepository.GetUsers(u.Name);
+                myAllUsers.Add(new SelectUser
+                {
+                    IsSelected = false,
+                    UserId = u2.USR_ID,
+                    UserFullName = u.FullName,
+                    UserName = u.Name
+                });
+            }
+
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
             var errorManager = new StandartErrorManager(GlobalOptions.GetEntities(), Name, true)
@@ -40,11 +53,21 @@ namespace KursAM2.ViewModel.Reference
 
         #endregion
 
+        #region Fields
+
+        private readonly StoreManager Manager;
+        private RSViewModelBase myCurrentStore;
+        private SelectUser myCurrentUser;
+        private readonly UserRepository myUserRepository;
+
+        private readonly ObservableCollection<SelectUser> myAllUsers = new ObservableCollection<SelectUser>();
+
+        #endregion
+
         #region Properties
 
         public new List<WarehouseViewModel> Rows { set; get; } = new List<WarehouseViewModel>();
 
-        #endregion
 
         public override string Key => "Id";
         public override string ParentKey => "ParentId";
@@ -53,6 +76,49 @@ namespace KursAM2.ViewModel.Reference
 
         public ObservableCollection<SelectUser> SelectedUsers { set; get; } = new ObservableCollection<SelectUser>();
 
+        public override RSViewModelBase CurrentRow
+        {
+            set
+            {
+                if (value == myCurrentStore) return;
+                myCurrentStore = value;
+                LoadRightStoreForUsers();
+                RaisePropertyChanged();
+            }
+            get => myCurrentStore;
+        }
+
+        public SelectUser CurrentUser
+        {
+            set
+            {
+                if (value == myCurrentUser) return;
+                myCurrentUser = value;
+                RaisePropertyChanged();
+            }
+            get => myCurrentUser;
+        }
+
+        #endregion
+
+        #region Methods
+
+        private void LoadRightStoreForUsers()
+        {
+            SelectedUsers.Clear();
+            var userForStore = myUserRepository.GetUsersForStores(CurrentRow.DocCode);
+            foreach (var usr in myAllUsers)
+            {
+                var newItem = new SelectUser
+                {
+                    UserName = usr.UserName,
+                    UserFullName = usr.UserFullName,
+                    UserId = usr.UserId,
+                    IsSelected = userForStore.Any(_ => _.Name == usr.UserName)
+                };
+                SelectedUsers.Add(newItem);
+            }
+        }
 
         public void SetGridColumn(GridColumn col)
         {
@@ -104,6 +170,9 @@ namespace KursAM2.ViewModel.Reference
             cur.Region = reg;
         }
 
+        #endregion
+
+
         #region Commands
 
         public override void SaveData(object data)
@@ -113,7 +182,7 @@ namespace KursAM2.ViewModel.Reference
                 if (row.State != RowStatus.NotEdited)
                     lst.Add(row);
             foreach (var row in DeletedRows)
-                lst.Add((WarehouseViewModel) row);
+                lst.Add((WarehouseViewModel)row);
             if (lst.Count <= 0) return;
             if (!Manager.Save(lst)) return;
             foreach (var r in Rows)
@@ -124,23 +193,21 @@ namespace KursAM2.ViewModel.Reference
 
         public override void ItemNewEmpty(object obj)
         {
-            
-                var newItem = Manager.New();
-                Rows.Add(newItem);
-                SetNewItemInControl(newItem);
-            
+            var newItem = Manager.New();
+            Rows.Add(newItem);
+            SetNewItemInControl(newItem);
         }
 
         public override void ItemNewChildEmpty(object obj)
         {
-            var newItem = Manager.New((WarehouseViewModel) CurrentRow);
+            var newItem = Manager.New((WarehouseViewModel)CurrentRow);
             Rows.Add(newItem);
             SetNewItemInControl(newItem);
         }
 
         public override void ItemNewCopy(object obj)
         {
-            var newItem = Manager.NewCopy((WarehouseViewModel) CurrentRow);
+            var newItem = Manager.NewCopy((WarehouseViewModel)CurrentRow);
             Rows.Add(newItem);
             SetNewItemInControl(newItem);
         }
@@ -151,8 +218,6 @@ namespace KursAM2.ViewModel.Reference
             Rows.Clear();
             DeletedRows.Clear();
             Rows.AddRange(Manager.Load());
-            //if (Rows.Count == 0) ItemNewEmpty(null);
-            //frm.gridDocuments.RefreshData();
         }
 
         private bool IsDataCorrect()
@@ -162,7 +227,35 @@ namespace KursAM2.ViewModel.Reference
         }
 
         public override bool IsCanSaveData =>
-            Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited) && IsDataCorrect() || DeletedRows.Count > 0;
+            (Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited) && IsDataCorrect()) || DeletedRows.Count > 0;
+
+        [Display(AutoGenerateField = false)]
+        public ICommand CopyRightStore
+        {
+            get { return new Command(CopyRight, _ => true); }
+        }
+
+        private void CopyRight(object obj)
+        {
+        }
+
+        [Display(AutoGenerateField = false)]
+        public ICommand UpdateRightUserStoreCommand
+        {
+            get { return new Command(UpdateRightUserStore, _ => true); }
+        }
+
+        private void UpdateRightUserStore(object obj)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                ctx.Database.ExecuteSqlCommand(
+                    CurrentUser.IsSelected
+                        ? $"INSERT INTO HD_27(DOC_CODE, USR_ID) VALUES({CustomFormat.DecimalToSqlDecimal(CurrentRow.DocCode)},{CurrentUser.UserId})"
+                        : $"DELETE FROM HD_27 WHERE DOC_CODE = {CustomFormat.DecimalToSqlDecimal(CurrentRow.DocCode)} AND USR_ID = {CurrentUser.UserId}");
+                ctx.SaveChanges();
+            }
+        }
 
         #endregion
     }

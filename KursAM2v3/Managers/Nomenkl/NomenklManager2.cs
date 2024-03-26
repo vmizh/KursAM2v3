@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Core.WindowsManager;
 using Data;
@@ -20,6 +21,23 @@ namespace KursAM2.Managers.Nomenkl
         {
             Context = context ?? GlobalOptions.GetEntities();
         }
+
+        //TODO Доделать расчет остатков и цен по спискуц номенклатур ***
+
+        public void RecalcPrice(List<decimal> nomDCs, ALFAMEDIAEntities context = null)
+        {
+            var strDC = new StringBuilder("(");
+            foreach (var dc in nomDCs)
+            {
+                if (strDC.Length == 1)
+                    strDC.Append(dc);
+                else strDC.Append($",{dc}");
+            }
+            strDC.Append(")");
+
+        }
+
+        //EXEC dbo.NomenklCalculateCostsForOne @NomDC
 
         public void RecalcPrice(ALFAMEDIAEntities context = null)
         {

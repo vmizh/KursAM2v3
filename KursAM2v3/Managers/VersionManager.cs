@@ -125,17 +125,18 @@ namespace KursAM2.Managers
 #if (!DEBUG)
                     if (_windowsViewModel != null && _windowsViewModel.Form != null)
                         ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Stop();
-#endif
+
                     msgDialog = @"Для версии " + verCheck.fullVersion + " выпущено критическое обновление " +
                                 verCheck.sfullVersion + ".\n" +
                                 "Для дальнейшей работы необходимо обновить программу.\nВыполнить обновление?";
                     showMsgResult = winManager.ShowKursDialog(msgDialog, "Запрос на обновление программы", Brushes.Red,
                         WindowManager.YesNo);
-#if (!DEBUG)
+
                     if (_windowsViewModel != null && _windowsViewModel.Form != null)
                         ((MainWindow)_windowsViewModel.Form).VersionUpdateTimer.Start();
-#endif
+
                     if (showMsgResult == WindowManager.KursDialogResult.No) return;
+#endif
                     break;
             }
 

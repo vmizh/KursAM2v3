@@ -29,7 +29,7 @@ namespace KursAM2.ViewModel.Reference
         public virtual ObservableCollection<RSViewModelBase> SelectedRows { set; get; } =
             new ObservableCollection<RSViewModelBase>();
 
-        public RSViewModelBase CurrentRow
+        public virtual RSViewModelBase CurrentRow
         {
             get => myCurrentRow;
             set
