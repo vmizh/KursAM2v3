@@ -8,6 +8,7 @@
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
                  xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
                  xmlns:control1="clr-namespace:KursDomain.Control;assembly=KursDomain"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                  mc:Ignorable="d"
                  Title="{Binding WindowName}" Height="450" Width="800">
     <dx:ThemedWindow.HeaderItems>
@@ -105,6 +106,10 @@
                                     </MenuItem>
                                 </ContextMenu>
                             </dxg:TableView.ContextMenu>
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand EventName="CellValueChanged"
+                                                       Command="{Binding UpdateRightUserStoreCommand}" />
+                            </dxmvvm:Interaction.Behaviors>
                         </dxg:TableView>
                     </dxg:GridControl.View>
                 </dxg:GridControl>

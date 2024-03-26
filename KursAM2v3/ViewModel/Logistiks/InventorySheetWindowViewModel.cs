@@ -449,6 +449,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void AddAllNomenkl(object obj)
         {
+            int maxCode = Document.Rows.Any() ? Document.Rows.Select(_ => _.Code).Max() + 1 : 1;
             var noms = NomenklCalculationManager
                 .GetNomenklStoreRemains(Document.Date, Document.Warehouse.DocCode)
                 .Where(_ => _.Remain != 0)
@@ -461,6 +462,7 @@ namespace KursAM2.ViewModel.Logistiks
                 var newItem = new InventorySheetRowViewModel(null)
                 {
                     DocCode = Document.DocCode,
+                    Code = maxCode,
                     Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(nom.NomenklDC) as Nomenkl,
                     QuantityFact = nom.Remain,
                     QuantityCalc = nom.Remain,
@@ -471,10 +473,13 @@ namespace KursAM2.ViewModel.Logistiks
                     Parent = Document
                 };
                 Document.Rows.Add(newItem);
+                UnitOfWork.Context.TD_24.Add(newItem.Entity);
                 if (!usedNomenklDCList.Contains(newItem.Nomenkl.DocCode))
                 {
                     usedNomenklDCList.Add(newItem.Nomenkl.DocCode);
                 }
+
+                maxCode++;
             }
         }
 
