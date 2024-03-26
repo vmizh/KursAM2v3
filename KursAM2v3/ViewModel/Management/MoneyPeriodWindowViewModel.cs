@@ -46,7 +46,7 @@ namespace KursAM2.ViewModel.Management
             IsDocNewCopyRequisiteAllow = true;
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            StartDate = DateTime.Today.AddDays(-30);
+            StartDate = new DateTime(DateTime.Today.Year,DateTime.Today.Month,1);
             EndDate = DateTime.Today;
             TimeOutIndex = 0;
         }

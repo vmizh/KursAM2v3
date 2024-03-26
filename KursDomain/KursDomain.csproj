@@ -369,6 +369,8 @@
     <Compile Include="Repository\LastDocumentRepository\LastDocumentRepository.cs" />
     <Compile Include="Repository\NomenklRepository\INomenklRepository.cs" />
     <Compile Include="Repository\NomenklRepository\NomenklRepository.cs" />
+    <Compile Include="Repository\UserRepository\IUserRepository.cs" />
+    <Compile Include="Repository\UserRepository\UserRepository.cs" />
     <Compile Include="Repository\WarehouseRepository\IWarehouseRepository.cs" />
     <Compile Include="Repository\LayoutRepository\ILayoutRepository.cs" />
     <Compile Include="Repository\LayoutRepository\LayoutRepository.cs" />

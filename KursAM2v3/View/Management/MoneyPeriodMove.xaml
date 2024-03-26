@@ -80,16 +80,15 @@
                                      CurrentItem="{Binding CurrentItem, Mode=TwoWay}"
                                      CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
                         <dxg:GridControl.Columns>
-                            <dxg:GridColumn x:Name="pcol1_11" Header="Документ" FieldName="DocName"
-                                            ReadOnly="True" />
                             <dxg:GridColumn x:Name="pcol1_1" Header="Дата" FieldName="Date"
+                                            ReadOnly="True" />
+                            <dxg:GridColumn x:Name="pcol1_11" Header="Документ" FieldName="DocName"
                                             ReadOnly="True" />
                             <dxg:GridColumn x:Name="pcol1_17" Header="Контрагент" FieldName="Kontragent"
                                             ReadOnly="True" />
                             <dxg:GridColumn x:Name="pcol2_1" Header="Сумма" FieldName="SummaPrihod">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:CalcEditSettings DisplayFormat="n2"
-                                                          MaskUseAsDisplayFormat="True"
                                                           AllowDefaultButton="False" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
@@ -101,9 +100,9 @@
                             </dxg:GridColumn>
                             <dxg:GridColumn x:Name="pcol1_12" Header="Примечание" FieldName="Note"
                                             ReadOnly="True" />
-                            <dxg:GridColumn x:Name="pcol1_13" Header="Статья Д/Р" FieldName="SDRState"
-                                            ReadOnly="True" ColumnFilterMode="DisplayText" />
                             <dxg:GridColumn x:Name="pcol1_14" Header="Счет Д/Р" FieldName="SDRSchet"
+                                            ReadOnly="True" ColumnFilterMode="DisplayText" />
+                            <dxg:GridColumn x:Name="pcol1_13" Header="Статья Д/Р" FieldName="SDRState"
                                             ReadOnly="True" ColumnFilterMode="DisplayText" />
                         </dxg:GridControl.Columns>
                         <dxg:GridControl.TotalSummary>
@@ -158,16 +157,15 @@
                                      ItemsSource="{Binding Rashod, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
                                      CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
                         <dxg:GridControl.Columns>
-                            <dxg:GridColumn x:Name="rcol1_11" Header="Документ" FieldName="DocName"
-                                            ReadOnly="True" />
                             <dxg:GridColumn x:Name="rcol1_1" Header="Дата" FieldName="Date"
+                                            ReadOnly="True" />
+                            <dxg:GridColumn x:Name="rcol1_11" Header="Документ" FieldName="DocName"
                                             ReadOnly="True" />
                             <dxg:GridColumn x:Name="rcol1_17" Header="Контрагент" FieldName="Kontragent"
                                             ReadOnly="True" />
                             <dxg:GridColumn x:Name="rcol2_21" Header="Сумма" FieldName="SummaRashod">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:CalcEditSettings DisplayFormat="n2"
-                                                          MaskUseAsDisplayFormat="True"
                                                           AllowDefaultButton="False" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
@@ -179,9 +177,9 @@
                             </dxg:GridColumn>
                             <dxg:GridColumn x:Name="rcol1_12" Header="Примечание" FieldName="Note"
                                             ReadOnly="True" />
-                            <dxg:GridColumn x:Name="rcol1_13" Header="Статья Д/Р" FieldName="SDRState"
+                             <dxg:GridColumn x:Name="rcol1_14" Header="Счет Д/Р" FieldName="SDRSchet"
                                             ReadOnly="True" ColumnFilterMode="DisplayText" />
-                            <dxg:GridColumn x:Name="rcol1_14" Header="Счет Д/Р" FieldName="SDRSchet"
+                           <dxg:GridColumn x:Name="rcol1_13" Header="Статья Д/Р" FieldName="SDRState"
                                             ReadOnly="True" ColumnFilterMode="DisplayText" />
 
                         </dxg:GridControl.Columns>
@@ -239,23 +237,21 @@
                                      ItemsSource="{Binding AllOperations, NotifyOnTargetUpdated=True, NotifyOnSourceUpdated=True}"
                                      CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
                         <dxg:GridControl.Columns>
-                            <dxg:GridColumn x:Name="acol1_11" Header="Документ" FieldName="DocName"
+                             <dxg:GridColumn x:Name="acol1_1" Header="Дата" FieldName="Date"
                                             ReadOnly="True" />
-                            <dxg:GridColumn x:Name="acol1_1" Header="Дата" FieldName="Date"
+                           <dxg:GridColumn x:Name="acol1_11" Header="Документ" FieldName="DocName"
                                             ReadOnly="True" />
                             <dxg:GridColumn x:Name="acol1_17" Header="Контрагент" FieldName="Kontragent"
                                             ReadOnly="True" />
                             <dxg:GridColumn x:Name="acol2_1" Header="Поступление" FieldName="SummaPrihod">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:CalcEditSettings DisplayFormat="n2"
-                                                          MaskUseAsDisplayFormat="True"
                                                           AllowDefaultButton="False" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                             <dxg:GridColumn x:Name="acol2_2" Header="Выплата" FieldName="SummaRashod">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:CalcEditSettings DisplayFormat="n2"
-                                                          MaskUseAsDisplayFormat="True"
                                                           AllowDefaultButton="False" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
@@ -267,9 +263,9 @@
                             </dxg:GridColumn>
                             <dxg:GridColumn x:Name="acol1_12" Header="Примечание" FieldName="Note"
                                             ReadOnly="True" />
-                            <dxg:GridColumn x:Name="acol1_13" Header="Статья Д/Р" FieldName="SDRState"
-                                            ReadOnly="True" ColumnFilterMode="DisplayText" />
                             <dxg:GridColumn x:Name="acol1_14" Header="Счет Д/Р" FieldName="SDRSchet"
+                                            ReadOnly="True" ColumnFilterMode="DisplayText" />
+                            <dxg:GridColumn x:Name="acol1_13" Header="Статья Д/Р" FieldName="SDRState"
                                             ReadOnly="True" ColumnFilterMode="DisplayText" />
                         </dxg:GridControl.Columns>
                         <dxg:GridControl.TotalSummary>
@@ -330,24 +326,22 @@
                                             ReadOnly="True" />
                             <dxg:GridColumn x:Name="rr5col1_12" Header="Счет(наименование)" FieldName="Name"
                                             ReadOnly="True" />
+                            <dxg:GridColumn x:Name="rrcol3_1_11" Header="Валюта" FieldName="Currency"
+                                            ReadOnly="True" ColumnFilterMode="DisplayText">
+                                <dxg:GridColumn.EditSettings>
+                                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
+                                </dxg:GridColumn.EditSettings>
+                            </dxg:GridColumn>
                             <dxg:GridColumn x:Name="rrcol2_11" Header="На начало" FieldName="StartSumma">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:CalcEditSettings DisplayFormat="n2"
-                                                          MaskUseAsDisplayFormat="True"
                                                           AllowDefaultButton="False" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                             <dxg:GridColumn x:Name="rrcol2_21" Header="На конец" FieldName="EndSumma">
                                 <dxg:GridColumn.EditSettings>
                                     <dxe:CalcEditSettings DisplayFormat="n2"
-                                                          MaskUseAsDisplayFormat="True"
                                                           AllowDefaultButton="False" />
-                                </dxg:GridColumn.EditSettings>
-                            </dxg:GridColumn>
-                            <dxg:GridColumn x:Name="rrcol3_1_11" Header="Валюта" FieldName="Currency"
-                                            ReadOnly="True" ColumnFilterMode="DisplayText">
-                                <dxg:GridColumn.EditSettings>
-                                    <dxe:TextEditSettings HorizontalContentAlignment="Right" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                         </dxg:GridControl.Columns>
