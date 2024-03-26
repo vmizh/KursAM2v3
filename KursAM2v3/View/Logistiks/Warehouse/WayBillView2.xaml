@@ -36,19 +36,19 @@
                               dxlc:LayoutControl.AllowVerticalSizing="True">
                 <dxlc:LayoutItem>
                     <DockPanel LastChildFill="False">
-                        <Label Content="№: " DockPanel.Dock="Left" />
+                        <Label Content="№: " DockPanel.Dock="Left" Margin="0,0,67,0" />
                         <dxe:TextEdit MinWidth="80"
                                       Margin="5,0,0,0"
                                       EditValue="{Binding Document.DD_IN_NUM, UpdateSourceTrigger=PropertyChanged}"
                                       DockPanel.Dock="Left" />
-                        <Label Content="  Дата: " DockPanel.Dock="Left" />
+                        <Label Content="  Дата: " DockPanel.Dock="Left" Margin="60,0,0,0" />
                         <dxe:DateEdit MinWidth="100"
                                       DockPanel.Dock="Left"
                                       Margin="5,0,0,0"
-                                      EditValue="{Binding Document.Date, UpdateSourceTrigger=PropertyChanged}" />
+                                      EditValue="{Binding Document.Date, UpdateSourceTrigger=PropertyChanged}" Width="116" />
                         <Label Content ="Валюта:" DockPanel.Dock="Left" Margin="20,0,0,0" Foreground="Red" Visibility="{Binding DocCurrencyVisible}"/>
                         <Label Content= "{Binding Document.DocCurrency, UpdateSourceTrigger=PropertyChanged}" Margin="8,0,0,0" 
-                               BorderThickness="1" MinWidth="60" BorderBrush="Red" Foreground="Red " Visibility="{Binding DocCurrencyVisible}" Width="70" HorizontalContentAlignment="Center"
+                               BorderThickness="1" MinWidth="60" BorderBrush="Red" Foreground="Red " Visibility="{Binding DocCurrencyVisible}" Width="96" HorizontalContentAlignment="Center"
                                />
                         <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
                                           IsEnabled="False" 
@@ -129,10 +129,12 @@
                     <Label Content="Примечание: " VerticalAlignment="Top" />
                     <dxe:TextEdit MinHeight="40"
                                   MaxHeight="60"
-                                  MinWidth="500"
+                                  MinWidth="460"
                                   VerticalContentAlignment="Top"
+                                  AcceptsReturn="True"
+                                  TextWrapping="Wrap"
                                   Margin="16 0"
-                                  EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}" />
+                                  EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}" Width="466" />
                 </StackPanel>
             </dxlc:LayoutGroup>
             <dxlc:LayoutGroup View="Group"
