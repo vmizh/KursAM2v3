@@ -39,18 +39,18 @@
                     <DockPanel LastChildFill="False">
                         <Label Content="№: " DockPanel.Dock="Left" />
                         <dxe:TextEdit MinWidth="80"
-                                      Margin="48,0,0,0"
+                                      Margin="90,0,0,0"
                                       EditValue="{Binding Document.DD_IN_NUM, 
                                     UpdateSourceTrigger=PropertyChanged}"
-                                      DockPanel.Dock="Left" />
-                        <Label Content="  Внеш.№: " DockPanel.Dock="Left" />
+                                      DockPanel.Dock="Left" Width="119" />
+                        <Label Content="  Внеш.№: " DockPanel.Dock="Left" Margin="6,0,0,0" Width="83" />
                         <dxe:TextEdit MinWidth="80"
                                       EditValue="{Binding Document.DD_EXT_NUM, 
                                     UpdateSourceTrigger=PropertyChanged}"
                                       DockPanel.Dock="Left" />
                         <Label Content="  от " DockPanel.Dock="Left" />
                         <dxe:DateEdit MinWidth="100" DockPanel.Dock="Left"
-                                      EditValue="{Binding Document.Date, UpdateSourceTrigger=PropertyChanged}" />
+                                      EditValue="{Binding Document.Date, UpdateSourceTrigger=PropertyChanged}" Width="86" />
                         <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
                                           IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }">
                             <dxmvvm:Interaction.Behaviors>
@@ -58,10 +58,10 @@
                                     EnumType="{x:Type iCommon:RowStatus}" />
                             </dxmvvm:Interaction.Behaviors>
                         </dxe:ComboBoxEdit>
-                        <Label Content="  Статус:" DockPanel.Dock="Right" />
+                        <Label Content="  Статус:" DockPanel.Dock="Right" Width="50" />
                         <dxe:TextEdit MinWidth="100" DockPanel.Dock="Right"
                                       EditValue="{Binding Document.CREATOR}" IsReadOnly="True" />
-                        <Label Content="Создатель: " DockPanel.Dock="Right" />
+                        <Label Content="Создатель: " DockPanel.Dock="Right" Width="65" />
                     </DockPanel>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem>
@@ -89,7 +89,7 @@
                             IsTextEditable="False"
                             Text="{Binding Document.Sender, ValidatesOnDataErrors=True, Mode=OneWay}"
                             EditValue="{Binding Document.Sender, ValidatesOnDataErrors=True, Mode=OneWay}"
-                            IsEnabled="{Binding IsCanChageKontragent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            IsEnabled="{Binding IsCanChageKontragent, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Width="201">
                             <dxmvvm:Interaction.Behaviors>
                                 <dxmvvm:EventToCommand EventName="DefaultButtonClick"
                                                        Command="{Binding SenderSelectCommand}" />
@@ -114,7 +114,7 @@
                         <Label Content="Склад получатель: " />
                         <dxe:ComboBoxEdit Style="{StaticResource ComboBoxEditWithError}"
                                           DockPanel.Dock="Left"
-                                          MinWidth="200"
+                                          MinWidth="300"
                                           Margin="5 0"
                                           ItemsSource="{Binding WarehouseList}"
                                           EditValue="{Binding Document.WarehouseIn, ValidatesOnDataErrors=True,
@@ -128,6 +128,8 @@
                                   MaxHeight="60"
                                   MinWidth="300"
                                   Margin="33 0"
+                                  TextWrapping="Wrap"
+                                  AcceptsReturn="True"
                                   VerticalContentAlignment="Top"/>
                 </StackPanel>
             </dxlc:LayoutGroup>
