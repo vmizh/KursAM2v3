@@ -106,6 +106,7 @@ namespace KursAM2.ViewModel.Reference
         private void LoadRightStoreForUsers()
         {
             SelectedUsers.Clear();
+            if (CurrentRow.State == RowStatus.NewRow) return;
             var userForStore = myUserRepository.GetUsersForStores(CurrentRow.DocCode);
             foreach (var usr in myAllUsers)
             {
