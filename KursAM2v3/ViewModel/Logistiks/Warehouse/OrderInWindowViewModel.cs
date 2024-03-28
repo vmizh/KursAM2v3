@@ -106,7 +106,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Document = new WarehouseOrderIn(doc);
                 {
                     State = RowStatus.NotEdited;
+                    
                 }
+                Document.WarehouseSenderType = Document.KontragentSender != null ? 
+                    WarehouseSenderType.Kontragent : WarehouseSenderType.Store;
                 if (Document != null)
                     WindowName = Document.ToString();
                 if (Document.Entity.DD_SPOST_DC != null)
@@ -316,6 +319,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     GlobalOptions.ReferencesCache.GetWarehouse(datarows.First().SD_24.DD_SKLAD_OTPR_DC) as
                         KursDomain.References.Warehouse;
                 foreach (var n in datarows)
+                {
                     if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DDT_NOMENKL_DC))
                     {
                         var nom = GlobalOptions.ReferencesCache.GetNomenkl(n.DDT_NOMENKL_DC) as Nomenkl;
@@ -341,6 +345,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         };
                         Document.Rows.Add(newItem);
                     }
+
+                    newCode++;
+                }
             }
 
         }
