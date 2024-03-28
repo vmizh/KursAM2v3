@@ -318,7 +318,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             DDT_SKLAD_OTPR_DC = n.SD_24.DD_SKLAD_OTPR_DC,
                             DDT_RASH_ORD_DC = n.DOC_CODE,
                             DDT_RASH_ORD_CODE = n.Code,
-                        };
+                            Id = Guid.NewGuid(),
+                            DocId = Document.Id
+                            };
                         Document.Entity.TD_24.Add(newEnt);
                         var newItem =  new WarehouseOrderInRow(newEnt)
                         {
@@ -385,11 +387,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
 
+        //управление кнопкой сохранить
         public override bool IsCanSaveData => Document != null && (Document.State != RowStatus.NotEdited
                                                                    || Document.Rows.Any(_ =>
                                                                        _.State != RowStatus.NotEdited)
                                                                    || Document.DeletedRows.Count > 0)
-                                                               && Document.KontragentSender != null &&
+                                                               && (Document.KontragentSender != null || Document.WarehouseOut != null) &&
                                                                Document.WarehouseIn != null;
 
         public override RowStatus State => Document?.State ?? RowStatus.NewRow;
@@ -488,6 +491,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void SaveData(object data)
         {
+            Document.Entity.DD_POLUCH_NAME = Document.WarehouseIn.Name;
             Document.Entity.DD_TYPE_DC = 2010000001;
             Document.Entity.DD_POLUCH_NAME = Document.Sender;
             var ent = UnitOfWork.Context.ChangeTracker.Entries().ToList();
