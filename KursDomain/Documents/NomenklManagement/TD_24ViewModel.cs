@@ -304,6 +304,7 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         }
     }
 
+    [Display(AutoGenerateField = false)]
     public InvoiceClientViewModel InvoiceClientViewModel
     {
         get => _myInvoiceClient;

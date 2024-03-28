@@ -105,10 +105,11 @@ namespace KursAM2.Dialogs
             return ctx.SelectedNomenkl.ToList();
         }
 
-        public static List<WarehouseOrderOutRowSelect> SelectNomenklsFromRashodOrder(Warehouse store)
+        public static List<WarehouseOrderOutRowSelect> SelectNomenklsFromRashodOrder(Warehouse store, 
+            List<Tuple<decimal,int>> exclude = null, Warehouse fromStore = null)
         {
             //MainReferences.UpdateNomenkl();
-            var ctx = new AddNomenklFromRashOrderViewModel(store)
+            var ctx = new AddNomenklFromRashOrderViewModel(store, exclude, fromStore)
             {
                 WindowName = "Выбор номенклатур"
             };
@@ -585,9 +586,9 @@ namespace KursAM2.Dialogs
             return new List<Nomenkl>(ctx.SelectedNomenkls);
         }
 
-        public static Warehouse SelectWarehouseDialog()
+        public static Warehouse SelectWarehouseDialog(List<Warehouse> excludeList = null)
         {
-            var ctx = new WarehouseSelectDialogViewModel();
+            var ctx = new WarehouseSelectDialogViewModel(excludeList);
             var dlg = new SelectDialogView {DataContext = ctx};
             dlg.ShowDialog();
             if (!ctx.DialogResult) return null;
