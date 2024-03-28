@@ -306,8 +306,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (Document.WarehouseSenderType == WarehouseSenderType.Store)
             {
                 var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
-                var datarows = StandartDialogs.SelectNomenklsFromRashodOrder(Document.WarehouseIn);
+                var datarows =
+                    StandartDialogs.SelectNomenklsFromRashodOrder(Document.WarehouseIn,
+                        Document.Rows.Select(_ =>
+                            new Tuple<decimal, int>((decimal)_.DDT_RASH_ORD_DC, (int)_.DDT_RASH_ORD_CODE)).ToList(),
+                        Document.WarehouseOut);
                 if (datarows == null || datarows.Count <= 0) return;
+                Document.WarehouseOut =
+                    GlobalOptions.ReferencesCache.GetWarehouse(datarows.First().SD_24.DD_SKLAD_OTPR_DC) as
+                        KursDomain.References.Warehouse;
                 foreach (var n in datarows)
                     if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DDT_NOMENKL_DC))
                     {
@@ -320,9 +327,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             DDT_RASH_ORD_CODE = n.Code,
                             Id = Guid.NewGuid(),
                             DocId = Document.Id
-                            };
+                        };
                         Document.Entity.TD_24.Add(newEnt);
-                        var newItem =  new WarehouseOrderInRow(newEnt)
+                        var newItem = new WarehouseOrderInRow(newEnt)
                         {
                             DocCode = Document.DocCode,
                             Code = newCode,
@@ -493,7 +500,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             Document.Entity.DD_POLUCH_NAME = Document.WarehouseIn.Name;
             Document.Entity.DD_TYPE_DC = 2010000001;
-            Document.Entity.DD_POLUCH_NAME = Document.Sender;
+            Document.Entity.DD_POLUCH_NAME = Document.WarehouseIn.Name;
             var ent = UnitOfWork.Context.ChangeTracker.Entries().ToList();
             UnitOfWork.CreateTransaction();
             try
@@ -512,9 +519,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 }
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
-                DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
+                DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.StoreOrderIn), null,
                     Document.DocCode, null, (string)Document.ToJson());
-                RecalcKontragentBalans.CalcBalans(Document.DD_KONTR_OTPR_DC.Value, Document.Date);
+                if(Document.DD_KONTR_OTPR_DC != null)
+                    RecalcKontragentBalans.CalcBalans(Document.DD_KONTR_OTPR_DC.Value, Document.Date);
             }
             catch (Exception ex)
             {
@@ -527,6 +535,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 r.myState = RowStatus.NotEdited;
             }
+            Document.RaisePropertyChanged("State");
         }
 
         public ICommand DeleteLinkDocumentCommand
@@ -570,11 +579,16 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     Document.Entity.DD_KONTR_OTPR_DC = kontr.DocCode;
                     break;
                 case WarehouseSenderType.Store:
-                    var warehouse = StandartDialogs.SelectWarehouseDialog();
+                    var WinManager = new WindowManager();
+                    if (Document.WarehouseIn == null)
+                    {
+                        WinManager.ShowWinUIMessageBox("Не выбран склад прихода.", "Ошибка", MessageBoxButton.OK,
+                            MessageBoxImage.Error);
+                        return;
+                    }
+                    var warehouse = StandartDialogs.SelectWarehouseDialog(new List<KursDomain.References.Warehouse>(new [] {Document.WarehouseIn}));
                     if (warehouse == null) return;
                     Document.WarehouseOut = warehouse;
-                    //var win = new WindowManager();
-                    // ReSharper disable once PossibleUnintendedReferenceComparison
                     break;
             }
 

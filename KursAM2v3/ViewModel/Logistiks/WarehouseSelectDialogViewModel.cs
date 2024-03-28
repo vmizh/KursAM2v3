@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Core.ViewModel.Base;
@@ -13,15 +14,28 @@ namespace KursAM2.ViewModel.Logistiks
     {
         private KursDomain.References.Warehouse myCurrentWarehouse;
         private SelectWarehouse myDataUserControl;
+        private List<KursDomain.References.Warehouse> myExcludeList;
 
-        public WarehouseSelectDialogViewModel()
+        public WarehouseSelectDialogViewModel(List<KursDomain.References.Warehouse> excludeList = null)
         {
             myDataUserControl = new SelectWarehouse();
+            myExcludeList = excludeList;
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
-            WarehouseCollection =
-                new ObservableCollection<KursDomain.References.Warehouse>(GlobalOptions.ReferencesCache
-                    .GetWarehousesAll()
-                    .Cast<KursDomain.References.Warehouse>().OrderBy(_ => _.Name));
+            if (myExcludeList != null && myExcludeList.Count > 0)
+            {
+                WarehouseCollection =
+                    new ObservableCollection<KursDomain.References.Warehouse>(GlobalOptions.ReferencesCache
+                        .GetWarehousesAll()
+                        .Cast<KursDomain.References.Warehouse>().Except(myExcludeList).OrderBy(_ => _.Name));
+            }
+            else
+            {
+                WarehouseCollection =
+                    new ObservableCollection<KursDomain.References.Warehouse>(GlobalOptions.ReferencesCache
+                        .GetWarehousesAll()
+                        .Cast<KursDomain.References.Warehouse>().OrderBy(_ => _.Name));
+            }
+
             WindowName = "Выбор склада";
         }
 

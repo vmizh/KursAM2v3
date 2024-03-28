@@ -78,5 +78,7 @@ namespace KursAM2.View.DialogUserControl
             ctx.DialogResult = true;
             ctx.Form?.Close();
         }
+
+       
     }
 }

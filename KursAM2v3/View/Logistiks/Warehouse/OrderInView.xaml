@@ -41,7 +41,8 @@
                         <dxe:TextEdit MinWidth="80"
                                       Margin="90,0,0,0"
                                       EditValue="{Binding Document.DD_IN_NUM, 
-                                    UpdateSourceTrigger=PropertyChanged}"
+                                      UpdateSourceTrigger=PropertyChanged}"
+                                      IsReadOnly="True"
                                       DockPanel.Dock="Left" Width="119" />
                         <Label Content="  Внеш.№: " DockPanel.Dock="Left" Margin="6,0,0,0" Width="83" />
                         <dxe:TextEdit MinWidth="80"
@@ -70,6 +71,7 @@
                         <dxe:ComboBoxEdit
                             Style="{StaticResource ComboBoxEditWithError}"
                             Margin="11 0"
+                            IsTextEditable="False"
                             MinWidth="120" DockPanel.Dock="Right"
                             IsEnabled="{Binding IsCanChageKontragent, Mode=OneWay}"
                             EditValue="{Binding Document.WarehouseSenderType, ValidatesOnDataErrors=True,
@@ -115,6 +117,7 @@
                         <dxe:ComboBoxEdit Style="{StaticResource ComboBoxEditWithError}"
                                           DockPanel.Dock="Left"
                                           MinWidth="300"
+                                          IsTextEditable="False"
                                           Margin="5 0"
                                           ItemsSource="{Binding WarehouseList}"
                                           EditValue="{Binding Document.WarehouseIn, ValidatesOnDataErrors=True,
@@ -123,14 +126,23 @@
                 </dxlc:LayoutItem>
                 <StackPanel Orientation="Horizontal" MaxHeight="60">
                     <Label Content="Примечание: " VerticalAlignment="Top" />
-                    <dxe:TextEdit EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
+                    <TextBox MinHeight="40"
+                             MaxHeight="60"
+                             MinWidth="300"
+                             Margin="33 0"
+                             TextWrapping="Wrap"
+                             AcceptsReturn="True"
+                             VerticalContentAlignment="Top"
+                             Text="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
+                             ></TextBox>
+                    <!--<dxe:TextEdit EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
                                   MinHeight="40"
                                   MaxHeight="60"
                                   MinWidth="300"
                                   Margin="33 0"
                                   TextWrapping="Wrap"
                                   AcceptsReturn="True"
-                                  VerticalContentAlignment="Top"/>
+                                  VerticalContentAlignment="Top"/>-->
                 </StackPanel>
             </dxlc:LayoutGroup>
             <dxlc:LayoutGroup View="Group"

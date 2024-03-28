@@ -1,16 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
+using System.Data.OleDb;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Xpf.Grid;
+using DevExpress.Xpf.Layout.Core;
 using Helper;
 using KursAM2.View.DialogUserControl;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
+using KursDomain.ICommon;
 
 namespace KursAM2.View.Logistiks.UC
 {
@@ -33,6 +39,11 @@ namespace KursAM2.View.Logistiks.UC
             }
             get => myIsSelected;
         }
+
+        [Display(AutoGenerateField = true, Name = "Склад")]
+        public string WarehouseName => Entity?.SD_24?.DD_SKLAD_OTPR_DC != null
+            ? ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.SD_24.DD_SKLAD_OTPR_DC)).Name
+            : null;
     }
 
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
@@ -43,16 +54,26 @@ namespace KursAM2.View.Logistiks.UC
         private WarehouseOrderOutRowSelect myCurrentSelectNomenkl;
         private StandartDialogSelectUC myDataUserControl;
         private KursDomain.References.Warehouse myStore;
+        private readonly KursDomain.References.Warehouse myFromStore;
+        private readonly List<Tuple<decimal, int>> myExclude;
+        private WarehouseOrderOutRowSelect mySelectedItem;
+        
 
-        public AddNomenklFromRashOrderViewModel(KursDomain.References.Warehouse store)
+        public AddNomenklFromRashOrderViewModel(KursDomain.References.Warehouse store, 
+            List<Tuple<decimal,int>> exclude = null,
+            KursDomain.References.Warehouse fromStore = null)
         {
             myStore = store;
+            myFromStore = fromStore;
+            myExclude = exclude;
             myDataUserControl = new StandartDialogSelectUC("AddNomenklFromRashOrder");
             // ReSharper disable once VirtualMemberCallInConstructor
             RefreshData(null);
         }
 
         public ObservableCollection<WarehouseOrderOutRowSelect> ItemsCollection { set; get; } =
+            new ObservableCollection<WarehouseOrderOutRowSelect>();
+        public ObservableCollection<WarehouseOrderOutRowSelect> ItemsCollectionFull { set; get; } =
             new ObservableCollection<WarehouseOrderOutRowSelect>();
 
         // ReSharper disable once CollectionNeverUpdated.Global
@@ -80,6 +101,16 @@ namespace KursAM2.View.Logistiks.UC
                 RaisePropertiesChanged();
             }
             get => myCurrentNomenkl;
+        }
+        public WarehouseOrderOutRowSelect SelectedItem
+        {
+            set
+            {
+                if (Equals(mySelectedItem, value)) return;
+                mySelectedItem = value;
+                RaisePropertiesChanged();
+            }
+            get => mySelectedItem;
         }
 
         public KursDomain.References.Warehouse Store
@@ -111,6 +142,7 @@ namespace KursAM2.View.Logistiks.UC
         {
             base.RefreshData(obj);
             ItemsCollection.Clear();
+            ItemsCollectionFull.Clear();
             SelectedItems.Clear();
             try
             {
@@ -151,8 +183,35 @@ namespace KursAM2.View.Logistiks.UC
                             .Include(_ => _.TD_9)
                             .AsNoTracking()
                             .FirstOrDefault(_ => _.DOC_CODE == r.DocCode && _.CODE == r.Code);
-                        if (d != null)
+                        if (d == null) continue;
+                        if(myFromStore == null)
                             ItemsCollection.Add(new WarehouseOrderOutRowSelect(d));
+                        else
+                        {
+                            if(myFromStore.DocCode == d.SD_24.DD_SKLAD_OTPR_DC)
+                                ItemsCollection.Add(new WarehouseOrderOutRowSelect(d));
+                        }
+
+                        foreach (var VARIABLE in myExclude)
+                        {
+                            
+                        }
+                    }
+
+                    if (myExclude is { Count: > 0 })
+                    {
+                        foreach (var item in myExclude)
+                        {
+                            var old = ItemsCollection.FirstOrDefault(_ =>
+                                _.DOC_CODE == item.Item1 && _.Code == item.Item2);
+                            if (old != null)
+                                ItemsCollection.Remove(old);
+                        }
+                    }
+
+                    foreach (var item in ItemsCollection)
+                    {
+                        ItemsCollectionFull.Add(item);
                     }
                 }
             }
@@ -168,6 +227,35 @@ namespace KursAM2.View.Logistiks.UC
         {
             public decimal DocCode { set; get; }
             public int Code { set; get; }
+        }
+
+        public ICommand SelectedValueChangedCommand
+        {
+            get { return new Command(SelectedValueChanged, _ => true); }
+        }
+
+        private void SelectedValueChanged(object obj)
+        {
+            if (obj is not CellValueChangedEventArgs arg) return;
+            if((bool)arg.Value)
+            {
+                var delItems =
+                    new List<WarehouseOrderOutRowSelect>(ItemsCollectionFull.Where(_ =>
+                        !_.WarehouseName.Equals(CurrentItem.WarehouseName)));
+                foreach (var item in delItems)
+                {
+                    ItemsCollection.Remove(item);
+                }
+            }
+            else
+            {
+                if (ItemsCollection.Any(_ => _.IsSelected)) return;
+                ItemsCollection.Clear();
+                foreach (var item in ItemsCollectionFull)
+                {
+                    ItemsCollection.Add(item);
+                }
+            }
         }
     }
 }
