@@ -148,20 +148,13 @@ namespace KursAM2.View.Logistiks.UC
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
-                    var sql = $@"SELECT 
-                                  t.DOC_CODE DocCode 
-                                 ,t.CODE Code 
-                                FROM TD_24 t 
-                                INNER JOIN SD_24 s 
-                                  ON t.DOC_CODE = s.DOC_CODE 
-                                    AND s.DD_TYPE_DC = 2010000003 
-                                    AND s.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(Store.DocCode)}' 
-                                LEFT OUTER JOIN td_24 t1 ON t1.DDT_RASH_ORD_CODE = t.DOC_CODE AND t1.CODE = t.DDT_RASH_ORD_CODE 
-                                LEFT OUTER JOIN sd_24 s1 
-                                    ON t1.DOC_CODE = s1.DOC_CODE 
-                                    AND s1.DD_TYPE_DC = 2010000001 
-                                    AND s1.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(Store.DocCode)}' 
-                                  WHERE t1.DOC_CODE IS null";
+                    var sql = $@"SELECT
+                                    t.DOC_CODE DocCode,
+                                    t.CODE     Code
+                                FROM TD_24 t
+                                    INNER JOIN SD_24 s ON t.DOC_CODE = s.DOC_CODE AND s.DD_TYPE_DC = 2010000003
+                                        AND s.DD_SKLAD_POL_DC = '{CustomFormat.DecimalToSqlDecimal(Store.DocCode)}'
+                                WHERE NOT EXISTS(SELECT 1 FROM td_24 t24 WHERE t24.DDT_RASH_ORD_DC = t.DOC_CODE AND t24.DDT_RASH_ORD_CODE = t.CODE)";
                     var rowslist = ctx.Database.SqlQuery<TempList>(sql).ToList();
                     foreach (var r in rowslist)
                     {

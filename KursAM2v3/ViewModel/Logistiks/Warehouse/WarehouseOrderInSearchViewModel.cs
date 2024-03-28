@@ -114,32 +114,17 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     foreach (var item in d)
                         rows.Add(new WarehouseOrderIn(item) { State = RowStatus.NotEdited });
                     Documents.Clear();
-                    foreach(var item in rows)
-                    {Documents.Add(item);} 
+                    foreach (var item in rows)
+                    {
+                        item.WarehouseSenderType = item.KontragentSender != null ? WarehouseSenderType.Kontragent : WarehouseSenderType.Store;
+                        Documents.Add(item);
+
+                    } 
                     //Documents = new ObservableCollection<WarehouseOrderIn>(rows);
                     RaisePropertyChanged(nameof(Documents));
                 }
                 
-                //var frm = Form as StandartSearchView;
-                //Documents.Clear();
-                //GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
-                //var ctx = GlobalOptions.GetEntities();
-                //Task.Run(() =>
-                //{
-                //    frm?.Dispatcher.Invoke(() => { frm.loadingIndicator.Visibility = Visibility.Visible; });
-                //    var result = new List<WarehouseOrderIn>();
-                //    var data1 = ctx.SD_24.Where(_ =>
-                //            _.DD_DATE >= StartDate && _.DD_DATE <= EndDate &&
-                //            _.DD_TYPE_DC == 2010000001).OrderByDescending(_ => _.DD_DATE)
-                //        .ToList();
-                //    result.AddRange(data1.Select(_ => new WarehouseOrderIn(_){State = RowStatus.NotEdited}));
-                //    frm?.Dispatcher.Invoke(() =>
-                //    {
-                //        Documents = new ObservableCollection<WarehouseOrderIn>(result);
-                //        frm.loadingIndicator.Visibility = Visibility.Hidden;
-                //    });
-                //    GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
-                //});
+                
             }
             catch (Exception e)
             {
