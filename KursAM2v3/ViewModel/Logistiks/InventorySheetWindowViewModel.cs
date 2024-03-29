@@ -97,6 +97,7 @@ namespace KursAM2.ViewModel.Logistiks
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             RefreshData();
+           
         }
 
         public InventorySheetWindowViewModel(decimal? docCode = null) : this()
@@ -110,6 +111,7 @@ namespace KursAM2.ViewModel.Logistiks
                 Document = new InventorySheetViewModel(SD_24Repository.GetByDC(docCode.Value));
                 myState = RowStatus.NotEdited;
             }
+            RaisePropertyChanged(nameof(IsDateCanChanged));
         }
 
         #endregion
@@ -151,6 +153,12 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged();
             }
         }
+
+        public bool IsDateCanChanged
+        {
+            get => Document.State != RowStatus.NewRow;
+            set { }
+        } 
 
         public ObservableCollection<InventorySheetRowViewModel> Rows { get; set; } =
             new ObservableCollection<InventorySheetRowViewModel>();
@@ -271,6 +279,8 @@ namespace KursAM2.ViewModel.Logistiks
                         smmList.Add(colummItem);
 
                 foreach (var columnItem2 in smmList) prm.gridNomenklRows.TotalSummary.Remove(columnItem2);
+                prm.DocDate.IsReadOnly = Document.State != RowStatus.NewRow;
+                prm.DocDate.AllowDefaultButton = Document.State == RowStatus.NewRow;
             }
         }
 
@@ -342,6 +352,12 @@ namespace KursAM2.ViewModel.Logistiks
                     0, null, (string)Document.ToJson());
                 foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
                 Document.myState = RowStatus.NotEdited;
+                if (Form is InventorySheetView2 prm)
+                {
+                    prm.DocDate.IsReadOnly = true;
+                    prm.DocDate.AllowDefaultButton = false;
+                }
+
                 Document.RaisePropertyChanged("State");
             }
             catch (Exception ex)
@@ -409,6 +425,8 @@ namespace KursAM2.ViewModel.Logistiks
             ((InventorySheetWindowViewModel)frm.DataContext).Document.State = RowStatus.NewRow;
             ((InventorySheetWindowViewModel)frm.DataContext).Document.Entity.DD_TYPE_DC =
                 MatearialDocumentType.InventorySheet;
+            ((InventorySheetWindowViewModel)frm.DataContext).Form = frm;
+
             frm.Show();
         }
 
@@ -426,6 +444,7 @@ namespace KursAM2.ViewModel.Logistiks
                 },
                 Owner = Application.Current.MainWindow
             };
+            ((InventorySheetWindowViewModel)frm.DataContext).Form = frm;
             frm.Show();
         }
 

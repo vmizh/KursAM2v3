@@ -165,6 +165,7 @@ namespace KursAM2.ViewModel.Logistiks
                 DataContext = dtx,
                 Owner = Application.Current.MainWindow
             };
+            dtx.Form = frm;
             frm.Show();
         }
 
@@ -193,6 +194,7 @@ namespace KursAM2.ViewModel.Logistiks
                 },
                 Owner = Application.Current.MainWindow
             };
+            ((InventorySheetWindowViewModel)frm.DataContext).Form = frm;
             frm.Show();
         }
 
