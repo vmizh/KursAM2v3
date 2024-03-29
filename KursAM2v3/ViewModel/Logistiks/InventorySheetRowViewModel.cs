@@ -191,21 +191,21 @@ namespace KursAM2.ViewModel.Logistiks
         {
             var res = new
             {
-                Статус = CustomFormat.GetEnumName(State),
+                РЎС‚Р°С‚СѓСЃ = CustomFormat.GetEnumName(State),
                 Id,
                 DocCode,
                 Code,
-                Номенклатурный_Номер = NomenklNumber,
-                Номенклатура = NomenklName,
-                Ед_Изм = NomenklUnit,
-                Валюта = NomenklCrsName,
-                Кол_расчетное = QuantityCalc,
-                Кол_фактическое = QuantityFact,
-                Разница = Difference,
-                Таксировано = IsTaxExecuted,
-                Цена = Price,
-                Сумма = Summa,
-                Примечание = Note
+                РќРѕРјРµРЅРєР»Р°С‚СѓСЂРЅС‹Р№_РќРѕРјРµСЂ = NomenklNumber,
+                РќРѕРјРµРЅРєР»Р°С‚СѓСЂР° = NomenklName,
+                Р•Рґ_РР·Рј = NomenklUnit,
+                Р’Р°Р»СЋС‚Р° = NomenklCrsName,
+                РљРѕР»_СЂР°СЃС‡РµС‚РЅРѕРµ = QuantityCalc,
+                РљРѕР»_С„Р°РєС‚РёС‡РµСЃРєРѕРµ = QuantityFact,
+                Р Р°Р·РЅРёС†Р° = Difference,
+                РўР°РєСЃРёСЂРѕРІР°РЅРѕ = IsTaxExecuted,
+                Р¦РµРЅР° = Price,
+                РЎСѓРјРјР° = Summa,
+                РџСЂРёРјРµС‡Р°РЅРёРµ = Note
             };
             return JsonConvert.SerializeObject(res);
         }

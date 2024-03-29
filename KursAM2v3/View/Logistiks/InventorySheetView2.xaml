@@ -34,12 +34,14 @@
                     <Label Content="№: " DockPanel.Dock="Left" />
                     <dxe:TextEdit MinWidth="80"
                                   Margin="19,0,0,0"
+                                  IsReadOnly="True"
                                   EditValue="{Binding Document.Num, UpdateSourceTrigger=PropertyChanged}"
                                   DockPanel.Dock="Left" />
                     <Label Content="  Дата " DockPanel.Dock="Left" />
                     <dxe:DateEdit MinWidth="100"
                                   DockPanel.Dock="Left"
                                   Margin="5,0,20,0"
+                                  Name="DocDate"
                                   EditValue="{Binding Document.Date, UpdateSourceTrigger=PropertyChanged}" />
                     <dxlc:LayoutItem Label="Закрыта" Width="68">
                         <dxe:CheckEdit IsChecked="{Binding Document.IsClosed}" />
