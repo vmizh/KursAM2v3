@@ -52,7 +52,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                           "GROUP BY code,t101.VVT_VAL_RASHOD " +
                           "HAVING t101.VVT_VAL_RASHOD > SUM(pip.Summa) ";
                 var data2 = ctx.Database.SqlQuery<BankTransList>(sql).ToList();
+                var existCodes = ctx.ProviderInvoicePay.Where(_ => _.BankCode != null).Select(_ => _.BankCode).ToList();
                 foreach (var d in data)
+                {
+                    if(existCodes.Contains(d.CODE)) continue;
                     ItemsCollection.Add(new BankPaymentRow
                     {
                         DocCode = d.DOC_CODE,
@@ -66,6 +69,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         AccountName = d.SD_101.SD_114.BA_RASH_ACC,
                         Remainder = (decimal)d.VVT_VAL_RASHOD
                     });
+                }
+
                 foreach (var d in data2)
                 {
                     var item = ctx.TD_101
