@@ -500,8 +500,8 @@ namespace KursAM2.ViewModel.Logistiks
             foreach (var nom in noms.Where(nom => Document.Rows.All(_ => _.Nomenkl.DocCode != nom.DocCode)))
             {
                 var q = nomenklManager.GetNomenklQuantity(Document.Warehouse.DocCode, nom.DocCode,
-                    DateTime.Today, DateTime.Today);
-                var quan = q.Count == 0 ? 0 : q.First().OstatokQuantity;
+                    new DateTime(2000,1,1), Document.Date.AddDays(-1));
+                var quan = q.Count == 0 ? 0 : q.Last().OstatokQuantity;
                 var newItem = new InventorySheetRowViewModel(new TD_24())
                 {
                     DocCode = Document.DocCode,
