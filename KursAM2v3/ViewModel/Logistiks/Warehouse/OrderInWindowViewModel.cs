@@ -455,6 +455,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     "WarehouseOrderIn", true))
                 { Form = frm, Document = orderManager.NewOrderInRecuisite(Document) };
             ctx.Document.myState = RowStatus.NewRow;
+            ctx.Document.WarehouseSenderType = ctx.Document.KontragentSender != null
+                ? WarehouseSenderType.Kontragent
+                : WarehouseSenderType.Store;
             frm.DataContext = ctx;
             frm.Show();
             
