@@ -1539,7 +1539,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             foreach (var entry in UnitOfWork.Context.ChangeTracker.Entries())
                 if ((entry.Entity is SD_101 || entry.Entity is TD_101 || entry.Entity is SD_114) &&
                     entry.State == EntityState.Added)
-                    entry.State = EntityState.Unchanged;
+                    entry.State = EntityState.Detached;
 
             UnitOfWork.CreateTransaction();
             try
