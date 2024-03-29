@@ -186,8 +186,17 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void KontragentTypeChanged(object obj)
         {
-            Document.KontragentSender = null;
-            Document.WarehouseIn = null;
+            switch (Document.WarehouseSenderType)
+            {
+                case WarehouseSenderType.Store:
+                    Document.KontragentSender = null;
+                    break;
+                case WarehouseSenderType.Kontragent:
+                    Document.WarehouseOut = null;
+                    break;
+            }
+            
+            
         }
 
         public ICommand LinkToSchetCommand
