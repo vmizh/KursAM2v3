@@ -157,7 +157,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public bool IsCanChangedWarehouseType => Document?.Sender == null;
 
         public override string WindowName =>
-            $"Приходный складской ордер №{Document?.DD_IN_NUM}/{Document?.DD_EXT_NUM} от {Document?.Date}";
+            $"Приходный складской ордер №{Document?.DD_IN_NUM}/{Document?.DD_EXT_NUM} от {Document?.Date.ToShortDateString()}";
 
         #endregion
 

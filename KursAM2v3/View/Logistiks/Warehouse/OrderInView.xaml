@@ -101,7 +101,7 @@
                             Margin="10 0"
                                         IsTextEditable="False"
                                         AllowDefaultButton="False"
-                                        EditValue="Выбор счета"
+                                        EditValue="Выбор документа"
                                         BorderThickness="0">
                             <dxe:ButtonEdit.Buttons>
                                 <dxe:ButtonInfo GlyphKind="Regular"
@@ -121,7 +121,16 @@
                                           Margin="5 0"
                                           ItemsSource="{Binding WarehouseList}"
                                           EditValue="{Binding Document.WarehouseIn, ValidatesOnDataErrors=True,
-                             UpdateSourceTrigger=PropertyChanged}" />
+                             UpdateSourceTrigger=PropertyChanged}" RenderTransformOrigin="0.5,0.5" Width="408" >
+                            <dxe:ComboBoxEdit.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="0.5"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </dxe:ComboBoxEdit.RenderTransform>
+                        </dxe:ComboBoxEdit>
                     </StackPanel>
                 </dxlc:LayoutItem>
                 <StackPanel Orientation="Horizontal" MaxHeight="60">
@@ -133,7 +142,7 @@
                              TextWrapping="Wrap"
                              AcceptsReturn="True"
                              VerticalContentAlignment="Top"
-                             Text="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
+                             Text="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}" Width="409"
                              ></TextBox>
                     <!--<dxe:TextEdit EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
                                   MinHeight="40"
