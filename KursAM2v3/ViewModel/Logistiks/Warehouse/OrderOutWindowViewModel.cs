@@ -7,14 +7,16 @@ using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Mvvm.POCO;
+using DevExpress.Mvvm;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
-using KursAM2.Managers.Nomenkl;
 using KursAM2.ReportManagers;
 using KursAM2.View.Logistiks.Warehouse;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.References;
 
@@ -64,6 +66,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Command = PrintOrderCommand
             });
         }
+
+        public override string LayoutName => "OrderOutWindowViewModel";
 
         public WarehouseOrderOut Document
         {
@@ -126,6 +130,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                                                    || Document.Rows.Any(_ =>
                                                                        _.State != RowStatus.NotEdited)
                                                                    || Document.DeletedRows.Count > 0)
+                                                                   && (Document.State != RowStatus.NotEdited && Document.Rows.All(_ => _.MaxQuantity > 0))
                                                                && Document.WarehouseOut != null &&
                                                                Document.WarehouseIn != null;
 
@@ -159,48 +164,74 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var frm = new OrderOutView { Owner = Application.Current.MainWindow };
             var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                 "WarehouseOrderOut", true)) { Form = frm, Document = orderManager.NewOrderOutRecuisite(Document) };
+
             frm.Show();
             frm.DataContext = ctx;
         }
 
         public override void RefreshData(object obj)
         {
+            if (IsCanSaveData)
+            {
+                var service = this.GetService<IDialogService>("WinUIDialogService");
+                dialogServiceText = "В документ внесены изменения, сохранить?";
+                if (service.ShowDialog(MessageButton.YesNoCancel, "Запрос", this) == MessageResult.Yes)
+                {
+                    SaveData(null);
+                    return;
+                }
+            }
+
+            WarehouseOrderOut tempDoc = null;
             if (Document != null && Document.DocCode > 0)
             {
-                Document = orderManager.GetOrderOut(Document.DocCode);
+                tempDoc = orderManager.GetOrderOut(Document.DocCode);
             }
             else
             {
                 var dc = obj as decimal? ?? 0;
                 if (dc != 0)
+                {
                     Document = orderManager.GetOrderOut(dc);
+
+                }
             }
 
-            if (Document != null)
+            if (tempDoc != null)
             {
-                foreach (var r in Document.Rows)
+                Document.Date = tempDoc.Date;
+                Document.Note = tempDoc.Note;
+                Document.WarehouseOut = tempDoc.WarehouseOut;
+                Document.WarehouseIn = tempDoc.WarehouseIn;
+                Document.KontragentSender = tempDoc.KontragentSender;
+                Document.WarehouseSenderType = Document.KontragentSender != null
+                ? WarehouseSenderType.Kontragent
+                    : WarehouseSenderType.Store;
+                Document.DD_OT_KOGO_POLUCHENO = tempDoc.DD_OT_KOGO_POLUCHENO;
+                foreach (var r in tempDoc.Rows)
                 {
+                    var oldRow = Rows.FirstOrDefault(_ => _.DocCode == r.DocCode && _.Code == r.Code);
+                    if (oldRow == null) continue;
                     var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DocCode, r.DDT_NOMENKL_DC,
                         Document.Date, Document.Date);
                     var quan = q.Count == 0 ? 0 : q.First().OstatokQuantity;
-                    r.MaxQuantity = quan + r.DDT_KOL_RASHOD;
-                    r.myState = RowStatus.NotEdited;
+                    oldRow.MaxQuantity = quan + oldRow.DDT_KOL_RASHOD;
+                    oldRow.myState = RowStatus.NotEdited;
+                    oldRow.Quantity = r.Quantity;
+                    oldRow.Note = r.Note;
+
                 }
 
                 Document.myState = RowStatus.NotEdited;
             }
-
-            RaisePropertyChanged(nameof(Document));
-            Document.RaisePropertyChanged("State");
-            RaisePropertyChanged(nameof(Document.Sender));
-            RaisePropertyChanged(nameof(Document.WarehouseIn));
-            RaisePropertyChanged(nameof(Document.WarehouseOut));
+            Document.UpdateMaxQuantity();
+            Document.myState = RowStatus.NotEdited;
         }
 
         public override void SaveData(object data)
         {
             var dc = orderManager.SaveOrderOut(Document);
-            if (dc > 0) RefreshData(dc);
+            //if (dc > 0) RefreshData(dc);
         }
 
         public ICommand AddNomenklCommand

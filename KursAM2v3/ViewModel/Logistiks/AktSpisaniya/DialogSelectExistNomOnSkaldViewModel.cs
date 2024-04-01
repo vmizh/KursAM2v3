@@ -4,14 +4,13 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Calculates.Materials;
 using Core.ViewModel.Base;
 using Helper;
-using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Logistiks.AktSpisaniya;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.Managers;
 using KursDomain.References;
 using KursDomain.RepositoryHelper;
 
@@ -19,8 +18,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
     public sealed class DialogSelectExistNomOnSkaldViewModel : RSWindowViewModelBase
     {
+        private readonly Currency myCurrency;
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
-        private readonly Currency myCurrency = null;
 
         #region Constructors
 
@@ -287,7 +286,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 foreach (var nl in delList) listTemp.Remove(nl);
                 NomenklList.Clear();
                 if (myCurrency == null)
-                {
                     foreach (var n in listTemp.Where(_ => _.QuantityEnd > 0))
                         NomenklList.Add(new NomenklRemainsOnSkladWithPrice
                         {
@@ -295,9 +293,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                             Quantity = n.QuantityEnd,
                             Prices = nomenklManager.GetNomenklPrice(n.Nomenkl.DocCode, DateTime.Today)
                         });
-                }
                 else
-                {
                     foreach (var n in listTemp.Where(_ =>
                                  _.QuantityEnd > 0 && ((IDocCode)_.Nomenkl.Currency).DocCode == myCurrency.DocCode))
                         NomenklList.Add(new NomenklRemainsOnSkladWithPrice
@@ -306,7 +302,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                             Quantity = n.QuantityEnd,
                             Prices = nomenklManager.GetNomenklPrice(n.Nomenkl.DocCode, DateTime.Today)
                         });
-                }
             }
         }
 

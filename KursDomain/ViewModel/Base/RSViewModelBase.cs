@@ -73,7 +73,7 @@ public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
         get => Id.ToString();
     }
 
-    [Display(AutoGenerateField = false)]
+    [Display(AutoGenerateField = true)]
     public virtual RowStatus State
     {
         set

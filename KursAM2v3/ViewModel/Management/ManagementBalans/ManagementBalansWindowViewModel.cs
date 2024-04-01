@@ -12,11 +12,9 @@ using Core.ViewModel.Base.Column;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Data;
-using DevExpress.Office.Utils;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Managers;
-using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Logistiks;
@@ -25,6 +23,7 @@ using KursAM2.ViewModel.Personal;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
+using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository.NomenklRepository;
@@ -973,10 +972,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
 
         public void GetCash()
         {
-            foreach (var row in _GetCash())
-            {
-                BalansStructure.Add(row);
-            }
+            foreach (var row in _GetCash()) BalansStructure.Add(row);
         }
 
         private List<ManagementBalanceGroupViewModel> _GetCash()
@@ -1011,7 +1007,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     var d1 = d;
                     var s =
                         data.Where(_ => _.CashDC == d1);
-                   ret.Add(new ManagementBalanceGroupViewModel
+                    ret.Add(new ManagementBalanceGroupViewModel
                     {
                         Id = Guid.NewGuid(),
                         ParentId = ch.Id,
@@ -1228,7 +1224,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             return d - (d - Math.Round(d, 4));
         }
 
-       
+
         private void GetNomenkl()
         {
             calcNomenklBefore();
@@ -1338,7 +1334,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         }
 
 
-    private void GetZarplata()
+        private void GetZarplata()
         {
             var ch = BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
                 .Single(t => t.Tag == BalansSection.Salary)

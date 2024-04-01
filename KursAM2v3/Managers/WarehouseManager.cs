@@ -6,11 +6,11 @@ using System.Windows;
 using Calculates.Materials;
 using Core.WindowsManager;
 using Data;
-using KursAM2.Managers.Nomenkl;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.Managers;
 using KursDomain.References;
 
 namespace KursAM2.Managers
@@ -740,74 +740,74 @@ namespace KursAM2.Managers
                         doc.DD_IN_NUM = inNum;
                         //ctx.SD_24.Add(new SD_24
                         //{
-                            /*DOC_CODE = newDC,
-                            DD_TYPE_DC = doc.Entity.DD_TYPE_DC,
-                            DD_DATE = doc.Date,
-                            DD_IN_NUM = inNum,
-                            DD_EXT_NUM = doc.DD_EXT_NUM,
-                            DD_SKLAD_OTPR_DC = doc.Entity.DD_SKLAD_OTPR_DC,
-                            DD_SKLAD_POL_DC = doc.Entity.DD_SKLAD_POL_DC,
-                            DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC,
-                            DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC,
-                            DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN,
-                            DD_EXECUTED = (short)(doc.IsExecuted ? 1 : 0),
-                            DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN,
-                            DD_OTRPAV_NAME = doc.Sender,
-                            DD_POLUCH_NAME = doc.Receiver,
-                            DD_KTO_SDAL_TN = doc.DD_KTO_SDAL_TN,
-                            DD_KOMU_PEREDANO = doc.DD_KOMU_PEREDANO,
-                            DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO,
-                            DD_GRUZOOTPRAVITEL = doc.DD_GRUZOOTPRAVITEL,
-                            DD_GRUZOPOLUCHATEL = doc.DD_GRUZOPOLUCHATEL,
-                            DD_OTPUSK_NA_SKLAD_DC = doc.Entity.DD_OTPUSK_NA_SKLAD_DC,
-                            DD_PRIHOD_SO_SKLADA_DC = doc.Entity.DD_PRIHOD_SO_SKLADA_DC,
-                            DD_SHABLON = doc.DD_SHABLON,
-                            DD_VED_VIDACH_DC = doc.DD_VED_VIDACH_DC,
-                            DD_PERIOD_DC = doc.Entity.DD_PERIOD_DC,
-                            DD_TREB_NUM = doc.DD_TREB_NUM,
-                            DD_TREB_DATE = doc.DD_TREB_DATE,
-                            DD_TREB_DC = doc.DD_TREB_DC,
-                            CREATOR = doc.CREATOR,
-                            DD_PODTVERZHDEN = doc.DD_PODTVERZHDEN,
-                            DD_OSN_OTGR_DC = doc.DD_OSN_OTGR_DC,
-                            DD_SCHET = doc.DD_SCHET,
-                            DD_DOVERENNOST = doc.DD_DOVERENNOST,
-                            DD_NOSZATR_ID = doc.DD_NOSZATR_ID,
-                            DD_NOSZATR_DC = doc.DD_NOSZATR_DC,
-                            DD_DOGOVOR_POKUPKI_DC = doc.DD_DOGOVOR_POKUPKI_DC,
-                            DD_NOTES = doc.Note,
-                            DD_KONTR_CRS_DC = doc.DD_KONTR_CRS_DC,
-                            DD_KONTR_CRS_RATE = doc.DD_KONTR_CRS_RATE,
-                            DD_UCHET_VALUTA_DC = doc.DD_UCHET_VALUTA_DC,
-                            DD_UCHET_VALUTA_RATE = doc.DD_UCHET_VALUTA_RATE,
-                            DD_SPOST_DC = doc.Entity.DD_SPOST_DC,
-                            DD_SFACT_DC = doc.Entity.DD_SFACT_DC,
-                            DD_VOZVRAT = doc.Entity.DD_VOZVRAT,
-                            DD_OTPRAV_TYPE = doc.DD_OTPRAV_TYPE,
-                            DD_POLUCH_TYPE = doc.DD_POLUCH_TYPE,
-                            DD_LISTOV_SERVIFICATOV = doc.DD_LISTOV_SERVIFICATOV,
-                            DD_VIEZD_FLAG = doc.DD_VIEZD_FLAG,
-                            DD_VIEZD_MASHINE = doc.DD_VIEZD_MASHINE,
-                            DD_VIEZD_CREATOR = doc.DD_VIEZD_CREATOR,
-                            DD_VIEZD_DATE = doc.DD_VIEZD_DATE,
-                            DD_KONTR_POL_FILIAL_DC = doc.DD_KONTR_POL_FILIAL_DC,
-                            DD_KONTR_POL_FILIAL_CODE = doc.DD_KONTR_POL_FILIAL_CODE,
-                            DD_PROZV_PROCESS_DC = doc.DD_PROZV_PROCESS_DC,
-                            TSTAMP = doc.TSTAMP,
-                            OWNER_ID = doc.OWNER_ID,
-                            OWNER_TEXT = doc.OWNER_TEXT,
-                            CONSIGNEE_ID = doc.CONSIGNEE_ID,
-                            CONSIGNEE_TEXT = doc.CONSIGNEE_TEXT,
-                            BUYER_ID = doc.BUYER_ID,
-                            BUYER_TEXT = doc.BUYER_TEXT,
-                            SHIPMENT_ID = doc.SHIPMENT_ID,
-                            SHIPMENT_TEXT = doc.SHIPMENT_TEXT,
-                            SUPPLIER_ID = doc.SUPPLIER_ID,
-                            SUPPLIER_TEXT = doc.SUPPLIER_TEXT,
-                            GRUZO_INFO_ID = doc.GRUZO_INFO_ID,
-                            GROZO_REQUISITE = doc.GROZO_REQUISITE,*/
-                            doc.Id = guidId;
-                    //});
+                        /*DOC_CODE = newDC,
+                        DD_TYPE_DC = doc.Entity.DD_TYPE_DC,
+                        DD_DATE = doc.Date,
+                        DD_IN_NUM = inNum,
+                        DD_EXT_NUM = doc.DD_EXT_NUM,
+                        DD_SKLAD_OTPR_DC = doc.Entity.DD_SKLAD_OTPR_DC,
+                        DD_SKLAD_POL_DC = doc.Entity.DD_SKLAD_POL_DC,
+                        DD_KONTR_OTPR_DC = doc.Entity.DD_KONTR_OTPR_DC,
+                        DD_KONTR_POL_DC = doc.Entity.DD_KONTR_POL_DC,
+                        DD_KLADOV_TN = doc.Entity.DD_KLADOV_TN,
+                        DD_EXECUTED = (short)(doc.IsExecuted ? 1 : 0),
+                        DD_POLUCHATEL_TN = doc.DD_POLUCHATEL_TN,
+                        DD_OTRPAV_NAME = doc.Sender,
+                        DD_POLUCH_NAME = doc.Receiver,
+                        DD_KTO_SDAL_TN = doc.DD_KTO_SDAL_TN,
+                        DD_KOMU_PEREDANO = doc.DD_KOMU_PEREDANO,
+                        DD_OT_KOGO_POLUCHENO = doc.DD_OT_KOGO_POLUCHENO,
+                        DD_GRUZOOTPRAVITEL = doc.DD_GRUZOOTPRAVITEL,
+                        DD_GRUZOPOLUCHATEL = doc.DD_GRUZOPOLUCHATEL,
+                        DD_OTPUSK_NA_SKLAD_DC = doc.Entity.DD_OTPUSK_NA_SKLAD_DC,
+                        DD_PRIHOD_SO_SKLADA_DC = doc.Entity.DD_PRIHOD_SO_SKLADA_DC,
+                        DD_SHABLON = doc.DD_SHABLON,
+                        DD_VED_VIDACH_DC = doc.DD_VED_VIDACH_DC,
+                        DD_PERIOD_DC = doc.Entity.DD_PERIOD_DC,
+                        DD_TREB_NUM = doc.DD_TREB_NUM,
+                        DD_TREB_DATE = doc.DD_TREB_DATE,
+                        DD_TREB_DC = doc.DD_TREB_DC,
+                        CREATOR = doc.CREATOR,
+                        DD_PODTVERZHDEN = doc.DD_PODTVERZHDEN,
+                        DD_OSN_OTGR_DC = doc.DD_OSN_OTGR_DC,
+                        DD_SCHET = doc.DD_SCHET,
+                        DD_DOVERENNOST = doc.DD_DOVERENNOST,
+                        DD_NOSZATR_ID = doc.DD_NOSZATR_ID,
+                        DD_NOSZATR_DC = doc.DD_NOSZATR_DC,
+                        DD_DOGOVOR_POKUPKI_DC = doc.DD_DOGOVOR_POKUPKI_DC,
+                        DD_NOTES = doc.Note,
+                        DD_KONTR_CRS_DC = doc.DD_KONTR_CRS_DC,
+                        DD_KONTR_CRS_RATE = doc.DD_KONTR_CRS_RATE,
+                        DD_UCHET_VALUTA_DC = doc.DD_UCHET_VALUTA_DC,
+                        DD_UCHET_VALUTA_RATE = doc.DD_UCHET_VALUTA_RATE,
+                        DD_SPOST_DC = doc.Entity.DD_SPOST_DC,
+                        DD_SFACT_DC = doc.Entity.DD_SFACT_DC,
+                        DD_VOZVRAT = doc.Entity.DD_VOZVRAT,
+                        DD_OTPRAV_TYPE = doc.DD_OTPRAV_TYPE,
+                        DD_POLUCH_TYPE = doc.DD_POLUCH_TYPE,
+                        DD_LISTOV_SERVIFICATOV = doc.DD_LISTOV_SERVIFICATOV,
+                        DD_VIEZD_FLAG = doc.DD_VIEZD_FLAG,
+                        DD_VIEZD_MASHINE = doc.DD_VIEZD_MASHINE,
+                        DD_VIEZD_CREATOR = doc.DD_VIEZD_CREATOR,
+                        DD_VIEZD_DATE = doc.DD_VIEZD_DATE,
+                        DD_KONTR_POL_FILIAL_DC = doc.DD_KONTR_POL_FILIAL_DC,
+                        DD_KONTR_POL_FILIAL_CODE = doc.DD_KONTR_POL_FILIAL_CODE,
+                        DD_PROZV_PROCESS_DC = doc.DD_PROZV_PROCESS_DC,
+                        TSTAMP = doc.TSTAMP,
+                        OWNER_ID = doc.OWNER_ID,
+                        OWNER_TEXT = doc.OWNER_TEXT,
+                        CONSIGNEE_ID = doc.CONSIGNEE_ID,
+                        CONSIGNEE_TEXT = doc.CONSIGNEE_TEXT,
+                        BUYER_ID = doc.BUYER_ID,
+                        BUYER_TEXT = doc.BUYER_TEXT,
+                        SHIPMENT_ID = doc.SHIPMENT_ID,
+                        SHIPMENT_TEXT = doc.SHIPMENT_TEXT,
+                        SUPPLIER_ID = doc.SUPPLIER_ID,
+                        SUPPLIER_TEXT = doc.SUPPLIER_TEXT,
+                        GRUZO_INFO_ID = doc.GRUZO_INFO_ID,
+                        GROZO_REQUISITE = doc.GROZO_REQUISITE,*/
+                        doc.Id = guidId;
+                        //});
                         if (doc.Rows.Count > 0)
                         {
                             var code = 1;
@@ -1201,6 +1201,15 @@ namespace KursAM2.Managers
             }
 
             var doc = new WarehouseOrderOut(old.Entity) { State = RowStatus.NewRow };
+            foreach (var r in doc.Rows)
+            {
+                var nq = nomenklManager.GetNomenklQuantity(doc.WarehouseOut.DocCode, r.Nomenkl.DocCode,
+                    doc.Date, doc.Date);
+                r.MaxQuantity = nq.Count > 0 ? nq.First().OstatokQuantity : 0;
+                if (r.Quantity > r.MaxQuantity)
+                    r.Quantity = r.MaxQuantity;
+            }
+
             return doc;
         }
 
@@ -1211,6 +1220,7 @@ namespace KursAM2.Managers
 
         public WarehouseOrderOut NewOrderOutRecuisite(decimal dc)
         {
+            //NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
             var old = GetOrderOut(dc);
             old.DocCode = -1;
             old.DD_IN_NUM = -1;
