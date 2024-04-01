@@ -7,8 +7,8 @@ using System.Windows;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Helper;
-using KursAM2.Managers.Nomenkl;
 using KursDomain;
+using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.References;
 
@@ -18,41 +18,8 @@ namespace KursAM2.View.Logistiks.UC
     {
         private readonly Kontragent myKontragent;
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
-        private decimal? DocDC;
-        private List<decimal> RowCodes;
-
-        #region Constructors
-
-        public AddNomenklFromInvoiceProviderRowViewModel(KursDomain.References.Warehouse warehouse,
-            Kontragent kontr = null)
-        {
-            Warehouse = warehouse;
-            LayoutControl = myDataUserControl = new AddNomenklFromInvoiceProviderRowUC(GetType().Name);
-            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            WindowName = "Выбор строк из счета";
-            myKontragent = kontr;
-            RefreshData(null);
-        }
-
-        public AddNomenklFromInvoiceProviderRowViewModel(KursDomain.References.Warehouse warehouse, decimal sfDC, List<decimal> excludeDC)
-        {
-            RowCodes = excludeDC;
-            DocDC = sfDC;
-            Warehouse = warehouse;
-            LayoutControl = myDataUserControl = new AddNomenklFromInvoiceProviderRowUC(GetType().Name);
-            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var sf = ctx.SD_26.Include(_ => _.SD_43).FirstOrDefault(_ => _.DOC_CODE == DocDC);
-                var extNum = string.IsNullOrWhiteSpace(sf.SF_POSTAV_NUM) ? null : $"/{sf.SF_POSTAV_NUM}";
-                WindowName = $"Выбор строк из счета №{sf.SF_IN_NUM}{extNum} от {sf.SF_POSTAV_DATE.ToShortDateString()} - {sf.SD_43.NAME}";
-            }
-
-            //myKontragent = kontr;
-            RefreshData(null);
-        }
-
-        #endregion
+        private readonly decimal? DocDC;
+        private readonly List<decimal> RowCodes;
 
         #region Commands
 
@@ -122,13 +89,47 @@ namespace KursAM2.View.Logistiks.UC
                         };
                         Nomenkls.Add(newRow);
                     }
-
                 }
             }
             catch (Exception ex)
             {
                 WindowManager.ShowError(ex);
             }
+        }
+
+        #endregion
+
+        #region Constructors
+
+        public AddNomenklFromInvoiceProviderRowViewModel(KursDomain.References.Warehouse warehouse,
+            Kontragent kontr = null)
+        {
+            Warehouse = warehouse;
+            LayoutControl = myDataUserControl = new AddNomenklFromInvoiceProviderRowUC(GetType().Name);
+            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+            WindowName = "Выбор строк из счета";
+            myKontragent = kontr;
+            RefreshData(null);
+        }
+
+        public AddNomenklFromInvoiceProviderRowViewModel(KursDomain.References.Warehouse warehouse, decimal sfDC,
+            List<decimal> excludeDC)
+        {
+            RowCodes = excludeDC;
+            DocDC = sfDC;
+            Warehouse = warehouse;
+            LayoutControl = myDataUserControl = new AddNomenklFromInvoiceProviderRowUC(GetType().Name);
+            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var sf = ctx.SD_26.Include(_ => _.SD_43).FirstOrDefault(_ => _.DOC_CODE == DocDC);
+                var extNum = string.IsNullOrWhiteSpace(sf.SF_POSTAV_NUM) ? null : $"/{sf.SF_POSTAV_NUM}";
+                WindowName =
+                    $"Выбор строк из счета №{sf.SF_IN_NUM}{extNum} от {sf.SF_POSTAV_DATE.ToShortDateString()} - {sf.SD_43.NAME}";
+            }
+
+            //myKontragent = kontr;
+            RefreshData(null);
         }
 
         #endregion

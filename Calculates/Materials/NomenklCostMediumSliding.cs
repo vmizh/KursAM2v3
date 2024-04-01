@@ -120,7 +120,7 @@ namespace Calculates.Materials
                         {
                             oper.FinDocumentDC = d.TD_26.SD_26.DOC_CODE;
                             oper.FinDocument =
-                                $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}";
+                                $"РЎ/С„ РїРѕСЃС‚Р°РІС‰РёРєР° в„–{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} РѕС‚ {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}";
                             oper.Naklad = (d.TD_26.SFT_SUMMA_NAKLAD ?? 0) / d.TD_26.SFT_KOL;
                             oper.DocPrice = d.TD_26.SFT_ED_CENA ?? 0;
                         }
@@ -129,45 +129,45 @@ namespace Calculates.Materials
                         {
                             oper.FinDocumentDC = d.TD_84.SD_84.DOC_CODE;
                             oper.FinDocument =
-                                $"С/ф клиенту №{d.TD_84.SD_84.SF_IN_NUM}/{d.TD_84.SD_84.SF_OUT_NUM} от {d.TD_84.SD_84.SF_DATE.ToShortDateString()}";
+                                $"РЎ/С„ РєР»РёРµРЅС‚Сѓ в„–{d.TD_84.SD_84.SF_IN_NUM}/{d.TD_84.SD_84.SF_OUT_NUM} РѕС‚ {d.TD_84.SD_84.SF_DATE.ToShortDateString()}";
                         }
 
                         switch (oper.OperCode)
                         {
                             case 1:
-                                oper.TovarDocument = "Приходный складской ордер ";
+                                oper.TovarDocument = "РџСЂРёС…РѕРґРЅС‹Р№ СЃРєР»Р°РґСЃРєРѕР№ РѕСЂРґРµСЂ ";
                                 break;
                             case 2:
-                                oper.TovarDocument = "Расходный складской ордер ";
+                                oper.TovarDocument = "Р Р°СЃС…РѕРґРЅС‹Р№ СЃРєР»Р°РґСЃРєРѕР№ РѕСЂРґРµСЂ ";
                                 break;
                             case 5:
-                                oper.TovarDocument = "Инвентаризационная ведомость ";
+                                oper.TovarDocument = "РРЅРІРµРЅС‚Р°СЂРёР·Р°С†РёРѕРЅРЅР°СЏ РІРµРґРѕРјРѕСЃС‚СЊ ";
                                 break;
                             case 7:
-                                oper.TovarDocument = "Акт приемки готовой продукции ";
+                                oper.TovarDocument = "РђРєС‚ РїСЂРёРµРјРєРё РіРѕС‚РѕРІРѕР№ РїСЂРѕРґСѓРєС†РёРё ";
                                 break;
                             case 8:
-                                oper.TovarDocument = "Акт разукомплектации готовой продукции ";
+                                oper.TovarDocument = "РђРєС‚ СЂР°Р·СѓРєРѕРјРїР»РµРєС‚Р°С†РёРё РіРѕС‚РѕРІРѕР№ РїСЂРѕРґСѓРєС†РёРё ";
                                 break;
                             case 9:
-                                oper.TovarDocument = "Акт списания материалов ";
+                                oper.TovarDocument = "РђРєС‚ СЃРїРёСЃР°РЅРёСЏ РјР°С‚РµСЂРёР°Р»РѕРІ ";
                                 break;
                             case 12:
-                                oper.TovarDocument = "Расходная накладная (без требования) ";
+                                oper.TovarDocument = "Р Р°СЃС…РѕРґРЅР°СЏ РЅР°РєР»Р°РґРЅР°СЏ (Р±РµР· С‚СЂРµР±РѕРІР°РЅРёСЏ) ";
                                 break;
                             case 13:
-                                oper.TovarDocument = "Накладная на внутренее перемещение ";
+                                oper.TovarDocument = "РќР°РєР»Р°РґРЅР°СЏ РЅР° РІРЅСѓС‚СЂРµРЅРµРµ РїРµСЂРµРјРµС‰РµРЅРёРµ ";
                                 break;
                             case 18:
-                                oper.TovarDocument = "Продажа за наличный расчет ";
+                                oper.TovarDocument = "РџСЂРѕРґР°Р¶Р° Р·Р° РЅР°Р»РёС‡РЅС‹Р№ СЂР°СЃС‡РµС‚ ";
                                 break;
                             case 25:
-                                oper.TovarDocument = "Возврат товара ";
+                                oper.TovarDocument = "Р’РѕР·РІСЂР°С‚ С‚РѕРІР°СЂР° ";
                                 break;
                         }
 
                         oper.TovarDocument +=
-                            $"№{d.SD_24.DD_IN_NUM}/{d.SD_24.DD_EXT_NUM} от {d.SD_24.DD_DATE.ToShortDateString()}";
+                            $"в„–{d.SD_24.DD_IN_NUM}/{d.SD_24.DD_EXT_NUM} РѕС‚ {d.SD_24.DD_DATE.ToShortDateString()}";
                         if (oper.OperCode == 3 && oper.QuantityIn <= 0) continue;
                         ret.Operations.Add(oper);
                     }
@@ -190,7 +190,7 @@ namespace Calculates.Materials
                             DocDate = d.NomenklTransfer.Date,
                             KontragentIn = null,
                             KontragentOut = null,
-                            OperationName = "Валютный перевод товара",
+                            OperationName = "Р’Р°Р»СЋС‚РЅС‹Р№ РїРµСЂРµРІРѕРґ С‚РѕРІР°СЂР°",
                             OperCode = 19,
                             QuantityIn = d.Quantity,
                             QuantityOut = d.Quantity,
@@ -225,7 +225,7 @@ namespace Calculates.Materials
                                 DocDate = d.NomenklTransfer.Date,
                                 KontragentIn = null,
                                 KontragentOut = null,
-                                OperationName = "Валютный перевод товара",
+                                OperationName = "Р’Р°Р»СЋС‚РЅС‹Р№ РїРµСЂРµРІРѕРґ С‚РѕРІР°СЂР°",
                                 OperCode = 19,
                                 QuantityIn = d.Quantity,
                                 QuantityOut = 0,
@@ -259,7 +259,7 @@ namespace Calculates.Materials
                                 DocDate = d.NomenklTransfer.Date,
                                 KontragentIn = null,
                                 KontragentOut = null,
-                                OperationName = "Валютный перевод товара",
+                                OperationName = "Р’Р°Р»СЋС‚РЅС‹Р№ РїРµСЂРµРІРѕРґ С‚РѕРІР°СЂР°",
                                 OperCode = 19,
                                 QuantityIn = 0,
                                 QuantityOut = d.Quantity,
@@ -305,7 +305,7 @@ namespace Calculates.Materials
                         DocDate = d.Date,
                         KontragentIn = null,
                         KontragentOut = null,
-                        OperationName = "Валютный перевод товара(из счета)",
+                        OperationName = "Р’Р°Р»СЋС‚РЅС‹Р№ РїРµСЂРµРІРѕРґ С‚РѕРІР°СЂР°(РёР· СЃС‡РµС‚Р°)",
                         OperCode = 20,
                         QuantityIn = d.Quantity,
                         QuantityOut = 0,
@@ -322,7 +322,7 @@ namespace Calculates.Materials
                         NomenklDC = nomDC,
                         FinDocumentDC = d.DOC_CODE,
                         FinDocument =
-                        $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}"
+                        $"РЎ/С„ РїРѕСЃС‚Р°РІС‰РёРєР° в„–{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} РѕС‚ {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}"
 
 
                     };
@@ -342,7 +342,7 @@ namespace Calculates.Materials
                         DocDate = d.Date,
                         KontragentIn = null,
                         KontragentOut = null,
-                        OperationName = "Валютный перевод товара(из счета)",
+                        OperationName = "Р’Р°Р»СЋС‚РЅС‹Р№ РїРµСЂРµРІРѕРґ С‚РѕРІР°СЂР°(РёР· СЃС‡РµС‚Р°)",
                         OperCode = 20,
                         QuantityIn = 0,
                         QuantityOut = d.Quantity,
@@ -359,7 +359,7 @@ namespace Calculates.Materials
                         NomenklDC = nomDC,
                         FinDocumentDC = d.DOC_CODE,
                         FinDocument =
-                            $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}"
+                            $"РЎ/С„ РїРѕСЃС‚Р°РІС‰РёРєР° в„–{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} РѕС‚ {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}"
                     };
                     ret.Operations.Add(newTransOper);
                 }
@@ -375,7 +375,7 @@ namespace Calculates.Materials
                         CalcPrice = 0,
                         CalcPriceNaklad = 0,
                         DocDate = spisHead.Date_Doc,
-                        OperationName = "Акт списания товара",
+                        OperationName = "РђРєС‚ СЃРїРёСЃР°РЅРёСЏ С‚РѕРІР°СЂР°",
                         OperCode = 72,
                         QuantityIn = 0,
                         QuantityOut = spisRow.Quantity,
@@ -402,7 +402,7 @@ namespace Calculates.Materials
                         DocDate = d.DocDate,
                         KontragentIn = null,
                         KontragentOut = null,
-                        OperationName = "Акт списания товара",
+                        OperationName = "РђРєС‚ СЃРїРёСЃР°РЅРёСЏ С‚РѕРІР°СЂР°",
                         OperCode = 72,
                         QuantityIn = 0,
                         QuantityOut = d.QuantityOut,
@@ -639,7 +639,7 @@ namespace Calculates.Materials
 
             var s = $"DELETE FROM NOMENKL_RECALC WHERE NOM_DC={nomDC}";
             context.Database.ExecuteSqlCommand(s);
-            //Console.WriteLine($"Сохранение для {nomDC}");
+            //Console.WriteLine($"РЎРѕС…СЂР°РЅРµРЅРёРµ РґР»СЏ {nomDC}");
             context.SaveChanges();
             context.Database.ExecuteSqlCommand("delete FROM WD_27 " +
                                                " INSERT INTO dbo.WD_27 (DOC_CODE, SKLW_NOMENKL_DC, SKLW_DATE, SKLW_KOLICH) " +

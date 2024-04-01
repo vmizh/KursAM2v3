@@ -2,18 +2,16 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.Managers;
-using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories;
 using KursAM2.View.Logistiks.AktSpisaniya;
 using KursDomain;
 using KursDomain.Documents.AktSpisaniya;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
+using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.Repository;
 
@@ -22,9 +20,9 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
     public sealed class AktSpisaniyaNomenklSearchViewModel : RSWindowViewModelBase
     {
         public readonly IAktSpisaniyaNomenkl_TitleRepository AktSpisaniyaNomenklRepository;
-        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         public readonly GenericKursDBRepository<AktSpisaniyaNomenkl_Title> BaseRepository;
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         // ReSharper disable once InconsistentNaming
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork =
@@ -173,13 +171,11 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                          .Select(d => new AktSpisaniyaNomenklTitleViewModel(d)))
             {
                 foreach (var r in newItem.Rows)
-                {
                     r.Prices = nomenklManager.GetNomenklPrice(r.Nomenkl.DocCode, newItem.DocDate);
-                  
-                }
 
                 Documents.Add(newItem);
             }
+
             RaisePropertyChanged(nameof(Documents));
         }
 

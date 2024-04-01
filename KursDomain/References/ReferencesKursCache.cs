@@ -11,6 +11,7 @@ using KursDomain.IReferences.Nomenkl;
 
 namespace KursDomain.References;
 
+[Serializable]
 [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
 public class ReferencesKursCache : IReferencesCache
 {
@@ -26,7 +27,9 @@ public class ReferencesKursCache : IReferencesCache
 
     #region fields
 
+    [NonSerialized]
     private readonly KursContext.KursContext Context;
+    [NonSerialized]
     private readonly SqlConnection sqlConnect;
     private DateTime lastTimeCheckTrackerId;
     private readonly int diffSecondsForCheckTracker = 0;
@@ -36,6 +39,7 @@ public class ReferencesKursCache : IReferencesCache
     #region Properties
 
     public bool IsChangeTrackingOn { set; get; }
+    
     public DbContext DBContext => Context;
 
     #endregion

@@ -836,18 +836,18 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
         }
 
-        protected override void OnWindowLoaded(object obj)
-        {
-            base.OnWindowLoaded(obj);
-            if (Form is not OrderInView frm) return;
-            foreach (var col in frm.gridRows.Columns)
-            {
-                if (col.FieldName is "DocDate" or "DocInNum" or "DocExtNum" or "Warehouse")
-                    col.Visible = false;
-                col.ReadOnly = col.FieldName is not (nameof(WarehouseOrderInRow.DDT_KOL_PRIHOD)
-                    or nameof(WarehouseOrderInRow.SDRSchet));
-            }
-        }
+        //protected override void OnWindowLoaded(object obj)
+        //{
+        //    base.OnWindowLoaded(obj);
+        //    if (Form is not OrderInView frm) return;
+        //    foreach (var col in frm.gridRows.Columns)
+        //    {
+        //        if (col.FieldName is "DocDate" or "DocInNum" or "DocExtNum" or "Warehouse")
+        //            col.Visible = false;
+        //        col.ReadOnly = col.FieldName is not (nameof(WarehouseOrderInRow.DDT_KOL_PRIHOD)
+        //            or nameof(WarehouseOrderInRow.SDRSchet));
+        //    }
+        //}
 
         public override void CloseWindow(object form)
         {

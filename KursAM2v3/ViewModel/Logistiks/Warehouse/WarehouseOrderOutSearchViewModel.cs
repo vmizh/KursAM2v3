@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Forms;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Data.Linq.Helpers;
@@ -74,7 +73,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             set
             {
-                if (Equals(myCurrentDocument,value)) return;
+                if (myCurrentDocument == value) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }
@@ -82,6 +81,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         }
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyAllow => CurrentDocument != null;
 
         private void PrintOrder(object obj)
         {
@@ -114,38 +115,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             try
             {
                 Documents.Clear();
-                // ReSharper disable once UnusedVariable
-                using (var ctx = GlobalOptions.GetEntities())
-                {
-                    //var query = ctx
-                    //    .SD_84
-                    //    .Include(_ => _.SD_43)
-                    //    .Include(_ => _.SD_431)
-                    //    .Include(_ => _.SD_432)
-                    //    .Include(_ => _.SD_301)
-                    //    .Include(_ => _.TD_84)
-                    //    .Include("TD_84.SD_83")
-                    //    .Include("TD_84.TD_24")
-                    //    .Where(_ => _.SF_DATE >= StartDate && _.SF_DATE <= EndDate);
-                    //foreach (var item in query.ToList())
-                    //{
-                    //    var newItem = new InvoiceClientViewModel(item);
-                    //    if (item.TD_84 != null && item.TD_84.Count > 0)
-                    //        newItem.SummaOtgruz = item.TD_84.Sum(i =>
-                    //            i.TD_24.Sum(i2 => i.SFT_ED_CENA * i2.DDT_KOL_RASHOD ?? 0));
-                    //    string d;
-                    //    d = newItem.Diler != null ? newItem.Diler.Name : "";
-                    //    if (newItem.SF_IN_NUM.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
-                    //        newItem.SF_OUT_NUM.ToUpper().Contains(SearchText.ToUpper()) ||
-                    //        newItem.SF_CLIENT_NAME.ToUpper().Contains(SearchText.ToUpper()) ||
-                    //        newItem.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
-                    //        newItem.SF_DILER_SUMMA.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
-                    //        newItem.CO.Name.ToUpper().Contains(SearchText.ToUpper()) ||
-                    //        newItem.SF_CRS_SUMMA_K_OPLATE.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
-                    //        d.ToUpper().Contains(SearchText.ToUpper()))
-                    //        Documents.Add(newItem);
-                    //}
-                }
+                
             }
             catch (Exception e)
             {
@@ -174,9 +144,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 {
                     var d = ctx.SD_24.Where(_ =>
                         _.DD_DATE >= StartDate && _.DD_DATE <= EndDate &&
-                        _.DD_TYPE_DC == 2010000003).ToList(); 
+                        _.DD_TYPE_DC == 2010000003).ToList();
                     foreach (var item in d)
-                        Documents.Add(new WarehouseOrderOut(item) {State = RowStatus.NotEdited});
+                        Documents.Add(new WarehouseOrderOut(item) { State = RowStatus.NotEdited });
                 }
             }
             catch (Exception e)
@@ -206,9 +176,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new OrderOutView {Owner = Application.Current.MainWindow};
+            var frm = new OrderOutView { Owner = Application.Current.MainWindow };
             var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                "WarehouseOrderOut", true)) {Form = frm};
+                "WarehouseOrderOut", true)) { Form = frm };
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -216,10 +186,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocNewCopy(object obj)
         {
             if (CurrentDocument == null) return;
-            var frm = new OrderOutView {Owner = Application.Current.MainWindow};
+            var frm = new OrderOutView { Owner = Application.Current.MainWindow };
             var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderIn", true))
-                {Form = frm};
+                { Form = frm };
             ctx.Document = orderManager.NewOrderOutCopy(CurrentDocument);
             foreach (var rOut in ctx.Document.Rows)
             {
@@ -233,13 +203,30 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocNewCopyRequisite(object obj)
         {
             if (CurrentDocument == null) return;
-            var frm = new OrderOutView {Owner = Application.Current.MainWindow};
+            var frm = new OrderOutView { Owner = Application.Current.MainWindow };
             var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderIn", true))
-                {Form = frm};
+                { Form = frm };
             ctx.Document = orderManager.NewOrderOutRecuisite(CurrentDocument);
             frm.Show();
             frm.DataContext = ctx;
+        }
+
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            if (Form is StandartSearchView frm)
+            {
+                foreach (var col in frm.gridDocuments.Columns)
+                {
+                    switch (col.FieldName)
+                    {
+                        case "State":
+                            col.Visible = false;
+                            break;
+                    }
+                }
+            }
         }
 
         #endregion

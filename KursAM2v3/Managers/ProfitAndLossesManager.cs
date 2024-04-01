@@ -6,10 +6,8 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core.ViewModel.Base;
 using Data;
-using DevExpress.XtraExport.Helpers;
 using FinanceAnalitic;
 using Helper;
-using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Logistiks;
@@ -18,6 +16,7 @@ using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Management;
 using KursDomain.ICommon;
+using KursDomain.Managers;
 using KursDomain.References;
 
 namespace KursAM2.Managers
@@ -354,7 +353,7 @@ namespace KursAM2.Managers
                         Kontragent = e.Kontragent,
                         CurrencyName = ((IName)e.Kontr.Currency).Name,
                         Nomenkl = e.Nomenkl,
-                        DocTypeCode = DocumentType.Waybill,
+                        DocTypeCode = DocumentType.Waybill
                     };
                     SetCurrenciesValue(newOp, ((IDocCode)e.Kontr.Currency).DocCode, e.Profit,
                         e.Loss * GetRate(MyRates, ((IDocCode)e.Nomenkl.Currency).DocCode,
@@ -1021,7 +1020,7 @@ namespace KursAM2.Managers
             {
                 var data = ctx.SD_34.Include(_ => _.StockHolders)
                     .AsNoTracking().Where(_ => _.DATE_ORD >= DateStart && _.DATE_ORD <= DateEnd
-                        && _.StockHolderId != null).ToList();
+                                                                       && _.StockHolderId != null).ToList();
                 foreach (var d in data)
                 {
                     var newOp = new ProfitAndLossesExtendRowViewModel
@@ -1072,13 +1071,12 @@ namespace KursAM2.Managers
                         Price = d.Price
                     };
                     SetCurrenciesValue(newOp, ((IDocCode)nom.Currency).DocCode, 0,
-                        d.Quatntity*d.Price);
+                        d.Quatntity * d.Price);
 
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }
             }
-
         }
 
         public void CalcDilers()
@@ -1983,7 +1981,7 @@ namespace KursAM2.Managers
                         Date = sd101.VV_START_DATE,
                         CrsDC = td101.VVT_CRS_DC,
                         Code = td101.CODE,
-                        Name = sd43.NAME ??  "Банковская выписка",
+                        Name = sd43.NAME ?? "Банковская выписка",
                         Note = "№" + td101.VVT_DOC_NUM + " Контрагент - " + sd43.NAME,
                         DocCode = sd101.DOC_CODE,
                         Price = td101.VVT_VAL_PRIHOD,
@@ -2035,7 +2033,7 @@ namespace KursAM2.Managers
                         DocDC = sd33.DOC_CODE,
                         Date = sd33.DATE_ORD,
                         CrsDC = sd33.CRS_DC,
-                        Name =  sd43.NAME, //"Приходный кассовый ордер",
+                        Name = sd43.NAME, //"Приходный кассовый ордер",
                         Note = "№" + sd33.NUM_ORD + " от " + sd33.DATE_ORD + " Контрагент - " + sd43.NAME,
                         DocCode = sd33.DOC_CODE,
                         Price = sd33.SUMM_ORD,
@@ -2453,12 +2451,12 @@ namespace KursAM2.Managers
 
                 foreach (var d in outBalansClient)
                 {
-
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountClient,
                         Name = "Внебалансовые начисления для клиентов",
-                        Note = string.Format($"Дата {d.DocDate.ToShortDateString()} №{d.DocInNum}/{d.DocExtNum} {d.Note}"),
+                        Note = string.Format(
+                            $"Дата {d.DocDate.ToShortDateString()} №{d.DocInNum}/{d.DocExtNum} {d.Note}"),
                         DocCode = 0,
                         Quantity = 1,
                         Price = d.AccuredAmountForClientRow?.Sum(_ => _.Summa) ?? 0,
@@ -2475,7 +2473,7 @@ namespace KursAM2.Managers
                     };
 
                     //CalcType = TypeProfitAndLossCalc.IsProfit
-                    
+
                     SetCurrenciesValue(newOp1,
                         ((IDocCode)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC).Currency).DocCode,
                         newOp1.Price, 0m);

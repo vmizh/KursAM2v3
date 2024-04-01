@@ -72,7 +72,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         }
     }
 
-    public DateTime Date
+    public virtual DateTime Date
     {
         get => Entity.DD_DATE;
         set

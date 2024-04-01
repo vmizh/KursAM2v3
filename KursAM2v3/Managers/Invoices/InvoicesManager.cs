@@ -8,7 +8,6 @@ using Core.EntityViewModel;
 using Core.WindowsManager;
 using Data;
 using Helper;
-using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks.UC;
@@ -19,6 +18,7 @@ using KursDomain.Documents.Invoices;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
+using KursDomain.Managers;
 using KursDomain.References;
 using KursDomain.Repository;
 
@@ -1216,7 +1216,8 @@ namespace KursAM2.Managers.Invoices
             var ret = new List<IInvoiceProvider>();
             try
             {
-                using (var context  = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString)))
+                using (var context =
+                       new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString)))
                 {
                     List<SD_26> data;
                     if (isAccepted)
@@ -1773,7 +1774,6 @@ namespace KursAM2.Managers.Invoices
                     //MainReferences.UpdateNomenkl();
                     foreach (var d in data.OrderByDescending(_ => _.SF_DATE))
                     {
-                        
                         if (ret.Any(_ => _.DocCode == d.DOC_CODE)) continue;
                         var newDoc = new InvoiceClientViewModel(d, context, true)
                         {

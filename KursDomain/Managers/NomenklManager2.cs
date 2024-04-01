@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using Core.WindowsManager;
 using Data;
 using Helper;
-using JetBrains.Annotations;
 using KursDomain;
+using KursDomain.Annotations;
 using KursDomain.Documents.Currency;
 using KursDomain.Repository.NomenklRepository;
 
-namespace KursAM2.Managers.Nomenkl
+namespace KursDomain.Managers
 {
     public class NomenklManager2
     {

@@ -10,8 +10,8 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
-using KursAM2.Managers.Nomenkl;
 using KursDomain;
+using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.References;
 

@@ -27,8 +27,8 @@ namespace KursAM2.View.Logistiks.Warehouse
         {
             InitializeComponent();
             
-            Closing += OrderIn_Closing;
-            Loaded += OrderIn_Loaded;
+            //Closing += OrderIn_Closing;
+            //Loaded += OrderIn_Loaded;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
@@ -169,8 +169,9 @@ namespace KursAM2.View.Logistiks.Warehouse
                     e.Item.IsReadOnly = true;
                     e.Item.HorizontalAlignment = HorizontalAlignment.Right;
                     break;
-                case "State":
+                case nameof(doc.State):
                     e.Item.IsReadOnly = true;
+                    e.Item.Visibility = Visibility.Visible;
                     if (e.Item.Content is ComboBoxEdit cbState) cbState.IsEnabled = false;
                     e.Item.HorizontalAlignment = HorizontalAlignment.Right;
                     break;

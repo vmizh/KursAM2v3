@@ -15,7 +15,6 @@ using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
-using KursAM2.Managers.Nomenkl;
 using KursAM2.ReportManagers.SFClientAndWayBill;
 using KursAM2.View.DialogUserControl.Invoices.ViewModels;
 using KursAM2.View.DialogUserControl.Standart;
@@ -27,6 +26,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
@@ -96,6 +96,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 };
                 UnitOfWork.Context.SD_24.Add(Document.Entity);
             }
+
             DocCurrencyVisible = Document.Client != null ? Visibility.Visible : Visibility.Hidden;
         }
 
@@ -228,7 +229,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         // public override bool IsDocNewCopyAllow => Document.State != RowStatus.NewRow;
         public override bool IsDocNewCopyAllow => false;
-        
+
         public override bool IsDocNewCopyRequisiteAllow => Document.State != RowStatus.NewRow;
         public override bool IsDocNewEmptyAllow => true;
 
@@ -755,7 +756,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             loadType |= InvoiceClientSearchType.OnlyAccepted;
             if (Document.Client != null) loadType |= InvoiceClientSearchType.OneKontragent;
             //ToDo отслеживание вставленных позиций в диалоге выбора строк ***
-            var dtx = new InvoiceClientSearchDialogViewModel(true, true, loadType, Document.Rows.Select(_ => _.DDT_NOMENKL_DC).ToList() , UnitOfWork.Context)
+            var dtx = new InvoiceClientSearchDialogViewModel(true, true, loadType,
+                Document.Rows.Select(_ => _.DDT_NOMENKL_DC).ToList(), UnitOfWork.Context)
             {
                 WindowName = "Выбор счетов фактур",
                 KontragentDC = Document.Client?.DocCode
@@ -810,14 +812,16 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 DDT_SFACT_DC = item.DocCode,
                                 DDT_SFACT_ROW_CODE = item.RowCode,
                                 Nomenkl = n,
-                                DDT_KOL_RASHOD = (item.Quantity - item.Shipped ?? 0) <= m ? item.Quantity-item.Shipped ?? 0 : m,
+                                DDT_KOL_RASHOD = (item.Quantity - item.Shipped ?? 0) <= m
+                                    ? item.Quantity - item.Shipped ?? 0
+                                    : m,
                                 Unit = n.Unit as Unit,
                                 Currency = n.Currency as Currency,
                                 InvoiceClientViewModel = Document.InvoiceClientViewModel,
                                 State = RowStatus.NewRow,
-                                SchetLinkedRowViewModel =  Document.InvoiceClientViewModel.Rows.FirstOrDefault(_ => _.Code == item.RowCode) as
-                                    InvoiceClientRowViewModel
-
+                                SchetLinkedRowViewModel =
+                                    Document.InvoiceClientViewModel.Rows.FirstOrDefault(_ => _.Code == item.RowCode) as
+                                        InvoiceClientRowViewModel
                             };
                             Document.Rows.Add(newItem);
                             Document.Entity.TD_24.Add(newItem.Entity);

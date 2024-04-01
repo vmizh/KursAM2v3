@@ -11,7 +11,6 @@ using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.Managers;
-using KursAM2.Managers.Nomenkl;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks;
 using KursAM2.ViewModel.Logistiks.TransferOut;
@@ -19,13 +18,13 @@ using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository.DocHistoryRepository;
 using KursDomain.Repository.NomenklRepository;
 using KursDomain.Repository.StorageLocationsRepositury;
 using KursDomain.Repository.TransferOut;
-using Microsoft.Expression.Shapes;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -69,11 +68,13 @@ namespace KursAM2.ViewModel.Logistiks
         {
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
-            StartDate = new DateTime(DateTime.Today.Year,1,1);
+            StartDate = new DateTime(DateTime.Today.Year, 1, 1);
             IsShowAll = true;
             IsDataLoaded = Visibility.Visible;
             LoadReferences();
         }
+
+        public override string LayoutName => "NomenklMoveOnSkladWindowViewModel";
 
         public Visibility IsDataLoaded
         {
@@ -284,6 +285,11 @@ namespace KursAM2.ViewModel.Logistiks
                 backgroundWorker1_RunWorkerCompleted;
             backgroundWork.ProgressChanged +=
                 backgroundWorker1_ProgressChanged;
+        }
+
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
         }
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -1115,6 +1121,7 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = -doc.Quatntity * prc
                     });
                 }
+
                 var docs8 = ctx.TD_24.Include(_ => _.SD_24)
                     .Where(_ => _.SD_24.DD_TYPE_DC == 2010000014 && _.SD_24.DD_DATE >= StartDate &&
                                 _.SD_24.DD_DATE <= EndDate
@@ -1136,7 +1143,7 @@ namespace KursAM2.ViewModel.Logistiks
                         DocumentDate = doc.SD_24.DD_DATE,
                         QuantityIn = kol_in,
                         QuantityOut = kol_out,
-                        QuantityDelta = kol_in-kol_out,
+                        QuantityDelta = kol_in - kol_out,
                         // ReSharper disable once PossibleInvalidOperationException
                         // ReSharper disable once AssignNullToNotNullAttribute
                         From = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC))
@@ -1145,12 +1152,11 @@ namespace KursAM2.ViewModel.Logistiks
                         // ReSharper disable once PossibleInvalidOperationException
                         To = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC))
                             .Name,
-                        SummaIn = kol_in*prc,
+                        SummaIn = kol_in * prc,
                         SummaOut = kol_out * prc,
                         SummaDelta = (kol_in - kol_out) * prc
                     });
                 }
-
             }
 
             CalcNakopit();

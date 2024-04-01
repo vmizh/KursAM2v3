@@ -14,7 +14,6 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.Managers;
-using KursAM2.Managers.Nomenkl;
 using KursAM2.Repositories;
 using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.AktSpisaniya;
@@ -23,6 +22,7 @@ using KursDomain;
 using KursDomain.Documents.AktSpisaniya;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
+using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
@@ -467,15 +467,19 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public ICommand AddNomenklCommand
         {
-            get { return new Command(AddNomenkl, _ => Document?.Warehouse != null 
-                                                      && Document?.Currency != null
-                                                      && IsSigned == false); }
+            get
+            {
+                return new Command(AddNomenkl, _ => Document?.Warehouse != null
+                                                    && Document?.Currency != null
+                                                    && IsSigned == false);
+            }
         }
 
         private void AddNomenkl(object obj)
         {
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
-            var ctx = new DialogSelectExistNomOnSkaldViewModel(Document.Warehouse, Document.DocDate, Document?.Currency);
+            var ctx = new DialogSelectExistNomOnSkaldViewModel(Document.Warehouse, Document.DocDate,
+                Document?.Currency);
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, $"Запрос для склада: {Document.Warehouse}", ctx) ==
                 MessageResult.Cancel) return;
