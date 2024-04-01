@@ -5,6 +5,7 @@ using System.Windows;
 using Core.WindowsManager;
 using DevExpress.Data;
 using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Core.Native;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -133,7 +134,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     e.Item.Width = 350;
                     break;
                 case nameof(doc.Date):
-                    e.Item.Width = 150;
+                    e.Item.Width = 158;
                     break;
 
                 case nameof(doc.DD_SCHET):
@@ -146,7 +147,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     BindingHelper.CopyBinding(oldContent, schetEdit, BaseEdit.EditValueProperty);
                     e.Item.Content = schetEdit;
                     e.Item.HorizontalAlignment = HorizontalAlignment.Left;
-                    e.Item.MinWidth = 600;
+                    e.Item.MinWidth = 400;
                     break;
                 case nameof(doc.WarehouseIn):
                     var wInCB = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.WarehouseIn, "WarehouseIn",

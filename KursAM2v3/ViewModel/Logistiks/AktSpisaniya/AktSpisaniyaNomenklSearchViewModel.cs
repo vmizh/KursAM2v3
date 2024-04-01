@@ -48,7 +48,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             EndDate = DateTime.Today;
-            StartDate = EndDate.AddDays(-30);
+            StartDate = new DateTime(DateTime.Today.Year,1,1);
             IsCanDocNew = true;
             LayoutName = "AktSpisaniyaSearchView";
             WindowName = "Акты списания материалов";
@@ -175,6 +175,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 foreach (var r in newItem.Rows)
                 {
                     r.Prices = nomenklManager.GetNomenklPrice(r.Nomenkl.DocCode, newItem.DocDate);
+                  
                 }
 
                 Documents.Add(newItem);

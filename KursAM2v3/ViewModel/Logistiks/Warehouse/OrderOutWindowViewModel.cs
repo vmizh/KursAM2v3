@@ -149,6 +149,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     "WarehouseOrderOut", true))
                 { Form = frm };
             ctx.Document = orderManager.NewOrderOutCopy(Document);
+            foreach (var rOut in ctx.Document.Rows)
+            {
+                var nq = nomenklManager.GetNomenklQuantity(ctx.Document.WarehouseOut.DocCode, rOut.DDT_NOMENKL_DC, ctx.Document.Date, ctx.Document.Date);
+                rOut.MaxQuantity =  nq.Count == 0 ? 0 : nq.First().OstatokQuantity;;
+            }
+
             frm.Show();
             frm.DataContext = ctx;
         }
