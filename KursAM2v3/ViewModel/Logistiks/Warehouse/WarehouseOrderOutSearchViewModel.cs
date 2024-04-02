@@ -15,6 +15,7 @@ using KursAM2.View.Logistiks.Warehouse;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.Managers;
 using KursDomain.Menu;
 using Application = System.Windows.Application;
 
@@ -25,21 +26,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private readonly WarehouseManager orderManager;
         private WarehouseOrderOut myCurrentDocument;
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
-
-        protected override void OnWindowLoaded(object obj)
-        {
-            base.OnWindowLoaded(obj);
-             if (Form is not StandartSearchView frm) return;
-            //var frm = Form as StandartSearchView;
-            //if (frm == null) return;
-
-            foreach (var col in frm.gridDocuments.Columns)
-            {
-               if (col.FieldName is "State")
-                    col.Visible = false;
-            }
-
-        }
 
         public WarehouseOrderOutSearchViewModel()
         {

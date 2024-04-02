@@ -452,7 +452,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (Document == null) return;
             var frm = new OrderInView { Owner = Application.Current.MainWindow };
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(UnitOfWork.Context,
-                    "WarehouseOrderIn", true))
+                    "WarehouseOrderIn", true), Document.DocCode)
                 { Form = frm, Document = orderManager.NewOrderInRecuisite(Document) };
             ctx.Document.myState = RowStatus.NewRow;
             ctx.Document.WarehouseSenderType = ctx.Document.KontragentSender != null
@@ -519,7 +519,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             Document.Entity.DD_POLUCH_NAME = Document.WarehouseIn.Name;
             Document.Entity.DD_TYPE_DC = 2010000001;
-            Document.Entity.DD_POLUCH_NAME = Document.WarehouseIn.Name;
             var ent = UnitOfWork.Context.ChangeTracker.Entries().ToList();
             UnitOfWork.CreateTransaction();
             try

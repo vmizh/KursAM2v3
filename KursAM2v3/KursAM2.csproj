@@ -189,7 +189,6 @@
     <Compile Include="Managers\AccessRightsManager.cs" />
     <Compile Include="Managers\CashDocumentType.cs" />
     <Compile Include="Managers\CashManager.cs" />
-    <Compile Include="Managers\Nomenkl\NomenklManager2.cs" />
     <Compile Include="Managers\WarehouseManager.cs" />
     <Compile Include="Managers\OffBalansOperationManagers\OffBalansInManager.cs" />
     <Compile Include="Managers\OffBalansOperationManagers\OffBalansOutManager.cs" />

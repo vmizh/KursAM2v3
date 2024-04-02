@@ -71,7 +71,7 @@ public sealed class WarehouseOrderOut : SD_24ViewModel
                 var nq = nomenklManager.GetNomenklQuantity(WarehouseOut.DocCode, r.Nomenkl.DocCode,
                     Entity.DD_DATE, Entity.DD_DATE);
 
-                if (State != RowStatus.NewRow && Entity.DD_DATE > dateOld)
+                if (State != RowStatus.NewRow && Entity.DD_DATE >= dateOld)
                 {
 
 
