@@ -54,13 +54,13 @@ public sealed class WarehouseOrderOut : SD_24ViewModel
         set
         {
             if (Entity.DD_DATE == value) return;
-            UpdateMaxQuantity();
+            UpdateMaxQuantity(value);
             Entity.DD_DATE = value;
             RaisePropertyChanged();
         }
     }
 
-    public void UpdateMaxQuantity()
+    public void UpdateMaxQuantity(DateTime newDate)
     {
         using (var ctx = GlobalOptions.GetEntities())
         {
@@ -69,9 +69,9 @@ public sealed class WarehouseOrderOut : SD_24ViewModel
             {
                 decimal oldQuan = 0;
                 var nq = nomenklManager.GetNomenklQuantity(WarehouseOut.DocCode, r.Nomenkl.DocCode,
-                    Entity.DD_DATE, Entity.DD_DATE);
+                    newDate, newDate);
 
-                if (State != RowStatus.NewRow && Entity.DD_DATE > dateOld)
+                if (State != RowStatus.NewRow && Entity.DD_DATE >= dateOld)
                 {
 
 

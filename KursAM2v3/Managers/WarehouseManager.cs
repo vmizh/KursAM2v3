@@ -1192,7 +1192,6 @@ namespace KursAM2.Managers
             old.DocCode = -1;
             old.DD_IN_NUM = -1;
             old.DD_EXT_NUM = null;
-            old.Date = DateTime.Today;
             old.CREATOR = GlobalOptions.UserInfo.Name;
             foreach (var r in old.Rows)
             {
@@ -1200,15 +1199,19 @@ namespace KursAM2.Managers
                 r.State = RowStatus.NewRow;
             }
 
-            var doc = new WarehouseOrderOut(old.Entity) { State = RowStatus.NewRow };
-            foreach (var r in doc.Rows)
+            var doc = new WarehouseOrderOut(old.Entity)
             {
-                var nq = nomenklManager.GetNomenklQuantity(doc.WarehouseOut.DocCode, r.Nomenkl.DocCode,
-                    doc.Date, doc.Date);
-                r.MaxQuantity = nq.Count > 0 ? nq.First().OstatokQuantity : 0;
-                if (r.Quantity > r.MaxQuantity)
-                    r.Quantity = r.MaxQuantity;
-            }
+                State = RowStatus.NewRow,
+                Date = DateTime.Today
+            };
+            //foreach (var r in doc.Rows)
+            //{
+            //    var nq = nomenklManager.GetNomenklQuantity(doc.WarehouseOut.DocCode, r.Nomenkl.DocCode,
+            //        doc.Date, doc.Date);
+            //    r.MaxQuantity = nq.Count > 0 ? nq.First().OstatokQuantity : 0;
+            //    if (r.Quantity > r.MaxQuantity)
+            //        r.Quantity = r.MaxQuantity;
+            //}
 
             return doc;
         }

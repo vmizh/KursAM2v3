@@ -9,6 +9,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Mvvm;
+using DevExpress.Mvvm.Native;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ReportManagers;
@@ -141,7 +142,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var frm = new OrderOutView { Owner = Application.Current.MainWindow };
             var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderOut", true))
-                { Form = frm };
+            {
+                Form = frm,
+                State = RowStatus.NewRow
+            };
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -152,8 +156,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var frm = new OrderOutView { Owner = Application.Current.MainWindow };
             var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderOut", true))
-                { Form = frm };
-            ctx.Document = orderManager.NewOrderOutCopy(Document);
+            {
+                Form = frm,
+                Document = orderManager.NewOrderOutCopy(Document.DocCode)
+            };
+            //ctx.Document.UpdateMaxQuantity();
             frm.Show();
             frm.DataContext = ctx;
         }
@@ -163,7 +170,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (Document == null) return;
             var frm = new OrderOutView { Owner = Application.Current.MainWindow };
             var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                "WarehouseOrderOut", true)) { Form = frm, Document = orderManager.NewOrderOutRecuisite(Document) };
+                "WarehouseOrderOut", true))
+            {
+                Form = frm, 
+                Document = orderManager.NewOrderOutRecuisite(Document),
+                State = RowStatus.NewRow
+            };
 
             frm.Show();
             frm.DataContext = ctx;
@@ -193,6 +205,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 if (dc != 0)
                 {
                     Document = orderManager.GetOrderOut(dc);
+                    Document.UpdateMaxQuantity(Document.Date);
 
                 }
             }
@@ -224,7 +237,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
                 Document.myState = RowStatus.NotEdited;
             }
-            Document.UpdateMaxQuantity();
+            Document.UpdateMaxQuantity(Document.Date);
             Document.myState = RowStatus.NotEdited;
         }
 
