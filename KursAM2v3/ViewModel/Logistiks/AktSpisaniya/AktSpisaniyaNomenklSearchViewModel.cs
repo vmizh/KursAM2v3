@@ -36,11 +36,13 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         // ReSharper disable once InconsistentNaming
         private DateTime myDateStart;
+        private readonly ISignatureRepository mySignatureRepository;
 
         #region Constructors
 
         public AktSpisaniyaNomenklSearchViewModel()
         {
+            mySignatureRepository = new SignatureRepository(unitOfWork);
             BaseRepository = new GenericKursDBRepository<AktSpisaniyaNomenkl_Title>(unitOfWork);
             AktSpisaniyaNomenklRepository = new AktSpisaniyaNomenkl_TitleRepository(unitOfWork);
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -170,6 +172,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             foreach (var newItem in AktSpisaniyaNomenklRepository.GetAllByDates(StartDate, EndDate).ToList()
                          .Select(d => new AktSpisaniyaNomenklTitleViewModel(d)))
             {
+                var signs = mySignatureRepository.CreateSignes(72, newItem.Id, out var issign, out var isSignNew);
+                newItem.IsSign = issign;
                 foreach (var r in newItem.Rows)
                     r.Prices = nomenklManager.GetNomenklPrice(r.Nomenkl.DocCode, newItem.DocDate);
 

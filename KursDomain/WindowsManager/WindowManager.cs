@@ -24,12 +24,12 @@ public class WindowManager : IWindowManager
 
     public WindowManager()
     {
-        DialogResultNames.Add(KursDialogResult.Yes,"Да");
-        DialogResultNames.Add(KursDialogResult.Save,"Сохранить");
-        DialogResultNames.Add(KursDialogResult.NotSave,"Не сохранять");
-        DialogResultNames.Add(KursDialogResult.Cancel,"Отмена");
-        DialogResultNames.Add(KursDialogResult.No,"Нет");
-        DialogResultNames.Add(KursDialogResult.Confirm,"ОК");
+        DialogResultNames.Add(KursDialogResult.Yes,"Р”Р°");
+        DialogResultNames.Add(KursDialogResult.Save,"РЎРѕС…СЂР°РЅРёС‚СЊ");
+        DialogResultNames.Add(KursDialogResult.NotSave,"РќРµ СЃРѕС…СЂР°РЅСЏС‚СЊ");
+        DialogResultNames.Add(KursDialogResult.Cancel,"РћС‚РјРµРЅР°");
+        DialogResultNames.Add(KursDialogResult.No,"РќРµС‚");
+        DialogResultNames.Add(KursDialogResult.Confirm,"РћРљ");
     }
 
     [Flags]
@@ -127,8 +127,8 @@ public class WindowManager : IWindowManager
     {
         WinUIMessageBox.Show(
             Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
-            "Функция не реализована.",
-            $"Системное сообщение. {text}",
+            "Р¤СѓРЅРєС†РёСЏ РЅРµ СЂРµР°Р»РёР·РѕРІР°РЅР°.",
+            $"РЎРёСЃС‚РµРјРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ. {text}",
             MessageBoxButton.OK,
             MessageBoxImage.Exclamation,
             MessageBoxResult.None, MessageBoxOptions.None,
@@ -142,7 +142,7 @@ public class WindowManager : IWindowManager
         var inEx = ex;
         while (inEx.InnerException != null)
         {
-            errText.Append("\n Внутрення ошибка:\n");
+            errText.Append("\n Р’РЅСѓС‚СЂРµРЅРЅСЏ РѕС€РёР±РєР°:\n");
             errText.Append(inEx.InnerException.Message);
             inEx = inEx.InnerException;
         }
@@ -162,7 +162,7 @@ public class WindowManager : IWindowManager
         //LoggerHelper.WriteError(ex);
         WinUIMessageBox.Show(win ?? Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
             errText.ToString(),
-            "Ошибка",
+            "РћС€РёР±РєР°",
             MessageBoxButton.OK,
             MessageBoxImage.Error,
             MessageBoxResult.None, MessageBoxOptions.None,
@@ -231,7 +231,7 @@ public class WindowManager : IWindowManager
                     DbId = GlobalOptions.DataBaseId,
                     Host = Environment.MachineName,
                     UserId = GlobalOptions.UserInfo.KursId,
-                    ErrorText = winActive + "/" + (methodname ?? "Метод не указан") + ": " + errText,
+                    ErrorText = winActive + "/" + (methodname ?? "РњРµС‚РѕРґ РЅРµ СѓРєР°Р·Р°РЅ") + ": " + errText,
                     Moment = DateTime.Now
                 });
                 errCtx.SaveChanges();
@@ -240,14 +240,14 @@ public class WindowManager : IWindowManager
         if (Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive) != null)
             WinUIMessageBox.Show(Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
                 errText.ToString(),
-                caption ?? "Ошибка",
+                caption ?? "РћС€РёР±РєР°",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error,
                 MessageBoxResult.None, MessageBoxOptions.None,
                 FloatingMode.Adorner);
         else
             MessageBox.Show(errText.ToString(),
-                "Ошибка",
+                "РћС€РёР±РєР°",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error);
     }
@@ -257,7 +257,7 @@ public class WindowManager : IWindowManager
         if (ex.InnerException == null)
             WinUIMessageBox.Show(Application.Current.Windows.Cast<Window>().SingleOrDefault(x => x.IsActive),
                 ex.Message,
-                "Ошибка",
+                "РћС€РёР±РєР°",
                 MessageBoxButton.OK,
                 MessageBoxImage.Error,
                 MessageBoxResult.None, MessageBoxOptions.None,
@@ -271,7 +271,7 @@ public class WindowManager : IWindowManager
         var errText = new StringBuilder(ex.Message);
         return ex.InnerException == null
             ? errText
-            : errText.Append($"{errText} \n Внутрення ошибка:\n {StringBuilder(ex.InnerException)}");
+            : errText.Append($"{errText} \n Р’РЅСѓС‚СЂРµРЅРЅСЏ РѕС€РёР±РєР°:\n {StringBuilder(ex.InnerException)}");
     }
 
     public MessageBoxResult ShowWinUIMessageBox(string messageBoxText, string caption)
