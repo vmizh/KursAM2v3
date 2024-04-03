@@ -109,9 +109,11 @@ public sealed class WarehouseOrderOut : SD_24ViewModel
     }
 
     public override string ToString()
-    {
+    {  
+        var strN = "";
+        if (DD_EXT_NUM != null) strN =  "/ + DD_EXT_NUM";
         return
-            $"Расходный складской ордер №{DD_IN_NUM}/{DD_EXT_NUM} от {Date.ToShortDateString()} склад:{WarehouseOut}";
+            $"Расходный складской ордер №{DD_IN_NUM}{strN} от {Date.ToShortDateString()} склад: {WarehouseOut}";
     }
 }
 

@@ -161,6 +161,7 @@
     <Compile Include="Documents\Employee\EMP_PAYROLL_TYPEViewModel.cs" />
     <Compile Include="Documents\Refund\RefundFromClientSimple.cs" />
     <Compile Include="ICommon\RowStatus.cs" />
+    <Compile Include="Managers\NomenklManager2.cs" />
     <Compile Include="RepositoryHelper\NomenklStoreRemainItem.cs" />
     <Compile Include="ICommon\ITreeReference.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNaklad.cs" />

@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Data.Linq.Helpers;
+using DevExpress.Pdf.Native;
 using KursAM2.Managers;
+using KursAM2.Managers.Nomenkl;
 using KursAM2.ReportManagers;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks.Warehouse;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
+using KursDomain.Managers;
 using KursDomain.Menu;
+using Application = System.Windows.Application;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -20,6 +25,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
     {
         private readonly WarehouseManager orderManager;
         private WarehouseOrderOut myCurrentDocument;
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         public WarehouseOrderOutSearchViewModel()
         {
@@ -28,7 +34,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             orderManager =
                 new WarehouseManager(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderSearchViewModel"));
-            StartDate = DateTime.Today.AddDays(-30);
+            StartDate = new DateTime(DateTime.Today.Year,1,1);
             EndDate = DateTime.Today;
             var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
             prn?.SubMenu.Add(new MenuButtonInfo
@@ -171,6 +177,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     "WarehouseOrderIn", true))
                 { Form = frm };
             ctx.Document = orderManager.NewOrderOutCopy(CurrentDocument);
+            foreach (var rOut in ctx.Document.Rows)
+            {
+             var nq = nomenklManager.GetNomenklQuantity(ctx.Document.WarehouseOut.DocCode, rOut.DDT_NOMENKL_DC, ctx.Document.Date, ctx.Document.Date);
+             rOut.MaxQuantity =  nq.Count == 0 ? 0 : nq.First().OstatokQuantity;;
+            }
             frm.Show();
             frm.DataContext = ctx;
         }
