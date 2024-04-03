@@ -19,13 +19,13 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
     public sealed class DialogSelectExistNomOnSkaldViewModel : RSWindowViewModelBase
     {
         private readonly Currency myCurrency;
-        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
         private readonly List<decimal> myExclude;
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         #region Constructors
 
         public DialogSelectExistNomOnSkaldViewModel(KursDomain.References.Warehouse sklad,
-            DateTime date,List<decimal> exclude = null, Currency currency = null)
+            DateTime date, List<decimal> exclude = null, Currency currency = null)
         {
             warehouse = sklad;
             Date = date;
@@ -89,6 +89,28 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         #endregion
 
         #region Commands
+
+        public ICommand RemoveNomenklFromSelectedCommand
+        {
+            get { return new Command(RemoveNomenklFromSelected, _ => CurrentSelectedNomenkl != null); }
+        }
+
+        private void RemoveNomenklFromSelected(object obj)
+        {
+            var removeList = new List<decimal>();
+            if (SelectedRows.Count > 0)
+            {
+                foreach (var item in SelectedRows)
+                    removeList.Add(item.Nomenkl.DocCode);
+                foreach (var nomDC in removeList)
+                {
+                    var r = NomenklSelectedList.FirstOrDefault(_ => _.Nomenkl.DocCode == nomDC);
+                    if (r != null)
+                        NomenklSelectedList.Remove(r);
+                }
+            }
+        }
+
 
         public ICommand AddNomenklToSelectedCommand
         {
