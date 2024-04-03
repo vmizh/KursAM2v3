@@ -69,7 +69,7 @@ public sealed class WarehouseOrderOut : SD_24ViewModel
             {
                 decimal oldQuan = 0;
                 var nq = nomenklManager.GetNomenklQuantity(WarehouseOut.DocCode, r.Nomenkl.DocCode,
-                    newDate, newDate);
+                    newDate, newDate > DateTime.Today ? newDate : DateTime.Today);
 
                 if (State != RowStatus.NewRow && Entity.DD_DATE >= dateOld)
                 {
@@ -80,7 +80,7 @@ public sealed class WarehouseOrderOut : SD_24ViewModel
                 }
 
 
-                r.MaxQuantity = nq.Count > 0 ? nq.First().OstatokQuantity + oldQuan : 0;
+                r.MaxQuantity = nq.Count > 0 ? nq.Min(_ => _.OstatokQuantity) + oldQuan : 0;
                 if (r.Quantity > r.MaxQuantity)
                     r.Quantity = r.MaxQuantity;
             }
