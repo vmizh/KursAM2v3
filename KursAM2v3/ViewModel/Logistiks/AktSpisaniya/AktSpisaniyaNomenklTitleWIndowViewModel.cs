@@ -169,7 +169,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         // ReSharper disable once InconsistentNaming
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork
-            = new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+            = new UnitOfWork<ALFAMEDIAEntities>(GlobalOptions.GetEntities());
 
         public readonly GenericKursDBRepository<AktSpisaniyaNomenkl_Title> GenericRepository;
         public readonly IAktSpisaniyaNomenkl_TitleRepository AktSpisaniyaNomenklTitleRepository;
@@ -479,6 +479,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         {
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             var ctx = new DialogSelectExistNomOnSkaldViewModel(Document.Warehouse, Document.DocDate,
+                Document.Rows.Select(_ => _.Nomenkl.DocCode).ToList(),
                 Document?.Currency);
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, $"Запрос для склада: {Document.Warehouse}", ctx) ==

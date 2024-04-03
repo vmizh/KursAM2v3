@@ -61,7 +61,7 @@ namespace KursAM2.Repositories
 
         public List<AktSpisaniyaNomenkl_Title> GetAllByDates(DateTime dateStart, DateTime dateEnd)
         {
-            return Context.AktSpisaniyaNomenkl_Title.Where(_ => _.Date_Doc >= dateStart && _.Date_Doc <= dateEnd).ToList();
+            return Context.AktSpisaniyaNomenkl_Title.Where(_ => _.Date_Doc >= dateStart && _.Date_Doc <= dateEnd).AsNoTracking().ToList();
         }
 
         public List<AktSpisaniyaNomenkl_Title> GetAllByWarehouse(decimal warehouseDC)

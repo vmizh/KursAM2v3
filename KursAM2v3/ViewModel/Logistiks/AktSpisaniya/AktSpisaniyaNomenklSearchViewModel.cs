@@ -19,7 +19,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
     public sealed class AktSpisaniyaNomenklSearchViewModel : RSWindowViewModelBase
     {
-        public readonly IAktSpisaniyaNomenkl_TitleRepository AktSpisaniyaNomenklRepository;
+        public IAktSpisaniyaNomenkl_TitleRepository AktSpisaniyaNomenklRepository;
 
         public readonly GenericKursDBRepository<AktSpisaniyaNomenkl_Title> BaseRepository;
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
@@ -36,7 +36,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         // ReSharper disable once InconsistentNaming
         private DateTime myDateStart;
-        private readonly ISignatureRepository mySignatureRepository;
+        private ISignatureRepository mySignatureRepository;
 
         #region Constructors
 
@@ -167,11 +167,13 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public override void RefreshData(object obj)
         {
+            
             base.RefreshData(obj);
             Documents.Clear();
             foreach (var newItem in AktSpisaniyaNomenklRepository.GetAllByDates(StartDate, EndDate).ToList()
                          .Select(d => new AktSpisaniyaNomenklTitleViewModel(d)))
             {
+                newItem.IsSign = false;
                 var signs = mySignatureRepository.CreateSignes(72, newItem.Id, out var issign, out var isSignNew);
                 newItem.IsSign = issign;
                 foreach (var r in newItem.Rows)
@@ -180,6 +182,10 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 Documents.Add(newItem);
             }
 
+            foreach (var item in Documents)
+            {
+                item.RaisePropertyAllChanged();
+            }
             RaisePropertyChanged(nameof(Documents));
         }
 

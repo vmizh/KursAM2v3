@@ -20,15 +20,17 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
     {
         private readonly Currency myCurrency;
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+        private readonly List<decimal> myExclude;
 
         #region Constructors
 
         public DialogSelectExistNomOnSkaldViewModel(KursDomain.References.Warehouse sklad,
-            DateTime date, Currency currency = null)
+            DateTime date,List<decimal> exclude = null, Currency currency = null)
         {
             warehouse = sklad;
             Date = date;
             myCurrency = currency;
+            myExclude = exclude;
             RefreshData(null);
         }
 
@@ -238,6 +240,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 var listTemp = new List<NomenklMoveOnSkladViewModel>();
                 foreach (var item in nnomlist)
                 {
+                    if (myExclude != null && myExclude.Count > 0 && myExclude.Contains(item.NomDC)) continue;
                     var summaIn = item.SummaIn;
                     var summaOut = item.SummaOut;
                     var newitem = new NomenklMoveOnSkladViewModel
