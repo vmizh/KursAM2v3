@@ -32,7 +32,7 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
                 e.Column.EditSettings = new CalcEditSettings
                 {
                     DisplayFormat = "n2",
-                    MaskUseAsDisplayFormat = true,
+                    //MaskUseAsDisplayFormat = true,
                     IsTextEditable = false,
                     AllowDefaultButton = false
                 };
@@ -42,7 +42,7 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
                     e.Column.EditSettings = new CalcEditSettings
                     {
                         DisplayFormat = "n",
-                        MaskUseAsDisplayFormat = true
+                       // MaskUseAsDisplayFormat = true
                     };
                     break;
                 case "Note":
