@@ -143,9 +143,22 @@ namespace KursAM2.View
                 ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = checkMultiUser;
                 return;
             }
-
             var res = ver.CheckVersion();
-            if (res != null && res.UpdateStatus == 2) ver.KursUpdate();
+            if (res != null)
+            {
+                switch (res.UpdateStatus)
+                {
+                    case 0:
+                        ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = false;
+                        break;
+                    case 1:
+                    case 2:
+                        ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = true;
+                        if (res.UpdateStatus == 2) ver.KursUpdate();
+                        break;
+                }
+            }
+
         }
 
 
@@ -183,9 +196,20 @@ namespace KursAM2.View
             {
                 dtx.Form = this;
                 var vers = new VersionManager(dtx);
-                vers.CheckVersion();
+                var res = vers.CheckVersion();
+                if (res.UpdateStatus == 0)
+                {
+                    ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = false;
+                    return;
+                }
                 var ver = vers.GetCanUpdate();
-                if (ver == false) ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = ver;
+                    if (ver == false)
+                    {
+                        ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = ver;
+                        return;
+                    }
+                    ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = true;
+
             }
         }
 

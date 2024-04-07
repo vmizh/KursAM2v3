@@ -11,7 +11,6 @@ using System.Xml;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.View;
-using KursAM2.ViewModel;
 
 //using MessageBox = System.Windows.MessageBox;
 
