@@ -19,14 +19,14 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 {
     public sealed class AktSpisaniyaNomenklSearchViewModel : RSWindowViewModelBase
     {
-        public IAktSpisaniyaNomenkl_TitleRepository AktSpisaniyaNomenklRepository;
-
         public readonly GenericKursDBRepository<AktSpisaniyaNomenkl_Title> BaseRepository;
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         // ReSharper disable once InconsistentNaming
         private readonly UnitOfWork<ALFAMEDIAEntities> unitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+
+        public IAktSpisaniyaNomenkl_TitleRepository AktSpisaniyaNomenklRepository;
 
         // ReSharper disable once InconsistentNaming
         private AktSpisaniyaNomenklTitleViewModel myCurrentDocument;
@@ -36,7 +36,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         // ReSharper disable once InconsistentNaming
         private DateTime myDateStart;
-        private ISignatureRepository mySignatureRepository;
+        private readonly ISignatureRepository mySignatureRepository;
 
         #region Constructors
 
@@ -48,7 +48,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             EndDate = DateTime.Today;
-            StartDate = new DateTime(DateTime.Today.Year,1,1);
+            StartDate = new DateTime(DateTime.Today.Year, 1, 1);
             IsCanDocNew = true;
             LayoutName = "AktSpisaniyaSearchView";
             WindowName = "Акты списания материалов";
@@ -110,7 +110,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         #region Commands
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
-        public override bool IsDocNewCopyAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyAllow => false;
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
 
         public override void DocumentOpen(object form)
@@ -167,7 +167,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         public override void RefreshData(object obj)
         {
-            
             base.RefreshData(obj);
             Documents.Clear();
             foreach (var newItem in AktSpisaniyaNomenklRepository.GetAllByDates(StartDate, EndDate).ToList()
@@ -182,10 +181,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 Documents.Add(newItem);
             }
 
-            foreach (var item in Documents)
-            {
-                item.RaisePropertyAllChanged();
-            }
+            foreach (var item in Documents) item.RaisePropertyAllChanged();
             RaisePropertyChanged(nameof(Documents));
         }
 

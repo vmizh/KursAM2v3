@@ -183,6 +183,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public override string MenuInfoString => "Акцептован";
         public override string LayoutName => "AktSpisaniyaNomenklTitleView";
 
+        public override bool IsDocNewCopyAllow => false;
+
         public override string WindowName =>
             Document == null
                 ? "Акт списания материалов(новый)"

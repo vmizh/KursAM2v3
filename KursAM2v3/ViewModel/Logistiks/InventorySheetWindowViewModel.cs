@@ -478,7 +478,7 @@ namespace KursAM2.ViewModel.Logistiks
             // ReSharper disable once PossibleMultipleEnumeration
             foreach (var nom in noms)
             {
-                var newItem = new InventorySheetRowViewModel(null)
+                var newItem = new InventorySheetRowViewModel(new TD_24())
                 {
                     DocCode = Document.DocCode,
                     Code = maxCode,
@@ -570,6 +570,7 @@ namespace KursAM2.ViewModel.Logistiks
                             DocId = Document.Id,
                             Parent = Document
                         };
+                        Document.State = RowStatus.Edited;
                         Document.Rows.Add(newItem);
                         if (!usedNomenklDCList.Contains(newItem.Nomenkl.DocCode))
                             usedNomenklDCList.Add(newItem.Nomenkl.DocCode);
