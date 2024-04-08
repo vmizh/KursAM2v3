@@ -325,9 +325,7 @@ namespace KursAM2.ViewModel.Logistiks
                 }
 
 
-                UnitOfWork.CreateTransaction();
-
-                UnitOfWork.Save();
+                
                 NomenklCalculationManager.InsertNomenklForCalc(UnitOfWork.Context,
                     Document.Rows.Select(_ => _.Nomenkl.DocCode).ToList());
                 NomenklCalculationManager.CalcAllNomenklRemains(UnitOfWork.Context);
@@ -335,9 +333,10 @@ namespace KursAM2.ViewModel.Logistiks
                 {
                     var c = NomenklCalculationManager.GetNomenklStoreRemain(UnitOfWork.Context, Document.Date,
                         n, Document.Warehouse.DocCode);
-                    if (c < 0)
+                    var newQuan = Document.Rows.First(_ => _.Nomenkl.DocCode == n).Difference;
+                    if (c + newQuan < 0)
                     {
-                        UnitOfWork.Rollback();
+                        //UnitOfWork.Rollback();
                         var nom = GlobalOptions.ReferencesCache.GetNomenkl(n) as Nomenkl;
                         WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
                                                   // ReSharper disable once PossibleInvalidOperationException
@@ -346,8 +345,9 @@ namespace KursAM2.ViewModel.Logistiks
                         return;
                     }
                 }
-
-                UnitOfWork.Commit();
+                //UnitOfWork.CreateTransaction();
+                UnitOfWork.Save();
+                //UnitOfWork.Commit();
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InventoryList), Document.Id,
                     0, null, (string)Document.ToJson());
                 foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
