@@ -90,19 +90,22 @@
                     <DockPanel DockPanel.Dock="Left">
                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" MaxHeight="60">
                             <Label Content="Причина списания: "
-                                   VerticalAlignment="Center" />
+                                   VerticalAlignment="Top" />
                             <dxe:TextEdit MinHeight="40"
                                           MinWidth="500"
                                           VerticalAlignment="Stretch"
                                           AcceptsReturn="True"
+                                          VerticalContentAlignment="Top"
                                           Margin="5 0"
                                           EditValue="{Binding Document.ReasonCreation, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>
                         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" MaxHeight="60" Margin="0 10 0 0">
-                            <Label Content="Примечания: " VerticalAlignment="Center" />
+                            <Label Content="Примечание: " VerticalAlignment="Top" />
                             <dxe:TextEdit MinHeight="40"
                                           MinWidth="500"
                                           VerticalAlignment="Stretch"
+                                          AcceptsReturn="True"
+                                          VerticalContentAlignment="Top"
                                           Margin="39 0"
                                           EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}" />
                         </StackPanel>

@@ -48,7 +48,8 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
                 case "Note":
                     e.Column.EditSettings = new TextEditSettings
                     {
-                        AcceptsReturn = true
+                        AcceptsReturn = true,
+                        TextWrapping = TextWrapping.Wrap
                     };
                     break;
             }
