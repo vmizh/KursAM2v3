@@ -59,6 +59,15 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
         LoadReference();
     }
 
+    public override string Note { get => Entity.DDT_NOTE;
+        set
+        {
+            if (Entity.DDT_NOTE == value) return;
+            Entity.DDT_NOTE = value;
+            RaisePropertyChanged();
+        }
+    }
+
     public decimal DOC_CODE
     {
         get => Entity.DOC_CODE;

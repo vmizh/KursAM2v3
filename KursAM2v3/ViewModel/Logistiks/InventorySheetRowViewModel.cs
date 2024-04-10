@@ -72,6 +72,17 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
+        public override string Note
+        {
+            get => Entity.DDT_NOTE;
+            set
+            {
+                if (Entity.DDT_NOTE == value) return;
+                Entity.DDT_NOTE = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public Nomenkl Nomenkl
         {
             get => Entity.DDT_NOMENKL_DC != 0

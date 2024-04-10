@@ -118,6 +118,9 @@ namespace KursAM2.ViewModel.Logistiks
 
         #region Properties
 
+        public ObservableCollection<InventorySheetRowViewModel> SelectedRows { set; get; } =
+            new ObservableCollection<InventorySheetRowViewModel>();
+
         public override string WindowName => Document.State == RowStatus.NewRow
             ? "Инвентаризационная ведомость (новая)"
             : $"Инвентаризационная ведомость №{Document.Num} от {Document.Date.ToShortDateString()}" +
@@ -539,6 +542,20 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
+        public ICommand RecalcNomenklCommand
+        {
+            get { return new Command(RecalcNomenkl, _ => CurrentNomenkl != null); }
+        }
+
+        private void RecalcNomenkl(object obj)
+        {
+            foreach (var row in SelectedRows)
+            {
+                row.QuantityCalc = NomenklCalculationManager.GetNomenklStoreRemain(UnitOfWork.Context, Document.Date,
+                    row.Nomenkl.DocCode, Document.WarehouseIn.DocCode);
+            }
+        }
+
         public ICommand AddWarehouseNomenklCommand
         {
             get { return new Command(AddWarehouseNomenkl, _ => Document.Warehouse != null && !Document.IsClosed); }
@@ -591,11 +608,17 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void RemoveNomenkl(object obj)
         {
-            if (usedNomenklDCList.Contains(CurrentNomenkl.Nomenkl.DocCode))
-                usedNomenklDCList.Remove(CurrentNomenkl.Nomenkl.DocCode);
-            UnitOfWork.Context.TD_24.Remove(CurrentNomenkl.Entity);
-            if (CurrentNomenkl.State != RowStatus.NewRow) Document.DeletedRows.Add(CurrentNomenkl);
-            Document.Rows.Remove(CurrentNomenkl);
+            foreach (var nom in SelectedRows.Select(_ => _.Nomenkl).ToList())
+            {
+                var row = Document.Rows.FirstOrDefault(_ => _.Nomenkl == nom);
+                if (row == null) continue;
+                if (usedNomenklDCList.Contains(row.Nomenkl.DocCode))
+                    usedNomenklDCList.Remove(row.Nomenkl.DocCode);
+                UnitOfWork.Context.TD_24.Remove(row.Entity);
+                if (CurrentNomenkl.State != RowStatus.NewRow) Document.DeletedRows.Add(row);
+                Document.Rows.Remove(row);
+            }
+
             //UnitOfWork.Context.Entry(CurrentNomenkl.Entity).State = EntityState.Detached;
             Document.State = RowStatus.Edited;
             RaisePropertyChanged(nameof(IsRedoAllow));

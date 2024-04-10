@@ -131,7 +131,8 @@
                                  dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                  CurrentItem="{Binding CurrentNomenkl, UpdateSourceTrigger=PropertyChanged}"
                                  ItemsSource="{Binding Document.Rows, UpdateSourceTrigger=PropertyChanged}"
-                                 SelectionMode="None">
+                                 SelectedItems="{Binding SelectedRows, UpdateSourceTrigger=PropertyChanged}"
+                                 SelectionMode="Row">
                     <dxg:GridControl.Columns>
                         <dxg:GridColumn x:Name="col2" Header="Номенкл.№" FieldName="NomenklNumber" ReadOnly="True" />
                         <dxg:GridColumn x:Name="col1" Header="Наименование" FieldName="NomenklName" ReadOnly="True" />
@@ -201,6 +202,9 @@
                                     <MenuItem Header="Добавить все номенклатуры со склада"
                                               ToolTip="Добавляет все позиции, кол-во которых не равно 0"
                                               Command="{Binding AddAllNomenklCommand}" />
+                                    <Separator />
+                                    <MenuItem Header="Пересчитать выделенные позиции"
+                                              Command="{Binding RecalcNomenklCommand}" />
                                     <Separator />
                                     <MenuItem Header="Экспорт"
                                               Command="{Binding VisualControlExportCommand}"
