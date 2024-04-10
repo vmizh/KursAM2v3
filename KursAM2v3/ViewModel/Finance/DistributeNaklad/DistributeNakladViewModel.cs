@@ -13,11 +13,9 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Data;
-using DevExpress.DataAccess.UI.Wizard;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.POCO;
-using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -519,10 +517,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                         continue;
                     }
 
-                    if (col.FieldName == "State")
-                    {
-                        col.Visible = false;
-                    }
+                    if (col.FieldName == "State") col.Visible = false;
 
                     if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType))
                     {
@@ -547,7 +542,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 foreach (var col in frm.gridDistributeSumma.Columns)
                 {
                     ///ToDo убираем лишние суммы в столбцах - вариант2 ***
-                    if (col.FieldName == "Rate" || col.FieldName == "Price" || col.FieldName == "DistributePrice") continue;
+                    if (col.FieldName == "Rate" || col.FieldName == "Price" ||
+                        col.FieldName == "DistributePrice") continue;
                     if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType))
                     {
                         col.EditSettings = new CalcEditSettings
@@ -1171,7 +1167,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 }
         }
 
-        
 
         public bool CanAddNakladInvoice()
         {

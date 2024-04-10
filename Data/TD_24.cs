@@ -124,6 +124,7 @@ namespace Data
         public bool IsSaleTax { get; set; }
         public Nullable<bool> IsAutoTax { get; set; }
         public string TaxUpdater { get; set; }
+        public string DDT_NOTE { get; set; }
     
         public virtual SD_122 SD_122 { get; set; }
         public virtual SD_170 SD_170 { get; set; }
