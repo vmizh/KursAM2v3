@@ -723,6 +723,7 @@ namespace KursAM2.ViewModel.Logistiks
         private void LoadDocuments(decimal storeDC)
         {
             DocumentList.Clear();
+            var tempList = new List<NomPriceDocumentViewModel>();
             if (CurrentNomenklMoveItem == null || storeDC == 0) return;
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -740,7 +741,7 @@ namespace KursAM2.ViewModel.Logistiks
                 foreach (var doc in docs)
                 {
                     if (MustExclude(exclude, doc)) continue;
-                    DocumentList.Add(new NomPriceDocumentViewModel
+                    tempList.Add(new NomPriceDocumentViewModel
                     {
                         DocCode = doc.DOC_CODE,
                         DocumentName = doc.SD_24.SD_201.D_NAME,
@@ -821,7 +822,7 @@ namespace KursAM2.ViewModel.Logistiks
                         newItem.Note = doc.SD_24.DD_NOTES;
                     }
 
-                    DocumentList.Add(newItem);
+                    tempList.Add(newItem);
                 }
 
                 docs = ctx.TD_24
@@ -837,7 +838,7 @@ namespace KursAM2.ViewModel.Logistiks
                             && (_.SD_24.DD_SKLAD_POL_DC == storeDC || _.SD_24.DD_SKLAD_OTPR_DC == storeDC))
                     .ToList();
                 foreach (var doc in docs)
-                    DocumentList.Add(new NomPriceDocumentViewModel
+                    tempList.Add(new NomPriceDocumentViewModel
                     {
                         DocCode = doc.DOC_CODE,
                         DocumentName = doc.SD_24.SD_201.D_NAME,
@@ -872,7 +873,7 @@ namespace KursAM2.ViewModel.Logistiks
                 foreach (var doc in docs)
                 {
                     if (MustExclude(exclude, doc)) continue;
-                    DocumentList.Add(new NomPriceDocumentViewModel
+                    tempList.Add(new NomPriceDocumentViewModel
                     {
                         DocCode = doc.DOC_CODE,
                         DocumentName = doc.SD_24.SD_201.D_NAME +
@@ -901,7 +902,7 @@ namespace KursAM2.ViewModel.Logistiks
                                 _.NomenklTransfer.Date >= StartDate && _.NomenklTransfer.Date <= EndDate
                                 && _.NomenklTransfer.SkladDC == storeDC).ToList();
                 foreach (var doc in docs2)
-                    DocumentList.Add(new NomPriceDocumentViewModel
+                    tempList.Add(new NomPriceDocumentViewModel
                     {
                         Id = doc.DocId,
                         DocumentName = "Акт валютной конвертации товара",
@@ -927,7 +928,7 @@ namespace KursAM2.ViewModel.Logistiks
                                 _.NomenklTransfer.Date >= StartDate && _.NomenklTransfer.Date <= EndDate
                                 && _.NomenklTransfer.SkladDC == storeDC).ToList();
                 foreach (var doc in docs2)
-                    DocumentList.Add(new NomPriceDocumentViewModel
+                    tempList.Add(new NomPriceDocumentViewModel
                     {
                         Id = doc.DocId,
                         DocumentName = "Акт валютной конвертации товара",
@@ -959,7 +960,7 @@ namespace KursAM2.ViewModel.Logistiks
                                                        && cc.StoreDC == storeDC
                     select cc;
                 foreach (var doc in docs3.ToList())
-                    DocumentList.Add(new NomPriceDocumentViewModel
+                    tempList.Add(new NomPriceDocumentViewModel
                     {
                         Id = doc.TD_26.SD_26.Id,
                         DocCode = doc.TD_26.DOC_CODE,
@@ -998,7 +999,7 @@ namespace KursAM2.ViewModel.Logistiks
                                                         _.DATE <= doc.Date).OrderBy(_ => _.DATE).ToList();
                     if (last.Any())
                         prc = last.Last().PRICE_WO_NAKLAD;
-                    DocumentList.Add(new NomPriceDocumentViewModel
+                    tempList.Add(new NomPriceDocumentViewModel
                     {
                         Id = doc.TD_26.SD_26.Id,
                         DocCode = doc.TD_26.DOC_CODE,
@@ -1032,7 +1033,7 @@ namespace KursAM2.ViewModel.Logistiks
                 foreach (var doc in docs5)
                 {
                     var prc = nomenklManager.GetNomenklPrice(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE).Price;
-                    DocumentList.Add(new NomPriceDocumentViewModel
+                    tempList.Add(new NomPriceDocumentViewModel
                     {
                         DocCode = doc.DOC_CODE,
                         DocumentName = doc.SD_24.SD_201.D_NAME,
@@ -1066,7 +1067,7 @@ namespace KursAM2.ViewModel.Logistiks
                 {
                     var prc = nomenklManager.GetNomenklPrice(doc.Nomenkl_DC, doc.AktSpisaniyaNomenkl_Title.Date_Doc)
                         .Price;
-                    DocumentList.Add(new NomPriceDocumentViewModel
+                    tempList.Add(new NomPriceDocumentViewModel
                     {
                         DocCode = 0,
                         DocumentName = "Акт списания номенклатур",
@@ -1099,7 +1100,7 @@ namespace KursAM2.ViewModel.Logistiks
                 {
                     var prc = nomenklManager.GetNomenklPrice(doc.NomenklDC, doc.TransferOutBalans.DocDate)
                         .Price;
-                    DocumentList.Add(new NomPriceDocumentViewModel
+                    tempList.Add(new NomPriceDocumentViewModel
                     {
                         DocCode = 0,
                         Id = doc.DocId,
@@ -1122,43 +1123,47 @@ namespace KursAM2.ViewModel.Logistiks
                     });
                 }
 
-                var docs8 = ctx.TD_24.Include(_ => _.SD_24)
-                    .Where(_ => _.SD_24.DD_TYPE_DC == 2010000014 && _.SD_24.DD_DATE >= StartDate &&
-                                _.SD_24.DD_DATE <= EndDate
-                                && _.DDT_NOMENKL_DC == CurrentNomenklMoveItem.Nomenkl.DocCode
-                                && _.SD_24.DD_SKLAD_POL_DC != _.SD_24.DD_SKLAD_OTPR_DC
-                                && (_.SD_24.DD_SKLAD_POL_DC == storeDC || _.SD_24.DD_SKLAD_OTPR_DC == storeDC));
-                foreach (var doc in docs8)
-                {
-                    var kol_in = doc.SD_24.DD_SKLAD_POL_DC == storeDC ? doc.DDT_KOL_PRIHOD : 0;
-                    var kol_out = doc.SD_24.DD_SKLAD_POL_DC == storeDC ? doc.DDT_KOL_PRIHOD : 0;
-                    var prc = nomenklManager.GetNomenklPrice(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE)
-                        .Price;
-                    DocumentList.Add(new NomPriceDocumentViewModel
-                    {
-                        DocCode = doc.DOC_CODE,
-                        Id = doc.DocId,
-                        DocumentName = "Перевод за баланс",
-                        DocumentNum = doc.SD_24.DD_IN_NUM + "/" + doc.SD_24.DD_EXT_NUM,
-                        DocumentDate = doc.SD_24.DD_DATE,
-                        QuantityIn = kol_in,
-                        QuantityOut = kol_out,
-                        QuantityDelta = kol_in - kol_out,
-                        // ReSharper disable once PossibleInvalidOperationException
-                        // ReSharper disable once AssignNullToNotNullAttribute
-                        From = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC))
-                            .Name,
-                        // ReSharper disable once AssignNullToNotNullAttribute
-                        // ReSharper disable once PossibleInvalidOperationException
-                        To = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC))
-                            .Name,
-                        SummaIn = kol_in * prc,
-                        SummaOut = kol_out * prc,
-                        SummaDelta = (kol_in - kol_out) * prc
-                    });
-                }
+                //var docs8 = ctx.TD_24.Include(_ => _.SD_24)
+                //    .Where(_ => _.SD_24.DD_TYPE_DC == 2010000014 && _.SD_24.DD_DATE >= StartDate &&
+                //                _.SD_24.DD_DATE <= EndDate
+                //                && _.DDT_NOMENKL_DC == CurrentNomenklMoveItem.Nomenkl.DocCode
+                //                && _.SD_24.DD_SKLAD_POL_DC != _.SD_24.DD_SKLAD_OTPR_DC
+                //                && (_.SD_24.DD_SKLAD_POL_DC == storeDC || _.SD_24.DD_SKLAD_OTPR_DC == storeDC));
+                //foreach (var doc in docs8)
+                //{
+                //    var kol_in = doc.SD_24.DD_SKLAD_POL_DC == storeDC ? doc.DDT_KOL_PRIHOD : 0;
+                //    var kol_out = doc.SD_24.DD_SKLAD_POL_DC == storeDC ? doc.DDT_KOL_PRIHOD : 0;
+                //    var prc = nomenklManager.GetNomenklPrice(doc.DDT_NOMENKL_DC, doc.SD_24.DD_DATE)
+                //        .Price;
+                //    DocumentList.Add(new NomPriceDocumentViewModel
+                //    {
+                //        DocCode = doc.DOC_CODE,
+                //        Id = doc.DocId,
+                //        DocumentName = "Накладная на внутренее перемещение",
+                //        DocumentNum = doc.SD_24.DD_IN_NUM + "/" + doc.SD_24.DD_EXT_NUM,
+                //        DocumentDate = doc.SD_24.DD_DATE,
+                //        QuantityIn = doc.SD_24.DD_SKLAD_POL_DC != null ? kol_in : 0,
+                //        QuantityOut = doc.SD_24.DD_SKLAD_OTPR_DC != null ? kol_out : 0,
+                //        QuantityDelta = kol_in - kol_out,
+                //        // ReSharper disable once PossibleInvalidOperationException
+                //        // ReSharper disable once AssignNullToNotNullAttribute
+                //        From = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_OTPR_DC))
+                //            .Name,
+                //        // ReSharper disable once AssignNullToNotNullAttribute
+                //        // ReSharper disable once PossibleInvalidOperationException
+                //        To = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.SD_24.DD_SKLAD_POL_DC))
+                //            .Name,
+                //        SummaIn = kol_in * prc,
+                //        SummaOut = kol_out * prc,
+                //        SummaDelta = (kol_in - kol_out) * prc
+                //    });
+                //}
             }
 
+            foreach (var item in tempList.OrderBy(_ => _.DocumentDate))
+            {
+                DocumentList.Add(item);
+            }
             CalcNakopit();
         }
 

@@ -319,7 +319,7 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 var clc = new NomenklCostMediumSliding(ctx);
                 NomenklOperations.Clear();
-                var data = clc.GetOperations(CurrentNomenklStore.Nomenkl.DocCode, false);
+                var data = clc.GetOperations(CurrentNomenklStore.Nomenkl.DocCode, false, CurrentWarehouse.DocCode);
                 if (data == null || data.Count <= 0) return;
                 decimal nakop = 0;
                 foreach (var op in data.Where(_ => _.SkladIn?.DocCode == CurrentWarehouse.DocCode

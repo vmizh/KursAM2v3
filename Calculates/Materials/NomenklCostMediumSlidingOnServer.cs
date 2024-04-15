@@ -7,7 +7,7 @@ namespace Calculates.Materials
 {
     public class NomenklCostMediumSlidingOnServer : NomenklCostBase
     {
-        public override ObservableCollection<NomenklCalcCostOperation> GetOperations(decimal nomDC, bool isCalcOnly = true)
+        public override ObservableCollection<NomenklCalcCostOperation> GetOperations(decimal nomDC, bool isCalcOnly = true, decimal? storeDC = null)
         {
             return null;
         }

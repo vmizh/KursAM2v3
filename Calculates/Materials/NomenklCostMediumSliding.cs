@@ -42,7 +42,7 @@ namespace Calculates.Materials
             return new Tuple<decimal, decimal>(0, 0);
         }
         public override ObservableCollection<NomenklCalcCostOperation> GetOperations(decimal nomDC,
-            bool isCalOnly = true)
+            bool isCalOnly = true, decimal? storeDC = null)
         {
             var currentRowNumber = 0;
             var ret = new NomenklCost
@@ -172,6 +172,53 @@ namespace Calculates.Materials
                         ret.Operations.Add(oper);
                     }
                 }
+
+                var dataInnerMove = context.TD_24
+                    .Include(_ => _.SD_24)
+                    .Include(_ => _.SD_24.SD_201)
+                    .Include(_ => _.TD_26)
+                    .Include(_ => _.TD_26.SD_26)
+                    .Include(_ => _.TD_84)
+                    .Include(_ => _.TD_84.SD_84)
+                    .Where(_ => _.SD_24.DD_TYPE_DC == 2010000014 && _.DDT_NOMENKL_DC == nomDC).ToList();
+
+                foreach (var d in dataInnerMove)
+                {
+                    currentRowNumber++;
+                    var prc = GetNomPrice(context, d.DDT_NOMENKL_DC, d.SD_24.DD_DATE);
+                    var oper = new NomenklCalcCostOperation
+                    {
+                        RowNumber = currentRowNumber,
+                        NomenklDC = nomDC,
+                        Note = d.SD_24.DD_NOTES,
+                        CalcPrice = prc.Item1,
+                        CalcPriceNaklad = prc.Item2,
+                        DocDate = d.SD_24.DD_DATE,
+                        KontragentIn = null,
+                        KontragentOut = null,
+                        OperationName = d.SD_24.SD_201.D_NAME,
+                        OperCode = (d.SD_24.DD_VOZVRAT ?? 0) == 1 ? 25 : d.SD_24.SD_201.D_OP_CODE,
+                        QuantityIn = d.SD_24.DD_SKLAD_POL_DC != null && d.SD_24.DD_SKLAD_POL_DC == (storeDC ?? d.SD_24.DD_SKLAD_POL_DC)
+                            ? d.DDT_KOL_PRIHOD : 0,
+                        QuantityOut =d.SD_24.DD_SKLAD_OTPR_DC != null && d.SD_24.DD_SKLAD_OTPR_DC == (storeDC ?? d.SD_24.DD_SKLAD_OTPR_DC)
+                            ? d.DDT_KOL_RASHOD : 0,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        DocPrice =  0,
+                        Naklad = 0,
+                        SkladIn =
+                            GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_POL_DC) as Warehouse,
+                        SkladOut =
+                            GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_OTPR_DC) as Warehouse,
+                        SummaIn = 0,
+                        SummaInWithNaklad = 0,
+                        SummaOut = 0,
+                        SummaOutWithNaklad = 0,
+                        QuantityNakopit = 0,
+                        TovarDocDC = d.DOC_CODE
+                    };
+                    ret.Operations.Add(oper);
+                }
+
 
                 var dataTransfer = context.NomenklTransferRow.Include(_ => _.NomenklTransfer)
                     .Where(_ => (_.NomenklInDC == nomDC || _.NomenklOutDC == nomDC) && _.IsAccepted).ToList();
