@@ -61,6 +61,7 @@ namespace KursAM2.Managers
                 case DocumentType.CashOut:
                 case DocumentType.InvoiceProvider:
                 case DocumentType.StoreOrderIn:
+                case DocumentType.StoreOrderOut:
                 case DocumentType.Bank:
                 case DocumentType.Waybill:
                 case DocumentType.NomenklTransfer:

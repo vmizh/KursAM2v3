@@ -19,7 +19,7 @@ namespace Calculates.Materials
         public bool IsSave { set; get; } = false;
 
         public abstract ObservableCollection<NomenklCalcCostOperation> GetOperations(decimal nomDC,
-            bool isCalcOnly = true);
+            bool isCalcOnly = true, decimal? storeDC = null);
 
         public abstract List<NomenklCalcCostOperation> Calc(ObservableCollection<NomenklCalcCostOperation> operList);
         public abstract void Save(IEnumerable<NomenklCalcCostOperation> operList);
