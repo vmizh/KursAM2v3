@@ -1245,6 +1245,11 @@ namespace KursAM2.View
                     tileMainGroup.Children.Add(newTileGroup);
                 }
             }
+            GlobalOptions.SystemProfile.Profile.Clear();
+            foreach (var p in GlobalOptions.GetEntities().PROFILE)
+            {
+                GlobalOptions.SystemProfile.Profile.Add(p);
+            }
         }
 
         private void DXWindow_Loaded(object sender, RoutedEventArgs e)

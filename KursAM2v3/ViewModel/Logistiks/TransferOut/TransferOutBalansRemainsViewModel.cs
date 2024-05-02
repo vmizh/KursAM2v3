@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -11,7 +9,7 @@ using DevExpress.Data;
 using DevExpress.Xpf.Grid;
 using KursAM2.View.Logistiks.TransferOut;
 using KursDomain;
-using KursDomain.IDocuments.TransferOut;
+using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository.DocHistoryRepository;
@@ -19,69 +17,21 @@ using KursDomain.Repository.NomenklRepository;
 using KursDomain.Repository.StorageLocationsRepositury;
 using KursDomain.Repository.TransferOut;
 using KursDomain.RepositoryHelper;
+using KursDomain.Services;
 using KursDomain.ViewModel.Base2;
 using KursDomain.Wrapper;
 using KursDomain.Wrapper.TransferOut;
 using Prism.Commands;
+using Prism.Events;
 
 namespace KursAM2.ViewModel.Logistiks.TransferOut
 {
-    public class TransferOutBalansRemainsDocument : ITransferOutBalansRows
-    {
-        [Display(AutoGenerateField = true, Name = "№")]
-        public int DocNum => TransferOutBalans.DocNum;
-
-        [Display(AutoGenerateField = true, Name = "Дата")]
-        public DateTime DocDate => TransferOutBalans.DocDate;
-
-        [Display(AutoGenerateField = true, Name = "Место хранения")]
-        public StorageLocationsWrapper StorageLocations { get; set; }
-
-        [Display(AutoGenerateField = true, Name = "Ном.№")]
-        public string NomenklNumber => Nomenkl?.NomenklNumber;
-
-        [Display(AutoGenerateField = false, Name = "Id")]
-        public Guid Id { get; set; }
-
-        [Display(AutoGenerateField = false, Name = "Id")]
-        public Guid DocId { get; set; }
-
-        [Display(AutoGenerateField = true, Name = "Номенклатура")]
-        [ReadOnly(true)]
-        public Nomenkl Nomenkl { get; set; }
-
-        [Display(AutoGenerateField = true, Name = "Кол-во")]
-        [ReadOnly(true)]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal Quatntity { get; set; }
-
-        [Display(AutoGenerateField = true, Name = "Цена")]
-        [ReadOnly(true)]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal Price { get; set; }
-
-        [Display(AutoGenerateField = true, Name = "Себес-ть(ед)")]
-        public decimal CostPrice  { get; set; }
- 
-        [Display(AutoGenerateField = true, Name = "Сумма")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal Summa => Price * Quatntity;
-
-        [Display(AutoGenerateField = true, Name = "Себ-ть (сумма)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal CostSumma => Quatntity*CostPrice;
-
-        [Display(AutoGenerateField = true, Name = "Примечание")]
-        [ReadOnly(true)]
-        public string Note { get; set; }
-
-        [Display(AutoGenerateField = false, Name = "Id")]
-        public ITransferOutBalans TransferOutBalans { get; set; }
-    }
-
     public sealed class TransferOutBalansRemainsViewModel : FormViewModelBase<NomenklStoreLocationItem, decimal>,
         IFormMenu
     {
+        protected IEventAggregator _EventAggregator;
+        protected IMessageDialogService _MessageDialogService;
+
         #region Constructors
 
         public TransferOutBalansRemainsViewModel()
@@ -89,7 +39,8 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             var context = GlobalOptions.GetEntities();
             _StorageLocationsRepositiry = new StorageLocationsRepository(context);
             _TransferOutBalansRepository = new TransferOutBalansRepository(context);
-
+            _EventAggregator = new EventAggregator();
+            _MessageDialogService = new MessageDialogService();
             LayoutName = "TransferOutBalansRemainsViewModel";
             Title = "Товары за балансом";
 
@@ -140,7 +91,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                 DocumentRows.Clear();
                 foreach (var r in data)
                 {
-                    var doc = new TransferOutBalansWrapper(r.TransferOutBalans);
+                    var doc = new TransferOutBalansWrapper(r.TransferOutBalans,_EventAggregator,_MessageDialogService);
                     doc.StartLoad(false);
                     var note = string.IsNullOrWhiteSpace(r.Note)
                         ? $"{r.TransferOutBalans.Note}"

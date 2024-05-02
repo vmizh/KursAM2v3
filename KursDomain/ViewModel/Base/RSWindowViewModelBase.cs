@@ -281,7 +281,15 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     {
         if (IsLayoutLoaded) return;
         if (LayoutManager == null) OnLayoutInitial(null);
-        LayoutManager.Load();
+        try
+        {
+            LayoutManager.Load();
+        }
+        catch (Exception ex)
+        {
+            WindowManager.ShowError(ex);
+        }
+
         if (Form == null)
         {
             IsLayoutLoaded = true;
@@ -300,6 +308,18 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                     col.ColumnFilterMode = ColumnFilterMode.Value;
                     col.SortMode = ColumnSortMode.Value;
                     col.Name = col.FieldName;
+
+                    if (col.EditSettings is CalcEditSettings ed)
+                    {
+                        if (col.Name.ToLower().Contains("quantity"))
+                            ed.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
+                        else if (col.Name.ToLower().Contains("price") ||
+                                 col.Name.ToLower().Contains("summa")
+                                 || col.Name.ToLower().Contains("sum"))
+                            ed.DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat();
+                        if (!col.IsEnabled || col.ReadOnly)
+                            ed.AllowDefaultButton = false;
+                    }
                     if (col.FieldType == typeof(string))
                         col.EditSettings = new TextEditSettings
                         {
@@ -344,6 +364,17 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                 col.ColumnFilterMode = ColumnFilterMode.Value;
                 col.SortMode = ColumnSortMode.Value;
                 col.Name = col.FieldName;
+                if (col.EditSettings is CalcEditSettings ed)
+                {
+                    if (col.Name.ToLower().Contains("quantity"))
+                        ed.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
+                    else if (col.Name.ToLower().Contains("price") ||
+                             col.Name.ToLower().Contains("summa")
+                             || col.Name.ToLower().Contains("sum"))
+                        ed.DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat();
+                    if (!col.IsEnabled || col.ReadOnly)
+                        ed.AllowDefaultButton = false;
+                }
                 if (col.FieldType == typeof(string))
                     col.EditSettings = new TextEditSettings
                     {

@@ -26,7 +26,7 @@ public class IncomingWarehouseOrderRow : IDescription, IRowDC, IRowId, IIncoming
     public bool IsTaxExecuted { get; set; }
     public ISDRSchet SDRSchet { get; set; }
     public IInvoiceProviderRow InvoiceProviderRow { get; set; }
-    public IIssueWarehouseOrderRow IssueOrderRow { get; set; }
+    public IWarehouseOrderOutRow IssueOrderRow { get; set; }
     
 
     public override string ToString()

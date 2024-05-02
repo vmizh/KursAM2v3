@@ -98,189 +98,116 @@ namespace KursAM2.Managers
             return DocumentType.None;
         }
 
-        public static void SaveLastOpenInfo(DocumentType docType, Guid? docId, decimal? docDC,
-            string creator, string lastChanger,
-            string desc)
-        {
-            try
-            {
-                using (var ctx = GlobalOptions.KursSystem())
-                {
-                    if (docDC != null)
-                        ctx.Database.ExecuteSqlCommand(
-                            $"DELETE FROM LastDocument WHERE DocDC = {CustomFormat.DecimalToSqlDecimal(docDC)} " +
-                            $"AND UserId = '{CustomFormat.GuidToSqlString(GlobalOptions.UserInfo.KursId)}' " +
-                            $"AND DbId = '{CustomFormat.GuidToSqlString(GlobalOptions.DataBaseId)}' ");
-                    if (docId != null && docId != Guid.Empty)
-                        ctx.Database.ExecuteSqlCommand(
-                            $"DELETE FROM LastDocument WHERE DocId = '{CustomFormat.GuidToSqlString(docId.Value)}' " +
-                            $"AND UserId = '{CustomFormat.GuidToSqlString(GlobalOptions.UserInfo.KursId)}' " +
-                            $"AND DbId = '{CustomFormat.GuidToSqlString(GlobalOptions.DataBaseId)}' ");
-
-                    ctx.Database.ExecuteSqlCommand(
-                        $"DELETE FROM LastDocument WHERE UserId = '{CustomFormat.GuidToSqlString(GlobalOptions.UserInfo.KursId)}' " +
-                        $"AND DbId = '{CustomFormat.GuidToSqlString(GlobalOptions.DataBaseId)}' " +
-                        $"AND LastOpen < '{CustomFormat.DateToString(DateTime.Today.AddDays(-60))}'");
-
-                    var newItem = new LastDocument
-                    {
-                        Id = Guid.NewGuid(),
-                        UserId = GlobalOptions.UserInfo.KursId,
-                        DbId = GlobalOptions.DataBaseId,
-                        DocId = docId,
-                        Creator = creator ?? "не указан",
-                        DocDC = docDC,
-                        DocType = (int)docType,
-                        LastChanger = lastChanger,
-                        LastOpen = DateTime.Now,
-                        Description = desc
-                    };
-                    ctx.LastDocument.Add(newItem);
-                    ctx.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                WindowManager.ShowError(ex);
-            }
-        }
-
-        public static void DeleteFromLastDocument(Guid? id, decimal? dc)
-        {
-            using (var ctx = GlobalOptions.KursSystem())
-            {
-                if (id != null && id != Guid.Empty)
-                {
-                    var old = ctx.LastDocument.FirstOrDefault(_ => _.DocId == id);
-                    if (old != null)
-                    {
-                        ctx.LastDocument.Remove(old);
-                        ctx.SaveChanges();
-                    }
-                }
-
-                if (dc == null) return;
-                {
-                    var old = ctx.LastDocument
-                        .FirstOrDefault(_ => _.DocDC == dc && _.DbId == GlobalOptions.DataBaseId);
-                    if (old != null)
-                    {
-                        ctx.LastDocument.Remove(old);
-                        ctx.SaveChanges();
-                    }
-                }
-            }
-        }
-
         public static void Open(DocumentType docType, decimal dc, Guid? id = null,
             object parent = null, UnitOfWork<ALFAMEDIAEntities> ctx = null)
         {
+           
             if (!IsDocumentOpen(docType)) return;
             switch (docType)
             {
                 case DocumentType.Naklad:
                     var nakl = OpenNakladDistribute(id);
-                    SaveLastOpenInfo(docType, nakl.Id, null, nakl.Creator,
-                        "", nakl.Description);
+                    //SaveLastOpenInfo(docType, nakl.Id, null, nakl.Creator,
+                    //    "", nakl.Description);
                     break;
 
                 case DocumentType.StockHolderAccrual:
                     var accr = OpenStockHolderAccrual(id);
-                    SaveLastOpenInfo(docType, accr.Document.Id, null, accr.Document.Creator,
-                        "", accr.Document.Description);
+                    //SaveLastOpenInfo(docType, accr.Document.Id, null, accr.Document.Creator,
+                    //    "", accr.Document.Description);
                     break;
                 case DocumentType.DogovorClient:
                     var dog = OpenDogovorClient(id);
-                    SaveLastOpenInfo(docType, dog.Document.Id, null, dog.Document.Creator,
-                        "", dog.Document.Description);
+                    //SaveLastOpenInfo(docType, dog.Document.Id, null, dog.Document.Creator,
+                    //    "", dog.Document.Description);
                     break;
                 case DocumentType.MutualAccounting:
                     var mut = OpenMutualAccounting(dc);
                     mut.Document.myState = RowStatus.NotEdited;
-                    SaveLastOpenInfo(docType, mut.Document.Id, mut.Document.DocCode, mut.Document.CREATOR,
-                        "", mut.Document.Description);
+                    //SaveLastOpenInfo(docType, mut.Document.Id, mut.Document.DocCode, mut.Document.CREATOR,
+                    //    "", mut.Document.Description);
                     break;
                 case DocumentType.CurrencyConvertAccounting:
                     var conv = OpenCurrencyConvertAccounting(dc);
-                    SaveLastOpenInfo(docType, conv.Document.Id, conv.Document.DocCode, conv.Document.CREATOR,
-                        "", conv.Document.Description);
+                    //SaveLastOpenInfo(docType, conv.Document.Id, conv.Document.DocCode, conv.Document.CREATOR,
+                    //    "", conv.Document.Description);
                     break;
                 case DocumentType.InvoiceClient:
                     var invcl = OpenSFClient(dc);
-                    SaveLastOpenInfo(docType, invcl.Document.Id, invcl.Document.DocCode, invcl.Document.CREATOR,
-                        "", invcl.Document.Description);
+                    //SaveLastOpenInfo(docType, invcl.Document.Id, invcl.Document.DocCode, invcl.Document.CREATOR,
+                    //    "", invcl.Document.Description);
                     break;
                 case DocumentType.InvoiceProvider:
                     var sfp = OpenSFProvider(dc);
-                    SaveLastOpenInfo(docType, sfp.Document.Id, sfp.Document.DocCode, sfp.Document.CREATOR,
-                        "", sfp.Document.Description);
+                    //SaveLastOpenInfo(docType, sfp.Document.Id, sfp.Document.DocCode, sfp.Document.CREATOR,
+                    //    "", sfp.Document.Description);
                     break;
                 case DocumentType.ProjectsReference:
                     OpenProjectsReferences();
                     break;
                 case DocumentType.CashIn:
                     var cashIn = OpenCashIn(dc, parent);
-                    SaveLastOpenInfo(docType, cashIn.Document.Id, cashIn.Document.DocCode, cashIn.Document.CREATOR,
-                        "", cashIn.Document.Description);
+                    //SaveLastOpenInfo(docType, cashIn.Document.Id, cashIn.Document.DocCode, cashIn.Document.CREATOR,
+                    //    "", cashIn.Document.Description);
                     break;
                 case DocumentType.CashOut:
                     var cashOut = OpenCashOut(dc, (Window)parent);
-                    SaveLastOpenInfo(docType, cashOut.Document.Id, cashOut.Document.DocCode, cashOut.Document.CREATOR,
-                        "", cashOut.Document.Description);
+                    //SaveLastOpenInfo(docType, cashOut.Document.Id, cashOut.Document.DocCode, cashOut.Document.CREATOR,
+                    //    "", cashOut.Document.Description);
                     break;
                 case DocumentType.CurrencyChange:
                     var cc = OpenCurrencyChange(dc, parent);
-                    SaveLastOpenInfo(docType, cc.Document.Id, cc.Document.DocCode, cc.Document.CREATOR,
-                        "", cc.Document.Description);
+                    //SaveLastOpenInfo(docType, cc.Document.Id, cc.Document.DocCode, cc.Document.CREATOR,
+                    //    "", cc.Document.Description);
                     break;
                 case DocumentType.NomenklTransfer:
                     // ReSharper disable once PossibleInvalidOperationException
                     var ont = OpenNomenklTransfer(id.Value);
-                    SaveLastOpenInfo(docType, ont.Document.Id, ont.Document.DocCode, ont.Document.Creator,
-                        "", ont.Document.Description);
+                    //SaveLastOpenInfo(docType, ont.Document.Id, ont.Document.DocCode, ont.Document.Creator,
+                    //    "", ont.Document.Description);
                     break;
                 case DocumentType.StoreOrderIn:
                     var osi = OpenStoreIn(dc);
-                    SaveLastOpenInfo(docType, osi.Document.Id, osi.Document.DocCode, osi.Document.CREATOR,
-                        "", osi.Document.Description);
+                    //SaveLastOpenInfo(docType, osi.Document.Id, osi.Document.DocCode, osi.Document.CREATOR,
+                    //    "", osi.Document.Description);
                     break;
                 case DocumentType.StoreOrderOut:
                     var oso = OpenStoreOut(dc);
-                    SaveLastOpenInfo(docType, oso.Document.Id, oso.Document.DocCode, oso.Document.CREATOR,
-                        "", oso.Document.Description);
+                    //SaveLastOpenInfo(docType, oso.Document.Id, oso.Document.DocCode, oso.Document.CREATOR,
+                    //    "", oso.Document.Description);
                     break;
                 case DocumentType.Bank:
                     OpenBank(dc, parent);
                     break;
                 case DocumentType.Waybill:
                     var owb = OpenWayBill(dc);
-                    SaveLastOpenInfo(docType, owb.Document.Id, owb.Document.DocCode, owb.Document.CREATOR,
-                        "", owb.Document.Description);
+                    //SaveLastOpenInfo(docType, owb.Document.Id, owb.Document.DocCode, owb.Document.CREATOR,
+                    //    "", owb.Document.Description);
                     break;
                 case DocumentType.PayRollVedomost:
                     var op = OpenPayroll(id);
-                    SaveLastOpenInfo(docType, op.Id, op.DocCode, op.Creator,
-                        "", op.Description);
+                    //SaveLastOpenInfo(docType, op.Id, op.DocCode, op.Creator,
+                    //    "", op.Description);
                     break;
                 case DocumentType.AktSpisaniya:
                     var akt = OpenAktSpisaniyaNomenkl(id);
-                    SaveLastOpenInfo(docType, akt.Document.Id, null, akt.Document.DocCreator,
-                        "", akt.Description);
+                    //SaveLastOpenInfo(docType, akt.Document.Id, null, akt.Document.DocCreator,
+                    //    "", akt.Description);
                     break;
                 case DocumentType.AccruedAmountForClient:
                     var aat = OpenAccruedAmountForClient(id, parent);
-                    SaveLastOpenInfo(docType, aat.Document.Id, null, aat.Document.Creator,
-                        "", aat.Description);
+                    //SaveLastOpenInfo(docType, aat.Document.Id, null, aat.Document.Creator,
+                    //    "", aat.Description);
                     break;
                 case DocumentType.AccruedAmountOfSupplier:
                     var aas = OpenAccruedAmountOfSupplier(id, parent);
-                    SaveLastOpenInfo(docType, aas.Document.Id, null, aas.Document.Creator,
-                        "", aas.Description);
+                    //SaveLastOpenInfo(docType, aas.Document.Id, null, aas.Document.Creator,
+                    //    "", aas.Description);
                     break;
                 case DocumentType.DogovorOfSupplier:
                     var dos = OpenDogovorOfSupplier(id, parent);
-                    SaveLastOpenInfo(docType, dos.Document.Id, null, dos.Document.Creator,
-                        "", dos.Description);
+                    //SaveLastOpenInfo(docType, dos.Document.Id, null, dos.Document.Creator,
+                    //    "", dos.Description);
                     break;
                 default:
                     WindowManager.ShowFunctionNotReleased();

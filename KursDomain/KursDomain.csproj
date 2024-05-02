@@ -36,6 +36,9 @@
     <LangVersion>10</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.10.1.1\lib\net461\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="ControlzEx, Version=4.0.0.0, Culture=neutral, PublicKeyToken=69f1c32f803d307e, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.4.4.0\lib\net462\ControlzEx.dll</HintPath>
     </Reference>
@@ -83,6 +86,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -160,7 +164,23 @@
     <Compile Include="Documents\Dogovora\Old\TD_9ViewModel.cs" />
     <Compile Include="Documents\Employee\EMP_PAYROLL_TYPEViewModel.cs" />
     <Compile Include="Documents\Refund\RefundFromClientSimple.cs" />
+    <Compile Include="Event\AFterOpenBaseWrapperEvent.cs" />
+    <Compile Include="Event\AFterSaveBaseWrapperEvent.cs" />
+    <Compile Include="Event\AFterSaveInvoiceProvideEvent.cs" />
+    <Compile Include="Event\AfterTransferOutBalansWrapperEvent.cs" />
+    <Compile Include="Event\AFterUpdateBaseWrapperEvent.cs" />
+    <Compile Include="Event\AFterDeleteBaseWrapperEvent.cs" />
+    <Compile Include="Event\AfterAddNewBaseWrapperEvent.cs" />
+    <Compile Include="Event\EnumAfterSaveOperation.cs" />
+    <Compile Include="Event\SaveHistoryEvent.cs" />
+    <Compile Include="Event\SaveLastDocumentEvent.cs" />
+    <Compile Include="ICommon\IMessageDialogService.cs" />
+    <Compile Include="ICommon\MessageDialogResult.cs" />
     <Compile Include="ICommon\RowStatus.cs" />
+    <Compile Include="IDocuments\IHistory.cs" />
+    <Compile Include="IDocuments\ILastDocument.cs" />
+    <Compile Include="IDocuments\MaterialDocumentTypeEnum.cs" />
+    <Compile Include="Managers\DocumentsOpenManager.cs" />
     <Compile Include="Managers\NomenklManager2.cs" />
     <Compile Include="RepositoryHelper\NomenklStoreRemainItem.cs" />
     <Compile Include="ICommon\ITreeReference.cs" />
@@ -280,8 +300,8 @@
     <Compile Include="IDocuments\WarehouseOrder\IConsumableWarehouseInvoice.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrder.cs" />
     <Compile Include="IDocuments\WarehouseOrder\IIncomingWarehouseOrderRow.cs" />
-    <Compile Include="IDocuments\WarehouseOrder\IIssueWarehouseOrder.cs" />
-    <Compile Include="IDocuments\WarehouseOrder\IIssueWarehouseOrderRow.cs" />
+    <Compile Include="IDocuments\WarehouseOrder\IWarehouseOrderOut.cs" />
+    <Compile Include="IDocuments\WarehouseOrder\IWarehouseOrderOutRow.cs" />
     <Compile Include="IDocuments\WarehouseOrder\RecepientType.cs" />
     <Compile Include="IDocuments\WarehouseOrder\SenderType.cs" />
     <Compile Include="IReferences\IBank.cs" />
@@ -370,6 +390,8 @@
     <Compile Include="Repository\LastDocumentRepository\LastDocumentRepository.cs" />
     <Compile Include="Repository\NomenklRepository\INomenklRepository.cs" />
     <Compile Include="Repository\NomenklRepository\NomenklRepository.cs" />
+    <Compile Include="Repository\SD24Repository\ISD24Repository.cs" />
+    <Compile Include="Repository\SD24Repository\SD24Repository.cs" />
     <Compile Include="Repository\UserRepository\IUserRepository.cs" />
     <Compile Include="Repository\UserRepository\UserRepository.cs" />
     <Compile Include="Repository\WarehouseRepository\IWarehouseRepository.cs" />
@@ -381,6 +403,11 @@
     <Compile Include="Repository\TransferOut\TransferOutBalansRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="Repository\WarehouseRepository\WarehouseRepository.cs" />
+    <Compile Include="Services\CreateNewDocumentServices\BaseCreateService.cs" />
+    <Compile Include="Services\CreateNewDocumentServices\ICreateNewDocument.cs" />
+    <Compile Include="Services\CreateNewDocumentServices\SD24CreateService.cs" />
+    <Compile Include="Services\CreateNewDocumentServices\WarehouseOrderOutCreateService.cs" />
+    <Compile Include="Services\MessageDialogService.cs" />
     <Compile Include="UserMenuFavorites.cs" />
     <Compile Include="ViewModel\Base2\DialogViewModelBase.cs" />
     <Compile Include="ViewModel\Base2\DocumentNewState.cs" />
@@ -415,6 +442,7 @@
     <Compile Include="ViewModel\Base\IEntity.cs" />
     <Compile Include="ViewModel\Base\ISearchWindowViewModel.cs" />
     <Compile Include="ViewModel\Base\ISimpleDialogItem.cs" />
+    <Compile Include="ViewModel\Base\ISimpleObject.cs" />
     <Compile Include="ViewModel\Base\ITreeReference.cs" />
     <Compile Include="ViewModel\Base\IViewModel.cs" />
     <Compile Include="ViewModel\Base\IViewModelToEntity.cs" />
@@ -424,6 +452,7 @@
     <Compile Include="ViewModel\Base\KursWindowSearchBaseViewModel.cs" />
     <Compile Include="ViewModel\Base\RSDataErrorWindowInfoViewModelBase.cs" />
     <Compile Include="ViewModel\Base\RSViewModelBase.cs" />
+    <Compile Include="ViewModel\Base\RSViewModelBase2.cs" />
     <Compile Include="ViewModel\Base\RSViewModelData.cs" />
     <Compile Include="ViewModel\Base\RSViewModelDataEntity.cs" />
     <Compile Include="ViewModel\Base\RSViewModelWindow.cs" />
@@ -466,6 +495,14 @@
     <Compile Include="Wrapper\Base\ICalculateValues.cs" />
     <Compile Include="Wrapper\Base\IUpdateReferences.cs" />
     <Compile Include="Wrapper\Base\NotifyDataErrorInfoBase.cs" />
+    <Compile Include="Wrapper\InvoiceClient\InvoiceClientRowWrapper.cs" />
+    <Compile Include="Wrapper\InvoiceClient\InvoiceClientWrapper.cs" />
+    <Compile Include="Wrapper\InvoiceProvider\InvoiceProviderRowWrapper.cs" />
+    <Compile Include="Wrapper\InvoiceProvider\InvoiceProviderWrapper.cs" />
+    <Compile Include="Wrapper\Nomenkl\SD_24BaseWrapper.cs" />
+    <Compile Include="Wrapper\Nomenkl\TD_24BaseWrapper.cs" />
+    <Compile Include="Wrapper\Nomenkl\WarehouseOut\WarehouseOutRowWrapper.cs" />
+    <Compile Include="Wrapper\Nomenkl\WarehouseOut\WarehouseOutWrapper.cs" />
     <Compile Include="Wrapper\StorageLocationsWrapper.cs" />
     <Compile Include="Wrapper\TransferOut\TransferOutBalansRefundWrapper.cs" />
     <Compile Include="Wrapper\TransferOut\TransferOutBalansRowsWrapper.cs" />

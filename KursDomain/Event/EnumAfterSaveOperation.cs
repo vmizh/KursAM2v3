@@ -1,4 +1,4 @@
-﻿namespace KursAM2.Event
+﻿namespace KursDomain.Event
 {
     public enum EnumAfterSaveOperation
     {

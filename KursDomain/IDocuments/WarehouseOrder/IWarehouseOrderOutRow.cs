@@ -7,7 +7,7 @@ namespace KursDomain.IDocuments.WarehouseOrder;
 /// <summary>
 ///     строка расходного складского ордера
 /// </summary>
-public interface IIssueWarehouseOrderRow
+public interface IWarehouseOrderOutRow
 {
     INomenkl Nomenkl { get; set; }
     decimal Quantity { set; get; }

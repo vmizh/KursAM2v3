@@ -719,9 +719,9 @@ namespace KursAM2.ViewModel.Personal
 
                         emp.RaisePropertyChanged("Rows");
                     }
-
-                    DocumentsOpenManager.SaveLastOpenInfo(DocumentType.PayRollVedomost, Id, DocCode, Creator,
-                        "", Description);
+                    //TODO Сохранить последний документ
+                    //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.PayRollVedomost, Id, DocCode, Creator,
+                    //    "", Description);
                     RemoveEmployees.Clear();
                     foreach (var e in Employees)
                     {

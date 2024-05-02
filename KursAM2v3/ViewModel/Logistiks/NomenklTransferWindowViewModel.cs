@@ -540,9 +540,10 @@ namespace KursAM2.ViewModel.Logistiks
                 calc.Calc(null);
                 Refresh();
                 RaisePropertyChanged(nameof(Document));
-                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.NomenklTransfer, Document.Id, Document.DocCode,
-                    Document.Creator,
-                    "", Document.Description);
+                //TODO Сохранить последний документ
+                //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.NomenklTransfer, Document.Id, Document.DocCode,
+                //    Document.Creator,
+                //    "", Document.Description);
             }
             catch (Exception ex)
             {

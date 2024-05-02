@@ -7,9 +7,8 @@ using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using DevExpress.Mvvm.POCO;
 using DevExpress.Mvvm;
-using DevExpress.Mvvm.Native;
+using DevExpress.Mvvm.POCO;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ReportManagers;
@@ -66,6 +65,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Caption = "Ордер",
                 Command = PrintOrderCommand
             });
+            
         }
 
         public override string LayoutName => "OrderOutWindowViewModel";
@@ -131,7 +131,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                                                    || Document.Rows.Any(_ =>
                                                                        _.State != RowStatus.NotEdited)
                                                                    || Document.DeletedRows.Count > 0)
-                                                                   && (Document.State != RowStatus.NotEdited && Document.Rows.All(_ => _.MaxQuantity > 0))
+                                                               && Document.State != RowStatus.NotEdited &&
+                                                               Document.Rows.All(_ => _.MaxQuantity > 0)
                                                                && Document.WarehouseOut != null &&
                                                                Document.WarehouseIn != null;
 
@@ -141,7 +142,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             var frm = new OrderOutView { Owner = Application.Current.MainWindow };
             var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                    "WarehouseOrderOut", true))
+                "WarehouseOrderOut", true))
             {
                 Form = frm,
                 State = RowStatus.NewRow
@@ -155,7 +156,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (Document == null) return;
             var frm = new OrderOutView { Owner = Application.Current.MainWindow };
             var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                    "WarehouseOrderOut", true))
+                "WarehouseOrderOut", true))
             {
                 Form = frm,
                 Document = orderManager.NewOrderOutCopy(Document.DocCode)
@@ -172,7 +173,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                 "WarehouseOrderOut", true))
             {
-                Form = frm, 
+                Form = frm,
                 Document = orderManager.NewOrderOutRecuisite(Document),
                 State = RowStatus.NewRow
             };
@@ -206,7 +207,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 {
                     Document = orderManager.GetOrderOut(dc);
                     Document.UpdateMaxQuantity(Document.Date);
-
                 }
             }
 
@@ -218,7 +218,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Document.WarehouseIn = tempDoc.WarehouseIn;
                 Document.KontragentSender = tempDoc.KontragentSender;
                 Document.WarehouseSenderType = Document.KontragentSender != null
-                ? WarehouseSenderType.Kontragent
+                    ? WarehouseSenderType.Kontragent
                     : WarehouseSenderType.Store;
                 Document.DD_OT_KOGO_POLUCHENO = tempDoc.DD_OT_KOGO_POLUCHENO;
                 foreach (var r in tempDoc.Rows)
@@ -232,11 +232,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     oldRow.myState = RowStatus.NotEdited;
                     oldRow.Quantity = r.Quantity;
                     oldRow.Note = r.Note;
-
                 }
 
                 Document.myState = RowStatus.NotEdited;
             }
+
             Document.UpdateMaxQuantity(Document.Date);
             Document.myState = RowStatus.NotEdited;
         }

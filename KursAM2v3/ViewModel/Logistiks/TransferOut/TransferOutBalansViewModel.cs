@@ -13,11 +13,12 @@ using Data;
 using DevExpress.Data;
 using DevExpress.Xpf.Grid;
 using Helper;
-using KursAM2.Event;
 using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.TransferOut;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
+using KursDomain.Event;
+using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository.DocHistoryRepository;
@@ -25,17 +26,23 @@ using KursDomain.Repository.NomenklRepository;
 using KursDomain.Repository.StorageLocationsRepositury;
 using KursDomain.Repository.TransferOut;
 using KursDomain.Repository.WarehouseRepository;
+using KursDomain.Services;
 using KursDomain.ViewModel.Base2;
 using KursDomain.ViewModel.Dialog;
 using KursDomain.Wrapper;
 using KursDomain.Wrapper.TransferOut;
 using Newtonsoft.Json;
 using Prism.Commands;
+using Prism.Events;
 
 namespace KursAM2.ViewModel.Logistiks.TransferOut
 {
     public class TransferOutBalansViewModel : FormViewModelBase<TransferOutBalansWrapper, Guid>, IFormMenu
     {
+
+        protected IEventAggregator _EventAggregator;
+        protected IMessageDialogService _MessageDialogService;
+
         public override async Task InitializeAsync(Guid id, DocumentNewState newState = DocumentNewState.None)
         {
             var storList = await _StorageLocationsRepository.GetAllAsync();
@@ -59,28 +66,28 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                     var d = await _transferOutBalansRepository.GetByIdAsync(id);
                     disp.Invoke(() =>
                     {
-                        Document = new TransferOutBalansWrapper(d);
+                        Document = new TransferOutBalansWrapper(d, _EventAggregator, _MessageDialogService);
                         Document.StartLoad();
                     });
                     break;
                 case DocumentNewState.Empty:
                     IsNewDocument = true;
                     var dnew = _transferOutBalansRepository.New();
-                    Document = new TransferOutBalansWrapper(dnew);
+                    Document = new TransferOutBalansWrapper(dnew, new EventAggregator(), new MessageDialogService());
                     break;
                 case DocumentNewState.Copy:
                     IsNewDocument = true;
                     var dcopy = await _transferOutBalansRepository.NewCopyAsync(id);
                     disp.Invoke(() =>
                     {
-                        Document = new TransferOutBalansWrapper(dcopy);
+                        Document = new TransferOutBalansWrapper(dcopy, new EventAggregator(), new MessageDialogService());
                         Document.StartLoad();
                     });
                     break;
                 case DocumentNewState.Requisite:
                     IsNewDocument = true;
                     var dreq = await _transferOutBalansRepository.NewCopyRequisiteAsync(id);
-                    disp.Invoke(() => { Document = new TransferOutBalansWrapper(dreq); });
+                    disp.Invoke(() => { Document = new TransferOutBalansWrapper(dreq, new EventAggregator(), new MessageDialogService()); });
                     break;
             }
 
@@ -129,7 +136,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             {
                 case DocumentNewState.None:
                     var d = _transferOutBalansRepository.GetById(id);
-                    Document = new TransferOutBalansWrapper(d);
+                    Document = new TransferOutBalansWrapper(d,_EventAggregator,_MessageDialogService);
                     Document.StartLoad();
                     break;
             }
@@ -188,6 +195,8 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             _StorageLocationsRepository = storageLocationsRepository;
             _NomenklRepository = nomenklRepository;
             _documentHistoryRepository = documentHistoryRepository;
+            _EventAggregator = new EventAggregator();
+            _MessageDialogService = new MessageDialogService();
 
             LayoutName = "TransferOutBalans";
             Title = "Списание товаров на забаланс";
@@ -358,7 +367,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                             Quatntity = item.Remain
                         };
                         _transferOutBalansRepository.AddRow(newItem);
-                        var newRow = new TransferOutBalansRowsWrapper(newItem)
+                        var newRow = new TransferOutBalansRowsWrapper(newItem, _EventAggregator, _MessageDialogService)
                         {
                             MaxCount = item.Remain,
                             CostPrice = item.Price
@@ -509,7 +518,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             {
                 if (entity.Entity is not TransferOutBalansRows m) continue;
                 var row = Document.Rows.FirstOrDefault(_ => _.Id == m.Id);
-                if (row == null) Document.Rows.Add(new TransferOutBalansRowsWrapper(m));
+                if (row == null) Document.Rows.Add(new TransferOutBalansRowsWrapper(m, _EventAggregator, _MessageDialogService));
             }
 
             foreach (var row in Document.Rows) row.RaisePropertiesChanged();

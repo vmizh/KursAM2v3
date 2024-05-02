@@ -56,7 +56,7 @@ public enum DocumentType
     /// <summary>
     ///     Приходный складской ордер
     /// </summary>
-    [Display(Name = "Приходный складской ордер")]
+    [Display(Name = "Расходный складской ордер")]
     StoreOrderOut = 358,
 
     /// <summary>

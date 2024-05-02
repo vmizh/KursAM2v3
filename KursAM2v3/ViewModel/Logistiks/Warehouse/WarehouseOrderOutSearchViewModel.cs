@@ -1,31 +1,33 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows.Forms;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using DevExpress.Data.Linq.Helpers;
-using DevExpress.Pdf.Native;
 using KursAM2.Managers;
-using KursAM2.Managers.Nomenkl;
 using KursAM2.ReportManagers;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks.Warehouse;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
+using KursDomain.Event;
 using KursDomain.ICommon;
+using KursDomain.IDocuments;
 using KursDomain.Managers;
 using KursDomain.Menu;
+using KursDomain.Repository.SD24Repository;
+using KursDomain.Services;
+using KursDomain.Wrapper.Nomenkl.WarehouseOut;
+using Prism.Events;
 using Application = System.Windows.Application;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public sealed class WarehouseOrderOutSearchViewModel : RSWindowSearchViewModelBase
     {
+        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
         private readonly WarehouseManager orderManager;
         private WarehouseOrderOut myCurrentDocument;
-        private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         public WarehouseOrderOutSearchViewModel()
         {
@@ -34,7 +36,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             orderManager =
                 new WarehouseManager(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderSearchViewModel"));
-            StartDate = new DateTime(DateTime.Today.Year,1,1);
+            StartDate = new DateTime(DateTime.Today.Year, 1, 1);
             EndDate = DateTime.Today;
             var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
             prn?.SubMenu.Add(new MenuButtonInfo
@@ -42,6 +44,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Caption = "Ордер",
                 Command = PrintOrderCommand
             });
+            MainWindowViewModel.EventAggregator.GetEvent<AFterDeleteBaseWrapperEvent<WarehouseOutWrapper>>()
+                .Subscribe(deleteDocument);
+            MainWindowViewModel.EventAggregator.GetEvent<AfterAddNewBaseWrapperEvent<WarehouseOutWrapper>>()
+                .Subscribe(onAddNewDocument);
+            MainWindowViewModel.EventAggregator.GetEvent<AFterSaveBaseWrapperEvent<WarehouseOutWrapper>>()
+                .Subscribe(onUpdateDocument);
         }
 
         public ICommand PrintOrderCommand
@@ -68,7 +76,40 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
-        public override bool IsDocNewCopyAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyAllow => false;
+
+        private void onUpdateDocument(AFterSaveBaseWrapperEventArgs<WarehouseOutWrapper> obj)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var d = ctx.SD_24.FirstOrDefault(_ =>
+                    _.DOC_CODE == obj.DocCode);
+                if (d != null && d.DD_DATE >= StartDate && d.DD_DATE <= EndDate)
+                {
+                    var old = Documents.FirstOrDefault(_ => _.DocCode == obj.DocCode);
+                    if (old != null)
+                        Documents.Remove(old);
+                    Documents.Add(new WarehouseOrderOut(d) { State = RowStatus.NotEdited });
+                }
+            }
+        }
+
+        private void onAddNewDocument(AfterAddNewBaseWrapperEventArgs<WarehouseOutWrapper> obj)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var d = ctx.SD_24.FirstOrDefault(_ =>
+                    _.DOC_CODE == obj.DocCode);
+                if (d != null && d.DD_DATE >= StartDate && d.DD_DATE <= EndDate)
+                    Documents.Add(new WarehouseOrderOut(d) { State = RowStatus.NotEdited });
+            }
+        }
+
+        private void deleteDocument(AFterDeleteBaseWrapperEventArgs<WarehouseOutWrapper> obj)
+        {
+            var delRow = Documents.FirstOrDefault(_ => _.DocCode == obj.DocCode);
+            if (delRow != null) Documents.Remove(delRow);
+        }
 
         private void PrintOrder(object obj)
         {
@@ -101,7 +142,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             try
             {
                 Documents.Clear();
-                
             }
             catch (Exception e)
             {
@@ -148,10 +188,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocumentOpen(object form)
         {
             if (CurrentDocument == null) return;
-            var ctx = new OrderOutWindowViewModel(
-                new StandartErrorManager(GlobalOptions.GetEntities(), "WarehouseOrderOut", true)
-                , CurrentDocument.DocCode);
-            var frm = new OrderOutView
+            var ctx = new OrderOutWindowViewModel2(CurrentDocument.DocCode, GlobalOptions.ReferencesCache,
+                null, GlobalOptions.GlobalEventAggregator, new MessageDialogService());
+            var frm = new OrderOutView2
             {
                 Owner = Application.Current.MainWindow,
                 DataContext = ctx
@@ -162,57 +201,83 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new OrderOutView { Owner = Application.Current.MainWindow };
-            var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                "WarehouseOrderOut", true)) { Form = frm };
-            frm.Show();
-            frm.DataContext = ctx;
-        }
-
-        public override void DocNewCopy(object obj)
-        {
-            if (CurrentDocument == null) return;
-            var frm = new OrderOutView { Owner = Application.Current.MainWindow };
-            var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                    "WarehouseOrderIn", true))
-                { Form = frm };
-            ctx.Document = orderManager.NewOrderOutCopy(CurrentDocument);
-            foreach (var rOut in ctx.Document.Rows)
+            var ctx = new OrderOutWindowViewModel2(null, GlobalOptions.ReferencesCache,
+                null, GlobalOptions.GlobalEventAggregator, new MessageDialogService());
+            ctx.Document.Model.DD_TYPE_DC = (decimal)MaterialDocumentTypeEnum.WarehouseOut;
+            var frm = new OrderOutView2
             {
-             var nq = nomenklManager.GetNomenklQuantity(ctx.Document.WarehouseOut.DocCode, rOut.DDT_NOMENKL_DC, ctx.Document.Date, ctx.Document.Date);
-             rOut.MaxQuantity =  nq.Count == 0 ? 0 : nq.First().OstatokQuantity;;
-            }
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
             frm.Show();
-            frm.DataContext = ctx;
         }
 
         public override void DocNewCopyRequisite(object obj)
         {
-            if (CurrentDocument == null) return;
-            var frm = new OrderOutView { Owner = Application.Current.MainWindow };
-            var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                    "WarehouseOrderIn", true))
-                { Form = frm };
-            ctx.Document = orderManager.NewOrderOutRecuisite(CurrentDocument);
+            var context = GlobalOptions.GetEntities();
+            var repo = new SD24Repository(context);
+            var d = repo.GetDocument(CurrentDocument.DocCode);
+            var doc = new WarehouseOutWrapper(d, GlobalOptions.ReferencesCache, context, new EventAggregator(),
+                new MessageDialogService());
+            var ctx = new OrderOutWindowViewModel2(null, GlobalOptions.ReferencesCache,
+                null, GlobalOptions.GlobalEventAggregator, new MessageDialogService())
+            {
+                Document =
+                {
+                    WarehouseIn = doc.WarehouseIn,
+                    WarehouseOut = doc.WarehouseOut,
+                    StoreKeeper = doc.StoreKeeper,
+                    SenderPersonaName = doc.SenderPersonaName
+                }
+            };
+
+            ctx.Document.Model.DD_TYPE_DC = doc.Model.DD_TYPE_DC;
+            var frm = new OrderOutView2
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx
+            };
+            ctx.Form = frm;
             frm.Show();
-            frm.DataContext = ctx;
         }
 
         protected override void OnWindowLoaded(object obj)
         {
             base.OnWindowLoaded(obj);
             if (Form is StandartSearchView frm)
-            {
                 foreach (var col in frm.gridDocuments.Columns)
-                {
                     switch (col.FieldName)
                     {
                         case "State":
                             col.Visible = false;
                             break;
                     }
-                }
-            }
+        }
+
+        public override void OnWindowClosing(object obj)
+        {
+            MainWindowViewModel.EventAggregator.GetEvent<AFterDeleteBaseWrapperEvent<WarehouseOutWrapper>>()
+                .Unsubscribe(unsubScribeDelete);
+            base.OnWindowClosing(obj);
+            MainWindowViewModel.EventAggregator.GetEvent<AFterSaveBaseWrapperEvent<WarehouseOutWrapper>>()
+                .Unsubscribe(unsubScribeUpdate);
+            base.OnWindowClosing(obj);
+            MainWindowViewModel.EventAggregator.GetEvent<AfterAddNewBaseWrapperEvent<WarehouseOutWrapper>>()
+                .Unsubscribe(unsubScribeAdd);
+            base.OnWindowClosing(obj);
+        }
+
+        private void unsubScribeDelete(AFterDeleteBaseWrapperEventArgs<WarehouseOutWrapper> obj)
+        {
+        }
+
+        private void unsubScribeUpdate(AFterSaveBaseWrapperEventArgs<WarehouseOutWrapper> obj)
+        {
+        }
+
+        private void unsubScribeAdd(AfterAddNewBaseWrapperEventArgs<WarehouseOutWrapper> obj)
+        {
         }
 
         #endregion

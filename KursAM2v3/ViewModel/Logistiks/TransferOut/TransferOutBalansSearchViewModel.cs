@@ -5,15 +5,18 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Data;
-using KursAM2.Event;
 using KursDomain;
+using KursDomain.Event;
+using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.Repository.DocHistoryRepository;
 using KursDomain.Repository.NomenklRepository;
 using KursDomain.Repository.StorageLocationsRepositury;
 using KursDomain.Repository.TransferOut;
+using KursDomain.Services;
 using KursDomain.ViewModel.Base2;
 using KursDomain.Wrapper.TransferOut;
+using Prism.Events;
 
 namespace KursAM2.ViewModel.Logistiks.TransferOut
 {
@@ -23,14 +26,19 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
 
         private ITransferOutBalansRepository _TransferOutBalansRepository;
 
-        #endregion
+        protected IEventAggregator _EventAggregator;
+        protected IMessageDialogService _MessageDialogService;
 
+        #endregion
+        
         #region Constructors
 
         public TransferOutBalansSearchViewModel()
         {
             LayoutName = "TransferOutBalansSearch";
             WindowName = "Перевод за баланс";
+            _EventAggregator = new EventAggregator();
+            _MessageDialogService = new MessageDialogService();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             DateStart = DateTime.Today.AddDays(-30);
@@ -63,7 +71,8 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                 Form.Dispatcher.BeginInvoke(new Action(() =>
                 {
                     Documents.Clear();
-                    foreach (var newItem in items.Select(item => new TransferOutBalansWrapper(item)))
+                    foreach (var newItem in items.Select(item =>
+                                 new TransferOutBalansWrapper(item, _EventAggregator, _MessageDialogService)))
                     {
                         newItem.StartLoad();
                         Documents.Add(newItem);

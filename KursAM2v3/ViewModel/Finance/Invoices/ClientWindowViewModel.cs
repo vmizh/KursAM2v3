@@ -1049,8 +1049,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var p in Document.PaymentDocs) p.myState = RowStatus.NotEdited;
                 Document.myState = RowStatus.NotEdited;
                 Document.RaisePropertyChanged("State");
-                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceClient, Document.Id, Document.DocCode,
-                    Document.CREATOR, "", Document.Description);
+                //TODO Сохранить последний документ
+                //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceClient, Document.Id, Document.DocCode,
+                //    Document.CREATOR, "", Document.Description);
                 RaisePropertyChanged(nameof(WindowName));
             }
             catch (Exception ex)
@@ -1203,7 +1204,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         GenericClientRepository.Delete(Document.Entity);
                         UnitOfWork.Save();
                         UnitOfWork.Commit();
-                        DocumentsOpenManager.DeleteFromLastDocument(null, Document.DocCode);
+                        //TODO Сохранить последний документ
+                        //DocumentsOpenManager.DeleteFromLastDocument(null, Document.DocCode);
                     }
                     catch (Exception ex)
                     {

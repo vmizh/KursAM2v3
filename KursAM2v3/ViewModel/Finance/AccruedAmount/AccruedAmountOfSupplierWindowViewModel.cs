@@ -426,7 +426,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             UnitOfWork.CreateTransaction();
             UnitOfWork.Save();
             UnitOfWork.Commit();
-            DocumentsOpenManager.DeleteFromLastDocument(Document.Id, null);
+            //TODO Сохранить последний документ
+            //DocumentsOpenManager.DeleteFromLastDocument(Document.Id, null);
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.AccruedAmountOfSupplier),
                 Document.Id,
                 0, null, (string)Document.ToJson());

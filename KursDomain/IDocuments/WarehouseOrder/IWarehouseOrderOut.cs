@@ -9,7 +9,7 @@ namespace KursDomain.IDocuments.WarehouseOrder;
 /// <summary>
 ///     Расходный складской ордер
 /// </summary>
-public interface IIssueWarehouseOrder
+public interface IWarehouseOrderOut
 {
     int OrderNumber { get; set; }
     string OuterNumber { get; set; }
@@ -21,5 +21,5 @@ public interface IIssueWarehouseOrder
     IInvoiceProvider InvoiceClient { set; get; }
     IWarehouse Warehouse { set; get; }
 
-    IEnumerable<IIssueWarehouseOrderRow> Rows { get; set; }
+    IEnumerable<IWarehouseOrderOutRow> Rows { get; set; }
 }
