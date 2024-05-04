@@ -2,7 +2,7 @@
 using KursDomain.Documents.Invoices;
 using Prism.Events;
 
-namespace KursAM2.Event
+namespace KursDomain.Event
 {
     public class AFterSaveInvoiceProvideEvent : PubSubEvent<AFterSaveInvoiceProvideEventArgs>
     {

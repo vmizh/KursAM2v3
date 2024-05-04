@@ -21,7 +21,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         void DeleteTD26CurrencyConvert();
         InvoiceProvider GetByDocCode(decimal dc);
-        List<IInvoiceProvider> GetAllByDates(DateTime dateStart, DateTime dateEnd);
+        List<IInvoiceProvider> GetAllByDates(DateTime dateStart, DateTime dateEnd, decimal? crsDC = null);
 
         List<InvoiceProviderShort> GetAllForNakladDistribute(Currency crs, DateTime? dateStart,
             DateTime? dateEnd);
@@ -130,7 +130,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 .FirstOrDefault(_ => _.DOC_CODE == dc), new UnitOfWork<ALFAMEDIAEntities>());
         }
 
-        public List<IInvoiceProvider> GetAllByDates(DateTime dateStart, DateTime dateEnd)
+        public List<IInvoiceProvider> GetAllByDates(DateTime dateStart, DateTime dateEnd, decimal? crsDC = null)
         {
             var data = Context.InvoicePostQuery.Where(_ => _.Date >= dateStart && _.Date <= dateEnd)
                 .OrderByDescending(_ => _.Date).ToList();

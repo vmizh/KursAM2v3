@@ -191,8 +191,9 @@ namespace KursAM2.ViewModel.Personal
             var form = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = pr};
             form.Show();
             pr.RefreshData(null);
-            DocumentsOpenManager.SaveLastOpenInfo(DocumentType.PayRollVedomost, pr.Id, pr.DocCode, pr.Creator,
-                "", pr.Description);
+            //TODO Сохранить последний документ
+            //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.PayRollVedomost, pr.Id, pr.DocCode, pr.Creator,
+            //    "", pr.Description);
         }
 
         public override void DocNewEmpty(object form)

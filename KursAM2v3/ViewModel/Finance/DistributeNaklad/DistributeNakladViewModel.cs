@@ -804,8 +804,9 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 RaisePropertyChanged(nameof(Tovars));
                 RaisePropertyChanged(nameof(SelectedTovars));
                 Load(Id);
-                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.Naklad, Id, null, Creator,
-                    GlobalOptions.UserInfo.Name, Description);
+                //TODO Сохранить последний документ
+                //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.Naklad, Id, null, Creator,
+                //    GlobalOptions.UserInfo.Name, Description);
             }
 
             catch (Exception ex)

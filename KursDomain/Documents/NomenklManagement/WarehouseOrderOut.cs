@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Data.Entity;
 using System.Windows.Controls;
 using Core.Helper;
 using Data;
@@ -33,14 +34,28 @@ public sealed class WarehouseOrderOut : SD_24ViewModel
 
     public WarehouseOrderOut(SD_24 entity) : base(entity)
     {
-        Entity = entity ?? DefaultValue();
-        var data = Entity.TD_24;
-        if (data != null && data.Count != 0)
-            foreach (var item in data)
-            {
-                var r = new WarehouseOrderOutRow(item) { Parent = this };
-                Rows.Add(r);
-            }
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            Entity = entity ?? DefaultValue();
+            var data = Entity.TD_24;
+            if (data != null && data.Count != 0)
+                foreach (var item in data)
+                {
+                    var r = new WarehouseOrderOutRow(item) { Parent = this };
+                    var ordIn = ctx.TD_24.Include(_ => _.SD_24).FirstOrDefault(_ =>
+                        _.DDT_RASH_ORD_DC == item.DOC_CODE && _.DDT_RASH_ORD_CODE == item.CODE);
+                    if (ordIn != null)
+                    {
+                        var h = new WarehouseOrderIn();
+                        h.Entity = ordIn.SD_24;
+                        r.OrderInRow = new WarehouseOrderInRow(ordIn)
+                        {
+                            Parent = h
+                        };
+                    }
+                    Rows.Add(r);
+                }
+        }
 
         myState = RowStatus.NotEdited;
         foreach (var r in Rows) r.myState = RowStatus.NotEdited;
@@ -54,7 +69,6 @@ public sealed class WarehouseOrderOut : SD_24ViewModel
         set
         {
             if (Entity.DD_DATE == value) return;
-            UpdateMaxQuantity(value);
             Entity.DD_DATE = value;
             RaisePropertyChanged();
         }
@@ -96,6 +110,8 @@ public sealed class WarehouseOrderOut : SD_24ViewModel
     // ReSharper disable once CollectionNeverUpdated.Global
     public ObservableCollection<WarehouseOrderOutRow> SelectedRows { get; set; } =
         new ObservableCollection<WarehouseOrderOutRow>();
+
+    
 
     public WarehouseSenderType WarehouseSenderType
     {

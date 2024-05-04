@@ -175,10 +175,6 @@
     <Compile Include="DragAndDrop\CustomTreeListDragDropManager.cs" />
     <Compile Include="DragAndDrop\ExternalDragDropViewInfo.cs" />
     <Compile Include="DragAndDrop\IDragRowVisibilitySupport.cs" />
-    <Compile Include="Event\AFterSaveInvoiceProvideEvent.cs" />
-    <Compile Include="Event\AFterSaveBaseWrapperEvent.cs" />
-    <Compile Include="Event\AfterTransferOutBalansWrapperEvent.cs" />
-    <Compile Include="Event\EnumAfterSaveOperation.cs" />
     <Compile Include="Managers\BankOperationsManager.cs" />
     <Compile Include="Managers\Base\AttributeHelper.cs" />
     <Compile Include="Managers\Base\BaseItemManager.cs" />
@@ -190,11 +186,11 @@
     <Compile Include="Managers\AccessRightsManager.cs" />
     <Compile Include="Managers\CashDocumentType.cs" />
     <Compile Include="Managers\CashManager.cs" />
+    <Compile Include="Managers\DocumentsOpenManager.cs" />
     <Compile Include="Managers\WarehouseManager.cs" />
     <Compile Include="Managers\OffBalansOperationManagers\OffBalansInManager.cs" />
     <Compile Include="Managers\OffBalansOperationManagers\OffBalansOutManager.cs" />
     <Compile Include="Managers\StoreManager.cs" />
-    <Compile Include="Managers\DocumentsOpenManager.cs" />
     <Compile Include="Managers\KontragentManager.cs" />
     <Compile Include="Managers\Nomenkl\NomenklCategoryManager.cs" />
     <Compile Include="Managers\Nomenkl\NomenklProductKindManager.cs" />
@@ -260,10 +256,12 @@
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenklTitleWIndowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\DialogSelectExistNomOnSkaldViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\NomenklRemainsOnSkladWithPrice.cs" />
+    <Compile Include="ViewModel\Logistiks\TransferOut\TransferOutBalansRemainsDocument.cs" />
     <Compile Include="ViewModel\Logistiks\TransferOut\TransferOutBalansRemainsViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\TransferOut\TransferOutBalansSearchViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\TransferOut\TransferOutBalansViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\Warehouse\NomenklInnerMoveQueryViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\Warehouse\OrderOutWindowViewModel2.cs" />
     <Compile Include="ViewModel\Logistiks\Warehouse\WaybillWindowViewModel2.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="ViewModel\Costing\KontragentRefOut.cs" />
@@ -548,6 +546,9 @@
       <DependentUpon>AddNomenklFromInvoiceProviderRowUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\UC\AddNomenklFromRashOrderViewModel.cs" />
+    <Compile Include="View\Logistiks\Warehouse\OrderOutView2.xaml.cs">
+      <DependentUpon>OrderOutView2.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Logistiks\Warehouse\WayBillView2.xaml.cs">
       <DependentUpon>WayBillView2.xaml</DependentUpon>
     </Compile>
@@ -1419,6 +1420,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Logistiks\UC\AddNomenklFromInvoiceProviderRowUC.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Logistiks\Warehouse\OrderOutView2.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

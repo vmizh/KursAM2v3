@@ -11,5 +11,5 @@ public interface IIncomingWarehouseOrderRow
     bool IsTaxExecuted { set; get; }
     ISDRSchet SDRSchet { set; get; }
     IInvoiceProviderRow InvoiceProviderRow { set; get; }
-    IIssueWarehouseOrderRow IssueOrderRow { set; get; }
+    IWarehouseOrderOutRow IssueOrderRow { set; get; }
 }

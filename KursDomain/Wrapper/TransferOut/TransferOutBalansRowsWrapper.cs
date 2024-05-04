@@ -6,6 +6,7 @@ using KursDomain.ICommon;
 using KursDomain.IDocuments.TransferOut;
 using KursDomain.References;
 using KursDomain.Wrapper.Base;
+using Prism.Events;
 
 namespace KursDomain.Wrapper.TransferOut;
 
@@ -15,8 +16,9 @@ public class TransferOutBalansRowsWrapper : BaseWrapper<TransferOutBalansRows>,
     private decimal myCostPrice;
     private decimal myMaxCount;
 
-    public TransferOutBalansRowsWrapper(TransferOutBalansRows model) :
-        base(model)
+    public TransferOutBalansRowsWrapper(TransferOutBalansRows model, IEventAggregator eventAggregator,
+        IMessageDialogService messageDialogService) :
+        base(model, eventAggregator, messageDialogService)
     {
     }
 
@@ -92,9 +94,9 @@ public class TransferOutBalansRowsWrapper : BaseWrapper<TransferOutBalansRows>,
 
     [Display(AutoGenerateField = true, Name = "Номенклатура", Order = 2)]
     [ReadOnly(true)]
-    public Nomenkl Nomenkl
+    public References.Nomenkl Nomenkl
     {
-        get => GlobalOptions.ReferencesCache.GetNomenkl(Model.NomenklDC) as Nomenkl;
+        get => GlobalOptions.ReferencesCache.GetNomenkl(Model.NomenklDC) as References.Nomenkl;
         set
         {
             if (Model.NomenklDC == (value?.DocCode ?? 0)) return;

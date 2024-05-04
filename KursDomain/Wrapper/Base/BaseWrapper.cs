@@ -2,17 +2,25 @@
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
 using Domain.Wrapper.Base;
+using KursDomain.ICommon;
+using Prism.Events;
 
 namespace KursDomain.Wrapper.Base;
 
 public class BaseWrapper<T> : NotifyDataErrorInfoBase
 {
-    public BaseWrapper(T model)
+    public BaseWrapper(T model, IEventAggregator eventAggregator, IMessageDialogService messageDialogService) : base(
+        eventAggregator, messageDialogService)
     {
         Model = model;
     }
 
-    [Display(AutoGenerateField = false)] public T Model { get; }
+    public BaseWrapper(T model) : base()
+    {
+        Model = model;
+    }
+
+    [Display(AutoGenerateField = false)] public T Model { get; set; }
 
     protected virtual void SetValue<TValue>(TValue value,
         [CallerMemberName] string propertyName = null)

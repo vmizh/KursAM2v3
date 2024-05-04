@@ -2,7 +2,7 @@
 using System;
 using KursDomain.Wrapper.TransferOut;
 
-namespace KursAM2.Event
+namespace KursDomain.Event
 {
     public class AfterTransferOutBalansWrapperEvent : PubSubEvent<AfterTransferOutBalansWrapperEventArgs>
     {

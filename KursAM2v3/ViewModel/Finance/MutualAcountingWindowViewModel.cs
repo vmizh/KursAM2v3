@@ -537,10 +537,10 @@ namespace KursAM2.ViewModel.Finance
                     RecalcKontragentBalans.CalcBalans(d, Document.VZ_DATE);
                 Document.DeletedRows.Clear();
             }
-
-            DocumentsOpenManager.SaveLastOpenInfo(
-                IsCurrencyConvert ? DocumentType.CurrencyConvertAccounting : DocumentType.MutualAccounting, Document.Id,
-                Document.DocCode, Document.CREATOR, "", Document.Description);
+            //TODO Сохранить последний документ
+            //DocumentsOpenManager.SaveLastOpenInfo(
+            //    IsCurrencyConvert ? DocumentType.CurrencyConvertAccounting : DocumentType.MutualAccounting, Document.Id,
+            //    Document.DocCode, Document.CREATOR, "", Document.Description);
             foreach (var r in Document.Rows)
             {
                 r.myState = RowStatus.NotEdited;

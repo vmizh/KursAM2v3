@@ -5,13 +5,30 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Core.ViewModel.Base;
+using KursDomain.ICommon;
+using KursDomain.Services;
+using Prism.Events;
 
 namespace Domain.Wrapper.Base;
 
-public class NotifyDataErrorInfoBase : RSViewModelBase, INotifyDataErrorInfo
+public class NotifyDataErrorInfoBase : RSViewModelBase2, INotifyDataErrorInfo
 {
     private readonly Dictionary<string, List<string>> _errorsByPropertyName
         = new Dictionary<string, List<string>>();
+    //protected IEventAggregator EventAggregator;
+    //protected IMessageDialogService MessageDialogService;
+
+    public NotifyDataErrorInfoBase(IEventAggregator eventAggregator, IMessageDialogService messageDialogService)
+    {
+        EventAggregator = eventAggregator;
+        MessageDialogService = messageDialogService;
+    }
+
+    public NotifyDataErrorInfoBase()
+    {
+        EventAggregator = new EventAggregator();
+        MessageDialogService = new MessageDialogService();
+    }
 
     [Display(AutoGenerateField = false)] public bool HasErrors => _errorsByPropertyName.Any();
 

@@ -74,7 +74,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             IsDocNewCopyRequisiteAllow = false;
             IsDocDeleteAllow = true;
             IsCanSaveData = false;
-            WindowName = $"Расходный кассовый ордер от {Document?.Kontragent} в {Document?.Cash?.Name}";
+            WindowName = $"Р Р°СЃС…РѕРґРЅС‹Р№ РєР°СЃСЃРѕРІС‹Р№ РѕСЂРґРµСЂ РѕС‚ {Document?.Kontragent} РІ {Document?.Cash?.Name}";
         }
 
         public CashOutWindowViewModel(decimal dc) : this()
@@ -202,13 +202,14 @@ namespace KursAM2.ViewModel.Finance.Cash
             if (Document.KONTRAGENT_DC != null)
                 // ReSharper disable once PossibleInvalidOperationException
                 RecalcKontragentBalans.CalcBalans((decimal)Document.KONTRAGENT_DC, (DateTime)Document.DATE_ORD);
-            DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CashOut, Document.Id, Document.DocCode, Document.CREATOR,
-                "", Document.Description);
+            //TODO РЎРѕС…СЂР°РЅРёС‚СЊ РїРѕСЃР»РµРґРЅРёР№ РґРѕРєСѓРјРµРЅС‚
+            //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CashOut, Document.Id, Document.DocCode, Document.CREATOR,
+            //    "", Document.Description);
         }
 
         public override void DocDelete(object form)
         {
-            var res = MessageBox.Show("Вы уверены, что хотите удалить данный документ?", "Запрос",
+            var res = MessageBox.Show("Р’С‹ СѓРІРµСЂРµРЅС‹, С‡С‚Рѕ С…РѕС‚РёС‚Рµ СѓРґР°Р»РёС‚СЊ РґР°РЅРЅС‹Р№ РґРѕРєСѓРјРµРЅС‚?", "Р—Р°РїСЂРѕСЃ",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
             if (res != MessageBoxResult.Yes) return;
@@ -217,7 +218,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                 case MessageBoxResult.Yes:
                     if (Document.SPOST_DC != null)
                     {
-                        var res1 = MessageBox.Show("Есть связь с оплаченным счетом? Удалить?", "Запрос",
+                        var res1 = MessageBox.Show("Р•СЃС‚СЊ СЃРІСЏР·СЊ СЃ РѕРїР»Р°С‡РµРЅРЅС‹Рј СЃС‡РµС‚РѕРј? РЈРґР°Р»РёС‚СЊ?", "Р—Р°РїСЂРѕСЃ",
                             MessageBoxButton.YesNo,
                             MessageBoxImage.Question);
                         switch (res1)
@@ -271,7 +272,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             if (IsCanSaveData && Document?.State != RowStatus.Deleted)
             {
-                var res = MessageBox.Show("В документ были внесены изменения, сохранить?", "Запрос",
+                var res = MessageBox.Show("Р’ РґРѕРєСѓРјРµРЅС‚ Р±С‹Р»Рё РІРЅРµСЃРµРЅС‹ РёР·РјРµРЅРµРЅРёСЏ, СЃРѕС…СЂР°РЅРёС‚СЊ?", "Р—Р°РїСЂРѕСЃ",
                     MessageBoxButton.YesNoCancel,
                     MessageBoxImage.Question);
                 switch (res)
@@ -301,7 +302,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             base.RefreshData(obj);
             if (IsCanSaveData)
             {
-                var res = MessageBox.Show("В документ были внесены изменения, сохранить?", "Запрос",
+                var res = MessageBox.Show("Р’ РґРѕРєСѓРјРµРЅС‚ Р±С‹Р»Рё РІРЅРµСЃРµРЅС‹ РёР·РјРµРЅРµРЅРёСЏ, СЃРѕС…СЂР°РЅРёС‚СЊ?", "Р—Р°РїСЂРѕСЃ",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question);
                 switch (res)
@@ -337,8 +338,8 @@ namespace KursAM2.ViewModel.Finance.Cash
                 if (Document == null)
                 {
                     var winManager = new WindowManager();
-                    winManager.ShowWinUIMessageBox($"Не найден документ с кодом {dc}!",
-                        "Ошибка обращения к базе данных", MessageBoxButton.OK, MessageBoxImage.Error,
+                    winManager.ShowWinUIMessageBox($"РќРµ РЅР°Р№РґРµРЅ РґРѕРєСѓРјРµРЅС‚ СЃ РєРѕРґРѕРј {dc}!",
+                        "РћС€РёР±РєР° РѕР±СЂР°С‰РµРЅРёСЏ Рє Р±Р°Р·Рµ РґР°РЅРЅС‹С…", MessageBoxButton.OK, MessageBoxImage.Error,
                         MessageBoxResult.None, MessageBoxOptions.None);
                     return;
                 }

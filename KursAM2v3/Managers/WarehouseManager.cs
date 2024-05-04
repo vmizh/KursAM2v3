@@ -1204,15 +1204,6 @@ namespace KursAM2.Managers
                 State = RowStatus.NewRow,
                 Date = DateTime.Today
             };
-            //foreach (var r in doc.Rows)
-            //{
-            //    var nq = nomenklManager.GetNomenklQuantity(doc.WarehouseOut.DocCode, r.Nomenkl.DocCode,
-            //        doc.Date, doc.Date);
-            //    r.MaxQuantity = nq.Count > 0 ? nq.First().OstatokQuantity : 0;
-            //    if (r.Quantity > r.MaxQuantity)
-            //        r.Quantity = r.MaxQuantity;
-            //}
-
             return doc;
         }
 

@@ -310,7 +310,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Document.Entity.DD_POLUCH_NAME = Document.Receiver;
                 UnitOfWork.CreateTransaction();
                 UnitOfWork.Save();
-                DocumentsOpenManager.DeleteFromLastDocument(Document.Id, null);
+                //TODO Сохранить последний документ
+                //DocumentsOpenManager.DeleteFromLastDocument(Document.Id, null);
                 nomenklManager.RecalcPrice(UnitOfWork.Context);
                 foreach (var n in Document.Rows.Select(_ => _.Nomenkl.DocCode))
                 {

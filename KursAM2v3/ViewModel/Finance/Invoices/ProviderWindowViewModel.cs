@@ -20,7 +20,6 @@ using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
-using KursAM2.Event;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
@@ -38,6 +37,7 @@ using KursDomain.Documents.Currency;
 using KursDomain.Documents.Dogovora;
 using KursDomain.Documents.Invoices;
 using KursDomain.Documents.NomenklManagement;
+using KursDomain.Event;
 using KursDomain.ICommon;
 using KursDomain.Managers;
 using KursDomain.Menu;
@@ -1646,9 +1646,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 // ReSharper disable once UseNameofExpression
                 Document.RaisePropertyChanged("State");
                 RaisePropertyChanged(nameof(WindowName));
-                DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceProvider, Document.Id, Document.DocCode,
-                    Document.CREATOR,
-                    "", Document.Description);
+                //TODO Сохранить последний документ
+                //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceProvider, Document.Id, Document.DocCode,
+                //    Document.CREATOR,
+                //    "", Document.Description);
                 DeletedStoreLink.Clear();
                 Document.DeletedRows.Clear();
                 MainWindowViewModel.EventAggregator.GetEvent<AFterSaveInvoiceProvideEvent>()
@@ -1812,7 +1813,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             }
 
                             UnitOfWork.Commit();
-                            DocumentsOpenManager.DeleteFromLastDocument(null, Document.DocCode);
+                            //TODO Сохранить последний документ
+                            //DocumentsOpenManager.DeleteFromLastDocument(null, Document.DocCode);
                         }
                         catch (Exception ex)
                         {

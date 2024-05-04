@@ -5,10 +5,8 @@ namespace KursDomain.ICommon;
 /// <summary>
 ///     Строка документа
 /// </summary>
-public interface IRowDC
+public interface IRowDC : IDocCode
 {
-    [Display(AutoGenerateField = false)]
-    decimal DocCode { get; set; }
     [Display(AutoGenerateField = false)]
     int Code { get; set; }
 }

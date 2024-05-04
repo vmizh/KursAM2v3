@@ -12,6 +12,7 @@ using KursDomain.ICommon;
 using KursDomain.IDocuments.TransferOut;
 using KursDomain.References;
 using KursDomain.Wrapper.Base;
+using Prism.Events;
 
 namespace KursDomain.Wrapper.TransferOut;
 
@@ -21,7 +22,8 @@ public sealed class TransferOutBalansWrapper : BaseWrapper<TransferOutBalans>, I
     private int _PositionCount;
     private StorageLocationsWrapper _StorageLocation;
 
-    public TransferOutBalansWrapper(TransferOutBalans model) : base(model)
+    public TransferOutBalansWrapper(TransferOutBalans model, IEventAggregator eventAggregator,
+        IMessageDialogService messageDialogService) : base(model, eventAggregator, messageDialogService)
     {
     }
 
@@ -144,12 +146,14 @@ public sealed class TransferOutBalansWrapper : BaseWrapper<TransferOutBalans>, I
 
     public override void StartLoad(bool isFullLoad = true)
     {
-        if (Model.StorageLocations != null) StorageLocation = new StorageLocationsWrapper(Model.StorageLocations);
+        if (Model.StorageLocations != null)
+            StorageLocation =
+                new StorageLocationsWrapper(Model.StorageLocations, EventAggregator, MessageDialogService);
 
         if (isFullLoad && Model.TransferOutBalansRows is { Count: > 0 })
             foreach (var row in Model.TransferOutBalansRows)
             {
-                var newRow = new TransferOutBalansRowsWrapper(row);
+                var newRow = new TransferOutBalansRowsWrapper(row, EventAggregator,MessageDialogService);
                 newRow.PropertyChanged += (o, e) => { UpdateSummaries(); };
                 Rows.Add(newRow);
             }

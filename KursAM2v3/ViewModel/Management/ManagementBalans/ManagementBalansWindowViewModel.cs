@@ -1324,15 +1324,16 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private void calcNomenklBefore()
         {
             using var ctx = GlobalOptions.GetEntities();
-            ctx.Database.ExecuteSqlCommand(@"dbo.NomenklBeforeCalc");
+            var sql = $@"dbo.NomenklBeforeCalc '{CustomFormat.DateToString(CurrentDate)}'";
+            ctx.Database.ExecuteSqlCommand($@"dbo.NomenklBeforeCalc '{CustomFormat.DateToString(CurrentDate)}'");
         }
 
         private void calcNomenklAfter()
         {
             using var ctx = GlobalOptions.GetEntities();
-            ctx.Database.ExecuteSqlCommand(@"dbo.NomenklAfterCalc");
+            ctx.Database.ExecuteSqlCommand($@"dbo.NomenklAfterCalc");
         }
-
+         
 
         private void GetZarplata()
         {

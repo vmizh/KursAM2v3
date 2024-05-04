@@ -7,20 +7,19 @@ using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using KursDomain.Annotations;
 using KursDomain.ICommon;
+using KursDomain.Services;
+using Prism.Events;
 
 namespace Core.ViewModel.Base;
-
-public interface ISimpleObject
-{
-    string Name { set; get; }
-    string Note { set; get; }
-}
 
 [DataContract]
 public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
     IComparable<RSViewModelBase>,
     IComparable, IEquatable<RSViewModelBase>
 {
+
+    #region Fields
+
     protected int myCode;
     private string myDescription;
     private decimal myDocCode;
@@ -32,6 +31,28 @@ public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
     private Guid? myParentId;
     private Guid myRowId;
 
+    protected IEventAggregator EventAggregator;
+    protected IMessageDialogService MessageDialogService;
+
+    #endregion
+
+    #region Constructors
+
+    protected RSViewModelBase(IEventAggregator eventAggregator, IMessageDialogService messageDialogService)
+    {
+        EventAggregator = eventAggregator;
+        MessageDialogService = messageDialogService;
+    }
+
+    public RSViewModelBase()
+    {
+        EventAggregator = new EventAggregator();
+        MessageDialogService = new MessageDialogService();
+    }
+
+    #endregion
+    
+
     // ReSharper disable once InconsistentNaming
     public RowStatus myState = RowStatus.NotEdited;
     //private RSWindowViewModelBase myWindowViewModel;
@@ -40,6 +61,8 @@ public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
     // ReSharper disable once CollectionNeverQueried.Global
     // ReSharper disable once MemberCanBePrivate.Global
     public IList<string> NotifyProtocol = new List<string>();
+
+    
 
     [Display(AutoGenerateField = false)]
     public virtual object Parent
@@ -257,8 +280,8 @@ public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
     {
         var handler = PropertyChanged;
         if (propertyName != "State")
-            if (State == RowStatus.NotEdited)
-                State = RowStatus.Edited;
+            if (myState == RowStatus.NotEdited)
+                myState = RowStatus.Edited;
         if (Parent is RSViewModelBase p)
             if (myState != RowStatus.NotEdited)
             {
@@ -292,7 +315,7 @@ public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
         }
     }
 
-    public void RaisePropertyAllChanged()
+    public virtual void RaisePropertyAllChanged()
     {
         foreach (var prop in GetType().GetProperties()) RaisePropertyChanged(prop.Name);
     }

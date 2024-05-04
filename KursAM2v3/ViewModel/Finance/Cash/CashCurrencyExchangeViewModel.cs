@@ -37,7 +37,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             IsDocNewCopyRequisiteAllow = false;
             IsDocDeleteAllow = true;
             IsCanSaveData = false;
-            WindowName = $"Обмен валюты для {Document?.Kontragent} в {Document?.Cash.Name}";
+            WindowName = $"РћР±РјРµРЅ РІР°Р»СЋС‚С‹ РґР»СЏ {Document?.Kontragent} РІ {Document?.Cash.Name}";
         }
 
         public CashCurrencyExchangeWindowViewModel(decimal dc) : this()
@@ -82,14 +82,15 @@ namespace KursAM2.ViewModel.Finance.Cash
                 ctx.RefreshActual(Document);
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.CurrencyChange), null,
                 Document.DocCode, null, (string)Document.ToJson());
-            DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CurrencyConvertAccounting, Document.Id, Document.DocCode,
-                Document.CREATOR,
-                "", Document.Description);
+            //TODO РЎРѕС…СЂР°РЅРёС‚СЊ РїРѕСЃР»РµРґРЅРёР№ РґРѕРєСѓРјРµРЅС‚
+            //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CurrencyConvertAccounting, Document.Id, Document.DocCode,
+            //    Document.CREATOR,
+            //    "", Document.Description);
         }
 
         public override void DocDelete(object form)
         {
-            var res = MessageBox.Show("Вы уверены, что хотите удалить данный документ?", "Запрос",
+            var res = MessageBox.Show("Р’С‹ СѓРІРµСЂРµРЅС‹, С‡С‚Рѕ С…РѕС‚РёС‚Рµ СѓРґР°Р»РёС‚СЊ РґР°РЅРЅС‹Р№ РґРѕРєСѓРјРµРЅС‚?", "Р—Р°РїСЂРѕСЃ",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
             switch (res)
@@ -147,7 +148,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             base.RefreshData(obj);
             if (IsCanSaveData)
             {
-                var res = MessageBox.Show("В документ были внесены изменения, сохранить?", "Запрос",
+                var res = MessageBox.Show("Р’ РґРѕРєСѓРјРµРЅС‚ Р±С‹Р»Рё РІРЅРµСЃРµРЅС‹ РёР·РјРµРЅРµРЅРёСЏ, СЃРѕС…СЂР°РЅРёС‚СЊ?", "Р—Р°РїСЂРѕСЃ",
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Question);
                 switch (res)
@@ -183,8 +184,8 @@ namespace KursAM2.ViewModel.Finance.Cash
                 if (Document == null)
                 {
                     var winManager = new WindowManager();
-                    winManager.ShowWinUIMessageBox($"Не найден документ с кодом {dc}!",
-                        "Ошибка обращения к базе данных", MessageBoxButton.OK, MessageBoxImage.Error,
+                    winManager.ShowWinUIMessageBox($"РќРµ РЅР°Р№РґРµРЅ РґРѕРєСѓРјРµРЅС‚ СЃ РєРѕРґРѕРј {dc}!",
+                        "РћС€РёР±РєР° РѕР±СЂР°С‰РµРЅРёСЏ Рє Р±Р°Р·Рµ РґР°РЅРЅС‹С…", MessageBoxButton.OK, MessageBoxImage.Error,
                         MessageBoxResult.None, MessageBoxOptions.None);
                     return;
                 }

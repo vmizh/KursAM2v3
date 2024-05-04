@@ -2,15 +2,23 @@
 using System.ComponentModel.DataAnnotations;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
+using KursDomain.ICommon;
 using KursDomain.References;
 using KursDomain.Wrapper.Base;
+using Prism.Events;
 
 namespace KursDomain.Wrapper;
 
 public class StorageLocationsWrapper : BaseWrapper<StorageLocations>, IEquatable<StorageLocationsWrapper>
 {
+    public StorageLocationsWrapper(StorageLocations model, IEventAggregator eventAggregator,
+        IMessageDialogService messageDialogService) : base(model, eventAggregator, messageDialogService)
+    {
+    }
+
     public StorageLocationsWrapper(StorageLocations model) : base(model)
     {
+        
     }
 
     [Display(AutoGenerateField = false)] public override Guid Id => Model.Id;

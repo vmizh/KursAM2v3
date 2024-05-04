@@ -5,14 +5,19 @@ using System.Configuration;
 using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Media;
-using Core;
+using Core.Helper;
 using Data;
 using Helper;
+using KursAM2.Managers;
 using KursDomain.Documents.Employee;
+using KursDomain.Event;
+using KursDomain.IDocuments;
 using KursDomain.IReferences;
 using KursDomain.References;
 using KursDomain.Repository;
+using Prism.Events;
 
 namespace KursDomain;
 
@@ -27,11 +32,24 @@ public static class GlobalOptions
 
     public static IReferencesCache ReferencesCache;
 
+    public static IEventAggregator GlobalEventAggregator = new EventAggregator();
+
     public static string SqlConnectionString;
     public static string SqlSystemConnectionString;
 
     static GlobalOptions()
     {
+        #region EventAggregator
+
+        GlobalEventAggregator
+            .GetEvent<SaveHistoryEvent<IHistory>>()
+            .Subscribe(SaveHistory);
+        GlobalEventAggregator.GetEvent<SaveLastDocumentEvent<ILastDocument>>().Subscribe(SaveLastDocument);
+        GlobalEventAggregator.GetEvent<DeleteLastDocumentEvent<ILastDocument>>().Subscribe(DeleteLastDocument);
+       
+        #endregion
+
+
         var section = ConfigurationManager.GetSection("appSettings") as NameValueCollection;
 #if DEBUG
         HostName = section.Get("KursSystemDebugHost");
@@ -51,6 +69,24 @@ public static class GlobalOptions
     //public static MainReferences MainReferences { set; get; }
     public static string Version { set; get; }
     public static string VersionType { set; get; }
+
+    private static void DeleteLastDocument(DeleteLastDocumentEventArgs<ILastDocument> obj)
+    {
+        DocumentsOpenManager.DeleteFromLastDocument(obj.info.DocId, obj.info.DocDC);
+    }
+
+    private static void SaveLastDocument(SaveLastDocumentEventArgs<ILastDocument> obj)
+    {
+        DocumentsOpenManager.SaveLastOpenInfo(obj.info.DocType, obj.info.DocId, obj.info.DocDC, obj.info.Creator,
+            obj.info.LastChanger,
+            obj.info.Desc);
+    }
+
+    private static void SaveHistory(SaveHistoryEventArgs<IHistory> obj)
+    {
+        DocumentHistoryHelper.SaveHistory(obj.history.DocType, obj.history.DocId, obj.history.DocDC,
+            obj.history.Code, obj.history.Json);
+    }
 
     public static KursSystemEntities KursSystem()
     {
@@ -153,6 +189,34 @@ public class SystemProfile
     public List<PROFILE> Profile { set; get; } = new List<PROFILE>();
     public Currency EmployeeDefaultCurrency { set; get; }
     public EMP_PAYROLL_TYPEViewModel DafaultPayRollType { set; get; }
+
+    /// <summary>
+    ///     Формат короткой даты для вывода
+    /// </summary>
+    /// <returns></returns>
+    public string GetShortDateFormat()
+    {
+        return Profile.FirstOrDefault(_ => _.SECTION == "Format" && _.ITEM == "ShortDate")?.ITEM_VALUE ?? "yyyy-MM-dd";
+    }
+
+
+    /// <summary>
+    ///     Формат вывода кол-ва
+    /// </summary>
+    /// <returns></returns>
+    public string GetQuantityValueNumberFormat()
+    {
+        return Profile.FirstOrDefault(_ => _.SECTION == "Format" && _.ITEM == "QuantityDataFormat")?.ITEM_VALUE ?? "n4";
+    }
+
+    /// <summary>
+    ///     Формат вывода кол-ва
+    /// </summary>
+    /// <returns></returns>
+    public string GetCurrencyFormat()
+    {
+        return Profile.FirstOrDefault(_ => _.SECTION == "Format" && _.ITEM == "Currency")?.ITEM_VALUE ?? "n2";
+    }
 }
 
 public enum NomenklCalcType

@@ -308,7 +308,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                         AktSpisaniyaNomenklTitleRepository.Delete();
                         unitOfWork.Save();
                         unitOfWork.Commit();
-                        DocumentsOpenManager.DeleteFromLastDocument(Document.Id, null);
+                        //TODO Сохранить последний документ
+                        //DocumentsOpenManager.DeleteFromLastDocument(Document.Id, null);
                         Form?.Close();
                         return;
                 }

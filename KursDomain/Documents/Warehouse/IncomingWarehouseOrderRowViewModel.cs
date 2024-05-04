@@ -22,7 +22,7 @@ public class IncomingWarehouseOrderRowViewModel : IDescription, IRowDC, IIncomin
     private readonly TD_24 Entity;
     private readonly IReferencesCache myReferenceCache;
     private IInvoiceProviderRow _InvoiceProviderRow;
-    private IIssueWarehouseOrderRow _IssueOrderRow;
+    private IWarehouseOrderOutRow _IssueOrderRow;
     private IIncomingWarehouseOrder Header;
 
     public IncomingWarehouseOrderRowViewModel(TD_24 entity, IReferencesCache refCache)
@@ -125,7 +125,7 @@ public class IncomingWarehouseOrderRowViewModel : IDescription, IRowDC, IIncomin
     }
 
     [Display(Name = "Расходный ордер", AutoGenerateField = false)]
-    public IIssueWarehouseOrderRow IssueOrderRow
+    public IWarehouseOrderOutRow IssueOrderRow
     {
         get => _IssueOrderRow;
         set
