@@ -18,6 +18,7 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.RepositoryHelper;
 
+
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -229,18 +230,25 @@ namespace KursAM2.ViewModel.Logistiks
             RaisePropertyChanged(nameof(NomenklsForSklad));
         }
 
+        
+        
+
         private void LoadNomForSklad()
         {
-            var data = nomenklManager.GetNomenklStoreQuantity(CurrentWarehouse.DocCode, new DateTime(2000, 1, 1),
+           var data = nomenklManager.GetNomenklStoreQuantity(CurrentWarehouse.DocCode, new DateTime(2000, 1, 1),
                 OstatokDate);
             if (data != null)
                 foreach (var d in data.Where(_ => _.OstatokQuantity > 0))
+
+
                     NomenklsForSklad.Add(new NomenklOstatkiWithPrice
                     {
                         Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(d.NomDC) as Nomenkl,
+
                         Warehouse =
                             GlobalOptions.ReferencesCache.GetWarehouse(CurrentWarehouse.DocCode) as
                                 KursDomain.References.Warehouse,
+                        
                         Quantity = d.OstatokQuantity,
                         CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetNomenkl(d.NomDC).Currency).Name,
                         Price = d.OstatokQuantity != 0 ? Math.Round(d.OstatokNaklSumma / d.OstatokQuantity, 2) : 0,
@@ -427,6 +435,10 @@ namespace KursAM2.ViewModel.Logistiks
         public decimal Quantity { set; get; }
         public decimal StartQuantity { set; get; }
         public string CurrencyName { set; get; }
+        public ProductType NomenklProductType => Nomenkl?.ProductType as ProductType;
+        public NomenklType NomenklType => Nomenkl?.NomenklType as NomenklType;
+
+
     }
 
     public class NomenklOstatkiWithPrice : NomenklOstatkiForSklad
@@ -441,5 +453,6 @@ namespace KursAM2.ViewModel.Logistiks
         public decimal SummaOutWONaklad { set; get; }
         public decimal Result { set; get; }
         public decimal ResultWONaklad { set; get; }
+        
     }
 }

@@ -147,7 +147,7 @@
                             <dxg:GridColumn Name="col_1_2" Header="Ном.№" FieldName="NomenklNumber" ReadOnly="True" />
                             <dxg:GridColumn Name="col_1_3" Header="Ед.измерения" FieldName="Unit" ReadOnly="True" />
                             <dxg:GridColumn Name="col_1_4" Header="Страна проис." FieldName="Country" ReadOnly="True" />
-                            <dxg:GridColumn Name="col_1_5" Header="Тип продукции" FieldName="NomenklType"
+                            <dxg:GridColumn Name="col_1_5" Header="Тип номенклатуры" FieldName="NomenklType"
                                             ReadOnly="True" />
                             <dxg:GridColumn Name="col_1_6" Header="Услуга" FieldName="IsUsluga" ReadOnly="True" />
                             <dxg:GridColumn Name="col_1_7" Header="Накл. расход" FieldName="IsNakladExpense"

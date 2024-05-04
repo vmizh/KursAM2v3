@@ -1,7 +1,7 @@
 ﻿namespace KursDomain.IReferences.Nomenkl;
 
 /// <summary>
-///     тип продукции
+///     тип продукции -> тип номенклатуры (вид продукции)
 /// </summary>
 public interface IProductType
 {

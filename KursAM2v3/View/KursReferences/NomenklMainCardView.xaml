@@ -8,7 +8,7 @@
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
     x:Class="KursAM2.View.KursReferences.NomenklMainCardView"
-    Title="Карточка основной номенклатуры" Height="430" Width="975">
+    Title="Карточка основной номенклатуры" Height="430" Width="1020">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
                    Foreground="{Binding DatabaseColor}"
@@ -46,10 +46,10 @@
                     Width="500" />
             </StackPanel>
             <DockPanel Height="90" HorizontalAlignment="Stretch">
-                <Label DockPanel.Dock="Left" VerticalAlignment="Center">Полное имя</Label>
+                <Label DockPanel.Dock="Left" VerticalAlignment="Top">Полное имя</Label>
                 <dxe:TextEdit Margin="83,0,0,0"
                               Height="80"
-                              VerticalAlignment="Center"
+                              VerticalAlignment="Top"
                               TextWrapping="Wrap"
                               AcceptsReturn="True"
                               EditValue="{Binding NomenklMain.FullName, Mode=TwoWay}" />
@@ -82,7 +82,7 @@
                                     dx:DXSerializer.StoreLayoutMode="None"
                                     AutoPopulateColumns="False"
                                     VerticalAlignment="Center"
-                                    Width="250"
+                                    Width="225"
                                     PopupMinWidth="400"
                                     InvalidValueBehavior="AllowLeaveEditor"
                                     DisplayMember="Name"
@@ -117,17 +117,17 @@
                             </ControlTemplate>
                         </dxg:LookUpEdit.PopupContentTemplate>
                     </dxg:LookUpEdit>
-                    <Label Margin="10,0,5,0" VerticalAlignment="Center">Тип продукции</Label>
-                    <dxe:ComboBoxEdit VerticalAlignment="Center"
+                    <Label Margin="10,0,5,0" VerticalAlignment="Center" Width="110">Тип номенклатуры</Label>
+                    <dxe:ComboBoxEdit
                                       dx:DXSerializer.StoreLayoutMode="None"
                                       AutoComplete="True"
                                       ItemsSource="{Binding NomenklTypeCollection}"
                                       DisplayMember="Name"
                                       ValueMember="DocCode"
-                                      EditValue="{Binding NomenklMain.NomenklTypeDC,UpdateSourceTrigger=PropertyChanged, Mode=TwoWay,ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
-                                      SelectedItem="{Binding NomenklMain.NomenklType, UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}"
+                                      EditValue="{Binding NomenklMain.NomenklTypeDC, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
+                                      SelectedItem="{Binding NomenklMain.NomenklType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                       InvalidValueBehavior="AllowLeaveEditor"
-                                      Width="300">
+                                      Width="240" Height="23">
                         <dxe:ComboBoxEdit.Buttons>
                             <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Edit"
                                             Command="{Binding TypeProductEditCommand}" />
@@ -137,7 +137,7 @@
                     <dxe:ComboBoxEdit Name="prodeuctLookUpEdit"
                                       dx:DXSerializer.StoreLayoutMode="None"
                                       VerticalAlignment="Center"
-                                      Width="250"
+                                      Width="221"
                                       PopupMinWidth="400"
                                       ItemsSource="{Binding NomenklProductCollection}"
                                       DisplayMember="Name"
@@ -184,7 +184,7 @@
                 </dxe:ComboBoxEdit>
             </DockPanel>
             <DockPanel Height="90">
-                <Label DockPanel.Dock="Left" VerticalAlignment="Center">Примечание</Label>
+                <Label DockPanel.Dock="Left" VerticalAlignment="Top">Примечание</Label>
                 <dxe:TextEdit Height="80"
                               AcceptsReturn="True"
                               EditValue="{Binding NomenklMain.Note, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"

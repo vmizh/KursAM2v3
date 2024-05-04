@@ -100,6 +100,12 @@
                                                                   IsTextEditable="False" />
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
+                                    <dxg:GridColumn Header="Тип номенклатуры" FieldName="NomenklType" Name="Tbl1NklType"
+                                                    ReadOnly="True" />
+                                    <dxg:GridColumn Header="Вид продукции" FieldName="NomenklProductType" Name="Tbl1PrType"
+                                                    ReadOnly="True" />
+
+
                                 </dxg:GridControl.Columns>
                                 <dxg:GridControl.TotalSummary>
                                     <dxg:GridSummaryItem FieldName="Quantity" SummaryType="Sum"

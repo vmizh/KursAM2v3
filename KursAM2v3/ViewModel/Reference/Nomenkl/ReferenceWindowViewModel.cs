@@ -22,6 +22,7 @@ using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using NomenklMain = KursDomain.References.NomenklMain;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
@@ -245,10 +246,10 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var data = ctx.NomenklMain
-                        .Include(_ => _.Countries)
+                        //.Include(_ => _.Countries) ?? зачем 2 раза
                         .Include(_ => _.SD_119)
                         .Include(_ => _.SD_175)
-                        .Include(_ => _.SD_82)
+                        .Include(_ => _.SD_82)                           
                         .Include(_ => _.SD_83)
                         .Include(_ => _.Countries)
                         .Where(_ => _.CategoryDC == nomCat.DocCode)
@@ -265,6 +266,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 WindowManager.ShowError(ex);
             }
         }
+
+
 
         public override void RefreshData(object obj)
         {

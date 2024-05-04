@@ -1974,7 +1974,7 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Тип продукции
 
-    private void UpdateCacheProductType()
+    private void UpdateCacheProductType() // Вид продукции по номенклатуре
     {
         var changed = GetChangeData("SD_50", ProductTypesTrackingId);
         if (changed.Any())
@@ -2008,7 +2008,7 @@ public class ReferencesKursCache : IReferencesCache
         ProductTypesTrackingId = GetCurrentChangeTrackingId();
     }
 
-    public IProductType GetProductType(decimal dc)
+    public IProductType GetProductType(decimal dc) // Вид продукции по номенклатуре
     {
         if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
             NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheProductType();
@@ -2072,7 +2072,7 @@ public class ReferencesKursCache : IReferencesCache
         NomenklTypesTrackingId = GetCurrentChangeTrackingId();
     }
 
-    public INomenklType GetNomenklType(decimal? dc)
+    public INomenklType GetNomenklType(decimal? dc) //Тип номенклатуры
     {
         if (dc == null) return null;
         if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
@@ -2263,7 +2263,7 @@ public class ReferencesKursCache : IReferencesCache
         return GetNomenklProductType(dc.Value);
     }
 
-    public INomenklProductType GetNomenklProductType(decimal dc)
+    public INomenklProductType GetNomenklProductType(decimal dc) // тип продукции для документов
     {
         if ((DateTime.Now - lastTimeCheckTrackerId).TotalSeconds > diffSecondsForCheckTracker && IsChangeTrackingOn &&
             NomenklsTrackingId != GetCurrentChangeTrackingId()) UpdateCacheNomenklProductType();

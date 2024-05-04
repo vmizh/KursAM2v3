@@ -23,7 +23,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public ProductTypeReferenceWindowViewModel()
         {
-            WindowName = "Справочник типов товаров";
+            WindowName = "Справочник типов номенклатур";
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
             // ReSharper disable once VirtualMemberCallInConstructor
