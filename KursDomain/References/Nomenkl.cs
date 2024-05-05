@@ -153,8 +153,8 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
         Unit = refCache.GetUnit(entity.NOM_ED_IZM_DC);
         Currency = refCache.GetCurrency(entity.NOM_SALE_CRS_DC);
         Group = refCache.GetNomenklGroup(entity.NOM_CATEG_DC);
-        NomenklType = refCache.GetNomenklType(entity.NOM_TYPE_DC);
-        ProductType = refCache.GetProductType(entity.NOM_PRODUCT_DC);
+        NomenklType = NomenklMain.NomenklType;
+        ProductType = NomenklMain.ProductType;
     }
 
     public override bool Equals(object obj)
