@@ -368,7 +368,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_189.Find(ch.DocCode);
+                        var item = Context.SD_189.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -428,7 +428,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_179.Find(ch.DocCode);
+                        var item = Context.SD_179.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -510,7 +510,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_102.Find(ch.DocCode);
+                        var item = Context.SD_102.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -835,7 +835,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_111.Find(ch.DocCode);
+                        var item = Context.SD_111.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -895,7 +895,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_303.Find(ch.DocCode);
+                        var item = Context.SD_303.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -929,7 +929,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_99.Find(ch.DocCode);
+                        var item = Context.SD_99.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -1024,7 +1024,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_148.Find(ch.DocCode);
+                        var item = Context.SD_148.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -1089,7 +1089,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_301.Find(ch.DocCode);
+                        var item = Context.SD_301.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -1176,7 +1176,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_23.Find(ch.DocCode);
+                        var item = Context.SD_23.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -1241,7 +1241,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_175.Find(ch.DocCode);
+                        var item = Context.SD_175.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -1307,7 +1307,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_43.Find(ch.DocCode);
+                        var item = Context.SD_43.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -1341,7 +1341,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.UD_43.Find(ch.Code);
+                        var item = Context.UD_43.AsNoTracking().FirstOrDefault(_ => _.EG_ID == ch.Code);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -1448,7 +1448,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_27.Find(ch.DocCode);
+                        var item = Context.SD_27.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -1519,7 +1519,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_2.Find(ch.Code);
+                        var item = Context.SD_2.AsNoTracking().FirstOrDefault(_ => _.TABELNUMBER == ch.Code);
                         if (item != null)
                         {
                             if (Employees.ContainsKey(item.DOC_CODE))
@@ -1599,7 +1599,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_83.Find(ch.DocCode);
+                        var item = Context.SD_83.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I" && !Nomenkls.ContainsKey(ch.DocCode))
@@ -1706,7 +1706,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.NomenklMain.Find(ch.Id);
+                        var item = Context.NomenklMain.AsNoTracking().FirstOrDefault(_ => _.Id == ch.Id);
                         if (item != null)
                         { 
                             if (NomenklMains.ContainsKey(ch.Id))
@@ -1722,7 +1722,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                 }
 
-        NomenklsTrackingId = GetCurrentChangeTrackingId();
+        NomenklMainTrackingId = GetCurrentChangeTrackingId();
     }
 
     public IEnumerable<INomenklMain> GetNomenklMainAll()
@@ -1742,7 +1742,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_82.Find(ch.DocCode);
+                        var item = Context.SD_82.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -1810,7 +1810,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_22.Find(ch.DocCode);
+                        var item = Context.SD_22.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -1844,7 +1844,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_44.Find(ch.DocCode);
+                        var item = Context.SD_44.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -1949,7 +1949,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_114.Find(ch.DocCode);
+                        var item = Context.SD_114.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -1987,7 +1987,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_50.Find(ch.DocCode);
+                        var item = Context.SD_50.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -2051,7 +2051,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_119.Find(ch.DocCode);
+                        var item = Context.SD_119.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -2113,7 +2113,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_40.Find(ch.DocCode);
+                        var item = Context.SD_40.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -2174,7 +2174,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_103.Find(ch.DocCode);
+                        var item = Context.SD_103.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (ch.Operation == "I")
@@ -2239,7 +2239,7 @@ public class ReferencesKursCache : IReferencesCache
                         break;
                     case "I":
                     case "U":
-                        var item = Context.SD_77.Find(ch.DocCode);
+                        var item = Context.SD_77.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
                         if (item != null)
                         {
                             if (NomenklProductTypes.ContainsKey(ch.DocCode))
