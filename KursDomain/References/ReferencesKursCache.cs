@@ -1588,6 +1588,7 @@ public class ReferencesKursCache : IReferencesCache
 
     private void UpdateCacheNomenkl()
     {
+        UpdateCacheNomenklMain();
         var changed = GetChangeData("SD_83", NomenklsTrackingId).ToList();
         if (changed.Any())
             foreach (var ch in changed)
