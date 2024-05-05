@@ -966,7 +966,7 @@ namespace KursAM2.View
                         ctxvidprod.RefreshData(null);
                         form.Show();
                         break;
-                    case "Справочник типов товаров":
+                    case "Справочник типов номенклатур":
                         var ctxtypeprod = new ProductTypeReferenceWindowViewModel();
                         form = new GridFormBaseView
                         {

@@ -643,9 +643,16 @@ namespace KursAM2.ViewModel.StartLogin
             }
             catch (Exception ex)
             {
-                var errText = new StringBuilder(ex.Message);
-                while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
-                MessageBox.Show("KursSystem error.\n" + errText);
+                var showMess = @"Нет связи с сервером. Запуск системы не возможен.";
+                var TitleText = "Ошибка запуска";
+                var wm = new WindowManager();
+                var dlgRslt = wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
+                    WindowManager.Confirm);
+                Environment.Exit(1);
+
+                //var errText = new StringBuilder(ex.Message);
+                //while (ex.InnerException != null) errText.Append($"\n {ex.InnerException.Message}");
+                //MessageBox.Show("KursSystem error.\n" + errText);
             }
 
             //Version cache
