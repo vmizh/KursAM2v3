@@ -71,6 +71,8 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
         NomenklNumber = entity.NomenklNumber;
         Unit = refCache?.GetUnit(entity.UnitDC);
         Category = refCache?.GetNomenklGroup(entity.CategoryDC);
+        NomenklType = refCache?.GetNomenklType(entity.TypeDC);
+        ProductType = refCache?.GetProductType(entity.ProductDC);
         FullName = entity.FullName;
         IsUsluga = entity.IsUsluga;
         IsProguct = entity.IsComplex;

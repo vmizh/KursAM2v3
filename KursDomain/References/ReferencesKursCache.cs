@@ -775,7 +775,7 @@ public class ReferencesKursCache : IReferencesCache
                 NomenklMains.Add(item.Id, newItem);
         }
 
-        foreach (var item in Context.SD_83.AsNoTracking().ToList().ToList())
+        foreach (var item in Context.SD_83.Include(_ => _.NomenklMain).AsNoTracking().ToList().ToList())
         {
             var newItem = new Nomenkl();
             newItem.LoadFromEntity(item, this);
