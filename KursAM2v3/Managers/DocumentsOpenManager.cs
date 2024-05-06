@@ -37,6 +37,7 @@ using KursDomain.Documents.Bank;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Repository;
+using KursDomain.Services;
 
 namespace KursAM2.Managers
 {
@@ -678,16 +679,17 @@ namespace KursAM2.Managers
         ///     Расходный складской ордер
         /// </summary>
         /// <param name="dc"></param>
-        private static OrderOutWindowViewModel OpenStoreOut(decimal dc)
+        private static OrderOutWindowViewModel2 OpenStoreOut(decimal dc)
         {
-            var ctx = new OrderOutWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(), null), dc);
-            var form = new OrderOutView
+            var ctx = new OrderOutWindowViewModel2(dc, GlobalOptions.ReferencesCache,
+                null, GlobalOptions.GlobalEventAggregator, new MessageDialogService());
+            var frm = new OrderOutView2
             {
                 Owner = Application.Current.MainWindow,
                 DataContext = ctx
             };
-            ctx.Form = form;
-            form.Show();
+            ctx.Form = frm;
+            frm.Show();
             return ctx;
         }
 

@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Core.WindowsManager;
 using DevExpress.Data;
+using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -151,7 +154,13 @@ namespace KursAM2.View.Logistiks.Warehouse
                     case nameof(doc.State):
                         e.Item.IsReadOnly = true;
                         e.Item.Visibility = Visibility.Visible;
-                        if (e.Item.Content is ComboBoxEdit cbState) cbState.AllowDefaultButton = false;
+                        if (e.Item.Content is ComboBoxEdit cbState)
+                        {
+                            cbState.AllowDefaultButton = false;
+                            cbState.PopupOpened += OrderOutView2_PopupOpened;
+                            cbState.FontWeight = FontWeights.Bold;
+                            cbState.EditValueChanged += OrderOutView2_EditValueChanged;
+                        }
                         e.Item.HorizontalAlignment = HorizontalAlignment.Right;
                         break;
                     case nameof(doc.Note):
@@ -167,6 +176,30 @@ namespace KursAM2.View.Logistiks.Warehouse
             {
                 WindowManager.ShowError(ex);
             }
+        }
+
+        private void OrderOutView2_EditValueChanged(object sender, EditValueChangedEventArgs e)
+        {
+            switch ((RowStatus)e.NewValue)
+            {
+                case RowStatus.NewRow:
+                    ((ComboBoxEdit)sender).Foreground = Brushes.Red;
+                    break;
+                case RowStatus.NotEdited:
+                    ((ComboBoxEdit)sender).Foreground = Brushes.Green;
+                    break;
+                case RowStatus.Edited:
+                    ((ComboBoxEdit)sender).Foreground = Brushes.Blue;
+                    break;
+                default:
+                    ((ComboBoxEdit)sender).Foreground = Brushes.Black;
+                    break;
+            }
+        }
+
+        private void OrderOutView2_PopupOpened(object sender, RoutedEventArgs e)
+        {
+            ((ComboBoxEdit)sender).IsPopupOpen = false;  
         }
 
         private void WOutCB_EditValueChanged(object sender, EditValueChangedEventArgs e)

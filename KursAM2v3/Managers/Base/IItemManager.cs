@@ -8,8 +8,8 @@ namespace KursAM2.Managers.Base
         List<T> LoadList();
         T Load(decimal dc);
         T Load(Guid id);
-        T New();
-        T NewCopy(T item);
+        T New(decimal newDC = -1);
+        T NewCopy(T item, decimal newDC = -1);
 
         bool Save(IEnumerable<T> items);
         bool Delete(IEnumerable<T> items);

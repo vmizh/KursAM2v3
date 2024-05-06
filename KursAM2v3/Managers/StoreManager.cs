@@ -42,32 +42,32 @@ namespace KursAM2.Managers
             return ret;
         }
 
-        public override WarehouseViewModel New(WarehouseViewModel parent = null)
+        public override WarehouseViewModel New(WarehouseViewModel parent = null, decimal newDC = -1)
         {
             return new WarehouseViewModel
             {
-                DocCode = -1,
+                DocCode = newDC,
                 Id = Guid.NewGuid(),
                 State = RowStatus.NewRow,
                 ParentId = parent?.Id
             };
         }
 
-        public override WarehouseViewModel New()
+        public override WarehouseViewModel New(decimal newDC = -1)
         {
             return new WarehouseViewModel
             {
-                DocCode = -1,
+                DocCode = newDC,
                 Id = Guid.NewGuid(),
                 State = RowStatus.NewRow
             };
         }
 
-        public override WarehouseViewModel NewCopy(WarehouseViewModel u)
+        public override WarehouseViewModel NewCopy(WarehouseViewModel u, decimal newDC = -1)
         {
             return new WarehouseViewModel
             {
-                DOC_CODE = -1,
+                DOC_CODE = newDC,
                 Id = Guid.NewGuid(),
                 ParentId = u.ParentId,
                 State = RowStatus.NewRow,

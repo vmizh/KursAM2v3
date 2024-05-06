@@ -35,33 +35,33 @@ namespace KursAM2.Managers.Nomenkl
             return ret;
         }
 
-        public override UnitViewModel New()
+        public override UnitViewModel New(decimal newDC =-1)
         {
             return new UnitViewModel
             {
-                DOC_CODE = -1,
+                DOC_CODE = newDC,
                 State = RowStatus.NewRow,
                 ED_IZM_MONEY = 0,
                 ED_IZM_INT = 1
             };
         }
 
-        public override UnitViewModel New(UnitViewModel u = default)
+        public override UnitViewModel New(UnitViewModel u = default, decimal newDC = -1)
         {
             return new UnitViewModel
             {
-                DOC_CODE = -1,
+                DOC_CODE = newDC,
                 State = RowStatus.NewRow,
                 ED_IZM_MONEY = 0,
                 ED_IZM_INT = 1
             };
         }
 
-        public override UnitViewModel NewCopy(UnitViewModel u)
+        public override UnitViewModel NewCopy(UnitViewModel u, decimal newDC = -1)
         {
             return new UnitViewModel
             {
-                DOC_CODE = -1,
+                DOC_CODE = newDC,
                 State = RowStatus.NewRow,
                 ED_IZM_OKEI = null,
                 ED_IZM_OKEI_CODE = null,

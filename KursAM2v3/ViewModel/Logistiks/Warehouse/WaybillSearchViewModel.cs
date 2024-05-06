@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,10 +6,8 @@ using System.Windows;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using DevExpress.Mvvm;
 using KursAM2.Managers;
 using KursAM2.Repositories;
-using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks.Warehouse;
 using KursDomain;
@@ -63,7 +60,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
             //StartDate = DateTime.Today.AddDays(-30);
             //начальная дата поиска - 1-е число предыдущего месяца или 1-го января
-            StartDate = new DateTime(DateTime.Today.Year, ((DateTime.Today.Month != 1) ? (DateTime.Today.Month - 1) : 1), 1);
+            StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month != 1 ? DateTime.Today.Month - 1 : 1, 1);
             EndDate = DateTime.Today;
         }
 
@@ -103,7 +100,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         }
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
-        
+
         //public override bool IsDocNewCopyAllow => CurrentDocument != null;
         public override bool IsDocNewCopyAllow => false;
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
@@ -209,8 +206,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new WayBillView2 {Owner = Application.Current.MainWindow};
-            var ctx = new WaybillWindowViewModel2(null) {Form = frm};
+            var frm = new WayBillView2 { Owner = Application.Current.MainWindow };
+            var ctx = new WaybillWindowViewModel2(null) { Form = frm };
             frm.DataContext = ctx;
             frm.Show();
         }
@@ -218,7 +215,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocNewCopy(object obj)
         {
             if (CurrentDocument == null) return;
-            var frm = new WayBillView2 {Owner = Application.Current.MainWindow};
+            var frm = new WayBillView2 { Owner = Application.Current.MainWindow };
             var ctx = new WaybillWindowViewModel2(null)
             {
                 Form = frm, Document = DocManager.NewWaybillCopy(CurrentDocument.DocCode)
@@ -231,13 +228,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void DocNewCopyRequisite(object obj)
         {
             if (CurrentDocument == null) return;
-            var frm = new WayBillView2 {Owner = Application.Current.MainWindow};
+            var frm = new WayBillView2 { Owner = Application.Current.MainWindow };
             var ctx = new WaybillWindowViewModel2(null)
-                {Form = frm};
+                { Form = frm };
             ctx.Document = DocManager.NewWaybillRecuisite(CurrentDocument.DocCode);
             frm.DataContext = ctx;
-            ctx.DocCurrencyVisible =  Visibility.Visible;
-            
+            ctx.DocCurrencyVisible = Visibility.Visible;
+
             //ctx.Document.RaisePropertyChanged("DocCurrency");
 
             frm.Show();

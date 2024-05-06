@@ -25,24 +25,27 @@ namespace KursAM2.Managers.Base
             throw new NotImplementedException();
         }
 
-        public virtual T New()
+        public virtual T New(decimal newDC =-1)
         {
             throw new NotImplementedException();
         }
 
-        public virtual T NewCopy(T item)
+        public virtual T NewCopy(T item, decimal newDC = -1)
+        {
+            throw new NotImplementedException();
+        }
+        
+        public virtual T New(T parentItem = default, decimal newDC = -1)
         {
             throw new NotImplementedException();
         }
 
+        
         public virtual bool Save(IEnumerable<T> items)
         {
             throw new NotImplementedException();
         }
 
-        public virtual T New(T parentItem = default)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }
