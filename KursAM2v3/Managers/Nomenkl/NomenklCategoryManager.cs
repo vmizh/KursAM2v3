@@ -35,21 +35,21 @@ namespace KursAM2.Managers.Nomenkl
             return ret;
         }
 
-        public override NomenklGroupViewModel New(NomenklGroupViewModel parent = null)
+        public override NomenklGroupViewModel New(NomenklGroupViewModel parent = null, decimal newDC =-1)
         {
             return new NomenklGroupViewModel
             {
-                DocCode = -1,
+                DocCode = newDC,
                 State = RowStatus.NewRow,
                 ParentDC = parent?.DocCode
             };
         }
 
-        public override NomenklGroupViewModel NewCopy(NomenklGroupViewModel u)
+        public override NomenklGroupViewModel NewCopy(NomenklGroupViewModel u, decimal newDC = -1)
         {
             return new NomenklGroupViewModel
             {
-                DocCode = -1,
+                DocCode = newDC,
                 State = RowStatus.NewRow,
                 Name = u.Name + "новый"
             };

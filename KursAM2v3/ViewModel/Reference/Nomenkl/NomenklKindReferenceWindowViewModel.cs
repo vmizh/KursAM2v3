@@ -14,6 +14,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         #region Fields
 
         private readonly NomenklProductKindManager NomenklProductKindManager = new NomenklProductKindManager();
+        private int myNewDC = 0;
 
         #endregion
 
@@ -58,19 +59,19 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         public override void ItemNewEmpty(object obj)
         {
             var parent = Rows.FirstOrDefault(_ => _.DocCode == CurrentRow?.ParentDC);
-            var newItem = NomenklProductKindManager.New(parent);
+            var newItem = NomenklProductKindManager.New(parent, myNewDC--);
             SetNewItemInControl(newItem);
         }
 
         public override void ItemNewChildEmpty(object obj)
         {
-            var newItem = NomenklProductKindManager.New((NomenklProductKind)CurrentRow);
+            var newItem = NomenklProductKindManager.New((NomenklProductKind)CurrentRow,myNewDC--);
             SetNewItemInControl(newItem);
         }
 
         public override void ItemNewCopy(object obj)
         {
-            var newItem = NomenklProductKindManager.NewCopy((NomenklProductKind)CurrentRow);
+            var newItem = NomenklProductKindManager.NewCopy((NomenklProductKind)CurrentRow,myNewDC--);
             SetNewItemInControl(newItem);
         }
 
@@ -108,6 +109,16 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public override bool IsCanSaveData =>
             (Rows != null && Rows.Any(_ => _.State != RowStatus.NotEdited)) || DeletedRows.Count > 0;
+
+        public override bool IsRowsNotContainsChilds()
+        {
+            //var lst = new List<RSViewModelBase>(new List<RSViewModelBase>(Rows));
+            //lst.AddRange(new List<RSViewModelBase>(DeletedRows));
+            foreach (var r in SelectedRows)
+                if (Rows.Any(_ => _.ParentDC == r.DocCode))
+                    return false;
+            return true;
+        }
 
         #endregion
     }

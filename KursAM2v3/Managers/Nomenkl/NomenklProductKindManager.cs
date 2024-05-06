@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Core;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
@@ -37,21 +35,21 @@ namespace KursAM2.Managers.Nomenkl
             return ret;
         }
 
-        public override NomenklProductKind New(NomenklProductKind parent = null)
+        public override NomenklProductKind New(NomenklProductKind parent = null, decimal newDC = -1)
         {
             return new NomenklProductKind
             {
-                DocCode = -1,
+                DocCode = newDC,
                 State = RowStatus.NewRow,
                 ParentDC = parent?.DocCode
             };
         }
 
-        public override NomenklProductKind NewCopy(NomenklProductKind u)
+        public override NomenklProductKind NewCopy(NomenklProductKind u, decimal newDC = -1)
         {
             return new NomenklProductKind
             {
-                DOC_CODE = -1,
+                DOC_CODE = newDC,
                 State = RowStatus.NewRow,
                 Name = u.Name + "новый",
                 ParentDC = u.ParentDC

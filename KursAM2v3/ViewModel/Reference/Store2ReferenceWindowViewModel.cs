@@ -194,7 +194,7 @@ namespace KursAM2.ViewModel.Reference
 
         public override void ItemNewEmpty(object obj)
         {
-            var newItem = Manager.New();
+            var newItem = Manager.New(-1);
             Rows.Add(newItem);
             SetNewItemInControl(newItem);
         }

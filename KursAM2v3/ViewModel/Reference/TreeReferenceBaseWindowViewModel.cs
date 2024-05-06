@@ -107,17 +107,17 @@ namespace KursAM2.ViewModel.Reference
 
         public virtual bool IsRowsNotContainsChilds()
         {
-            var lst = new List<RSViewModelBase>(new List<RSViewModelBase>(Rows));
-            lst.AddRange(new List<RSViewModelBase>(DeletedRows));
+            //var lst = new List<RSViewModelBase>(new List<RSViewModelBase>(Rows));
+            //lst.AddRange(new List<RSViewModelBase>(DeletedRows));
             foreach (var r in SelectedRows)
-                if (lst.Any(_ => _.ParentDC == r.DocCode))
+                if (Rows.Any(_ => _.ParentDC == r.DocCode))
                     return false;
             return true;
         }
 
         public virtual bool IsCanDelete()
         {
-            return CurrentRow != null;
+            return CurrentRow != null && IsRowsNotContainsChilds();
         }
 
         public ICommand ItemDeleteCommand

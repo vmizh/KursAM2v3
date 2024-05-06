@@ -37,11 +37,11 @@ namespace KursAM2.Managers.Nomenkl
             return ret;
         }
 
-        public override NomenklProductType New()
+        public override NomenklProductType New(decimal newDC = -1)
         {
             return new NomenklProductType
             {
-                DOC_CODE = -1,
+                DOC_CODE = newDC,
                 State = RowStatus.NewRow,
                 MC_DELETED = 0,
                 MC_PROC_OTKL = 0,
@@ -51,11 +51,11 @@ namespace KursAM2.Managers.Nomenkl
             };
         }
 
-        public override NomenklProductType NewCopy(NomenklProductType u)
+        public override NomenklProductType NewCopy(NomenklProductType u, decimal newDC = -1)
         {
             return new NomenklProductType
             {
-                DOC_CODE = -1,
+                DOC_CODE = newDC,
                 State = RowStatus.NewRow,
                 MC_NAME = u.Name,
                 MC_DELETED = 0,

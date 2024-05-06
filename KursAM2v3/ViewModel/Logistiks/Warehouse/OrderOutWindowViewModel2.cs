@@ -14,6 +14,7 @@ using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
+using KursAM2.Managers;
 using KursAM2.ReportManagers;
 using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.ViewModel.Logistiks.AktSpisaniya;
@@ -227,12 +228,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     {
                         frm.docDateEditor.IsReadOnly = true;
                         frm.docDateEditor.AllowDefaultButton = false;
-                        frm.comboWarehouseOut.IsReadOnly = true;
-                        frm.comboWarehouseOut.AllowDefaultButton = false;
+                        if (frm.comboWarehouseOut != null)
+                        {
+                            frm.comboWarehouseOut.IsReadOnly = true;
+                            frm.comboWarehouseOut.AllowDefaultButton = false;
+                        }
                     }
 
                 if (Document.Rows.Count > 0)
-                    if (frm != null)
+                    if (frm != null && frm.comboWarehouseIn != null)
                     {
                         frm.comboWarehouseIn.IsReadOnly = true;
                         frm.comboWarehouseIn.AllowDefaultButton = false;
@@ -244,10 +248,17 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 {
                     frm.docDateEditor.IsReadOnly = false;
                     frm.docDateEditor.AllowDefaultButton = true;
-                    frm.comboWarehouseOut.IsReadOnly = false;
-                    frm.comboWarehouseOut.AllowDefaultButton = true;
-                    frm.comboWarehouseIn.IsReadOnly = false;
-                    frm.comboWarehouseIn.AllowDefaultButton = true;
+                    if (frm.comboWarehouseOut != null)
+                    {
+                        frm.comboWarehouseOut.IsReadOnly = false;
+                        frm.comboWarehouseOut.AllowDefaultButton = true;
+                    }
+
+                    if (frm.comboWarehouseIn != null)
+                    {
+                        frm.comboWarehouseIn.IsReadOnly = false;
+                        frm.comboWarehouseIn.AllowDefaultButton = true;
+                    }
                 }
             }
         }
@@ -419,6 +430,17 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         State = RowStatus.NewRow
                     });
                 }
+            UpdateMaxQuantity(Document.DocDate);
+        }
+
+        public ICommand OrderInOpenCommand
+        {
+            get { return new Command(OrderInOpen, _ => CurrentRow?.WarehouseOrderIn != null); }
+        }
+
+        private void OrderInOpen(object obj)
+        {
+            DocumentsOpenManager.Open(DocumentType.StoreOrderIn,CurrentRow.WarehouseOrderIn.DocCode);
         }
 
         public ICommand AddNomenklStoreCommand
@@ -439,7 +461,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.Nomenkl.DocCode))
                 {
-                    var nPrice = myNomenklManager.GetNomenklPrice(n.Nomenkl.DocCode, Document.DocDate);
                     var newItem = new WarehouseOutRowWrapper(new TD_24(), myCache, myContext, myWrapperEventAggregator,
                         myMessageDialogService)
                     {
@@ -461,6 +482,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
                 newCode++;
             }
+            UpdateMaxQuantity(Document.DocDate);
         }
 
         public override void SaveData(object data)
