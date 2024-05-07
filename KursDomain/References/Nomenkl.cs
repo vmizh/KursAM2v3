@@ -137,7 +137,6 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
         Name = entity.NOM_NAME;
         FullName = entity.NOM_FULL_NAME;
         Notes = entity.NOM_NOTES;
-        NomenklNumber = entity.NOM_NOMENKL;
         IsUsluga = entity.NOM_0MATER_1USLUGA == 1;
         IsProguct = entity.NOM_1PROD_0MATER == 1;
         IsNakladExpense = entity.NOM_1NAKLRASH_0NO == 1;
@@ -150,6 +149,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
         NomenklMain = refCache.GetNomenklMain(entity.MainId);
         if (NomenklMain.IsCurrencyTransfer != IsCurrencyTransfer)
             IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer;
+        NomenklNumber = NomenklMain.NomenklNumber + ' ' + refCache.GetCurrency(entity.NOM_SALE_CRS_DC);
         Unit = refCache.GetUnit(entity.NOM_ED_IZM_DC);
         Currency = refCache.GetCurrency(entity.NOM_SALE_CRS_DC);
         Group = refCache.GetNomenklGroup(entity.NOM_CATEG_DC);
