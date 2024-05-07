@@ -254,7 +254,9 @@ namespace KursAM2.ViewModel.Logistiks
                         Price = d.OstatokQuantity != 0 ? Math.Round(d.OstatokNaklSumma / d.OstatokQuantity, 2) : 0,
                         PriceWONaklad = d.OstatokQuantity != 0 ? Math.Round(d.OstatokSumma / d.OstatokQuantity, 2) : 0,
                         Summa = d.OstatokNaklSumma,
-                        SummaWONaklad = d.OstatokSumma
+                        SummaWONaklad = d.OstatokSumma,
+                        Reserved = d.Reserved
+                        
                     });
         }
 
@@ -323,6 +325,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void loadDocumentsForNomenkl()
         {
+            if (CurrentWarehouse == null) return;
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var clc = new NomenklCostMediumSliding(ctx);
@@ -453,6 +456,7 @@ namespace KursAM2.ViewModel.Logistiks
         public decimal SummaOutWONaklad { set; get; }
         public decimal Result { set; get; }
         public decimal ResultWONaklad { set; get; }
+        public decimal Reserved { set; get; }
         
     }
 }

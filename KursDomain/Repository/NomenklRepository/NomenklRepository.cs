@@ -36,6 +36,7 @@ public class NomenklQuantityInfo
     public decimal OstatokQuantity { set; get; }
     public decimal OstatokSumma { set; get; }
     public decimal OstatokNaklSumma { set; get; }
+    public decimal Reserved { set; get; }
 
 }
 

@@ -100,6 +100,14 @@
                                                                   IsTextEditable="False" />
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
+                                    <dxg:GridColumn Name="cols_16" Header="Зарезервировано" FieldName="Reserved"
+                                                    ReadOnly="True">
+                                        <dxg:GridColumn.EditSettings>
+                                            <dxe:CalcEditSettings DisplayFormat="n2"
+                                                                  AllowDefaultButton="False"
+                                                                  IsTextEditable="False" />
+                                        </dxg:GridColumn.EditSettings>
+                                    </dxg:GridColumn>
                                     <dxg:GridColumn Header="Тип номенклатуры" FieldName="NomenklType" Name="Tbl1NklType"
                                                     ReadOnly="True" />
                                     <dxg:GridColumn Header="Вид продукции" FieldName="NomenklProductType" Name="Tbl1PrType"
