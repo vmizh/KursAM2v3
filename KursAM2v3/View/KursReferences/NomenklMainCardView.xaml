@@ -8,7 +8,7 @@
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
     x:Class="KursAM2.View.KursReferences.NomenklMainCardView"
-    Title="Карточка основной номенклатуры" Height="430" Width="1020">
+    Title="Карточка основной номенклатуры" Height="460" Width="1045">
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
                    Foreground="{Binding DatabaseColor}"
@@ -23,15 +23,15 @@
                             Margin="0,0,5,0" 
                             dx:DXSerializer.SerializationID="mainLayoutControl"
                             dx:DXSerializer.StoreLayoutMode="UI"/>
-        <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Vertical" Width="962" Height="365">
             <StackPanel Orientation="Horizontal">
-                <Label VerticalAlignment="Center">Номенклатурный номер</Label>
+                <Label VerticalAlignment="Top">Номенклатурный номер</Label>
                 <dxe:TextEdit
                     EditValue="{Binding NomenklMain.NomenklNumber, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
                     NullText="&lt;автоматически&gt;"
                     DockPanel.Dock="Left"
                     Width="200"
-                    Margin="15,0,0,0"
+                    Margin="15,0,0,10"
                     VerticalAlignment="Center" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
@@ -40,19 +40,26 @@
                     EditValue="{Binding NomenklMain.Name, UpdateSourceTrigger=PropertyChanged, 
                     ValidatesOnDataErrors=True, ValidatesOnExceptions=True}"
                     DockPanel.Dock="Left"
-                    Margin="67,0,0,0"
-                    HorizontalAlignment="Left"
+                    Margin="66,0,0,0"
                     VerticalAlignment="Stretch"
-                    Width="500" />
+                    Width="494" />
             </StackPanel>
             <DockPanel Height="90" HorizontalAlignment="Stretch">
                 <Label DockPanel.Dock="Left" VerticalAlignment="Top">Полное имя</Label>
-                <dxe:TextEdit Margin="83,0,0,0"
+                <dxe:TextEdit Margin="70,0,0,0"
                               Height="80"
-                              VerticalAlignment="Top"
                               TextWrapping="Wrap"
                               AcceptsReturn="True"
-                              EditValue="{Binding NomenklMain.FullName, Mode=TwoWay}" />
+                              EditValue="{Binding NomenklMain.FullName, Mode=TwoWay}" Width="798"  >
+                    <dxe:TextEdit.RenderTransform>
+                        <TransformGroup>
+                            <ScaleTransform/>
+                            <SkewTransform AngleY="-0.077"/>
+                            <RotateTransform/>
+                            <TranslateTransform Y="-0.553"/>
+                        </TransformGroup>
+                    </dxe:TextEdit.RenderTransform>
+                </dxe:TextEdit>
             </DockPanel>
             <StackPanel Orientation="Horizontal">
                 <Label DockPanel.Dock="Left" VerticalAlignment="Center" Margin="4,0,0,0" Width="49">Услуга</Label>
@@ -137,7 +144,7 @@
                     <dxe:ComboBoxEdit Name="prodeuctLookUpEdit"
                                       dx:DXSerializer.StoreLayoutMode="None"
                                       VerticalAlignment="Center"
-                                      Width="221"
+                                      Width="199"
                                       PopupMinWidth="400"
                                       ItemsSource="{Binding NomenklProductCollection}"
                                       DisplayMember="Name"
@@ -183,14 +190,13 @@
                     </dxe:ComboBoxEdit.Buttons>
                 </dxe:ComboBoxEdit>
             </DockPanel>
-            <DockPanel Height="90">
-                <Label DockPanel.Dock="Left" VerticalAlignment="Top">Примечание</Label>
-                <dxe:TextEdit Height="80"
+            <DockPanel Height="90" Width="956">
+                <Label DockPanel.Dock="Left" VerticalAlignment="Top" Content="Примечание"/>
+                <dxe:TextEdit Height="70"
                               AcceptsReturn="True"
-                              EditValue="{Binding NomenklMain.Note, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                              EditValue="{Binding NomenklMain.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               TextWrapping="Wrap"
-                              Margin="80,0,0,0"
-                              VerticalAlignment="Center" />
+                              Margin="68,0,0,0" Width="799"  />
             </DockPanel>
         </StackPanel>
     </DockPanel>
