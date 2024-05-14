@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -13,7 +12,6 @@ using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Mvvm.Xpf;
-using DevExpress.XtraCharts.GLGraphics;
 using Helper;
 using KursAM2.Managers.Nomenkl;
 using KursAM2.View.DialogUserControl.ViewModel;
@@ -22,18 +20,17 @@ using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
-using NomenklMain = KursDomain.References.NomenklMain;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
     public sealed class ReferenceWindowViewModel : RSWindowViewModelBase
     {
+        private readonly WindowManager WinManager = new WindowManager();
         private NomenklGroupViewModel myCurrentCategory;
         private NomenklViewModel myCurrentNomenkl;
         private NomenklMainViewModel myCurrentNomenklMain;
         private bool myIsCanChangeCurrency;
         private bool myIsCategoryEnabled;
-        readonly WindowManager WinManager = new WindowManager();
 
         public ReferenceWindowViewModel()
         {
@@ -49,14 +46,18 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         public ObservableCollection<NomenklGroupViewModel> CategoryCollection { set; get; } =
             new ObservableCollection<NomenklGroupViewModel>();
 
-        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<NomenklMainViewModel> NomenklMainCollection { set; get; } =
             new ObservableCollection<NomenklMainViewModel>();
+
+        public ObservableCollection<NomenklViewModel> CurrentNomenklCollection { set; get; }
+            = new ObservableCollection<NomenklViewModel>();
 
         public ObservableCollection<Currency> CurrencyCollection { set; get; }
 
         public ObservableCollection<Currency> CurrencyCollectionForNomenklMain { set; get; }
             = new ObservableCollection<Currency>();
+
+        public override string LayoutName => "NomenklReferenceWindowViewModel";
 
         //public bool IsSearchTextNull => 
         public bool IsCanChangeCurrency
@@ -145,8 +146,11 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 myCurrentCategory = value;
                 if (myCurrentCategory == null)
                 {
-                    NomenklMainCollection.Clear();
-                    RaisePropertyChanged(nameof(NomenklMainCollection));
+                    if (NomenklMainCollection != null)
+                    {
+                        NomenklMainCollection.Clear();
+                        RaisePropertyChanged(nameof(NomenklMainCollection));
+                    }
                 }
                 else
                 {
@@ -158,8 +162,6 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         }
 
         public override bool IsCanSaveData => CategoryCollection.Any(_ => _.State != RowStatus.NotEdited) ||
-                                              NomenklMainCollection.Any(_ => _.State != RowStatus.NotEdited)
-                                              ||
                                               (CurrentNomenklMain != null &&
                                                CurrentNomenklMain.NomenklCollection.Any(_ =>
                                                    _.State != RowStatus.NotEdited) &&
@@ -202,33 +204,38 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         private void LoadNomenklForMain(NomenklMainViewModel main)
         {
-            main.NomenklCollection.Clear();
+            //main.NomenklCollection.Clear();
+            CurrentNomenklCollection.Clear();
             try
             {
-                using (var ctx = GlobalOptions.GetEntities())
+                foreach (var nom in CurrentNomenklMain.NomenklCollection)
                 {
-                    var noms = (from n in ctx.SD_83
-                        join sd301 in ctx.SD_301 on n.NOM_SALE_CRS_DC equals sd301.DOC_CODE
-                        where n.MainId == main.Id
-                        select new NomenklViewModel
-                        {
-                            DocCode = n.DOC_CODE,
-                            Name = n.NOM_NAME,
-                            NomenklNumber = n.NOM_NOMENKL,
-                            NameFull = n.NOM_FULL_NAME,
-                            NOM_SALE_CRS_DC = sd301.DOC_CODE,
-                            Note = n.NOM_NOTES,
-                            IsRentabelnost = n.IsUslugaInRent ?? false
-                        }).ToList();
-                    foreach (var nom in noms)
-                    {
-                        nom.Parent = CurrentNomenklMain;
-                        main.NomenklCollection.Add(nom);
-                        nom.State = RowStatus.NotEdited;
-                    }
-
-                    CurrentNomenklMain.State = RowStatus.NotEdited;
+                    CurrentNomenklCollection.Add(nom);
                 }
+                //using (var ctx = GlobalOptions.GetEntities())
+                //{
+                //    var noms = (from n in ctx.SD_83
+                //        join sd301 in ctx.SD_301 on n.NOM_SALE_CRS_DC equals sd301.DOC_CODE
+                //        where n.MainId == main.Id
+                //        select new NomenklViewModel
+                //        {
+                //            DocCode = n.DOC_CODE,
+                //            Name = n.NOM_NAME,
+                //            NomenklNumber = n.NOM_NOMENKL,
+                //            NameFull = n.NOM_FULL_NAME,
+                //            NOM_SALE_CRS_DC = sd301.DOC_CODE,
+                //            Note = n.NOM_NOTES,
+                //            IsRentabelnost = n.IsUslugaInRent ?? false
+                //        }).ToList();
+                //    foreach (var nom in noms)
+                //    {
+                //        nom.Parent = CurrentNomenklMain;
+                //        main.NomenklCollection.Add(nom);
+                //        nom.State = RowStatus.NotEdited;
+                //    }
+
+                //    CurrentNomenklMain.State = RowStatus.NotEdited;
+                //}
             }
             catch (Exception ex)
             {
@@ -241,16 +248,17 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             var nomCat = nomenklGroup ?? CurrentCategory;
             if (nomCat == null) return;
             NomenklMainCollection.Clear();
+            CurrentNomenklCollection.Clear();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     var data = ctx.NomenklMain
-                        //.Include(_ => _.Countries) ?? зачем 2 раза
                         .Include(_ => _.SD_119)
                         .Include(_ => _.SD_175)
-                        .Include(_ => _.SD_82)                           
+                        .Include(_ => _.SD_82)
                         .Include(_ => _.SD_83)
+                        .Include(_ => _.SD_50)
                         .Include(_ => _.Countries)
                         .Where(_ => _.CategoryDC == nomCat.DocCode)
                         .ToList();
@@ -266,7 +274,6 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 WindowManager.ShowError(ex);
             }
         }
-
 
 
         public override void RefreshData(object obj)
@@ -291,41 +298,45 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             CategoryCollection.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
-                foreach (var grp in ctx.SD_82.ToList())
-                    CategoryCollection.Add(new NomenklGroupViewModel(grp)
-                    {
-                        State = RowStatus.NotEdited
-                    });
-            }
-
-            CalcCommonSum();
-        }
-
-        private void CalcCommonSum()
-        {
-            var parents = CategoryCollection.Select(_ => _.ParentDC).Distinct().ToList();
-            var lasts = new List<NomenklGroupViewModel>();
-            foreach (var n in CategoryCollection)
-                if (parents.All(_ => _ != n.DocCode))
-                    lasts.Add(n);
-            foreach (var node in lasts)
-            {
-                node.NomenklCount =
-                    GlobalOptions.ReferencesCache.GetNomenklsAll()
-                        .Count(_ => ((IDocCode)_.Group).DocCode == node.DocCode);
-                var prevn = node;
-                var n = CategoryCollection.FirstOrDefault(_ => _.DocCode == node.ParentDC);
-                if (n == null) continue;
-                while (n != null)
+                foreach (var newItem in ctx.SD_82.ToList().Select(grp => new NomenklGroupViewModel(grp)
+                         {
+                             State = RowStatus.NotEdited
+                         }))
                 {
-                    var c = GlobalOptions.ReferencesCache.GetNomenklsAll()
-                        .Count(_ => ((IDocCode)_.Group).DocCode == n.DocCode);
-                    n.NomenklCount = n.NomenklCount + prevn.NomenklCount + c;
-                    prevn = n;
-                    n = CategoryCollection.FirstOrDefault(_ => _.DocCode == n.ParentDC);
+                    newItem.NomenklCount = GlobalOptions.ReferencesCache.GetNomenklGroup(newItem.DocCode).NomenklCount;
+                    CategoryCollection.Add(newItem);
                 }
             }
+
+            //CalcCommonSum();
         }
+
+
+        //private void CalcCommonSum()
+        //{
+        //    var parents = CategoryCollection.Select(_ => _.ParentDC).Distinct().ToList();
+        //    var lasts = new List<NomenklGroupViewModel>();
+        //    foreach (var n in CategoryCollection)
+        //        if (parents.All(_ => _ != n.DocCode))
+        //            lasts.Add(n);
+        //    foreach (var node in lasts)
+        //    {
+        //        node.NomenklCount =
+        //            GlobalOptions.ReferencesCache.GetNomenklsAll()
+        //                .Count(_ => ((IDocCode)_.Group).DocCode == node.DocCode);
+        //        var prevn = node;
+        //        var n = CategoryCollection.FirstOrDefault(_ => _.DocCode == node.ParentDC);
+        //        if (n == null) continue;
+        //        while (n != null)
+        //        {
+        //            var c = GlobalOptions.ReferencesCache.GetNomenklsAll()
+        //                .Count(_ => ((IDocCode)_.Group).DocCode == n.DocCode);
+        //            n.NomenklCount = n.NomenklCount + prevn.NomenklCount + c;
+        //            prevn = n;
+        //            n = CategoryCollection.FirstOrDefault(_ => _.DocCode == n.ParentDC);
+        //        }
+        //    }
+        //}
 
         private void SaveNomenkl(NomenklViewModel nom)
         {
@@ -384,6 +395,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                     }
                 }
             }
+
             if (state == RowStatus.NewRow)
                 GlobalOptions.ReferencesCache.GetNomenkl(newDC);
         }
@@ -455,9 +467,10 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             using (var ctx = GlobalOptions.GetEntities())
             {
                 return CurrentNomenkl != null && !(ctx.TD_24.Any(_ => _.DDT_NOMENKL_DC == CurrentNomenkl.DocCode)
-                                               || ctx.TD_26.Any(_ => _.SFT_NEMENKL_DC == CurrentNomenkl.DocCode)
-                                               || ctx.TD_84.Any(_ => _.SFT_NEMENKL_DC == CurrentNomenkl.DocCode)
-                                               || ctx.TD_26_CurrencyConvert.Any(_ => _.NomenklId == CurrentNomenkl.Id));
+                                                   || ctx.TD_26.Any(_ => _.SFT_NEMENKL_DC == CurrentNomenkl.DocCode)
+                                                   || ctx.TD_84.Any(_ => _.SFT_NEMENKL_DC == CurrentNomenkl.DocCode)
+                                                   || ctx.TD_26_CurrencyConvert.Any(_ =>
+                                                       _.NomenklId == CurrentNomenkl.Id));
             }
         }
 
@@ -472,7 +485,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Question);
             if (res == MessageBoxResult.No) return;
-            
+
             using (var ctx = GlobalOptions.GetEntities())
             {
                 using (var tnx = ctx.Database.BeginTransaction())
@@ -598,14 +611,18 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         {
             using (var dbContext = GlobalOptions.GetEntities())
             {
-                var nm = dbContext.NomenklMain.Single(_ => _.Id == CurrentNomenklMain.Id);
+                //var nm = dbContext.NomenklMain
+                //    .Include(_ => _.SD_119)
+                //    .Include(_ => _.SD_175)
+                //    .Include(_ => _.SD_82)
+                //    .Include(_ => _.SD_83)
+                //    .Include(_ => _.SD_50)
+                //    .Include(_ => _.Countries)
+                //    .Single(_ => _.Id == CurrentNomenklMain.Id);
                 var ctx = new MainCardWindowViewModel
                 {
                     ParentReference = this,
-                    NomenklMain = new NomenklMainViewModel(nm)
-                    {
-                        State = RowStatus.NotEdited
-                    }
+                    NomenklMain = CurrentNomenklMain
                 };
                 // ReSharper disable once UseObjectOrCollectionInitializer
                 var form = new NomenklMainCardView { Owner = Application.Current.MainWindow };
@@ -861,7 +878,9 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public override void Search(object obj)
         {
+            CurrentNomenklCollection.Clear();
             NomenklMainCollection.Clear();
+            //return;
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
@@ -871,6 +890,9 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         .Include(_ => _.SD_119)
                         .Include(_ => _.SD_175)
                         .Include(_ => _.SD_82)
+                        .Include(_ => _.SD_82)
+                        .Include(_ => _.SD_50)
+                        .AsNoTracking()
                         .Where(_ => _.FullName.ToUpper().Contains(SearchText.ToUpper()) ||
                                     _.Name.ToUpper().Contains(SearchText.ToUpper()) ||
                                     _.NomenklNumber.ToUpper().Contains(SearchText.ToUpper()) ||
@@ -884,10 +906,13 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         )
                         .ToList();
                     foreach (var nom in data)
-                        NomenklMainCollection.Add(new NomenklMainViewModel(nom)
+                    {
+                        var item = new NomenklMainViewModel(nom)
                         {
                             State = RowStatus.NotEdited
-                        });
+                        };
+                        NomenklMainCollection.Add(item);
+                    }
                 }
             }
             catch (Exception ex)
@@ -925,9 +950,16 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         public override void SearchClear(object obj)
         {
             SearchText = null;
-            RefreshData(null);
+            CurrentNomenklCollection.Clear();
+            NomenklMainCollection.Clear();
+
         }
 
         #endregion
+
+        protected override void OnWindowLoaded(object obj)
+        {
+            //base.OnWindowLoaded(obj);
+        }
     }
 }

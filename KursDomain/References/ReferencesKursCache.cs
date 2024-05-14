@@ -354,6 +354,21 @@ public class ReferencesKursCache : IReferencesCache
 
     #endregion
 
+    #region Methods
+
+    private void setNomenklGroupCount(decimal catDC, int cnt = 1)
+    {
+        if (NomenklGroups.TryGetValue(catDC, out var group))
+        {
+            group.NomenklCount += cnt;
+            if (group.ParentDC == null) return;
+            setNomenklGroupCount(group.ParentDC.Value, cnt);
+            
+        }
+    }
+
+    #endregion
+
     #region Форма оплаты SD_189
 
     private void UpdateCachePayForm()
@@ -779,8 +794,9 @@ public class ReferencesKursCache : IReferencesCache
         {
             var newItem = new Nomenkl();
             newItem.LoadFromEntity(item, this);
-            if (!Nomenkls.ContainsKey(newItem.DocCode))
-                Nomenkls.Add(item.DOC_CODE, newItem);
+            if (Nomenkls.ContainsKey(newItem.DocCode)) continue;
+            Nomenkls.Add(item.DOC_CODE, newItem);
+            setNomenklGroupCount(item.NOM_CATEG_DC,1);
         }
 
         IsChangeTrackingOn = true;
@@ -1588,6 +1604,9 @@ public class ReferencesKursCache : IReferencesCache
 
     private void UpdateCacheNomenkl()
     {
+        UpdateCacheNomenklGroup();
+        UpdateCacheNomenklType();
+        UpdateCacheNomenklProductType();
         UpdateCacheNomenklMain();
         var changed = GetChangeData("SD_83", NomenklsTrackingId).ToList();
         if (changed.Any())

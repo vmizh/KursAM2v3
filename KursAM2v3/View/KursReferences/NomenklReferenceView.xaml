@@ -21,7 +21,7 @@
         <dxwui:WinUIDialogService />
         <dxwui:WinUIMessageBoxService />
     </dxmvvm:Interaction.Behaviors>
-    <DockPanel>
+    <DockPanel Style="{StaticResource DXServices}">
         <control1:WindowMenu Height="60" DockPanel.Dock="Top" />
         <DockPanel Margin="0,5,5,5" DockPanel.Dock="Top" LastChildFill="False">
             <dxlc:LayoutItem Label="Поиск"
@@ -139,9 +139,9 @@
                                      dx:DXSerializer.StoreLayoutMode="All"
                                      dxg:DataControlSerializationOptions.AddNewColumns="True"
                                      dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                                     ItemsSource="{Binding NomenklMainCollection}"
-                                     CurrentItem="{Binding CurrentNomenklMain,Mode=TwoWay}"
-                                     SelectionMode="Row">
+                                     ItemsSource="{Binding NomenklMainCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     CurrentItem="{Binding CurrentNomenklMain, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                     SelectionMode="Row" MouseEnter="gridControlNomenklMain_MouseEnter">
                         <dxg:GridControl.Columns>
                             <dxg:GridColumn Name="col_1_1" Header="Наименование" FieldName="Name" ReadOnly="True" />
                             <dxg:GridColumn Name="col_1_2" Header="Ном.№" FieldName="NomenklNumber" ReadOnly="True" />
@@ -202,8 +202,7 @@
                                      dx:DXSerializer.StoreLayoutMode="All"
                                      dxg:DataControlSerializationOptions.AddNewColumns="True"
                                      dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                                     ItemsSource="{Binding ElementName=gridControlNomenklMain, 
-                        Path=CurrentItem.NomenklCollection,Mode=TwoWay}"
+                                     ItemsSource="{Binding CurrentNomenklCollection, UpdateSourceTrigger=PropertyChanged}"
                                      CurrentItem="{Binding CurrentNomenkl,Mode=TwoWay}"
                                      SelectionMode="Row">
                         <dxg:GridControl.Columns>

@@ -11,10 +11,10 @@ using KursDomain.IReferences.Nomenkl;
 
 namespace KursDomain.References;
 
-[DebuggerDisplay("{DocCode,nq} {Name,nq} {ParentDC,nq}")]
+[DebuggerDisplay("{DocCode,nq} {Name,nq} {ParentDC,nq} {NomenklCount,nq}")]
 public class NomenklGroup : IDocCode, IDocGuid, IName, INomenklGroup, IEquatable<NomenklGroup>, IComparable
 {
-    public int CompareTo(object obj)
+    public int CompareTo(object obj) 
     {
         var c = obj as Unit;
         return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);

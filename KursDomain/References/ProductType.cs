@@ -11,7 +11,7 @@ public class ProductType : IProductType, IDocCode, IName, IEquatable<ProductType
 {
     public int CompareTo(object obj)
     {
-        var c = obj as Unit;
+        var c = obj as ProductType;
         return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
     }
     public decimal DocCode { get; set; }

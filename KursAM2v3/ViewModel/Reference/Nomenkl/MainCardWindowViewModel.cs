@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Data.Entity;
 using System.Windows;
 using System.Windows.Input;
 using Core.EntityViewModel.NomenklManagement;
@@ -188,6 +189,12 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 LoadReferences();
                 var d =
                     ctx.NomenklMain
+                        .Include(_ => _.SD_119)
+                        .Include(_ => _.SD_175)
+                        .Include(_ => _.SD_82)                           
+                        .Include(_ => _.SD_83)
+                        .Include(_ => _.SD_50)
+                        .Include(_ => _.Countries)
                         .AsNoTracking()
                         .FirstOrDefault(_ => _.Id == myId);
                 if (d == null) return;
@@ -236,7 +243,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     Name = NomenklMain.Name,
                                     FullName = NomenklMain.FullName,
                                     CategoryDC = NomenklMain.CategoryDC,
-                                    TypeDC = NomenklMain.NomenklTypeDC,
+                                    TypeDC = NomenklMain.NomenklType.DocCode,
                                     CountryId = NomenklMain.CountryId,
                                     NomenklNumber = NomenklMain.NomenklNumber,
                                     Note = NomenklMain.Note,
@@ -290,7 +297,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 old.Name = NomenklMain.Name;
                                 old.FullName = NomenklMain.FullName;
                                 old.CategoryDC = NomenklMain.CategoryDC;
-                                old.TypeDC = NomenklMain.NomenklTypeDC;
+                                old.TypeDC = NomenklMain.NomenklType.DocCode;
                                 old.CountryId = NomenklMain.CountryId;
                                 old.NomenklNumber = NomenklMain.NomenklNumber;
                                 old.Note = NomenklMain.Note;
@@ -320,6 +327,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         {
                             var n = GlobalOptions.ReferencesCache.GetNomenkl(nom.DocCode);
                         }
+                        
                         //foreach (var n in dcs) MainReferences.LoadNomenkl(n);
                     }
                     catch (Exception ex)

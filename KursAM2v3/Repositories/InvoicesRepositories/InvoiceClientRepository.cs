@@ -20,6 +20,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
         InvoiceClientViewModel GetRequisiteCopy(decimal dc);
         void Delete(SD_84 entity);
         List<IInvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd);
+        List<IInvoiceClient> GetByDocCodes(List<decimal> dcs);
     }
 
     public class InvoiceClientRepository : GenericKursDBRepository<InvoiceClientViewModel>, IInvoiceClientRepository
@@ -75,6 +76,14 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 .OrderByDescending(_ => _.DocDate).ToList();
             return data.Select(_ => _.DocCode).Distinct()
                 .Select(dc => new InvoiceClientBase(data.Where(_ => _.DocCode == dc))).Cast<IInvoiceClient>().ToList();
+        }
+
+        public List<IInvoiceClient> GetByDocCodes(List<decimal> dcs)
+        {
+            var data = Context.InvoiceClientQuery.Where(_ => dcs.Contains(_.DocCode)).ToList();
+            return data.Select(_ => _.DocCode).Distinct()
+                .Select(dc => new InvoiceClientBase(data.Where(_ => _.DocCode == dc)))
+                .Cast<IInvoiceClient>().ToList();
         }
     }
 }
