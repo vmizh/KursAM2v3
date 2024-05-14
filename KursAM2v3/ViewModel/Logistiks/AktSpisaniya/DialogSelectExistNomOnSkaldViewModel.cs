@@ -5,6 +5,8 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Core.ViewModel.Base;
+using DevExpress.Xpf.Editors.Settings;
+using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.View.Logistiks.AktSpisaniya;
 using KursDomain;
@@ -21,6 +23,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         private readonly Currency myCurrency;
         private readonly List<decimal> myExclude;
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+        private GridColumn otgruzColumn;
 
         #region Constructors
 
@@ -42,6 +45,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         private NomenklRemainsOnSkladWithPrice myCurrentSelectedNomenkl;
         private readonly KursDomain.References.Warehouse warehouse;
         private readonly DateTime Date;
+        private GridColumn mySelectedColumn;
 
         #endregion
 
@@ -75,6 +79,17 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public ObservableCollection<NomenklRemainsOnSkladWithPrice> SelectedRows { set; get; } =
             new ObservableCollection<NomenklRemainsOnSkladWithPrice>();
 
+        public GridColumn SelectedColumn
+        {
+            set
+            {
+                if (Equals(value, mySelectedColumn)) return;
+                mySelectedColumn = value;
+                RaisePropertyChanged();
+            }
+            get => mySelectedColumn;
+        }
+
         public NomenklRemainsOnSkladWithPrice CurrentSelectedNomenkl
         {
             get => myCurrentSelectedNomenkl;
@@ -82,6 +97,10 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             {
                 if (myCurrentSelectedNomenkl == value) return;
                 myCurrentSelectedNomenkl = value;
+                if (otgruzColumn != null)
+                {
+                    ((SpinEditSettings)otgruzColumn.EditSettings).MaxValue = myCurrentSelectedNomenkl.MaxOtgruz;
+                }
                 RaisePropertyChanged();
             }
         }
@@ -90,26 +109,31 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         #region Commands
 
-        public ICommand RemoveNomenklFromSelectedCommand
-        {
-            get { return new Command(RemoveNomenklFromSelected, _ => CurrentSelectedNomenkl != null); }
-        }
+        //public ICommand RemoveNomenklFromSelectedCommand
+        //{
+        //    get
+        //    {
+        //        return new Command(RemoveNomenklFromSelected,
+        //            _ => CurrentSelectedNomenkl != null);
+        //    }
+        //}
 
-        private void RemoveNomenklFromSelected(object obj)
-        {
-            var removeList = new List<decimal>();
-            if (SelectedRows.Count > 0)
-            {
-                foreach (var item in SelectedRows)
-                    removeList.Add(item.Nomenkl.DocCode);
-                foreach (var nomDC in removeList)
-                {
-                    var r = NomenklSelectedList.FirstOrDefault(_ => _.Nomenkl.DocCode == nomDC);
-                    if (r != null)
-                        NomenklSelectedList.Remove(r);
-                }
-            }
-        }
+        //private void RemoveNomenklFromSelected(object obj)
+        //{
+        //    if (SelectedColumn?.FieldName != "FactOtgruz") return;
+        //    var removeList = new List<decimal>();
+        //    if (SelectedRows.Count > 0)
+        //    {
+        //        foreach (var item in SelectedRows)
+        //            removeList.Add(item.Nomenkl.DocCode);
+        //        foreach (var nomDC in removeList)
+        //        {
+        //            var r = NomenklSelectedList.FirstOrDefault(_ => _.Nomenkl.DocCode == nomDC);
+        //            if (r != null)
+        //                NomenklSelectedList.Remove(r);
+        //        }
+        //    }
+        //}
 
 
         public ICommand AddNomenklToSelectedCommand
@@ -328,6 +352,48 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                             Prices = nomenklManager.GetNomenklPrice(n.Nomenkl.DocCode, DateTime.Today)
                         });
             }
+
+            UpdateMaxQuantity(Date);
+        }
+
+        public void UpdateMaxQuantity(DateTime newDate)
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                foreach (var r in NomenklList)
+                {
+                    var nq = nomenklManager.GetNomenklQuantity(warehouse.DocCode, r.Nomenkl.DocCode,
+                        newDate, newDate > DateTime.Today ? newDate : DateTime.Today);
+                    r.MaxOtgruz = nq.Count > 0 ? nq.Min(_ => _.OstatokQuantity) : 0;
+                }
+            }
+        }
+
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            ((SelectExistNomenklOnSkladView)CustomDataUserControl).gridNomenklRows.SelectionMode =
+                MultiSelectMode.MultipleRow;
+            ((SelectExistNomenklOnSkladView)CustomDataUserControl).tableViewRows.NavigationStyle =
+                GridViewNavigationStyle.Row;
+
+            ((SelectExistNomenklOnSkladView)CustomDataUserControl).gridSelectNomenklRows.SelectionMode =
+                MultiSelectMode.MultipleRow;
+            ((SelectExistNomenklOnSkladView)CustomDataUserControl).tableSelectNomenklViewRows.NavigationStyle =
+                GridViewNavigationStyle.Cell;
+            foreach (var col in ((SelectExistNomenklOnSkladView)CustomDataUserControl).gridSelectNomenklRows.Columns)
+                switch (col.FieldName)
+                {
+                    case "FactOtgruz":
+                        otgruzColumn = col;
+                        col.ReadOnly = false;
+                        col.EditSettings = new SpinEditSettings
+                        {
+                            MaxValue = 1,
+                            MinValue = 0
+                        };
+                        break;
+                }
         }
 
         #endregion

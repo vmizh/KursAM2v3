@@ -22,7 +22,8 @@ namespace Helper
                 ShowIcon = false,
                 VerticalAlignment = VerticalAlignment.Stretch,
                 ShowEditorButtons = false,
-                TextWrapping = TextWrapping.Wrap
+                TextWrapping = TextWrapping.Wrap,
+
             };
             defaultMemo.EditValueChanged += delegate(object o, EditValueChangedEventArgs args)
             {
@@ -36,7 +37,7 @@ namespace Helper
                 item.Height = height;
             item.HorizontalAlignment = hrzAlign;
             if (width != null)
-                item.Width = width.Value;
+                item.Width = width.Value + 50;
             return defaultMemo;
         }
 
@@ -49,15 +50,18 @@ namespace Helper
             {
                 TextWrapping = TextWrapping.Wrap,
                 AcceptsReturn = true,
-                AcceptsTab = true
+                AcceptsTab = true,
+                Width = (double)width,
+                Height = (double)height
+
             };
             BindingHelper.CopyBinding(oldContent, defaultText, BaseEdit.EditValueProperty);
             item.Content = defaultText;
             item.HorizontalAlignment = hrzAlign;
-            if (width != null)
-                item.Width = width.Value;
-            if (height != null)
-                item.Height = height.Value;
+            //if (width != null)
+            //    item.Width = width.Value;
+            //if (height != null)
+            //    item.Height = height.Value;
             return defaultText;
         }
 

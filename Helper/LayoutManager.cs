@@ -173,7 +173,7 @@ namespace Helper
             if (CurrentUser.UserInfo == null) return;
             try
             {
-                var l = context.FormLayout.FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
+                var l = context.FormLayout.AsNoTracking().FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
                                                                && _.FormName == FormName
                                                                && _.ControlName == FormName);
                 if (l == null) return;

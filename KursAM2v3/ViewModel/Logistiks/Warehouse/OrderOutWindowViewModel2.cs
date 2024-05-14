@@ -12,6 +12,7 @@ using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
+using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
