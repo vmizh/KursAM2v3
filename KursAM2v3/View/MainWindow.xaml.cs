@@ -622,6 +622,7 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow,
                             DataContext = ctxost
                         };
+                        ctxost.Form = form;
                         form.Show();
                         break;
                     case "Калькуляция себестоимости":

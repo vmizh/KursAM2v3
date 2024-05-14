@@ -58,10 +58,18 @@
                                                     ReadOnly="True" />
                                     <dxg:GridColumn Header="Наименование" FieldName="Name" Name="tbl1_col2"
                                                     ReadOnly="True" />
-                                    <dxg:GridColumn Header="Остаток" FieldName="Quantity" Name="tbl1_col6"
+                                    <dxg:GridColumn Header="Наличие" FieldName="Quantity" Name="tbl1_col6"
                                                     ReadOnly="True">
                                         <dxg:GridColumn.EditSettings>
                                             <dxe:CalcEditSettings DisplayFormat="n1"
+                                                                  AllowDefaultButton="False"
+                                                                  IsTextEditable="False" />
+                                        </dxg:GridColumn.EditSettings>
+                                    </dxg:GridColumn>
+                                    <dxg:GridColumn Name="cols_17" Header="Остаток" FieldName="StockLevel"
+                                                    ReadOnly="True" >
+                                        <dxg:GridColumn.EditSettings>
+                                            <dxe:CalcEditSettings DisplayFormat="n2"
                                                                   AllowDefaultButton="False"
                                                                   IsTextEditable="False" />
                                         </dxg:GridColumn.EditSettings>

@@ -8,6 +8,9 @@ using System.Windows.Media;
 using Calculates.Materials;
 using Core.ViewModel.Base;
 using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Core.ConditionalFormatting;
+using DevExpress.Xpf.Editors.Helpers;
+using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
 using KursAM2.View.Logistiks;
 using KursDomain;
@@ -56,6 +59,7 @@ namespace KursAM2.ViewModel.Logistiks
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             myIsPeriodSet = false;
             myOstatokDate = DateTime.Today;
+
             RefreshReferences();
         }
 
@@ -230,8 +234,28 @@ namespace KursAM2.ViewModel.Logistiks
             RaisePropertyChanged(nameof(NomenklsForSklad));
         }
 
-        
-        
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            if (Form is SkladOstatki frm)
+            {
+                var notShippedFormatCondition = new FormatCondition
+                {
+                    //Expression = "[SummaFact] < [Summa]",
+                    FieldName = "StockLevel",
+                    ApplyToRow = false,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Red
+                    },
+                    ValueRule = ConditionRule.Less,
+                    Value1 = 0m
+                };
+                frm.tableOstatkiView.FormatConditions.Add(notShippedFormatCondition);
+            }
+
+        }
+
 
         private void LoadNomForSklad()
         {
@@ -258,6 +282,7 @@ namespace KursAM2.ViewModel.Logistiks
                         Reserved = d.Reserved
                         
                     });
+            
         }
 
         private void DocumentTovarOpen(object obj)
@@ -457,6 +482,17 @@ namespace KursAM2.ViewModel.Logistiks
         public decimal Result { set; get; }
         public decimal ResultWONaklad { set; get; }
         public decimal Reserved { set; get; }
+
+        public decimal StockLevel
+        {
+            get { return Quantity - Reserved; }
+            set
+            {
+
+            }
+        }
+
+
         
     }
 }
