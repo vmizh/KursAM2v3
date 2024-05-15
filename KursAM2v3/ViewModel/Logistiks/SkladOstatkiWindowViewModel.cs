@@ -261,6 +261,26 @@ namespace KursAM2.ViewModel.Logistiks
             RaisePropertyChanged(nameof(NomenklsForSklad));
         }
 
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            if (Form is SkladOstatki frm)
+            {
+                var notShippedFormatCondition = new FormatCondition
+                {
+                    //Expression = "[SummaFact] < [Summa]",
+                    FieldName = "StockLevel",
+                    ApplyToRow = false,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Red
+                    },
+                    ValueRule = ConditionRule.Less,
+                    Value1 = 0m
+                };
+                frm.tableOstatkiView.FormatConditions.Add(notShippedFormatCondition);
+            }
+        }
 
         public ICommand NomenklMainCardOpenCommand
         {
@@ -582,17 +602,9 @@ namespace KursAM2.ViewModel.Logistiks
         public decimal Result { set; get; }
         public decimal ResultWONaklad { set; get; }
         public decimal Reserved { set; get; }
-
-        public decimal StockLevel
-        {
-            get { return Quantity - Reserved; }
-            set
-            {
-
-            }
-        }
+        public decimal StockLevel => Quantity - Reserved;
 
 
-        
+
     }
 }
