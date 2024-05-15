@@ -7,7 +7,6 @@ using System.Windows.Controls;
 using Core.Helper;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
-using DevExpress.Mvvm.Native;
 using KursDomain.Documents.Invoices;
 using Newtonsoft.Json;
 

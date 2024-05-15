@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
-using System.Data.OleDb;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Input;
@@ -11,7 +10,6 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Grid;
-using DevExpress.Xpf.Layout.Core;
 using Helper;
 using KursAM2.View.DialogUserControl;
 using KursDomain;
@@ -40,6 +38,8 @@ namespace KursAM2.View.Logistiks.UC
             get => myIsSelected;
         }
 
+
+
         [Display(AutoGenerateField = true, Name = "Склад")]
         public string WarehouseName => Entity?.SD_24?.DD_SKLAD_OTPR_DC != null
             ? ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.SD_24.DD_SKLAD_OTPR_DC)).Name
@@ -49,18 +49,19 @@ namespace KursAM2.View.Logistiks.UC
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
     public class AddNomenklFromRashOrderViewModel : RSWindowViewModelBase
     {
+        private readonly List<Tuple<decimal, int>> myExclude;
+        private readonly KursDomain.References.Warehouse myFromStore;
+
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private WarehouseOrderOutRowSelect myCurrentNomenkl;
         private WarehouseOrderOutRowSelect myCurrentSelectNomenkl;
         private StandartDialogSelectUC myDataUserControl;
-        private KursDomain.References.Warehouse myStore;
-        private readonly KursDomain.References.Warehouse myFromStore;
-        private readonly List<Tuple<decimal, int>> myExclude;
         private WarehouseOrderOutRowSelect mySelectedItem;
-        
+        private KursDomain.References.Warehouse myStore;
 
-        public AddNomenklFromRashOrderViewModel(KursDomain.References.Warehouse store, 
-            List<Tuple<decimal,int>> exclude = null,
+
+        public AddNomenklFromRashOrderViewModel(KursDomain.References.Warehouse store,
+            List<Tuple<decimal, int>> exclude = null,
             KursDomain.References.Warehouse fromStore = null)
         {
             myStore = store;
@@ -73,6 +74,7 @@ namespace KursAM2.View.Logistiks.UC
 
         public ObservableCollection<WarehouseOrderOutRowSelect> ItemsCollection { set; get; } =
             new ObservableCollection<WarehouseOrderOutRowSelect>();
+
         public ObservableCollection<WarehouseOrderOutRowSelect> ItemsCollectionFull { set; get; } =
             new ObservableCollection<WarehouseOrderOutRowSelect>();
 
@@ -102,6 +104,7 @@ namespace KursAM2.View.Logistiks.UC
             }
             get => myCurrentNomenkl;
         }
+
         public WarehouseOrderOutRowSelect SelectedItem
         {
             set
@@ -133,6 +136,11 @@ namespace KursAM2.View.Logistiks.UC
                 RaisePropertiesChanged();
             }
             get => myCurrentSelectNomenkl;
+        }
+
+        public ICommand SelectedValueChangedCommand
+        {
+            get { return new Command(SelectedValueChanged, _ => true); }
         }
 
 
@@ -177,22 +185,18 @@ namespace KursAM2.View.Logistiks.UC
                             .AsNoTracking()
                             .FirstOrDefault(_ => _.DOC_CODE == r.DocCode && _.CODE == r.Code);
                         if (d == null) continue;
-                        if(myFromStore == null)
+                        if (myFromStore == null)
+                        {
                             ItemsCollection.Add(new WarehouseOrderOutRowSelect(d));
+                        }
                         else
                         {
-                            if(myFromStore.DocCode == d.SD_24.DD_SKLAD_OTPR_DC)
+                            if (myFromStore.DocCode == d.SD_24.DD_SKLAD_OTPR_DC)
                                 ItemsCollection.Add(new WarehouseOrderOutRowSelect(d));
-                        }
-
-                        foreach (var VARIABLE in myExclude)
-                        {
-                            
                         }
                     }
 
                     if (myExclude is { Count: > 0 })
-                    {
                         foreach (var item in myExclude)
                         {
                             var old = ItemsCollection.FirstOrDefault(_ =>
@@ -200,12 +204,8 @@ namespace KursAM2.View.Logistiks.UC
                             if (old != null)
                                 ItemsCollection.Remove(old);
                         }
-                    }
 
-                    foreach (var item in ItemsCollection)
-                    {
-                        ItemsCollectionFull.Add(item);
-                    }
+                    foreach (var item in ItemsCollection) ItemsCollectionFull.Add(item);
                 }
             }
             catch (Exception e)
@@ -216,39 +216,28 @@ namespace KursAM2.View.Logistiks.UC
 
         #endregion
 
-        public class TempList
-        {
-            public decimal DocCode { set; get; }
-            public int Code { set; get; }
-        }
-
-        public ICommand SelectedValueChangedCommand
-        {
-            get { return new Command(SelectedValueChanged, _ => true); }
-        }
-
         private void SelectedValueChanged(object obj)
         {
             if (obj is not CellValueChangedEventArgs arg) return;
-            if((bool)arg.Value)
+            if ((bool)arg.Value)
             {
                 var delItems =
                     new List<WarehouseOrderOutRowSelect>(ItemsCollectionFull.Where(_ =>
                         !_.WarehouseName.Equals(CurrentItem.WarehouseName)));
-                foreach (var item in delItems)
-                {
-                    ItemsCollection.Remove(item);
-                }
+                foreach (var item in delItems) ItemsCollection.Remove(item);
             }
             else
             {
                 if (ItemsCollection.Any(_ => _.IsSelected)) return;
                 ItemsCollection.Clear();
-                foreach (var item in ItemsCollectionFull)
-                {
-                    ItemsCollection.Add(item);
-                }
+                foreach (var item in ItemsCollectionFull) ItemsCollection.Add(item);
             }
+        }
+
+        public class TempList
+        {
+            public decimal DocCode { set; get; }
+            public int Code { set; get; }
         }
     }
 }

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
@@ -454,9 +456,27 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             var ctx = new DialogSelectExistNomOnSkaldViewModel(Document.WarehouseOut, Document.DocDate,
                 Document.Rows.Select(_ => _.Nomenkl.DocCode).ToList());
+            var okCommand = new UICommand()
+            {
+                Caption = "Ок",
+                IsCancel = false,
+                IsDefault = true,
+                Command = new DelegateCommand<CancelEventArgs>(
+                    x => {},
+                    x => !IDataErrorInfoHelper.HasErrors(ctx.CurrentSelectedNomenkl ?? new NomenklRemainsOnSkladWithPrice())),
+            };
+
+            var cancelCommand = new UICommand()
+            {
+                Id = MessageBoxResult.Cancel,
+                Caption = "Отмена1",
+                IsCancel = true,
+                IsDefault = false,
+            };
+
+            
             var service = this.GetService<IDialogService>("DialogServiceUI");
-            if (service.ShowDialog(MessageButton.OKCancel, $"Запрос для склада: {Document.WarehouseOut}", ctx) ==
-                MessageResult.Cancel) return;
+            if (service.ShowDialog(new List<UICommand> {okCommand, cancelCommand}, $"Запрос для склада: {Document.WarehouseOut}", ctx) == cancelCommand) return;
             if (ctx.NomenklSelectedList.Count == 0) return;
             foreach (var n in ctx.NomenklSelectedList)
             {
@@ -472,7 +492,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         Nomenkl = n.Nomenkl,
                         Unit = n.Nomenkl.Unit as Unit,
                         Currency = n.Currency,
-                        QuantityOut = 1,
+                        QuantityOut = n.FactOtgruz,
                         MaxQuantity = Math.Min(1, n.Quantity),
                         State = RowStatus.NewRow,
                         Parent = this
