@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -97,10 +98,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             {
                 if (myCurrentSelectedNomenkl == value) return;
                 myCurrentSelectedNomenkl = value;
-                if (otgruzColumn != null)
-                {
-                    ((SpinEditSettings)otgruzColumn.EditSettings).MaxValue = myCurrentSelectedNomenkl.MaxOtgruz;
-                }
                 RaisePropertyChanged();
             }
         }
@@ -109,31 +106,35 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         #region Commands
 
-        //public ICommand RemoveNomenklFromSelectedCommand
-        //{
-        //    get
-        //    {
-        //        return new Command(RemoveNomenklFromSelected,
-        //            _ => CurrentSelectedNomenkl != null);
-        //    }
-        //}
+        public ICommand RemoveNomenklFromSelectedCommand
+        {
+            get
+            {
+                return new Command(RemoveNomenklFromSelected,
+                    _ => CurrentSelectedNomenkl != null);
+            }
+        }
 
-        //private void RemoveNomenklFromSelected(object obj)
-        //{
-        //    if (SelectedColumn?.FieldName != "FactOtgruz") return;
-        //    var removeList = new List<decimal>();
-        //    if (SelectedRows.Count > 0)
-        //    {
-        //        foreach (var item in SelectedRows)
-        //            removeList.Add(item.Nomenkl.DocCode);
-        //        foreach (var nomDC in removeList)
-        //        {
-        //            var r = NomenklSelectedList.FirstOrDefault(_ => _.Nomenkl.DocCode == nomDC);
-        //            if (r != null)
-        //                NomenklSelectedList.Remove(r);
-        //        }
-        //    }
-        //}
+        private void RemoveNomenklFromSelected(object obj)
+        {
+            if (SelectedColumn?.FieldName != "FactOtgruz") return;
+            var removeList = new List<decimal>();
+            if (SelectedRows.Count > 0)
+            {
+                foreach (var item in SelectedRows)
+                {
+                    removeList.Add(item.Nomenkl.DocCode);
+                    NomenklList.Add(item);
+                }
+
+                foreach (var nomDC in removeList)
+                {
+                    var r = NomenklSelectedList.FirstOrDefault(_ => _.Nomenkl.DocCode == nomDC);
+                    if (r != null)
+                        NomenklSelectedList.Remove(r);
+                }
+            }
+        }
 
 
         public ICommand AddNomenklToSelectedCommand
@@ -143,16 +144,31 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         private void AddNomenklToSelected(object obj)
         {
+            List<decimal> removeDCs = new List<decimal>();
             if (NomenklSkladRows.Count > 1)
             {
                 foreach (var ns in NomenklSkladRows)
                     if (NomenklSelectedList.All(_ => _.Nomenkl.DocCode != ns.Nomenkl.DocCode))
+                    {
+                        ns.FactOtgruz = ns.MaxOtgruz;
                         NomenklSelectedList.Add(ns);
+                        removeDCs.Add(ns.Nomenkl.DocCode);
+                    }
             }
             else
             {
                 if (NomenklSelectedList.All(_ => _.Nomenkl.DocCode != CurrentNomenkl.Nomenkl.DocCode))
+                {
+                    CurrentNomenkl.FactOtgruz = CurrentNomenkl.MaxOtgruz;
+                    removeDCs.Add(CurrentNomenkl.Nomenkl.DocCode);
                     NomenklSelectedList.Add(CurrentNomenkl);
+                }
+            }
+
+            foreach (var old in removeDCs.Select(dc => NomenklList.FirstOrDefault(_ => _.Nomenkl.DocCode == dc))
+                         .Where(old => old != null))
+            {
+                NomenklList.Remove(old);
             }
         }
 
@@ -373,12 +389,12 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         {
             base.OnWindowLoaded(obj);
             ((SelectExistNomenklOnSkladView)CustomDataUserControl).gridNomenklRows.SelectionMode =
-                MultiSelectMode.MultipleRow;
+                MultiSelectMode.Row;
             ((SelectExistNomenklOnSkladView)CustomDataUserControl).tableViewRows.NavigationStyle =
-                GridViewNavigationStyle.Row;
+                GridViewNavigationStyle.Cell;
 
             ((SelectExistNomenklOnSkladView)CustomDataUserControl).gridSelectNomenklRows.SelectionMode =
-                MultiSelectMode.MultipleRow;
+                MultiSelectMode.Row;
             ((SelectExistNomenklOnSkladView)CustomDataUserControl).tableSelectNomenklViewRows.NavigationStyle =
                 GridViewNavigationStyle.Cell;
             foreach (var col in ((SelectExistNomenklOnSkladView)CustomDataUserControl).gridSelectNomenklRows.Columns)
@@ -387,15 +403,32 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                     case "FactOtgruz":
                         otgruzColumn = col;
                         col.ReadOnly = false;
-                        col.EditSettings = new SpinEditSettings
-                        {
-                            MaxValue = 1,
-                            MinValue = 0
-                        };
+                        //col.EditSettings = new SpinEditSettings
+                        //{
+                        //    MaxValue = 1,
+                        //    MinValue = 0,
+                        //    AllowDefaultButton = false
+                        //};
                         break;
                 }
         }
 
         #endregion
+
+        public ICommand FactOtgruzChangedCommand
+        {
+            get { return new Command(FactOtgruzChanged, _ => true); }
+        }
+
+        private void FactOtgruzChanged(object obj)
+        {
+            if (obj is CellValueChangedEventArgs args && CurrentSelectedNomenkl != null)
+            {
+                if ((decimal)args.Value > CurrentSelectedNomenkl.MaxOtgruz)
+                {
+                    CurrentSelectedNomenkl.FactOtgruz = CurrentSelectedNomenkl.MaxOtgruz;
+                }
+            }
+        }
     }
 }
