@@ -2,10 +2,8 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Core.WindowsManager;
 using DevExpress.Data;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -16,6 +14,7 @@ using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
 using LayoutManager;
+using ItemsSourceChangedEventArgs = DevExpress.Xpf.Grid.ItemsSourceChangedEventArgs;
 
 namespace KursAM2.View.Logistiks.Warehouse
 {
@@ -24,9 +23,10 @@ namespace KursAM2.View.Logistiks.Warehouse
     /// </summary>
     public partial class OrderOutView2 : ILayout
     {
-        public DateEdit docDateEditor;
-        public ComboBoxEdit comboWarehouseOut;
         public ComboBoxEdit comboWarehouseIn;
+        public ComboBoxEdit comboWarehouseOut;
+        public DateEdit docDateEditor;
+        public TextEdit noteEdit;
 
         public OrderOutView2()
         {
@@ -122,17 +122,18 @@ namespace KursAM2.View.Logistiks.Warehouse
                 {
                     case nameof(doc.DocNum):
                         e.Item.IsReadOnly = true;
-                        e.Item.Width = 250;
+                        e.Item.Width = 240;
                         break;
                     case nameof(doc.DocExtNum):
                         e.Item.Width = 350;
                         break;
                     case nameof(doc.DocDate):
                         e.Item.Width = 158;
+                        e.Item.Margin = new Thickness(10, 0, 0, 0);
                         docDateEditor = e.Item.Content as DateEdit;
                         break;
                     case nameof(doc.WarehouseIn):
-                        comboWarehouseIn= ViewFluentHelper.SetComboBoxEdit(e.Item, doc.WarehouseIn, "WarehouseIn",
+                        comboWarehouseIn = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.WarehouseIn, "WarehouseIn",
                             GlobalOptions.ReferencesCache.GetWarehousesAll().Cast<KursDomain.References.Warehouse>()
                                 .OrderBy(_ => _.Name).ToList());
                         e.Item.HorizontalAlignment = HorizontalAlignment.Left;
@@ -150,24 +151,39 @@ namespace KursAM2.View.Logistiks.Warehouse
                     case nameof(doc.Creator):
                         e.Item.IsReadOnly = true;
                         e.Item.HorizontalAlignment = HorizontalAlignment.Right;
+                        e.Item.Width = 200;
                         break;
                     case nameof(doc.State):
                         e.Item.IsReadOnly = true;
+                        e.Item.Width = 200;
+                        e.Item.Margin = new Thickness(10, 0, 0, 0);
                         e.Item.Visibility = Visibility.Visible;
                         if (e.Item.Content is ComboBoxEdit cbState)
                         {
                             cbState.AllowDefaultButton = false;
                             cbState.PopupOpened += OrderOutView2_PopupOpened;
-                            cbState.FontWeight = FontWeights.Bold;
+                            //cbState.FontWeight = FontWeights.Bold;
                             cbState.EditValueChanged += OrderOutView2_EditValueChanged;
                         }
+
                         e.Item.HorizontalAlignment = HorizontalAlignment.Right;
                         break;
+                    /*
                     case nameof(doc.Note):
-                        ViewFluentHelper.SetDefaultMemoEdit(e.Item);
+                        if (e.Item.Content is TextEdit ted)
+                        {
+                            ted.TextWrapping = TextWrapping.Wrap;
+                            ted.AcceptsReturn = true;
+                            ted.AcceptsTab = true;
+                            ted.Width = 600;
+                            //ted.HorizontalAlignment = HorizontalAlignment.Left;
+                            //ted.HorizontalContentAlignment = HorizontalAlignment.Left;
+                        }
                         e.Item.HorizontalAlignment = HorizontalAlignment.Left;
-                        e.Item.MinWidth = 300;
+                        e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
+                        //e.Item.Width = 600;
                         break;
+                */
                 }
 
                 ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);
@@ -199,7 +215,7 @@ namespace KursAM2.View.Logistiks.Warehouse
 
         private void OrderOutView2_PopupOpened(object sender, RoutedEventArgs e)
         {
-            ((ComboBoxEdit)sender).IsPopupOpen = false;  
+            ((ComboBoxEdit)sender).IsPopupOpen = false;
         }
 
         private void WOutCB_EditValueChanged(object sender, EditValueChangedEventArgs e)
@@ -216,6 +232,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK, MessageBoxOptions.None);
                 doc.WarehouseOut = null;
             }
+
             doc.Model.DD_KLADOV_TN =
                 doc.WarehouseOut?.StoreKeeper?.TabelNumber;
             doc.RaisePropertyChanged(nameof(doc.StoreKeeper));
@@ -235,8 +252,6 @@ namespace KursAM2.View.Logistiks.Warehouse
                     MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK, MessageBoxOptions.None);
                 doc.WarehouseIn = null;
             }
-
-           
         }
 
         private void LayoutItems_OnAutoGeneratedUI(object sender, EventArgs e)
@@ -250,15 +265,14 @@ namespace KursAM2.View.Logistiks.Warehouse
             if (e.Column.FieldName == "QuantityOut")
                 if (dtx.CurrentRow.QuantityOut > dtx.CurrentRow.MaxQuantity)
                 {
-                    WindowManager.ShowMessage("Кол-во отгрузки первышает кол-ва на складе",
+                    WindowManager.ShowMessage("Кол-во отгрузки превышает кол-ва на складе",
                         "Ошибка", MessageBoxImage.Stop);
                     dtx.CurrentRow.QuantityOut = (decimal)e.OldValue;
                 }
         }
 
-        private void gridRows_ItemsSourceChanged(object sender, DevExpress.Xpf.Grid.ItemsSourceChangedEventArgs e)
+        private void gridRows_ItemsSourceChanged(object sender, ItemsSourceChangedEventArgs e)
         {
-
         }
     }
 }

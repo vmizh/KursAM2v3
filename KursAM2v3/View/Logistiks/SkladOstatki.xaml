@@ -6,7 +6,6 @@
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-    xmlns:control1="clr-namespace:Core.Control;assembly=KursDomain"
     xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
     Title="{Binding WindowName}" Height="350" Width="578">
     <dx:ThemedWindow.HeaderItems>
@@ -17,12 +16,12 @@
     </dx:ThemedWindow.HeaderItems>
     <DockPanel Style="{StaticResource DXServices}">
         <control:WindowMenu DockPanel.Dock="Top" />
-            <StackPanel Margin="0,0,0,5"
-                        DockPanel.Dock="Top"
-                        VerticalAlignment="Center" Orientation="Horizontal">
-                <Label Content="На дату: "/>
-                <dxe:DateEdit EditValue="{Binding OstatokDate}" Margin="5,0,0,0" Width="100" />
-            </StackPanel>
+        <StackPanel Margin="0,0,0,5"
+                    DockPanel.Dock="Top"
+                    VerticalAlignment="Center" Orientation="Horizontal">
+            <Label Content="На дату: " />
+            <dxe:DateEdit EditValue="{Binding OstatokDate}" Margin="5,0,0,0" Width="100" />
+        </StackPanel>
         <dxlc:LayoutControl x:Name="mainLayoutControl" Orientation="Vertical" Padding="0"
                             dx:DXSerializer.StoreLayoutMode="All">
             <dxlc:LayoutGroup View="Tabs" Padding="0">
@@ -33,7 +32,7 @@
                                          DisplayMember="Name"
                                          EditValue="{Binding CurrentWarehouse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          SelectedItem="{Binding CurrentWarehouse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                         ItemContainerStyle="{StaticResource ItemContainerStyle}"/>
+                                         ItemContainerStyle="{StaticResource ItemContainerStyle}" />
                     </dxlc:LayoutGroup>
                     <dxlc:LayoutGroup View="Group" Padding="0" Orientation="Vertical">
                         <dxlc:LayoutGroup View="GroupBox" Header="Товары" Padding="0"
@@ -116,9 +115,11 @@
                                                                   IsTextEditable="False" />
                                         </dxg:GridColumn.EditSettings>
                                     </dxg:GridColumn>
-                                    <dxg:GridColumn Header="Тип номенклатуры" FieldName="NomenklType" Name="Tbl1NklType"
+                                    <dxg:GridColumn Header="Тип номенклатуры" FieldName="NomenklType"
+                                                    Name="Tbl1NklType"
                                                     ReadOnly="True" />
-                                    <dxg:GridColumn Header="Вид продукции" FieldName="NomenklProductType" Name="Tbl1PrType"
+                                    <dxg:GridColumn Header="Вид продукции" FieldName="NomenklProductType"
+                                                    Name="Tbl1PrType"
                                                     ReadOnly="True" />
 
 
@@ -141,6 +142,8 @@
                                             <ContextMenu>
                                                 <MenuItem Header="Открыть калькуляцию"
                                                           Command="{Binding NomenklCalcOpenCommand}" />
+                                                <MenuItem Header="Открыть номенклатурную карточку"
+                                                          Command="{Binding NomenklMainCardOpenCommand}" />
                                                 <Separator />
                                                 <MenuItem Header="Экспорт"
                                                           Command="{Binding VisualControlExportCommand}"
@@ -158,40 +161,46 @@
                             </dxg:GridControl>
                         </dxlc:LayoutGroup>
                         <dxlc:LayoutGroup View="GroupBox" Header="Операции" Padding="0">
-                            <dxg:GridControl x:Name="nomenklskladOperGridControl"
-                                             AutoGenerateColumns="None"
-                                             MaxHeight="10000"
-                                             MaxWidth="10000"
-                                             dx:DXSerializer.SerializationID="nomenklskladOperGridControl"
-                                             dx:DXSerializer.StoreLayoutMode="All"
-                                             dxg:DataControlSerializationOptions.AddNewColumns="True"
-                                             dxg:DataControlSerializationOptions.RemoveOldColumns="True"
-                                             ItemsSource="{Binding NomenklOperations, UpdateSourceTrigger=PropertyChanged}"
-                                             CurrentItem="{Binding CurrentOperation, UpdateSourceTrigger=PropertyChanged}"
-                                             SelectionMode="Row"
-                                             EnableSmartColumnsGeneration="True"
-                                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                                <dxg:GridControl.Columns>
-                                    <dxg:GridColumn Name="colk_1" Header="Дата" FieldName="DocDate" ReadOnly="True" />
-                                    <dxg:GridColumn Name="colk_2" Header="Операция" FieldName="OperationName"
-                                                    ReadOnly="True" />
-                                    <dxg:GridColumn Name="colk_30" Header="Финансовый документ" FieldName="FinDocument"
-                                                    ReadOnly="True" />
-                                    <dxg:GridColumn Name="colk_31" Header="Товарный документ" FieldName="TovarDocument"
-                                                    ReadOnly="True" />
-                                    <dxg:GridColumn Name="colk_4" Header="Отправитель/получатель" 
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <StackPanel Orientation="Horizontal">
-                                                    <Image Height="16" Width="16" Source="{Binding RowData.Row.SenderReceiverIcon}"/>
-                                                    <TextBlock Text="{Binding RowData.Row.SenderReceiverName}"/>  
-                                                </StackPanel>
+                            <dxlc:LayoutGroup View="Tabs">
+                                <dxlc:LayoutGroup View="Group" Header="Документы">
+                                    <dxg:GridControl x:Name="nomenklskladOperGridControl"
+                                                     AutoGenerateColumns="None"
+                                                     MaxHeight="10000"
+                                                     MaxWidth="10000"
+                                                     dx:DXSerializer.SerializationID="nomenklskladOperGridControl"
+                                                     dx:DXSerializer.StoreLayoutMode="All"
+                                                     dxg:DataControlSerializationOptions.AddNewColumns="True"
+                                                     dxg:DataControlSerializationOptions.RemoveOldColumns="True"
+                                                     ItemsSource="{Binding NomenklOperations, UpdateSourceTrigger=PropertyChanged}"
+                                                     CurrentItem="{Binding CurrentOperation, UpdateSourceTrigger=PropertyChanged}"
+                                                     SelectionMode="Row"
+                                                     EnableSmartColumnsGeneration="True"
+                                                     HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <dxg:GridControl.Columns>
+                                            <dxg:GridColumn Name="colk_1" Header="Дата" FieldName="DocDate"
+                                                            ReadOnly="True" />
+                                            <dxg:GridColumn Name="colk_2" Header="Операция" FieldName="OperationName"
+                                                            ReadOnly="True" />
+                                            <dxg:GridColumn Name="colk_30" Header="Финансовый документ"
+                                                            FieldName="FinDocument"
+                                                            ReadOnly="True" />
+                                            <dxg:GridColumn Name="colk_31" Header="Товарный документ"
+                                                            FieldName="TovarDocument"
+                                                            ReadOnly="True" />
+                                            <dxg:GridColumn Name="colk_4" Header="Отправитель/получатель"
+                                                            ReadOnly="True">
+                                                <dxg:GridColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Image Height="16" Width="16"
+                                                                   Source="{Binding RowData.Row.SenderReceiverIcon}" />
+                                                            <TextBlock Text="{Binding RowData.Row.SenderReceiverName}" />
+                                                        </StackPanel>
 
-                                            </DataTemplate>
-                                        </dxg:GridColumn.CellTemplate>
-                                    </dxg:GridColumn>
-                                    <!--<dxg:GridColumn Name="colk_3" Header="Склад (отправитель)" FieldName="SkladOutName"
+                                                    </DataTemplate>
+                                                </dxg:GridColumn.CellTemplate>
+                                            </dxg:GridColumn>
+                                            <!--<dxg:GridColumn Name="colk_3" Header="Склад (отправитель)" FieldName="SkladOutName"
                                                     ReadOnly="True" />
                                     <dxg:GridColumn Name="colk_4" Header="Склад (получатель)" FieldName="SkladInName"
                                                     ReadOnly="True" />
@@ -201,123 +210,165 @@
                                     <dxg:GridColumn Name="colk_6" Header="Контрагент (получатель)"
                                                     FieldName="KontrInName"
                                                     ReadOnly="True" />-->
-                                    <dxg:GridColumn Name="colk_7_1" Header="Цена" FieldName="DocPrice"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="colk_8" Header="Накладные" FieldName="Naklad" ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="colk_9_1" Header="Кол-во (приход)" FieldName="QuantityIn"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="colk_19" Header="Кол-во (расход)" FieldName="QuantityOut"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="colk_10" Header="Сумма прихода" FieldName="SummaIn"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="colk_11" Header="Сумма расхода" FieldName="SummaOut"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="colk_16" Header="Сумма прихода (с накл.)"
-                                                    FieldName="SummaInWithNaklad" ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="colk_17" Header="Сумма расхода (с накл.)"
-                                                    FieldName="SummaOutWithNaklad" ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="colk_12" Header="Накопительно" FieldName="QuantityNakopit"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="colk_13" Header="Себестоимость" FieldName="CalcPrice"
-                                                    ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="colk_14" Header="Себестоимость с накладн."
-                                                    FieldName="CalcPriceNaklad" ReadOnly="True">
-                                        <dxg:GridColumn.EditSettings>
-                                            <dxe:TextEditSettings DisplayFormat="n2" />
-                                        </dxg:GridColumn.EditSettings>
-                                    </dxg:GridColumn>
-                                    <dxg:GridColumn Name="colk_25" Header="Примечание" FieldName="Note" />
-                                </dxg:GridControl.Columns>
-                                <dxg:GridControl.TotalSummary>
-                                    <dxg:GridSummaryItem FieldName="OperationName" SummaryType="Count"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="Naklad" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="QuantityIn" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="QuantityOut" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="SummaIn" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="SummaOut" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="SummaInWithNaklad" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                    <dxg:GridSummaryItem FieldName="SummaOutWithNaklad" SummaryType="Sum"
-                                                         DisplayFormat="n2" />
-                                </dxg:GridControl.TotalSummary>
-                                <dxg:GridControl.View>
-                                    <dxg:TableView AllowPerPixelScrolling="True"
-                                                   ShowTotalSummary="True"
-                                                   ShowGroupPanel="False"
-                                                   ShowAutoFilterRow="True">
-                                        <dxg:TableView.ContextMenu>
-                                            <ContextMenu>
-                                                <MenuItem Header="Открыть товарный документ"
-                                                          Command="{Binding DocumentTovarOpenCommand}" />
-                                                <MenuItem Header="Открыть финансовый документ"
-                                                          Command="{Binding DocumentFinanceOpenCommand}" />
-                                                <Separator />
-                                                <MenuItem Header="Экспорт"
-                                                          Command="{Binding VisualControlExportCommand}"
-                                                          CommandParameter="{Binding Path=PlacementTarget, 
+                                            <dxg:GridColumn Name="colk_7_1" Header="Цена" FieldName="DocPrice"
+                                                            ReadOnly="True">
+                                                <dxg:GridColumn.EditSettings>
+                                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                                </dxg:GridColumn.EditSettings>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn Name="colk_8" Header="Накладные" FieldName="Naklad"
+                                                            ReadOnly="True">
+                                                <dxg:GridColumn.EditSettings>
+                                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                                </dxg:GridColumn.EditSettings>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn Name="colk_9_1" Header="Кол-во (приход)"
+                                                            FieldName="QuantityIn"
+                                                            ReadOnly="True">
+                                                <dxg:GridColumn.EditSettings>
+                                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                                </dxg:GridColumn.EditSettings>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn Name="colk_19" Header="Кол-во (расход)"
+                                                            FieldName="QuantityOut"
+                                                            ReadOnly="True">
+                                                <dxg:GridColumn.EditSettings>
+                                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                                </dxg:GridColumn.EditSettings>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn Name="colk_10" Header="Сумма прихода" FieldName="SummaIn"
+                                                            ReadOnly="True">
+                                                <dxg:GridColumn.EditSettings>
+                                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                                </dxg:GridColumn.EditSettings>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn Name="colk_11" Header="Сумма расхода" FieldName="SummaOut"
+                                                            ReadOnly="True">
+                                                <dxg:GridColumn.EditSettings>
+                                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                                </dxg:GridColumn.EditSettings>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn Name="colk_16" Header="Сумма прихода (с накл.)"
+                                                            FieldName="SummaInWithNaklad" ReadOnly="True">
+                                                <dxg:GridColumn.EditSettings>
+                                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                                </dxg:GridColumn.EditSettings>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn Name="colk_17" Header="Сумма расхода (с накл.)"
+                                                            FieldName="SummaOutWithNaklad" ReadOnly="True">
+                                                <dxg:GridColumn.EditSettings>
+                                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                                </dxg:GridColumn.EditSettings>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn Name="colk_12" Header="Накопительно"
+                                                            FieldName="QuantityNakopit"
+                                                            ReadOnly="True">
+                                                <dxg:GridColumn.EditSettings>
+                                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                                </dxg:GridColumn.EditSettings>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn Name="colk_13" Header="Себестоимость" FieldName="CalcPrice"
+                                                            ReadOnly="True">
+                                                <dxg:GridColumn.EditSettings>
+                                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                                </dxg:GridColumn.EditSettings>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn Name="colk_14" Header="Себестоимость с накладн."
+                                                            FieldName="CalcPriceNaklad" ReadOnly="True">
+                                                <dxg:GridColumn.EditSettings>
+                                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                                </dxg:GridColumn.EditSettings>
+                                            </dxg:GridColumn>
+                                            <dxg:GridColumn Name="colk_25" Header="Примечание" FieldName="Note" />
+                                        </dxg:GridControl.Columns>
+                                        <dxg:GridControl.TotalSummary>
+                                            <dxg:GridSummaryItem FieldName="OperationName" SummaryType="Count"
+                                                                 DisplayFormat="n2" />
+                                            <dxg:GridSummaryItem FieldName="Naklad" SummaryType="Sum"
+                                                                 DisplayFormat="n2" />
+                                            <dxg:GridSummaryItem FieldName="QuantityIn" SummaryType="Sum"
+                                                                 DisplayFormat="n2" />
+                                            <dxg:GridSummaryItem FieldName="QuantityOut" SummaryType="Sum"
+                                                                 DisplayFormat="n2" />
+                                            <dxg:GridSummaryItem FieldName="SummaIn" SummaryType="Sum"
+                                                                 DisplayFormat="n2" />
+                                            <dxg:GridSummaryItem FieldName="SummaOut" SummaryType="Sum"
+                                                                 DisplayFormat="n2" />
+                                            <dxg:GridSummaryItem FieldName="SummaInWithNaklad" SummaryType="Sum"
+                                                                 DisplayFormat="n2" />
+                                            <dxg:GridSummaryItem FieldName="SummaOutWithNaklad" SummaryType="Sum"
+                                                                 DisplayFormat="n2" />
+                                        </dxg:GridControl.TotalSummary>
+                                        <dxg:GridControl.View>
+                                            <dxg:TableView AllowPerPixelScrolling="True"
+                                                           ShowTotalSummary="True"
+                                                           ShowGroupPanel="False"
+                                                           ShowAutoFilterRow="True">
+                                                <dxg:TableView.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Открыть товарный документ"
+                                                                  Command="{Binding DocumentTovarOpenCommand}" />
+                                                        <MenuItem Header="Открыть финансовый документ"
+                                                                  Command="{Binding DocumentFinanceOpenCommand}" />
+                                                        <Separator />
+                                                        <MenuItem Header="Экспорт"
+                                                                  Command="{Binding VisualControlExportCommand}"
+                                                                  CommandParameter="{Binding Path=PlacementTarget, 
                            RelativeSource={RelativeSource Mode=FindAncestor,
                                             AncestorType={x:Type ContextMenu}}}">
-                                                    <MenuItem.Icon>
-                                                        <Image
-                                                            Source="pack://siteoforigin:,,,/Images/export1.png" />
-                                                    </MenuItem.Icon>
-                                                </MenuItem>
-                                                <MenuItem Header="Копировать итоговую сумму"
-                                                          Command="{Binding GetColumnSummaCommand}"
-                                                          CommandParameter="{Binding Path=PlacementTarget, 
+                                                            <MenuItem.Icon>
+                                                                <Image
+                                                                    Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Копировать итоговую сумму"
+                                                                  Command="{Binding GetColumnSummaCommand}"
+                                                                  CommandParameter="{Binding Path=PlacementTarget, 
                            RelativeSource={RelativeSource Mode=FindAncestor,
                                             AncestorType={x:Type ContextMenu}}}" />
-                                            </ContextMenu>
-                                        </dxg:TableView.ContextMenu>
-                                    </dxg:TableView>
-                                </dxg:GridControl.View>
-                            </dxg:GridControl>
+                                                    </ContextMenu>
+                                                </dxg:TableView.ContextMenu>
+                                            </dxg:TableView>
+                                        </dxg:GridControl.View>
+                                    </dxg:GridControl>
+                                </dxlc:LayoutGroup>
+                                <dxlc:LayoutGroup View="Group" Header="Счета">
+                                    <dxg:GridControl x:Name="invoiceClientGridControl"
+                                                     Style="{StaticResource GridControl.Search}"
+                                                     dx:DXSerializer.SerializationID="invoiceClientGridControl"
+                                                     ItemsSource="{Binding InvoiceClientList, UpdateSourceTrigger=PropertyChanged}"
+                                                     CurrentItem="{Binding CurrentInvoice, UpdateSourceTrigger=PropertyChanged}"
+                                                     SelectionMode="Row">
+                                        <dxg:GridControl.View>
+                                            <dxg:TableView Style="{StaticResource TableView.Search}"
+                                                           ShowGroupPanel="False">
+                                                <dxg:TableView.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Открыть документ"
+                                                                  Command="{Binding InvoiceOpenCommand}" />
+                                                                                                               <Separator />
+                                                        <MenuItem Header="Экспорт"
+                                                                  Command="{Binding VisualControlExportCommand}"
+                                                                  CommandParameter="{Binding Path=PlacementTarget, 
+RelativeSource={RelativeSource Mode=FindAncestor,
+                 AncestorType={x:Type ContextMenu}}}">
+                                                            <MenuItem.Icon>
+                                                                <Image
+                                                                    Source="pack://siteoforigin:,,,/Images/export1.png" />
+                                                            </MenuItem.Icon>
+                                                        </MenuItem>
+                                                        <MenuItem Header="Копировать итоговую сумму"
+                                                                  Command="{Binding GetColumnSummaCommand}"
+                                                                  CommandParameter="{Binding Path=PlacementTarget, 
+RelativeSource={RelativeSource Mode=FindAncestor,
+                 AncestorType={x:Type ContextMenu}}}" />
+                                                    </ContextMenu>
+                                                </dxg:TableView.ContextMenu>
+                                            </dxg:TableView>
+                                        </dxg:GridControl.View>
+                                    </dxg:GridControl>
+                                </dxlc:LayoutGroup>
+                            </dxlc:LayoutGroup>
                         </dxlc:LayoutGroup>
                     </dxlc:LayoutGroup>
                 </dxlc:LayoutGroup>

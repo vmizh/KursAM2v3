@@ -3,11 +3,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using DevExpress.Utils;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Reference.Nomenkl;
 using KursDomain;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.References;
 using LayoutManager;
@@ -22,10 +20,11 @@ namespace KursAM2.View.KursReferences
         public NomenklReferenceView()
         {
             InitializeComponent();
-            
-            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
-            Loaded += NomenklReferenceView_Loaded;
-            Closing += NomenklReferenceView_Closing;
+
+            //LayoutManager =
+            //    new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, mainLayoutControl);
+            //Loaded += NomenklReferenceView_Loaded;
+            //Closing += NomenklReferenceView_Closing;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
@@ -69,9 +68,9 @@ namespace KursAM2.View.KursReferences
         {
             if (!(Keyboard.FocusedElement is TextBox)) return;
             if (((e.Key == Key.Right &&
-                  ((TextBox) Keyboard.FocusedElement).CaretIndex == ((TextBox) Keyboard.FocusedElement).Text.Length) ||
+                  ((TextBox)Keyboard.FocusedElement).CaretIndex == ((TextBox)Keyboard.FocusedElement).Text.Length) ||
                  (e.Key == Key.Left &&
-                  ((TextBox) Keyboard.FocusedElement).CaretIndex == 0)) &&
+                  ((TextBox)Keyboard.FocusedElement).CaretIndex == 0)) &&
                 Equals(treeListCategory.CurrentColumn, treeListCategory.Columns[treeListCategory.Columns.Count - 1]))
                 e.Handled = true;
         }
@@ -89,6 +88,11 @@ namespace KursAM2.View.KursReferences
             if (r.NomenklNumber.Length <= 5 ||
                 r.NomenklNumber.Substring(r.NomenklNumber.Length - 4, 3) != ((IName)r.Currency).Name)
                 r.NomenklNumber += " " + ((IName)r.Currency).Name;
+        }
+
+        private void gridControlNomenklMain_MouseEnter(object sender, MouseEventArgs e)
+        {
+
         }
     }
 }

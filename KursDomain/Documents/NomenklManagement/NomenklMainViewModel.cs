@@ -8,7 +8,6 @@ using Core.ViewModel.Base;
 using Data;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.References;
 using NomenklMain = Data.NomenklMain;
@@ -21,7 +20,6 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
     private CountriesViewModel myCountry;
     private NomenklMain myEntity;
     private NomenklGroup myNomenklCategory;
-    public NomenklType myNomenklType;
     public ProductType myProductType;
     private Unit myUnit;
 
@@ -69,15 +67,6 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
             if (Entity.NomenklNumber == value) return;
             Entity.NomenklNumber = value;
             RaisePropertyChanged();
-        }
-    }
-
-    public override void RaisePropertyChanged(string propertyName = null)
-    {
-        base.RaisePropertyChanged(propertyName);
-        if (Parent is RSWindowViewModelBase p)
-        {
-            p.RaisePropertyChanged("IsCanSaveData");
         }
     }
 
@@ -253,26 +242,14 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
         }
     }
 
-    public decimal NomenklTypeDC
-    {
-        get => Entity.TypeDC;
-        set
-        {
-            if (Entity.TypeDC == value) return;
-            Entity.TypeDC = value;
-            RaisePropertyChanged();
-        }
-    }
-
     public NomenklType NomenklType
     {
-        get => myNomenklType;
+        get => GlobalOptions.ReferencesCache.GetNomenklType(Entity.TypeDC) as NomenklType;
         set
         {
-            if (myNomenklType != null && myNomenklType.Equals(value)) return;
-            myNomenklType = value;
-            if (myNomenklType != null)
-                Entity.TypeDC = myNomenklType.DocCode;
+            if (GlobalOptions.ReferencesCache.GetNomenklType(Entity.TypeDC) == value) return;
+            if(value != null)
+                Entity.TypeDC = value.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -285,7 +262,7 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
             if (myProductType != null && myProductType.Equals(value)) return;
             myProductType = value;
             if (myProductType != null)
-                Entity.ProductDC = myProductType.DocCode;
+                ProductTypeDC = myProductType.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -308,17 +285,6 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
         {
             if (Entity.IsDelete == value) return;
             Entity.IsDelete = value;
-            RaisePropertyChanged();
-        }
-    }
-
-    public decimal ProductDC
-    {
-        get => Entity.ProductDC;
-        set
-        {
-            if (Entity.ProductDC == value) return;
-            Entity.ProductDC = value;
             RaisePropertyChanged();
         }
     }
@@ -418,6 +384,12 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
         }
     }
 
+    public override void RaisePropertyChanged(string propertyName = null)
+    {
+        base.RaisePropertyChanged(propertyName);
+        if (Parent is RSWindowViewModelBase p) p.RaisePropertyChanged("IsCanSaveData");
+    }
+
 
     private bool CheckResetIsUsluga()
     {
@@ -441,34 +413,28 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
     {
         myCountry = new CountriesViewModel(Entity.Countries);
 
+        
         if (Entity.SD_82 != null)
         {
-            myNomenklType = new NomenklType();
-            myNomenklType.LoadFromEntity(Entity.SD_119);
-        }
-
-        if (Entity.SD_82 != null)
-        {
-            myNomenklCategory = new NomenklGroup();
-            myNomenklCategory.LoadFromEntity(Entity.SD_82);
+            NomenklCategory = new NomenklGroup();
+            NomenklCategory.LoadFromEntity(Entity.SD_82);
         }
 
         if (Entity.SD_175 != null)
         {
-            myUnit = new Unit();
-            myUnit.LoadFromEntity(Entity.SD_175);
+            Unit = new Unit();
+            Unit.LoadFromEntity(Entity.SD_175);
         }
 
         if (Entity.SD_50 != null)
         {
-            myProductType = new ProductType();
-            myProductType.LoadFromEntity(Entity.SD_50);
+            ProductType = new ProductType();
+            ProductType.LoadFromEntity(Entity.SD_50);
         }
 
         if (Entity.SD_83 == null || Entity.SD_83.Count <= 0) return;
         foreach (var n in Entity.SD_83)
             NomenklCollection.Add(new NomenklViewModel(n));
-
     }
 
     public NomenklMain Load(decimal dc)
@@ -499,9 +465,8 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
         CountryId = ent.CountryId;
         UnitDC = ent.UnitDC;
         IsComplex = ent.IsComplex;
-        NomenklTypeDC = ent.TypeDC;
         IsDelete = ent.IsDelete;
-        ProductDC = ent.ProductDC;
+        ProductTypeDC = ent.ProductDC;
         Countries = ent.Countries;
         SD_50 = ent.SD_50;
         SD_119 = ent.SD_119;
@@ -522,9 +487,8 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
         ent.CountryId = CountryId;
         ent.UnitDC = UnitDC;
         ent.IsComplex = IsComplex;
-        ent.TypeDC = NomenklTypeDC;
         ent.IsDelete = IsDelete;
-        ent.ProductDC = ProductDC;
+        ent.ProductDC = ProductTypeDC;
         ent.Countries = Countries;
         ent.SD_50 = SD_50;
         ent.SD_119 = SD_119;

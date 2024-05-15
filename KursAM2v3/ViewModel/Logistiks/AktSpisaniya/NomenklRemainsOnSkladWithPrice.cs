@@ -45,5 +45,15 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         [ReadOnly(true)]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal SummaWithPrices => Prices.PriceWithNaklad * Quantity;
+
+        [Display(Name = "Макс. отгруз.")]
+        [ReadOnly(true)]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal MaxOtgruz { set; get; }
+
+
+        [Display(Name = "Отгрузить")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal FactOtgruz { set; get; }
     }
 }

@@ -12,6 +12,7 @@ using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
+using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -219,6 +220,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         protected override void OnWindowLoaded(object obj)
         {
+            //return;
             base.OnWindowLoaded(obj);
             var frm = Form as OrderOutView2;
             if (Document.State != RowStatus.NewRow)

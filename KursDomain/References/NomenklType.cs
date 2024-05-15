@@ -44,6 +44,7 @@ public class NomenklType : IDocCode, IName, INomenklType, IEquatable<NomenklType
         DocCode = entity.DOC_CODE;
         Name = entity.MC_NAME;
         IsDeleted = entity.MC_DELETED == 1;
+        
     }
 
     public override bool Equals(object obj)
