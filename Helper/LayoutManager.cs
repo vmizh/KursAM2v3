@@ -90,7 +90,6 @@ namespace Helper
         public void Save()
         {
             if (layoutService == null) return;
-
             if (CurrentUser.UserInfo == null) return;
             using (var tran = context.Database.BeginTransaction())
             {
@@ -100,8 +99,8 @@ namespace Helper
                     .Include(_ => _.Users)
                     .Include(_ => _.KursMenuItem)
                     .FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
-                                                               && _.FormName == FormName
-                                                               && _.ControlName == FormName);
+                                         && _.FormName == FormName
+                                         && _.ControlName == FormName);
                 try
                 {
                     StringBuilder sb = null;
@@ -161,6 +160,7 @@ namespace Helper
             }
         }
 
+
         public bool IsLayoutExists()
         {
             if (CurrentUser.UserInfo == null) return false;
@@ -170,12 +170,15 @@ namespace Helper
 
         public void Load()
         {
+            layoutService.Deserialize(StartLayout);
             if (CurrentUser.UserInfo == null) return;
             try
             {
-                var l = context.FormLayout.AsNoTracking().FirstOrDefault(_ => _.UserId == CurrentUser.UserInfo.KursId
-                                                               && _.FormName == FormName
-                                                               && _.ControlName == FormName);
+
+                var l = context.FormLayout.AsNoTracking().FirstOrDefault(_ =>
+                    _.UserId == CurrentUser.UserInfo.KursId
+                    && _.FormName == FormName
+                    && _.ControlName == FormName);
                 if (l == null) return;
                 var d = new DataContractSerializer(typeof(WindowsScreenState));
                 if (l.WindowState != null && window != null &&
@@ -190,6 +193,7 @@ namespace Helper
                 }
 
                 layoutService.Deserialize(l.Layout);
+
             }
             catch (Exception ex)
             {

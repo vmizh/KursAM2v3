@@ -1,13 +1,13 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using Core.ViewModel.Base;
 using KursDomain.References;
 
 namespace Calculates.Materials
 {
     /// <summary>
-    ///     ����� ����������� �������� �������� ������
+    ///      Класс описывающий операцию движение товара
     /// </summary>
     public class NomenklCalcCostOperation : RSViewModelData
     {
@@ -36,13 +36,17 @@ namespace Calculates.Materials
         private string myTovarDocument;
         private int myTovarRowCode;
         private string mySenderReceiverName;
+
+        [Display(AutoGenerateField = false)]
         public int RowNumber { set; get; }
 
+        [Display(AutoGenerateField = false)]
         public ImageSource SenderReceiverIcon {
             get;
             set;
         }
 
+        [Display(AutoGenerateField = false, Name = "Отправитель/получатель",Order = 4)]
         public string SenderReceiverName
         {
             get => mySenderReceiverName;
@@ -53,7 +57,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public int OperCode
         {
             get => myOperCode;
@@ -64,7 +68,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public decimal NomenklDC
         {
             get => myNomenklDC;
@@ -75,7 +79,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public decimal? TovarDocDC
         {
             get => myTovarDocDC;
@@ -86,7 +90,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public int TovarRowCode
         {
             get => myTovarRowCode;
@@ -97,7 +101,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public decimal? FinDocumentDC
         {
             get => myFinDocumentDC;
@@ -108,7 +112,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = true, Name = "Дата", Order = 0)]
         public DateTime DocDate
         {
             get => myDocDate;
@@ -119,7 +123,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = true,Name = "Товарный документ",Order = 3)]
         public string TovarDocument
         {
             get => myTovarDocument;
@@ -131,6 +135,7 @@ namespace Calculates.Materials
             }
         }
 
+        [Display(AutoGenerateField = true, Name = "Финансовый документ",Order = 2)]
         public string FinDocument
         {
             get => myFinDocument;
@@ -141,7 +146,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = true, Name = "Операция",Order = 1)]
         public string OperationName
         {
             get => myOperationName;
@@ -152,7 +157,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public Warehouse SkladOut
         {
             get => mySkladOut;
@@ -164,9 +169,9 @@ namespace Calculates.Materials
                 RaisePropertyChanged(nameof(SkladOutName));
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public string SkladOutName => SkladOut?.Name;
-
+        [Display(AutoGenerateField = false)]
         public Warehouse SkladIn
         {
             get => mySkladIn;
@@ -178,9 +183,9 @@ namespace Calculates.Materials
                 RaisePropertyChanged(nameof(SkladInName));
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public string SkladInName => SkladIn?.Name;
-
+        [Display(AutoGenerateField = false)]
         public Kontragent KontragentIn
         {
             get => myKontragentIn;
@@ -192,9 +197,9 @@ namespace Calculates.Materials
                 RaisePropertyChanged(nameof(KontrInName));
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public string KontrInName => KontragentIn?.Name;
-
+        [Display(AutoGenerateField = false)]
         public Kontragent KontragentOut
         {
             get => myKontragentOut;
@@ -206,9 +211,10 @@ namespace Calculates.Materials
                 RaisePropertyChanged(nameof(KontrOutName));
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public string KontrOutName => myKontragentOut?.Name;
 
+        [Display(AutoGenerateField = true, Name = "Цена", Order = 8)]
         public decimal DocPrice
         {
             get => myDocPrice;
@@ -220,6 +226,7 @@ namespace Calculates.Materials
             }
         }
 
+        [Display(AutoGenerateField = true, Name = "Накладные", Order = 14)]
         public decimal Naklad
         {
             get => myNaklad;
@@ -231,6 +238,7 @@ namespace Calculates.Materials
             }
         }
 
+        [Display(AutoGenerateField = true, Name = "Кол-во (приход)",Order = 5)]
         public decimal QuantityIn
         {
             get => myQuantityIn;
@@ -241,7 +249,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = true, Name = "Кол-во (расход)",Order = 6)]
         public decimal QuantityOut
         {
             get => myQuantityOut;
@@ -253,6 +261,7 @@ namespace Calculates.Materials
             }
         }
 
+        [Display(AutoGenerateField = true, Name = "Сумма прихода", Order = 9)]
         public decimal SummaIn
         {
             get => mySummaIn;
@@ -263,7 +272,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = true, Name = "Сумма расхода", Order = 10)]
         public decimal SummaOut
         {
             get => mySummaOut;
@@ -274,7 +283,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = true, Name = "Сумма прихода (с накл)",Order = 11)]
         public decimal SummaInWithNaklad
         {
             get => mySummaInWithNaklad;
@@ -285,7 +294,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = true, Name = "Сумма расхода (с накл)", Order = 12)]
         public decimal SummaOutWithNaklad
         {
             get => mySummaOutWithNaklad;
@@ -297,6 +306,7 @@ namespace Calculates.Materials
             }
         }
 
+        [Display(AutoGenerateField = true, Name = "Накопительно",Order = 7)]
         public decimal QuantityNakopit
         {
             get => myQuantityNakopit;
@@ -307,7 +317,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = true, Name = "Себестоимость", Order = 13)]
         public decimal CalcPrice
         {
             get => myCalcPrice;
@@ -318,7 +328,7 @@ namespace Calculates.Materials
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = true, Name = "Себестоимость с наклад.", Order = 15)]
         public decimal CalcPriceNaklad
         {
             get => myCalcPriceNaklad;
@@ -326,6 +336,18 @@ namespace Calculates.Materials
             {
                 if (myCalcPriceNaklad == value) return;
                 myCalcPriceNaklad = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        [Display(AutoGenerateField = true, Name = "Примечание", Order = 16)]
+        public override string Note
+        {
+            get => myNote;
+            set
+            {
+                if (myNote == value) return;
+                myNote = value;
                 RaisePropertyChanged();
             }
         }

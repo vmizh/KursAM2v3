@@ -7,14 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
-using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -325,11 +323,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
             var frm = Form as OrderOutView2;
             if (frm != null)
-            {
                 using (var ms = new MemoryStream())
                 {
                     frm.gridRows.SaveLayoutToStream(ms);
-                    
+
                     myContext = new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString);
                     mySD24Repository = new SD24Repository(myContext);
                     myNomenklManager = new NomenklManager2(myContext);
@@ -347,9 +344,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     ms.Seek(0, SeekOrigin.Begin);
                     frm.gridRows.RestoreLayoutFromStream(ms);
                 }
-
-            }
-
         }
 
         public ICommand DocumentChangedCommand
@@ -434,6 +428,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         State = RowStatus.NewRow
                     });
                 }
+
             UpdateMaxQuantity(Document.DocDate);
         }
 
@@ -444,7 +439,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void OrderInOpen(object obj)
         {
-            DocumentsOpenManager.Open(DocumentType.StoreOrderIn,CurrentRow.WarehouseOrderIn.DocCode);
+            DocumentsOpenManager.Open(DocumentType.StoreOrderIn, CurrentRow.WarehouseOrderIn.DocCode);
         }
 
         public ICommand AddNomenklStoreCommand
@@ -457,27 +452,29 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
             var ctx = new DialogSelectExistNomOnSkaldViewModel(Document.WarehouseOut, Document.DocDate,
                 Document.Rows.Select(_ => _.Nomenkl.DocCode).ToList());
-            var okCommand = new UICommand()
+            var okCommand = new UICommand
             {
                 Caption = "Ок",
                 IsCancel = false,
                 IsDefault = true,
                 Command = new DelegateCommand<CancelEventArgs>(
-                    x => {},
-                    x => !IDataErrorInfoHelper.HasErrors(ctx.CurrentSelectedNomenkl ?? new NomenklRemainsOnSkladWithPrice())),
+                    x => { },
+                    x => !IDataErrorInfoHelper.HasErrors(ctx.CurrentSelectedNomenkl ??
+                                                         new NomenklRemainsOnSkladWithPrice()))
             };
 
-            var cancelCommand = new UICommand()
+            var cancelCommand = new UICommand
             {
                 Id = MessageBoxResult.Cancel,
                 Caption = "Отмена1",
                 IsCancel = true,
-                IsDefault = false,
+                IsDefault = false
             };
 
-            
+
             var service = this.GetService<IDialogService>("DialogServiceUI");
-            if (service.ShowDialog(new List<UICommand> {okCommand, cancelCommand}, $"Запрос для склада: {Document.WarehouseOut}", ctx) == cancelCommand) return;
+            if (service.ShowDialog(new List<UICommand> { okCommand, cancelCommand },
+                    $"Запрос для склада: {Document.WarehouseOut}", ctx) == cancelCommand) return;
             if (ctx.NomenklSelectedList.Count == 0) return;
             foreach (var n in ctx.NomenklSelectedList)
             {
@@ -504,6 +501,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
                 newCode++;
             }
+
             UpdateMaxQuantity(Document.DocDate);
         }
 
@@ -518,6 +516,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Document.DocNum = newNum;
                 foreach (var row in Document.Rows) row.DocCode = Document.DocCode;
             }
+
             myContext.SaveChanges();
             var dcs = Document.Rows.Select(row => row.DocCode).ToList();
             dcs.AddRange(deletedRows.Select(_ => _.DocCode));
@@ -592,6 +591,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         Id = Document.Id
                     });
             }
+
             var dcs = Document.Rows.Select(row => row.DocCode).ToList();
             dcs.AddRange(deletedRows.Select(_ => _.DocCode));
             myNomenklManager.RecalcPrice(dcs);

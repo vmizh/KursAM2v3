@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
+using KursDomain;
 using KursDomain.Annotations;
 using KursDomain.ICommon;
 using KursDomain.Services;

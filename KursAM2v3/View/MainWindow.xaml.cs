@@ -616,14 +616,14 @@ namespace KursAM2.View
                         break;
                     case "Остатки товаров на складах":
                         var ctxost = new SkladOstatkiWindowViewModel();
-                        ctxost.RefreshData(null);
-                        form = new SkladOstatki
+                        form = new SkladOstatkiView
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = ctxost
                         };
                         ctxost.Form = form;
-                        form.Show();
+                        //ctxost.RefreshData(null);
+                        form.Show(); 
                         break;
                     case "Калькуляция себестоимости":
                         var ctxost1 = new NomenklCostCalculatorWindowViewModel(null);

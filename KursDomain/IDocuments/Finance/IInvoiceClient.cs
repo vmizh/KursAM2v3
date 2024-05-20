@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using KursDomain.References;
 
@@ -77,3 +78,13 @@ public interface IInvoiceClient
 
     [Display(AutoGenerateField = false)] ObservableCollection<IInvoiceClientRow> Rows { set; get; }
 }
+
+public interface IInvoiceClientRemains : IInvoiceClient {
+
+    [Display(AutoGenerateField = true, Name = "Кол-во", Order = 21)]
+    [ReadOnly(true)]
+    [DisplayFormat(DataFormatString = "{0:n3")]
+    public decimal NomQuantity { set; get; }
+
+}
+

@@ -196,20 +196,9 @@
                                                                    Source="{Binding RowData.Row.SenderReceiverIcon}" />
                                                             <TextBlock Text="{Binding RowData.Row.SenderReceiverName}" />
                                                         </StackPanel>
-
                                                     </DataTemplate>
                                                 </dxg:GridColumn.CellTemplate>
                                             </dxg:GridColumn>
-                                            <!--<dxg:GridColumn Name="colk_3" Header="Склад (отправитель)" FieldName="SkladOutName"
-                                                    ReadOnly="True" />
-                                    <dxg:GridColumn Name="colk_4" Header="Склад (получатель)" FieldName="SkladInName"
-                                                    ReadOnly="True" />
-                                    <dxg:GridColumn Name="colk_5" Header="Контрагент (отправитель)"
-                                                    FieldName="KontrOutName"
-                                                    ReadOnly="True" />
-                                    <dxg:GridColumn Name="colk_6" Header="Контрагент (получатель)"
-                                                    FieldName="KontrInName"
-                                                    ReadOnly="True" />-->
                                             <dxg:GridColumn Name="colk_7_1" Header="Цена" FieldName="DocPrice"
                                                             ReadOnly="True">
                                                 <dxg:GridColumn.EditSettings>

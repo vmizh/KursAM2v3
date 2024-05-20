@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using KursDomain.ICommon;
 
 namespace Core.ViewModel.Base;
@@ -41,5 +42,6 @@ public class StateEventArgs : EventArgs
     }
 
     public RSViewModelData Row { get; }
+    [Display(AutoGenerateField = false)]
     public RowStatus State { get; }
 }

@@ -311,7 +311,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
 
                     if (col.EditSettings is CalcEditSettings ed)
                     {
-                        if (col.Name.ToLower().Contains("quantity"))
+                        if (col.Name.ToLower().Contains("quan"))
                             ed.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
                         else if (col.Name.ToLower().Contains("price") ||
                                  col.Name.ToLower().Contains("summa")
@@ -366,7 +366,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                 col.Name = col.FieldName;
                 if (col.EditSettings is CalcEditSettings ed)
                 {
-                    if (col.Name.ToLower().Contains("quantity"))
+                    if (col.Name.ToLower().Contains("quan"))
                         ed.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
                     else if (col.Name.ToLower().Contains("price") ||
                              col.Name.ToLower().Contains("summa")
@@ -896,6 +896,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
             layman.LayoutManager?.ResetLayout();
         else
             LayoutManager?.ResetLayout();
+        UpdateVisualObjects();
     }
 
     [Display(AutoGenerateField = false)]

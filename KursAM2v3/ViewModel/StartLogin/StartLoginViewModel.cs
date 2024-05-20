@@ -60,6 +60,8 @@ namespace KursAM2.ViewModel.StartLogin
             CurrentUser = UserIniFile.ReadINI("Start", "Login");
         }
 
+
+
         public IniFileManager UserIniFile { set; get; }
 
 

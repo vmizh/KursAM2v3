@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -9,15 +11,16 @@ using System.Windows.Media;
 using Calculates.Materials;
 using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
+using DevExpress.Data;
 using DevExpress.Xpf.Core;
-using DevExpress.Xpf.Core.ConditionalFormatting;
-using DevExpress.Xpf.Editors.Helpers;
+using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.KursReferences;
 using KursAM2.View.Logistiks;
+using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursAM2.ViewModel.Reference.Nomenkl;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
@@ -30,15 +33,17 @@ using KursDomain.RepositoryHelper;
 using NomenklMain = Data.NomenklMain;
 
 
-// ReSharper disable UnusedAutoPropertyAccessor.Global
 namespace KursAM2.ViewModel.Logistiks
 {
     public sealed class SkladOstatkiWindowViewModel : RSWindowViewModelBase
     {
         private readonly ImageSource KontrImage;
+        private readonly InvoiceClientRepository myInvoiceClientRepository;
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         private readonly ImageSource StoreImage;
+        private bool IsRightOnNomenklReference;
+        private IInvoiceClient myCurrentInvoice;
 
         private NomenklOstatkiForSklad myCurrentNomenklForSklad;
         private NomenklOstatkiWithPrice myCurrentNomenklStore;
@@ -46,13 +51,23 @@ namespace KursAM2.ViewModel.Logistiks
         private KursDomain.References.Warehouse myCurrentWarehouse;
         private bool myIsPeriodSet;
         private DateTime myOstatokDate;
-        private bool IsRightOnNomenklReference;
-        private InvoiceClientRepository myInvoiceClientRepository;
-        private IInvoiceClient myCurrentInvoice;
+        private IniFileManager iniFile;
 
         public SkladOstatkiWindowViewModel()
         {
-            LayoutName = "SkladOstatkiWindowViewModel";
+            var iniFileName = Application.Current.Properties["DataPath"] + "\\User.ini";
+            try
+            {
+                iniFile = new IniFileManager(iniFileName);
+                InitIniFile(iniFile);
+            }
+            catch
+            {
+                if (File.Exists(iniFileName)) File.Delete(iniFileName);
+                iniFile = new IniFileManager(iniFileName);
+                InitIniFile(iniFile);
+            }
+
             WindowName = "Остатки товаров на складах";
 
             myInvoiceClientRepository = new InvoiceClientRepository(GlobalOptions.GetEntities());
@@ -76,6 +91,19 @@ namespace KursAM2.ViewModel.Logistiks
             RefreshReferences();
         }
 
+        private void InitIniFile(IniFileManager userIni)
+        {
+            if (!userIni.KeyExists("SkaldOstatkiReceiverName", "Layot")) userIni.Write("Layout", "SkaldOstatkiReceiverName", "5");
+            //if (!userIni.KeyExists("Login", "Start")) userIni.Write("Start", "Login", "");
+            //if (!userIni.KeyExists("LastDataBase", "Start")) userIni.Write("Start", "LastDataBase", "");
+            //if (!userIni.KeyExists("DefaultDataBase", "Start")) userIni.Write("Start", "DefaultDataBase", "");
+            //if (!userIni.KeyExists("System", "Version")) userIni.Write("Version", "System", "0");
+            //if (!userIni.KeyExists("Test", "Version")) userIni.Write("Version", "Test", "0");
+            //if (!userIni.KeyExists("Version", "Version")) userIni.Write("Version", "Version", "0");
+        }
+
+        public override string LayoutName => "SkladOstatkiWindowViewModelLayout";
+
         public IInvoiceClient CurrentInvoice
         {
             set
@@ -87,21 +115,18 @@ namespace KursAM2.ViewModel.Logistiks
             get => myCurrentInvoice;
         }
 
-        public ObservableCollection<IInvoiceClient> InvoiceClientList { set; get; } =
-            new ObservableCollection<IInvoiceClient>();
+        public ObservableCollection<InvoiceClientRemains> InvoiceClientList { set; get; } =
+            new ObservableCollection<InvoiceClientRemains>();
+
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<KursDomain.References.Warehouse> Sklads { set; get; } =
             new ObservableCollection<KursDomain.References.Warehouse>();
 
-        // ReSharper disable once CollectionNeverUpdated.Global
         public List<NomPrice> Prices { set; get; } = new List<NomPrice>();
 
-        // ReSharper disable once CollectionNeverQueried.Global
-        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<OperationNomenklMove> NomenklOperationsForSklad { set; get; } =
             new ObservableCollection<OperationNomenklMove>();
 
-        // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<NomenklCalcCostOperation> NomenklOperations { set; get; } =
             new ObservableCollection<NomenklCalcCostOperation>();
 
@@ -188,8 +213,6 @@ namespace KursAM2.ViewModel.Logistiks
         public ObservableCollection<SkladQuantity> NomenklOnSklads { set; get; } =
             new ObservableCollection<SkladQuantity>();
 
-        // ReSharper disable once CollectionNeverQueried.Global
-        // ReSharper disable once CollectionNeverUpdated.Global
         public ObservableCollection<NomenklOstatkiWithPrice> NomenklsForSklad { set; get; } =
             new ObservableCollection<NomenklOstatkiWithPrice>();
 
@@ -237,8 +260,21 @@ namespace KursAM2.ViewModel.Logistiks
             get { return new Command(NomenklCalcOpen, _ => CurrentNomenklStore != null); }
         }
 
+
+        public ICommand NomenklMainCardOpenCommand
+        {
+            get { return new Command(NomenklMainCardOpen, _ => IsRightOnNomenklReference); }
+        }
+
+        public ICommand InvoiceOpenCommand
+        {
+            get { return new Command(InvoiceOpen, _ => CurrentInvoice != null); }
+        }
+
+
         private void RefreshReferences()
         {
+            Sklads.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var sql = "SELECT DISTINCT storeDC FROM NomenklMoveForCalc nmfc " +
@@ -261,23 +297,13 @@ namespace KursAM2.ViewModel.Logistiks
             RaisePropertyChanged(nameof(NomenklsForSklad));
         }
 
-
-        public ICommand NomenklMainCardOpenCommand
-        {
-            get
-            {
-                return new Command(NomenklMainCardOpen, _ => IsRightOnNomenklReference);
-            }
-        }
-
         private void getRightOnNomenklReference()
         {
             using (var ctx = GlobalOptions.KursSystem())
             {
                 IsRightOnNomenklReference = ctx.UserMenuRight.Any(_ => _.LoginName == GlobalOptions.UserInfo.NickName
-                && _.DBId == GlobalOptions.DataBaseId);
+                                                                       && _.DBId == GlobalOptions.DataBaseId);
             }
-           
         }
 
         private void NomenklMainCardOpen(object obj)
@@ -309,6 +335,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void loadInvoices()
         {
+            var frm = Form as SkladOstatkiView;
             InvoiceClientList.Clear();
             if (CurrentNomenklStore.Reserved == 0) return;
             using (var context = GlobalOptions.GetEntities())
@@ -338,17 +365,16 @@ namespace KursAM2.ViewModel.Logistiks
                             HAVING
                                     CAST(SFT_KOL AS NUMERIC(18, 0)) - SUM(ISNULL(t24.DDT_KOL_RASHOD, 0)) > 0) tab";
 
-                List<decimal> res = context.Database.SqlQuery<decimal>(sql).ToList();
+                var res = context.Database.SqlQuery<decimal>(sql).ToList();
                 foreach (var item in myInvoiceClientRepository.GetByDocCodes(res))
                 {
-                    InvoiceClientList.Add(item);
+                    var newItem = new InvoiceClientRemains(item);
+                    var row = context.TD_84.FirstOrDefault(_ =>
+                        _.DOC_CODE == item.DocCode && _.SFT_NEMENKL_DC == CurrentNomenklStore.Nomenkl.DocCode);
+                    newItem.NomQuantity = (decimal)(row?.SFT_KOL ?? 0); 
+                    InvoiceClientList.Add(newItem);
                 }
             }
-        }
-
-        public ICommand InvoiceOpenCommand
-        {
-            get { return new Command(InvoiceOpen, _ => CurrentInvoice != null); }
         }
 
         private void InvoiceOpen(object obj)
@@ -359,7 +385,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void LoadNomForSklad()
         {
-           var data = nomenklManager.GetNomenklStoreQuantity(CurrentWarehouse.DocCode, new DateTime(2000, 1, 1),
+            var data = nomenklManager.GetNomenklStoreQuantity(CurrentWarehouse.DocCode, new DateTime(2000, 1, 1),
                 OstatokDate);
             if (data != null)
                 foreach (var d in data.Where(_ => _.OstatokQuantity > 0))
@@ -372,7 +398,7 @@ namespace KursAM2.ViewModel.Logistiks
                         Warehouse =
                             GlobalOptions.ReferencesCache.GetWarehouse(CurrentWarehouse.DocCode) as
                                 KursDomain.References.Warehouse,
-                        
+
                         Quantity = d.OstatokQuantity,
                         CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetNomenkl(d.NomDC).Currency).Name,
                         Price = d.OstatokQuantity != 0 ? Math.Round(d.OstatokNaklSumma / d.OstatokQuantity, 2) : 0,
@@ -380,9 +406,7 @@ namespace KursAM2.ViewModel.Logistiks
                         Summa = d.OstatokNaklSumma,
                         SummaWONaklad = d.OstatokSumma,
                         Reserved = d.Reserved
-                        
                     });
-            
         }
 
         private void DocumentTovarOpen(object obj)
@@ -434,6 +458,8 @@ namespace KursAM2.ViewModel.Logistiks
                     break;
             }
         }
+
+        
 
         private void NomenklCalcOpen(object obj)
         {
@@ -488,6 +514,171 @@ namespace KursAM2.ViewModel.Logistiks
                 }
             }
         }
+
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            UpdateVisualObjects();
+        }
+
+        public override void UpdateVisualObjects()
+        {
+            if (Form is SkladOstatkiView frm)
+            {
+                frm.nomenklskladGridControl.TotalSummary.Clear();
+                foreach (var col in frm.nomenklskladGridControl.Columns)
+                {
+                    var calcEd = col.EditSettings as CalcEditSettings;
+                    switch (col.FieldName)
+                    {
+                        case "State":
+                            col.Visible = false;
+                            break;
+
+                        case nameof(NomenklOstatkiWithPrice.Prihod):
+                        case nameof(NomenklOstatkiWithPrice.Rashod):
+                            if (calcEd != null)
+                                calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
+                            break;
+
+                        case nameof(NomenklOstatkiWithPrice.Quantity):
+                            if (calcEd != null)
+                                calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
+                            else
+                                col.EditSettings = new CalcEditSettings
+                                {
+                                    DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat(),
+                                    AllowDefaultButton = false
+                                };
+                            frm.nomenklskladGridControl.TotalSummary.Add(new GridSummaryItem
+                            {
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Count,
+                                DisplayFormat = "{0:n0}"
+                            });
+                            break;
+                        case nameof(NomenklOstatkiWithPrice.Reserved):
+                        case nameof(NomenklOstatkiWithPrice.StockLevel):
+                            if (calcEd != null)
+                                calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
+                            else
+                                col.EditSettings = new CalcEditSettings
+                                {
+                                    DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat(),
+                                    AllowDefaultButton = false
+                                };
+                            frm.nomenklskladGridControl.TotalSummary.Add(new GridSummaryItem
+                            {
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Sum,
+                                DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat()
+                            });
+                            break;
+                        case nameof(NomenklOstatkiWithPrice.Summa):
+                        case nameof(NomenklOstatkiWithPrice.SummaWONaklad):
+                            if (calcEd != null)
+                                calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat();
+                            else
+                                col.EditSettings = new CalcEditSettings
+                                {
+                                    DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat(),
+                                    AllowDefaultButton = false
+                                };
+                            frm.nomenklskladGridControl.TotalSummary.Add(new GridSummaryItem
+                            {
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Sum,
+                                DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat()
+                            });
+                            break;
+                        case nameof(NomenklOstatkiWithPrice.Price):
+                        case nameof(NomenklOstatkiWithPrice.PriceWONaklad):
+                            if (calcEd != null)
+                                calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat();
+                            else
+                                col.EditSettings = new CalcEditSettings
+                                {
+                                    DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat(),
+                                    AllowDefaultButton = false
+                                };
+                            break;
+                    }
+                }
+
+                var sCol = KursGridControlHelper.GetSummaryForField(frm.invoiceClientGridControl,
+                    "NomQuantity");
+                if (sCol == null)
+                {
+                    frm.invoiceClientGridControl.TotalSummary.Add(new GridSummaryItem()
+                    {
+                        FieldName = "NomQuantity",
+                        DisplayFormat = "{0:n3}",
+                        SummaryType = SummaryItemType.Sum
+                    });
+                }
+                var nomQCol = KursGridControlHelper.GetColumnForField(frm.invoiceClientGridControl,
+                    "NomQuantity");
+                nomQCol.EditSettings = new CalcEditSettings()
+                {
+                    AllowDefaultButton = false,
+                    DisplayFormat = "{0:n3}",
+
+                };
+
+                var colIndex = Convert.ToInt32(iniFile.ReadINI("Layout", "SkaldOstatkiReceiverName"));
+
+                var recNameCol = KursGridControlHelper.GetColumnForField(frm.nomenklskladOperGridControl,
+                    "SenderReceiverName");
+                recNameCol.VisibleIndex = colIndex;
+                frm.nomenklskladOperGridControl.TotalSummary.Clear();
+                foreach (var col in frm.nomenklskladOperGridControl.Columns)
+                {
+                    var calcEd = col.EditSettings;
+                    switch (col.FieldName)
+                    {
+                        case nameof(NomenklCalcCostOperation.OperationName):
+                            frm.nomenklskladOperGridControl.TotalSummary.Add(new GridSummaryItem
+                            {
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Count
+                            });
+                            break;
+                        case nameof(NomenklCalcCostOperation.QuantityIn):
+                        case nameof(NomenklCalcCostOperation.QuantityOut):
+                        case nameof(NomenklCalcCostOperation.QuantityNakopit):
+                            if (calcEd != null)
+                                calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
+                            frm.nomenklskladOperGridControl.TotalSummary.Add(new GridSummaryItem
+                            {
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Sum,
+                                DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat()
+                            });
+                            break;
+                        case nameof(NomenklCalcCostOperation.SummaIn):
+                        case nameof(NomenklCalcCostOperation.SummaOut):
+                        case nameof(NomenklCalcCostOperation.SummaInWithNaklad):
+                        case nameof(NomenklCalcCostOperation.SummaOutWithNaklad):
+                            if (calcEd != null)
+                                calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat();
+                            frm.nomenklskladOperGridControl.TotalSummary.Add(new GridSummaryItem
+                            {
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Sum,
+                                DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat()
+                            });
+                            break;
+                        case nameof(NomenklCalcCostOperation.CalcPrice):
+                        case nameof(NomenklCalcCostOperation.CalcPriceNaklad):
+                        case nameof(NomenklCalcCostOperation.DocPrice):
+                            if (calcEd != null)
+                                calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat();
+                            break;
+                    }
+                }
+            }
+        }
+
 
         public class FilterNomenkl
         {
@@ -550,49 +741,74 @@ namespace KursAM2.ViewModel.Logistiks
         public decimal Ostatok { set; get; }
     }
 
-    public class NomenklOstatkiForSklad
+    public class NomenklOstatkiForSklad : RSViewModelBase
     {
-        public Nomenkl Nomenkl { set; get; }
-        public string NomenklName => Nomenkl?.Name;
-        public KursDomain.References.Warehouse Warehouse { set; get; }
-        public string StoreName => Warehouse?.Name;
+        [Display(AutoGenerateField = true, Name = "Ном.№", Order = 0)]
         public string NomenklNumber => Nomenkl?.NomenklNumber;
-        public string Name => Nomenkl?.Name;
-        public decimal Prihod { set; get; }
-        public decimal Rashod { set; get; }
-        public decimal Quantity { set; get; }
-        public decimal StartQuantity { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Наименование", Order = 1)]
+        public override string Name => Nomenkl?.Name;
+
+        [Display(AutoGenerateField = true, Name = "Валюта", Order = 2)]
         public string CurrencyName { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Наличие", Order = 3)]
+        public decimal Quantity { set; get; }
+
+        [Display(AutoGenerateField = false)] public Nomenkl Nomenkl { set; get; }
+
+        [Display(AutoGenerateField = false)] public string NomenklName => Nomenkl?.Name;
+
+        [Display(AutoGenerateField = false)] public KursDomain.References.Warehouse Warehouse { set; get; }
+
+        [Display(AutoGenerateField = false)] public string StoreName => Warehouse?.Name;
+
+        [Display(AutoGenerateField = false, Name = "Приход")]
+        public decimal Prihod { set; get; }
+
+        [Display(AutoGenerateField = false, Name = "Расход")]
+        public decimal Rashod { set; get; }
+
+        [Display(AutoGenerateField = false, Name = "Остаток на начало")]
+        public decimal StartQuantity { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Вид продукции", Order = 7)]
         public ProductType NomenklProductType => Nomenkl?.ProductType as ProductType;
+
+        [Display(AutoGenerateField = true, Name = "Тип номенклатуры", Order = 6)]
         public NomenklType NomenklType => Nomenkl?.NomenklType as NomenklType;
-
-
     }
 
     public class NomenklOstatkiWithPrice : NomenklOstatkiForSklad
     {
+        [Display(AutoGenerateField = true, Name = "Цена (б/н)", Order = 8)]
         public decimal PriceWONaklad { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Цена", Order = 10)]
         public decimal Price { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Сумма  (б/н)", Order = 9)]
         public decimal SummaWONaklad { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Сумма", Order = 11)]
         public decimal Summa { set; get; }
-        public decimal SummaIn { set; get; }
-        public decimal SummaInWONaklad { set; get; }
-        public decimal SummaOut { set; get; }
-        public decimal SummaOutWONaklad { set; get; }
-        public decimal Result { set; get; }
-        public decimal ResultWONaklad { set; get; }
+
+        [Display(AutoGenerateField = false)] public decimal SummaIn { set; get; }
+
+        [Display(AutoGenerateField = false)] public decimal SummaInWONaklad { set; get; }
+
+        [Display(AutoGenerateField = false)] public decimal SummaOut { set; get; }
+
+        [Display(AutoGenerateField = false)] public decimal SummaOutWONaklad { set; get; }
+
+        [Display(AutoGenerateField = false)] public decimal Result { set; get; }
+
+        [Display(AutoGenerateField = false)] public decimal ResultWONaklad { set; get; }
+
+        [Display(AutoGenerateField = true, Name = "Зарезервировано", Order = 4)]
         public decimal Reserved { set; get; }
 
-        public decimal StockLevel
-        {
-            get { return Quantity - Reserved; }
-            set
-            {
-
-            }
-        }
-
-
-        
+        [Display(AutoGenerateField = true, Name = "Остаток", Order = 5)]
+        public decimal StockLevel => Quantity - Reserved;
     }
 }

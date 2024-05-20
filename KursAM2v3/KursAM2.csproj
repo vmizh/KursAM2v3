@@ -527,6 +527,9 @@
     <Compile Include="View\Logistiks\InventorySheetView2.xaml.cs">
       <DependentUpon>InventorySheetView2.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Logistiks\SkladOstatkiView.xaml.cs">
+      <DependentUpon>SkladOstatkiView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Logistiks\TransferOut\TransferOutBalansRemainsView.xaml.cs">
       <DependentUpon>TransferOutBalansRemainsView.xaml</DependentUpon>
     </Compile>
@@ -1400,6 +1403,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Logistiks\InventorySheetView2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\SkladOstatkiView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Data;
 using KursDomain;
-using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 
@@ -57,8 +57,9 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
                 else
                 {
                     var k = ctx.SD_43.FirstOrDefault(_ => _.DOC_CODE == doc.ClientDC);
-                    if(k.OTVETSTV_LICO != null)
-                        PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(k.OTVETSTV_LICO.Value) as Employee;
+                    if (k.OTVETSTV_LICO != null)
+                        PersonaResponsible =
+                            GlobalOptions.ReferencesCache.GetEmployee(k.OTVETSTV_LICO.Value) as Employee;
                 }
             }
 
@@ -169,5 +170,83 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public decimal? SFT_SUMMA_NDS { get; set; }
         public SDRSchet SDRSchet { get; set; }
         public string GruzoDeclaration { get; set; }
+    }
+
+
+    public class InvoiceClientRemains : IInvoiceClientRemains
+    {
+        public InvoiceClientRemains(IInvoiceClient inv)
+        {
+            DocCode = inv.DocCode;
+            Id = inv.Id;
+            Receiver = inv.Receiver;
+            CO = inv.CO;
+            VzaimoraschetType = inv.VzaimoraschetType;
+            FormRaschet = inv.FormRaschet;
+            PayCondition = inv.PayCondition;
+            DocDate = inv.DocDate;
+            InnerNumber = inv.InnerNumber;
+            OuterNumber = inv.OuterNumber;
+            Client = inv.Client;
+            Currency = inv.Currency;
+            SummaOtgruz = inv.SummaOtgruz;
+            DilerSumma = inv.DilerSumma;
+            Note = inv.Note;
+            Diler = inv.Diler;
+            IsAccepted = inv.IsAccepted;
+            Summa = inv.Summa;
+            CREATOR = inv.CREATOR;
+            IsNDSIncludeInPrice = inv.IsNDSIncludeInPrice;
+            PaySumma = inv.PaySumma;
+            PersonaResponsible = inv.PersonaResponsible;
+        }
+
+        [Display(AutoGenerateField = false)] 
+        public decimal DocCode { get; set; }
+        [Display(AutoGenerateField = false)] 
+        public Guid Id { get; set; }
+        [Display(AutoGenerateField = true, Name = "Поставщик", Order = 9)]
+        public Kontragent Receiver { get; set; }
+        [Display(AutoGenerateField = true, Name = "Центр ответственности", Order = 12)]
+        public CentrResponsibility CO { get; set; }
+        [Display(AutoGenerateField = true, Name = "Тип продукции", Order = 13)]
+        public NomenklProductType VzaimoraschetType { get; set; }
+        [Display(AutoGenerateField = true, Name = "Форма расчетов", Order = 15)]
+        public PayForm FormRaschet { get; set; }
+        [Display(AutoGenerateField = true, Name = "Условия оплаты", Order = 14)]
+        public PayCondition PayCondition { get; set; }
+        [Display(AutoGenerateField = true, Name = "Дата", Order = 1)]
+        public DateTime DocDate { get; set; }
+        [Display(AutoGenerateField = true, Name = "№", Order = 2)]
+        public int InnerNumber { get; set; }
+        [Display(AutoGenerateField = true, Name = "Внешний №", Order = 3)]
+        public string OuterNumber { get; set; }
+        [Display(AutoGenerateField = true, Name = "Клиент", Order = 4)]
+        public Kontragent Client { get; set; }
+        [Display(AutoGenerateField = true, Name = "Валюта", Order = 6)]
+        public Currency Currency { get; set; }
+        [Display(AutoGenerateField = true, Name = "Отгружено", Order = 8)]
+        public decimal SummaOtgruz { get; set; }
+        [Display(AutoGenerateField = true, Name = "Сумма дилера", Order = 17)]
+        public decimal DilerSumma { get; set; }
+        [Display(AutoGenerateField = true, Name = "Примечание", Order = 10)]
+        public string Note { get; set; }
+        [Display(AutoGenerateField = true, Name = "Дилер", Order = 16)]
+        public Kontragent Diler { get; set; }
+        [Display(AutoGenerateField = true, Name = "Акцептован", Order = 18)]
+        public bool IsAccepted { get; set; }
+        [Display(AutoGenerateField = true, Name = "Сумма", Order = 5)]
+        public decimal Summa { get; set; }
+        [Display(AutoGenerateField = true, Name = "Создатель", Order = 11)]
+        public string CREATOR { get; set; }
+        [Display(AutoGenerateField = true, Name = "НДС в цене", Order = 19)]
+        public bool IsNDSIncludeInPrice { get; set; }
+        [Display(AutoGenerateField = true, Name = "Оплачено", Order = 7)]
+        public decimal PaySumma { get; set; }
+        [Display(AutoGenerateField = true, Name = "Ответственный", Order = 20)]
+        public Employee PersonaResponsible { get; set; }
+        public ObservableCollection<IInvoiceClientRow> Rows { get; set; }
+        [Display(AutoGenerateField = true, Name = "Кол-во", Order = 21)]
+        public decimal NomQuantity { get; set; }
     }
 }
