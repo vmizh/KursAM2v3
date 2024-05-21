@@ -369,7 +369,7 @@ namespace Calculates.Materials
                         NomenklDC = nomDC,
                         FinDocumentDC = d.DOC_CODE,
                         FinDocument =
-                        $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}"
+                        $"С/ф поставщика №{d.TD_26?.SD_26?.SF_IN_NUM}/{d.TD_26?.SD_26?.SF_POSTAV_NUM} от {d.TD_26?.SD_26?.SF_POSTAV_DATE.ToShortDateString()}"
 
 
                     };

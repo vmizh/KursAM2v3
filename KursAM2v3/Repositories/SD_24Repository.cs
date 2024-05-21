@@ -174,7 +174,7 @@ namespace KursAM2.Repositories
         {
             return Context.SD_24
                 .Where(_ => _.DD_DATE >= dateStart && _.DD_DATE <= dateEnd
-                                                   && _.DD_TYPE_DC == 2010000012).ToList();
+                                                   && _.DD_TYPE_DC == 2010000012).AsNoTracking().ToList();
         }
 
         public List<SD_24> GetPrihodOrderAllByDates(DateTime dateStart, DateTime dateEnd)
