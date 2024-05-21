@@ -140,7 +140,7 @@ namespace Calculates.Materials
                             case 2:
                                 oper.TovarDocument = "Расходный складской ордер ";
                                 break;
-                            case 5:
+                            case 3:
                                 oper.TovarDocument = "Инвентаризационная ведомость ";
                                 break;
                             case 7:
@@ -168,7 +168,7 @@ namespace Calculates.Materials
 
                         oper.TovarDocument +=
                             $"№{d.SD_24.DD_IN_NUM}/{d.SD_24.DD_EXT_NUM} от {d.SD_24.DD_DATE.ToShortDateString()}";
-                        if (oper.OperCode == 3 && oper.QuantityIn <= 0) continue;
+                        //if (oper.OperCode == 3 && oper.QuantityIn <= 0) continue;
                         ret.Operations.Add(oper);
                     }
                 }
@@ -369,7 +369,7 @@ namespace Calculates.Materials
                         NomenklDC = nomDC,
                         FinDocumentDC = d.DOC_CODE,
                         FinDocument =
-                        $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}"
+                        $"С/ф поставщика №{d.TD_26?.SD_26.SF_IN_NUM}/{d.TD_26?.SD_26.SF_POSTAV_NUM} от {d.TD_26?.SD_26.SF_POSTAV_DATE.ToShortDateString()}"
 
 
                     };
