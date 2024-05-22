@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Navigation;
 using Core.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
@@ -163,6 +164,23 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override string LayoutName => "InvoiceClientView2";
 
+        public Visibility IsPaysEnabled => isPaysEnabled();
+
+        private Visibility isPaysEnabled()
+        {
+            if (Document.PaymentDocs.Count > 0)
+            {
+                if (Document.PaymentDocs.Any(_ => _.DocumentType == DocumentType.CashIn) && !Document.PaymentDocs
+                        .Where(_ => _.DocumentType == DocumentType.CashIn)
+                        .Any(_ => GlobalOptions.UserInfo.CashAccess.Contains(_.FromDC))) return Visibility.Hidden;
+                if (Document.PaymentDocs.Any(__ => __.DocumentType == DocumentType.Bank) && !Document.PaymentDocs
+                        .Where(__ => __.DocumentType == DocumentType.Bank)
+                        .Any(__ => GlobalOptions.UserInfo.BankAccess
+                            .Contains(__.FromDC))) return Visibility.Hidden;
+            }
+
+            return Visibility.Visible;
+        }
 
         public bool IsCurrencyEnabled => Document.Client == null;
 
@@ -351,6 +369,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
         protected override void OnWindowLoaded(object obj)
         {
             base.OnWindowLoaded(obj);
+            UpdateVisualObjects();
+        }
+
+        public override void UpdateVisualObjects()
+        {
+            base.UpdateVisualObjects();
             if (Form is InvoiceClientView frm)
             {
                 var delList = new List<GridSummaryItem>();
@@ -397,6 +421,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 frm.tableViewRows.FormatConditions.Add(shippedFormatCondition);
                 frm.tableViewRows.FormatConditions.Add(notShippedFormatCondition);
                 frm.tableViewRows.FormatConditions.Add(serviceFormatCondition);
+                RaisePropertyChanged(nameof(IsPaysEnabled));
             }
         }
 
@@ -876,6 +901,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.myState = RowStatus.NotEdited;
                 Document.RaisePropertyChanged("State");
             }
+            RaisePropertyChanged(nameof(IsPaysEnabled));
+            UpdateVisualObjects();
         }
 
 

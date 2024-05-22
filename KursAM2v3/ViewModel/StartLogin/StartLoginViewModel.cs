@@ -254,6 +254,20 @@ namespace KursAM2.ViewModel.StartLogin
             GlobalOptions.ReferencesCache = refer;
             SetUserProfile(newUser.NickName.ToUpper());
             SetGlobalProfile();
+            using (var dbContext = GlobalOptions.GetEntities())
+            {
+                var bankSql = $"SELECT doc_code FROM HD_114 h WHERE h.USR_ID = {CustomFormat.DecimalToSqlDecimal(GlobalOptions.UserInfo.Id)}";
+                var cashSql = $"SELECT doc_code FROM HD_22 h WHERE h.USR_ID = {CustomFormat.DecimalToSqlDecimal(GlobalOptions.UserInfo.Id)}";
+
+                foreach (var dc in dbContext.Database.SqlQuery<decimal>(bankSql))
+                {
+                    newUser.BankAccess.Add(dc);
+                }
+                foreach (var dc in dbContext.Database.SqlQuery<decimal>(cashSql))
+                {
+                    newUser.CashAccess.Add(dc);
+                }
+            }
             // ReSharper disable once PossibleNullReferenceException
             view.IsConnectSuccess = true;
             DialogResult = true;

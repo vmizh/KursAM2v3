@@ -230,7 +230,7 @@
                               HorizontalAlignment="Stretch"
                               VerticalAlignment="Stretch"
                               dxlc:LayoutControl.AllowVerticalSizing="True"
-                              Name="mainLayoutControl2">
+                              Name="tabsLayoutControl">
                 <dxlc:LayoutGroup HeaderTemplate="{StaticResource RowsLayoutGroupHeader}"
                                   Name="mainLayoutControl3">
                     <dxg:GridControl Name="gridRows"
@@ -362,7 +362,8 @@
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>
                 <dxlc:LayoutGroup HeaderTemplate="{StaticResource PaysLayoutGroupHeader}"
-                                  Name="mainLayoutControl5">
+                                  Name="payLayoutControl"
+                                  Visibility="{Binding IsPaysEnabled}">
                     <dxg:GridControl Name="gridPays"
                                      Style="{StaticResource GridControl.Base}"
                                      Margin="0,10,0,0"

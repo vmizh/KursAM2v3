@@ -354,6 +354,18 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Properties
 
+        public Visibility IsPaysEnabled => isPaysEnabled();
+
+        private Visibility isPaysEnabled()
+        {
+            if (Document.PaymentDocs.Count == 0) return Visibility.Visible;
+            if(Document.PaymentDocs.Any(_ => _.CashDC != null) && !Document
+                   .PaymentDocs.Any(_ => GlobalOptions.UserInfo.CashAccess.Contains(_.CashBook.DocCode))) return Visibility.Hidden;
+            if(Document.PaymentDocs.Any(_ => _.BankCode != null) && !Document
+                   .PaymentDocs.Any(_ => GlobalOptions.UserInfo.BankAccess.Contains(_.Bank.DocCode))) return Visibility.Hidden;
+            return Visibility.Visible;
+        }
+
         public List<Currency> CurrencyList => GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>()
             .OrderBy(_ => _.Name).ToList();
 

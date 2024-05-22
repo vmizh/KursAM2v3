@@ -15,6 +15,9 @@ public class UserProfileViewModel : RSViewModelBase, IEntity<UserProfile>
         Entity = new UserProfile { Id = Guid.NewGuid() };
     }
 
+    public List<decimal> BankAccess { set; get; } = new List<decimal>();
+    public List<decimal> CashAccess { set; get; } = new List<decimal>();
+
     public UserProfileViewModel(UserProfile entity)
     {
         Entity = entity ?? new UserProfile { Id = Guid.NewGuid() };

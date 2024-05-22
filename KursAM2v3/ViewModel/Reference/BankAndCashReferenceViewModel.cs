@@ -44,6 +44,8 @@ namespace KursAM2.ViewModel.Reference
 
         #region Properties
 
+        public override string LayoutName => "BankCashReferencesWithRight";
+
         public override bool IsCanSaveData => Cashs.Any(_ =>
             _.State != RowStatus.NotEdited || _.StartRemains.Any(s => s.State != RowStatus.NotEdited) || Banks.Any(b =>
                 b.State != RowStatus.NotEdited));

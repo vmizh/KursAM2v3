@@ -19,6 +19,9 @@ namespace Helper
         [DataMember] public List<TileGroup> MainTileGroups = new List<TileGroup>();
         [DataMember] public List<UserProfile> Profile = new List<UserProfile>();
 
+        [DataMember] public List<decimal> BankAccess = new List<decimal>();
+        [DataMember] public List<decimal> CashAccess = new List<decimal>();
+
         [DataMember]
         public ObservableCollection<UserMenuFavorites> MenuFavorites { set; get; }
             = new ObservableCollection<UserMenuFavorites>();

@@ -7,6 +7,7 @@ using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
+using KursDomain.References;
 
 namespace KursDomain.Documents.Invoices;
 
@@ -26,6 +27,19 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
     {
         Entity = entity ?? DefaultValue();
     }
+
+    private void LoadReferences()
+    {
+       
+    }
+
+    [Display(AutoGenerateField = false)]
+    public BankAccount Bank => GlobalOptions.ReferencesCache.GetBankAccount(Entity.TD_101?.SD_101?.SD_114?.DOC_CODE) as BankAccount;
+    [Display(AutoGenerateField = false)]
+    public CashBox CashBook => GlobalOptions.ReferencesCache.GetCashBox(Entity.SD_34?.CA_DC) as CashBox;
+
+    [Display(AutoGenerateField = true, Name = "Касса/Банк")]
+    public override string Name => Bank?.Name ?? CashBook?.Name;
 
     [Display(AutoGenerateField = false)]
     public override Guid Id

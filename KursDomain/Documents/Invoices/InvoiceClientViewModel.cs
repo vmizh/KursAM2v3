@@ -1161,6 +1161,8 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                     {
                         DocCode = c.DOC_CODE,
                         Code = 0,
+                        FromDC = (decimal)c.CA_DC,
+                        FromName = ((IName)GlobalOptions.ReferencesCache.GetCashBox(c.CA_DC))?.Name,
                         DocumentType = DocumentType.CashIn,
                         // ReSharper disable once PossibleInvalidOperationException
                         DocumentName =
@@ -1173,6 +1175,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                         Note = c.NOTES_ORD
                     });
                 foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
+                             .Include(_ => _.SD_101.SD_114)
                              .Where(_ => _.VVT_SFACT_CLIENT_DC == DocCode)
                              .ToList())
                     PaymentDocs.Add(new InvoicePaymentDocument
@@ -1180,6 +1183,8 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                         DocCode = c.DOC_CODE,
                         Code = c.CODE,
                         DocumentType = DocumentType.Bank,
+                        FromDC = c.SD_101.VV_ACC_DC,
+                        FromName = $"{GlobalOptions.ReferencesCache.GetBank(c.SD_101.SD_114.BA_BANKDC).NickName} {c.SD_101.SD_114.BA_RASH_ACC}",
                         DocumentName =
                             // ReSharper disable once PossibleInvalidOperationException
                             $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",

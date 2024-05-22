@@ -52,14 +52,11 @@
                                   dx:DXSerializer.SerializationID="layoutGroup56"
                                   dx:DXSerializer.StoreLayoutMode="All"
                                   dxlc:LayoutControl.AllowHorizontalSizing="True">
-
                     <dxlc:LayoutGroup View="GroupBox" Header="Товары" Padding="0"
                                       Orientation="Vertical"
                                       dx:DXSerializer.SerializationID="layoutGroup5"
                                       dx:DXSerializer.StoreLayoutMode="All"
                                       dxlc:LayoutControl.AllowVerticalSizing="True">
-
-
                         <dxg:GridControl x:Name="nomenklskladGridControl"
                                          Style="{StaticResource GridControl.Base}"
                                          dx:DXSerializer.SerializationID="nomenklskladGridControl"

@@ -55,7 +55,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 var existCodes = ctx.ProviderInvoicePay.Where(_ => _.BankCode != null).Select(_ => _.BankCode).ToList();
                 foreach (var d in data)
                 {
-                    if(existCodes.Contains(d.CODE)) continue;
+                    if (existCodes.Contains(d.CODE)) continue;
                     ItemsCollection.Add(new BankPaymentRow
                     {
                         DocCode = d.DOC_CODE,
@@ -190,9 +190,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 ItemsCollection.Clear();
                 var data = ctx.SD_34.Where(_ => _.KONTRAGENT_DC == myKontrDC
                                                 && (_.KONTR_FROM_DC ?? 0) == 0 && (_.SPOST_DC ?? 0) == 0)
-                    .OrderByDescending(_ => _.DATE_ORD);
+                    .OrderByDescending(_ => _.DATE_ORD).ToList();
 
-                foreach (var d in data)
+                foreach (var d in data.Where(_ => GlobalOptions.UserInfo.CashAccess.Contains(_.CA_DC ?? 0)))
                     ItemsCollection.Add(new CashPaymentRow
                     {
                         DocCode = d.DOC_CODE,

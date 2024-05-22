@@ -127,7 +127,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                         .AsNoTracking()
                         .Where(_ => _.DATE_ORD >= DateStart && _.DATE_ORD <= DateEnd)
                         .ToList();
-                    foreach (var d in data)
+                    foreach (var d in data.Where(_=> GlobalOptions.UserInfo.CashAccess.Contains(_.CA_DC ?? 0)))
                         if (d.SD_43.NAME.Contains(SearchText))
                             DocumentCollection.Add(new CashInViewModel(d));
                 }

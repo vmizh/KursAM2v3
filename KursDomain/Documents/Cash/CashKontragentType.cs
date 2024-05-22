@@ -4,10 +4,10 @@ namespace KursDomain.Documents.Cash;
 
 public enum CashKontragentType
 {
-    [Display(Name = "Контрагент")] Kontragent = 1,
-    [Display(Name = "Сотрудник")] Employee = 2,
-    [Display(Name = "Касса")] Cash = 3,
-    [Display(Name = "Банк")] Bank = 4,
-    [Display(Name = "Акционер")] StockHolder = 5,
-    [Display(Name = "Не выбран")] NotChoice = 0
+    [Display(Name = "РљРѕРЅС‚СЂР°РіРµРЅС‚")] Kontragent = 1,
+    [Display(Name = "РЎРѕС‚СЂСѓРґРЅРёРє")] Employee = 2,
+    [Display(Name = "РљР°СЃСЃР°")] Cash = 3,
+    [Display(Name = "Р‘Р°РЅРє")] Bank = 4,
+    [Display(Name = "РђРєС†РёРѕРЅРµСЂ")] StockHolder = 5,
+    [Display(Name = "РќРµ РІС‹Р±СЂР°РЅ")] NotChoice = 0
 }

@@ -61,7 +61,8 @@ namespace KursAM2.ViewModel.Finance.Cash
         #region Properties
 
         public ObservableCollection<CashBox> CashList { set; get; }
-            = new ObservableCollection<CashBox>(GlobalOptions.ReferencesCache.GetCashBoxAll().Cast<CashBox>());
+            = new ObservableCollection<CashBox>(GlobalOptions.ReferencesCache.GetCashBoxAll().Cast<CashBox>()
+                .Where(_ => GlobalOptions.UserInfo.CashAccess.Contains(_.DocCode)));
 
         public ObservableCollection<CashBookDocument> Documents { set; get; }
             = new ObservableCollection<CashBookDocument>();

@@ -4,7 +4,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-             
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
@@ -17,7 +16,7 @@
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
-    <DockPanel>
+    <DockPanel Style="{StaticResource DXServices}">
         <control1:WindowMenu Height="60" DockPanel.Dock="Top" />
         <dxlc:LayoutControl Name="mainLayoutControl"
                             Orientation="Vertical"
@@ -159,7 +158,8 @@
                                   Name="mainLayoutControl5"
                                   IsEnabled="{Binding IsCanUserRight}"
                                   Orientation="Vertical">
-                    <dxlc:LayoutGroup Name="mainLayoutControl6">
+                    <dxlc:LayoutGroup Name="mainLayoutControl6" 
+                                      dxlc:LayoutControl.AllowVerticalSizing="True">
                         <dxg:GridControl Name="gridBankCash"
                                          Margin="0,10,0,0"
                                          AutoGenerateColumns="AddNew"
@@ -205,7 +205,8 @@
                             </dxg:GridControl.View>
                         </dxg:GridControl>
                     </dxlc:LayoutGroup>
-                    <dxlc:LayoutGroup Name="mainLayoutControl7">
+                    <dxlc:LayoutGroup Name="mainLayoutControl7"
+                                      dxlc:LayoutControl.AllowVerticalSizing="True">
                         <dxg:GridControl Name="gridUsers"
                                          Margin="0,10,0,0"
                                          AutoGenerateColumns="AddNew"
