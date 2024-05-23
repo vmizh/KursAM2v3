@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 using DevExpress.Xpf.Grid;
 
 namespace KursAM2.View.Logistiks.AktSpisaniya
@@ -45,6 +46,25 @@ namespace KursAM2.View.Logistiks.AktSpisaniya
         {
         }
 
-        
+
+        private void GridNomenklRows_OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.A && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))  
+            {  
+                e.Handled = true;  
+                gridNomenklRows.SelectAll();  
+                gridNomenklRows.CopyToClipboard();  
+            }  
+        }
+
+        private void GridSelectNomenklRows_OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.A && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))  
+            {  
+                e.Handled = true;  
+                gridSelectNomenklRows.SelectAll();  
+                gridSelectNomenklRows.CopyToClipboard();  
+            } 
+        }
     }
 }

@@ -117,7 +117,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         private void RemoveNomenklFromSelected(object obj)
         {
-            if (SelectedColumn?.FieldName != "FactOtgruz") return;
+            //if (SelectedColumn?.FieldName != "FactOtgruz") return;
             var removeList = new List<decimal>();
             if (SelectedRows.Count > 0)
             {

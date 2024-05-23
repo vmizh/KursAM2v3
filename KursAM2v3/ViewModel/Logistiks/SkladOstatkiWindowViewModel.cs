@@ -124,8 +124,8 @@ namespace KursAM2.ViewModel.Logistiks
 
         public List<NomPrice> Prices { set; get; } = new List<NomPrice>();
 
-        public ObservableCollection<OperationNomenklMove> NomenklOperationsForSklad { set; get; } =
-            new ObservableCollection<OperationNomenklMove>();
+        //public ObservableCollection<OperationNomenklMove> NomenklOperationsForSklad { set; get; } =
+        //    new ObservableCollection<OperationNomenklMove>();
 
         public ObservableCollection<NomenklCalcCostOperation> NomenklOperations { set; get; } =
             new ObservableCollection<NomenklCalcCostOperation>();
@@ -180,19 +180,15 @@ namespace KursAM2.ViewModel.Logistiks
                     NomenklsForSklad.Clear();
                     LoadNomForSklad();
                 }
-                else
-                {
-                    NomenklOperationsForSklad.Clear();
-                    RaisePropertyChanged(nameof(NomenklOperationsForSklad));
-                }
+                //else
+                //{
+                //    NomenklOperationsForSklad.Clear();
+                //    RaisePropertyChanged(nameof(NomenklOperationsForSklad));
+                //}
 
                 RaisePropertyChanged();
             }
         }
-
-        // ReSharper disable once CollectionNeverQueried.Global
-        public ObservableCollection<NomenklQuantity> NomenklQuantity { set; get; } =
-            new ObservableCollection<NomenklQuantity>();
 
         public NomenklOstatkiWithPrice CurrentNomenklStore
         {
@@ -227,11 +223,11 @@ namespace KursAM2.ViewModel.Logistiks
                 {
                     RefreshData(null);
                 }
-                else
-                {
-                    NomenklOperationsForSklad.Clear();
-                    RaisePropertyChanged(nameof(NomenklOperationsForSklad));
-                }
+                //else
+                //{
+                //    NomenklOperationsForSklad.Clear();
+                //    RaisePropertyChanged(nameof(NomenklOperationsForSklad));
+                //}
 
                 RaisePropertyChanged();
             }
@@ -335,7 +331,6 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void loadInvoices()
         {
-            var frm = Form as SkladOstatkiView;
             InvoiceClientList.Clear();
             if (CurrentNomenklStore.Reserved == 0) return;
             using (var context = GlobalOptions.GetEntities())
@@ -419,9 +414,10 @@ namespace KursAM2.ViewModel.Logistiks
                     DocumentsOpenManager.Open(DocumentType.StoreOrderIn, (decimal)CurrentOperation.TovarDocDC);
                     break;
                 case 2:
+                    // ReSharper disable once PossibleInvalidOperationException
                     DocumentsOpenManager.Open(DocumentType.StoreOrderIn, (decimal)CurrentOperation.TovarDocDC);
                     break;
-                case 5:
+                case 3:
                     // ReSharper disable once PossibleInvalidOperationException
                     DocumentsOpenManager.Open(DocumentType.InventoryList, (decimal)CurrentOperation.TovarDocDC);
                     break;
@@ -433,6 +429,7 @@ namespace KursAM2.ViewModel.Logistiks
                     DocumentsOpenManager.Open(DocumentType.NomenklTransfer, CurrentOperation.Id);
                     break;
                 case 20:
+                    // ReSharper disable once PossibleInvalidOperationException
                     DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)CurrentOperation.FinDocumentDC);
                     break;
             }
@@ -451,6 +448,7 @@ namespace KursAM2.ViewModel.Logistiks
                     DocumentsOpenManager.Open(DocumentType.InvoiceClient, (decimal)CurrentOperation.FinDocumentDC);
                     break;
                 case 20:
+                    // ReSharper disable once PossibleInvalidOperationException
                     DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)CurrentOperation.FinDocumentDC);
                     break;
                 case 19:

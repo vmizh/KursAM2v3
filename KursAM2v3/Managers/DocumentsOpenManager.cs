@@ -74,6 +74,7 @@ namespace KursAM2.Managers
                 case DocumentType.DogovorOfSupplier:
                 case DocumentType.StockHolderAccrual:
                 case DocumentType.Naklad:
+                case DocumentType.InventoryList:
                     return true;
                 default:
                     return false;
@@ -210,10 +211,30 @@ namespace KursAM2.Managers
                     //SaveLastOpenInfo(docType, dos.Document.Id, null, dos.Document.Creator,
                     //    "", dos.Description);
                     break;
+                case DocumentType.InventoryList:
+                    var invList = OpenInventoryList(dc);
+                    break;
+                
                 default:
                     WindowManager.ShowFunctionNotReleased();
                     return;
             }
+        }
+
+        private static InventorySheetWindowViewModel OpenInventoryList(decimal dc)
+        {
+            var form = new InventorySheetView2
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var ctx = new InventorySheetWindowViewModel(dc)
+            {
+                Form = form,
+                myState = RowStatus.NotEdited
+            };
+            form.DataContext = ctx;
+            form.Show();
+            return ctx;
         }
 
         private static DistributeNakladViewModel OpenNakladDistribute(Guid? id)
