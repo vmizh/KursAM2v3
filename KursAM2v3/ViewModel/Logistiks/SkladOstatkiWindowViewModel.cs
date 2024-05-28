@@ -13,6 +13,7 @@ using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using DevExpress.Data;
 using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -42,7 +43,6 @@ namespace KursAM2.ViewModel.Logistiks
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
 
         private readonly ImageSource StoreImage;
-        private readonly IniFileManager iniFile;
         private bool IsRightOnNomenklReference;
         private IInvoiceClient myCurrentInvoice;
 
@@ -52,6 +52,7 @@ namespace KursAM2.ViewModel.Logistiks
         private KursDomain.References.Warehouse myCurrentWarehouse;
         private bool myIsPeriodSet;
         private DateTime myOstatokDate;
+        private IniFileManager iniFile;
 
         public SkladOstatkiWindowViewModel()
         {
@@ -89,6 +90,17 @@ namespace KursAM2.ViewModel.Logistiks
             myOstatokDate = DateTime.Today;
             getRightOnNomenklReference();
             RefreshReferences();
+        }
+
+        private void InitIniFile(IniFileManager userIni)
+        {
+            if (!userIni.KeyExists("SkaldOstatkiReceiverName", "Layot")) userIni.Write("Layout", "SkaldOstatkiReceiverName", "5");
+            //if (!userIni.KeyExists("Login", "Start")) userIni.Write("Start", "Login", "");
+            //if (!userIni.KeyExists("LastDataBase", "Start")) userIni.Write("Start", "LastDataBase", "");
+            //if (!userIni.KeyExists("DefaultDataBase", "Start")) userIni.Write("Start", "DefaultDataBase", "");
+            //if (!userIni.KeyExists("System", "Version")) userIni.Write("Version", "System", "0");
+            //if (!userIni.KeyExists("Test", "Version")) userIni.Write("Version", "Test", "0");
+            //if (!userIni.KeyExists("Version", "Version")) userIni.Write("Version", "Version", "0");
         }
 
         public override string LayoutName => "SkladOstatkiWindowViewModelLayout";
@@ -208,7 +220,10 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 if (myCurrentNomenklForSklad == value) return;
                 myCurrentNomenklForSklad = value;
-                if (myCurrentNomenklForSklad != null) RefreshData(null);
+                if (myCurrentNomenklForSklad != null)
+                {
+                    RefreshData(null);
+                }
                 //else
                 //{
                 //    NomenklOperationsForSklad.Clear();
@@ -251,18 +266,6 @@ namespace KursAM2.ViewModel.Logistiks
         public ICommand InvoiceOpenCommand
         {
             get { return new Command(InvoiceOpen, _ => CurrentInvoice != null); }
-        }
-
-        private void InitIniFile(IniFileManager userIni)
-        {
-            if (!userIni.KeyExists("SkaldOstatkiReceiverName", "Layot"))
-                userIni.Write("Layout", "SkaldOstatkiReceiverName", "5");
-            //if (!userIni.KeyExists("Login", "Start")) userIni.Write("Start", "Login", "");
-            //if (!userIni.KeyExists("LastDataBase", "Start")) userIni.Write("Start", "LastDataBase", "");
-            //if (!userIni.KeyExists("DefaultDataBase", "Start")) userIni.Write("Start", "DefaultDataBase", "");
-            //if (!userIni.KeyExists("System", "Version")) userIni.Write("Version", "System", "0");
-            //if (!userIni.KeyExists("Test", "Version")) userIni.Write("Version", "Test", "0");
-            //if (!userIni.KeyExists("Version", "Version")) userIni.Write("Version", "Version", "0");
         }
 
 
@@ -364,7 +367,7 @@ namespace KursAM2.ViewModel.Logistiks
                     var newItem = new InvoiceClientRemains(item);
                     var row = context.TD_84.FirstOrDefault(_ =>
                         _.DOC_CODE == item.DocCode && _.SFT_NEMENKL_DC == CurrentNomenklStore.Nomenkl.DocCode);
-                    newItem.NomQuantity = (decimal)(row?.SFT_KOL ?? 0);
+                    newItem.NomQuantity = (decimal)(row?.SFT_KOL ?? 0); 
                     InvoiceClientList.Add(newItem);
                 }
             }
@@ -455,6 +458,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
+        
 
         private void NomenklCalcOpen(object obj)
         {
@@ -513,7 +517,7 @@ namespace KursAM2.ViewModel.Logistiks
         protected override void OnWindowLoaded(object obj)
         {
             base.OnWindowLoaded(obj);
-            UpdateVisualObjects();
+              UpdateVisualObjects();
         }
 
         public override void UpdateVisualObjects()
@@ -529,7 +533,6 @@ namespace KursAM2.ViewModel.Logistiks
                         case "State":
                             col.Visible = false;
                             break;
-
                         case nameof(NomenklOstatkiWithPrice.Name):
                             frm.nomenklskladGridControl.TotalSummary.Add(new GridSummaryItem
                             {
@@ -552,17 +555,48 @@ namespace KursAM2.ViewModel.Logistiks
                                 col.EditSettings = new CalcEditSettings
                                 {
                                     DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat(),
-                                    AllowDefaultButton = false
-                                };
+                                    AllowDefaultButton = false,
+                                   };
+                            
                             frm.nomenklskladGridControl.TotalSummary.Add(new GridSummaryItem
                             {
                                 FieldName = col.FieldName,
                                 SummaryType = SummaryItemType.Sum,
-                                DisplayFormat = "{0:n3}"
+                                DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat()
                             });
                             break;
-                        case nameof(NomenklOstatkiWithPrice.Reserved):
-                        case nameof(NomenklOstatkiWithPrice.StockLevel):
+                         case nameof(NomenklOstatkiWithPrice.StockLevel):
+                             if (calcEd != null)
+                                 calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
+                             else
+                                 col.EditSettings = new CalcEditSettings
+                                 {
+                                     DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat(),
+                                     AllowDefaultButton = false
+                                 };
+
+                             var notShippedFormatCondition = new FormatCondition
+                             {
+                                 //Expression = "[SummaFact] < [Summa]",
+                                 FieldName = "StockLevel",
+                                 ApplyToRow = false,
+                                 Format = new Format
+                                 {
+                                     Foreground = Brushes.Red
+                                 },
+                                 ValueRule = ConditionRule.Less,
+                                 Value1 = 0m
+                             };
+                             frm.tableOstatkiView.FormatConditions.Add(notShippedFormatCondition);
+                             frm.nomenklskladGridControl.TotalSummary.Add(new GridSummaryItem
+                             {
+                                 FieldName = col.FieldName,
+                                 SummaryType = SummaryItemType.Sum,
+                                 DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat()
+                             });
+
+                             break;
+                       case nameof(NomenklOstatkiWithPrice.Reserved):
                             if (calcEd != null)
                                 calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
                             else
@@ -577,6 +611,7 @@ namespace KursAM2.ViewModel.Logistiks
                                 SummaryType = SummaryItemType.Sum,
                                 DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat()
                             });
+
                             break;
                         case nameof(NomenklOstatkiWithPrice.Summa):
                         case nameof(NomenklOstatkiWithPrice.SummaWONaklad):
@@ -612,18 +647,21 @@ namespace KursAM2.ViewModel.Logistiks
                 var sCol = KursGridControlHelper.GetSummaryForField(frm.invoiceClientGridControl,
                     "NomQuantity");
                 if (sCol == null)
-                    frm.invoiceClientGridControl.TotalSummary.Add(new GridSummaryItem
+                {
+                    frm.invoiceClientGridControl.TotalSummary.Add(new GridSummaryItem()
                     {
                         FieldName = "NomQuantity",
-                        DisplayFormat = "{0:n3}",
+                        DisplayFormat = "{0:n2}",
                         SummaryType = SummaryItemType.Sum
                     });
+                }
                 var nomQCol = KursGridControlHelper.GetColumnForField(frm.invoiceClientGridControl,
                     "NomQuantity");
-                nomQCol.EditSettings = new CalcEditSettings
+                nomQCol.EditSettings = new CalcEditSettings()
                 {
                     AllowDefaultButton = false,
-                    DisplayFormat = "{0:n3}"
+                    DisplayFormat = "{0:n2}",
+
                 };
 
                 var colIndex = Convert.ToInt32(iniFile.ReadINI("Layout", "SkaldOstatkiReceiverName"));
@@ -641,13 +679,12 @@ namespace KursAM2.ViewModel.Logistiks
                             frm.nomenklskladOperGridControl.TotalSummary.Add(new GridSummaryItem
                             {
                                 FieldName = col.FieldName,
-                                SummaryType = SummaryItemType.Count
-                                //Alignment = GridSummaryItemAlignment.Right
+                                SummaryType = SummaryItemType.Count,
+                                DisplayFormat="n0"
                             });
                             break;
                         case nameof(NomenklCalcCostOperation.QuantityIn):
                         case nameof(NomenklCalcCostOperation.QuantityOut):
-                        case nameof(NomenklCalcCostOperation.QuantityNakopit):
                             if (calcEd != null)
                                 calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
                             frm.nomenklskladOperGridControl.TotalSummary.Add(new GridSummaryItem

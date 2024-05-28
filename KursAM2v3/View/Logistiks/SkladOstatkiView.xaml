@@ -60,7 +60,8 @@
                                       dxlc:LayoutControl.AllowVerticalSizing="True">
                         <dxg:GridControl x:Name="nomenklskladGridControl"
                                          Style="{StaticResource GridControl.Base}"
-                                         dx:DXSerializer.SerializationID="nomenklskladGridControl"
+
+dx:DXSerializer.SerializationID="nomenklskladGridControl"
                                          ItemsSource="{Binding NomenklsForSklad, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
                                          CurrentItem="{Binding CurrentNomenklStore, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                          SelectionMode="Row"
@@ -75,7 +76,6 @@
                                     <dxg:TableView.TotalSummaryContentStyle>
                                         <Style BasedOn="{StaticResource {dxgt:TotalSummaryThemeKey ResourceKey=TotalSummaryContentStyle}}" 
                                                TargetType="dx:DataContentPresenter">
-                                            <Setter Property="TextBlock.FontWeight" Value="Bold"/>
                                             <Setter Property="HorizontalAlignment" Value="Right"/>
                                         </Style>
                                     </dxg:TableView.TotalSummaryContentStyle>
@@ -113,7 +113,8 @@
                                               dx:DXSerializer.SerializationID="layoutGroup8"
                                               dx:DXSerializer.StoreLayoutMode="All">
                                 <dxg:GridControl x:Name="nomenklskladOperGridControl"
-                                                 Style="{StaticResource GridControl.Base}"
+
+Style="{StaticResource GridControl.Base}"
                                                  dx:DXSerializer.SerializationID="nomenklskladOperGridControl"
                                                  ItemsSource="{Binding NomenklOperations, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                  CurrentItem="{Binding CurrentOperation, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
@@ -138,6 +139,13 @@
                                                        ShowTotalSummary="True"
                                                        ShowGroupPanel="False"
                                                        ShowAutoFilterRow="True">
+                                            <dxg:TableView.TotalSummaryContentStyle>
+                                                <Style BasedOn="{StaticResource {dxgt:TotalSummaryThemeKey ResourceKey=TotalSummaryContentStyle}}" 
+                                                       TargetType="dx:DataContentPresenter">
+                                                    <Setter Property="HorizontalAlignment" Value="Right"/>
+                                                </Style>
+                                            </dxg:TableView.TotalSummaryContentStyle>
+
                                             <dxg:TableView.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Header="Открыть товарный документ"
@@ -159,7 +167,8 @@
                                                               Command="{Binding GetColumnSummaCommand}"
                                                               CommandParameter="{Binding Path=PlacementTarget, 
                            RelativeSource={RelativeSource Mode=FindAncestor,
-                                            AncestorType={x:Type ContextMenu}}}" />
+
+AncestorType={x:Type ContextMenu}}}" />
                                                 </ContextMenu>
                                             </dxg:TableView.ContextMenu>
                                         </dxg:TableView>

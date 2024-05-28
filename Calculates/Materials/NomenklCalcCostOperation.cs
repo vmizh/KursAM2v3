@@ -307,6 +307,7 @@ namespace Calculates.Materials
         }
 
         [Display(AutoGenerateField = true, Name = "Накопительно",Order = 7)]
+        [DisplayFormat(DataFormatString = "n2")]
         public decimal QuantityNakopit
         {
             get => myQuantityNakopit;
