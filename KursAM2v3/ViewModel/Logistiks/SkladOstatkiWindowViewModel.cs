@@ -13,6 +13,7 @@ using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
 using DevExpress.Data;
 using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -516,7 +517,7 @@ namespace KursAM2.ViewModel.Logistiks
         protected override void OnWindowLoaded(object obj)
         {
             base.OnWindowLoaded(obj);
-            UpdateVisualObjects();
+              UpdateVisualObjects();
         }
 
         public override void UpdateVisualObjects()
@@ -532,6 +533,14 @@ namespace KursAM2.ViewModel.Logistiks
                         case "State":
                             col.Visible = false;
                             break;
+                        case nameof(NomenklOstatkiWithPrice.Name):
+                            frm.nomenklskladGridControl.TotalSummary.Add(new GridSummaryItem
+                            {
+                                FieldName = col.FieldName,
+                                SummaryType = SummaryItemType.Count,
+                                DisplayFormat = "{0:n0}"
+                            });
+                            break;
 
                         case nameof(NomenklOstatkiWithPrice.Prihod):
                         case nameof(NomenklOstatkiWithPrice.Rashod):
@@ -546,17 +555,48 @@ namespace KursAM2.ViewModel.Logistiks
                                 col.EditSettings = new CalcEditSettings
                                 {
                                     DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat(),
-                                    AllowDefaultButton = false
-                                };
+                                    AllowDefaultButton = false,
+                                   };
+                            
                             frm.nomenklskladGridControl.TotalSummary.Add(new GridSummaryItem
                             {
                                 FieldName = col.FieldName,
-                                SummaryType = SummaryItemType.Count,
-                                DisplayFormat = "{0:n0}"
+                                SummaryType = SummaryItemType.Sum,
+                                DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat()
                             });
                             break;
-                        case nameof(NomenklOstatkiWithPrice.Reserved):
-                        case nameof(NomenklOstatkiWithPrice.StockLevel):
+                         case nameof(NomenklOstatkiWithPrice.StockLevel):
+                             if (calcEd != null)
+                                 calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
+                             else
+                                 col.EditSettings = new CalcEditSettings
+                                 {
+                                     DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat(),
+                                     AllowDefaultButton = false
+                                 };
+
+                             var notShippedFormatCondition = new FormatCondition
+                             {
+                                 //Expression = "[SummaFact] < [Summa]",
+                                 FieldName = "StockLevel",
+                                 ApplyToRow = false,
+                                 Format = new Format
+                                 {
+                                     Foreground = Brushes.Red
+                                 },
+                                 ValueRule = ConditionRule.Less,
+                                 Value1 = 0m
+                             };
+                             frm.tableOstatkiView.FormatConditions.Add(notShippedFormatCondition);
+                             frm.nomenklskladGridControl.TotalSummary.Add(new GridSummaryItem
+                             {
+                                 FieldName = col.FieldName,
+                                 SummaryType = SummaryItemType.Sum,
+                                 DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat()
+                             });
+
+                             break;
+                       case nameof(NomenklOstatkiWithPrice.Reserved):
                             if (calcEd != null)
                                 calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
                             else
@@ -571,6 +611,7 @@ namespace KursAM2.ViewModel.Logistiks
                                 SummaryType = SummaryItemType.Sum,
                                 DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat()
                             });
+
                             break;
                         case nameof(NomenklOstatkiWithPrice.Summa):
                         case nameof(NomenklOstatkiWithPrice.SummaWONaklad):
@@ -610,7 +651,7 @@ namespace KursAM2.ViewModel.Logistiks
                     frm.invoiceClientGridControl.TotalSummary.Add(new GridSummaryItem()
                     {
                         FieldName = "NomQuantity",
-                        DisplayFormat = "{0:n3}",
+                        DisplayFormat = "{0:n2}",
                         SummaryType = SummaryItemType.Sum
                     });
                 }
@@ -619,7 +660,7 @@ namespace KursAM2.ViewModel.Logistiks
                 nomQCol.EditSettings = new CalcEditSettings()
                 {
                     AllowDefaultButton = false,
-                    DisplayFormat = "{0:n3}",
+                    DisplayFormat = "{0:n2}",
 
                 };
 
@@ -638,12 +679,12 @@ namespace KursAM2.ViewModel.Logistiks
                             frm.nomenklskladOperGridControl.TotalSummary.Add(new GridSummaryItem
                             {
                                 FieldName = col.FieldName,
-                                SummaryType = SummaryItemType.Count
+                                SummaryType = SummaryItemType.Count,
+                                DisplayFormat="n0"
                             });
                             break;
                         case nameof(NomenklCalcCostOperation.QuantityIn):
                         case nameof(NomenklCalcCostOperation.QuantityOut):
-                        case nameof(NomenklCalcCostOperation.QuantityNakopit):
                             if (calcEd != null)
                                 calcEd.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
                             frm.nomenklskladOperGridControl.TotalSummary.Add(new GridSummaryItem
