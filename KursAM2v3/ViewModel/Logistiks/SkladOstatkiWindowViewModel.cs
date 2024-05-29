@@ -381,6 +381,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void LoadNomForSklad()
         {
+            NomenklOperations.Clear();
             var data = nomenklManager.GetNomenklStoreQuantity(CurrentWarehouse.DocCode, new DateTime(2000, 1, 1),
                 OstatokDate);
             if (data != null)

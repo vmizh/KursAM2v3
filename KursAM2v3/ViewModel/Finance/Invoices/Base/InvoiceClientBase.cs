@@ -236,6 +236,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         [Display(AutoGenerateField = true, Name = "Акцептован", Order = 18)]
         public bool IsAccepted { get; set; }
         [Display(AutoGenerateField = true, Name = "Сумма", Order = 5)]
+        [DisplayFormat (DataFormatString="n2") ]
         public decimal Summa { get; set; }
         [Display(AutoGenerateField = true, Name = "Создатель", Order = 11)]
         public string CREATOR { get; set; }
