@@ -30,7 +30,7 @@ namespace KursAM2
                     $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\KursAM2v3");
             Current.Properties.Add("DataPath",
                 $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\KursAM2v3");
-            this.Dispatcher.UnhandledException += OnDispatcherUnhandledException;
+            Dispatcher.UnhandledException += OnDispatcherUnhandledException;
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -65,15 +65,12 @@ namespace KursAM2
             }
         }
 
-        void OnDispatcherUnhandledException(object sender,
-            System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        private void OnDispatcherUnhandledException(object sender,
+            DispatcherUnhandledExceptionEventArgs e)
         {
-            StringBuilder sb = new StringBuilder(e.Exception.Message);
+            var sb = new StringBuilder(e.Exception.Message);
             var ex1 = e.Exception.InnerException;
-            while (ex1 != null)
-            {
-                sb.Append($"\n{ex1.Message}");
-            }
+            while (ex1 != null) sb.Append($"\n{ex1.Message}");
             MessageBox.Show("Unhandled exception occurred: \n" + e.Exception.Message, "Error", MessageBoxButton.OK,
                 MessageBoxImage.Error);
         }
