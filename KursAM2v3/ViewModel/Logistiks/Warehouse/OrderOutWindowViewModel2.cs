@@ -456,7 +456,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 Caption = "Ок",
                 IsCancel = false,
-                IsDefault = true,
+                IsDefault = false,
                 Command = new DelegateCommand<CancelEventArgs>(
                     x => { },
                     x => !IDataErrorInfoHelper.HasErrors(ctx.CurrentSelectedNomenkl ??
@@ -466,7 +466,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var cancelCommand = new UICommand
             {
                 Id = MessageBoxResult.Cancel,
-                Caption = "Отмена1",
+                Caption = "Отмена",
                 IsCancel = true,
                 IsDefault = false
             };

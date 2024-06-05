@@ -171,8 +171,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public SDRSchet SDRSchet { get; set; }
         public string GruzoDeclaration { get; set; }
     }
-
-
+    
     public class InvoiceClientRemains : IInvoiceClientRemains
     {
         public InvoiceClientRemains(IInvoiceClient inv)

@@ -95,12 +95,6 @@ namespace KursAM2.ViewModel.Logistiks
         private void InitIniFile(IniFileManager userIni)
         {
             if (!userIni.KeyExists("SkaldOstatkiReceiverName", "Layot")) userIni.Write("Layout", "SkaldOstatkiReceiverName", "5");
-            //if (!userIni.KeyExists("Login", "Start")) userIni.Write("Start", "Login", "");
-            //if (!userIni.KeyExists("LastDataBase", "Start")) userIni.Write("Start", "LastDataBase", "");
-            //if (!userIni.KeyExists("DefaultDataBase", "Start")) userIni.Write("Start", "DefaultDataBase", "");
-            //if (!userIni.KeyExists("System", "Version")) userIni.Write("Version", "System", "0");
-            //if (!userIni.KeyExists("Test", "Version")) userIni.Write("Version", "Test", "0");
-            //if (!userIni.KeyExists("Version", "Version")) userIni.Write("Version", "Version", "0");
         }
 
         public override string LayoutName => "SkladOstatkiWindowViewModelLayout";
@@ -381,6 +375,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void LoadNomForSklad()
         {
+            NomenklOperations.Clear();
             var data = nomenklManager.GetNomenklStoreQuantity(CurrentWarehouse.DocCode, new DateTime(2000, 1, 1),
                 OstatokDate);
             if (data != null)
