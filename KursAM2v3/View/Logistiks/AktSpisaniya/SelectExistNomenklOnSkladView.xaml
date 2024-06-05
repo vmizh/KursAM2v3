@@ -28,6 +28,7 @@
                     <dxmvvm:Interaction.Behaviors>
                         <dxmvvm:EventToCommand EventName="MouseDoubleClick"
                                                Command="{Binding AddNomenklToSelectedCommand}"/>
+                        <dxmvvm:KeyToCommand KeyGesture="Enter" Command="{Binding AddNomenklToSelectedCommand}"/>
                     </dxmvvm:Interaction.Behaviors>
                     <dxg:GridControl.View>
                         <dxg:TableView 
@@ -75,6 +76,7 @@
                     <dxmvvm:Interaction.Behaviors>
                         <dxmvvm:EventToCommand EventName="MouseDoubleClick"
                                                Command="{Binding RemoveNomenklFromSelectedCommand}"/>
+                        <dxmvvm:KeyToCommand KeyGesture="Enter" Command="{Binding RemoveNomenklFromSelectedCommand}"/>
                     </dxmvvm:Interaction.Behaviors>
                     <dxg:GridControl.View>
                         <dxg:TableView 
