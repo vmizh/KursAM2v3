@@ -1150,6 +1150,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                 Rows.Add(newRow);
             }
 
+        Summa = Rows.Sum(_ => _.Summa);
         using (var ctx = GlobalOptions.GetEntities())
         {
             PaymentDocs.Clear();

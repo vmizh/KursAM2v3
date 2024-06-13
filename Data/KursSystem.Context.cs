@@ -44,5 +44,7 @@ namespace Data
         public virtual DbSet<UserRoles> UserRoles { get; set; }
         public virtual DbSet<Users> Users { get; set; }
         public virtual DbSet<Versions> Versions { get; set; }
+        public virtual DbSet<ObjectRightResposibilityCenter> ObjectRightResposibilityCenter { get; set; }
+        public virtual DbSet<UserRightsResponsibilityCenter> UserRightsResponsibilityCenter { get; set; }
     }
 }

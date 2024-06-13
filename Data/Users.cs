@@ -25,6 +25,7 @@ namespace Data
             this.UserMenuFavorites = new HashSet<UserMenuFavorites>();
             this.SignatureType = new HashSet<SignatureType>();
             this.DataSources = new HashSet<DataSources>();
+            this.UserRightsResponsibilityCenter = new HashSet<UserRightsResponsibilityCenter>();
         }
     
         public System.Guid Id { get; set; }
@@ -36,6 +37,7 @@ namespace Data
         public byte[] Avatar { get; set; }
         public string FullName { get; set; }
         public string ThemeName { get; set; }
+        public string Password { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Errors> Errors { get; set; }
@@ -53,5 +55,7 @@ namespace Data
         public virtual ICollection<SignatureType> SignatureType { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DataSources> DataSources { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<UserRightsResponsibilityCenter> UserRightsResponsibilityCenter { get; set; }
     }
 }

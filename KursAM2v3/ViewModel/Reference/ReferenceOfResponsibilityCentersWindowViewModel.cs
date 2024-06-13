@@ -381,4 +381,9 @@ namespace KursAM2.ViewModel.Reference
 
         #endregion
     }
+
+    public class UserRightCentrResponsible
+    {
+
+    }
 }

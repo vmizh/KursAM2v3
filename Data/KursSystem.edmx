@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="KursSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="KursSystemModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="DataSources">
           <Key>
             <PropertyRef Name="Id" />
@@ -119,6 +119,16 @@
           <Property Name="ProgramName" Type="nvarchar" MaxLength="500" />
           <Property Name="UserName" Type="nvarchar" MaxLength="100" />
         </EntityType>
+        <EntityType Name="ObjectRightResposibilityCenter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ObjectTypeId" Type="smallint" Nullable="false" />
+          <Property Name="RespCentDC" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="ObjectDC" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+          <Property Name="Note" Type="varchar" MaxLength="500" />
+        </EntityType>
         <EntityType Name="SignatureLink">
           <Key>
             <PropertyRef Name="SignId" />
@@ -195,6 +205,15 @@
           <Property Name="MenuId" Type="int" Nullable="false" />
           <Property Name="IsReadOnly" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="UserRightsResponsibilityCenter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="DbId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="UserId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="RespCentDC" Type="numeric" Precision="18" Scale="0" Nullable="false" />
+        </EntityType>
         <EntityType Name="UserRoles">
           <Key>
             <PropertyRef Name="id" />
@@ -224,6 +243,7 @@
           <Property Name="Avatar" Type="image" />
           <Property Name="FullName" Type="varchar" MaxLength="50" />
           <Property Name="ThemeName" Type="varchar" MaxLength="100" />
+          <Property Name="Password" Type="varchar" MaxLength="150" />
         </EntityType>
         <EntityType Name="UsersLinkDB">
           <Key>
@@ -557,6 +577,30 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_UserRightsResponsibilityCenter_DbId">
+          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
+          <End Role="UserRightsResponsibilityCenter" Type="Self.UserRightsResponsibilityCenter" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRightsResponsibilityCenter">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRightsResponsibilityCenter_UserId">
+          <End Role="Users" Type="Self.Users" Multiplicity="1" />
+          <End Role="UserRightsResponsibilityCenter" Type="Self.UserRightsResponsibilityCenter" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRightsResponsibilityCenter">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_UserRolesLinkMenuItem_MenuId">
           <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="1" />
           <End Role="UserRolesLinkMenuItem" Type="Self.UserRolesLinkMenuItem" Multiplicity="*" />
@@ -615,6 +659,7 @@
           <EntitySet Name="LastDocument" EntityType="Self.LastDocument" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="LastMenuUserSearch" EntityType="Self.LastMenuUserSearch" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Log" EntityType="Self.Log" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ObjectRightResposibilityCenter" EntityType="Self.ObjectRightResposibilityCenter" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SignatureLink" EntityType="Self.SignatureLink" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SignatureSchemes" EntityType="Self.SignatureSchemes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SignatureSchemesInfo" EntityType="Self.SignatureSchemesInfo" Schema="dbo" store:Type="Tables" />
@@ -623,6 +668,7 @@
           <EntitySet Name="UserMenuFavorites" EntityType="Self.UserMenuFavorites" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMenuOrder" EntityType="Self.UserMenuOrder" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMenuRight" EntityType="Self.UserMenuRight" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserRightsResponsibilityCenter" EntityType="Self.UserRightsResponsibilityCenter" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserRoles" EntityType="Self.UserRoles" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserRolesLinkMenuItem" EntityType="Self.UserRolesLinkMenuItem" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Users" EntityType="Self.Users" Schema="dbo" store:Type="Tables" />
@@ -732,6 +778,14 @@
             <End Role="KursMenuItem" EntitySet="KursMenuItem" />
             <End Role="UserMenuRight" EntitySet="UserMenuRight" />
           </AssociationSet>
+          <AssociationSet Name="FK_UserRightsResponsibilityCenter_DbId" Association="Self.FK_UserRightsResponsibilityCenter_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="UserRightsResponsibilityCenter" EntitySet="UserRightsResponsibilityCenter" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRightsResponsibilityCenter_UserId" Association="Self.FK_UserRightsResponsibilityCenter_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserRightsResponsibilityCenter" EntitySet="UserRightsResponsibilityCenter" />
+          </AssociationSet>
           <AssociationSet Name="FK_UserRolesLinkMenuItem_MenuId" Association="Self.FK_UserRolesLinkMenuItem_MenuId">
             <End Role="KursMenuItem" EntitySet="KursMenuItem" />
             <End Role="UserRolesLinkMenuItem" EntitySet="UserRolesLinkMenuItem" />
@@ -749,8 +803,7 @@
             <End Role="UsersLinkDB" EntitySet="UsersLinkDB" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="KursSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -775,6 +828,7 @@
           <NavigationProperty Name="UserMenuFavorites" Relationship="Self.FK_UserMenuFavorites_DbId" FromRole="DataSources" ToRole="UserMenuFavorites" />
           <NavigationProperty Name="UserMenuRight" Relationship="Self.FK_UserMenuRight_DBId" FromRole="DataSources" ToRole="UserMenuRight" />
           <NavigationProperty Name="Users" Relationship="Self.UsersLinkDB" FromRole="DataSources" ToRole="Users" />
+          <NavigationProperty Name="UserRightsResponsibilityCenter" Relationship="KursSystemModel.FK_UserRightsResponsibilityCenter_DbId" FromRole="DataSources" ToRole="UserRightsResponsibilityCenter" />
         </EntityType>
         <EntityType Name="Errors">
           <Key>
@@ -1011,6 +1065,8 @@
           <NavigationProperty Name="UserMenuFavorites" Relationship="Self.FK_UserMenuFavorites_UserId" FromRole="Users" ToRole="UserMenuFavorites" />
           <NavigationProperty Name="SignatureType" Relationship="Self.SignatureLink" FromRole="Users" ToRole="SignatureType" />
           <NavigationProperty Name="DataSources" Relationship="Self.UsersLinkDB" FromRole="Users" ToRole="DataSources" />
+          <NavigationProperty Name="UserRightsResponsibilityCenter" Relationship="KursSystemModel.FK_UserRightsResponsibilityCenter_UserId" FromRole="Users" ToRole="UserRightsResponsibilityCenter" />
+          <Property Name="Password" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Versions">
           <Key>
@@ -1452,7 +1508,62 @@
             <End Role="DataSources" EntitySet="DataSources" />
             <End Role="Users" EntitySet="Users" />
           </AssociationSet>
+          <EntitySet Name="ObjectRightResposibilityCenter" EntityType="KursSystemModel.ObjectRightResposibilityCenter" />
+          <EntitySet Name="UserRightsResponsibilityCenter" EntityType="KursSystemModel.UserRightsResponsibilityCenter" />
+          <AssociationSet Name="FK_UserRightsResponsibilityCenter_DbId" Association="KursSystemModel.FK_UserRightsResponsibilityCenter_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="UserRightsResponsibilityCenter" EntitySet="UserRightsResponsibilityCenter" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserRightsResponsibilityCenter_UserId" Association="KursSystemModel.FK_UserRightsResponsibilityCenter_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserRightsResponsibilityCenter" EntitySet="UserRightsResponsibilityCenter" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="ObjectRightResposibilityCenter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="ObjectTypeId" Type="Int16" Nullable="false" />
+          <Property Name="RespCentDC" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="ObjectDC" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <Property Name="Note" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="UserRightsResponsibilityCenter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="DbId" Type="Guid" Nullable="false" />
+          <Property Name="UserId" Type="Guid" Nullable="false" />
+          <Property Name="RespCentDC" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_UserRightsResponsibilityCenter_DbId" FromRole="UserRightsResponsibilityCenter" ToRole="DataSources" />
+          <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_UserRightsResponsibilityCenter_UserId" FromRole="UserRightsResponsibilityCenter" ToRole="Users" />
+        </EntityType>
+        <Association Name="FK_UserRightsResponsibilityCenter_DbId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.UserRightsResponsibilityCenter" Role="UserRightsResponsibilityCenter" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRightsResponsibilityCenter">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRightsResponsibilityCenter_UserId">
+          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="1" />
+          <End Type="KursSystemModel.UserRightsResponsibilityCenter" Role="UserRightsResponsibilityCenter" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Users">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRightsResponsibilityCenter">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1669,6 +1780,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="KursSystemModel.Users">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
                 <ScalarProperty Name="Note" ColumnName="Note" />
@@ -1718,6 +1830,27 @@
               <ScalarProperty Name="Id" ColumnName="UserId" />
             </EndProperty>
           </AssociationSetMapping>
+          <EntitySetMapping Name="ObjectRightResposibilityCenter">
+            <EntityTypeMapping TypeName="KursSystemModel.ObjectRightResposibilityCenter">
+              <MappingFragment StoreEntitySet="ObjectRightResposibilityCenter">
+                <ScalarProperty Name="Note" ColumnName="Note" />
+                <ScalarProperty Name="ObjectDC" ColumnName="ObjectDC" />
+                <ScalarProperty Name="RespCentDC" ColumnName="RespCentDC" />
+                <ScalarProperty Name="ObjectTypeId" ColumnName="ObjectTypeId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserRightsResponsibilityCenter">
+            <EntityTypeMapping TypeName="KursSystemModel.UserRightsResponsibilityCenter">
+              <MappingFragment StoreEntitySet="UserRightsResponsibilityCenter">
+                <ScalarProperty Name="RespCentDC" ColumnName="RespCentDC" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="DbId" ColumnName="DbId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

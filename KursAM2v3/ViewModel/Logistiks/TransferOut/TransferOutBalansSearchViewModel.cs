@@ -16,6 +16,7 @@ using KursDomain.Repository.TransferOut;
 using KursDomain.Services;
 using KursDomain.ViewModel.Base2;
 using KursDomain.Wrapper.TransferOut;
+using Prism.Commands;
 using Prism.Events;
 
 namespace KursAM2.ViewModel.Logistiks.TransferOut
@@ -28,6 +29,8 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
 
         protected IEventAggregator _EventAggregator;
         protected IMessageDialogService _MessageDialogService;
+        private TransferOutBalansWrapper myCurrentDocument;
+        private bool isLoaded = false;
 
         #endregion
         
@@ -53,6 +56,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
 
         #region Commands
 
+        
         public override async Task OnRefreshDataAsync()
         {
             using (var ctx = GlobalOptions.GetEntities())
@@ -83,13 +87,34 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             }
         }
 
+        public override bool CanDocumentOpen()
+        {
+            return CurrentDocument != null && !isLoaded;
+        }
+
+        public override TransferOutBalansWrapper CurrentDocument
+        {
+            get => myCurrentDocument;
+            set
+            {
+                if (Equals(value, myCurrentDocument)) return;
+                myCurrentDocument = value;
+                RaisePropertyChanged(nameof(CurrentDocument));
+                ((DelegateCommand)DocumentOpenCommand).RaiseCanExecuteChanged();
+            }
+        }
+
         public override async Task OnDocumentOpenAsync()
         {
+            isLoaded = true;
+            ((DelegateCommand)DocumentOpenCommand).RaiseCanExecuteChanged();
             var ctx = GlobalOptions.GetEntities();
             var doc = new TransferOutBalansViewModel(new TransferOutBalansRepository(ctx),
                 new StorageLocationsRepository(ctx), new NomenklRepository(ctx), new DocHistoryRepository(ctx));
-            await doc.InitializeAsync(CurrentDocument.Id);
+            await doc.InitializeAsync(CurrentDocument.Id); 
             doc.Show();
+            isLoaded = false;
+            ((DelegateCommand)DocumentOpenCommand).RaiseCanExecuteChanged();
         }
 
         protected override async Task OnDocNewEmptyExecute()

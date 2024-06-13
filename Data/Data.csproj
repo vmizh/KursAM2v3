@@ -732,6 +732,9 @@
     <Compile Include="NOM_SKLAD_CURRENCY_PRICE.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="ObjectRightResposibilityCenter.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
+    </Compile>
     <Compile Include="OffBalanceSheetChargesType.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -2131,6 +2134,9 @@
     </Compile>
     <Compile Include="UserProfile.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserRightsResponsibilityCenter.cs">
+      <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
     <Compile Include="UserRoles.cs">
       <DependentUpon>KursSystem.tt</DependentUpon>

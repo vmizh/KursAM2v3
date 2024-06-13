@@ -5,7 +5,6 @@ using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
-using System.Windows.Controls;
 using Data;
 using Helper;
 using KursDomain;
@@ -26,7 +25,7 @@ namespace Calculates.Materials
         }
 
 
-        private Tuple<decimal,decimal> GetNomPrice(ALFAMEDIAEntities ctx, decimal nomDC, DateTime date)
+        private Tuple<decimal, decimal> GetNomPrice(ALFAMEDIAEntities ctx, decimal nomDC, DateTime date)
         {
             var sql = $@"SELECT * FROM NOM_PRICE np
                             WHERE np.NOM_DC = {CustomFormat.DecimalToSqlDecimal(nomDC)} 
@@ -34,13 +33,11 @@ namespace Calculates.Materials
                                                 FROM NOM_PRICE np1 WHERE np1.NOM_DC = {CustomFormat.DecimalToSqlDecimal(nomDC)} 
                                     AND np1.DATE <=  '{CustomFormat.DateToString(date)}');";
             var d = ctx.Database.SqlQuery<NOM_PRICE>(sql);
-            if (d.Any())
-            {
-                return new Tuple<decimal, decimal>(d.First().PRICE_WO_NAKLAD, d.First().PRICE);
-            }
+            if (d.Any()) return new Tuple<decimal, decimal>(d.First().PRICE_WO_NAKLAD, d.First().PRICE);
 
             return new Tuple<decimal, decimal>(0, 0);
         }
+
         public override ObservableCollection<NomenklCalcCostOperation> GetOperations(decimal nomDC,
             bool isCalOnly = true, decimal? storeDC = null)
         {
@@ -78,16 +75,16 @@ namespace Calculates.Materials
                             CalcPrice = prc.Item1,
                             CalcPriceNaklad = prc.Item2,
                             DocDate = d.SD_24.DD_DATE,
-                            KontragentIn =  
-                                (Kontragent) GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_POL_DC),
+                            KontragentIn =
+                                (Kontragent)GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_POL_DC),
                             KontragentOut =
-                                (Kontragent) GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC),
+                                (Kontragent)GlobalOptions.ReferencesCache.GetKontragent(d.SD_24.DD_KONTR_OTPR_DC),
                             OperationName = d.SD_24.SD_201.D_NAME,
                             OperCode = (d.SD_24.DD_VOZVRAT ?? 0) == 1 ? 25 : d.SD_24.SD_201.D_OP_CODE,
                             QuantityIn = d.DDT_KOL_PRIHOD,
                             QuantityOut = d.DDT_KOL_RASHOD,
                             // ReSharper disable once PossibleInvalidOperationException
-                            DocPrice = d.SD_24.DD_TYPE_DC == 2010000005 ? (d.DDT_TAX_CENA ?? 0) : 0,
+                            DocPrice = d.SD_24.DD_TYPE_DC == 2010000005 ? d.DDT_TAX_CENA ?? 0 : 0,
                             Naklad = 0,
                             SkladIn =
                                 GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_POL_DC) as Warehouse,
@@ -120,7 +117,7 @@ namespace Calculates.Materials
                         {
                             oper.FinDocumentDC = d.TD_26.SD_26.DOC_CODE;
                             oper.FinDocument =
-                                $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}";
+                                $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()} ({d.TD_26.SD_26.CREATOR})";
                             oper.Naklad = (d.TD_26.SFT_SUMMA_NAKLAD ?? 0) / d.TD_26.SFT_KOL;
                             oper.DocPrice = d.TD_26.SFT_ED_CENA ?? 0;
                         }
@@ -129,7 +126,7 @@ namespace Calculates.Materials
                         {
                             oper.FinDocumentDC = d.TD_84.SD_84.DOC_CODE;
                             oper.FinDocument =
-                                $"С/ф клиенту №{d.TD_84.SD_84.SF_IN_NUM}/{d.TD_84.SD_84.SF_OUT_NUM} от {d.TD_84.SD_84.SF_DATE.ToShortDateString()}";
+                                $"С/ф клиенту №{d.TD_84.SD_84.SF_IN_NUM}/{d.TD_84.SD_84.SF_OUT_NUM} от {d.TD_84.SD_84.SF_DATE.ToShortDateString()} ({d.TD_84.SD_84.CREATOR})";
                         }
 
                         switch (oper.OperCode)
@@ -167,7 +164,7 @@ namespace Calculates.Materials
                         }
 
                         oper.TovarDocument +=
-                            $"№{d.SD_24.DD_IN_NUM}/{d.SD_24.DD_EXT_NUM} от {d.SD_24.DD_DATE.ToShortDateString()}";
+                            $"№{d.SD_24.DD_IN_NUM}/{d.SD_24.DD_EXT_NUM} от {d.SD_24.DD_DATE.ToShortDateString()} ({d.SD_24.CREATOR})";
                         //if (oper.OperCode == 3 && oper.QuantityIn <= 0) continue;
                         ret.Operations.Add(oper);
                     }
@@ -198,12 +195,16 @@ namespace Calculates.Materials
                         KontragentOut = null,
                         OperationName = d.SD_24.SD_201.D_NAME,
                         OperCode = (d.SD_24.DD_VOZVRAT ?? 0) == 1 ? 25 : d.SD_24.SD_201.D_OP_CODE,
-                        QuantityIn = d.SD_24.DD_SKLAD_POL_DC != null && d.SD_24.DD_SKLAD_POL_DC == (storeDC ?? d.SD_24.DD_SKLAD_POL_DC)
-                            ? d.DDT_KOL_PRIHOD : 0,
-                        QuantityOut =d.SD_24.DD_SKLAD_OTPR_DC != null && d.SD_24.DD_SKLAD_OTPR_DC == (storeDC ?? d.SD_24.DD_SKLAD_OTPR_DC)
-                            ? d.DDT_KOL_RASHOD : 0,
+                        QuantityIn = d.SD_24.DD_SKLAD_POL_DC != null &&
+                                     d.SD_24.DD_SKLAD_POL_DC == (storeDC ?? d.SD_24.DD_SKLAD_POL_DC)
+                            ? d.DDT_KOL_PRIHOD
+                            : 0,
+                        QuantityOut = d.SD_24.DD_SKLAD_OTPR_DC != null &&
+                                      d.SD_24.DD_SKLAD_OTPR_DC == (storeDC ?? d.SD_24.DD_SKLAD_OTPR_DC)
+                            ? d.DDT_KOL_RASHOD
+                            : 0,
                         // ReSharper disable once PossibleInvalidOperationException
-                        DocPrice =  0,
+                        DocPrice = 0,
                         Naklad = 0,
                         SkladIn =
                             GlobalOptions.ReferencesCache.GetWarehouse(d.SD_24.DD_SKLAD_POL_DC) as Warehouse,
@@ -225,7 +226,7 @@ namespace Calculates.Materials
                 foreach (var d in dataTransfer)
                 {
                     currentRowNumber++;
-                    var prc = GetNomPrice(context, nomDC,d.NomenklTransfer.Date);
+                    var prc = GetNomPrice(context, nomDC, d.NomenklTransfer.Date);
                     if (d.NomenklInDC == d.NomenklOutDC)
                     {
                         var newTransOper = new NomenklCalcCostOperation
@@ -262,7 +263,7 @@ namespace Calculates.Materials
                     {
                         if (d.NomenklInDC == nomDC)
                         {
-                            var prc1 = GetNomPrice(context, nomDC,d.NomenklTransfer.Date);
+                            var prc1 = GetNomPrice(context, nomDC, d.NomenklTransfer.Date);
                             var newTransOper = new NomenklCalcCostOperation
                             {
                                 RowNumber = currentRowNumber,
@@ -296,7 +297,7 @@ namespace Calculates.Materials
 
                         if (d.NomenklOutDC == nomDC)
                         {
-                            var prc2 = GetNomPrice(context, nomDC,d.NomenklTransfer.Date);
+                            var prc2 = GetNomPrice(context, nomDC, d.NomenklTransfer.Date);
                             var newTransOper = new NomenklCalcCostOperation
                             {
                                 RowNumber = currentRowNumber,
@@ -330,7 +331,7 @@ namespace Calculates.Materials
                     }
                 }
 
-                var nomId = ((IDocGuid) GlobalOptions.ReferencesCache.GetNomenkl(nomDC)).Id;
+                var nomId = ((IDocGuid)GlobalOptions.ReferencesCache.GetNomenkl(nomDC)).Id;
                 var nomcrsconverts = context.TD_26_CurrencyConvert
                     .Include(_ => _.TD_26)
                     .Include(_ => _.TD_26.SD_26)
@@ -342,7 +343,7 @@ namespace Calculates.Materials
                 foreach (var d in nomcrsconverts)
                 {
                     currentRowNumber++;
-                    var prc3 = GetNomPrice(context, nomDC,d.Date);
+                    var prc3 = GetNomPrice(context, nomDC, d.Date);
                     var newTransOper = new NomenklCalcCostOperation
                     {
                         RowNumber = currentRowNumber,
@@ -369,9 +370,7 @@ namespace Calculates.Materials
                         NomenklDC = nomDC,
                         FinDocumentDC = d.DOC_CODE,
                         FinDocument =
-                        $"С/ф поставщика №{d.TD_26?.SD_26?.SF_IN_NUM}/{d.TD_26?.SD_26?.SF_POSTAV_NUM} от {d.TD_26?.SD_26?.SF_POSTAV_DATE.ToShortDateString()}"
-
-
+                            $"С/ф поставщика №{d.TD_26?.SD_26?.SF_IN_NUM}/{d.TD_26?.SD_26?.SF_POSTAV_NUM} от {d.TD_26?.SD_26?.SF_POSTAV_DATE.ToShortDateString()} ({d.TD_26?.SD_26?.CREATOR})"
                     };
                     ret.Operations.Add(newTransOper);
                 }
@@ -379,7 +378,7 @@ namespace Calculates.Materials
                 foreach (var d in nomcrsconverts2)
                 {
                     currentRowNumber++;
-                    var prc4 = GetNomPrice(context, nomDC,d.Date);
+                    var prc4 = GetNomPrice(context, nomDC, d.Date);
                     var newTransOper = new NomenklCalcCostOperation
                     {
                         RowNumber = currentRowNumber,
@@ -406,7 +405,7 @@ namespace Calculates.Materials
                         NomenklDC = nomDC,
                         FinDocumentDC = d.DOC_CODE,
                         FinDocument =
-                            $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()}"
+                            $"С/ф поставщика №{d.TD_26.SD_26.SF_IN_NUM}/{d.TD_26.SD_26.SF_POSTAV_NUM} от {d.TD_26.SD_26.SF_POSTAV_DATE.ToShortDateString()} ({d.TD_26.SD_26.CREATOR})"
                     };
                     ret.Operations.Add(newTransOper);
                 }

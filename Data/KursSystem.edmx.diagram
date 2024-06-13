@@ -51,6 +51,10 @@
         <AssociationConnector Association="KursSystemModel.SignatureLink" ManuallyRouted="false" />
         <AssociationConnector Association="KursSystemModel.UserRolesLinkMenuItem" ManuallyRouted="false" />
         <AssociationConnector Association="KursSystemModel.UsersLinkDB" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="KursSystemModel.ObjectRightResposibilityCenter" Width="1.5" PointX="8.375" PointY="4.75" />
+        <EntityTypeShape EntityType="KursSystemModel.UserRightsResponsibilityCenter" Width="1.5" PointX="10.5" PointY="21.125" />
+        <AssociationConnector Association="KursSystemModel.FK_UserRightsResponsibilityCenter_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_UserRightsResponsibilityCenter_UserId" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -183,6 +183,7 @@
     <Compile Include="IDocuments\MaterialDocumentTypeEnum.cs" />
     <Compile Include="Managers\DocumentsOpenManager.cs" />
     <Compile Include="Managers\NomenklManager2.cs" />
+    <Compile Include="References\ResponsibleRightObjectTypeEnum.cs" />
     <Compile Include="RepositoryHelper\NomenklStoreRemainItem.cs" />
     <Compile Include="ICommon\ITreeReference.cs" />
     <Compile Include="IDocuments\DistributeOverhead\IDistributeNaklad.cs" />
@@ -391,6 +392,8 @@
     <Compile Include="Repository\LastDocumentRepository\LastDocumentRepository.cs" />
     <Compile Include="Repository\NomenklRepository\INomenklRepository.cs" />
     <Compile Include="Repository\NomenklRepository\NomenklRepository.cs" />
+    <Compile Include="Repository\ResponsibileCenterRepository\IResponsibileCenterRepository.cs" />
+    <Compile Include="Repository\ResponsibileCenterRepository\ResponsibileCenterRepository.cs" />
     <Compile Include="Repository\SD24Repository\ISD24Repository.cs" />
     <Compile Include="Repository\SD24Repository\SD24Repository.cs" />
     <Compile Include="Repository\UserRepository\IUserRepository.cs" />
@@ -504,6 +507,7 @@
     <Compile Include="Wrapper\Nomenkl\TD_24BaseWrapper.cs" />
     <Compile Include="Wrapper\Nomenkl\WarehouseOut\WarehouseOutRowWrapper.cs" />
     <Compile Include="Wrapper\Nomenkl\WarehouseOut\WarehouseOutWrapper.cs" />
+    <Compile Include="Wrapper\ResponsibilityCenter\UserRightResponsibilityCenterWrapper.cs" />
     <Compile Include="Wrapper\StorageLocationsWrapper.cs" />
     <Compile Include="Wrapper\TransferOut\TransferOutBalansRefundWrapper.cs" />
     <Compile Include="Wrapper\TransferOut\TransferOutBalansRowsWrapper.cs" />

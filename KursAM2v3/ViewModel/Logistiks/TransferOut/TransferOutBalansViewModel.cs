@@ -551,7 +551,8 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                             {
                                 FieldName = col.FieldName,
                                 SummaryType = SummaryItemType.Sum,
-                                DisplayFormat = "n2"
+                                DisplayFormat = "n2",
+                                 
                             };
                             form.gridRows.TotalSummary.Add(summ);
                             break;
