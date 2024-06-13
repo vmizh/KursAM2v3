@@ -42,6 +42,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
 
         protected IEventAggregator _EventAggregator;
         protected IMessageDialogService _MessageDialogService;
+        private TransferOutBalansWrapper myCurrentDocument; 
 
         public override async Task InitializeAsync(Guid id, DocumentNewState newState = DocumentNewState.None)
         {
@@ -477,6 +478,40 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             return myCanRefreshData && !IsBusy;
         }
 
+        protected override bool CanDocNewEmpty()
+        {
+            return true;
+        }
+
+        protected override bool CanDocNewCopyRequisite()
+        {
+            return true;
+        }
+
+        protected override bool CanNewCopyEmpty()
+        {
+            return false;
+        }
+
+        protected override async Task OnDocNewEmptyExecueAsync()
+        {
+            var ctx = GlobalOptions.GetEntities();
+            var doc = new TransferOutBalansViewModel(new TransferOutBalansRepository(ctx),
+                new StorageLocationsRepository(ctx), new NomenklRepository(ctx), new DocHistoryRepository(ctx));
+            await doc.InitializeAsync(Guid.Empty, DocumentNewState.Empty);
+            doc.Show();
+        }
+
+        protected override async Task OnDocNewCopyRequisiteExecueAsync()
+        {
+            var ctx = GlobalOptions.GetEntities();
+            var doc = new TransferOutBalansViewModel(new TransferOutBalansRepository(ctx),
+                new StorageLocationsRepository(ctx), new NomenklRepository(ctx), new DocHistoryRepository(ctx));
+            await doc.InitializeAsync(Document.Id, DocumentNewState.Requisite);
+            doc.Show();
+        }
+
+        
         public override async Task OnRefreshDataAsync()
         {
             myCanRefreshData = false;
@@ -535,9 +570,9 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             DocumentHistoryManager.LoadHistory(DocumentType.TransferOutBalans, Document.Id, 0);
         }
 
-        protected override async Task OnWindowLoaded()
+
+        protected override void UpdateVisualObject()
         {
-            await base.OnWindowLoaded();
             if (FormControl is TransferOutBalansView form)
             {
                 form.gridRows.TotalSummary.Clear();
@@ -546,7 +581,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                     switch (col.FieldName)
                     {
                         case nameof(TransferOutBalansRowsWrapper.Summa):
-                        case nameof(TransferOutBalansRowsWrapper.CostPrice):
+                        case nameof(TransferOutBalansRowsWrapper.CostSumma):
                             var summ = new GridSummaryItem
                             {
                                 FieldName = col.FieldName,
@@ -555,9 +590,13 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                             };
                             form.gridRows.TotalSummary.Add(summ);
                             break;
+                        case nameof(TransferOutBalansRowsWrapper.State):
+                            col.Visible = false;
+                            break;
                     }
                 }
             }
+
         }
 
         #endregion

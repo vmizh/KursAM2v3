@@ -181,7 +181,8 @@ public class WarehouseRemainsViewModel : DialogViewModelBase<NomenklStoreRemainI
 
     protected override void OnKeyEnterExecute()
     {
-        OnOkExecute();
+       // OnOkExecute();
+      // OnIncludeExecute();
     }
 
     protected override bool CanOk()

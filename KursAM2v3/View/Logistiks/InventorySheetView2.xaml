@@ -76,6 +76,7 @@
                                   EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}"
                                   AcceptsReturn="True"
                                   TextWrapping="Wrap"
+                                  VerticalContentAlignment="Top"
                                   Height="50" />
                 </dxlc:LayoutItem>
             </dxlc:LayoutGroup>

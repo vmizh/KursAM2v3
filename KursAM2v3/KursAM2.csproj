@@ -2588,7 +2588,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="kurs11.ico" />
+    <Resource Include="kurs11.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

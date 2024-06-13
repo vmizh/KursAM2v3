@@ -618,7 +618,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get
             {
                 return new Command(OpenLinkDocument,
-                    _ => CurrentRow != null && CurrentRow.LinkOrder != null || CurrentRow.DDT_SPOST_DC != null);
+                    _ => CurrentRow != null && (CurrentRow.LinkOrder != null || CurrentRow.DDT_SPOST_DC != null));
             }
         }
 
@@ -635,8 +635,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             get
             {
-                return new Command(AddFromDocument, _ => CurrentRow != null && CurrentRow.LinkInvoice != null 
-                                                         || CurrentRow.LinkOrder != null);
+                return new Command(AddFromDocument, _ => CurrentRow != null && (CurrentRow.LinkInvoice != null 
+                    || CurrentRow.LinkOrder != null));
             }
         }
 

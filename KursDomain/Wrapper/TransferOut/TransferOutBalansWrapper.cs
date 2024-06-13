@@ -41,8 +41,9 @@ public sealed class TransferOutBalansWrapper : BaseWrapper<TransferOutBalans>, I
     }
 
     [Display(AutoGenerateField = true, Name = "Сумма")]
+    [DisplayFormat(DataFormatString = "n2")]
     [ReadOnly(true)]
-    public string Summa => getSumma();
+    public decimal Summa => getSumma();
 
     public override string Description =>
         $"Перевод за баланс. №{DocNum} от {DocDate.ToShortDateString()} со склада {Warehouse?.Name}";
@@ -133,15 +134,10 @@ public sealed class TransferOutBalansWrapper : BaseWrapper<TransferOutBalans>, I
         }
     }
 
-    private string getSumma()
+    private decimal getSumma()
     {
-        var ret = new StringBuilder();
-        var currs = Rows.Select(_ => _.Currency).Distinct().ToList();
-        foreach (var crs in currs)
-            ret.Append(
-                $"{crs.Name}: {Math.Round(Rows.Where(_ => _.Currency.DocCode == crs.DocCode).Sum(_ => _.Summa), 2)} ");
-
-        return ret.ToString();
+         return Math.Round(Rows.Sum(_ => _.Summa), 2);
+      
     }
 
     public override void StartLoad(bool isFullLoad = true)

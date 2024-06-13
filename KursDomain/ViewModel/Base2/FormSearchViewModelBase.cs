@@ -60,7 +60,7 @@ public abstract class FormSearchViewModelBase<T> : ViewModelBase, IFormSearchCom
 
     #region Command
 
-    protected bool CanDocNewEmpty()
+    protected virtual bool CanDocNewEmpty()
     {
         return true;
     }
@@ -69,7 +69,7 @@ public abstract class FormSearchViewModelBase<T> : ViewModelBase, IFormSearchCom
     {
     }
 
-    protected bool CanDocNewCopyRequisite()
+    protected virtual bool CanDocNewCopyRequisite()
     {
         return true;
     }
@@ -78,7 +78,7 @@ public abstract class FormSearchViewModelBase<T> : ViewModelBase, IFormSearchCom
     {
     }
 
-    protected bool CanDocNewCopy()
+    protected virtual bool CanDocNewCopy()
     {
         return true;
     }
@@ -192,6 +192,7 @@ public abstract class FormSearchViewModelBase<T> : ViewModelBase, IFormSearchCom
             currentWindow.Left = p.FormLeft < 0 ? 0 : p.FormLeft;
             currentWindow.Top = p.FormTop < 0 ? 0 : p.FormTop;
         }
+
     }
 
     #endregion
