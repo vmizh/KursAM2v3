@@ -26,12 +26,11 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
         #region Fields
 
         private ITransferOutBalansRepository _TransferOutBalansRepository;
+        private TransferOutBalansWrapper myCurrentDocument; 
 
         protected IEventAggregator _EventAggregator;
         protected IMessageDialogService _MessageDialogService;
-        private TransferOutBalansWrapper myCurrentDocument;
         private bool isLoaded = false;
-
         #endregion
         
         #region Constructors
@@ -44,7 +43,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             _MessageDialogService = new MessageDialogService();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            DateStart = DateTime.Today.AddDays(-30);
+            DateStart = new DateTime(DateTime.Today.Year,1,1);
             DateEnd = DateTime.Today;
             Documents = new ObservableCollection<TransferOutBalansWrapper>();
 
@@ -56,7 +55,6 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
 
         #region Commands
 
-        
         public override async Task OnRefreshDataAsync()
         {
             using (var ctx = GlobalOptions.GetEntities())
@@ -87,10 +85,41 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             }
         }
 
+        public override async Task OnDocumentOpenAsync()
+        {
+            // var ctx = GlobalOptions.GetEntities();
+            // var doc = new TransferOutBalansViewModel(new TransferOutBalansRepository(ctx),
+            //     new StorageLocationsRepository(ctx), new NomenklRepository(ctx), new DocHistoryRepository(ctx));
+            // await doc.InitializeAsync(CurrentDocument.Id);
+            // doc.Show();
+
+            isLoaded = true;
+            ((DelegateCommand)DocumentOpenCommand).RaiseCanExecuteChanged();
+            var ctx = GlobalOptions.GetEntities();
+            var doc = new TransferOutBalansViewModel(new TransferOutBalansRepository(ctx),
+                new StorageLocationsRepository(ctx), new NomenklRepository(ctx), new DocHistoryRepository(ctx));
+            await doc.InitializeAsync(CurrentDocument.Id); 
+            doc.Show();
+            isLoaded = false;
+            ((DelegateCommand)DocumentOpenCommand).RaiseCanExecuteChanged();
+        }
+
         public override bool CanDocumentOpen()
         {
             return CurrentDocument != null && !isLoaded;
         }
+
+        protected override bool CanDocNewCopy()
+        {
+            return false;
+        }
+
+        protected override bool CanDocNewCopyRequisite()
+        {
+            return CurrentDocument != null;;
+        }
+
+        
 
         public override TransferOutBalansWrapper CurrentDocument
         {
@@ -103,20 +132,6 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                 ((DelegateCommand)DocumentOpenCommand).RaiseCanExecuteChanged();
             }
         }
-
-        public override async Task OnDocumentOpenAsync()
-        {
-            isLoaded = true;
-            ((DelegateCommand)DocumentOpenCommand).RaiseCanExecuteChanged();
-            var ctx = GlobalOptions.GetEntities();
-            var doc = new TransferOutBalansViewModel(new TransferOutBalansRepository(ctx),
-                new StorageLocationsRepository(ctx), new NomenklRepository(ctx), new DocHistoryRepository(ctx));
-            await doc.InitializeAsync(CurrentDocument.Id); 
-            doc.Show();
-            isLoaded = false;
-            ((DelegateCommand)DocumentOpenCommand).RaiseCanExecuteChanged();
-        }
-
         protected override async Task OnDocNewEmptyExecute()
         {
             var ctx = GlobalOptions.GetEntities();
@@ -183,7 +198,16 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
             await base.OnWindowLoaded();
             if (Form is not null)
                 foreach (var col in Form.gridDocuments.Columns)
+                {
                     col.ReadOnly = true;
+                    switch (col.FieldName)
+                    {
+                        case nameof(TransferOutBalansRowsWrapper.State):
+                            col.Visible = false;
+                            break;
+                    }
+
+                }
         }
 
         #endregion

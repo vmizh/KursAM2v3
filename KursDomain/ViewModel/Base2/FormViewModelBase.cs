@@ -140,8 +140,13 @@ public abstract class FormViewModelBase<T, I> : ViewModelBase, IForm, ILayout
             currentWindow.Left = p.FormLeft < 0 ? 0 : p.FormLeft;
             currentWindow.Top = p.FormTop < 0 ? 0 : p.FormTop;
         }
+        UpdateVisualObject();
     }
 
+    protected virtual void UpdateVisualObject()
+    {
+
+    }
     protected virtual void OnInitialize()
     {
     }
@@ -289,6 +294,7 @@ public abstract class FormViewModelBase<T, I> : ViewModelBase, IForm, ILayout
     protected virtual void OnResetLayoutExecute()
     {
         LayoutSerializationService.Deserialize(_startLayout);
+        UpdateVisualObject();
     }
 
     public ICommand ShowHistoryCommand { get; }

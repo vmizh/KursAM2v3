@@ -46,7 +46,8 @@
                             Style="{StaticResource TableView.SearchWithoutMenu}" 
                             NavigationStyle="Row">
                             <dxmvvm:Interaction.Behaviors>
-                                <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding IncludeCommand }" />
+                                <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding IncludeCommand }"/>
+                                <dxmvvm:KeyToCommand EventName="KeyDown" KeyGesture="Enter" Command="{Binding IncludeSelectedCommand }"  />
                             </dxmvvm:Interaction.Behaviors>
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
@@ -80,6 +81,7 @@
                         >
                         <dxmvvm:Interaction.Behaviors>
                             <dxmvvm:EventToCommand EventName="MouseDoubleClick" Command="{Binding ExcludeCommand }" />
+                            <dxmvvm:KeyToCommand EventName="KeyDown" KeyGesture="Enter" Command="{Binding      ExcludeSelectedCommand }"  />
                         </dxmvvm:Interaction.Behaviors>
                         <dxg:TableView.ContextMenu>
                             <ContextMenu>

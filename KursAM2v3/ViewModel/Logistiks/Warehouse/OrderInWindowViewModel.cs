@@ -636,7 +636,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get
             {
                 return new Command(AddFromDocument, _ => CurrentRow != null && (CurrentRow.LinkInvoice != null 
-                                                         || CurrentRow.LinkOrder != null));
+                    || CurrentRow.LinkOrder != null));
             }
         }
 

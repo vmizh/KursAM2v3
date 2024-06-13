@@ -33,10 +33,12 @@
             <control:WindowMenu Height="60" DockPanel.Dock="Top" />
             <DockPanel DockPanel.Dock="Top" LastChildFill="False">
                 <dxe:DateEdit Width="120" EditValue="{Binding DateStart}"
+                              Margin="0,0,7,0"
                               IsEnabled="{Binding IsDateEnabled}" 
                               DockPanel.Dock="Left"/>
                 <Label Content="по" />
                 <dxe:DateEdit Width="120" EditValue="{Binding DateEnd}"
+                              Margin="7,0,0,0"
                               IsEnabled="{Binding IsDateEnabled}"
                               DockPanel.Dock="Left"/>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">

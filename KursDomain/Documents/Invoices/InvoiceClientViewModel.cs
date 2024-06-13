@@ -1059,7 +1059,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         {
             if (mySumma == value) return;
             mySumma = value;
-            RaisePropertiesChanged();
+            //RaisePropertiesChanged();
         }
         get => mySumma;
     }
@@ -1149,6 +1149,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                 };
                 Rows.Add(newRow);
             }
+        Summa = Rows.Sum(_ => _.Summa);
 
         Summa = Rows.Sum(_ => _.Summa);
         using (var ctx = GlobalOptions.GetEntities())

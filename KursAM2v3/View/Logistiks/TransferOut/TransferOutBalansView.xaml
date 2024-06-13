@@ -25,9 +25,9 @@
                         <Label Margin="10 0 0 0"
                                Content="{Binding Document.DocNum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged }" />
                         <Label Content="от" Margin="12 0 0 0" />
-                        <dxe:DateEdit Margin="4 0"
+                        <dxe:DateEdit Margin="10 0"
                                       EditValue="{Binding Document.DocDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                      MinWidth="100" />
+                                      MinWidth="100" Width="100" />
                         <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
                                           IsReadOnly="True"
                                           Focusable="False"
@@ -47,14 +47,14 @@
                     <StackPanel Orientation="Horizontal"
                                 DockPanel.Dock="Top"
                                 Margin="0 5 ">
-                        <Label Content="Со склада:" />
+                        <Label Content="Со склада:" Margin="0,0,12,0"  />
                         <dxe:ComboBoxEdit
                             MinWidth="150"
-                            Margin="31 0"
+                            Margin="31,0,25 0"
                             IsEnabled="{Binding CanWarehouseChanged, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             Style="{StaticResource ComboBoxEditWithError}"
                             EditValue="{Binding Document.Warehouse, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            ItemsSource="{Binding WarehouseList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            ItemsSource="{Binding WarehouseList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="125" />
                         <Label Content="Место хранения:" />
                         <dxe:ComboBoxEdit
                             MinWidth="150"
@@ -72,25 +72,32 @@
                         <Label Content="Валюта:" />
                         <dxe:ComboBoxEdit
                             MinWidth="150"
-                            Height="30"
+                            Height="24"
                             VerticalAlignment="Top"
                             Margin="5 0"
                             IsEnabled="{Binding CanCurrencyChanged, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                             Style="{StaticResource ComboBoxEditWithError}"
                             EditValue="{Binding Document.Currency, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             ItemsSource="{Binding CurrencyList, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <Label Content="На сумму:" />
+                        <Label Content="Cумма:" VerticalAlignment="Center" Margin="23,0,7,0"/>
+                        <dxe:PopupCalcEdit EditValue="{Binding Document.Summa, Mode=OneWay}"
+                                           Margin="0 0 30 0"
+                                           AllowDefaultButton="False" IsReadOnly="True"
+                                           DisplayFormatString="n2" MaskUseAsDisplayFormat="True"
+                                           HorizontalAlignment="Right" DockPanel.Dock="Left" MinWidth="120" />
+                        <!--
                         <dxg:GridControl Name="gridSummariesRows"
                                          AutoGenerateColumns="AddNew"
-                                         Margin="10,10,0,0"
+                                         Margin="10,0,0,0"
                                          MaxHeight="1000"
                                          MaxWidth="1000"
                                          MinWidth="272"
                                          dx:DXSerializer.Enabled="False"
-                                         ItemsSource="{Binding Document.CurrenciesSummaries,  UpdateSourceTrigger=PropertyChanged}"
+                                         ItemsSource="{Binding Document.CurrenciesSummaries.Summa,  UpdateSourceTrigger=PropertyChanged}"
                                          CurrentItem="{Binding CurrentSummary, UpdateSourceTrigger=PropertyChanged}"
-                                         SelectedItems="{Binding SelectedSummaryRows, UpdateSourceTrigger=PropertyChanged}"
+                                         SelectedItems="{Binding SelectedSummaryRows, UpdateSourceTrigger=PropertyChanged}" Height="54" RenderTransformOrigin="0.523,0.537"
                                          >
+                            
                             <dxg:GridControl.View>
                                 <dxg:TableView ShowTotalSummary="True"
                                                Name="summariesTableViewRows"
@@ -99,18 +106,20 @@
                                                ShowCriteriaInAutoFilterRow="False" 
                                                ShowIndicator="False"
                                                ShowGroupFooters="False"
-                                               TotalSummaryPosition="None"/>
+                                               TotalSummaryPosition="None" Height="39"/>
                             </dxg:GridControl.View>
                         </dxg:GridControl>
+                        -->
 
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
-                        <Label Content="Примечание:" />
-                        <dxe:TextEdit Margin="14 0"
+                        <Label Content="Примечание:" Margin="0,10,0,0" />
+                        <dxe:TextEdit Margin="14 10,0,0"
                                       EditValue="{Binding Document.Note, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                      VerticalContentAlignment="Top"
                                       MinWidth="385"
                                       Height="60" 
-                                      AcceptsReturn="True"
+                                      AcceptsReturn="True" Width="438"
                                       />
                     </StackPanel>
                 </DockPanel>
