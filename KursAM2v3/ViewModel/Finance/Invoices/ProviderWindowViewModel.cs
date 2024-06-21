@@ -45,6 +45,8 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
 using Reports.Base;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 using NomenklProductType = KursDomain.References.NomenklProductType;
 
 namespace KursAM2.ViewModel.Finance.Invoices
