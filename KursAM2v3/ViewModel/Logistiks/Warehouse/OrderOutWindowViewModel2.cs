@@ -184,16 +184,17 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get => myCurrentRow;
         }
 
-        public ObservableCollection<WarehouseOutRowWrapper> SelectedRows =
+        public ObservableCollection<WarehouseOutRowWrapper> SelectedRows { set; get;} =
             new ObservableCollection<WarehouseOutRowWrapper>();
 
-        public List<WarehouseOutRowWrapper> DeletedRows = new List<WarehouseOutRowWrapper>();
+        public List<WarehouseOutRowWrapper> DeletedRows { set; get; } = new List<WarehouseOutRowWrapper>();
 
         #endregion
 
         #region Commands
 
-        public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow;
+        public override bool IsDocDeleteAllow => Document != null && Document.State != RowStatus.NewRow && 
+                                                 Document.Rows.All( _ => _.WarehouseOrderIn == null);
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
 
         public override bool IsCanSaveData => Document != null && (Document.State != RowStatus.NotEdited
@@ -554,7 +555,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand DeleteNomenklCommand
         {
-            get { return new Command(DeleteNomenkl, _ => CurrentRow != null || SelectedRows.Count > 0); }
+            get
+            {
+                return new Command(DeleteNomenkl, _ => SelectedRows.Count > 0 &&
+                    SelectedRows.All(r => r.WarehouseOrderIn == null));
+            }
         }
 
         private void DeleteNomenkl(object obj)

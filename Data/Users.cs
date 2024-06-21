@@ -38,6 +38,7 @@ namespace Data
         public string FullName { get; set; }
         public string ThemeName { get; set; }
         public string Password { get; set; }
+        public string PasswordSalt { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Errors> Errors { get; set; }

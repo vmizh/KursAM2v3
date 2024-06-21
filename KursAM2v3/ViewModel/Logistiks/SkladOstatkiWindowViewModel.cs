@@ -94,7 +94,8 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void InitIniFile(IniFileManager userIni)
         {
-            if (!userIni.KeyExists("SkaldOstatkiReceiverName", "Layot")) userIni.Write("Layout", "SkaldOstatkiReceiverName", "5");
+            if (!userIni.KeyExists("SkaldOstatkiReceiverName", "Layot"))
+                userIni.Write("Layout", "SkaldOstatkiReceiverName", "5");
         }
 
         public override string LayoutName => "SkladOstatkiWindowViewModelLayout";
@@ -278,13 +279,31 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
+        private void updateSklads()
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var sql = "SELECT DISTINCT storeDC FROM NomenklMoveForCalc nmfc " +
+                          "INNER JOIN HD_27 h ON h.DOC_CODE = nmfc.StoreDC " +
+                          "INNER JOIN  EXT_USERS U ON U.USR_ID = H.USR_ID " +
+                          $"AND UPPER(U.USR_NICKNAME) = UPPER('{GlobalOptions.UserInfo.NickName}')";
+                var skls = ctx.Database.SqlQuery<decimal>(sql);
+                foreach (var dc in skls)
+                {
+                    if (Sklads.Any(_ => _.DocCode == dc)) continue;
+                    Sklads.Add(GlobalOptions.ReferencesCache.GetWarehouse(dc) as KursDomain.References.Warehouse);
+                }
+            }
+        }
+
+
         public override void RefreshData(object obj)
         {
             NomenklsForSklad.Clear();
             LoadedRemains.Clear();
             //LoadedRemains = NomenklCalculationManager.GetNomenklStoreRemains(OstatokDate, true);
             if (CurrentWarehouse != null) LoadNomForSklad();
-
+            updateSklads();
             RaisePropertyChanged(nameof(NomenklsForSklad));
         }
 

@@ -282,7 +282,11 @@ public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
         var handler = PropertyChanged;
         if (propertyName != "State")
             if (myState == RowStatus.NotEdited)
+            {
                 myState = RowStatus.Edited;
+                RaisePropertyChanged("State");
+            }
+
         if (Parent is RSViewModelBase p)
             if (myState != RowStatus.NotEdited)
             {

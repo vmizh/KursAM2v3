@@ -26,7 +26,6 @@ namespace KursAM2.View.Logistiks.Warehouse
         public ComboBoxEdit comboWarehouseIn;
         public ComboBoxEdit comboWarehouseOut;
         public DateEdit docDateEditor;
-        public TextEdit noteEdit;
 
         public OrderOutView2()
         {
@@ -258,19 +257,7 @@ namespace KursAM2.View.Logistiks.Warehouse
         {
         }
 
-        private void TableViewRows_OnCellValueChanged(object sender, CellValueChangedEventArgs e)
-        {
-            var dtx = DataContext as OrderOutWindowViewModel2;
-            if (dtx == null) return;
-            if (e.Column.FieldName == "QuantityOut")
-                if (dtx.CurrentRow.QuantityOut > dtx.CurrentRow.MaxQuantity)
-                {
-                    WindowManager.ShowMessage("Кол-во отгрузки превышает кол-ва на складе",
-                        "Ошибка", MessageBoxImage.Stop);
-                    dtx.CurrentRow.QuantityOut = (decimal)e.OldValue;
-                }
-        }
-
+        
         private void gridRows_ItemsSourceChanged(object sender, ItemsSourceChangedEventArgs e)
         {
         }

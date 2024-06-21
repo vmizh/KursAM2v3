@@ -105,11 +105,11 @@ namespace KursAM2.Dialogs
             return ctx.SelectedNomenkl.ToList();
         }
 
-        public static List<WarehouseOrderOutRowSelect> SelectNomenklsFromRashodOrder(Warehouse store, 
+        public static List<WarehouseOrderOutRowSelect> SelectNomenklsFromRashodOrder(Warehouse store, DateTime date, 
             List<Tuple<decimal,int>> exclude = null, Warehouse fromStore = null)
         {
             //MainReferences.UpdateNomenkl();
-            var ctx = new AddNomenklFromRashOrderViewModel(store, exclude, fromStore)
+            var ctx = new AddNomenklFromRashOrderViewModel(store,date, exclude, fromStore)
             {
                 WindowName = "Выбор номенклатур"
             };

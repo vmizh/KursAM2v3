@@ -6,6 +6,7 @@ using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core.Helper;
@@ -58,20 +59,70 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void UpdateVisualObjects()
         {
-            if (Form is InvoiceProviderView view)
+            if (Form is InvoiceProviderView frm)
             {
-                var cols = view.gridPays.TotalSummary.GetForName("Rate");
+                var col = frm.gridFacts.Columns.FirstOrDefault(_ => _.FieldName == "LinkOrder");
+                if (col != null)
+                    frm.gridFacts.Columns.Remove(col);
+                GridSummaryItem g = null;
+                foreach (var s in frm.gridRows.TotalSummary)
+                {
+                    if (s.FieldName != "NDSPercent") continue;
+                    g = s;
+                    break;
+                }
+
+                if (g != null) frm.gridRows.TotalSummary.Remove(g);
+                frm.tableViewRows.FormatConditions.Clear();
+                var notShippedFormatCondition = new FormatCondition
+                {
+                    FieldName = "Shipped",
+                    ApplyToRow = true,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Red
+                    },
+                    ValueRule = ConditionRule.Equal,
+                    Value1 = 0m
+                };
+                var serviceFormatCondition = new FormatCondition
+                {
+                    FieldName = "IsUsluga",
+                    ApplyToRow = true,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Black
+                    },
+                    ValueRule = ConditionRule.Equal,
+                    Value1 = true
+                };
+
+                var shippedFormatCondition = new FormatCondition
+                {
+                    Expression = "[Quantity] > [Shipped]",
+                    FieldName = "Shipped",
+                    ApplyToRow = true,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Blue
+                    }
+                };
+                frm.tableViewRows.FormatConditions.Add(shippedFormatCondition);
+                frm.tableViewRows.FormatConditions.Add(notShippedFormatCondition);
+                frm.tableViewRows.FormatConditions.Add(serviceFormatCondition);
+
+                var cols = frm.gridPays.TotalSummary.GetForName("Rate");
                 if (cols.Count > 0)
                 {
-                    view.gridPays.TotalSummary.BeginUpdate();
-                    foreach (var c in cols) view.gridPays.TotalSummary.Remove(c);
+                    frm.gridPays.TotalSummary.BeginUpdate();
+                    foreach (var c in cols) frm.gridPays.TotalSummary.Remove(c);
 
-                    view.gridPays.TotalSummary.Add(new GridSummaryItem
+                    frm.gridPays.TotalSummary.Add(new GridSummaryItem
                     {
                         FieldName = "Rate",
                         SummaryType = SummaryItemType.Custom
                     });
-                    view.gridPays.TotalSummary.EndUpdate();
+                    frm.gridPays.TotalSummary.EndUpdate();
                 }
             }
         }
@@ -494,58 +545,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         protected override void OnWindowLoaded(object obj)
         {
             base.OnWindowLoaded(obj);
-            if (Form is InvoiceProviderView frm)
-            {
-                var col = frm.gridFacts.Columns.FirstOrDefault(_ => _.FieldName == "LinkOrder");
-                if (col != null)
-                    frm.gridFacts.Columns.Remove(col);
-                GridSummaryItem g = null;
-                foreach (var s in frm.gridRows.TotalSummary)
-                {
-                    if (s.FieldName != "NDSPercent") continue;
-                    g = s;
-                    break;
-                }
-
-                if (g != null) frm.gridRows.TotalSummary.Remove(g);
-                frm.tableViewRows.FormatConditions.Clear();
-                var notShippedFormatCondition = new FormatCondition
-                {
-                    FieldName = "Shipped",
-                    ApplyToRow = true,
-                    Format = new Format
-                    {
-                        Foreground = Brushes.Red
-                    },
-                    ValueRule = ConditionRule.Equal,
-                    Value1 = 0m
-                };
-                var serviceFormatCondition = new FormatCondition
-                {
-                    FieldName = "IsUsluga",
-                    ApplyToRow = true,
-                    Format = new Format
-                    {
-                        Foreground = Brushes.Black
-                    },
-                    ValueRule = ConditionRule.Equal,
-                    Value1 = true
-                };
-
-                var shippedFormatCondition = new FormatCondition
-                {
-                    Expression = "[Quantity] > [Shipped]",
-                    FieldName = "Shipped",
-                    ApplyToRow = true,
-                    Format = new Format
-                    {
-                        Foreground = Brushes.Blue
-                    }
-                };
-                frm.tableViewRows.FormatConditions.Add(shippedFormatCondition);
-                frm.tableViewRows.FormatConditions.Add(notShippedFormatCondition);
-                frm.tableViewRows.FormatConditions.Add(serviceFormatCondition);
-            }
+            
         }
 
         public ICommand DogovorSelectCommand
@@ -905,6 +905,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             Document.DeletedRows.Clear();
             Document.myState = RowStatus.NotEdited;
+            UpdateVisualObjects();
         }
 
         public ICommand PrintZajavkaCommand

@@ -51,9 +51,18 @@
                                       DockPanel.Dock="Left" />
                         <Label Content="  от " DockPanel.Dock="Left" />
                         <dxe:DateEdit MinWidth="100" DockPanel.Dock="Left"
-                                      EditValue="{Binding Document.Date, UpdateSourceTrigger=PropertyChanged}" Width="86" />
+                                      EditValue="{Binding Document.Date, UpdateSourceTrigger=PropertyChanged}" Width="86">
+                            <dxmvvm:Interaction.Behaviors>
+                                <dxmvvm:EventToCommand EventName="EditValueChanged"
+                                                       Command="{Binding DateChangedCommand}"
+                                                       PassEventArgsToCommand="True"/>
+                            </dxmvvm:Interaction.Behaviors>
+                        </dxe:DateEdit>
                         <dxe:ComboBoxEdit MinWidth="80" DockPanel.Dock="Right"
-                                          IsEnabled="False" EditValue="{Binding Document.State, Mode=OneWay }">
+                                          EditValue="{Binding Document.State, Mode=OneWay }"
+                                          Focusable="False"
+                                          EditValueChanged="State_OnEditValueChanged"
+                                          AllowDefaultButton="False">
                             <dxmvvm:Interaction.Behaviors>
                                 <dxmvvm:EnumItemsSourceBehavior
                                     EnumType="{x:Type iCommon:RowStatus}" />

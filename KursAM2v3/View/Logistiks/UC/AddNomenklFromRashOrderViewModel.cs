@@ -44,6 +44,12 @@ namespace KursAM2.View.Logistiks.UC
         public string WarehouseName => Entity?.SD_24?.DD_SKLAD_OTPR_DC != null
             ? ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.SD_24.DD_SKLAD_OTPR_DC)).Name
             : null;
+
+        [Display(AutoGenerateField = true, Name = "Дата")]
+        public DateTime? DocDate => Entity?.SD_24?.DD_DATE;
+
+        [Display(AutoGenerateField = true, Name = "Дата")]
+        public int? DocNum => Entity?.SD_24?.DD_IN_NUM;
     }
 
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
@@ -58,13 +64,15 @@ namespace KursAM2.View.Logistiks.UC
         private StandartDialogSelectUC myDataUserControl;
         private WarehouseOrderOutRowSelect mySelectedItem;
         private KursDomain.References.Warehouse myStore;
+        private readonly DateTime myDate;
 
 
-        public AddNomenklFromRashOrderViewModel(KursDomain.References.Warehouse store,
+        public AddNomenklFromRashOrderViewModel(KursDomain.References.Warehouse store, DateTime date,
             List<Tuple<decimal, int>> exclude = null,
             KursDomain.References.Warehouse fromStore = null)
         {
             myStore = store;
+            myDate = date;
             myFromStore = fromStore;
             myExclude = exclude;
             myDataUserControl = new StandartDialogSelectUC("AddNomenklFromRashOrder");
@@ -185,14 +193,17 @@ namespace KursAM2.View.Logistiks.UC
                             .AsNoTracking()
                             .FirstOrDefault(_ => _.DOC_CODE == r.DocCode && _.CODE == r.Code);
                         if (d == null) continue;
-                        if (myFromStore == null)
+                        if (d.SD_24.DD_DATE <= myDate)
                         {
-                            ItemsCollection.Add(new WarehouseOrderOutRowSelect(d));
-                        }
-                        else
-                        {
-                            if (myFromStore.DocCode == d.SD_24.DD_SKLAD_OTPR_DC)
+                            if (myFromStore == null)
+                            {
                                 ItemsCollection.Add(new WarehouseOrderOutRowSelect(d));
+                            }
+                            else
+                            {
+                                if (myFromStore.DocCode == d.SD_24.DD_SKLAD_OTPR_DC)
+                                    ItemsCollection.Add(new WarehouseOrderOutRowSelect(d));
+                            }
                         }
                     }
 

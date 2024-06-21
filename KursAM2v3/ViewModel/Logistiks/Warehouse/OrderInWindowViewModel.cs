@@ -19,11 +19,9 @@ using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ReportManagers;
 using KursAM2.Repositories;
-using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl.Invoices.ViewModels;
 using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Helper;
-using KursAM2.View.Logistiks.UC;
 using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management.Calculations;
 using KursDomain;
@@ -56,7 +54,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             GenericOrderInRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
             SD_24Repository = new SD_24Repository(UnitOfWork);
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
-            RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this); 
+            RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             IsDocNewCopyAllow = false;
             IsDocNewCopyRequisiteAllow = true;
             orderManager = new WarehouseManager(errManager);
@@ -106,10 +104,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Document = new WarehouseOrderIn(doc);
                 {
                     State = RowStatus.NotEdited;
-                    
                 }
-                Document.WarehouseSenderType = Document.KontragentSender != null ? 
-                    WarehouseSenderType.Kontragent : WarehouseSenderType.Store;
+                Document.WarehouseSenderType = Document.KontragentSender != null
+                    ? WarehouseSenderType.Kontragent
+                    : WarehouseSenderType.Store;
                 if (Document != null)
                     WindowName = Document.ToString();
                 if (Document.Entity.DD_SPOST_DC != null)
@@ -123,7 +121,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
         }
 
-       #region Properties
+        #region Properties
 
         public List<KursDomain.References.Warehouse>
             WarehouseList { set; get; } = GlobalOptions.ReferencesCache.GetWarehousesAll()
@@ -133,7 +131,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             set
             {
-                if (Equals(myDocument ,value)) return;
+                if (Equals(myDocument, value)) return;
                 myDocument = value;
                 RaisePropertyChanged();
             }
@@ -148,7 +146,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get => myCurrentRow;
             set
             {
-                if (Equals(myCurrentRow,value)) return;
+                if (Equals(myCurrentRow, value)) return;
                 myCurrentRow = value;
                 RaisePropertyChanged();
             }
@@ -175,13 +173,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 RaisePropertyChanged();
             }
         }
-        
+
         public ICommand KontragentTypeChangedCommand
         {
-            get
-            {
-                return new Command(KontragentTypeChanged, _ => IsCanChageKontragent);
-            }
+            get { return new Command(KontragentTypeChanged, _ => IsCanChageKontragent); }
         }
 
         private void KontragentTypeChanged(object obj)
@@ -195,8 +190,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     Document.WarehouseOut = null;
                     break;
             }
-            
-            
         }
 
         public ICommand LinkToSchetCommand
@@ -217,9 +210,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 WinManager.ShowWinUIMessageBox("Не выбран склад.", "Ошибка", MessageBoxButton.OK,
                     MessageBoxImage.Error);
-                return;
             }
-
         }
 
         private void SelectSchet()
@@ -257,7 +248,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
                 if (dtx.SelectedItems.Count > 0)
                 {
-
                     if (Document.KontragentSender == null)
                         Document.KontragentSender =
                             GlobalOptions.ReferencesCache.GetKontragent(dtx.SelectedItems.First().PostDC) as Kontragent;
@@ -265,7 +255,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     var sf = UnitOfWork.Context.SD_26.First(_ => _.DOC_CODE == dc);
                     Schet = $"№{sf.SF_IN_NUM}/{sf.SF_POSTAV_NUM} от {sf.SF_POSTAV_DATE.ToShortDateString()}";
                     Document.Entity.DD_SPOST_DC = sf.DOC_CODE;
-                    int code = Document.Rows.Count == 0 ? 1 : Document.Rows.Max(_ => _.Code) + 1;
+                    var code = Document.Rows.Count == 0 ? 1 : Document.Rows.Max(_ => _.Code) + 1;
                     foreach (var row in dtx.SelectedItems)
                     {
                         var old = Document.Rows.FirstOrDefault(_ => _.DDT_NOMENKL_DC == row.NomenklDC);
@@ -285,7 +275,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             DDT_NOMENKL_DC = ((IDocCode)nom).DocCode,
                             Id = Guid.NewGuid(),
                             DocId = Document.Id
-
                         };
                         Document.Entity.TD_24.Add(newEntity);
                         Document.Rows.Add(new WarehouseOrderInRow(newEntity)
@@ -311,7 +300,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             $"от {s26.SF_POSTAV_DATE.ToShortDateString()} ";
                         Document.Entity.DD_SPOST_DC = dtx.SelectedItems.First().DocCode;
                     }
-
                 }
             }
 
@@ -319,7 +307,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 var newCode = Document.Rows.Count > 0 ? Document.Rows.Max(_ => _.Code) + 1 : 1;
                 var datarows =
-                    StandartDialogs.SelectNomenklsFromRashodOrder(Document.WarehouseIn,
+                    StandartDialogs.SelectNomenklsFromRashodOrder(Document.WarehouseIn, Document.Date,
                         Document.Rows.Select(_ =>
                             new Tuple<decimal, int>((decimal)_.DDT_RASH_ORD_DC, (int)_.DDT_RASH_ORD_CODE)).ToList(),
                         Document.WarehouseOut);
@@ -350,6 +338,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             Unit = nom?.Unit as Unit,
                             // ReSharper disable once PossibleNullReferenceException
                             Currency = (Currency)nom.Currency,
+                            LinkOrder = n,
                             State = RowStatus.NewRow
                         };
                         Document.Rows.Add(newItem);
@@ -358,9 +347,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     newCode++;
                 }
             }
-
         }
-
 
 
         public ICommand DeleteLinkSchetCommand
@@ -415,10 +402,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                                                    || Document.Rows.Any(_ =>
                                                                        _.State != RowStatus.NotEdited)
                                                                    || Document.DeletedRows.Count > 0)
-                                                               && (Document.KontragentSender != null || Document.WarehouseOut != null) &&
+                                                               && (Document.KontragentSender != null ||
+                                                                   Document.WarehouseOut != null) &&
                                                                Document.WarehouseIn != null;
 
-        public override RowStatus State => Document?.State ?? RowStatus.NewRow;
         public override string LayoutName => "OrderWarehouseInLayout";
 
         public override void DocNewEmpty(object form)
@@ -437,14 +424,14 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (Document == null) return;
             var frm = new OrderInView { Owner = Application.Current.MainWindow };
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(UnitOfWork.Context,
-                    "WarehouseOrderIn", true))
-                { Form = frm,
-                    Document = orderManager.NewOrderInCopy(Document.DocCode)
-                };
+                "WarehouseOrderIn", true))
+            {
+                Form = frm,
+                Document = orderManager.NewOrderInCopy(Document.DocCode)
+            };
             ctx.Document.myState = RowStatus.NewRow;
             frm.DataContext = ctx;
             frm.Show();
-            
         }
 
         public override void DocNewCopyRequisite(object form)
@@ -460,7 +447,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 : WarehouseSenderType.Store;
             frm.DataContext = ctx;
             frm.Show();
-            
         }
 
         public override void RefreshData(object obj)
@@ -485,15 +471,16 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
 
             var rrows = UnitOfWork.Context.TD_24.Where(_ => _.DOC_CODE == Document.DocCode).ToList();
-            foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries()) 
+            foreach (var entity in UnitOfWork.Context.ChangeTracker.Entries())
                 entity.Reload();
             var codes = Document.Rows.Select(_ => _.Code).ToList();
             foreach (var code in codes)
             {
-                if(rrows.Any(_ => _.CODE == code)) continue;
+                if (rrows.Any(_ => _.CODE == code)) continue;
                 var d = Document.Rows.FirstOrDefault(_ => _.Code == code);
                 Document.Rows.Remove(d);
             }
+
             Document.RaisePropertyAllChanged();
             Document.Rows.ForEach(_ => _.RaisePropertyAllChanged());
             Document.State = RowStatus.NotEdited;
@@ -507,11 +494,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
             foreach (var r in Document.Rows)
             {
-                if(r.TD_26 != null)
+                if (r.TD_26 != null)
                     r.LinkInvoice = new InvoiceProviderRow(r.TD_26);
                 r.State = RowStatus.NotEdited;
-
             }
+
             Document.State = RowStatus.NotEdited;
         }
 
@@ -525,9 +512,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 if (Document.State == RowStatus.NewRow || Document.DocCode < 0)
                 {
-                    int code = 1;
-                    Document.DD_IN_NUM = UnitOfWork.Context.SD_24.Any() ? UnitOfWork.Context.SD_24.Max(_ => _.DD_IN_NUM) + 1 : 1;
-                    Document.DocCode = UnitOfWork.Context.SD_24.Any() ? UnitOfWork.Context.SD_24.Max(_ => _.DOC_CODE) + 1 : 10240000001;
+                    var code = 1;
+                    Document.DD_IN_NUM = UnitOfWork.Context.SD_24.Any()
+                        ? UnitOfWork.Context.SD_24.Max(_ => _.DD_IN_NUM) + 1
+                        : 1;
+                    Document.DocCode = UnitOfWork.Context.SD_24.Any()
+                        ? UnitOfWork.Context.SD_24.Max(_ => _.DOC_CODE) + 1
+                        : 10240000001;
                     foreach (var row in Document.Rows)
                     {
                         row.DocCode = Document.DocCode;
@@ -535,11 +526,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         code++;
                     }
                 }
+
                 UnitOfWork.Save();
                 UnitOfWork.Commit();
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.StoreOrderIn), null,
                     Document.DocCode, null, (string)Document.ToJson());
-                if(Document.DD_KONTR_OTPR_DC != null)
+                if (Document.DD_KONTR_OTPR_DC != null)
                     RecalcKontragentBalans.CalcBalans(Document.DD_KONTR_OTPR_DC.Value, Document.Date);
             }
             catch (Exception ex)
@@ -547,12 +539,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 UnitOfWork.Rollback();
                 WindowManager.ShowError(ex);
             }
+
             Document.DeletedRows.Clear();
             Document.myState = RowStatus.NotEdited;
-            foreach (var r in Document.Rows)
-            {
-                r.myState = RowStatus.NotEdited;
-            }
+            foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
             Document.RaisePropertyChanged("State");
         }
 
@@ -604,7 +594,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             MessageBoxImage.Error);
                         return;
                     }
-                    var warehouse = StandartDialogs.SelectWarehouseDialog(new List<KursDomain.References.Warehouse>(new [] {Document.WarehouseIn}));
+
+                    var warehouse =
+                        StandartDialogs.SelectWarehouseDialog(
+                            new List<KursDomain.References.Warehouse>(new[] { Document.WarehouseIn }));
                     if (warehouse == null) return;
                     Document.WarehouseOut = warehouse;
                     break;
@@ -624,8 +617,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void OpenLinkDocument(object obj)
         {
-            if(CurrentRow.DDT_SPOST_DC != null)
-            // ReSharper disable once PossibleInvalidOperationException
+            if (CurrentRow.DDT_SPOST_DC != null)
+                // ReSharper disable once PossibleInvalidOperationException
                 DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)CurrentRow.DDT_SPOST_DC);
             if (CurrentRow.LinkDocument != null)
                 DocumentsOpenManager.Open(DocumentType.StoreOrderOut, CurrentRow.LinkOrder.DocCode);
@@ -635,7 +628,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             get
             {
-                return new Command(AddFromDocument, _ => CurrentRow != null && (CurrentRow.LinkInvoice != null 
+                return new Command(AddFromDocument, _ => CurrentRow != null && (CurrentRow.LinkInvoice != null
                     || CurrentRow.LinkOrder != null));
             }
         }
@@ -667,6 +660,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     MessageBoxImage.Warning);
                 return;
             }
+
             if (Document.KontragentSender == null)
             {
                 WinManager.ShowWinUIMessageBox("Не выбран контрагент", "Предупреждение", MessageBoxButton.OK,
@@ -692,7 +686,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             DDT_POST_ED_IZM_DC = ((IDocCode)n.Unit).DocCode,
                             DDT_CRS_DC = ((IDocCode)n.Currency).DocCode,
                             Id = Guid.NewGuid(),
-                            DocId =  Document.Id
+                            DocId = Document.Id
                         };
                         Document.Entity.TD_24.Add(newEntity);
                         var newItem = new WarehouseOrderInRow(newEntity)
@@ -704,7 +698,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
             else
             {
-                var datarows = StandartDialogs.SelectNomenklsFromRashodOrder(Document.WarehouseIn);
+                var datarows = StandartDialogs.SelectNomenklsFromRashodOrder(Document.WarehouseIn, Document.Date);
                 if (datarows == null || datarows.Count <= 0) return;
                 foreach (var n in datarows)
                     if (Document.Rows.All(_ => _.Nomenkl.DocCode != n.DDT_NOMENKL_DC))
@@ -715,10 +709,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             DDT_KOL_PRIHOD = n.DDT_KOL_RASHOD,
                             DDT_SKLAD_OTPR_DC = n.SD_24.DD_SKLAD_OTPR_DC,
                             DDT_RASH_ORD_DC = n.DOC_CODE,
-                            DDT_RASH_ORD_CODE = n.Code,
+                            DDT_RASH_ORD_CODE = n.Code
                         };
                         Document.Entity.TD_24.Add(newEnt);
-                        var newItem =  new WarehouseOrderInRow(newEnt)
+                        var newItem = new WarehouseOrderInRow(newEnt)
                         {
                             DocCode = Document.DocCode,
                             Code = newCode,
@@ -738,10 +732,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand DeleteNomenklCommand
         {
-            get
-            {
-                return new Command(DeleteNomenkl, _ => CurrentRow != null);
-            }
+            get { return new Command(DeleteNomenkl, _ => CurrentRow != null); }
         }
 
         private void DeleteNomenkl(object obj)
@@ -756,6 +747,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Document.DeletedRows.Add(CurrentRow);
                 Document.Rows.Remove(CurrentRow);
             }
+
             RaisePropertyChanged(nameof(IsCanChageKontragent));
         }
 
@@ -798,19 +790,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
         }
 
-        //protected override void OnWindowLoaded(object obj)
-        //{
-        //    base.OnWindowLoaded(obj);
-        //    if (Form is not OrderInView frm) return;
-        //    foreach (var col in frm.gridRows.Columns)
-        //    {
-        //        if (col.FieldName is "DocDate" or "DocInNum" or "DocExtNum" or "Warehouse")
-        //            col.Visible = false;
-        //        col.ReadOnly = col.FieldName is not (nameof(WarehouseOrderInRow.DDT_KOL_PRIHOD)
-        //            or nameof(WarehouseOrderInRow.SDRSchet));
-        //    }
-        //}
-
         public override void CloseWindow(object form)
         {
             if (IsCanSaveData && Document?.State != RowStatus.Deleted)
@@ -852,16 +831,16 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (obj is not CellValueChangedEventArgs p) return;
             if (p.Column.FieldName != "DDT_KOL_PRIHOD") return;
             if ((decimal)p.Value == 0)
-            {
                 if (frm.tableViewRows.ActiveEditor is PopupCalcEdit ed)
                 {
                     ed.Value = 1;
                     frm.tableViewRows.PostEditor();
                     CurrentRow.DDT_KOL_PRIHOD = 1;
                 }
-            }
-            var maxKol = Convert.ToDecimal(UnitOfWork.Context.TD_26.FirstOrDefault(_ => _.DOC_CODE == CurrentRow.LinkInvoice.DocCode
-                                                                      && _.CODE == CurrentRow.LinkInvoice.Code)
+
+            var maxKol = Convert.ToDecimal(UnitOfWork.Context.TD_26.FirstOrDefault(_ =>
+                    _.DOC_CODE == CurrentRow.LinkInvoice.DocCode
+                    && _.CODE == CurrentRow.LinkInvoice.Code)
                 ?.SFT_KOL ?? 0);
             var d = UnitOfWork.Context.TD_24.Where(_ => _.DDT_SPOST_DC == CurrentRow.LinkInvoice.DocCode
                                                         && _.DDT_SPOST_ROW_CODE == CurrentRow.LinkInvoice.Code
@@ -874,6 +853,26 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 editor.Value = maxKol - prih;
                 frm.tableViewRows.PostEditor();
                 CurrentRow.DDT_KOL_PRIHOD = maxKol - prih;
+            }
+        }
+
+        public ICommand DateChangedCommand
+        {
+            get { return new Command(DateChanged, _ => true); }
+        }
+
+        private void DateChanged(object obj)
+        {
+            if (Document.WarehouseSenderType == WarehouseSenderType.Kontragent
+                || Document.Rows.Count == 0) return;
+            if (obj is EditValueChangedEventArgs args && args.NewValue != null && args.OldValue != null)
+            {
+                if (Document.Rows.Where(_ => _.LinkOrder != null)
+                    .Any(_ => _.LinkOrder.SD_24.DD_DATE >= (DateTime)args.NewValue))
+                {
+                    args.Handled = false;
+                    Document.Date = (DateTime)args.OldValue;
+                }
             }
         }
 

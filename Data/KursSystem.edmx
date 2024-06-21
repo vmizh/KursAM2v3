@@ -243,7 +243,8 @@
           <Property Name="Avatar" Type="image" />
           <Property Name="FullName" Type="varchar" MaxLength="50" />
           <Property Name="ThemeName" Type="varchar" MaxLength="100" />
-          <Property Name="Password" Type="varchar" MaxLength="150" />
+          <Property Name="Password" Type="varchar" MaxLength="255" />
+          <Property Name="PasswordSalt" Type="varchar" MaxLength="255" />
         </EntityType>
         <EntityType Name="UsersLinkDB">
           <Key>
@@ -1066,7 +1067,8 @@
           <NavigationProperty Name="SignatureType" Relationship="Self.SignatureLink" FromRole="Users" ToRole="SignatureType" />
           <NavigationProperty Name="DataSources" Relationship="Self.UsersLinkDB" FromRole="Users" ToRole="DataSources" />
           <NavigationProperty Name="UserRightsResponsibilityCenter" Relationship="KursSystemModel.FK_UserRightsResponsibilityCenter_UserId" FromRole="Users" ToRole="UserRightsResponsibilityCenter" />
-          <Property Name="Password" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="PasswordSalt" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="Versions">
           <Key>
@@ -1780,6 +1782,7 @@
           <EntitySetMapping Name="Users">
             <EntityTypeMapping TypeName="KursSystemModel.Users">
               <MappingFragment StoreEntitySet="Users">
+                <ScalarProperty Name="PasswordSalt" ColumnName="PasswordSalt" />
                 <ScalarProperty Name="Password" ColumnName="Password" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
                 <ScalarProperty Name="Name" ColumnName="Name" />
