@@ -618,9 +618,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private void OpenLinkDocument(object obj)
         {
             if (CurrentRow.DDT_SPOST_DC != null)
+            {
                 // ReSharper disable once PossibleInvalidOperationException
                 DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)CurrentRow.DDT_SPOST_DC);
-            if (CurrentRow.LinkDocument != null)
+                return;
+            }
+
+            if (CurrentRow.LinkOrder != null)
                 DocumentsOpenManager.Open(DocumentType.StoreOrderOut, CurrentRow.LinkOrder.DocCode);
         }
 

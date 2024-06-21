@@ -894,6 +894,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             foreach (var r in Document.Rows.Cast<InvoiceProviderRow>())
             {
+                r.Shipped = Document.Facts.Where(_ => !_.Nomenkl.IsUsluga && _.Nomenkl.DocCode == r.Nomenkl.DocCode)
+                    .Sum(s => s.DDT_KOL_PRIHOD);
                 foreach (var cr in r.CurrencyConvertRows)
                 {
                     cr.Rate = rate;
