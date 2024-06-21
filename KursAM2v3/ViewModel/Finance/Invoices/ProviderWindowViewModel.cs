@@ -45,6 +45,8 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
 using Reports.Base;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 using NomenklProductType = KursDomain.References.NomenklProductType;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -892,6 +894,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             foreach (var r in Document.Rows.Cast<InvoiceProviderRow>())
             {
+                r.Shipped = Document.Facts.Where(_ => !_.Nomenkl.IsUsluga && _.Nomenkl.DocCode == r.Nomenkl.DocCode)
+                    .Sum(s => s.DDT_KOL_PRIHOD);
                 foreach (var cr in r.CurrencyConvertRows)
                 {
                     cr.Rate = rate;

@@ -182,9 +182,8 @@
                         <helper:GridLayoutHelper LayoutChanged="GridLayoutHelper_Trigger" />
                     </dxmvvm:Interaction.Behaviors>
                     <dxg:GridControl.View>
-                        <dxg:TableView ShowTotalSummary="True"
-                                       Name="tableViewRows"
-                                       ShowAutoFilterRow="True">
+                        <dxg:TableView Name="tableViewRows"
+                                       Style="{StaticResource TableView.Standart }">
                             <dxg:TableView.ContextMenu>
                                 <ContextMenu>
                                      <MenuItem Header="Удалить номенклатуру" Command="{Binding DeleteNomenklCommand}" />
