@@ -400,6 +400,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 }
 
                 Document.myState = RowStatus.NotEdited;
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.InvoiceProvider, null, Document.DocCode,
+                    Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
             }
         }
 
@@ -1663,10 +1665,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 // ReSharper disable once UseNameofExpression
                 Document.RaisePropertyChanged("State");
                 RaisePropertyChanged(nameof(WindowName));
-                //TODO Сохранить последний документ
-                //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceProvider, Document.Id, Document.DocCode,
-                //    Document.CREATOR,
-                //    "", Document.Description);
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.InvoiceProvider, null, Document.DocCode,
+                    Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
                 DeletedStoreLink.Clear();
                 Document.DeletedRows.Clear();
                 MainWindowViewModel.EventAggregator.GetEvent<AFterSaveInvoiceProvideEvent>()

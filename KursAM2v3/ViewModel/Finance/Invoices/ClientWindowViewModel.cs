@@ -5,10 +5,11 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Navigation;
+using System.Windows.Threading;
 using Core.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
@@ -24,6 +25,7 @@ using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.ReportManagers.SFClientAndWayBill;
+using KursAM2.Repositories;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Finance.Invoices;
@@ -39,6 +41,7 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
 using Reports.Base;
+using StackExchange.Redis;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -65,6 +68,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         // ReSharper disable once NotAccessedField.Local
         private bool IsLoadPay = true;
+        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ISubscriber mySubscriber;
 
         #endregion
 
@@ -72,6 +77,23 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ClientWindowViewModel()
         {
+            //TODO Тест обмена сообщений Redis
+            if (myRedis != null)
+            {
+                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                //if (!mySubscriber.IsConnected("ClientInvoice"))
+                mySubscriber.Subscribe("ClientInvoice",
+                    (channel, message) =>
+                    {
+                        if (KursNotyficationService != null)
+                        {
+                            Console.WriteLine($"Redis - {message}");
+                            Form.Dispatcher.Invoke(() => ShowNotify(message));
+                        }
+
+                    });
+            }
+
             ShipmentRowDeleted = new List<ShipmentRowViewModel>();
             GenericClientRepository = new GenericKursDBRepository<SD_84>(UnitOfWork);
             InvoiceClientRepository = new InvoiceClientRepository(UnitOfWork);
@@ -129,6 +151,16 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.myState = RowStatus.NotEdited;
                 foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>()) r.myState = RowStatus.NotEdited;
                 SetVisualOnStart();
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.InvoiceClient, null, Document.DocCode,
+                    Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
+            }
+            //TODO Тест обмена сообщений Redis
+            if (mySubscriber != null)
+            {
+                mySubscriber.Publish("ClientInvoice",
+                    Document.State == RowStatus.NewRow
+                        ? $"Создан новый счет-фактура клиенту '{GlobalOptions.UserInfo.Name}'"
+                        : $"Пользователь '{GlobalOptions.UserInfo.Name}' открыл счет {Document.Description}");
             }
         }
 
@@ -137,6 +169,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
         #region Properties
 
         public List<ShipmentRowViewModel> ShipmentRowDeleted { set; get; }
+
+        public string NotifyInfo { set; get; }
 
 
         public List<Currency> CurrencyList => GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>()
@@ -846,8 +880,18 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Document.Receiver = kontr;
         }
 
+        private void ShowNotify(string notify)
+        {
+            NotifyInfo = notify;
+            var notification = KursNotyficationService.CreateCustomNotification(this);
+
+            // notification.ShowAsync().ContinueWith(OnNotificationShown, TaskScheduler.FromCurrentSynchronizationContext());
+            notification.ShowAsync();
+        }
+
         public override void RefreshData(object obj)
         {
+            ShowNotify("Обновление документа");
             base.RefreshData(obj);
             myUsedNomenklsDC.Clear();
             if (IsCanSaveData)
@@ -901,6 +945,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.myState = RowStatus.NotEdited;
                 Document.RaisePropertyChanged("State");
             }
+
             RaisePropertyChanged(nameof(IsPaysEnabled));
             UpdateVisualObjects();
         }
@@ -1076,9 +1121,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 foreach (var p in Document.PaymentDocs) p.myState = RowStatus.NotEdited;
                 Document.myState = RowStatus.NotEdited;
                 Document.RaisePropertyChanged("State");
-                //TODO Сохранить последний документ
-                //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.InvoiceClient, Document.Id, Document.DocCode,
-                //    Document.CREATOR, "", Document.Description);
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.InvoiceClient, null, Document.DocCode,
+                    Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
                 RaisePropertyChanged(nameof(WindowName));
             }
             catch (Exception ex)

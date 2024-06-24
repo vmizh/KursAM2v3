@@ -73,6 +73,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                     r.RaisePropertyAllChanged();
                     r.myState = RowStatus.NotEdited;
                 }
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.AktSpisaniya, null, Document.DocCode,
+                    Document.DocCreator, GlobalOptions.UserInfo.NickName, Document.Description);
             }
 
             AktSpisaniyaNomenklTitleRepository.AktSpisaniya = Document.Entity;
@@ -410,6 +412,8 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             unitOfWork.Commit();
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.AktSpisaniya), Document.Id,
                 0, null, (string)Document.ToJson());
+            LastDocumentManager.SaveLastOpenInfo(DocumentType.AktSpisaniya, null, Document.DocCode,
+                Document.DocCreator, GlobalOptions.UserInfo.NickName, Document.Description);
             foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
             Document.myState = RowStatus.NotEdited;
             // ReSharper disable once UseNameofExpression

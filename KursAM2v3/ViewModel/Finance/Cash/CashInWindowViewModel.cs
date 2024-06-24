@@ -214,9 +214,8 @@ namespace KursAM2.ViewModel.Finance.Cash
                 RecalcKontragentBalans.CalcBalans((decimal)Document.KONTRAGENT_DC,
                     // ReSharper disable once PossibleInvalidOperationException
                     (DateTime)(Document.DATE_ORD > oldDate ? oldDate : Document.DATE_ORD));
-            //TODO Сохранить последний документ
-            //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CashIn, Document.Id, Document.DocCode, Document.CREATOR,
-            //    "", Document.Description);
+            LastDocumentManager.SaveLastOpenInfo(DocumentType.CashIn, null, Document.DocCode,
+                Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
         }
 
         public override void DocDelete(object form)
@@ -270,6 +269,8 @@ namespace KursAM2.ViewModel.Finance.Cash
             if (Document?.DocCode > 0)
             {
                 Document = CashManager.LoadCashIn(Document.DocCode);
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.CashIn, null, Document.DocCode,
+                    Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
                 RaisePropertyChanged(nameof(Document));
             }
             else

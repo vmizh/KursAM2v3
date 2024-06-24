@@ -83,6 +83,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         r.InvoiceClientViewModel = sf.FirstOrDefault(_ => r.DDT_SFACT_DC == _.DocCode);
                         r.myState = RowStatus.NotEdited;
                     }
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.Waybill, null, Document.DocCode,
+                    Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
             }
             else
             {
@@ -310,8 +312,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Document.Entity.DD_POLUCH_NAME = Document.Receiver;
                 UnitOfWork.CreateTransaction();
                 UnitOfWork.Save();
-                //TODO Сохранить последний документ
-                //DocumentsOpenManager.DeleteFromLastDocument(Document.Id, null);
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.Waybill, null, Document.DocCode,
+                    Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
                 nomenklManager.RecalcPrice(UnitOfWork.Context);
                 foreach (var n in Document.Rows.Select(_ => _.Nomenkl.DocCode))
                 {

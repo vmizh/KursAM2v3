@@ -29,7 +29,8 @@ namespace Core.ViewModel.Base;
 
 
 [POCOViewModel]
-public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLayout, ISupportServices, KursDomain.ViewModel.Base2.IFormCommands, 
+public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLayout, ISupportServices, 
+    KursDomain.ViewModel.Base2.IFormCommands, 
     KursDomain.ViewModel.Base2.IDialogOperation
 {
     [Display(AutoGenerateField = false)] protected bool IsLayoutLoaded;
@@ -99,6 +100,9 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
 
     [Display(AutoGenerateField = false)]
     protected ILayoutSerializationService LayoutSerializationService => this.GetService<ILayoutSerializationService>();
+
+    [Display(AutoGenerateField = false)]
+    protected INotificationService KursNotyficationService => this.GetService<INotificationService>();
 
 
     [Display(AutoGenerateField = false)]

@@ -118,6 +118,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
                 Document.Rows.ForEach(_ => _.State = RowStatus.NotEdited);
                 Document.State = RowStatus.NotEdited;
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.StoreOrderIn, null, Document.DocCode, 
+                    Document.CREATOR, GlobalOptions.UserInfo.NickName,Document.Description);
             }
         }
 
@@ -438,9 +440,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             if (Document == null) return;
             var frm = new OrderInView { Owner = Application.Current.MainWindow };
-            var ctx = new OrderInWindowViewModel(new StandartErrorManager(UnitOfWork.Context,
-                    "WarehouseOrderIn", true), Document.DocCode)
-                { Form = frm, Document = orderManager.NewOrderInRecuisite(Document) };
+            var dbContext = new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString);
+            var ctx = new OrderInWindowViewModel(new StandartErrorManager(dbContext,
+                    "WarehouseOrderIn", true), -1)
+                { Form = frm };
+            ctx.Document = orderManager.NewOrderInRecuisite(Document);
+            ctx.UnitOfWork.Context.SD_24.Add(ctx.Document.Entity);
             ctx.Document.myState = RowStatus.NewRow;
             ctx.Document.WarehouseSenderType = ctx.Document.KontragentSender != null
                 ? WarehouseSenderType.Kontragent
@@ -506,6 +511,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             Document.Entity.DD_POLUCH_NAME = Document.WarehouseIn.Name;
             Document.Entity.DD_TYPE_DC = 2010000001;
+            if (UnitOfWork.Context.Entry(Document.Entity.SD_201) != null)
+            {
+                UnitOfWork.Context.Entry(Document.Entity.SD_201).State = EntityState.Unchanged;
+            }
             var ent = UnitOfWork.Context.ChangeTracker.Entries().ToList();
             UnitOfWork.CreateTransaction();
             try
@@ -531,6 +540,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 UnitOfWork.Commit();
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.StoreOrderIn), null,
                     Document.DocCode, null, (string)Document.ToJson());
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.StoreOrderIn, null, Document.DocCode, 
+                    Document.CREATOR, GlobalOptions.UserInfo.NickName,Document.Description);
                 if (Document.DD_KONTR_OTPR_DC != null)
                     RecalcKontragentBalans.CalcBalans(Document.DD_KONTR_OTPR_DC.Value, Document.Date);
             }
