@@ -8,7 +8,7 @@ using KursDomain.Documents.CommonReferences;
 
 namespace KursAM2.Managers;
 
-public class DocumentsOpenManager
+public class LastDocumentManager
 {
     public static void SaveLastOpenInfo(DocumentType docType, Guid? docId, decimal? docDC,
         string creator, string lastChanger,

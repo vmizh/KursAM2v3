@@ -14,6 +14,7 @@ using KursAM2.Managers;
 using KursAM2.ReportManagers;
 using KursAM2.View.Logistiks.Warehouse;
 using KursDomain;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Managers;
@@ -199,6 +200,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (Document != null && Document.DocCode > 0)
             {
                 tempDoc = orderManager.GetOrderOut(Document.DocCode);
+
             }
             else
             {
@@ -235,6 +237,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 }
 
                 Document.myState = RowStatus.NotEdited;
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.StoreOrderOut, null, Document.DocCode,
+                    Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
             }
 
             Document.UpdateMaxQuantity(Document.Date);
@@ -244,6 +248,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override void SaveData(object data)
         {
             var dc = orderManager.SaveOrderOut(Document);
+            LastDocumentManager.SaveLastOpenInfo(DocumentType.StoreOrderOut, null, Document.DocCode,
+                Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
             //if (dc > 0) RefreshData(dc);
         }
 

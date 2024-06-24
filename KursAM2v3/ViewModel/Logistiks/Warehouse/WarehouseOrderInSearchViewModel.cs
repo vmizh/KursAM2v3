@@ -184,8 +184,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             if (CurrentDocument == null) return;
             var frm = new OrderInView {Owner = Application.Current.MainWindow};
-            var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
-                    "WarehouseOrderIn", true), CurrentDocument.DocCode)
+            var dbContext = GlobalOptions.GetEntities();
+            var ctx = new OrderInWindowViewModel(new StandartErrorManager(dbContext,
+                    "WarehouseOrderIn", true), 0)
                 {Form = frm,
                     Document = orderManager.NewOrderInRecuisite(CurrentDocument)
                 };

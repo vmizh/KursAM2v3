@@ -83,6 +83,8 @@ namespace KursAM2.ViewModel.Finance.Cash
             // ReSharper disable once PossibleInvalidOperationException
             oldDate = (DateTime)Document.DATE_ORD;
             oldKontrDC = Document.KONTRAGENT_DC;
+            LastDocumentManager.SaveLastOpenInfo(DocumentType.CashOut, null, Document.DocCode,
+                Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
         }
 
         #endregion
@@ -202,9 +204,8 @@ namespace KursAM2.ViewModel.Finance.Cash
             if (Document.KONTRAGENT_DC != null)
                 // ReSharper disable once PossibleInvalidOperationException
                 RecalcKontragentBalans.CalcBalans((decimal)Document.KONTRAGENT_DC, (DateTime)Document.DATE_ORD);
-            //TODO Сохранить последний документ
-            //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CashOut, Document.Id, Document.DocCode, Document.CREATOR,
-            //    "", Document.Description);
+            LastDocumentManager.SaveLastOpenInfo(DocumentType.CashOut, null, Document.DocCode,
+                Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
         }
 
         public override void DocDelete(object form)

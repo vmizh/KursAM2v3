@@ -20,6 +20,16 @@
                  Icon="{Binding Source={StaticResource InvoiceClientDrawingImage},
                  Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
                  Title="{Binding WindowName}" MinHeight="400" Width="800">
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:NotificationService x:Name="notificationService"
+
+                                    ApplicationId="KursAM2v4"
+                                    PredefinedNotificationTemplate="ShortHeaderAndLongText"
+                                    PredefinedNotificationDuration="Default"
+                                    CustomNotificationTemplate="{StaticResource CustomNotificationTemplate}"
+                                    UseWin8NotificationsIfAvailable="True" />
+
+    </dxmvvm:Interaction.Behaviors>
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
                    Foreground="{Binding DatabaseColor}"

@@ -9,6 +9,7 @@ using Helper;
 using KursAM2.Managers;
 using KursAM2.View.Finance.Cash;
 using KursAM2.View.Helper;
+using KursDomain;
 using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
@@ -46,6 +47,8 @@ namespace KursAM2.ViewModel.Finance.Cash
             RefreshData(dc);
             oldDate = Document.CH_DATE_IN ?? DateTime.Today;
             oldDate2 = Document.CH_DATE_OUT ?? DateTime.Today;
+            LastDocumentManager.SaveLastOpenInfo(DocumentType.CurrencyChange, null, Document.DocCode,
+                Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
         }
 
         #endregion
@@ -82,6 +85,8 @@ namespace KursAM2.ViewModel.Finance.Cash
                 ctx.RefreshActual(Document);
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.CurrencyChange), null,
                 Document.DocCode, null, (string)Document.ToJson());
+            LastDocumentManager.SaveLastOpenInfo(DocumentType.CurrencyChange, null, Document.DocCode,
+                Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
             //TODO Сохранить последний документ
             //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CurrencyConvertAccounting, Document.Id, Document.DocCode,
             //    Document.CREATOR,

@@ -59,7 +59,6 @@ public static class GlobalOptions
     }
 
     public static User UserInfo { set; get; }
-
     public static string DataBaseName { set; get; }
     public static Guid DataBaseId { set; get; }
     public static Brush DatabaseColor { set; get; }
@@ -72,12 +71,12 @@ public static class GlobalOptions
 
     private static void DeleteLastDocument(DeleteLastDocumentEventArgs<ILastDocument> obj)
     {
-        DocumentsOpenManager.DeleteFromLastDocument(obj.info.DocId, obj.info.DocDC);
+        LastDocumentManager.DeleteFromLastDocument(obj.info.DocId, obj.info.DocDC);
     }
 
     private static void SaveLastDocument(SaveLastDocumentEventArgs<ILastDocument> obj)
     {
-        DocumentsOpenManager.SaveLastOpenInfo(obj.info.DocType, obj.info.DocId, obj.info.DocDC, obj.info.Creator,
+        LastDocumentManager.SaveLastOpenInfo(obj.info.DocType, obj.info.DocId, obj.info.DocDC, obj.info.Creator,
             obj.info.LastChanger,
             obj.info.Desc);
     }

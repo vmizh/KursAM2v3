@@ -192,7 +192,8 @@ namespace KursAM2.Managers
 
         public WarehouseOrderIn NewOrderInRecuisite(decimal dc)
         {
-            var ret = new WarehouseOrderIn(GetOrderIn(dc).Entity)
+            var ent = GetOrderIn(dc).Entity;
+            var ret = new WarehouseOrderIn(ent)
             {
                 DocCode = -1,
                 State = RowStatus.NewRow,
@@ -204,7 +205,8 @@ namespace KursAM2.Managers
                 InvoiceProvider = null,
                 InvoiceClientViewModel = null,
                 DD_SCHET = null,
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+               
             };
             ret.Rows.Clear();
             ret.Entity.TD_24.Clear();

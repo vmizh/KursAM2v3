@@ -462,4 +462,20 @@
             </dxg:FormatCondition>
         </ContentControl>
     </DataTemplate>
+    <DataTemplate x:Key="CustomNotificationTemplate">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Border Background="#FF3D3D3D" CornerRadius="10,0,0,10">
+                <Image Stretch="Fill" Width="100" Height="100" Source="/Images/Box_Green.png" />
+            </Border>
+            <Border Grid.Column="1" CornerRadius="0,10,10,0" Background="{Binding Background}">
+                <TextBox  Text="{Binding NotifyInfo,Mode=OneWay}" 
+                          TextWrapping="WrapWithOverflow"
+                          IsReadOnly="True" />
+            </Border>
+        </Grid>
+    </DataTemplate>
 </ResourceDictionary>
