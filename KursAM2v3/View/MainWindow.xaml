@@ -17,6 +17,17 @@
     <dx:ThemedWindow.DataContext>
         <viewModel:MainWindowViewModel />
     </dx:ThemedWindow.DataContext>
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:NotificationService x:Name="notificationService"
+
+                                    ApplicationId="KursAM2v4"
+                                    PredefinedNotificationTemplate="ShortHeaderAndLongText"
+                                    PredefinedNotificationDuration="Long"
+                                    CustomNotificationTemplate="{StaticResource CustomNotificationTemplate}"
+                                    UseWin8NotificationsIfAvailable="True" 
+                                    CustomNotificationPosition="BottomRight" />
+
+    </dxmvvm:Interaction.Behaviors>
     <dxb:BarManager Name="BarManager">
         <dxb:BarManager.Items>
             <dxb:BarSubItem x:Name="barSubItem1" Content="Система"

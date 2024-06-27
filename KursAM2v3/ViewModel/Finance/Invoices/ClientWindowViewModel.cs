@@ -5,11 +5,9 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Threading;
 using Core.EntityViewModel;
 using Core.Helper;
 using Core.ViewModel.Base;
@@ -25,8 +23,8 @@ using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.ReportManagers.SFClientAndWayBill;
-using KursAM2.Repositories;
 using KursAM2.Repositories.InvoicesRepositories;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Helper;
@@ -40,6 +38,7 @@ using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
+using Newtonsoft.Json;
 using Reports.Base;
 using StackExchange.Redis;
 
@@ -77,21 +76,19 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ClientWindowViewModel()
         {
-            //TODO Тест обмена сообщений Redis
             if (myRedis != null)
             {
                 mySubscriber = myRedis.Multiplexer.GetSubscriber();
-                //if (!mySubscriber.IsConnected("ClientInvoice"))
-                mySubscriber.Subscribe("ClientInvoice",
-                    (channel, message) =>
-                    {
-                        if (KursNotyficationService != null)
+                if (mySubscriber.IsConnected())
+                    mySubscriber.Subscribe("ClientInvoice",
+                        (channel, message) =>
                         {
-                            Console.WriteLine($"Redis - {message}");
-                            Form.Dispatcher.Invoke(() => ShowNotify(message));
-                        }
-
-                    });
+                            if (KursNotyficationService != null)
+                            {
+                                Console.WriteLine($"Redis - {message}");
+                                Form.Dispatcher.Invoke(() => ShowNotify(message));
+                            }
+                        });
             }
 
             ShipmentRowDeleted = new List<ShipmentRowViewModel>();
@@ -109,6 +106,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             WindowName = "Счет-фактура клиенту (новая)";
             CreateReportsMenu();
         }
+
 
         public ClientWindowViewModel(decimal? dc, bool isLoadPay = true) : this()
         {
@@ -154,13 +152,25 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 LastDocumentManager.SaveLastOpenInfo(DocumentType.InvoiceClient, null, Document.DocCode,
                     Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
             }
-            //TODO Тест обмена сообщений Redis
-            if (mySubscriber != null)
+
+            if (mySubscriber != null && mySubscriber.IsConnected())
             {
-                mySubscriber.Publish("ClientInvoice",
-                    Document.State == RowStatus.NewRow
-                        ? $"Создан новый счет-фактура клиенту '{GlobalOptions.UserInfo.Name}'"
-                        : $"Пользователь '{GlobalOptions.UserInfo.Name}' открыл счет {Document.Description}");
+                var message = new RedisMessage
+                {
+                    DocumentType = DocumentType.InvoiceClient,
+                    DocCode = Document.DocCode,
+                    DocDate = Document.DocDate,
+                    OperationType = RedisMessageDocumentOperationTypeEnum.Open,
+                    IsDocument = true,
+                    Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' открыл счет {Document.Description}"
+                };
+                var jsonSerializerSettings = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                };
+                var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                if (Document.State != RowStatus.NewRow)
+                    mySubscriber.Publish("ClientInvoice", json);
             }
         }
 
@@ -882,11 +892,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void ShowNotify(string notify)
         {
-            NotifyInfo = notify;
-            var notification = KursNotyficationService.CreateCustomNotification(this);
-
-            // notification.ShowAsync().ContinueWith(OnNotificationShown, TaskScheduler.FromCurrentSynchronizationContext());
-            notification.ShowAsync();
+            if (string.IsNullOrWhiteSpace(notify)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(notify);
+            if (msg == null || msg.UserId == GlobalOptions.UserInfo.KursId) return;
+            if (msg.DocCode == Document.DocCode)
+            {
+                NotifyInfo = msg.Message;
+                var notification = KursNotyficationService.CreateCustomNotification(this);
+                notification.ShowAsync();
+            }
         }
 
         public override void RefreshData(object obj)
@@ -1107,6 +1121,27 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 UnitOfWork.Commit();
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
                     Document.DocCode, null, (string)Document.ToJson());
+                if (mySubscriber != null && mySubscriber.IsConnected())
+                {
+                    var str = Document.State == RowStatus.NewRow ? "создал" : "сохранил";
+                    var message = new RedisMessage
+                    {
+                        DocumentType = DocumentType.InvoiceClient,
+                        DocCode = Document.DocCode,
+                        DocDate = Document.DocDate,
+                        IsDocument = true,
+                        OperationType = Document.myState == RowStatus.NewRow
+                            ? RedisMessageDocumentOperationTypeEnum.Create
+                            : RedisMessageDocumentOperationTypeEnum.Update,
+                        Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} счет {Document.Description}"
+                    };
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                    mySubscriber.Publish("ClientInvoice", json);
+                }
                 RecalcKontragentBalans.CalcBalans(Document.Client.DocCode, Document.DocDate);
                 nomenklManager.RecalcPrice(myUsedNomenklsDC);
                 foreach (var ndc in Document.Rows.Select(_ => _.Nomenkl.DocCode)) AddUsedNomenkl(ndc);
@@ -1283,7 +1318,25 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         UnitOfWork.Rollback();
                         WindowManager.ShowError(ex);
                     }
-
+                    if (mySubscriber != null && mySubscriber.IsConnected())
+                    {
+                        var message = new RedisMessage
+                        {
+                            DocumentType = DocumentType.InvoiceClient,
+                            DocCode = Document.DocCode,
+                            DocDate = Document.DocDate,
+                            IsDocument = true,
+                            OperationType = RedisMessageDocumentOperationTypeEnum.Delete,
+                            Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' удалил счет {Document.Description}"
+                        };
+                        var jsonSerializerSettings = new JsonSerializerSettings
+                        {
+                            TypeNameHandling = TypeNameHandling.All
+                        };
+                        var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                        if (Document.State != RowStatus.NewRow)
+                            mySubscriber.Publish("ClientInvoice", json);
+                    }
                     // ReSharper disable once PossibleInvalidOperationException
                     RecalcKontragentBalans.CalcBalans(dc, docdate);
                     if (dilerdc != null)

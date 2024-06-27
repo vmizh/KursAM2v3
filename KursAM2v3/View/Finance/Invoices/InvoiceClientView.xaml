@@ -22,10 +22,10 @@
                  Title="{Binding WindowName}" MinHeight="400" Width="800">
     <dxmvvm:Interaction.Behaviors>
         <dxmvvm:NotificationService x:Name="notificationService"
-
                                     ApplicationId="KursAM2v4"
                                     PredefinedNotificationTemplate="ShortHeaderAndLongText"
-                                    PredefinedNotificationDuration="Default"
+                                    PredefinedNotificationDuration="Long"
+                                    CustomNotificationPosition="BottomRight"
                                     CustomNotificationTemplate="{StaticResource CustomNotificationTemplate}"
                                     UseWin8NotificationsIfAvailable="True" />
 

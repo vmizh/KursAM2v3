@@ -170,5 +170,16 @@ namespace KursAM2.ViewModel
                     LastDocuments.Add(new LastDocumentViewModel(h));
             }
         }
+
+        private void ShowNotify(string notify)
+        {
+            NotifyInfo = notify;
+            var notification = KursNotyficationService.CreateCustomNotification(this);
+
+            // notification.ShowAsync().ContinueWith(OnNotificationShown, TaskScheduler.FromCurrentSynchronizationContext());
+            notification.ShowAsync();
+        }
+
+        public string NotifyInfo { get; set; }
     }
 }

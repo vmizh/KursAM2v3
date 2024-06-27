@@ -179,6 +179,7 @@
     <Compile Include="ICommon\MessageDialogResult.cs" />
     <Compile Include="ICommon\RowStatus.cs" />
     <Compile Include="IDocuments\IHistory.cs" />
+    <Compile Include="IDocuments\ILastChanged.cs" />
     <Compile Include="IDocuments\ILastDocument.cs" />
     <Compile Include="IDocuments\MaterialDocumentTypeEnum.cs" />
     <Compile Include="Managers\DocumentsOpenManager.cs" />

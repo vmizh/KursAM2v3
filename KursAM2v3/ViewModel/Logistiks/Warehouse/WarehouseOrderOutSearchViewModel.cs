@@ -1,11 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using Data;
 using KursAM2.Managers;
 using KursAM2.ReportManagers;
+using KursAM2.Repositories.InvoicesRepositories;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks.Warehouse;
 using KursDomain;
@@ -15,10 +19,13 @@ using KursDomain.ICommon;
 using KursDomain.IDocuments;
 using KursDomain.Managers;
 using KursDomain.Menu;
+using KursDomain.Repository;
 using KursDomain.Repository.SD24Repository;
 using KursDomain.Services;
 using KursDomain.Wrapper.Nomenkl.WarehouseOut;
+using Newtonsoft.Json;
 using Prism.Events;
+using StackExchange.Redis;
 using Application = System.Windows.Application;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
@@ -29,8 +36,22 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private readonly WarehouseManager orderManager;
         private WarehouseOrderOut myCurrentDocument;
 
+        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ISubscriber mySubscriber;
+
         public WarehouseOrderOutSearchViewModel()
         {
+            if (myRedis != null)
+            {
+                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                if (mySubscriber.IsConnected())
+                    mySubscriber.Subscribe("ClientInvoice",
+                        (channel, message) =>
+                        {
+                            Console.WriteLine($@"Redis - {message}");
+                            Form.Dispatcher.Invoke(() => UpdateList(message));
+                        });
+            }
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             orderManager =
@@ -160,6 +181,47 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             RefreshData(null);
         }
 
+        private void UpdateList(RedisValue message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
+            if (msg == null || msg.DocCode == null) return;
+            if (msg.OperationType == RedisMessageDocumentOperationTypeEnum.Open
+                || (msg.DocDate ?? DateTime.Today) < StartDate || (msg.DocDate ?? DateTime.Today) > EndDate) return;
+            if (msg.OperationType == RedisMessageDocumentOperationTypeEnum.Delete)
+            {
+                var del = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
+                if (del != null) Documents.Remove(del);
+                return;
+            }
+
+            if (msg.OperationType != RedisMessageDocumentOperationTypeEnum.Create
+                && Documents.All(_ => _.DocCode != msg.DocCode)) return;
+
+            //InvoiceClientRepository =
+            //    new InvoiceClientRepository(
+            //        new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString)));
+
+            //var dc = new List<decimal>(new[] { msg.DocCode.Value });
+            //var data = InvoiceClientRepository.GetByDocCodes(dc);
+            //var last = InvoiceClientRepository.GetLastChanges(dc);
+            //if (data.Count <= 0) return;
+            //if (last.Count > 0)
+            //{
+            //    data.First().LastChanger = last.First().Value.Item1;
+            //    data.First().LastChangerDate = last.First().Value.Item2;
+            //}
+            //else
+            //{
+            //    data.First().LastChanger = data.First().CREATOR;
+            //    data.First().LastChangerDate = data.First().DocDate;
+            //}
+
+            //var old = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
+            //if (old != null) Documents.Remove(old);
+            //Documents.Add(data.First());
+        }
+
         public override void RefreshData(object data)
         {
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
@@ -173,6 +235,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         _.DD_TYPE_DC == 2010000003).ToList();
                     foreach (var item in d)
                         Documents.Add(new WarehouseOrderOut(item) { State = RowStatus.NotEdited });
+
+
                 }
             }
             catch (Exception e)

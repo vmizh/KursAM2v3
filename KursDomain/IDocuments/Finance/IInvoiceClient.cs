@@ -6,7 +6,7 @@ using KursDomain.References;
 
 namespace KursDomain.IDocuments.Finance;
 
-public interface IInvoiceClient
+public interface IInvoiceClient : ILastChanged
 {
     [Display(AutoGenerateField = false)] decimal DocCode { set; get; }
 
@@ -75,6 +75,19 @@ public interface IInvoiceClient
 
     [Display(AutoGenerateField = true, Name = "Ответственный", Order = 20)]
     Employee PersonaResponsible { set; get; }
+
+
+    /// <summary>
+    /// Пользователь, последний изменивший документ
+    /// </summary>
+    [Display(AutoGenerateField = true, Name = "Посл.изменил", Order = 21)]
+    public string LastChanger { set; get; }
+
+    /// <summary>
+    /// Дата последнего изменения
+    /// </summary>
+    [Display(AutoGenerateField = true, Name = "Дата посл.изм.", Order = 21)]
+    public DateTime LastChangerDate { set; get; }
 
     [Display(AutoGenerateField = false)] ObservableCollection<IInvoiceClientRow> Rows { set; get; }
 }

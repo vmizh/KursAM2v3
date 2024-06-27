@@ -92,6 +92,8 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public bool IsNDSIncludeInPrice { get; set; }
         public decimal PaySumma { get; set; }
         public Employee PersonaResponsible { get; set; }
+        public string LastChanger { get; set; }
+        public DateTime LastChangerDate { get; set; }
         public ObservableCollection<IInvoiceClientRow> Rows { get; set; }
     }
 
@@ -245,6 +247,9 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public decimal PaySumma { get; set; }
         [Display(AutoGenerateField = true, Name = "Ответственный", Order = 20)]
         public Employee PersonaResponsible { get; set; }
+
+        public string LastChanger { get; set; }
+        public DateTime LastChangerDate { get; set; }
         public ObservableCollection<IInvoiceClientRow> Rows { get; set; }
         [Display(AutoGenerateField = true, Name = "Кол-во", Order = 21)]
         public decimal NomQuantity { get; set; }
