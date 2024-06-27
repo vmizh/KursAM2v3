@@ -45,8 +45,9 @@
                     Width="494" />
             </StackPanel>
             <DockPanel Height="90" HorizontalAlignment="Stretch">
-                <Label DockPanel.Dock="Left" VerticalAlignment="Top">Полное имя</Label>
+                <Label DockPanel.Dock="Left" Margin="0,3,0,0" VerticalAlignment="Top">Полное имя</Label>
                 <dxe:TextEdit Margin="70,0,0,0"
+                              VerticalContentAlignment="Top"
                               Height="80"
                               TextWrapping="Wrap"
                               AcceptsReturn="True"
@@ -191,8 +192,9 @@
                 </dxe:ComboBoxEdit>
             </DockPanel>
             <DockPanel Height="90" Width="956">
-                <Label DockPanel.Dock="Left" VerticalAlignment="Top" Content="Примечание"/>
+                <Label DockPanel.Dock="Left" VerticalAlignment="Top" Content="Примечание"  Margin="0,8,0,0"/>
                 <dxe:TextEdit Height="70"
+                              VerticalContentAlignment="Top"
                               AcceptsReturn="True"
                               EditValue="{Binding NomenklMain.Note, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                               TextWrapping="Wrap"
