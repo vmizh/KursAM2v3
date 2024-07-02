@@ -87,7 +87,7 @@ namespace KursAM2.Managers.Invoices
                         .Include("TD_26.SD_261")
                         .Include("TD_26.SD_301")
                         .Include("TD_26.SD_303")
-                        .Include(_ => _.TD_26.Select(x => x.TD_26_CurrencyConvert))
+                        .Include(_ => _.TD_26.Select(x => x.TD_26_CurrencyConvert)).Include(sd26 => sd26.SD_24)
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
                     foreach (var c in ctx.SD_34.Where(_ => _.SPOST_DC == dc).ToList())
                         pDocs.Add(new InvoicePaymentDocument

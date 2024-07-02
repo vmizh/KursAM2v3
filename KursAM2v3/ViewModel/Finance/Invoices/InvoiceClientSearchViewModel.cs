@@ -17,7 +17,6 @@ using Helper;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.Repositories.InvoicesRepositories;
-using KursAM2.Repositories.LastDocumentRepository;
 using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.Invoices;
@@ -27,6 +26,7 @@ using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
 using KursDomain.Repository;
+using KursDomain.Repository.DocHistoryRepository;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
@@ -55,7 +55,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 mySubscriber = myRedis.Multiplexer.GetSubscriber();
                 if (mySubscriber.IsConnected())
                     mySubscriber.Subscribe("ClientInvoice",
-                        (channel, message) =>
+                        (_, message) =>
                         {
                             Console.WriteLine($@"Redis - {message}");
                             Form.Dispatcher.Invoke(() => UpdateList(message));
@@ -73,7 +73,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 mySubscriber = myRedis.Multiplexer.GetSubscriber();
                 if (mySubscriber.IsConnected())
                     mySubscriber.Subscribe("ClientInvoice",
-                        (channel, message) =>
+                        (_, message) =>
                         {
                             Console.WriteLine($@"Redis - {message}");
                             Form.Dispatcher.Invoke(() => UpdateList(message));
@@ -266,6 +266,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (string.IsNullOrWhiteSpace(message)) return;
             var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
             if (msg == null || msg.DocCode == null) return;
+            if (msg.DbId != GlobalOptions.DataBaseId) return;
             if (msg.OperationType == RedisMessageDocumentOperationTypeEnum.Open
                 || (msg.DocDate ?? DateTime.Today) < StartDate || (msg.DocDate ?? DateTime.Today) > EndDate) return;
             if (msg.OperationType == RedisMessageDocumentOperationTypeEnum.Delete)
@@ -282,7 +283,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 new InvoiceClientRepository(
                     new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString)));
 
-            var lastDocumentRopository = new LastDocumentRepository();
+            var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
 
             var dc = new List<decimal>(new[] { msg.DocCode.Value });
             var data = InvoiceClientRepository.GetByDocCodes(dc);
@@ -300,7 +301,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
 
             var old = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
-            if (old != null) Documents.Remove(old);
+            if (old != null)
+            {
+                switch (msg.OperationType)
+                {
+                    case RedisMessageDocumentOperationTypeEnum.Update:
+                    {
+                        var idx = Documents.IndexOf(old);
+                        Documents[idx] = old;
+                        break;
+                    }
+                    case RedisMessageDocumentOperationTypeEnum.Delete:
+                        Documents.Remove(old);
+                        break;
+                }
+            }
             Documents.Add(data.First());
         }
 
@@ -375,7 +390,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             InvoiceClientRepository =
                 new InvoiceClientRepository(
                     new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString)));
-            var lastDocumentRopository = new LastDocumentRepository();
+            var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
             var frm = Form as StandartSearchView;
             Documents.Clear();
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
