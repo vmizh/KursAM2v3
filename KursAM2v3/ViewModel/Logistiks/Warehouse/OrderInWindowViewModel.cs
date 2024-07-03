@@ -511,7 +511,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             Document.Entity.DD_POLUCH_NAME = Document.WarehouseIn.Name;
             Document.Entity.DD_TYPE_DC = 2010000001;
-            if (UnitOfWork.Context.Entry(Document.Entity.SD_201) != null)
+            if (Document.Entity.SD_201 != null &&  UnitOfWork.Context.Entry(Document.Entity.SD_201) != null)
             {
                 UnitOfWork.Context.Entry(Document.Entity.SD_201).State = EntityState.Unchanged;
             }
