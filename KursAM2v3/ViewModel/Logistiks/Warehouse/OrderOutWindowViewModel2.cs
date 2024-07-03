@@ -17,6 +17,7 @@ using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ReportManagers;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.ViewModel.Logistiks.AktSpisaniya;
 using KursDomain;
@@ -33,16 +34,34 @@ using KursDomain.Services;
 using KursDomain.Wrapper.Nomenkl.WarehouseOut;
 using Newtonsoft.Json;
 using Prism.Events;
+using StackExchange.Redis;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public sealed class OrderOutWindowViewModel2 : RSWindowViewModelBase
     {
+        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ISubscriber mySubscriber;
+
         #region Constructor
 
         public OrderOutWindowViewModel2(decimal? docDC, IReferencesCache cache, ALFAMEDIAEntities ctx,
             IEventAggregator eventAggregator, IMessageDialogService messageDialogService)
         {
+            if (myRedis != null)
+            {
+                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                if (mySubscriber.IsConnected())
+                    mySubscriber.Subscribe("WarehouseOut",
+                        (channel, message) =>
+                        {
+                            if (KursNotyficationService != null)
+                            {
+                                Console.WriteLine($"Redis - {message}");
+                                Form.Dispatcher.Invoke(() => ShowNotify(message));
+                            }
+                        });
+            }
             myCache = cache;
             myContext = ctx ?? new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString);
             myEeventAggregator = eventAggregator;
@@ -93,7 +112,25 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Document.State = getState();
                 WindowName = "Расходный складской ордер (новый)";
             }
-
+            if (mySubscriber != null && mySubscriber.IsConnected())
+            {
+                var message = new RedisMessage
+                {
+                    DocumentType = DocumentType.StoreOrderOut,
+                    DocCode = Document.DocCode,
+                    DocDate = Document.DocDate,
+                    OperationType = RedisMessageDocumentOperationTypeEnum.Open,
+                    IsDocument = true,
+                    Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' открыл расх. складской ордер {Document.Description}"
+                };
+                var jsonSerializerSettings = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                };
+                var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                if (Document.State != RowStatus.NewRow)
+                    mySubscriber.Publish("WarehouseOut", json);
+            }
 
             myWrapperEventAggregator.GetEvent<AfterUpdateBaseWrapperEvent<WarehouseOutWrapper>>()
                 .Subscribe(updateDocument);
@@ -102,6 +139,21 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         #endregion
 
         #region Methods
+
+        private void ShowNotify(string notify)
+        {
+            if (string.IsNullOrWhiteSpace(notify)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(notify);
+            if (msg == null || msg.UserId == GlobalOptions.UserInfo.KursId) return;
+            if (msg.DocCode == Document.DocCode)
+            {
+                NotifyInfo = msg.Message;
+                var notification = KursNotyficationService.CreateCustomNotification(this);
+                notification.ShowAsync();
+            }
+        }
+
+        public string NotifyInfo { get; set; }
 
         public void UpdateMaxQuantity(DateTime newDate)
         {
@@ -536,6 +588,27 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         Json = JsonConvert.SerializeObject(Document.ToJson())
                     }
                 });
+            if (mySubscriber != null && mySubscriber.IsConnected())
+            {
+                var str = isNew ? "создал" : "сохранил";
+                var message = new RedisMessage
+                {
+                    DocumentType = DocumentType.StoreOrderOut,
+                    DocCode = Document.DocCode,
+                    DocDate = Document.DocDate,
+                    IsDocument = true,
+                    OperationType = isNew
+                        ? RedisMessageDocumentOperationTypeEnum.Create
+                        : RedisMessageDocumentOperationTypeEnum.Update,
+                    Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} расх.складской ордер {Document.Description}"
+                };
+                var jsonSerializerSettings = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                };
+                var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                mySubscriber.Publish("WarehouseOut", json);
+            }
             if (isNew)
                 MainWindowViewModel.EventAggregator.GetEvent<AfterAddNewBaseWrapperEvent<WarehouseOutWrapper>>()
                     .Publish(new AfterAddNewBaseWrapperEventArgs<WarehouseOutWrapper>
@@ -595,6 +668,24 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         DocCode = Document.DocCode,
                         Id = Document.Id
                     });
+                if (mySubscriber != null && mySubscriber.IsConnected())
+                {
+                    var message = new RedisMessage
+                    {
+                        DocumentType = DocumentType.StoreOrderOut,
+                        DocCode = Document.DocCode,
+                        DocDate = Document.DocDate,
+                        IsDocument = true,
+                        OperationType = RedisMessageDocumentOperationTypeEnum.Delete,
+                        Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' удалил расх.складской ордер {Document.Description}"
+                    };
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                    mySubscriber.Publish("WarehouseOut", json);
+                }
             }
 
             var dcs = Document.Rows.Select(row => row.DocCode).ToList();

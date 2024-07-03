@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using KursDomain.Documents.CommonReferences;
 
+
 namespace KursDomain.Repository.LastDocumentRepository;
 
 public interface ILastDocumentRepository :  IKursGenericRepository<LastDocument, Guid>

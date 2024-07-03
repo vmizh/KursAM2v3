@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Media;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Xpf.Core;
+using DevExpress.Xpf.Core.ConditionalFormatting;
+using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
 using KursAM2.ReportManagers;
 using KursAM2.Repositories.InvoicesRepositories;
@@ -20,6 +25,7 @@ using KursDomain.IDocuments;
 using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.Repository;
+using KursDomain.Repository.DocHistoryRepository;
 using KursDomain.Repository.SD24Repository;
 using KursDomain.Services;
 using KursDomain.Wrapper.Nomenkl.WarehouseOut;
@@ -32,12 +38,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public sealed class WarehouseOrderOutSearchViewModel : RSWindowSearchViewModelBase
     {
+        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ISubscriber mySubscriber;
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
         private readonly WarehouseManager orderManager;
         private WarehouseOrderOut myCurrentDocument;
-
-        private readonly IDatabase myRedis = RedisStore.RedisCache;
-        private readonly ISubscriber mySubscriber;
 
         public WarehouseOrderOutSearchViewModel()
         {
@@ -45,13 +50,14 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 mySubscriber = myRedis.Multiplexer.GetSubscriber();
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe("ClientInvoice",
+                    mySubscriber.Subscribe("WarehouseOut",
                         (channel, message) =>
                         {
                             Console.WriteLine($@"Redis - {message}");
                             Form.Dispatcher.Invoke(() => UpdateList(message));
                         });
             }
+
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             orderManager =
@@ -65,12 +71,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 Caption = "Ордер",
                 Command = PrintOrderCommand
             });
-            MainWindowViewModel.EventAggregator.GetEvent<AFterDeleteBaseWrapperEvent<WarehouseOutWrapper>>()
-                .Subscribe(deleteDocument);
-            MainWindowViewModel.EventAggregator.GetEvent<AfterAddNewBaseWrapperEvent<WarehouseOutWrapper>>()
-                .Subscribe(onAddNewDocument);
-            MainWindowViewModel.EventAggregator.GetEvent<AFterSaveBaseWrapperEvent<WarehouseOutWrapper>>()
-                .Subscribe(onUpdateDocument);
+            //MainWindowViewModel.EventAggregator.GetEvent<AFterDeleteBaseWrapperEvent<WarehouseOutWrapper>>()
+            //    .Subscribe(deleteDocument);
+            //MainWindowViewModel.EventAggregator.GetEvent<AfterAddNewBaseWrapperEvent<WarehouseOutWrapper>>()
+            //    .Subscribe(onAddNewDocument);
+            //MainWindowViewModel.EventAggregator.GetEvent<AFterSaveBaseWrapperEvent<WarehouseOutWrapper>>()
+            //    .Subscribe(onUpdateDocument);
         }
 
         public ICommand PrintOrderCommand
@@ -186,6 +192,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (string.IsNullOrWhiteSpace(message)) return;
             var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
             if (msg == null || msg.DocCode == null) return;
+            if (msg.DbId != GlobalOptions.DataBaseId) return;
             if (msg.OperationType == RedisMessageDocumentOperationTypeEnum.Open
                 || (msg.DocDate ?? DateTime.Today) < StartDate || (msg.DocDate ?? DateTime.Today) > EndDate) return;
             if (msg.OperationType == RedisMessageDocumentOperationTypeEnum.Delete)
@@ -198,28 +205,49 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (msg.OperationType != RedisMessageDocumentOperationTypeEnum.Create
                 && Documents.All(_ => _.DocCode != msg.DocCode)) return;
 
-            //InvoiceClientRepository =
-            //    new InvoiceClientRepository(
-            //        new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString)));
+            using (var ctx = GlobalOptions.GetEntities())
+            {
 
-            //var dc = new List<decimal>(new[] { msg.DocCode.Value });
-            //var data = InvoiceClientRepository.GetByDocCodes(dc);
-            //var last = InvoiceClientRepository.GetLastChanges(dc);
-            //if (data.Count <= 0) return;
-            //if (last.Count > 0)
-            //{
-            //    data.First().LastChanger = last.First().Value.Item1;
-            //    data.First().LastChangerDate = last.First().Value.Item2;
-            //}
-            //else
-            //{
-            //    data.First().LastChanger = data.First().CREATOR;
-            //    data.First().LastChangerDate = data.First().DocDate;
-            //}
+                var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
 
-            //var old = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
-            //if (old != null) Documents.Remove(old);
-            //Documents.Add(data.First());
+                var dc = new List<decimal>(new[] { msg.DocCode.Value });
+                var data = ctx.SD_24.Include(_ => _.TD_24).FirstOrDefault(_ => _.DOC_CODE == msg.DocCode.Value);
+                var last = lastDocumentRopository.GetLastChanges(dc);
+                if (data == null) return;
+                var newItem = new WarehouseOrderOut(data) { State = RowStatus.NotEdited };
+                if (last.Count > 0)
+                {
+                    newItem.LastChanger = last.First().Value.Item1;
+                    newItem.LastChangerDate = last.First().Value.Item2;
+                }
+                else
+                {
+                    newItem.LastChanger = newItem.CREATOR;
+                    newItem.LastChangerDate = newItem.Date;
+                }
+
+                var old = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
+
+                if (old != null)
+                {
+                    switch (msg.OperationType)
+                    {
+                        case RedisMessageDocumentOperationTypeEnum.Update:
+                        {
+                            var idx = Documents.IndexOf(old);
+                            Documents[idx] = newItem;
+                            break;
+                        }
+                        case RedisMessageDocumentOperationTypeEnum.Delete:
+                            Documents.Remove(old);
+                            break;
+                    }
+                }
+                else
+                {
+                    Documents.Add(newItem);
+                }
+            }
         }
 
         public override void RefreshData(object data)
@@ -230,13 +258,45 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
-                    var d = ctx.SD_24.Where(_ =>
+                    IDocHistoryRepository lastDocRepository =
+                        new DocHistoryRepository(ctx);
+                    var d = ctx.SD_24.Include(_ => _.TD_24).Where(_ =>
                         _.DD_DATE >= StartDate && _.DD_DATE <= EndDate &&
                         _.DD_TYPE_DC == 2010000003).ToList();
+                    var lastDocInfo = lastDocRepository.GetLastChanges(d.Select(_ => _.DOC_CODE));
                     foreach (var item in d)
-                        Documents.Add(new WarehouseOrderOut(item) { State = RowStatus.NotEdited });
+                    {
+                        var newItem = new WarehouseOrderOut(item) { State = RowStatus.NotEdited };
+                        if (lastDocInfo.ContainsKey(newItem.DocCode))
+                        {
+                            newItem.LastChanger = lastDocInfo[newItem.DocCode].Item1;
+                            newItem.LastChangerDate = lastDocInfo[newItem.DocCode].Item2;
+                        }
+                        else
+                        {
+                            newItem.LastChanger = newItem.CREATOR;
+                            newItem.LastChangerDate = newItem.LastChangerDate;
+                        }
 
+                        Documents.Add(newItem);
+                    }
 
+                    foreach (var item in Documents)
+                    {
+                        var c = ctx.TD_24.Any(_ => _.DDT_RASH_ORD_DC == item.DocCode) ?
+                        ctx.TD_24.Where(_ => _.DDT_RASH_ORD_DC == item.DocCode).Sum(_ => _.DDT_KOL_PRIHOD) : 0;
+                        if (c == 0)
+                        {
+                            item.FlagShipped = "not";
+                        } else if (c < item.Rows.Sum(_ => _.Quantity))
+                        {
+                            item.FlagShipped = "part";
+                        }
+                        else
+                        {
+                            item.FlagShipped = "full";
+                        }
+                    }
                 }
             }
             catch (Exception e)
@@ -306,19 +366,49 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             frm.Show();
         }
 
-        protected override void OnWindowLoaded(object obj)
+        public override void UpdateVisualObjects()
         {
-            base.OnWindowLoaded(obj);
+            base.UpdateVisualObjects();
             if (Form is StandartSearchView frm)
+            {
                 foreach (var col in frm.gridDocuments.Columns)
                     switch (col.FieldName)
                     {
                         case "State":
+                        case "FlagShipped":
                             col.Visible = false;
                             break;
                     }
-        }
 
+                frm.gridDocumentsTableView.FormatConditions.Clear();
+                var notShippedFormatCondition = new FormatCondition
+                {
+                    FieldName = "FlagShipped",
+                    ApplyToRow = true,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Red
+                    },
+                    ValueRule = ConditionRule.Equal,
+                    Value1 = "not"
+                };
+                var partShippedFormatCondition = new FormatCondition
+                {
+                    FieldName = "FlagShipped",
+                    ApplyToRow = true,
+                    Format = new Format
+                    {
+                        Foreground = Brushes.Blue
+                    },
+                    ValueRule = ConditionRule.Equal,
+                    Value1 = "part"
+                };
+                frm.gridDocumentsTableView.FormatConditions.Add(notShippedFormatCondition);
+                frm.gridDocumentsTableView.FormatConditions.Add(partShippedFormatCondition);
+                
+            }
+        }
+        
         public override void OnWindowClosing(object obj)
         {
             MainWindowViewModel.EventAggregator.GetEvent<AFterDeleteBaseWrapperEvent<WarehouseOutWrapper>>()

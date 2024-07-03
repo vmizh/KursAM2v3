@@ -249,7 +249,6 @@
     <Compile Include="Repositories\DogovorsRepositories\DogovorOfSupplierRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceClientRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceProviderRepository.cs" />
-    <Compile Include="Repositories\LastDocumentRepository\LastDocumentRepository.cs" />
     <Compile Include="Repositories\Logistik\SD_24Repository.cs" />
     <Compile Include="Repositories\RedisRepository\RedisMessage.cs" />
     <Compile Include="Repositories\RedisRepository\RedisStore.cs" />

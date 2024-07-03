@@ -234,11 +234,11 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 {
                     WindowName = "Выбор счетов фактур",
                     LayoutName = "InvoiceProviderSearchMulti",
-                    KontragentDC = Document.KontragentSender?.DocCode
+                    KontragentDC = Document.KontragentSender?.DocCode,
+                    ExistingRows = Document.Rows.Select(r =>
+                            new Tuple<decimal, decimal, int>(r.Nomenkl.DocCode, r.LinkInvoice.DocCode, r.LinkInvoice.Code))
+                        .ToList()
                 };
-                dtx.ExistingRows = Document.Rows.Select(r =>
-                        new Tuple<decimal, decimal, int>(r.Nomenkl.DocCode, r.LinkInvoice.DocCode, r.LinkInvoice.Code))
-                    .ToList();
                 dtx.RefreshData(null);
                 var dialog = new SelectInvoiceMultipleDialogView
                 {
@@ -511,7 +511,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             Document.Entity.DD_POLUCH_NAME = Document.WarehouseIn.Name;
             Document.Entity.DD_TYPE_DC = 2010000001;
-            if (Document.Entity.SD_201 != null &&  UnitOfWork.Context.Entry(Document.Entity.SD_201) != null)
+            if (Document.Entity.SD_201 != null && UnitOfWork.Context.Entry(Document.Entity.SD_201) != null)
             {
                 UnitOfWork.Context.Entry(Document.Entity.SD_201).State = EntityState.Unchanged;
             }

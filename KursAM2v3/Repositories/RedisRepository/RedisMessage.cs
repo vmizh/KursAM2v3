@@ -10,6 +10,7 @@ namespace KursAM2.Repositories.RedisRepository
         public DocumentType DocumentType { get; set; }
         public RedisMessageDocumentOperationTypeEnum OperationType { get; set; }
         public Guid UserId { get; set; } = GlobalOptions.UserInfo.KursId;
+        public Guid DbId { get; set; } = GlobalOptions.DataBaseId;
         public string UserName { get; set; } = GlobalOptions.UserInfo.NickName;
         public bool IsDocument { get; set; }
         public decimal? DocCode { get; set; }
