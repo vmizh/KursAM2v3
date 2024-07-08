@@ -50,7 +50,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
 
         public BreakEvenWindowViewModel()
         {
-            StartDate = DateTime.Today.AddDays(-30);
+            StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             EndDate = DateTime.Today;
             DataAll = new List<BreakEvenRow>();
             NomenklGroups = new ObservableCollection<BreakEvenNomGroupViewModel>();
