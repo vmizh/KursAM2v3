@@ -68,7 +68,8 @@ namespace KursAM2.ViewModel.Management
             CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as Currency);
             CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as Currency);
             CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as Currency);
-            StartDate = DateTime.Today;
+            StartDate = new DateTime(DateTime.Today.Year,DateTime.Today.Month,1);
+            //StartDate = DateTime.Today;
             EndDate = DateTime.Today;
             var crsrate = new CrossCurrencyRate();
             crsrate.SetRates(DateTime.Today);
