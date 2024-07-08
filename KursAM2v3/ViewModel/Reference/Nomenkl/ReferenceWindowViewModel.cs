@@ -131,6 +131,12 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 if (myCurrentNomenklMain != null)
                     LoadNomenklForMain(myCurrentNomenklMain);
                 reloadCurrencies();
+                if (myCurrentNomenklMain != null)
+                    foreach (var n in myCurrentNomenklMain.NomenklCollection)
+                    {
+                        n.State = RowStatus.NotEdited;
+                    }
+
                 RaisePropertyChanged();
             }
         }
