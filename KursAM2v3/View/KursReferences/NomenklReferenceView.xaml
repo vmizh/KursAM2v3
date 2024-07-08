@@ -17,10 +17,6 @@
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
-    <dxmvvm:Interaction.Behaviors>
-        <dxwui:WinUIDialogService />
-        <dxwui:WinUIMessageBoxService />
-    </dxmvvm:Interaction.Behaviors>
     <DockPanel Style="{StaticResource DXServices}">
         <control1:WindowMenu Height="60" DockPanel.Dock="Top" />
         <DockPanel Margin="0,5,5,5" DockPanel.Dock="Top" LastChildFill="False">
@@ -48,13 +44,14 @@
                 DockPanel.Dock="Right"
                 IsChecked="{Binding IsShowDeleted,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </DockPanel>
-        <dxlc:LayoutControl x:Name="mainLayoutControl" Orientation="Horizontal" Padding="0">
+        <dxlc:LayoutControl x:Name="mainLayoutControl" Orientation="Horizontal" Padding="0" >
             <dxlc:LayoutGroup View="Group"
+                              x:Name="LayoutGroup_1"
+                              dx:DXSerializer.StoreLayoutMode="All"
                               dxlc:LayoutControl.AllowHorizontalSizing="True"
                               IsEnabled="{Binding IsSearchTextNull, UpdateSourceTrigger=PropertyChanged}">
                 <dxg:TreeListControl x:Name="treeListCategory"
                                      AutoGenerateColumns="None"
-                                     EnableSmartColumnsGeneration="True"
                                      VerticalAlignment="Stretch"
                                      HorizontalAlignment="Stretch"
                                      dx:DXSerializer.SerializationID="treeListCategory"
@@ -65,14 +62,13 @@
                                      CurrentItem="{Binding CurrentCategory, Mode=TwoWay}"
                                      CurrentItemChanged="treeListViewCategory_FocusedRowChanged"
                                      ShowBorder="False"
-                                     IsEnabled="{Binding IsCategoryEnabled, UpdateSourceTrigger=PropertyChanged}">
+                                     IsEnabled="{Binding IsCategoryEnabled, UpdateSourceTrigger=PropertyChanged}" 
+                                     >
                     <dxg:TreeListControl.Columns>
-                        <dxg:TreeListColumn x:Name="tcol_1"
-                                            Header="Наименование"
+                        <dxg:TreeListColumn Header="Наименование"
                                             FieldName="Name"
                                             AllowEditing="False" />
-                        <dxg:TreeListColumn x:Name="tcol_2"
-                                            Header="Кол-во номенклатур"
+                        <dxg:TreeListColumn Header="Кол-во номенклатур"
                                             FieldName="NomenklCount"
                                             AllowEditing="False" />
                     </dxg:TreeListControl.Columns>
@@ -88,7 +84,8 @@
                                           ShowHorizontalLines="False"
                                           ShowVerticalLines="False"
                                           ShowFilterPanelMode="Never"
-                                          ShowIndicator="True">
+                                          ShowIndicator="True"
+                                          >
                             <dxg:TreeListView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Header="Добавить в корень" Command="{Binding TreeAddInRootCommand}" />
@@ -141,7 +138,7 @@
                                      dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                      ItemsSource="{Binding NomenklMainCollection, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                      CurrentItem="{Binding CurrentNomenklMain, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                     SelectionMode="Row" MouseEnter="gridControlNomenklMain_MouseEnter">
+                                     SelectionMode="Row">
                         <dxg:GridControl.Columns>
                             <dxg:GridColumn Name="col_1_1" Header="Наименование" FieldName="Name" ReadOnly="True" />
                             <dxg:GridColumn Name="col_1_2" Header="Ном.№" FieldName="NomenklNumber" ReadOnly="True" />

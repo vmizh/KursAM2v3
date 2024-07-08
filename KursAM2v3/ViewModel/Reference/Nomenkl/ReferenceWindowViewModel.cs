@@ -959,7 +959,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         protected override void OnWindowLoaded(object obj)
         {
-            //base.OnWindowLoaded(obj);
+
+            base.OnWindowLoaded(obj);
         }
     }
 }

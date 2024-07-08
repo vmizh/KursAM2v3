@@ -1,66 +1,33 @@
-﻿using System.ComponentModel;
-using System.Windows;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows.Input;
 using DevExpress.Utils;
 using DevExpress.Xpf.Grid;
-using KursAM2.ViewModel.Reference.Nomenkl;
-using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
-using LayoutManager;
 
 namespace KursAM2.View.KursReferences
 {
     /// <summary>
     ///     Interaction logic for NomenklReferenceView.xaml
     /// </summary>
-    public partial class NomenklReferenceView : ILayout
+    public partial class NomenklReferenceView
     {
         public NomenklReferenceView()
         {
             InitializeComponent();
-
-            //LayoutManager =
-            //    new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, mainLayoutControl);
-            //Loaded += NomenklReferenceView_Loaded;
-            //Closing += NomenklReferenceView_Closing;
         }
-
-        public LayoutManager.LayoutManager LayoutManager { get; set; }
-        public string LayoutManagerName { get; set; }
-
-        public void SaveLayout()
-        {
-            LayoutManager.Save();
-        }
-
-        private void NomenklReferenceView_Closing(object sender, CancelEventArgs e)
-        {
-            LayoutManager.Save();
-        }
-
-        private void NomenklReferenceView_Loaded(object sender, RoutedEventArgs e)
-        {
-            LayoutManager.Load();
-        }
-
-        //private void MenuItemEdit_OnClick(object sender, RoutedEventArgs e)
-        //{
-        //    tcol_1.AllowEditing = DefaultBoolean.True;
-        //    treeListViewCategory.ShowEditor(false);
-        //}
 
         private void treeListViewCategory_FocusedRowChanged(object sender,
             CurrentItemChangedEventArgs currentItemChangedEventArgs)
         {
-            tcol_1.AllowEditing = DefaultBoolean.False;
+            
+            //Name.AllowEditing = DefaultBoolean.False;
         }
 
         private void TreeListViewCategory_OnMouseDoubleClick(object sender,
             MouseButtonEventArgs mouseButtonEventArgs)
         {
-            tcol_1.AllowEditing = DefaultBoolean.True;
+            //Name.AllowEditing = DefaultBoolean.True;
             treeListViewCategory.ShowEditor(false);
         }
 
@@ -75,11 +42,6 @@ namespace KursAM2.View.KursReferences
                 e.Handled = true;
         }
 
-        private void GridControlNomenklMain_OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-            var ctx = DataContext as ReferenceWindowViewModel;
-            ctx?.NomenklMainEdit(ctx.CurrentNomenklMain.Id);
-        }
 
         private void tableViewNomenkl_CellValueChanged(object sender, CellValueChangedEventArgs e)
         {
@@ -88,11 +50,6 @@ namespace KursAM2.View.KursReferences
             if (r.NomenklNumber.Length <= 5 ||
                 r.NomenklNumber.Substring(r.NomenklNumber.Length - 4, 3) != ((IName)r.Currency).Name)
                 r.NomenklNumber += " " + ((IName)r.Currency).Name;
-        }
-
-        private void gridControlNomenklMain_MouseEnter(object sender, MouseEventArgs e)
-        {
-
         }
     }
 }

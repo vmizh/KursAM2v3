@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -21,24 +20,25 @@ using Helper;
 using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.Menu;
-using LayoutManager;
+using KursDomain.ViewModel.Base2;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
+using ILayout = LayoutManager.ILayout;
 
 namespace Core.ViewModel.Base;
 
-
-
 [POCOViewModel]
-public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLayout, ISupportServices, 
-    KursDomain.ViewModel.Base2.IFormCommands, 
-    KursDomain.ViewModel.Base2.IDialogOperation
+public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLayout, ISupportServices,
+    IFormCommands,
+    IDialogOperation
 {
+    private bool _versionUpdateStatus;
+
+    protected bool IsDeleting = false;
     [Display(AutoGenerateField = false)] protected bool IsLayoutLoaded;
 
     // ReSharper disable once ArrangeObjectCreationWhenTypeEvident
     //public readonly WindowManager WinManager = new WindowManager();
     private bool myDialogResult;
-    private bool _versionUpdateStatus;
     public Window myForm;
 
     // ReSharper disable once MemberInitializerValueIgnored
@@ -76,6 +76,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         Form = form;
         myIsCanRefresh = true;
     }
+
     [Display(AutoGenerateField = false)]
     public bool IsVersionUpdateStatus
     {
@@ -87,8 +88,6 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
             RaisePropertyChanged();
         }
     }
-
-    protected bool IsDeleting = false;
 
     [Display(AutoGenerateField = false)]
     protected IDispatcherService DispatcherService => this.GetService<IDispatcherService>();
@@ -202,11 +201,6 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         get { return new Command(UnboundColumnData, _ => true); }
     }
 
-    protected virtual void UnboundColumnData(object obj)
-    {
-        
-    }
-
 
     [Display(AutoGenerateField = false)] public bool IsCanSave { get; set; }
 
@@ -243,6 +237,10 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     public IEnumerable<object> LookupViewModels => null;
     IServiceContainer ISupportServices.ServiceContainer => ServiceContainer;
 
+    protected virtual void UnboundColumnData(object obj)
+    {
+    }
+
     private bool IsSummaryExists(GridSummaryItemCollection tsums, string fname, SummaryItemType sumType)
     {
         foreach (var s in tsums)
@@ -260,17 +258,12 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     protected void OnLayoutInitial(object obj)
     {
         if (Form != null)
-        {
             LayoutManager ??= new global::Helper.LayoutManager(Form, LayoutSerializationService,
                 LayoutName, null, GlobalOptions.KursSystemDBContext);
-            
-        }
         else
-        {
             LayoutManager = new global::Helper.LayoutManager(GlobalOptions.KursSystemDBContext,
                 LayoutSerializationService,
                 LayoutName, null);
-        }
     }
 
     /// <summary>
@@ -284,10 +277,21 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     protected virtual void OnWindowLoaded(object obj)
     {
         if (IsLayoutLoaded) return;
-        if (LayoutManager == null) OnLayoutInitial(null);
+        if (LayoutManager == null) OnLayoutInitial(null); 
+        var grids = Form.FindVisualChildren<GridControl>().ToList();
+        var trees = Form.FindVisualChildren<TreeListControl>().ToList();
         try
         {
-            LayoutManager.Load();
+            foreach (var col in grids.SelectMany(grid => grid.Columns))
+            {
+                col.Name = col.FieldName;
+            }
+            foreach (var col in trees.SelectMany(grid => grid.Columns))
+            {
+                col.Name = col.FieldName;
+            }
+
+            LayoutManager?.Load();
         }
         catch (Exception ex)
         {
@@ -300,9 +304,8 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
             return;
         }
 
-        var grids = Form.FindVisualChildren<GridControl>();
-        var trees = Form.FindVisualChildren<TreeListControl>();
-        if (grids != null)
+       
+        if (grids.Count > 0)
             foreach (var grid in grids)
             {
                 grid.FilterString = null;
@@ -324,6 +327,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                         if (!col.IsEnabled || col.ReadOnly)
                             ed.AllowDefaultButton = false;
                     }
+
                     if (col.FieldType == typeof(string))
                         col.EditSettings = new TextEditSettings
                         {
@@ -355,12 +359,11 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                             SummaryType = SummaryItemType.Count,
                             ShowInColumn = col.FieldName
                         });
-                        continue;
                     }
                 }
             }
 
-        if (trees != null)
+        if (trees.Count > 0)
             foreach (var t in trees)
             foreach (var col in t.Columns)
             {
@@ -379,6 +382,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                     if (!col.IsEnabled || col.ReadOnly)
                         ed.AllowDefaultButton = false;
                 }
+
                 if (col.FieldType == typeof(string))
                     col.EditSettings = new TextEditSettings
                     {
@@ -386,7 +390,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                     };
             }
 
-        
+
         UpdateVisualObjects();
         IsLayoutLoaded = true;
     }
@@ -630,6 +634,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     {
         //WindowManager.ShowFunctionNotReleased();
     }
+
     public virtual Task DocumentOpenAsync(object obj)
     {
         throw new NotImplementedException();
@@ -778,13 +783,13 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     }
 
     [Display(AutoGenerateField = false)]
-    public ICommand UndoCommand {
-        get { return new Command(Undo, _ =>true); }
+    public ICommand UndoCommand
+    {
+        get { return new Command(Undo, _ => true); }
     }
 
     private void Undo(object obj)
     {
-       
     }
 
     public virtual void DocDelete(object form)
