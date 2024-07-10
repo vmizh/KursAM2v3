@@ -169,6 +169,7 @@
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Примечание" LabelVerticalAlignment="Top">
                     <dxe:TextEdit EditValue="{Binding VVT_DOC_NUM, Mode=TwoWay}"
+                                  VerticalContentAlignment="Top"
                                     AcceptsReturn="True"
                                     TextWrapping="Wrap"
                                     Height="55"
