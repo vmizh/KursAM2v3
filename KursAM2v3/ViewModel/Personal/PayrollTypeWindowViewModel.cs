@@ -26,6 +26,8 @@ namespace KursAM2.ViewModel.Personal
             RefreshData(null);
         }
 
+        public override string LayoutName => "PayrollTypeWindowViewModel";
+
         public ObservableCollection<PayrollType> Rows { set; get; } = new ObservableCollection<PayrollType>();
         public ObservableCollection<PayrollType> DeletedRows { set; get; } = new ObservableCollection<PayrollType>();
 
@@ -85,6 +87,9 @@ namespace KursAM2.ViewModel.Personal
                                     row => myDataContext.EMP_PAYROLL_TYPE.FirstOrDefault(_ => _.ID == row.ID))
                                 .Where(d => d != null))
                             myDataContext.EMP_PAYROLL_TYPE.Remove(d);
+                    var newDC = myDataContext.EMP_PAYROLL_TYPE.Count() > 0
+                                ? myDataContext.EMP_PAYROLL_TYPE.Max(_ => _.DOC_CODE) + 1
+                                : 19000000001;
                     foreach (var row in Rows.Where(_ => _.State != RowStatus.NotEdited))
                     {
                         if (row.State == RowStatus.Edited)
@@ -97,9 +102,7 @@ namespace KursAM2.ViewModel.Personal
 
                         if (row.State == RowStatus.NewRow)
                         {
-                            var newDC = myDataContext.EMP_PAYROLL_TYPE.Count() > 0
-                                ? myDataContext.EMP_PAYROLL_TYPE.Max(_ => _.DOC_CODE) + 1
-                                : 19000000001;
+                            
                             myDataContext.EMP_PAYROLL_TYPE.Add(new EMP_PAYROLL_TYPE
                             {
                                 ID = row.ID,
@@ -107,6 +110,7 @@ namespace KursAM2.ViewModel.Personal
                                 Name = row.Name,
                                 Type = row.Type ? 1 : 0
                             });
+                            newDC++;
                         }
                     }
 
@@ -124,10 +128,11 @@ namespace KursAM2.ViewModel.Personal
 
         private void AddRow(object obj)
         {
+            var newDC = Rows.Any(_ => _.DocCode < 0) ? Rows.Min(_ => _.DocCode) - 1 : -1;
             Rows.Add(new PayrollType
             {
                 ID = Guid.NewGuid().ToString().ToUpper().Replace("-", string.Empty),
-                DocCode = -1,
+                DocCode = newDC,
                 Type = true,
                 State = RowStatus.NewRow
             });
@@ -144,7 +149,7 @@ namespace KursAM2.ViewModel.Personal
         {
             if (IsCanSaveData)
             {
-                var res = MessageBox.Show("В документ были внесены изменения, сохранить?", "Запрос",
+                var res = MessageBox.Show("Р’ РґРѕРєСѓРјРµРЅС‚ Р±С‹Р»Рё РІРЅРµСЃРµРЅС‹ РёР·РјРµРЅРµРЅРёСЏ, СЃРѕС…СЂР°РЅРёС‚СЊ?", "Р—Р°РїСЂРѕСЃ",
                     MessageBoxButton.YesNoCancel,
                     MessageBoxImage.Question);
                 switch (res)

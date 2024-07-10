@@ -7,14 +7,14 @@ using LayoutManager;
 
 namespace KursAM2.View.Personal
 {
-    public partial class PayRollVedomost : ILayout
+    public partial class PayRollVedomost //: ILayout
     {
         public PayRollVedomost()
         {
             InitializeComponent(); 
-            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
-            Loaded += PayRollVedomost_Loaded;
-            Closing += PayRollVedomost_Closing;
+            //LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
+            //Loaded += PayRollVedomost_Loaded;
+            //Closing += PayRollVedomost_Closing;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

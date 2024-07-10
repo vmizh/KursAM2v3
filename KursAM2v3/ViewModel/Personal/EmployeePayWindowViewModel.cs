@@ -41,6 +41,8 @@ namespace KursAM2.ViewModel.Personal
             RightMenuBar = GetRightMenu();
         }
 
+        public override string LayoutName => "EmployeePayWindowViewModel";
+
         public EmployeePayWindowViewModel(bool isPersItog)
         {
             Documents = new ObservableCollection<EmployeePayDocumentViewModel>();

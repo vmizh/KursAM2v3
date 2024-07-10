@@ -16,11 +16,7 @@
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
-    <dxmvvm:Interaction.Behaviors>
-        <dxwui:WinUIDialogService />
-        <dxwui:WinUIMessageBoxService />
-    </dxmvvm:Interaction.Behaviors>
-    <DockPanel>
+    <DockPanel Style="{StaticResource DXServices}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <dxlc:LayoutControl x:Name="mainLayoutControl" Margin="0" Padding="0">
             <dxlc:LayoutGroup Orientation="Vertical">
