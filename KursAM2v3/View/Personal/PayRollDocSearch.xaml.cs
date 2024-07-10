@@ -8,23 +8,22 @@ using KursAM2.ViewModel.Personal;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
-using LayoutManager;
 
 namespace KursAM2.View.Personal
 {
     /// <summary>
     ///     Interaction logic for PayRollDocSearch.xaml
     /// </summary>
-    public partial class PayRollDocSearch : ILayout
+    public partial class PayRollDocSearch //: ILayout
     {
         private bool isTemplate;
 
         public PayRollDocSearch()
         {
             InitializeComponent();
-            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, mainLayoutControl);
-            Loaded += PayRollDocSearch_Loaded;
-            Closing += PayRollDocSearch_Closing;
+            //LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, mainLayoutControl);
+            //Loaded += PayRollDocSearch_Loaded;
+            //Closing += PayRollDocSearch_Closing;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

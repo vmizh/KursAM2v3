@@ -10,17 +10,17 @@ namespace KursAM2.View.Personal
     /// <summary>
     ///     Interaction logic for PayRollTypeReference.xaml
     /// </summary>
-    public partial class PayRollTypeReference : ILayout
+    public partial class PayRollTypeReference //: ILayout
     {
-        private readonly PayrollTypeWindowViewModel myData = new PayrollTypeWindowViewModel();
+        //private readonly PayrollTypeWindowViewModel myData = new PayrollTypeWindowViewModel();
 
         public PayRollTypeReference()
         {
             InitializeComponent(); 
-            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
-            //DataContext = myData;
-            Loaded += PayRollTypeReference_Loaded;
-            Closing += PayRollTypeReference_Closing;
+            //LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
+            ////DataContext = myData;
+            //Loaded += PayRollTypeReference_Loaded;
+            //Closing += PayRollTypeReference_Closing;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }

@@ -1,9 +1,10 @@
 using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using DevExpress.Data;
-using KursDomain.Documents.Employee;
 using KursDomain.ICommon;
 using KursDomain.References;
 
@@ -15,34 +16,41 @@ namespace KursAM2.ViewModel.Personal
 
         [DataMember] public Employee Employee { set; get; }
 
-        [GridColumnView("Сотрудник", SettingsType.Default, ReadOnly = true)]
+        [Display(Name = "РЎРѕС‚СЂСѓРґРЅРёРє")]
+        [ReadOnly(true)]
         [DataMember]
         public string EmployeeName => Employee.Name;
 
-        [GridColumnView("Таб. №", SettingsType.Default, ReadOnly = true)]
+        [Display(Name = "РўР°Р±. в„–")]
+        [ReadOnly(true)]
         [DataMember]
         public int TabelNumber => Employee.TabelNumber;
 
-        [GridColumnView("Валюта", SettingsType.Default, ReadOnly = true)]
+        [Display(Name = "Р’Р°Р»СЋС‚Р°")]
+        [ReadOnly(true)]
         [DataMember]
         public string CrsName => ((IName)Employee.Currency).Name;
 
         [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Начислено", SettingsType.Decimal, ReadOnly = true)]
+        [Display(Name = "РќР°С‡РёСЃР»РµРЅРѕ")]
+        [ReadOnly(true)]
         [DataMember]
         public decimal SummaNach { get; set; }
 
         [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Выплачено", SettingsType.Decimal, ReadOnly = true)]
+        [Display(Name = "Р’С‹РїР»Р°С‡РµРЅРѕ")]
+        [ReadOnly(true)]
         [DataMember]
         public decimal PlatSumma { get; set; }
 
         [GridColumnSummary(SummaryItemType.Sum, "n2")]
-        [GridColumnView("Долг", SettingsType.Decimal, ReadOnly = true)]
+        [Display(Name = "Р”РѕР»Рі")]
+        [ReadOnly(true)]
         [DataMember]
         public decimal DolgSumma { get; set; }
 
-        [GridColumnView("Дата. посл. операции", SettingsType.Default, ReadOnly = true)]
+        [Display(Name = "Р”Р°С‚Р°. РїРѕСЃР». РѕРїРµСЂР°С†РёРё")]
+        [ReadOnly(true)]
         [DataMember]
         public DateTime DateLastOper { set; get; }
 

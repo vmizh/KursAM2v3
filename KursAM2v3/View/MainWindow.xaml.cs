@@ -454,14 +454,14 @@ namespace KursAM2.View
                         break;
                     case "Ведомости начислений з/платы":
                         var vedCtx = new PayrollSearchWindowViewModel();
-                        vedCtx.RefreshData(null);
                         form = new PayRollDocSearch
                         {
                             Owner = Application.Current.MainWindow
                         };
-                        vedCtx.Form = form;
-                        form.Show();
+                        vedCtx.Form = form; 
                         form.DataContext = vedCtx;
+                        vedCtx.RefreshData(null);
+                        form.Show();
                         break;
                     case "Управленческий баланс":
                         var ctx1 = new ManagementBalansWindowViewModel { CurrentDate = DateTime.Today };

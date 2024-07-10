@@ -14,7 +14,6 @@ namespace KursAM2.ViewModel.Personal
         {
         }
 
-        [GridColumnView("Начисление/удержание", SettingsType.Default)]
         public new bool Type
         {
             get => Entity.Type == 1;

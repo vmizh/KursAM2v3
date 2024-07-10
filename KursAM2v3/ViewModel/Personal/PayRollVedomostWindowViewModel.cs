@@ -51,6 +51,8 @@ namespace KursAM2.ViewModel.Personal
             isChange = false;
         }
 
+        public override string LayoutName => "PayRollVedomostWindowViewModel";
+
         public PayRollVedomostWindowViewModel(string id) : this()
         {
             Id = Guid.Parse(id);

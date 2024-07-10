@@ -2,8 +2,6 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
@@ -33,6 +31,8 @@ namespace KursAM2.ViewModel.Personal
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
         }
+
+        public override string LayoutName => "PayrollSearchWindowViewModel";
 
         public ObservableCollection<PayRollVedomostSearch> Template
         {
@@ -165,14 +165,9 @@ namespace KursAM2.ViewModel.Personal
                         RaisePropertyChanged(nameof(Vedomost));
                     }
                 }
-                if (Vedomost.Count > 0)
-                {
-                    CurrentVedomost = Vedomost.First();
-                }
-                if (Template.Count > 0)
-                {
-                    CurrentTemplate = Template.First();
-                }
+
+                if (Vedomost.Count > 0) CurrentVedomost = Vedomost.First();
+                if (Template.Count > 0) CurrentTemplate = Template.First();
             }
             catch (Exception ex)
             {
@@ -186,9 +181,8 @@ namespace KursAM2.ViewModel.Personal
             row = IsTemplate ? CurrentTemplate : CurrentVedomost;
             if (row == null) return;
             var pr = new PayRollVedomostWindowViewModel(row.Id);
-            //var newVed = pr.Copy();
-            //var form = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = newVed};
-            var form = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = pr};
+            var form = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = pr };
+            pr.Form = form;
             form.Show();
             pr.RefreshData(null);
             //TODO Сохранить последний документ
@@ -199,7 +193,7 @@ namespace KursAM2.ViewModel.Personal
         public override void DocNewEmpty(object form)
         {
             var ved = PayRollVedomostWindowViewModel.CreateNew();
-            var frm = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = ved};
+            var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = ved };
             frm.Show();
         }
 
@@ -237,9 +231,13 @@ namespace KursAM2.ViewModel.Personal
                     r.NachDate = DateTime.Today;
                 }
             }
+
             pr.myState = RowStatus.NewRow;
-            var frm = new PayRollVedomost {Owner = Application.Current.MainWindow,
-                DataContext = pr};
+            var frm = new PayRollVedomost
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = pr
+            };
             frm.Show();
         }
 
@@ -253,7 +251,7 @@ namespace KursAM2.ViewModel.Personal
                 : new PayRollVedomostWindowViewModel(CurrentVedomost.Id);
             var dtx = pr.Copy();
             pr.myState = RowStatus.NewRow;
-            var frm = new PayRollVedomost {Owner = Application.Current.MainWindow, DataContext = dtx};
+            var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = dtx };
             frm.Show();
             foreach (var e in dtx.Employees)
             {
@@ -265,7 +263,8 @@ namespace KursAM2.ViewModel.Personal
                     Name = e.Name,
                     State = RowStatus.NewRow,
                     Employee = e.Employee,
-                    Crs = GlobalOptions.ReferencesCache.GetCurrency(GlobalOptions.SystemProfile.MainCurrency.DocCode) as Currency,
+                    Crs = GlobalOptions.ReferencesCache.GetCurrency(GlobalOptions.SystemProfile.MainCurrency.DocCode) as
+                        Currency,
                     PRType = dtx.PayrollTypeCollection.Single(_ =>
                         _.DocCode == GlobalOptions.SystemProfile.DafaultPayRollType.DocCode),
                     Summa = 0,
