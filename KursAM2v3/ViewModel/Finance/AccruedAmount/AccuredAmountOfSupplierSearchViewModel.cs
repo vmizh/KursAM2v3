@@ -28,8 +28,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            DateEnd = DateTime.Today;
-            DateStart = DateEnd.AddDays(-30);
+            EndDate = DateTime.Today; 
+            StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month - 1, 1);
         }
 
         #endregion
