@@ -170,6 +170,7 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 if ((Entity.DDT_TAX_CRS_CENA ?? 0) == value) return;
                 Entity.DDT_TAX_CRS_CENA = value;
+                Entity.DDT_FACT_CRS_CENA = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Summa));
             }

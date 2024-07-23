@@ -310,6 +310,8 @@ namespace KursAM2.ViewModel.Logistiks
                 foreach (var t in Document.Rows)
                 {
                     t.DocCode = Document.DocCode;
+                    if (t.Entity.DDT_FACT_CRS_CENA is null) t.Entity.DDT_FACT_CRS_CENA = 0;
+                    if (t.Entity.DDT_TAX_CRS_CENA is null) t.Entity.DDT_TAX_CRS_CENA = 0;
                     switch (t.Difference)
                     {
                         case 0:

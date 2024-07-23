@@ -52,7 +52,6 @@ namespace KursAM2.ViewModel.Management
         }
 
         public override string LayoutName => "MoneyPeriodWindowViewModel";
-
         public bool IsIncludeVzaimozachet
         {
             get => myIncludeVzaimozachet;
