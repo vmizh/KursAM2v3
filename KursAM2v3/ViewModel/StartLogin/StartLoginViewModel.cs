@@ -23,12 +23,15 @@ using DevExpress.Xpf.Core;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.Properties;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.ViewModel.Splash;
 using KursDomain;
 using KursDomain.DBContext;
 using KursDomain.Documents.Employee;
 using KursDomain.References;
 using KursDomain.Repository;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace KursAM2.ViewModel.StartLogin
 {
@@ -40,9 +43,24 @@ namespace KursAM2.ViewModel.StartLogin
         private bool myIsThemeAllow;
         private DataSource mySelectedDataSource;
         private string myVersionValue;
+        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ISubscriber mySubscriber;
+
 
         public StartLoginViewModel(Window formWindow)
         {
+            if (myRedis != null)
+            {
+                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                if (mySubscriber.IsConnected())
+                    mySubscriber.Subscribe("StartLogin",
+                        (_, message) =>
+                        {
+                            Console.WriteLine($@"Redis - {message}");
+                            StartLoad(message);
+                        });
+            }
+
             var iniFileName = Application.Current.Properties["DataPath"] + "\\User.ini";
             try
             {
@@ -61,6 +79,14 @@ namespace KursAM2.ViewModel.StartLogin
             CurrentUser = UserIniFile.ReadINI("Start", "Login");
         }
 
+        private async void StartLoad(RedisValue message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
+            if (msg == null) return;
+            if(msg.Message == CurrentUser)
+                await bnOk_ClickAsync();
+        }
 
 
         public IniFileManager UserIniFile { set; get; }
@@ -142,13 +168,12 @@ namespace KursAM2.ViewModel.StartLogin
 
         #region command
 
-        // ReSharper disable once InconsistentNaming
-        //public ICommand bnOk_ClickCommand
-        //{
-        //    get { return new Command(bnOk_Click, _ => true); }
-        //}
+        public ICommand bnOk_ClickCommand
+        {
+            get { return new Command(bnOk_Click, _ => true); }
+        }
 
-        public async Task bnOk_Click(object obj)
+        public void bnOk_Click(object obj)
         {
             var view = Form as View.StartLogin;
             if (string.IsNullOrEmpty(CurrentUser) || CurrentUser.Trim() == string.Empty ||
@@ -165,19 +190,19 @@ namespace KursAM2.ViewModel.StartLogin
 
             UserIniFile.Write("Start", "Login", CurrentUser);
             UserIniFile.Write("Start", "LastDataBase", SelectedDataSource.ShowName);
-            SplashLoadBar();
+            //SplashLoadBar();
             // ReSharper disable once InlineOutVariableDeclaration
             User newUser;
             if (!CheckAndSetUser(out newUser)) return;
             using (var ctx = GlobalOptions.KursSystem())
             {
-                var tileOrders = await GlobalOptions.KursSystem().UserMenuOrder
-                    .Where(_ => _.UserId == newUser.KursId).ToListAsync();
-                var tileItems = await ctx.KursMenuGroup.ToListAsync();
-                var tileUsersItems =await ctx.UserMenuRight.Where(_ => _.DBId == GlobalOptions.DataBaseId
+                var tileOrders = GlobalOptions.KursSystem().UserMenuOrder
+                    .Where(_ => _.UserId == newUser.KursId).ToList();
+                var tileItems = ctx.KursMenuGroup.ToList();
+                var tileUsersItems = ctx.UserMenuRight.Where(_ => _.DBId == GlobalOptions.DataBaseId
                                                                   && _.LoginName.ToUpper() ==
                                                                   newUser.NickName.ToUpper())
-                    .ToListAsync();
+                    .ToList();
                 var tileGroupsTemp = new List<TileGroup>();
                 var favorite = tileItems.FirstOrDefault(_ => _.Id == 11);
                 if (favorite != null)
@@ -275,6 +300,158 @@ namespace KursAM2.ViewModel.StartLogin
             SaveСache(view.AvatarObj.Source);
             view.Close();
         }
+        public async Task bnOk_ClickAsync()
+        {
+            var view = Form as View.StartLogin;
+            if (string.IsNullOrEmpty(CurrentUser) || CurrentUser.Trim() == string.Empty ||
+                string.IsNullOrEmpty(CurrentPassword)
+                || SelectedDataSource == null)
+            {
+                var wm = new WindowManager();
+                var showMess = @"Имя пользователя и пароль должны быть обязательно заполнены.";
+                var TitleText = "Ошибка входа в систему";
+                Form.Dispatcher.Invoke(() =>
+                {
+                    var dlgRslt = wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
+                        WindowManager.Confirm);
+                    view.ButtonOK.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#edf9fd");
+                });
+                return;
+            }
+
+            UserIniFile.Write("Start", "Login", CurrentUser);
+            UserIniFile.Write("Start", "LastDataBase", SelectedDataSource.ShowName);
+            //SplashLoadBar();
+            // ReSharper disable once InlineOutVariableDeclaration
+            User newUser;
+            if (!CheckAndSetUser(out newUser, false))
+            {
+                view.Dispatcher.Invoke(() =>
+                {
+                    var showMess = @"Недопустимые имя пользователя или пароль.";
+                    var TitleText = "Ошибка входа в систему!";
+
+                    var wm = new WindowManager();
+                    var dlgRslt = wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
+                        WindowManager.Confirm);
+                    view.ButtonOK.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#edf9fd");
+                });
+
+                return;
+            }
+
+            using (var ctx = GlobalOptions.KursSystem())
+            {
+                var tileOrders = await GlobalOptions.KursSystem().UserMenuOrder
+                    .Where(_ => _.UserId == newUser.KursId).ToListAsync();
+                var tileItems = await ctx.KursMenuGroup.ToListAsync();
+                var tileUsersItems = await ctx.UserMenuRight.Where(_ => _.DBId == GlobalOptions.DataBaseId
+                                                                        && _.LoginName.ToUpper() ==
+                                                                        newUser.NickName.ToUpper())
+                    .ToListAsync();
+                view.Dispatcher.Invoke(() =>
+                {
+                    var tileGroupsTemp = new List<TileGroup>();
+                    var favorite = tileItems.FirstOrDefault(_ => _.Id == 11);
+                    if (favorite != null)
+                    {
+                        var newfavGrp = new TileGroup
+                        {
+                            Id = favorite.Id,
+                            Name = favorite.Name,
+                            Notes = favorite.Note,
+                            Picture = ImageManager.ByteToImage(favorite.Picture),
+                            // ReSharper disable once PossibleInvalidOperationException
+                            OrderBy = favorite.Id
+                        };
+                        tileGroupsTemp.Add(newfavGrp);
+                    }
+
+                    foreach (var grp in tileItems.OrderBy(_ => _.OrderBy))
+                    {
+                        var grpOrd = tileOrders.FirstOrDefault(_ => _.IsGroup && _.TileId == grp.Id);
+                        foreach (var t in grp.KursMenuItem)
+                            if (tileUsersItems.Any(_ => _.MenuId == t.Id) && tileGroupsTemp.All(_ => _.Id != grp.Id))
+                            {
+                                var newGrp = new TileGroup
+                                {
+                                    Id = grp.Id,
+                                    Name = grp.Name,
+                                    Notes = grp.Note,
+                                    Picture = ImageManager.ByteToImage(grp.Picture),
+                                    // ReSharper disable once PossibleInvalidOperationException
+                                    OrderBy = (int)(grpOrd != null ? grpOrd.Order : grp.Id)
+                                };
+                                tileGroupsTemp.Add(newGrp);
+                            }
+                    }
+
+                    var tileGroups = new List<TileGroup>(tileGroupsTemp.OrderBy(_ => _.OrderBy));
+                    foreach (var grp in tileGroups)
+                    {
+                        var tItems = new List<TileItem>();
+                        foreach (var tile in ctx.KursMenuItem.Where(t => t.GroupId == grp.Id).ToList())
+                        {
+                            if (tileUsersItems.All(_ => _.MenuId != tile.Id)) continue;
+                            var ord = tileOrders.FirstOrDefault(_ => !_.IsGroup && _.TileId == tile.Id);
+                            var newTItem = new TileItem
+                            {
+                                Id = tile.Id,
+                                Name = tile.Name,
+                                Notes = tile.Note,
+                                Picture = ImageManager.ByteToImage(tile.Picture),
+                                GroupId = tile.GroupId,
+                                // ReSharper disable once PossibleInvalidOperationException
+                                OrderBy = (int)(ord != null ? ord.Order : tile.Id)
+                            };
+                            tItems.Add(newTItem);
+                        }
+
+                        grp.TileItems = new List<TileItem>(tItems.OrderBy(_ => _.OrderBy));
+                    }
+
+                    newUser.MainTileGroups = new List<TileGroup>(tileGroups.OrderBy(_ => _.OrderBy));
+                    newUser.Groups = GlobalOptions.GetEntities().EXT_GROUPS.Select(
+                                grp => new UserGroup { Id = grp.GR_ID, Name = grp.GR_NAME })
+                            .ToList();
+                    var fav = ctx.UserMenuFavorites.Where(_ => _.DbId == GlobalOptions.DataBaseId
+                                                               && _.UserId == newUser.KursId).ToList();
+                    foreach (var f in fav) newUser.MenuFavorites.Add(f);
+                    GlobalOptions.UserInfo = newUser;
+                    Helper.CurrentUser.UserInfo = newUser;
+                    GlobalOptions.SystemProfile = new SystemProfile();
+                });
+            }
+
+            var refer = new ReferencesKursCache(new KursDBContext(GlobalOptions.SqlConnectionString).Context);
+            refer.StartLoad();
+            GlobalOptions.ReferencesCache = refer;
+            SetUserProfile(newUser.NickName.ToUpper());
+            SetGlobalProfile();
+            using (var dbContext = GlobalOptions.GetEntities())
+            {
+                var bankSql = $"SELECT doc_code FROM HD_114 h WHERE h.USR_ID = {CustomFormat.DecimalToSqlDecimal(GlobalOptions.UserInfo.Id)}";
+                var cashSql = $"SELECT doc_code FROM HD_22 h WHERE h.USR_ID = {CustomFormat.DecimalToSqlDecimal(GlobalOptions.UserInfo.Id)}";
+
+                foreach (var dc in dbContext.Database.SqlQuery<decimal>(bankSql))
+                {
+                    newUser.BankAccess.Add(dc);
+                }
+                foreach (var dc in dbContext.Database.SqlQuery<decimal>(cashSql))
+                {
+                    newUser.CashAccess.Add(dc);
+                }
+            }
+            // ReSharper disable once PossibleNullReferenceException
+            Form.Dispatcher.Invoke(() =>
+            {
+
+                view.IsConnectSuccess = true;
+                DialogResult = true;
+                SaveСache(view.AvatarObj.Source);
+                view.Close();
+            });
+        }
 
         private static void SetGlobalProfile()
         {
@@ -371,7 +548,7 @@ namespace KursAM2.ViewModel.StartLogin
             }
         }
 
-        private bool CheckAndSetUser(out User newUser)
+        private bool CheckAndSetUser(out User newUser, bool isMessageShow = true)
         {
             var WinManager = new WindowManager();
             try
@@ -379,7 +556,7 @@ namespace KursAM2.ViewModel.StartLogin
                 using (var kursSystemCtx = GlobalOptions.KursSystem())
                 {
                     var u = kursSystemCtx.Users.Include(_ => _.DataSources).FirstOrDefault(_ => _.Name == CurrentUser);
-                    if (u == null)
+                    if (u == null && isMessageShow)
                     {
                         WinManager.ShowMessageBox($"Пользователь {CurrentUser} в системе не зарегистрирован",
                             "Ошибка входа");
@@ -387,7 +564,7 @@ namespace KursAM2.ViewModel.StartLogin
                         return false;
                     }
 
-                    if (u.IsDeleted)
+                    if (u.IsDeleted && isMessageShow)
                     {
                         WinManager.ShowMessageBox(
                             $"Пользователю {CurrentUser} запрещен вход в систему.Обратитесь к администратору.",
@@ -396,7 +573,7 @@ namespace KursAM2.ViewModel.StartLogin
                         return false;
                     }
 
-                    if (u.IsDeleted)
+                    if (u.IsDeleted && isMessageShow)
                     {
                         WinManager.ShowMessageBox(
                             $"Пользователю {CurrentUser} не назначен доступ ни к одной базе данных. " +
@@ -477,12 +654,16 @@ namespace KursAM2.ViewModel.StartLogin
                     exx = exx.InnerException;
                 }
 
-                var showMess = @"Недопустимые имя пользователя или пароль.";
-                var TitleText = "Ошибка входа в систему!";
-                var wm = new WindowManager();
-                var dlgRslt = wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
-                    WindowManager.Confirm);
-                
+                if (isMessageShow)
+                {
+                    var showMess = @"Недопустимые имя пользователя или пароль.";
+                    var TitleText = "Ошибка входа в систему!";
+
+                    var wm = new WindowManager();
+                    var dlgRslt = wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
+                        WindowManager.Confirm);
+                }
+
                 newUser = null;
                 return false;
             }

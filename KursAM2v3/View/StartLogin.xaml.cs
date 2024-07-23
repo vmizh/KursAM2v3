@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -9,8 +10,15 @@ using System.Windows.Media.Imaging;
 using Core;
 using DevExpress.Xpf.Editors;
 using Helper;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.ViewModel.StartLogin;
-using Microsoft.Win32;
+using KursDomain;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.ICommon;
+using Newtonsoft.Json;
+using StackExchange.Redis;
+using KeyEventArgs = System.Windows.Input.KeyEventArgs;
+using OpenFileDialog = Microsoft.Win32.OpenFileDialog;
 
 
 // ReSharper disable InconsistentNaming
@@ -23,15 +31,20 @@ namespace KursAM2.View
     {
         private readonly StartLoginViewModel dtx;
         public bool IsConnectSuccess;
+        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ISubscriber mySubscriber;
 
         public StartLogin()
         {
             InitializeComponent();
-
+            
+            mySubscriber = myRedis.Multiplexer.GetSubscriber();
             DataContext = new StartLoginViewModel(this);
             pwdText.Focus();
             dtx = (StartLoginViewModel)DataContext;
         }
+
+        
 
         private void MenuItem_OnClick(object sender, RoutedEventArgs e)
         {
@@ -75,9 +88,28 @@ namespace KursAM2.View
         {
             if (e.Key == Key.Enter)
             {
+                ((StartLoginViewModel)DataContext).SplashLoadBar();
                     ButtonOK.Background =
                         (SolidColorBrush)new BrushConverter().ConvertFrom("#9ae4ff");
-                await ((StartLoginViewModel)DataContext).bnOk_Click(null);
+                if (mySubscriber != null && mySubscriber.IsConnected())
+                {
+                    var message = new RedisMessage
+                    {
+                        
+                        DocumentType = DocumentType.StartLogin,
+                        DocCode = 0,
+                        DocDate = DateTime.Now,
+                        IsDocument = false,
+                        OperationType = RedisMessageDocumentOperationTypeEnum.Execute,
+                        Message = $"{((StartLoginViewModel)DataContext).CurrentUser}"
+                    };
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                    mySubscriber.Publish("StartLogin", json);
+                }
                 
             }
         }
