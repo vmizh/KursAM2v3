@@ -1078,7 +1078,6 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         }
     }
 
-    // изменил НДС в цене на вкл ***
     public bool IsNDSIncludeInPrice
     {
         get => (Entity.SF_NDS_1INCLUD_0NO ?? 0) == 1;

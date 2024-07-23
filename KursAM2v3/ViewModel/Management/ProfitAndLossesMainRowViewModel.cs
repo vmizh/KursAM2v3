@@ -745,7 +745,7 @@ namespace KursAM2.ViewModel.Management
                 {
                     Id = OutBalansAccrualAmmountClient,
                     ParentId = Dohod,
-                    Name = @"Внебалансовые начисления для клиентов",
+                    Name = @"Прямые услуги для клиентов",
                     CalcType = TypeProfitAndLossCalc.IsProfit
                 },
                 new ProfitAndLossesMainRowViewModel

@@ -37,6 +37,7 @@
                                   HorizontalAlignment="Center"
                                   TextBlock.Foreground="White" />
             </Border>
+            <!--
             <ControlTemplate.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Border.Background" TargetName="ButtonBorder"
@@ -51,6 +52,7 @@
                             Value="#9ae4ff" />
                 </Trigger>
             </ControlTemplate.Triggers>
+        -->
         </ControlTemplate>
         <Style x:Key="ButtonRoundedCorner" TargetType="Button">
             <!--<Setter Property="Background" Value="Silver"/>

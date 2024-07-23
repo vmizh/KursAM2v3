@@ -18,7 +18,7 @@
                    FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
-    <DockPanel>
+    <DockPanel Style="{StaticResource DXServices}">
         <control:WindowMenu Height="60" DockPanel.Dock="Top" />
         <dxlc:LayoutControl Orientation="Vertical" Name="mainLayoutControl" Padding="2">
             <dxlc:LayoutGroup Name="layoutGroupHeader" Margin="10,0" Orientation="Vertical">

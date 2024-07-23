@@ -23,7 +23,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            DateStart = DateTime.Today.AddDays(-100);
+            DateStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             DateEnd = DateTime.Today;
         }
 
@@ -34,6 +34,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         private CashOut myCurrentDocument;
         private DateTime myDateEnd;
         private DateTime myDateStart;
+        public override string LayoutName => "CashOutWindowSearchViewModel";
 
         #endregion
 

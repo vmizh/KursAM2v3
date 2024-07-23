@@ -12,7 +12,7 @@ namespace KursAM2.View.Management
     /// <summary>
     ///     Форма "Движение денежных средств"
     /// </summary>
-    public partial class MoneyPeriodMove : ILayout
+    public partial class MoneyPeriodMove //: ILayout
     {
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly Timer myTimer;
@@ -20,9 +20,9 @@ namespace KursAM2.View.Management
         public MoneyPeriodMove()
         {
             InitializeComponent();
-            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
-            Loaded += MoneyPeriodMove_Loaded;
-            Closing += MoneyPeriodMove_Closing;
+            // LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
+            // Loaded += MoneyPeriodMove_Loaded;
+            // Closing += MoneyPeriodMove_Closing;
             myTimer = new Timer();
             myTimer.Elapsed += DisplayTimeEvent;
             myTimer.Interval = int.MaxValue;

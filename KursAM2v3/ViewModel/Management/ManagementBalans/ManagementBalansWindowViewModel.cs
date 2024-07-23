@@ -299,6 +299,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         {
             var ctxk = new KontragentBalansWindowViewModel(CurrentExtendItem.Kontragent.DocCode);
             var frm = new KontragentBalansForm { Owner = Application.Current.MainWindow, DataContext = ctxk };
+            ctxk.Form = frm;
             frm.Show();
         }
 
