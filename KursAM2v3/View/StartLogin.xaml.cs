@@ -29,7 +29,6 @@ namespace KursAM2.View
         private readonly IDatabase myRedis = RedisStore.RedisCache;
         private readonly ISubscriber mySubscriber;
         public bool IsConnectSuccess;
-        public bool IsConnectExecute;
 
         public StartLogin()
         {
