@@ -10,6 +10,11 @@ public enum DocumentType
     [Display(Name = "Не документ")] None = 0,
 
     /// <summary>
+    ///     Не документ
+    /// </summary>
+    [Display(Name = "Login")] StartLogin = 1,
+
+    /// <summary>
     ///     Приходный касовый ордер
     /// </summary>
     [Display(Name = "Приходный касовый ордер")]
