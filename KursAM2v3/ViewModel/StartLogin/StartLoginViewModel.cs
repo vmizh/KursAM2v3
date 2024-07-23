@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -142,12 +143,12 @@ namespace KursAM2.ViewModel.StartLogin
         #region command
 
         // ReSharper disable once InconsistentNaming
-        public ICommand bnOk_ClickCommand
-        {
-            get { return new Command(bnOk_Click, _ => true); }
-        }
+        //public ICommand bnOk_ClickCommand
+        //{
+        //    get { return new Command(bnOk_Click, _ => true); }
+        //}
 
-        private void bnOk_Click(object obj)
+        public async Task bnOk_Click(object obj)
         {
             var view = Form as View.StartLogin;
             if (string.IsNullOrEmpty(CurrentUser) || CurrentUser.Trim() == string.Empty ||
@@ -170,13 +171,13 @@ namespace KursAM2.ViewModel.StartLogin
             if (!CheckAndSetUser(out newUser)) return;
             using (var ctx = GlobalOptions.KursSystem())
             {
-                var tileOrders = GlobalOptions.KursSystem().UserMenuOrder
-                    .Where(_ => _.UserId == newUser.KursId).ToList();
-                var tileItems = ctx.KursMenuGroup.ToList();
-                var tileUsersItems = ctx.UserMenuRight.Where(_ => _.DBId == GlobalOptions.DataBaseId
+                var tileOrders = await GlobalOptions.KursSystem().UserMenuOrder
+                    .Where(_ => _.UserId == newUser.KursId).ToListAsync();
+                var tileItems = await ctx.KursMenuGroup.ToListAsync();
+                var tileUsersItems =await ctx.UserMenuRight.Where(_ => _.DBId == GlobalOptions.DataBaseId
                                                                   && _.LoginName.ToUpper() ==
                                                                   newUser.NickName.ToUpper())
-                    .ToList();
+                    .ToListAsync();
                 var tileGroupsTemp = new List<TileGroup>();
                 var favorite = tileItems.FirstOrDefault(_ => _.Id == 11);
                 if (favorite != null)

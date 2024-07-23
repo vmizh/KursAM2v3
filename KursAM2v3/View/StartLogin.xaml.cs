@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Core;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using Helper;
 using KursAM2.ViewModel.StartLogin;
 using Microsoft.Win32;
-using Brush = System.Windows.Media.Brush;
-using Image = System.Drawing.Image;
+
 
 // ReSharper disable InconsistentNaming
 namespace KursAM2.View
@@ -21,10 +19,8 @@ namespace KursAM2.View
     /// <summary>
     ///     Interaction logic for StartLogin.xaml
     /// </summary>
-    
     public partial class StartLogin
     {
-        private Brush buttonOkColor;
         private readonly StartLoginViewModel dtx;
         public bool IsConnectSuccess;
 
@@ -32,7 +28,6 @@ namespace KursAM2.View
         {
             InitializeComponent();
 
-            buttonOkColor = ButtonNewOk.Background;
             DataContext = new StartLoginViewModel(this);
             pwdText.Focus();
             dtx = (StartLoginViewModel)DataContext;
@@ -76,26 +71,14 @@ namespace KursAM2.View
                 dtx.SelectedDataSource = e.NewValue as DataSource;
         }
 
-        private void ButtonNewOk_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            ((Button)sender).Background= (SolidColorBrush)new BrushConverter().ConvertFrom("#93b3bd");
-        }
-
-        private void ButtonNewOk_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-            ((Button)sender).Background= buttonOkColor;
-        }
-
-        private void ButtonNewOk_Click(object sender, RoutedEventArgs e)
-        {
-            ((Button)sender).Background= (SolidColorBrush)new BrushConverter().ConvertFrom("#9ae4ff");
-        }
-
-        private void pwdText_KeyDown(object sender, KeyEventArgs e)
+        private async void pwdText_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                ButtonNewOk.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#9ae4ff");
+                    ButtonOK.Background =
+                        (SolidColorBrush)new BrushConverter().ConvertFrom("#9ae4ff");
+                await ((StartLoginViewModel)DataContext).bnOk_Click(null);
+                
             }
         }
     }

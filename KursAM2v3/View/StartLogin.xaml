@@ -55,6 +55,31 @@
             </ControlTemplate.Triggers>
         -->
         </ControlTemplate>
+        <Style x:Key="ButtonRoundedCorner" TargetType="Button">
+            <!--<Setter Property="Background" Value="Silver"/>
+            <Setter Property="Foreground" Value="White" />-->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border CornerRadius="25" Background="{TemplateBinding Background}" BorderThickness="2">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
+                            </ContentPresenter>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" 
+                            Value="#edf9fd" />
+                </Trigger>
+                <Trigger Property="IsFocused" Value="true">
+                    <Setter Property="Background"
+                            Value="#9ae4ff" />
+                    
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
     <dxmvvm:Interaction.Behaviors>
         <dx:DXSplashScreenService SplashScreenStartupLocation="CenterOwner">
@@ -117,9 +142,7 @@
             <dxlc:LayoutItem FontSize="16" Foreground="#5f5f5f" Margin="50 0 50 5">
                 <dxe:PasswordBoxEdit x:Name="pwdText" MaxLength="15" Height="35"
                                      Text="{Binding CurrentPassword, NotifyOnSourceUpdated=True, 
-                                     UpdateSourceTrigger=PropertyChanged}" KeyDown="pwdText_KeyDown">
-                 
-                </dxe:PasswordBoxEdit>
+                                     UpdateSourceTrigger=PropertyChanged}" KeyDown="pwdText_KeyDown" />
             </dxlc:LayoutItem>
             <dxlc:LayoutItem Label="Предприятие" FontSize="14" Foreground="#5f5f5f" Margin="50 0 50 5" />
             <dxlc:LayoutItem FontSize="16" Foreground="#5f5f5f" Margin="50 0 50 5">
@@ -139,29 +162,19 @@
                 </dxe:ComboBoxEdit>
             </dxlc:LayoutItem>
             <dxlc:LayoutItem HorizontalAlignment="Center" Margin="0 20 0 0">
-                <!--
-                <Button Template="{StaticResource ButtonTemplate}" IsDefault="True"
-                        -->
-                <Button Name="ButtonNewOk" 
-                        Template="{StaticResource ButtonTemplate}"
+                <Button Style="{StaticResource ButtonRoundedCorner}"
+                        Name="ButtonOK"
                         Height="50" Width="150"
-                        Margin="0" Padding="0" Command="{Binding bnOk_ClickCommand}" MouseMove="ButtonNewOk_MouseMove" MouseLeave="ButtonNewOk_MouseLeave" Click="ButtonNewOk_Click" >
+                        Margin="0" Padding="0" Command="{Binding bnOk_ClickCommand}">
                     <TextBlock Text="Войти" FontSize="20" Foreground="#5f5f5f" />
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="20"/>
+                        </Style>
+                    </Button.Resources>
                 </Button>
             </dxlc:LayoutItem>
-            <!--<dxlc:LayoutItem FontSize="16" 
-                             Foreground="#5f5f5f" 
-                             Margin="50 0 50 5">
-                --><!--<dxb:MainMenuControl DockPanel.Dock="Top">
-                    <dxb:MainMenuControl.Items>
-                        <dxb:BarSplitButtonItem Content="Цветовая тема">
-                            <dxmvvm:Interaction.Behaviors>
-                                <dxb:BarSplitItemThemeSelectorBehavior Changed="BarSplitItemThemeSelectorBehavior_Changed" />
-                            </dxmvvm:Interaction.Behaviors>
-                        </dxb:BarSplitButtonItem>
-                    </dxb:MainMenuControl.Items>
-                </dxb:MainMenuControl>--><!--
-            </dxlc:LayoutItem>-->
+            
             <dxlc:LayoutItem Margin="0 10 0 0">
                 <Label Name="version" Content="{Binding VersionValue}" 
                        Foreground="#a0a0a0" 
