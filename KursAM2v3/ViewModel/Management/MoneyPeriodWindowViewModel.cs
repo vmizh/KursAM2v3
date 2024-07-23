@@ -51,6 +51,8 @@ namespace KursAM2.ViewModel.Management
             TimeOutIndex = 0;
         }
 
+        public override string LayoutName => "MoneyPeriodWindowViewModel";
+
         public bool IsIncludeVzaimozachet
         {
             get => myIncludeVzaimozachet;

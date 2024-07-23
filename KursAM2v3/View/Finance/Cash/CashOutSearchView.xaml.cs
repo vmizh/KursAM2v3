@@ -11,15 +11,15 @@ namespace KursAM2.View.Finance.Cash
     /// <summary>
     ///     Interaction logic for CashOutSearchView.xaml
     /// </summary>
-    public partial class CashOutSearchView : ILayout
+    public partial class CashOutSearchView //: ILayout
     {
         public CashOutSearchView()
         {
             InitializeComponent(); 
             
-            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
-            Loaded += CashOutSearchView_Loaded;
-            Closing += CashOutSearchView_Closing;
+            // LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
+            // Loaded += CashOutSearchView_Loaded;
+            // Closing += CashOutSearchView_Closing;
         }
 
         private void CashOutSearchView_Closing(object sender, CancelEventArgs e)

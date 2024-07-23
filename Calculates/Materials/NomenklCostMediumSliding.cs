@@ -71,7 +71,7 @@ namespace Calculates.Materials
                         {
                             RowNumber = currentRowNumber,
                             NomenklDC = nomDC,
-                            Note = d.SD_24.DD_NOTES + " " + d.TD_26?.SFT_TEXT + d.TD_84?.SFT_TEXT,
+                            Note = d.DDT_NOTE + " " + d.TD_26?.SFT_TEXT + d.TD_84?.SFT_TEXT,
                             CalcPrice = prc.Item1,
                             CalcPriceNaklad = prc.Item2,
                             DocDate = d.SD_24.DD_DATE,

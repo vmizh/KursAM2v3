@@ -905,7 +905,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void RefreshData(object obj)
         {
-            ShowNotify("Обновление документа");
             base.RefreshData(obj);
             myUsedNomenklsDC.Clear();
             if (IsCanSaveData)

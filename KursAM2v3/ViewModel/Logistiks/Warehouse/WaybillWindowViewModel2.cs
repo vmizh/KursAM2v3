@@ -771,6 +771,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 DataContext = dtx,
                 Owner = Application.Current.MainWindow
             };
+            dtx.Form = dialog;
             dialog.ShowDialog();
             if (dtx.DialogResult == MessageResult.OK)
             {
