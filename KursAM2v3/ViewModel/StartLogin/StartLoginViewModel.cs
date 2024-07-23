@@ -84,10 +84,18 @@ namespace KursAM2.ViewModel.StartLogin
         private async void StartLoad(RedisValue message)
         {
             if (string.IsNullOrWhiteSpace(message)) return;
-            var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
-            if (msg == null) return;
-            if(msg.Message == CurrentUser)
-                await bnOk_ClickAsync();
+            try
+            {
+                var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
+                if (msg == null) return;
+                if (msg.Message == CurrentUser)
+                    await bnOk_ClickAsync();
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine(@"Ошибка десериализации в методе StartLoginViewModel.StartLoad");
+                Console.WriteLine(ex.Message);
+            }
         }
 
 

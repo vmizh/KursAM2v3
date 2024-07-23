@@ -5,8 +5,6 @@
              xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
              xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
              xmlns:splashWindow="clr-namespace:KursAM2.View.SplashWindow"
-             xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
-             xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
              x:Class="KursAM2.View.StartLogin"
              Title="Вход в КурсАМ2"
              Icon="pack://siteoforigin:,,,/Images/User1.png" 
