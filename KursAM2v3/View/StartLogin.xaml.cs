@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Core;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using Helper;
 using KursAM2.ViewModel.StartLogin;
 using Microsoft.Win32;
+
 
 // ReSharper disable InconsistentNaming
 namespace KursAM2.View
@@ -24,7 +27,7 @@ namespace KursAM2.View
         public StartLogin()
         {
             InitializeComponent();
-            
+
             DataContext = new StartLoginViewModel(this);
             pwdText.Focus();
             dtx = (StartLoginViewModel)DataContext;
@@ -66,6 +69,17 @@ namespace KursAM2.View
         {
             if (dtx != null)
                 dtx.SelectedDataSource = e.NewValue as DataSource;
+        }
+
+        private async void pwdText_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                    ButtonOK.Background =
+                        (SolidColorBrush)new BrushConverter().ConvertFrom("#9ae4ff");
+                await ((StartLoginViewModel)DataContext).bnOk_Click(null);
+                
+            }
         }
     }
 }
