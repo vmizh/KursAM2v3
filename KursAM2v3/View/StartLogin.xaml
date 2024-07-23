@@ -16,7 +16,8 @@
              Width="400" Height="750" 
              VerticalAlignment="Stretch"
              FontFamily="pack://application:,,,/Font/#Roboto Light"
-             FontStyle="Normal">
+             FontStyle="Normal"
+             >
     <Window.Resources>
         <DataTemplate x:Key="dialogErrorTemplate">
                 <dxe:TextEdit 
@@ -113,7 +114,8 @@
             </dx:DialogService.DialogStyle>
         </dx:DialogService>
     </dxmvvm:Interaction.Behaviors>
-    <dxlc:LayoutControl x:Name="MainLayout" Background="#FFF" Margin="0" Padding="0">
+    <dxlc:LayoutControl x:Name="MainLayout" Background="#FFF" Margin="0" Padding="0"
+                        IsEnabled="{Binding IsConnectNotExecute}">
         <dxlc:LayoutGroup Orientation="Vertical">
             <dxlc:LayoutItem Margin="0 0 0 30" Height="200" Width="200">
                 <Image x:Name="AvatarObj"

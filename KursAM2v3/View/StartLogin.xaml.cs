@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -12,9 +10,7 @@ using DevExpress.Xpf.Editors;
 using Helper;
 using KursAM2.Repositories.RedisRepository;
 using KursAM2.ViewModel.StartLogin;
-using KursDomain;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.ICommon;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using KeyEventArgs = System.Windows.Input.KeyEventArgs;
@@ -30,21 +26,21 @@ namespace KursAM2.View
     public partial class StartLogin
     {
         private readonly StartLoginViewModel dtx;
-        public bool IsConnectSuccess;
         private readonly IDatabase myRedis = RedisStore.RedisCache;
         private readonly ISubscriber mySubscriber;
+        public bool IsConnectSuccess;
+        public bool IsConnectExecute;
 
         public StartLogin()
         {
             InitializeComponent();
-            
+
             mySubscriber = myRedis.Multiplexer.GetSubscriber();
             DataContext = new StartLoginViewModel(this);
             pwdText.Focus();
             dtx = (StartLoginViewModel)DataContext;
         }
 
-        
 
         private void MenuItem_OnClick(object sender, RoutedEventArgs e)
         {
@@ -88,14 +84,14 @@ namespace KursAM2.View
         {
             if (e.Key == Key.Enter)
             {
-                ((StartLoginViewModel)DataContext).SplashLoadBar();
-                    ButtonOK.Background =
-                        (SolidColorBrush)new BrushConverter().ConvertFrom("#9ae4ff");
+                
+                ((StartLoginViewModel)DataContext).IsConnectNotExecute = false;
+                ButtonOK.Background =
+                    (SolidColorBrush)new BrushConverter().ConvertFrom("#9ae4ff");
                 if (mySubscriber != null && mySubscriber.IsConnected())
                 {
                     var message = new RedisMessage
                     {
-                        
                         DocumentType = DocumentType.StartLogin,
                         DocCode = 0,
                         DocDate = DateTime.Now,
@@ -110,7 +106,6 @@ namespace KursAM2.View
                     var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
                     mySubscriber.Publish("StartLogin", json);
                 }
-                
             }
         }
     }

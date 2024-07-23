@@ -45,10 +45,12 @@ namespace KursAM2.ViewModel.StartLogin
         private string myVersionValue;
         private readonly IDatabase myRedis = RedisStore.RedisCache;
         private readonly ISubscriber mySubscriber;
+        private bool myIsConnectNotExecute;
 
 
         public StartLoginViewModel(Window formWindow)
         {
+            IsConnectNotExecute = true;
             if (myRedis != null)
             {
                 mySubscriber = myRedis.Multiplexer.GetSubscriber();
@@ -94,6 +96,17 @@ namespace KursAM2.ViewModel.StartLogin
 
         public ObservableCollection<DataSource> ComboBoxItemSource { set; get; } =
             new ObservableCollection<DataSource>();
+
+        public bool IsConnectNotExecute
+        {
+            get => myIsConnectNotExecute;
+            set
+            {
+                if (value == myIsConnectNotExecute) return;
+                myIsConnectNotExecute = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public DataSource SelectedDataSource
         {
@@ -316,6 +329,7 @@ namespace KursAM2.ViewModel.StartLogin
                         WindowManager.Confirm);
                     view.ButtonOK.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#edf9fd");
                 });
+                IsConnectNotExecute = true;
                 return;
             }
 
@@ -336,7 +350,7 @@ namespace KursAM2.ViewModel.StartLogin
                         WindowManager.Confirm);
                     view.ButtonOK.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#edf9fd");
                 });
-
+                IsConnectNotExecute = true;
                 return;
             }
 
@@ -451,6 +465,7 @@ namespace KursAM2.ViewModel.StartLogin
                 SaveСache(view.AvatarObj.Source);
                 view.Close();
             });
+            IsConnectNotExecute = true;
         }
 
         private static void SetGlobalProfile()
