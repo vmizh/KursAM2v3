@@ -79,14 +79,13 @@ namespace KursAM2.View
                 dtx.SelectedDataSource = e.NewValue as DataSource;
         }
 
-        private async void pwdText_KeyDown(object sender, KeyEventArgs e)
+        private void pwdText_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter && ((StartLoginViewModel)DataContext).IsConnectNotExecute  != false)
             {
                 
                 ((StartLoginViewModel)DataContext).IsConnectNotExecute = false;
-                ButtonOK.Background =
-                    (SolidColorBrush)new BrushConverter().ConvertFrom("#9ae4ff");
+                ButtonOK.Tag = "Active";
                 if (mySubscriber != null && mySubscriber.IsConnected())
                 {
                     var message = new RedisMessage
@@ -106,6 +105,11 @@ namespace KursAM2.View
                     mySubscriber.Publish("StartLogin", json);
                 }
             }
+        }
+
+        private void ButtonOK_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

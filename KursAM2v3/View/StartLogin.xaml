@@ -36,34 +36,20 @@
                                   HorizontalAlignment="Center"
                                   TextBlock.Foreground="White" />
             </Border>
-            <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Border.Background" TargetName="ButtonBorder"
-                            Value="#edf9fd" />
-                    <Setter Property="Border.BorderBrush" TargetName="ButtonBorder"
-                            Value="#93b3bd" />
-                </Trigger>
-                <Trigger Property="IsFocused" Value="true">
-                    <Setter Property="Border.Background" TargetName="ButtonBorder"
-                            Value="#9ae4ff" />
-                    <Setter Property="Border.BorderBrush" TargetName="ButtonBorder"
-                            Value="#9ae4ff" />
-                </Trigger>
-            </ControlTemplate.Triggers>
         </ControlTemplate>
-        <Style x:Key="ButtonRoundedCorner" TargetType="Button">
-            <!--<Setter Property="Background" Value="Silver"/>
-            <Setter Property="Foreground" Value="White" />-->
-            <Setter Property="Template">
+        <Style x:Name="ButtonRoundedCornerStyle" x:Key="ButtonRoundedCorner" TargetType="Button">
+           <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border CornerRadius="25" Background="{TemplateBinding Background}" BorderThickness="2">
+                        <Border CornerRadius="25" Background="{TemplateBinding Background}" 
+                                BorderThickness="0,1"  BorderBrush="#a0a0a0">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center">
                             </ContentPresenter>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Setter Property="Background" Value="Transparent"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" 
@@ -72,7 +58,10 @@
                 <Trigger Property="IsFocused" Value="true">
                     <Setter Property="Background"
                             Value="#9ae4ff" />
-                    
+                </Trigger>
+                <Trigger Property="Tag" Value="Active">
+                    <Setter Property="Background"
+                            Value="#9ae4ff" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -86,7 +75,7 @@
                         AnimationOne="True"
                         IndicatorBrush="#edf9fd"
                         IndicatorSecondBrush="#9ae4ff"
-                        ProgressLabelBrus="#9ae4ff">   <!--5e92a8-->
+                        ProgressLabelBrus="#9ae4ff">  
                     </splashWindow:DebitorCreditorKontrCalcSplashView>
                 </DataTemplate>
             </dx:DXSplashScreenService.ViewTemplate>
@@ -162,13 +151,9 @@
                 <Button Style="{StaticResource ButtonRoundedCorner}"
                         Name="ButtonOK"
                         Height="50" Width="150"
-                        Margin="0" Padding="0" Command="{Binding bnOk_ClickCommand}">
-                    <TextBlock Text="Войти" FontSize="20" Foreground="#5f5f5f" />
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="20"/>
-                        </Style>
-                    </Button.Resources>
+                        BorderBrush="#5f5f5f"
+                        Margin="0" Padding="0" Command="{Binding bnOk_ClickCommand}" Click="ButtonOK_Click" >
+                    <TextBlock Text="Войти" FontSize="20" Foreground="#5f5f5f"  />
                 </Button>
             </dxlc:LayoutItem>
             

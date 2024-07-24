@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -206,6 +207,7 @@ namespace KursAM2.ViewModel.StartLogin
                 var TitleText = "Ошибка входа в систему";
                 var dlgRslt = wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
                     WindowManager.Confirm);
+                view.Dispatcher.Invoke(() => { view.pwdText.Focus(); });
                 return;
             }
 
@@ -214,7 +216,11 @@ namespace KursAM2.ViewModel.StartLogin
             //SplashLoadBar();
             // ReSharper disable once InlineOutVariableDeclaration
             User newUser;
-            if (!CheckAndSetUser(out newUser)) return;
+            if (!CheckAndSetUser(out newUser))
+            {
+                view.Dispatcher.Invoke(() => { view.pwdText.Focus(); });
+                return;
+            }
             using (var ctx = GlobalOptions.KursSystem())
             {
                 var tileOrders = GlobalOptions.KursSystem().UserMenuOrder
@@ -335,7 +341,8 @@ namespace KursAM2.ViewModel.StartLogin
                 {
                     var dlgRslt = wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
                         WindowManager.Confirm);
-                    view.ButtonOK.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#edf9fd");
+                    view.ButtonOK.Tag = "NotActive";
+                    
                 });
                 IsConnectNotExecute = true;
                 return;
@@ -356,7 +363,7 @@ namespace KursAM2.ViewModel.StartLogin
                     var wm = new WindowManager();
                     var dlgRslt = wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
                         WindowManager.Confirm);
-                    view.ButtonOK.Background = (SolidColorBrush)new BrushConverter().ConvertFrom("#edf9fd");
+                    view.ButtonOK.Tag = "NotActive";
                 });
                 IsConnectNotExecute = true;
                 return;
