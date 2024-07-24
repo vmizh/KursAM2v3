@@ -37,27 +37,9 @@
                                   HorizontalAlignment="Center"
                                   TextBlock.Foreground="White" />
             </Border>
-            <!--
-            <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Border.Background" TargetName="ButtonBorder"
-                            Value="#edf9fd" />
-                    <Setter Property="Border.BorderBrush" TargetName="ButtonBorder"
-                            Value="#93b3bd" />
-                </Trigger>
-                <Trigger Property="IsFocused" Value="true">
-                    <Setter Property="Border.Background" TargetName="ButtonBorder"
-                            Value="#9ae4ff" />
-                    <Setter Property="Border.BorderBrush" TargetName="ButtonBorder"
-                            Value="#9ae4ff" />
-                </Trigger>
-            </ControlTemplate.Triggers>
-        -->
         </ControlTemplate>
-        <Style x:Key="ButtonRoundedCorner" TargetType="Button">
-            <!--<Setter Property="Background" Value="Silver"/>
-            <Setter Property="Foreground" Value="White" />-->
-            <Setter Property="Template">
+        <Style x:Name="ButtonRoundedCornerStyle" x:Key="ButtonRoundedCorner" TargetType="Button">
+           <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border CornerRadius="25" Background="{TemplateBinding Background}" BorderThickness="2">
@@ -75,7 +57,10 @@
                 <Trigger Property="IsFocused" Value="true">
                     <Setter Property="Background"
                             Value="#9ae4ff" />
-                    
+                </Trigger>
+                <Trigger Property="Tag" Value="Active">
+                    <Setter Property="Background"
+                            Value="#9ae4ff" />
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -167,11 +152,6 @@
                         Height="50" Width="150"
                         Margin="0" Padding="0" Command="{Binding bnOk_ClickCommand}">
                     <TextBlock Text="Войти" FontSize="20" Foreground="#5f5f5f" />
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="20"/>
-                        </Style>
-                    </Button.Resources>
                 </Button>
             </dxlc:LayoutItem>
             
