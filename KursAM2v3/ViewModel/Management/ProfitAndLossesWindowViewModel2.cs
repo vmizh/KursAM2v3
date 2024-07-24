@@ -299,9 +299,9 @@ namespace KursAM2.ViewModel.Management
                             frm?.NavigateTo(typeof(CurrencyConvertView));
                             UpdateBalansOper(StartDate, EndDate);
                             break;
-                        case "4cea8d09-030e-49e8-b6f7-eb83d5e0d6ea":
-                            frm?.NavigateTo(typeof(AccruedOfSupplierUI));
-                            break;
+                        // case "4cea8d09-030e-49e8-b6f7-eb83d5e0d6ea":
+                        //     frm?.NavigateTo(typeof(AccruedOfSupplierUI));
+                        //     break;
                         default:
                             frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
                             break;

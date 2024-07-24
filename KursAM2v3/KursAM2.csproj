@@ -592,9 +592,6 @@
     <Compile Include="View\Management\KontragentBalansView.xaml.cs">
       <DependentUpon>KontragentBalansView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Management\ProfitAndLossesControls\AccruedOfSupplierUI.xaml.cs">
-      <DependentUpon>AccruedOfSupplierUI.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\Management\ProfitAndLossesControls\CurrencyConvertView.xaml.cs">
       <DependentUpon>CurrencyConvertView.xaml</DependentUpon>
     </Compile>
@@ -1481,10 +1478,6 @@
     <Page Include="View\Management\KontragentBalansView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Management\ProfitAndLossesControls\AccruedOfSupplierUI.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Management\ProfitAndLossesControls\CurrencyConvertView.xaml">
       <SubType>Designer</SubType>
