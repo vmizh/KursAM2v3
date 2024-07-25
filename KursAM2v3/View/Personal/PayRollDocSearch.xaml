@@ -79,17 +79,17 @@
                             <dxg:GridColumn Name="col1" Header="Дата" ReadOnly="True" FieldName="Date" />
                             <dxg:GridColumn Name="col2" Header="RUB" ReadOnly="True" FieldName="RUB">
                                 <dxg:GridColumn.EditSettings>
-                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                    <dxe:CalcEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                             <dxg:GridColumn Name="col3" Header="USD" ReadOnly="True" FieldName="USD">
                                 <dxg:GridColumn.EditSettings>
-                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                    <dxe:CalcEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                             <dxg:GridColumn Name="col4" Header="EUR" ReadOnly="True" FieldName="EUR">
                                 <dxg:GridColumn.EditSettings>
-                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                    <dxe:CalcEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                         </dxg:GridControl.Columns>
@@ -142,17 +142,17 @@
                             <dxg:GridColumn Name="tcol1" Header="Дата" ReadOnly="True" FieldName="Date" />
                             <dxg:GridColumn Name="tcol2" Header="RUB" ReadOnly="True" FieldName="RUB">
                                 <dxg:GridColumn.EditSettings>
-                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                    <dxe:CalcEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                             <dxg:GridColumn Name="tcol3" Header="USD" ReadOnly="True" FieldName="USD">
                                 <dxg:GridColumn.EditSettings>
-                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                    <dxe:CalcEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                             <dxg:GridColumn Name="tcol4" Header="EUR" ReadOnly="True" FieldName="EUR">
                                 <dxg:GridColumn.EditSettings>
-                                    <dxe:TextEditSettings DisplayFormat="n2" />
+                                    <dxe:CalcEditSettings DisplayFormat="n2" />
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                         </dxg:GridControl.Columns>

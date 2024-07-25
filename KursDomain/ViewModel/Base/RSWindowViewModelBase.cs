@@ -19,7 +19,9 @@ using DevExpress.XtraGrid;
 using Helper;
 using KursDomain;
 using KursDomain.Documents.Invoices;
+using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.References;
 using KursDomain.ViewModel.Base2;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 using ILayout = LayoutManager.ILayout;
@@ -274,6 +276,13 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     {
     }
 
+    private bool CheckCurrencyColumn(string name)
+    {
+        if (name == "RUB")
+            name = "RUR";
+        return GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<IName>().Select(_ => _.Name).Contains(name);
+    }
+
     protected virtual void OnWindowLoaded(object obj)
     {
         if (IsLayoutLoaded) return;
@@ -322,7 +331,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                             ed.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
                         else if (col.Name.ToLower().Contains("price") ||
                                  col.Name.ToLower().Contains("summa")
-                                 || col.Name.ToLower().Contains("sum"))
+                                 || col.Name.ToLower().Contains("sum") || CheckCurrencyColumn(col.FieldName))
                             ed.DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat();
                         if (!col.IsEnabled || col.ReadOnly)
                             ed.AllowDefaultButton = false;
@@ -338,6 +347,18 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                         || col.FieldType == typeof(float) || col.FieldType == typeof(float?)
                         || col.FieldType == typeof(double) || col.FieldType == typeof(double?))
                     {
+                        if (col.EditSettings == null)
+                        {
+                            col.EditSettings = new CalcEditSettings();
+                            if (col.Name.ToLower().Contains("quan"))
+                                col.EditSettings.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
+                            else if (col.Name.ToLower().Contains("price") ||
+                                     col.Name.ToLower().Contains("summa")
+                                     || col.Name.ToLower().Contains("sum") || CheckCurrencyColumn(col.FieldName))
+                                col.EditSettings.DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat();
+                            if (!col.IsEnabled || col.ReadOnly)
+                                ((CalcEditSettings)col.EditSettings).AllowDefaultButton = false;
+                        }
                         if (IsSummaryExists(grid.TotalSummary, col.FieldName, SummaryItemType.Sum)) continue;
                         grid.TotalSummary.Add(new GridSummaryItem
                         {
