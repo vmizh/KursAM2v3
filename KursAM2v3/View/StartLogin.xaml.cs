@@ -81,7 +81,7 @@ namespace KursAM2.View
 
         private void pwdText_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter && ((StartLoginViewModel)DataContext).IsConnectNotExecute  != false)
+            if (e.Key == Key.Enter && ((StartLoginViewModel)DataContext).IsConnectNotExecute)
             {
                 
                 ((StartLoginViewModel)DataContext).IsConnectNotExecute = false;

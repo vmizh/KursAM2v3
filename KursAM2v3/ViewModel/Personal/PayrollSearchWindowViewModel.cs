@@ -240,6 +240,7 @@ namespace KursAM2.ViewModel.Personal
                 Owner = Application.Current.MainWindow,
                 DataContext = pr
             };
+            pr.Form= frm;
             frm.Show();
         }
 
@@ -254,6 +255,7 @@ namespace KursAM2.ViewModel.Personal
             var dtx = pr.Copy();
             pr.myState = RowStatus.NewRow;
             var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = dtx };
+            dtx.Form = frm;
             frm.Show();
             foreach (var e in dtx.Employees)
             {
