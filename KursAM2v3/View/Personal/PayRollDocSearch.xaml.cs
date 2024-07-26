@@ -51,6 +51,7 @@ namespace KursAM2.View.Personal
                 if (!(gridVedomost.CurrentItem is PayRollVedomostSearch row)) return;
                 var ctx = new PayRollVedomostWindowViewModel(row.Id);
                 var form = new PayRollVedomost { Owner = this };
+                ctx.Form= form;
                 form.Show();
                 form.DataContext = ctx;
             }
@@ -80,6 +81,7 @@ namespace KursAM2.View.Personal
 
                 var pr = new PayRollVedomostWindowViewModel(row.Id);
                 var form = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = pr };
+                pr.Form= form;
                 form.Show();
             }
             catch (Exception ex)
@@ -107,6 +109,7 @@ namespace KursAM2.View.Personal
             var pr = new PayRollVedomostWindowViewModel(row.Id);
             var newVed = pr.Copy();
             var form = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = newVed };
+            newVed.Form= form;
             form.Show();
         }
 
@@ -128,6 +131,7 @@ namespace KursAM2.View.Personal
                 var pr = new PayRollVedomostWindowViewModel(row.Id);
                 var dtx = pr.Copy();
                 var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = dtx };
+                dtx.Form=frm;
                 frm.Show();
                 foreach (var emp in dtx.Employees)
                 {

@@ -375,6 +375,7 @@ namespace KursAM2.ViewModel.Personal
         {
             var ved = CreateNew();
             var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = ved };
+            ved.Form = frm;
             frm.Show();
         }
 
@@ -382,6 +383,7 @@ namespace KursAM2.ViewModel.Personal
         {
             var dtx = Copy();
             var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = dtx };
+            dtx.Form= frm;
             frm.Show();
             foreach (var e in dtx.Employees)
             {
@@ -411,6 +413,7 @@ namespace KursAM2.ViewModel.Personal
             var dtx = Copy();
             dtx.myState = RowStatus.NewRow;
             var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = dtx };
+            dtx.Form = frm;
             frm.Show();
         }
 
