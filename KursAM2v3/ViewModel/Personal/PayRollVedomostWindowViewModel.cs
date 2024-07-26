@@ -13,10 +13,8 @@ using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core;
-using KursAM2.Managers;
 using KursAM2.View.Personal;
 using KursDomain;
-using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Employee;
 using KursDomain.ICommon;
 using KursDomain.Menu;
@@ -51,8 +49,6 @@ namespace KursAM2.ViewModel.Personal
             isChange = false;
         }
 
-        public override string LayoutName => "PayRollVedomostWindowViewModel";
-
         public PayRollVedomostWindowViewModel(string id) : this()
         {
             Id = Guid.Parse(id);
@@ -80,6 +76,8 @@ namespace KursAM2.ViewModel.Personal
             if (emp != null)
                 Employee = Employees.SingleOrDefault(_ => _.Employee.DocCode == emp.DocCode);
         }
+
+        public override string LayoutName => "PayRollVedomostWindowViewModel";
 
         public ICommand AddNewEmployeeCommand => new DelegateCommand(AddNewEmployee);
         public ICommand ShowMessageBoxCommand => new DelegateCommand(ShowMessageBox);
@@ -383,7 +381,7 @@ namespace KursAM2.ViewModel.Personal
         {
             var dtx = Copy();
             var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = dtx };
-            dtx.Form= frm;
+            dtx.Form = frm;
             frm.Show();
             foreach (var e in dtx.Employees)
             {
@@ -724,6 +722,7 @@ namespace KursAM2.ViewModel.Personal
 
                         emp.RaisePropertyChanged("Rows");
                     }
+
                     //TODO Сохранить последний документ
                     //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.PayRollVedomost, Id, DocCode, Creator,
                     //    "", Description);
@@ -749,8 +748,10 @@ namespace KursAM2.ViewModel.Personal
             }
         }
 
-        public override bool IsCanSaveData => isChange || Employees.Any(_ => _.State != RowStatus.NotEdited) ||
-                                              RemoveEmployees.Count > 0;
+        
+
+        public override bool IsCanSaveData => (isChange || Employees.Any(_ => _.State != RowStatus.NotEdited) ||
+                                              RemoveEmployees.Count > 0) && (Employees.All(emp => !emp.Rows.Any(_ => _.PRType == null || _.Crs == null))) ;
 
         public ICommand AddNachCommand
         {

@@ -11,7 +11,6 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -194,7 +193,7 @@ namespace KursAM2.ViewModel.Personal
         public override void DocNewEmpty(object form)
         {
             var ved = PayRollVedomostWindowViewModel.CreateNew();
-            var frm = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = ved };
+            var frm = new PayRollVedomost { Owner = Application.Current.MainWindow};
             ved.Form = frm;
             frm.Show();
         }

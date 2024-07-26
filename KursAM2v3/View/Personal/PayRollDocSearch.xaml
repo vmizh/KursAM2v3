@@ -50,8 +50,8 @@
                                      EnableSmartColumnsGeneration="True"
                                      dx:DXSerializer.StoreLayoutMode="ALL"
                                      dx:DXSerializer.SerializationID="gridVedomost"
-                                     dxg:GridSerializationOptions.AddNewColumns="False"
-                                     dxg:GridSerializationOptions.RemoveOldColumns="False"
+                                     dxg:GridSerializationOptions.AddNewColumns="True"
+                                     dxg:GridSerializationOptions.RemoveOldColumns="True"
                                      SelectionMode="Row"
                                      HorizontalAlignment="Stretch"
                                      VerticalAlignment="Stretch"
@@ -93,12 +93,6 @@
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                         </dxg:GridControl.Columns>
-                        <dxg:GridControl.TotalSummary>
-                            <dxg:GridSummaryItem FieldName="Date" SummaryType="Count" />
-                            <dxg:GridSummaryItem FieldName="RUBSumma" SummaryType="Sum" DisplayFormat="n2" />
-                            <dxg:GridSummaryItem FieldName="USDSumma" SummaryType="Sum" DisplayFormat="n2" />
-                            <dxg:GridSummaryItem FieldName="EURSumma" SummaryType="Sum" DisplayFormat="n2" />
-                        </dxg:GridControl.TotalSummary>
                         <dxg:GridControl.View>
                             <dxg:TableView AllowPerPixelScrolling="True"
                                            ShowTotalSummary="True" 
@@ -113,8 +107,8 @@
                                      EnableSmartColumnsGeneration="True"
                                      dx:DXSerializer.StoreLayoutMode="ALL"
                                      dx:DXSerializer.SerializationID="gridTemplate"
-                                     dxg:GridSerializationOptions.AddNewColumns="False"
-                                     dxg:GridSerializationOptions.RemoveOldColumns="False"
+                                     dxg:GridSerializationOptions.AddNewColumns="True"
+                                     dxg:GridSerializationOptions.RemoveOldColumns="True"
                                      HorizontalAlignment="Stretch"
                                      VerticalAlignment="Stretch"
                                      SelectionMode="Row"
@@ -156,12 +150,12 @@
                                 </dxg:GridColumn.EditSettings>
                             </dxg:GridColumn>
                         </dxg:GridControl.Columns>
-                        <dxg:GridControl.TotalSummary>
-                            <dxg:GridSummaryItem FieldName="Date" SummaryType="Count" />
-                            <dxg:GridSummaryItem FieldName="RUB" SummaryType="Sum" DisplayFormat="n2" />
-                            <dxg:GridSummaryItem FieldName="USD" SummaryType="Sum" DisplayFormat="n2" />
-                            <dxg:GridSummaryItem FieldName="EUR" SummaryType="Sum" DisplayFormat="n2" />
-                        </dxg:GridControl.TotalSummary>
+                        <dxg:GridControl.View>
+                            <dxg:TableView AllowPerPixelScrolling="True"
+                                           ShowTotalSummary="True" 
+                   
+                            />
+                        </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>
             </dxlc:LayoutGroup>

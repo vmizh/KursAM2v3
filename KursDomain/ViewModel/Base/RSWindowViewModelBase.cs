@@ -274,117 +274,84 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     /// </summary>
     public virtual void UpdateVisualObjects()
     {
-    }
-
-    private bool CheckCurrencyColumn(string name)
-    {
-        if (name == "RUB")
-            name = "RUR";
-        return GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<IName>().Select(_ => _.Name).Contains(name);
-    }
-
-    protected virtual void OnWindowLoaded(object obj)
-    {
-        if (IsLayoutLoaded) return;
-        if (LayoutManager == null) OnLayoutInitial(null); 
         var grids = Form.FindVisualChildren<GridControl>().ToList();
         var trees = Form.FindVisualChildren<TreeListControl>().ToList();
-        try
-        {
-            foreach (var col in grids.SelectMany(grid => grid.Columns))
-            {
-                col.Name = col.FieldName;
-            }
-            foreach (var col in trees.SelectMany(grid => grid.Columns))
-            {
-                col.Name = col.FieldName;
-            }
+         if (grids.Count > 0)
+             foreach (var grid in grids)
+             {
+                 grid.FilterString = null;
+                 grid.TotalSummary.Clear();
+                 foreach (var col in grid.Columns)
+                 {
+                     col.AutoFilterCondition = AutoFilterCondition.Contains;
+                     col.ColumnFilterMode = ColumnFilterMode.DisplayText;
+                     col.SortMode = ColumnSortMode.DisplayText;
 
-            LayoutManager?.Load();
-        }
-        catch (Exception ex)
-        {
-            WindowManager.ShowError(ex);
-        }
+                     if (col.FieldType == typeof(string))
+                         col.EditSettings = new TextEditSettings
+                         {
+                             SelectAllOnMouseUp = true
+                         };
+                     else if (col.FieldType == typeof(decimal) ||
+                              col.FieldType == typeof(decimal?)
+                              || col.FieldType == typeof(float) || col.FieldType == typeof(float?)
+                              || col.FieldType == typeof(double) || col.FieldType == typeof(double?))
+                     {
+                         col.ColumnFilterMode = ColumnFilterMode.Value;
+                         col.SortMode = ColumnSortMode.Value;
+                         if (col.EditSettings == null)
+                             col.EditSettings = new CalcEditSettings();
+                         if (col.Name.ToLower().Contains("quan"))
+                         {
+                             col.EditSettings.DisplayFormat =
+                                 GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
+                             if (!col.IsEnabled || col.ReadOnly)
+                                 ((CalcEditSettings)col.EditSettings).AllowDefaultButton = false;
+                             grid.TotalSummary.Add(new GridSummaryItem
+                             {
+                                 DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat(),
+                                 FieldName = col.FieldName,
+                                 SummaryType = SummaryItemType.Sum,
+                                 ShowInColumn = col.FieldName
+                             });
+                         }
+                         else if (col.Name.ToLower().Contains("price") ||
+                                  col.Name.ToLower().Contains("summa")
+                                  || col.Name.ToLower().Contains("sum") || CheckCurrencyColumn(col.FieldName))
+                         {
+                             col.EditSettings.DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat();
+                             grid.TotalSummary.Add(new GridSummaryItem
+                             {
+                                 DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat(),
+                                 FieldName = col.FieldName,
+                                 SummaryType = SummaryItemType.Sum,
+                                 ShowInColumn = col.FieldName
+                             });
+                         }
+                     }
+                     else if (col.FieldType == typeof(DateTime) ||
+                              col.FieldType == typeof(DateTime?))
 
-        if (Form == null)
-        {
-            IsLayoutLoaded = true;
-            return;
-        }
+                     {
+                         col.ColumnFilterMode = ColumnFilterMode.Value;
+                         col.SortMode = ColumnSortMode.Value;
+                     }
 
-       
-        if (grids.Count > 0)
-            foreach (var grid in grids)
-            {
-                grid.FilterString = null;
-                foreach (var col in grid.Columns)
-                {
-                    col.AutoFilterCondition = AutoFilterCondition.Contains;
-                    col.ColumnFilterMode = ColumnFilterMode.Value;
-                    col.SortMode = ColumnSortMode.Value;
-                    col.Name = col.FieldName;
+                     //if (col.FieldType == typeof(int) || col.FieldType == typeof(int?))
+                     //{
+                     //    if (IsSummaryExists(grid.TotalSummary, col.FieldName, SummaryItemType.Count)) continue;
+                     //    grid.TotalSummary.Add(new GridSummaryItem
+                     //    {
+                     //        DisplayFormat = "n0",
+                     //        FieldName = col.FieldName,
+                     //        SummaryType = SummaryItemType.Count,
+                     //        ShowInColumn = col.FieldName
+                     //    });
+                     //}
+                 }
+             }
 
-                    if (col.EditSettings is CalcEditSettings ed)
-                    {
-                        if (col.Name.ToLower().Contains("quan"))
-                            ed.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
-                        else if (col.Name.ToLower().Contains("price") ||
-                                 col.Name.ToLower().Contains("summa")
-                                 || col.Name.ToLower().Contains("sum") || CheckCurrencyColumn(col.FieldName))
-                            ed.DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat();
-                        if (!col.IsEnabled || col.ReadOnly)
-                            ed.AllowDefaultButton = false;
-                    }
-
-                    if (col.FieldType == typeof(string))
-                        col.EditSettings = new TextEditSettings
-                        {
-                            SelectAllOnMouseUp = true
-                        };
-                    if (col.FieldType == typeof(decimal) ||
-                        col.FieldType == typeof(decimal?)
-                        || col.FieldType == typeof(float) || col.FieldType == typeof(float?)
-                        || col.FieldType == typeof(double) || col.FieldType == typeof(double?))
-                    {
-                        if (col.EditSettings == null)
-                        {
-                            col.EditSettings = new CalcEditSettings();
-                            if (col.Name.ToLower().Contains("quan"))
-                                col.EditSettings.DisplayFormat = GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
-                            else if (col.Name.ToLower().Contains("price") ||
-                                     col.Name.ToLower().Contains("summa")
-                                     || col.Name.ToLower().Contains("sum") || CheckCurrencyColumn(col.FieldName))
-                                col.EditSettings.DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat();
-                            if (!col.IsEnabled || col.ReadOnly)
-                                ((CalcEditSettings)col.EditSettings).AllowDefaultButton = false;
-                        }
-                        if (IsSummaryExists(grid.TotalSummary, col.FieldName, SummaryItemType.Sum)) continue;
-                        grid.TotalSummary.Add(new GridSummaryItem
-                        {
-                            DisplayFormat = "n2",
-                            FieldName = col.FieldName,
-                            SummaryType = SummaryItemType.Sum,
-                            ShowInColumn = col.FieldName
-                        });
-                        continue;
-                    }
-
-                    if (col.FieldType == typeof(int) || col.FieldType == typeof(int?))
-                    {
-                        if (IsSummaryExists(grid.TotalSummary, col.FieldName, SummaryItemType.Count)) continue;
-                        grid.TotalSummary.Add(new GridSummaryItem
-                        {
-                            DisplayFormat = "n0",
-                            FieldName = col.FieldName,
-                            SummaryType = SummaryItemType.Count,
-                            ShowInColumn = col.FieldName
-                        });
-                    }
-                }
-            }
-
-        if (trees.Count > 0)
+         if (trees.Count > 0)
             foreach (var t in trees)
             foreach (var col in t.Columns)
             {
@@ -410,8 +377,44 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                         SelectAllOnMouseUp = true
                     };
             }
+    }
 
+    private bool CheckCurrencyColumn(string name)
+    {
+        if (name == "RUB")
+            name = "RUR";
+        return GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<IName>().Select(_ => _.Name).Contains(name);
+    }
 
+    protected virtual void OnWindowLoaded(object obj)
+    {
+        if (IsLayoutLoaded) return;
+        var grids = Form.FindVisualChildren<GridControl>().ToList();
+        var trees = Form.FindVisualChildren<TreeListControl>().ToList();
+        try
+        {
+            foreach (var col in grids.SelectMany(grid => grid.Columns))
+            {
+                col.Name = col.FieldName;
+            }
+            foreach (var col in trees.SelectMany(grid => grid.Columns))
+            {
+                col.Name = col.FieldName;
+            }
+            if (LayoutManager == null) OnLayoutInitial(null); 
+            LayoutManager?.Load();
+        }
+        catch (Exception ex)
+        {
+            WindowManager.ShowError(ex);
+        }
+
+        if (Form == null)
+        {
+            IsLayoutLoaded = true;
+            return;
+        }
+        
         UpdateVisualObjects();
         IsLayoutLoaded = true;
     }
