@@ -40,7 +40,6 @@ namespace KursAM2.View
             dtx = (StartLoginViewModel)DataContext;
         }
 
-
         private void MenuItem_OnClick(object sender, RoutedEventArgs e)
         {
             //Не переносить в ViewModel
@@ -81,9 +80,8 @@ namespace KursAM2.View
 
         private void pwdText_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter && ((StartLoginViewModel)DataContext).IsConnectNotExecute  != false)
+            if (e.Key == Key.Enter && ((StartLoginViewModel)DataContext).IsConnectNotExecute)
             {
-                
                 ((StartLoginViewModel)DataContext).IsConnectNotExecute = false;
                 ButtonOK.Tag = "Active";
                 if (mySubscriber != null && mySubscriber.IsConnected())

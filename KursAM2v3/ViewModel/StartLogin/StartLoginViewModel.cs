@@ -342,7 +342,9 @@ namespace KursAM2.ViewModel.StartLogin
                     var dlgRslt = wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
                         WindowManager.Confirm);
                     view.ButtonOK.Tag = "NotActive";
-                    
+                    view.pwdText.Focus();
+                    view.pwdText.SelectAll();
+
                 });
                 IsConnectNotExecute = true;
                 return;
@@ -364,6 +366,8 @@ namespace KursAM2.ViewModel.StartLogin
                     var dlgRslt = wm.ShowKursDialog(showMess, TitleText, Brushes.Red,
                         WindowManager.Confirm);
                     view.ButtonOK.Tag = "NotActive";
+                    view.pwdText.Focus();
+                    view.pwdText.SelectAll();
                 });
                 IsConnectNotExecute = true;
                 return;
