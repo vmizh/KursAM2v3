@@ -205,7 +205,7 @@ public class SystemProfile
     /// <returns></returns>
     public string GetQuantityValueNumberFormat()
     {
-        return Profile.FirstOrDefault(_ => _.SECTION == "Format" && _.ITEM == "QuantityDataFormat")?.ITEM_VALUE ?? "n4";
+        return Profile.FirstOrDefault(_ => _.SECTION == "Format" && _.ITEM == "QuantityDataFormat")?.ITEM_VALUE ?? "n2";
     }
 
     /// <summary>

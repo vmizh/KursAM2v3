@@ -299,7 +299,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                      {
                          col.ColumnFilterMode = ColumnFilterMode.Value;
                          col.SortMode = ColumnSortMode.Value;
-                         if (col.EditSettings == null)
+                         if (col.EditSettings == null || col.EditSettings.GetType() != typeof(CalcEditSettings))
                              col.EditSettings = new CalcEditSettings();
                          if (col.Name.ToLower().Contains("quan"))
                          {

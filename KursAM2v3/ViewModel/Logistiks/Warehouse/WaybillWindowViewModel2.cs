@@ -11,6 +11,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
+using DevExpress.Xpf.Editors.Settings;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -100,6 +101,28 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
 
             DocCurrencyVisible = Document.Client != null ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        public override void UpdateVisualObjects()
+        {
+            base.UpdateVisualObjects();
+            if (Form is WayBillView2 frm)
+            {
+                foreach (var col in frm.gridRows.Columns)
+                {
+                    switch (col.FieldName)
+                    {
+                        case "DDT_KOL_RASHOD":
+
+
+                            if (col.EditSettings == null || col.EditSettings.GetType() != typeof(CalcEditSettings))
+                                col.EditSettings = new CalcEditSettings();
+                            ((CalcEditSettings)col.EditSettings).DisplayFormat =
+                                GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
+                            break;
+                    }
+                }
+            }
         }
 
         #endregion
