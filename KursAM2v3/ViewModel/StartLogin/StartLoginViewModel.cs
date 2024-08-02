@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -38,16 +37,15 @@ namespace KursAM2.ViewModel.StartLogin
 {
     public sealed class StartLoginViewModel : RSWindowViewModelBase
     {
+        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ISubscriber mySubscriber;
         private string myCurrentBoxItem;
         private string myCurrentPassword;
         private string myCurrentUser;
+        private bool myIsConnectNotExecute;
         private bool myIsThemeAllow;
         private DataSource mySelectedDataSource;
         private string myVersionValue;
-        private readonly IDatabase myRedis = RedisStore.RedisCache;
-        private readonly ISubscriber mySubscriber;
-        private bool myIsConnectNotExecute;
-
 
         public StartLoginViewModel(Window formWindow)
         {
@@ -80,23 +78,6 @@ namespace KursAM2.ViewModel.StartLogin
 
             Form = formWindow;
             CurrentUser = UserIniFile.ReadINI("Start", "Login");
-        }
-
-        private async void StartLoad(RedisValue message)
-        {
-            if (string.IsNullOrWhiteSpace(message)) return;
-            try
-            {
-                var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
-                if (msg == null) return;
-                if (msg.Message == CurrentUser)
-                    await bnOk_ClickAsync();
-            }
-            catch (JsonException ex)
-            {
-                Console.WriteLine(@"Ошибка десериализации в методе StartLoginViewModel.StartLoad");
-                Console.WriteLine(ex.Message);
-            }
         }
 
 
@@ -178,6 +159,23 @@ namespace KursAM2.ViewModel.StartLogin
         public ObservableCollection<string> ThemeNameList { set; get; } =
             new ObservableCollection<string>();
 
+        private async void StartLoad(RedisValue message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            try
+            {
+                var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
+                if (msg == null) return;
+                if (msg.Message == CurrentUser)
+                    await bnOk_ClickAsync();
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine(@"Ошибка десериализации в методе StartLoginViewModel.StartLoad");
+                Console.WriteLine(ex.Message);
+            }
+        }
+
         private void InitIniFile(IniFileManager userIni)
         {
             if (!userIni.KeyExists("Login", "Start")) userIni.Write("Start", "Login", "");
@@ -221,6 +219,7 @@ namespace KursAM2.ViewModel.StartLogin
                 view.Dispatcher.Invoke(() => { view.pwdText.Focus(); });
                 return;
             }
+
             using (var ctx = GlobalOptions.KursSystem())
             {
                 var tileOrders = GlobalOptions.KursSystem().UserMenuOrder
@@ -309,24 +308,22 @@ namespace KursAM2.ViewModel.StartLogin
             SetGlobalProfile();
             using (var dbContext = GlobalOptions.GetEntities())
             {
-                var bankSql = $"SELECT doc_code FROM HD_114 h WHERE h.USR_ID = {CustomFormat.DecimalToSqlDecimal(GlobalOptions.UserInfo.Id)}";
-                var cashSql = $"SELECT doc_code FROM HD_22 h WHERE h.USR_ID = {CustomFormat.DecimalToSqlDecimal(GlobalOptions.UserInfo.Id)}";
+                var bankSql =
+                    $"SELECT doc_code FROM HD_114 h WHERE h.USR_ID = {CustomFormat.DecimalToSqlDecimal(GlobalOptions.UserInfo.Id)}";
+                var cashSql =
+                    $"SELECT doc_code FROM HD_22 h WHERE h.USR_ID = {CustomFormat.DecimalToSqlDecimal(GlobalOptions.UserInfo.Id)}";
 
-                foreach (var dc in dbContext.Database.SqlQuery<decimal>(bankSql))
-                {
-                    newUser.BankAccess.Add(dc);
-                }
-                foreach (var dc in dbContext.Database.SqlQuery<decimal>(cashSql))
-                {
-                    newUser.CashAccess.Add(dc);
-                }
+                foreach (var dc in dbContext.Database.SqlQuery<decimal>(bankSql)) newUser.BankAccess.Add(dc);
+                foreach (var dc in dbContext.Database.SqlQuery<decimal>(cashSql)) newUser.CashAccess.Add(dc);
             }
+
             // ReSharper disable once PossibleNullReferenceException
             view.IsConnectSuccess = true;
             DialogResult = true;
             SaveСache(view.AvatarObj.Source);
             view.Close();
         }
+
         public async Task bnOk_ClickAsync()
         {
             var view = Form as View.StartLogin;
@@ -344,7 +341,6 @@ namespace KursAM2.ViewModel.StartLogin
                     view.ButtonOK.Tag = "NotActive";
                     view.pwdText.Focus();
                     view.pwdText.SelectAll();
-
                 });
                 IsConnectNotExecute = true;
                 return;
@@ -445,8 +441,8 @@ namespace KursAM2.ViewModel.StartLogin
 
                     newUser.MainTileGroups = new List<TileGroup>(tileGroups.OrderBy(_ => _.OrderBy));
                     newUser.Groups = GlobalOptions.GetEntities().EXT_GROUPS.Select(
-                                grp => new UserGroup { Id = grp.GR_ID, Name = grp.GR_NAME })
-                            .ToList();
+                            grp => new UserGroup { Id = grp.GR_ID, Name = grp.GR_NAME })
+                        .ToList();
                     var fav = ctx.UserMenuFavorites.Where(_ => _.DbId == GlobalOptions.DataBaseId
                                                                && _.UserId == newUser.KursId).ToList();
                     foreach (var f in fav) newUser.MenuFavorites.Add(f);
@@ -463,22 +459,18 @@ namespace KursAM2.ViewModel.StartLogin
             SetGlobalProfile();
             using (var dbContext = GlobalOptions.GetEntities())
             {
-                var bankSql = $"SELECT doc_code FROM HD_114 h WHERE h.USR_ID = {CustomFormat.DecimalToSqlDecimal(GlobalOptions.UserInfo.Id)}";
-                var cashSql = $"SELECT doc_code FROM HD_22 h WHERE h.USR_ID = {CustomFormat.DecimalToSqlDecimal(GlobalOptions.UserInfo.Id)}";
+                var bankSql =
+                    $"SELECT doc_code FROM HD_114 h WHERE h.USR_ID = {CustomFormat.DecimalToSqlDecimal(GlobalOptions.UserInfo.Id)}";
+                var cashSql =
+                    $"SELECT doc_code FROM HD_22 h WHERE h.USR_ID = {CustomFormat.DecimalToSqlDecimal(GlobalOptions.UserInfo.Id)}";
 
-                foreach (var dc in dbContext.Database.SqlQuery<decimal>(bankSql))
-                {
-                    newUser.BankAccess.Add(dc);
-                }
-                foreach (var dc in dbContext.Database.SqlQuery<decimal>(cashSql))
-                {
-                    newUser.CashAccess.Add(dc);
-                }
+                foreach (var dc in dbContext.Database.SqlQuery<decimal>(bankSql)) newUser.BankAccess.Add(dc);
+                foreach (var dc in dbContext.Database.SqlQuery<decimal>(cashSql)) newUser.CashAccess.Add(dc);
             }
+
             // ReSharper disable once PossibleNullReferenceException
             Form.Dispatcher.Invoke(() =>
             {
-
                 view.IsConnectSuccess = true;
                 DialogResult = true;
                 SaveСache(view.AvatarObj.Source);
