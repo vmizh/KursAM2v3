@@ -73,7 +73,21 @@ namespace KursAM2.ViewModel.Personal
         }
 
         public sealed override void RefreshData(object obj)
-        {
+        {if (IsCanSaveData)
+            {
+                var res = MessageBox.Show("В документ внесены изменения. Сохранить?", "Запрос",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Question);
+                switch (res)
+                {
+                    case MessageBoxResult.Yes:
+                        SaveData(null);
+                        break;
+                    case MessageBoxResult.No:
+                        foreach (var entity in myCtx.ChangeTracker.Entries()) entity.Reload();
+                        break;
+                }
+            }
             PersonaCollection.Clear();
             UserCollection.Clear();
             try
@@ -190,6 +204,10 @@ namespace KursAM2.ViewModel.Personal
 
                         ctxsave.SaveChanges();
                         tnx.Commit();
+                        foreach (var pers in PersonaCollection)
+                        {
+                            pers.myState = RowStatus.NotEdited;
+                        }
                         RefreshData(null);
                     }
                     catch (Exception ex)
