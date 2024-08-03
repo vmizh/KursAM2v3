@@ -308,7 +308,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     case RedisMessageDocumentOperationTypeEnum.Update:
                     {
                         var idx = Documents.IndexOf(old);
-                        Documents[idx] = old;
+                        Documents[idx] = data.First();
                         break;
                     }
                     case RedisMessageDocumentOperationTypeEnum.Delete:
@@ -316,7 +316,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         break;
                 }
             }
-            Documents.Add(data.First());
+            //Documents.Add(data.First());
         }
 
         #region Commands
