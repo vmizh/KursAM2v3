@@ -80,7 +80,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 mySubscriber = myRedis.Multiplexer.GetSubscriber();
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe("ClientInvoice",
+                    mySubscriber.Subscribe(new RedisChannel("ClientInvoice", RedisChannel.PatternMode.Auto),
                         (channel, message) =>
                         {
                             if (KursNotyficationService != null)
@@ -170,7 +170,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 };
                 var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
                 if (Document.State != RowStatus.NewRow)
-                    mySubscriber.Publish("ClientInvoice", json);
+                    mySubscriber.Publish(new RedisChannel("ClientInvoice", RedisChannel.PatternMode.Auto), json);
             }
         }
 
@@ -1139,7 +1139,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         TypeNameHandling = TypeNameHandling.All
                     };
                     var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
-                    mySubscriber.Publish("ClientInvoice", json);
+                    mySubscriber.Publish(new RedisChannel("ClientInvoice", RedisChannel.PatternMode.Auto), json);
                 }
                 RecalcKontragentBalans.CalcBalans(Document.Client.DocCode, Document.DocDate);
                 nomenklManager.RecalcPrice(myUsedNomenklsDC);
@@ -1334,7 +1334,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         };
                         var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
                         if (Document.State != RowStatus.NewRow)
-                            mySubscriber.Publish("ClientInvoice", json);
+                            mySubscriber.Publish(new RedisChannel("ClientInvoice", RedisChannel.PatternMode.Auto), json);
                     }
                     // ReSharper disable once PossibleInvalidOperationException
                     RecalcKontragentBalans.CalcBalans(dc, docdate);

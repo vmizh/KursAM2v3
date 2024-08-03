@@ -52,7 +52,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 mySubscriber = myRedis.Multiplexer.GetSubscriber();
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe("WarehouseOut",
+                    mySubscriber.Subscribe(new RedisChannel("WarehouseOut", RedisChannel.PatternMode.Auto),
                         (channel, message) =>
                         {
                             if (KursNotyficationService != null)
@@ -129,7 +129,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 };
                 var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
                 if (Document.State != RowStatus.NewRow)
-                    mySubscriber.Publish("WarehouseOut", json);
+                    mySubscriber.Publish(new RedisChannel("WarehouseOut", RedisChannel.PatternMode.Auto), json);
             }
 
             myWrapperEventAggregator.GetEvent<AfterUpdateBaseWrapperEvent<WarehouseOutWrapper>>()
@@ -607,7 +607,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     TypeNameHandling = TypeNameHandling.All
                 };
                 var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
-                mySubscriber.Publish("WarehouseOut", json);
+                mySubscriber.Publish(new RedisChannel("WarehouseOut", RedisChannel.PatternMode.Auto), json);
             }
             if (isNew)
                 MainWindowViewModel.EventAggregator.GetEvent<AfterAddNewBaseWrapperEvent<WarehouseOutWrapper>>()
@@ -684,7 +684,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         TypeNameHandling = TypeNameHandling.All
                     };
                     var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
-                    mySubscriber.Publish("WarehouseOut", json);
+                    mySubscriber.Publish(new RedisChannel("WarehouseOut", RedisChannel.PatternMode.Auto), json);
                 }
             }
 

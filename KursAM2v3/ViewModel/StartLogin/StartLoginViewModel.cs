@@ -54,7 +54,7 @@ namespace KursAM2.ViewModel.StartLogin
             {
                 mySubscriber = myRedis.Multiplexer.GetSubscriber();
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe("StartLogin",
+                    mySubscriber.Subscribe(new RedisChannel("StartLogin", RedisChannel.PatternMode.Auto),
                         (_, message) =>
                         {
                             Console.WriteLine($@"Redis - {message}");

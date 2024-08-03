@@ -50,7 +50,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             {
                 mySubscriber = myRedis.Multiplexer.GetSubscriber();
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe("WarehouseOut",
+                    mySubscriber.Subscribe(new RedisChannel("WarehouseOut", RedisChannel.PatternMode.Auto),
                         (channel, message) =>
                         {
                             Console.WriteLine($@"Redis - {message}");
