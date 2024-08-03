@@ -54,7 +54,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 mySubscriber = myRedis.Multiplexer.GetSubscriber();
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe("ClientInvoice",
+                    mySubscriber.Subscribe(new RedisChannel("ClientInvoice", RedisChannel.PatternMode.Auto),
                         (_, message) =>
                         {
                             Console.WriteLine($@"Redis - {message}");
@@ -72,7 +72,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             {
                 mySubscriber = myRedis.Multiplexer.GetSubscriber();
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe("ClientInvoice",
+                    mySubscriber.Subscribe(new RedisChannel("ClientInvoice",RedisChannel.PatternMode.Auto),
                         (_, message) =>
                         {
                             Console.WriteLine($@"Redis - {message}");

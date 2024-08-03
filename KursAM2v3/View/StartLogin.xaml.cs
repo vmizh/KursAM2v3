@@ -100,7 +100,8 @@ namespace KursAM2.View
                         TypeNameHandling = TypeNameHandling.All
                     };
                     var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
-                    mySubscriber.Publish("StartLogin", json);
+                    var ch = new RedisChannel("StartLogin", RedisChannel.PatternMode.Auto);
+                    mySubscriber.Publish(ch,json);
                 }
             }
         }
