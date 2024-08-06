@@ -328,6 +328,17 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                                  ShowInColumn = col.FieldName
                              });
                          }
+                         else
+                         {
+                             col.EditSettings.DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat();
+                             grid.TotalSummary.Add(new GridSummaryItem
+                             {
+                                 DisplayFormat = GlobalOptions.SystemProfile.GetCurrencyFormat(),
+                                 FieldName = col.FieldName,
+                                 SummaryType = SummaryItemType.Sum,
+                                 ShowInColumn = col.FieldName
+                             });
+                         }
                      }
                      else if (col.FieldType == typeof(DateTime) ||
                               col.FieldType == typeof(DateTime?))
