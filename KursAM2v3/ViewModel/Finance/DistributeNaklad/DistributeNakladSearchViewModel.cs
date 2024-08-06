@@ -210,6 +210,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 Form = dsForm
             };
             dsForm.DataContext = dtx;
+            dtx.Form=dsForm;
             dsForm.Show();
         }
         
