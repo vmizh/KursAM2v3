@@ -4,7 +4,6 @@
                  xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
                  xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
-                 
                  xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                  xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
                  x:Class="KursAM2.View.Management.KontragentBalansForm"

@@ -101,14 +101,12 @@ namespace KursAM2.View
                     };
                     var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
                     var ch = new RedisChannel("StartLogin", RedisChannel.PatternMode.Auto);
-                    mySubscriber.Publish(ch,json);
+                    mySubscriber.Publish(ch, json);
+                    return;
                 }
+                dtx?.bnOk_Click(null);
             }
-        }
-
-        private void ButtonOK_Click(object sender, RoutedEventArgs e)
-        {
-
+            
         }
     }
 }
