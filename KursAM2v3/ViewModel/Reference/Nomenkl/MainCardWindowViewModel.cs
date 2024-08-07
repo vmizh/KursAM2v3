@@ -83,7 +83,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public override bool IsCanSaveData => NomenklMain != null && NomenklMain.State != RowStatus.NotEdited &&
                                               NomenklMain.Unit != null && NomenklMain.ProductType != null &&
-                                              NomenklMain.NomenklCategory != null &&
+                                              NomenklMain.NomenklType != null
+                                              && NomenklMain.NomenklCategory != null &&
                                               !string.IsNullOrEmpty(NomenklMain.Name);
 
         //private NomenklProductViewModel myNomenklProduct;

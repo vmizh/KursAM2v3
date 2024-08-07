@@ -129,7 +129,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 if (Equals(myCurrentNomenklMain, value)) return;
                 myCurrentNomenklMain = value;
                 if (myCurrentNomenklMain != null)
-                    LoadNomenklForMain(myCurrentNomenklMain);
+                    LoadNomenklForMain();
                 reloadCurrencies();
                 if (myCurrentNomenklMain != null)
                     foreach (var n in myCurrentNomenklMain.NomenklCollection)
@@ -208,9 +208,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             }
         }
 
-        private void LoadNomenklForMain(NomenklMainViewModel main)
+        private void LoadNomenklForMain()
         {
-            //main.NomenklCollection.Clear();
             CurrentNomenklCollection.Clear();
             try
             {
@@ -218,30 +217,6 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 {
                     CurrentNomenklCollection.Add(nom);
                 }
-                //using (var ctx = GlobalOptions.GetEntities())
-                //{
-                //    var noms = (from n in ctx.SD_83
-                //        join sd301 in ctx.SD_301 on n.NOM_SALE_CRS_DC equals sd301.DOC_CODE
-                //        where n.MainId == main.Id
-                //        select new NomenklViewModel
-                //        {
-                //            DocCode = n.DOC_CODE,
-                //            Name = n.NOM_NAME,
-                //            NomenklNumber = n.NOM_NOMENKL,
-                //            NameFull = n.NOM_FULL_NAME,
-                //            NOM_SALE_CRS_DC = sd301.DOC_CODE,
-                //            Note = n.NOM_NOTES,
-                //            IsRentabelnost = n.IsUslugaInRent ?? false
-                //        }).ToList();
-                //    foreach (var nom in noms)
-                //    {
-                //        nom.Parent = CurrentNomenklMain;
-                //        main.NomenklCollection.Add(nom);
-                //        nom.State = RowStatus.NotEdited;
-                //    }
-
-                //    CurrentNomenklMain.State = RowStatus.NotEdited;
-                //}
             }
             catch (Exception ex)
             {
@@ -560,6 +535,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 IsCurrencyTransfer = CurrentNomenklMain.IsCurrencyTransfer
             };
             CurrentNomenklMain.NomenklCollection.Add(newItem);
+            LoadNomenklForMain();
         }
 
         public ICommand NomenklMainAddCommand
@@ -615,16 +591,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public void NomenklMainEdit(object obj)
         {
-            using (var dbContext = GlobalOptions.GetEntities())
-            {
-                //var nm = dbContext.NomenklMain
-                //    .Include(_ => _.SD_119)
-                //    .Include(_ => _.SD_175)
-                //    .Include(_ => _.SD_82)
-                //    .Include(_ => _.SD_83)
-                //    .Include(_ => _.SD_50)
-                //    .Include(_ => _.Countries)
-                //    .Single(_ => _.Id == CurrentNomenklMain.Id);
+            
                 var ctx = new MainCardWindowViewModel
                 {
                     ParentReference = this,
@@ -634,7 +601,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 var form = new NomenklMainCardView { Owner = Application.Current.MainWindow };
                 form.Show();
                 form.DataContext = ctx;
-            }
+            
         }
 
         public ICommand NomenklMainCopyCommand
@@ -963,10 +930,6 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         #endregion
 
-        protected override void OnWindowLoaded(object obj)
-        {
-
-            base.OnWindowLoaded(obj);
-        }
+        
     }
 }
