@@ -579,6 +579,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 Form = dsForm
             };
             dsForm.DataContext = dtx;
+            dtx.Form=dsForm;
             dsForm.Show();
         }
 
@@ -1137,6 +1138,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 DataContext = dtx,
                 Owner = Application.Current.MainWindow
             };
+            dtx.Form = dialog;
             dialog.ShowDialog();
             if (dtx.DialogResult == MessageResult.OK)
                 foreach (var item in dtx.ItemsCollection.Where(_ => _.IsSelected == true).ToList())
