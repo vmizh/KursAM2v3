@@ -399,7 +399,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
 
     protected virtual void OnWindowLoaded(object obj)
     {
-        if (IsLayoutLoaded) return;
+        if (IsLayoutLoaded || Form is null) return;
         var grids = Form.FindVisualChildren<GridControl>().ToList();
         var trees = Form.FindVisualChildren<TreeListControl>().ToList();
         try
