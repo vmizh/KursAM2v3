@@ -27,7 +27,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         [Display(Name = "Кол-во на складе")]
         [ReadOnly(true)]
-        [DisplayFormat(DataFormatString = "n4")]
+        [DisplayFormat(DataFormatString = "n2")]
         public decimal Quantity { set; get; }
 
         [Display(AutoGenerateField = false)] public Prices Prices { set; get; }
@@ -78,6 +78,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             }
         }
 
+        [Display(AutoGenerateField = false)]
         public string Error { get; private set; }
 
 

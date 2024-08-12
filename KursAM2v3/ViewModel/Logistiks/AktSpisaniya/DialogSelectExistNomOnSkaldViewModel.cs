@@ -6,6 +6,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Core.ViewModel.Base;
+using Core.WindowsManager;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -388,7 +389,26 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
 
         protected override void OnWindowLoaded(object obj)
         {
-            base.OnWindowLoaded(obj);
+            //base.OnWindowLoaded(obj);
+            var grids = CustomDataUserControl.FindVisualChildren<GridControl>().ToList();
+            var trees = CustomDataUserControl.FindVisualChildren<TreeListControl>().ToList();
+            try
+            {
+                foreach (var col in grids.SelectMany(grid => grid.Columns))
+                {
+                    col.Name = col.FieldName;
+                }
+                foreach (var col in trees.SelectMany(grid => grid.Columns))
+                {
+                    col.Name = col.FieldName;
+                }
+                if (LayoutManager == null) OnLayoutInitial(null); 
+                LayoutManager?.Load();
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex);
+            }
             ((SelectExistNomenklOnSkladView)CustomDataUserControl).gridNomenklRows.SelectionMode =
                 MultiSelectMode.Row;
             ((SelectExistNomenklOnSkladView)CustomDataUserControl).tableViewRows.NavigationStyle =
@@ -404,12 +424,6 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                     case "FactOtgruz":
                         otgruzColumn = col;
                         col.ReadOnly = false;
-                        //col.EditSettings = new SpinEditSettings
-                        //{
-                        //    MaxValue = 1,
-                        //    MinValue = 0,
-                        //    AllowDefaultButton = false
-                        //};
                         break;
                 }
         }
