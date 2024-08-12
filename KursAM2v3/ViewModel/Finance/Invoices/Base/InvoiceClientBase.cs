@@ -244,6 +244,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         [Display(AutoGenerateField = true, Name = "НДС в цене", Order = 19)]
         public bool IsNDSIncludeInPrice { get; set; }
         [Display(AutoGenerateField = true, Name = "Оплачено", Order = 7)]
+        [DisplayFormat (DataFormatString="n2") ]
         public decimal PaySumma { get; set; }
         [Display(AutoGenerateField = true, Name = "Ответственный", Order = 20)]
         public Employee PersonaResponsible { get; set; }

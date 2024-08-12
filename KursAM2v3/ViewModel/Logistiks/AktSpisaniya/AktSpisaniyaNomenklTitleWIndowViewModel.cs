@@ -577,6 +577,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
                 State = RowStatus.NewRow
             };
             frm.DataContext = ctx;
+            ctx.Form= frm;
             frm.Show();
         }
 
