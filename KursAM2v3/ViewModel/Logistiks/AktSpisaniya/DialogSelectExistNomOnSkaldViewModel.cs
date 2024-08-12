@@ -10,6 +10,7 @@ using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.View.Logistiks.AktSpisaniya;
+using KursAM2.ViewModel.Finance;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
