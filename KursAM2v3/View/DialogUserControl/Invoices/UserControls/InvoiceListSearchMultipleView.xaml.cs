@@ -55,7 +55,10 @@ namespace KursAM2.View.DialogUserControl.Invoices.UserControls
 
         private void gridViewSelected_CellValueChanged(object sender, CellValueChangedEventArgs e)
         {
-            if (DataContext is IUpdatechildItems dtx) dtx.UpdateSelectedItems();
+            if (DataContext is IUpdatechildItems dtx)
+            {
+               dtx.UpdateSelectedItems();
+            }
         }
 
         private void gridViewPosition_CellValueChanged(object sender, CellValueChangedEventArgs e)
@@ -69,7 +72,11 @@ namespace KursAM2.View.DialogUserControl.Invoices.UserControls
 
         private void gridViewSearch_CellValueChanged(object sender, CellValueChangedEventArgs e)
         {
-            if (DataContext is IUpdatechildItems dtx) dtx.UpdateInvoiceItem();
+            if (DataContext is IUpdatechildItems dtx)
+            {
+                dtx.UpdateVisible();
+                dtx.UpdateInvoiceItem();
+            }
             gridControlSearch.View.CloseEditor(); 
         }
     }

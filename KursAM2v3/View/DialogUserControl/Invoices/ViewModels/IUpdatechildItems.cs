@@ -8,5 +8,6 @@
         void UpdateSelectedItems();
         void UpdatePositionItem();
         void UpdateInvoiceItem();
+        void UpdateVisible();
     }
 }

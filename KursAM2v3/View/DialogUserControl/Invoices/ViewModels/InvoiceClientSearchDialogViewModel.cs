@@ -10,6 +10,7 @@ using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
+using DevExpress.Xpf.CodeView;
 using Helper;
 using KursAM2.View.DialogUserControl.Invoices.UserControls;
 using KursDomain;
@@ -64,6 +65,9 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         private List<InvoiceClientQuery> Data = new List<InvoiceClientQuery>();
 
         public ObservableCollection<InvoiceClientHead> ItemsCollection { set; get; } =
+            new ObservableCollection<InvoiceClientHead>();
+
+        public ObservableCollection<InvoiceClientHead> HiddenItemsCollection { set; get; } =
             new ObservableCollection<InvoiceClientHead>();
 
         public ObservableCollection<InvoiceClientRow> ItemPositionsCollection { set; get; } =
@@ -190,6 +194,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 
         public override void RefreshData(object obj)
         {
+            HiddenItemsCollection.Clear();
             var isExistContext = context != null;
             var DataRange = (loadType & InvoiceClientSearchType.DataRange) == InvoiceClientSearchType.DataRange
                 ? $" DocDate >= '{CustomFormat.DateToString(StartDate)}' and DocDate <= '{CustomFormat.DateToString(EndDate)}' "
@@ -265,6 +270,38 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             else
             {
                 SelectedItems.Remove(CurrentPosition);
+            }
+        }
+
+        public void UpdateVisible()
+        {
+            
+            var kontr = ItemsCollection.FirstOrDefault(_ => _.IsSelected);
+            if (kontr != null)
+            {
+                if (HiddenItemsCollection.Any()) return;
+                foreach (var row in ItemsCollection.Where(_ => _.ClientDC != kontr.ClientDC))
+                {
+                    HiddenItemsCollection.Add(row);
+                }
+                foreach (var row in HiddenItemsCollection)
+                {
+                    List<InvoiceClientRow> sel = ItemPositionsCollection.Where(_ => _.DocCode == row.DocCode).ToList();
+
+                    foreach (var item in sel)
+                    {
+                        ItemPositionsCollection.Remove(item);
+                    }
+                    ItemsCollection.Remove(row);
+                }
+            }
+            else
+            {
+                foreach (var row in HiddenItemsCollection)
+                {
+                    ItemsCollection.Add(row);
+                }
+                HiddenItemsCollection.Clear();
             }
         }
 

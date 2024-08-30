@@ -448,6 +448,11 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             RaisePropertyChanged(nameof(SelectedItems));
         }
 
+        public void UpdateVisible()
+        {
+            //throw new NotImplementedException();
+        }
+
         private void LoadPositions()
         {
             ItemPositionsCollection.Clear();

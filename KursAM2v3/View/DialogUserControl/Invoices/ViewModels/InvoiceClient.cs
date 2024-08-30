@@ -24,6 +24,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             InnerNumber = d.InnerNumber;
             OuterNumber = d.OuterNumber;
             Client = d.Client;
+            ClientDC = d.ClientDC;
             Currency = d.Currency;
             SummaOtgruz = d.SummaOtgruz;
             DilerSumma = d.DilerSumma;
