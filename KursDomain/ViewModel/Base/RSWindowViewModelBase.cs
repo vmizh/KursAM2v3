@@ -823,9 +823,24 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         get { return new Command(Undo, _ => true); }
     }
 
-    private void Undo(object obj)
+    public virtual void Undo(object obj)
     {
     }
+
+
+    [Display(AutoGenerateField = false)]
+    public ICommand CreateLinkDocumentCommand
+    {
+        get { return new Command(CreateLinkDocument, _ => CanCreateLinkDocument); }
+    }
+
+    public virtual void CreateLinkDocument(object obj)
+    {
+        WindowManager.ShowFunctionNotReleased("Не реализована генерация документа");
+    }
+
+    public virtual bool CanCreateLinkDocument { set; get; } = true;
+
 
     public virtual void DocDelete(object form)
     {

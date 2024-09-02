@@ -21,6 +21,7 @@ public abstract class FormCommands : IFormCommands
         DocNewCommand = new DelegateCommand(OnDocNew,CanDocNew);
         DoсDeleteCommand = new DelegateCommand(OnDoсDelete, CanDoсDelete);
         RedoCommand = new DelegateCommand(OnRedo, CanRedo);
+        CreateLinkDocumentCommand = new DelegateCommand(OnCreateLinkDocument, CanCreateLinkDocument);
 
     }
     
@@ -40,9 +41,21 @@ public abstract class FormCommands : IFormCommands
     public ICommand DoсDeleteCommand { get; }
 
     public ICommand UndoCommand { get; }
+    public ICommand CreateLinkDocumentCommand { get; }
 
 
     public ICommand RedoCommand { get; }
+
+    //OnCreateLinkDocument, CanCreateLinkDocument
+    private void OnCreateLinkDocument()
+    {
+        WindowManager.ShowFunctionNotReleased();
+    }
+
+    private bool CanCreateLinkDocument()
+    {
+        return false;
+    }
 
     private bool CanSaveData()
     {

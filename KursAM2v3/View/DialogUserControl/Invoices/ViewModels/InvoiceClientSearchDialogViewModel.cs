@@ -4,13 +4,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Core;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
-using DevExpress.Xpf.CodeView;
 using Helper;
 using KursAM2.View.DialogUserControl.Invoices.UserControls;
 using KursDomain;
@@ -19,6 +17,16 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 {
     public sealed class InvoiceClientSearchDialogViewModel : RSWindowViewModelBase, IUpdatechildItems
     {
+        /// <summary>
+        /// Рижим работы диалога выбора. При контрагенте - выбор только одного счета,
+        /// при не выбранном контрагенте фильтрация счетов по первому выбранному в диалоге контрагенту
+        /// </summary>
+        public enum OperatingMode
+        {
+            SelectKontragent = 0,
+            AllKontragent = 1
+        }
+
         #region Fields
 
         private ALFAMEDIAEntities context;
@@ -30,7 +38,11 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         private bool myIsAllowPositionSelected;
         private InvoiceClientRow myCurrentSelectedItem;
         private InvoiceClientRow myCurrentPosition;
-        private List<decimal> myExclude;
+        private readonly List<decimal> myExclude;
+
+        private readonly OperatingMode _operatingMode;
+        private bool _IsAllowMultipleSchet;
+
 
         #endregion
 
@@ -43,9 +55,12 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 
 
         public InvoiceClientSearchDialogViewModel(bool isAllowPosition, bool isAllowMultipleSchet,
-            InvoiceClientSearchType loadType, List<decimal> exclude = null, ALFAMEDIAEntities context = null) :
+            InvoiceClientSearchType loadType, OperatingMode mode = OperatingMode.AllKontragent,
+            List<decimal> exclude = null, ALFAMEDIAEntities context = null) :
             this(context)
         {
+            _IsAllowMultipleSchet = isAllowMultipleSchet;
+            _operatingMode = mode;
             this.loadType = loadType;
             myExclude = exclude;
             IsAllowPositionSelected = isAllowPosition;
@@ -55,7 +70,9 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             if (isAllowMultipleSchet)
                 LayoutName = "InvoiceClientListSearchMultipleView";
             else
-                LayoutName = isAllowPosition ? "InvoiceClientListSearchPositionView" : "InvoiceClientListSearchSingleSchetView";
+                LayoutName = isAllowPosition
+                    ? "InvoiceClientListSearchPositionView"
+                    : "InvoiceClientListSearchSingleSchetView";
         }
 
         #endregion
@@ -73,14 +90,8 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         public ObservableCollection<InvoiceClientRow> ItemPositionsCollection { set; get; } =
             new ObservableCollection<InvoiceClientRow>();
 
-        public ObservableCollection<InvoiceClientRow> ItemPositionsSelSelectedCollection { set; get; } =
-            new ObservableCollection<InvoiceClientRow>();
-
         public ObservableCollection<InvoiceClientRow> SelectedItems { set; get; } =
             new ObservableCollection<InvoiceClientRow>();
-
-        public ObservableCollection<InvoiceClientHead> SelectItems { set; get; } =
-            new ObservableCollection<InvoiceClientHead>();
 
         public Visibility PositionVisibility
         {
@@ -209,8 +220,9 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                 InvoiceClientSearchType.OneKontragent
                     ? $" ClientDC = {CustomFormat.DecimalToSqlDecimal(KontragentDC)}"
                     : null;
-            var OnlyAccepted = (loadType & InvoiceClientSearchType.OnlyAccepted) ==InvoiceClientSearchType.OnlyAccepted ?
-                    $"IsAccepted = 1" : null;
+            var OnlyAccepted = (loadType & InvoiceClientSearchType.OnlyAccepted) == InvoiceClientSearchType.OnlyAccepted
+                ? "IsAccepted = 1"
+                : null;
             try
             {
                 if (!isExistContext)
@@ -220,7 +232,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                     sqlBase += " WHERE " + (DataRange != null ? DataRange + " AND " : null) +
                                (NotPay != null ? NotPay + " AND " : null) +
                                (NotShipped != null ? NotShipped + " AND " : null) +
-                               (OneKontragent != null ? OneKontragent + " AND " : null) + 
+                               (OneKontragent != null ? OneKontragent + " AND " : null) +
                                (OnlyAccepted != null ? OnlyAccepted + " AND " : null);
                     sqlBase = sqlBase.Remove(sqlBase.Length - 4, 4);
                 }
@@ -275,39 +287,72 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 
         public void UpdateVisible()
         {
-            
+            if (_operatingMode == OperatingMode.SelectKontragent) return;
             var kontr = ItemsCollection.FirstOrDefault(_ => _.IsSelected);
             if (kontr != null)
             {
                 if (HiddenItemsCollection.Any()) return;
                 foreach (var row in ItemsCollection.Where(_ => _.ClientDC != kontr.ClientDC))
-                {
                     HiddenItemsCollection.Add(row);
-                }
+
                 foreach (var row in HiddenItemsCollection)
                 {
-                    List<InvoiceClientRow> sel = ItemPositionsCollection.Where(_ => _.DocCode == row.DocCode).ToList();
+                    var sel = ItemPositionsCollection.Where(_ => _.DocCode == row.DocCode).ToList();
 
-                    foreach (var item in sel)
-                    {
-                        ItemPositionsCollection.Remove(item);
-                    }
+                    foreach (var item in sel) ItemPositionsCollection.Remove(item);
+
                     ItemsCollection.Remove(row);
                 }
+
+                return;
             }
-            else
+
+            var posRow = ItemPositionsCollection.FirstOrDefault(_ => _.IsSelected);
+            if (posRow != null)
             {
+                if (HiddenItemsCollection.Any()) return;
+                foreach (var row in ItemsCollection.Where(_ => _.ClientDC != posRow.ClientDC))
+                    HiddenItemsCollection.Add(row);
                 foreach (var row in HiddenItemsCollection)
                 {
-                    ItemsCollection.Add(row);
+                    var sel = ItemPositionsCollection.Where(_ => _.DocCode == row.DocCode).ToList();
+
+                    foreach (var item in sel) ItemPositionsCollection.Remove(item);
+
+                    ItemsCollection.Remove(row);
                 }
-                HiddenItemsCollection.Clear();
+
+                return;
             }
+
+            foreach (var row in HiddenItemsCollection) ItemsCollection.Add(row);
+            HiddenItemsCollection.Clear();
         }
 
         public void UpdateInvoiceItem()
         {
             if (CurrentItem == null) return;
+            if (!_IsAllowMultipleSchet)
+            {
+                foreach (var item in ItemsCollection.Where(_ => _.DocCode != CurrentItem.DocCode))
+                {
+                    if (item.IsSelected)
+                    {
+                        item.IsSelected = false;
+                    }
+                    SelectedItems.Clear();
+                }
+
+                var frm = CustomDataUserControl as InvoiceListSearchView;
+                if (CustomDataUserControl is InvoiceListSearchMultipleView frmMulti)
+                {
+                    frmMulti.gridControlSearch.RefreshData();
+                }
+
+                frm?.gridControlSearch.RefreshData();
+
+                RaisePropertyChanged(nameof(ItemsCollection));
+            }
             if (CurrentItem.IsSelected)
                 foreach (var pos in ItemPositionsCollection)
                     if (SelectedItems.All(_ => _.NomenklDC != pos.NomenklDC))
@@ -337,7 +382,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             if (CurrentItem == null) return;
             foreach (var pos in Data.Where(_ => _.DocCode == CurrentItem.DocCode))
             {
-                if (myExclude is {Count: > 0} && myExclude.Any( _=> _ == pos.NomenklDC)) continue;
+                if (myExclude is { Count: > 0 } && myExclude.Any(_ => _ == pos.NomenklDC)) continue;
                 ItemPositionsCollection.Add(new InvoiceClientRow
                 {
                     IsSelected = SelectedItems.Any(_ => _.Row2d == pos.Row2d),

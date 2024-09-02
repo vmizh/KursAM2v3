@@ -379,6 +379,23 @@ public static class MenuGenerator
         return ret;
     }
 
+    public static ObservableCollection<MenuButtonInfo> DocWithCreateLinkDocumentLeftBar(IFormCommands vm)
+    {
+        var ret = BaseLeftBar(vm);
+        ret[0].SubMenu.Add(
+            new MenuButtonInfo
+            {
+                Alignment = Dock.Right,
+                HAlignment = HorizontalAlignment.Right,
+                Caption = "Создать связанный приходно/расходный документ",
+                Image = Application.Current.Resources["ExportDrawingImage"] as DrawingImage,
+                ToolTip = "Создать связанный приходно/расходный документ",
+                Command = vm.CreateLinkDocumentCommand
+            });
+        return ret;
+    }
+    //ExportDrawingImage
+
     public static ObservableCollection<MenuButtonInfo> BaseLeftBar(IFormCommands vm)
     {
         var ret = new ObservableCollection<MenuButtonInfo>

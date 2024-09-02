@@ -3,8 +3,9 @@ using System.Windows;
 using Core.WindowsManager;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
+using KursAM2.View.Base;
 using KursRepozit.Auxiliary;
-using KursBaseWindow = KursAM2.View.Base.KursBaseWindow;
+
 
 namespace KursRepozit.ViewModels
 {

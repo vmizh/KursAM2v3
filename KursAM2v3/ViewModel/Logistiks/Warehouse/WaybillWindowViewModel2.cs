@@ -32,6 +32,7 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
 using Reports.Base;
+using static KursAM2.View.DialogUserControl.Invoices.ViewModels.InvoiceClientSearchDialogViewModel;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -84,6 +85,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         r.InvoiceClientViewModel = sf.FirstOrDefault(_ => r.DDT_SFACT_DC == _.DocCode);
                         r.myState = RowStatus.NotEdited;
                     }
+
                 LastDocumentManager.SaveLastOpenInfo(DocumentType.Waybill, null, Document.DocCode,
                     Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
             }
@@ -107,9 +109,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             base.UpdateVisualObjects();
             if (Form is WayBillView2 frm)
-            {
                 foreach (var col in frm.gridRows.Columns)
-                {
                     switch (col.FieldName)
                     {
                         case "DDT_KOL_RASHOD":
@@ -121,8 +121,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 GlobalOptions.SystemProfile.GetQuantityValueNumberFormat();
                             break;
                     }
-                }
-            }
         }
 
         #endregion
@@ -252,7 +250,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                                                        _.State != RowStatus.NotEdited)
                                                                    || Document.DeletedRows.Count > 0);
 
-        // public override bool IsDocNewCopyAllow => Document.State != RowStatus.NewRow;
         public override bool IsDocNewCopyAllow => false;
 
         public override bool IsDocNewCopyRequisiteAllow => Document.State != RowStatus.NewRow;
@@ -272,9 +269,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         private void KontragentSelect(object obj)
         {
-            var k = StandartDialogs.SelectKontragent();
-            if (k != null)
-                Document.Client = k;
+            SelectSchet(null);
             DocCurrencyVisible = Document.Client != null ? Visibility.Visible : Visibility.Hidden;
             Document.RaisePropertyChanged("DocCurrency");
         }
@@ -781,8 +776,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var loadType = InvoiceClientSearchType.NotShipped;
             loadType |= InvoiceClientSearchType.OnlyAccepted;
             if (Document.Client != null) loadType |= InvoiceClientSearchType.OneKontragent;
+            var mode = Document.Client == null ? OperatingMode.SelectKontragent : OperatingMode.AllKontragent;
+            var multiMode = Document.Client == null ? false : true;
             //ToDo отслеживание вставленных позиций в диалоге выбора строк ***
-            var dtx = new InvoiceClientSearchDialogViewModel(true, true, loadType,
+            var dtx = new InvoiceClientSearchDialogViewModel(true, multiMode, loadType, mode,
                 Document.Rows.Select(_ => _.DDT_NOMENKL_DC).ToList(), UnitOfWork.Context)
             {
                 WindowName = "Выбор счетов фактур",

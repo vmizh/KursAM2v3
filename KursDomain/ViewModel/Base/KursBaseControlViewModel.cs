@@ -469,6 +469,7 @@ public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseCon
     }
 
     public ICommand UndoCommand { get; }
+    public ICommand CreateLinkDocumentCommand { get; }
 
 
     public virtual void DocDelete(object form)

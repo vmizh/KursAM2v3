@@ -16,6 +16,7 @@ using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Mvvm.Xpf;
+using DevExpress.Skins;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -28,10 +29,13 @@ using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Helper;
+using KursAM2.View.Logistiks.Warehouse;
+using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management.Calculations;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
+using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Managers;
@@ -41,6 +45,7 @@ using KursDomain.Repository;
 using Newtonsoft.Json;
 using Reports.Base;
 using StackExchange.Redis;
+using NomenklProductType = KursDomain.References.NomenklProductType;
 
 namespace KursAM2.ViewModel.Finance.Invoices
 {
@@ -101,7 +106,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
             IsDocNewCopyAllow = true;
             // ReSharper disable once VirtualMemberCallInConstructor
             IsDocNewCopyRequisiteAllow = true;
-            LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
+            LeftMenuBar = GlobalOptions.UserInfo.IsAdmin
+                ? MenuGenerator.DocWithCreateLinkDocumentLeftBar(this)
+                : MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             WindowName = "Счет-фактура клиенту (новая)";
             CreateReportsMenu();
@@ -671,9 +678,61 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     .Sum(_ => _.DDT_KOL_RASHOD);
         }
 
+        private void GenerateNaklad(WaybillWindowViewModel2 vm)
+        {
+            WindowManager winManager = new WindowManager();
+            vm.Document.Client = Document.Client;
+            vm.Document.InvoiceClientViewModel = InvoicesManager.GetInvoiceClient(Document.DocCode);
+            var newCode = 1;
+            foreach (var item in Document.Rows.Where(_ => _.Quantity > _.Shipped))
+            {
+                var n = GlobalOptions.ReferencesCache.GetNomenkl(item.Nomenkl.DocCode) as Nomenkl;
+                if (vm.Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode))
+                {
+                    var newItem = new WaybillRow
+                    {
+                        DocCode = vm.Document.DocCode,
+                        Code = newCode,
+                        Id = Guid.NewGuid(),
+                        DocId = vm.Document.Id,
+                        DDT_SFACT_DC = item.DocCode,
+                        DDT_SFACT_ROW_CODE = item.Code,
+                        Nomenkl = n,
+                        DDT_KOL_RASHOD = item.Quantity - item.Shipped,
+                        Unit = n.Unit as Unit,
+                        Currency = n.Currency as Currency,
+                        InvoiceClientViewModel = vm.Document.InvoiceClientViewModel,
+                        State = RowStatus.NewRow,
+                        SchetLinkedRowViewModel =
+                            vm.Document.InvoiceClientViewModel.Rows.FirstOrDefault(_ => _.Code == item.Code) as
+                                InvoiceClientRowViewModel
+                    };
+                    vm.Document.Rows.Add(newItem);
+                    vm.Document.Entity.TD_24.Add(newItem.Entity);
+                }
+
+                newCode++;
+            }
+        }
+
         #endregion
 
         #region Command
+
+        public override bool CanCreateLinkDocument => Document.State == RowStatus.NotEdited &&
+                                                      Document.Summa - Document.Rows.Where(_ => _.IsUsluga)
+                                                          .Sum(s => s.Summa)
+                                                      > Document.SummaOtgruz;
+
+        public override void CreateLinkDocument(object obj)
+        {
+            var frm = new WayBillView2 { Owner = Application.Current.MainWindow };
+            var ctx = new WaybillWindowViewModel2(null) { Form = frm };
+            ctx.Document.Client = Document.Client;
+            GenerateNaklad(ctx);
+            frm.DataContext = ctx;
+            frm.Show();
+        }
 
         public override void ShowHistory(object data)
         {
@@ -962,7 +1021,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             RaisePropertyChanged(nameof(IsPaysEnabled));
             UpdateVisualObjects();
         }
-
 
         private void LoadFromExternal()
         {

@@ -8,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml;
-using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.UI;
@@ -47,6 +46,7 @@ public abstract class FormViewModelBase<T, I> : ViewModelBase, IForm, ILayout
         ResetLayoutCommand = new DelegateCommand(OnResetLayoutExecute);
 
         ShowHistoryCommand = new DelegateCommand(OnShowHistoryExecute);
+        CreateLinkDocumentCommand = new DelegateCommand(OnCreateLinkDocumentExecute);
     }
 
     #endregion
@@ -140,13 +140,14 @@ public abstract class FormViewModelBase<T, I> : ViewModelBase, IForm, ILayout
             currentWindow.Left = p.FormLeft < 0 ? 0 : p.FormLeft;
             currentWindow.Top = p.FormTop < 0 ? 0 : p.FormTop;
         }
+
         UpdateVisualObject();
     }
 
     protected virtual void UpdateVisualObject()
     {
-
     }
+
     protected virtual void OnInitialize()
     {
     }
@@ -301,8 +302,12 @@ public abstract class FormViewModelBase<T, I> : ViewModelBase, IForm, ILayout
 
     protected virtual void OnShowHistoryExecute()
     {
-        
     }
+
+    protected virtual void OnCreateLinkDocumentExecute()
+    {
+    }
+
 
     public ICommand DoсDeleteCommand { get; }
 
@@ -316,6 +321,7 @@ public abstract class FormViewModelBase<T, I> : ViewModelBase, IForm, ILayout
     }
 
     public ICommand UndoCommand { get; }
+    public ICommand CreateLinkDocumentCommand { get; }
 
     protected virtual bool CanUndo()
     {

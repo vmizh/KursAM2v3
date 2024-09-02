@@ -1,6 +1,4 @@
 ﻿using System.Windows;
-using System.Windows.Controls;
-using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -12,11 +10,11 @@ namespace KursAM2.View.DialogUserControl.Invoices.UserControls
     /// <summary>
     ///     Interaction logic for InvoiceListSearchMultipleView.xaml
     /// </summary>
-    public partial class InvoiceListSearchMultipleView 
+    public partial class InvoiceListSearchMultipleView
     {
         public InvoiceListSearchMultipleView()
         {
-            InitializeComponent(); 
+            InitializeComponent();
         }
 
         private void GridControlSearch_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
@@ -26,7 +24,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.UserControls
             {
                 var checkEdit = new CheckEditSettings
                 {
-                   IsThreeState = true,
+                    IsThreeState = true
                 };
                 e.Column.EditSettings = checkEdit;
             }
@@ -55,10 +53,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.UserControls
 
         private void gridViewSelected_CellValueChanged(object sender, CellValueChangedEventArgs e)
         {
-            if (DataContext is IUpdatechildItems dtx)
-            {
-               dtx.UpdateSelectedItems();
-            }
+            if (DataContext is IUpdatechildItems dtx) dtx.UpdateSelectedItems();
         }
 
         private void gridViewPosition_CellValueChanged(object sender, CellValueChangedEventArgs e)
@@ -66,18 +61,19 @@ namespace KursAM2.View.DialogUserControl.Invoices.UserControls
             if (DataContext is IUpdatechildItems dtx)
             {
                 dtx.UpdatePositionItem();
+                dtx.UpdateVisible();
             }
-           
         }
 
         private void gridViewSearch_CellValueChanged(object sender, CellValueChangedEventArgs e)
         {
             if (DataContext is IUpdatechildItems dtx)
             {
-                dtx.UpdateVisible();
                 dtx.UpdateInvoiceItem();
+                dtx.UpdateVisible();
             }
-            gridControlSearch.View.CloseEditor(); 
+
+            gridControlSearch.View.CloseEditor();
         }
     }
 }
