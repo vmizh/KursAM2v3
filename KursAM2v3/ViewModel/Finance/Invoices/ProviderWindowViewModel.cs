@@ -6,7 +6,6 @@ using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core.Helper;
@@ -29,8 +28,10 @@ using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Helper;
 using KursAM2.View.Logistiks.UC;
+using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.ViewModel.Dogovora;
 using KursAM2.ViewModel.Finance.DistributeNaklad;
+using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management.Calculations;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
@@ -40,12 +41,17 @@ using KursDomain.Documents.Invoices;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.Event;
 using KursDomain.ICommon;
+using KursDomain.IReferences;
 using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
+using KursDomain.Services;
+using KursDomain.Wrapper.Nomenkl.WarehouseOut;
+using Prism.Events;
 using Reports.Base;
 using Application = System.Windows.Application;
+using InvoiceProviderRow = KursDomain.Documents.Invoices.InvoiceProviderRow;
 using MessageBox = System.Windows.MessageBox;
 using NomenklProductType = KursDomain.References.NomenklProductType;
 
@@ -318,6 +324,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private ProviderInvoicePayViewModel myCurrentPaymentDoc;
         private InvoiceProviderRowCurrencyConvertViewModel myCurrentCrsConvertItem;
 
+        private readonly ALFAMEDIAEntities myContext;
+        private readonly IEventAggregator myEeventAggregator;
+        private readonly IEventAggregator myWrapperEventAggregator;
+        private readonly IMessageDialogService myMessageDialogService;
+
         // ReSharper disable once NotAccessedField.Local
         public IInvoiceProviderRepository InvoiceProviderRepository;
 
@@ -335,9 +346,16 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = true;
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = GlobalOptions.UserInfo.IsAdmin
+                ? MenuGenerator.DocWithCreateLinkDocumentLeftBar(this)
+                : MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
             CreateReportsMenu();
+            myContext = new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString);
+            myCache = GlobalOptions.ReferencesCache;
+            myEeventAggregator = GlobalOptions.GlobalEventAggregator;
+            myMessageDialogService = new MessageDialogService();
+            myWrapperEventAggregator = new EventAggregator();
         }
 
         public ProviderWindowViewModel(decimal? dc) : this()
@@ -414,10 +432,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private Visibility isPaysEnabled()
         {
             if (Document.PaymentDocs.Count == 0) return Visibility.Visible;
-            if(Document.PaymentDocs.Any(_ => _.CashDC != null) && !Document
-                   .PaymentDocs.Any(_ => GlobalOptions.UserInfo.CashAccess.Contains(_.CashBook.DocCode))) return Visibility.Hidden;
-            if(Document.PaymentDocs.Any(_ => _.BankCode != null) && !Document
-                   .PaymentDocs.Any(_ => GlobalOptions.UserInfo.BankAccess.Contains(_.Bank.DocCode))) return Visibility.Hidden;
+            if (Document.PaymentDocs.Any(_ => _.CashDC != null) && !Document
+                    .PaymentDocs
+                    .Any(_ => GlobalOptions.UserInfo.CashAccess.Contains(_.CashBook.DocCode))) return Visibility.Hidden;
+            if (Document.PaymentDocs.Any(_ => _.BankCode != null) && !Document
+                    .PaymentDocs
+                    .Any(_ => GlobalOptions.UserInfo.BankAccess.Contains(_.Bank.DocCode))) return Visibility.Hidden;
             return Visibility.Visible;
         }
 
@@ -498,6 +518,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             new ObservableCollection<WarehouseOrderInRow>();
 
         private WarehouseOrderInRow myCurrentFact;
+        private readonly IReferencesCache myCache;
 
         public WarehouseOrderInRow CurrentFact
         {
@@ -513,6 +534,50 @@ namespace KursAM2.ViewModel.Finance.Invoices
         #endregion
 
         #region Commands
+
+        public override bool CanCreateLinkDocument => Document.State == RowStatus.NotEdited &&
+                                                      Document.Summa - Document.Rows.Where(_ => _.IsUsluga)
+                                                          .Sum(s => s.Summa)
+                                                      > Document.SummaFact;
+
+        public override void CreateLinkDocument(object obj)
+        {
+            var frm = new OrderInView { Owner = Application.Current.MainWindow };
+            var ctx = new OrderInWindowViewModel(new StandartErrorManager(UnitOfWork.Context,
+                    "WarehouseOrderIn", true))
+                { Form = frm };
+            ctx.Document.myState = RowStatus.NewRow;
+
+            frm.DataContext = ctx;
+            frm.Show();
+        }
+
+
+        private void GenerateOrder(OrderOutWindowViewModel2 vm)
+        {
+            var newCode = 1;
+            foreach (var n in Document.Rows)
+            {
+                var newItem = new WarehouseOutRowWrapper(new TD_24(), myCache, myContext, myWrapperEventAggregator,
+                    myMessageDialogService)
+                {
+                    DocCode = vm.Document.DocCode,
+                    Code = newCode,
+                    Id = Guid.NewGuid(),
+                    DocId = vm.Document.Id,
+                    Nomenkl = n.Nomenkl,
+                    Unit = n.Nomenkl.Unit as Unit,
+                    Currency = n.Nomenkl.Currency as Currency,
+                    QuantityOut = n.Quantity,
+                    MaxQuantity = Math.Min(1, n.Quantity),
+                    State = RowStatus.NewRow,
+                    Parent = this
+                };
+                myContext.TD_24.Add(newItem.Model);
+                vm.Document.Rows.Add(newItem);
+                newCode++;
+            }
+        }
 
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
 
@@ -549,7 +614,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
         protected override void OnWindowLoaded(object obj)
         {
             base.OnWindowLoaded(obj);
-            
         }
 
         public ICommand DogovorSelectCommand

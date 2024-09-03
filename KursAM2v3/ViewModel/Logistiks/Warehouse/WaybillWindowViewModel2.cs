@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
@@ -326,6 +327,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         }
                     }
 
+                Dictionary<DbEntityEntry, EntityState> entityStates =
+                    UnitOfWork.Context.ChangeTracker.Entries().ToDictionary(e => e, e => e.State);
+
                 Document.Entity.DD_OTRPAV_NAME = Document.Sender;
                 Document.Entity.DD_POLUCH_NAME = Document.Receiver;
                 UnitOfWork.CreateTransaction();
@@ -333,8 +337,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 LastDocumentManager.SaveLastOpenInfo(DocumentType.Waybill, null, Document.DocCode,
                     Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
                 nomenklManager.RecalcPrice(UnitOfWork.Context);
-                foreach (var n in Document.Rows.Select(_ => _.Nomenkl.DocCode))
+                foreach (var row in Document.Rows)
                 {
+                    var n = row.Nomenkl.DocCode;
                     var q = nomenklManager.GetNomenklQuantity(Document.WarehouseOut.DocCode, n,
                         Document.Date, Document.Date);
                     var m = q.Count == 0 ? 0 : q.First().OstatokQuantity;
@@ -346,10 +351,28 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                                   $"склад {Document.WarehouseOut} в кол-ве {q.First().OstatokQuantity} ",
                             "Отрицательные остатки", MessageBoxImage.Error);
                         UnitOfWork.Rollback();
+                        foreach (var ent in  UnitOfWork.Context.ChangeTracker.Entries())
+                        {
+                            if(entityStates.ContainsKey(ent))
+                            {
+                                ent.State = entityStates[ent];
+                            }
+                        }
+                        if (row.State == RowStatus.NewRow)
+                        {
+                            Document.Rows.Remove(row);
+                            Document.Entity.TD_24.Remove(row.Entity);
+                        }
+                        else
+                        {
+                            Document.DeletedRows.Add(row);
+                            Document.Rows.Remove(row);
+                            Document.Entity.TD_24.Remove(row.Entity);
+                        }
                         return;
                     }
                 }
-
+                
                 RecalcKontragentBalans.CalcBalans(Document.Client.DocCode, Document.Date, UnitOfWork.Context);
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.AccruedAmountOfSupplier),
                     Document.Id,
@@ -644,7 +667,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     Document.Entity.TD_24.Remove(row.Entity);
                 }
         }
-        //OpenMainSchetCommand
 
         public ICommand OpenMainSchetCommand
         {
@@ -693,7 +715,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public ICommand SelectSchetCommand
         {
-            get { return new Command(SelectSchet, _ => Document.WarehouseOut != null); }
+            get { return new Command(SelectSchet, _ => Document.WarehouseOut != null && Document.Client != null); }
         }
 
         private void addFromOneSchet(InvoiceClientViewModel inv)

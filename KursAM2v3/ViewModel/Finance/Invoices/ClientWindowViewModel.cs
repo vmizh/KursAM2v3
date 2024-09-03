@@ -113,8 +113,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             WindowName = "Счет-фактура клиенту (новая)";
             CreateReportsMenu();
         }
-
-
+        
         public ClientWindowViewModel(decimal? dc, bool isLoadPay = true) : this()
         {
             IsLoadPay = isLoadPay;
@@ -680,11 +679,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void GenerateNaklad(WaybillWindowViewModel2 vm)
         {
-            WindowManager winManager = new WindowManager();
             vm.Document.Client = Document.Client;
             vm.Document.InvoiceClientViewModel = InvoicesManager.GetInvoiceClient(Document.DocCode);
             var newCode = 1;
-            foreach (var item in Document.Rows.Where(_ => _.Quantity > _.Shipped))
+            foreach (var item in Document.Rows.Where(_ => !_.IsUsluga && _.Quantity > _.Shipped))
             {
                 var n = GlobalOptions.ReferencesCache.GetNomenkl(item.Nomenkl.DocCode) as Nomenkl;
                 if (vm.Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode))
@@ -718,6 +716,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
         #endregion
 
         #region Command
+
+        
 
         public override bool CanCreateLinkDocument => Document.State == RowStatus.NotEdited &&
                                                       Document.Summa - Document.Rows.Where(_ => _.IsUsluga)
