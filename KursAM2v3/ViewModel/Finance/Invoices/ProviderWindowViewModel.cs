@@ -47,7 +47,6 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
 using KursDomain.Services;
-using KursDomain.Wrapper.Nomenkl.WarehouseOut;
 using Prism.Events;
 using Reports.Base;
 using Application = System.Windows.Application;
@@ -547,37 +546,46 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     "WarehouseOrderIn", true))
                 { Form = frm };
             ctx.Document.myState = RowStatus.NewRow;
-
+            ctx.Document.KontragentSender = Document.Kontragent;
+            GenerateOrder(ctx);
             frm.DataContext = ctx;
             frm.Show();
         }
 
 
-        private void GenerateOrder(OrderOutWindowViewModel2 vm)
+        private void GenerateOrder(OrderInWindowViewModel vm)
         {
-            var newCode = 1;
-            foreach (var n in Document.Rows)
+            var code = 1;
+            foreach (var row in Document.Rows.Where(_ => !_.IsUsluga && _.Quantity > _.Shipped).ToList())
             {
-                var newItem = new WarehouseOutRowWrapper(new TD_24(), myCache, myContext, myWrapperEventAggregator,
-                    myMessageDialogService)
+                var old = row;
+                var invRow = UnitOfWork.Context.TD_26
+                    .Include(_ => _.SD_26).FirstOrDefault(_ => _.DOC_CODE == row.DocCode && _.CODE == row.Code);
+                var schetRow = invRow != null ? new InvoiceProviderRow(invRow) : null;
+                var newEntity = new TD_24
                 {
-                    DocCode = vm.Document.DocCode,
-                    Code = newCode,
+                    DOC_CODE = vm.Document.DocCode,
+                    CODE = code,
+                    DDT_KOL_PRIHOD = row.Quantity - row.Shipped,
+                    DDT_SPOST_DC = row.DocCode,
+                    DDT_SPOST_ROW_CODE = row.Code,
+                    DDT_CRS_DC = ((IDocCode)row.Nomenkl.Currency).DocCode,
+                    DDT_NOMENKL_DC = ((IDocCode)row.Nomenkl).DocCode,
                     Id = Guid.NewGuid(),
-                    DocId = vm.Document.Id,
-                    Nomenkl = n.Nomenkl,
-                    Unit = n.Nomenkl.Unit as Unit,
-                    Currency = n.Nomenkl.Currency as Currency,
-                    QuantityOut = n.Quantity,
-                    MaxQuantity = Math.Min(1, n.Quantity),
-                    State = RowStatus.NewRow,
-                    Parent = this
+                    DocId = vm.Document.Id
                 };
-                myContext.TD_24.Add(newItem.Model);
-                vm.Document.Rows.Add(newItem);
-                newCode++;
+                vm.Document.Entity.TD_24.Add(newEntity);
+                vm.Document.Rows.Add(new WarehouseOrderInRow(newEntity)
+                {
+                    Nomenkl = row.Nomenkl,
+                    LinkInvoice = schetRow,
+                    // ReSharper disable once PossibleNullReferenceException
+                    State = RowStatus.NewRow
+                });
+                code++;
             }
         }
+
 
         public override bool IsCanRefresh => Document != null && Document.State != RowStatus.NewRow;
 
