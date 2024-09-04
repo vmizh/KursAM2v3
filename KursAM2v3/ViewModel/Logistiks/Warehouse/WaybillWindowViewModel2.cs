@@ -348,7 +348,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         var nom = GlobalOptions.ReferencesCache.GetNomenkl(n) as Nomenkl;
                         WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
                                                   // ReSharper disable once PossibleInvalidOperationException
-                                                  $"склад {Document.WarehouseOut} в кол-ве {q.First().OstatokQuantity} ",
+                                                  $"склад {Document.WarehouseOut} в кол-ве {q.First().OstatokQuantity:0.0}.",
                             "Отрицательные остатки", MessageBoxImage.Error);
                         UnitOfWork.Rollback();
                         foreach (var ent in  UnitOfWork.Context.ChangeTracker.Entries())
