@@ -35,7 +35,7 @@ namespace KursAM2.ViewModel.Finance
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            StartDate = DateTime.Today.AddDays(-100);
+            StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month-1, 1);
             EndDate = DateTime.Today;
         }
 
