@@ -3,27 +3,23 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows;
 using System.Windows.Input;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Data;
-using KursDomain.Repository;
 using DevExpress.Mvvm;
-using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.Repositories;
+using KursAM2.View.Base;
 using KursAM2.View.Finance.DistributeNaklad;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
-using KursAM2.View.Base;
+using KursDomain.Repository;
 
 namespace KursAM2.ViewModel.Finance.DistributeNaklad
 {
-
     public sealed class DistributeNakladSearchViewModel : KursWindowSearchBaseViewModel,
         ISearchWindowViewModel<DistributeNakladViewModel>, IKursLayoutManager
     {
@@ -43,7 +39,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             EndDate = DateTime.Today;
-            StartDate = new DateTime(DateTime.Now.Year, 1,1);
+            StartDate = new DateTime(DateTime.Now.Year, 1, 1);
             baseRepository = new GenericKursDBRepository<Data.DistributeNaklad>(unitOfWork);
             distributeNakladRepository = new DistributeNakladRepository(unitOfWork);
         }
@@ -81,16 +77,15 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         public override string WindowName => "Поиск распределений накладных расходов";
         public override string LayoutName => "DistributeNakladSearchViewModel";
 
-        [Display(AutoGenerateField = false)]
-        public override bool IsCanDocNew => true;
-        [Display(AutoGenerateField = false)]
-        public override bool IsDocNewCopyAllow => false;
-        [Display(AutoGenerateField = false)]
-        public override bool IsDocNewCopyRequisiteAllow => false;
+        [Display(AutoGenerateField = false)] public override bool IsCanDocNew => true;
+
+        [Display(AutoGenerateField = false)] public override bool IsDocNewCopyAllow => false;
+
+        [Display(AutoGenerateField = false)] public override bool IsDocNewCopyRequisiteAllow => false;
+
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
-        [Display(AutoGenerateField = false)]
-        public new Helper.LayoutManager LayoutManager { get; set; }
+        [Display(AutoGenerateField = false)] public new Helper.LayoutManager LayoutManager { get; set; }
 
         [Display(AutoGenerateField = false)]
         private new ILayoutSerializationService LayoutSerializationService
@@ -150,7 +145,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             get { return new Command(OnWindowClosing, _ => true); }
         }
 
-        public void OnWindowClosing()
+        public override void OnWindowClosing(object obj)
         {
             LayoutManager.Save();
         }
@@ -167,20 +162,14 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 GetType().Name, null, GlobalOptions.KursSystemDBContext);
             LayoutManager.Load();
             if (Form is KursBaseSearchWindow ctrl)
-            {
                 if (ctrl.modelViewControl.Content is DistributeNakladSearchView frm)
-                {
                     foreach (var col in frm.resultGridControl.Columns)
-                    {
                         switch (col.FieldName)
                         {
                             case "State":
                                 col.Visible = false;
                                 break;
                         }
-                    }
-                }
-            }
         }
 
         public override void ResetLayout(object form)
@@ -190,7 +179,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         public override void RefreshData(object obj)
         {
-           
         }
 
         public override bool IsCanRefresh { set; get; } = true;
@@ -200,20 +188,19 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             var dsForm = new DistributedNakladView
             {
                 Owner = Application.Current.MainWindow
-
             };
             var dtx = new DistributeNakladViewModel(null, new DocumentOpenType
             {
-                OpenType = DocumentCreateTypeEnum.New,
-                })
+                OpenType = DocumentCreateTypeEnum.New
+            })
             {
                 Form = dsForm
             };
             dsForm.DataContext = dtx;
-            dtx.Form=dsForm;
+            dtx.Form = dsForm;
             dsForm.Show();
         }
-        
+
         public override void DocumentOpen(object obj)
         {
             DocumentsOpenManager.Open(DocumentType.Naklad, 0, CurrentDocument.Id);

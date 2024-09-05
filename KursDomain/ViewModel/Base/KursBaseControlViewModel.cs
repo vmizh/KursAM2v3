@@ -468,7 +468,9 @@ public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseCon
         get { return new Command(DocDelete, param => IsDocDeleteAllow); }
     }
 
+    [Display(AutoGenerateField = false)]
     public ICommand UndoCommand { get; }
+    [Display(AutoGenerateField = false)]
     public ICommand CreateLinkDocumentCommand { get; }
 
 

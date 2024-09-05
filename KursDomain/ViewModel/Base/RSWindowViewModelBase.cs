@@ -839,6 +839,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         WindowManager.ShowFunctionNotReleased("Не реализована генерация документа");
     }
 
+    [Display(AutoGenerateField = false)]
     public virtual bool CanCreateLinkDocument { set; get; } = true;
 
 

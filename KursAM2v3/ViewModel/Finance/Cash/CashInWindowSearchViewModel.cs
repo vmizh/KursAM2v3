@@ -143,7 +143,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             base.RefreshData(obj);
             SearchText = null;
-            DocumentCollection = new ObservableCollection<CashInViewModel>();
+            DocumentCollection.Clear();
             try
             {
                 using (var ctx = GlobalOptions.GetEntities())
