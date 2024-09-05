@@ -177,7 +177,7 @@ namespace KursAM2.View
                 if (f is MainWindow) continue;
                 if (f is KursBaseSearchWindow s)
                     if (s.DataContext is DistributeNakladSearchViewModel ctx)
-                        ctx.OnWindowClosing();
+                        ctx.OnWindowClosing(null);
                 if (f is ILayout l)
 
                     l.SaveLayout();

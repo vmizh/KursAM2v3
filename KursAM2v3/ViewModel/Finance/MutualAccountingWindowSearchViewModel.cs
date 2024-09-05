@@ -3,11 +3,14 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Media;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Data;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
+using DevExpress.XtraGrid;
 using KursAM2.Managers;
 using KursAM2.Managers.Base;
 using KursAM2.View.Base;
@@ -17,6 +20,8 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using Application = System.Windows.Application;
+using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace KursAM2.ViewModel.Finance
 {
@@ -248,11 +253,40 @@ namespace KursAM2.ViewModel.Finance
             frm.DataContext = ctx;
         }
 
+
+        private bool summaryExists(string fieldName)
+        {
+            if(Form is not StandartSearchView frm) return false;
+            foreach (var s in frm.gridDocuments.TotalSummary)
+            {
+                if (s.FieldName == fieldName) return true;
+            }
+            return false;
+        }
+
         protected override void OnWindowLoaded(object obj)
         {
             base.OnWindowLoaded(obj);
             if (Form is StandartSearchView frm)
             {
+                foreach (var col in frm.gridDocuments.Columns)
+                {
+                    switch (col.FieldName)
+                    {
+                        case "VZ_PRIBIL_UCH_CRS_SUM":
+                            if (!summaryExists("VZ_PRIBIL_UCH_CRS_SUM"))
+                            {
+                                frm.gridDocuments.TotalSummary.Add(new GridSummaryItem()
+                                {
+                                    FieldName = "VZ_PRIBIL_UCH_CRS_SUM",
+                                    DisplayFormat = "n2",
+                                    SummaryType = SummaryItemType.Sum
+                                });
+                            }
+                            break;
+                    }
+                }
+
                 frm.gridDocumentsTableView.FormatConditions.Clear();
                 var resultMinus = new FormatCondition
                 {
