@@ -321,6 +321,7 @@ public abstract class FormViewModelBase<T, I> : ViewModelBase, IForm, ILayout
     }
 
     public ICommand UndoCommand { get; }
+    public ICommand AddSearchListCommand { get; }
     public ICommand CreateLinkDocumentCommand { get; }
 
     protected virtual bool CanUndo()

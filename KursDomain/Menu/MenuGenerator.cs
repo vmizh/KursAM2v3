@@ -423,6 +423,14 @@ public static class MenuGenerator
                 }
             }
         };
+        ret.Add( new MenuButtonInfo
+        {
+            Alignment = Dock.Right,
+            HAlignment = HorizontalAlignment.Right,
+            Content = Application.Current.Resources["menuAddSearchList"] as ControlTemplate,
+            ToolTip = "Создать дубликат поиска",
+            Command = vm.AddSearchListCommand
+        });
         return ret;
     }
 

@@ -17,6 +17,8 @@ public interface IFormCommands
     ICommand ShowHistoryCommand { get; }
     ICommand DoсDeleteCommand { get; }
     ICommand UndoCommand { get; }
+    ICommand AddSearchListCommand { get; }
+
 
     ICommand CreateLinkDocumentCommand { get; }
 }

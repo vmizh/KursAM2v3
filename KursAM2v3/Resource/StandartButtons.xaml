@@ -182,7 +182,7 @@
                 <Setter TargetName="Rect" Property="Stroke" Value="Orange" />
                 <Setter TargetName="PART_1" Property="Fill" Value="Orange" />
                 <Setter TargetName="Rect" Property="Visibility" Value="Visible" />
-                <Setter TargetName="PART_1" Property="ToolTip" Value="{Binding ToolTipForSave}"/>
+                <Setter TargetName="PART_1" Property="ToolTip" Value="{Binding ToolTipForSave}" />
             </Trigger>
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="PART_1" Property="Fill" Value="LightGray" />
@@ -561,6 +561,58 @@
             <Trigger Property="IsEnabled" Value="False">
                 <Setter TargetName="PART_1" Property="Fill" Value="LightGray" />
             </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="RenderTransform">
+                    <Setter.Value>
+                        <ScaleTransform ScaleX="0.9" ScaleY="0.9" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="RenderTransformOrigin" Value=".5,.5" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+    <ControlTemplate x:Key="buttonAddSearchList" TargetType="{x:Type Button}">
+        <ContentControl ToolTip="Обновить данные">
+            <Grid Name="gridbuttonAdd" Width="48" Height="48" Margin="0">
+                <Rectangle Name="Rect" Fill="White" Visibility="Hidden" Stretch="Fill" />
+                <Path Fill="#FF404041" Name="PART_1">
+                    <Path.Data>
+                        <PathGeometry FillRule="Nonzero"
+                                      Figures="M64,64z M0,0z M32,0C14.327,0 0,14.327 0,32 0,49.673 14.327,64 32,64 49.673,64 64,49.673 64,32 64,14.327 49.673,0 32,0z M32,62.001C15.432,62.001 2,48.569 2,32 2,15.432 15.432,2 32,2 48.568,2 62,15.432 62,32 62,48.569 48.568,62.001 32,62.001z" />
+                    </Path.Data>
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+                <Path Fill="#FF404041" Name="PART_2">
+                    <Path.Data>
+                        <PathGeometry FillRule="Nonzero"
+                                      Figures="M64,64z M0,0z M44,31L44,31 33,31 33,20 31,20 31,31 20,31 20,33 31,33 31,44 33,44 33,33 44,33z" />
+                    </Path.Data>
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </ContentControl>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Rect" Property="Stroke" Value="Orange" />
+                <Setter TargetName="Rect" Property="Visibility" Value="Visible" />
+                <Setter TargetName="PART_1" Property="Fill" Value="Orange" />
+                <Setter TargetName="PART_2" Property="Fill" Value="Orange" />
+            </Trigger>
+
             <Trigger Property="IsPressed" Value="True">
                 <Setter Property="RenderTransform">
                     <Setter.Value>

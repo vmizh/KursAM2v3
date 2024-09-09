@@ -189,12 +189,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ctx.PrintZakaz(null);
         }
 
-        //public override void Print(object form)
-        //{
-        //    var rep = new ExportView();
-        //    rep.Show();
-        //}
-
         private void ExportSF(object obj)
         {
             var ctx = new ClientWindowViewModel(CurrentDocument.DocCode);
@@ -213,6 +207,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 mySubscriber.UnsubscribeAll(CommandFlags.FireAndForget);
 
             base.OnWindowClosing(obj);
+        }
+
+        public override void AddSearchList(object obj)
+        {
+            var form = new StandartSearchView { Owner = Application.Current.MainWindow };
+            var ctxsf = new InvoiceClientSearchViewModel(form);
+            form.DataContext = ctxsf;
+            form.Show();
         }
 
         protected override void OnWindowLoaded(object obj)

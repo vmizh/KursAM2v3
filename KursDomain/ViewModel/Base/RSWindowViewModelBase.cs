@@ -823,6 +823,17 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         get { return new Command(Undo, _ => true); }
     }
 
+    [Display(AutoGenerateField = false)]
+    public virtual ICommand AddSearchListCommand
+    {
+        get { return new Command(AddSearchList, _ => true); }
+    }
+
+    public virtual void AddSearchList(object obj)
+    {
+        WindowManager.ShowFunctionNotReleased();
+    }
+
     public virtual void Undo(object obj)
     {
     }

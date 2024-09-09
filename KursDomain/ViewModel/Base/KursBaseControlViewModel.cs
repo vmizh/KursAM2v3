@@ -470,6 +470,10 @@ public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseCon
 
     [Display(AutoGenerateField = false)]
     public ICommand UndoCommand { get; }
+
+    [Display(AutoGenerateField = false)]
+    public ICommand AddSearchListCommand { get; }
+
     [Display(AutoGenerateField = false)]
     public ICommand CreateLinkDocumentCommand { get; }
 

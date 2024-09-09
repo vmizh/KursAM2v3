@@ -682,6 +682,42 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
+    <ControlTemplate x:Key="menuAddSearchList" TargetType="{x:Type Button}">
+        <ContentControl>
+            <Grid Width="48" Height="48">
+                <Grid Name="backgroundGrid" Width="48" Height="48" Visibility="Visible">
+                    <Ellipse Fill="White" Name="Rect" Visibility="Visible"
+                             Style="{StaticResource ellipseStandartStyle}" />
+                </Grid>
+                <Viewbox Width="50" Height="50">
+                    <Path Name="PART_1"
+                          Data="M64,64z M0,0z M44,31L44,31 33,31 33,20 31,20 31,31 20,31 20,33 31,33 31,44 33,44 33,33 44,33z"
+                          Fill="Black" 
+                          />
+                </Viewbox>
+            </Grid>
+        </ContentControl>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Rect" Property="Stroke" Value="Orange" />
+                <Setter TargetName="PART_1" Property="Fill" Value="Orange" />
+                <Setter TargetName="Rect" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter TargetName="Rect" Property="Stroke" Value="LightGray" />
+                <Setter TargetName="PART_1" Property="Fill" Value="LightGray" />
+                <Setter TargetName="Rect" Property="Visibility" Value="Visible" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="RenderTransform">
+                    <Setter.Value>
+                        <ScaleTransform ScaleX="0.9" ScaleY="0.9" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="RenderTransformOrigin" Value=".5,.5" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
     <ControlTemplate x:Key="menuPrinter" TargetType="{x:Type Button}">
         <ContentControl>
             <Grid Width="48" Height="48">

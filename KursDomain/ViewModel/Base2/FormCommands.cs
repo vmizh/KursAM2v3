@@ -22,9 +22,19 @@ public abstract class FormCommands : IFormCommands
         DoсDeleteCommand = new DelegateCommand(OnDoсDelete, CanDoсDelete);
         RedoCommand = new DelegateCommand(OnRedo, CanRedo);
         CreateLinkDocumentCommand = new DelegateCommand(OnCreateLinkDocument, CanCreateLinkDocument);
-
+        AddSearchListCommand = new DelegateCommand(OnAddSearchList, CanAddSerachList);
     }
-    
+
+    private bool CanAddSerachList()
+    {
+       return false;
+    }
+
+    private void OnAddSearchList()
+    {
+        WindowManager.ShowFunctionNotReleased();
+    }
+
     #region Command
 
     public ICommand CloseWindowCommand { get; }
@@ -41,6 +51,7 @@ public abstract class FormCommands : IFormCommands
     public ICommand DoсDeleteCommand { get; }
 
     public ICommand UndoCommand { get; }
+    public ICommand AddSearchListCommand { get; }
     public ICommand CreateLinkDocumentCommand { get; }
 
 
