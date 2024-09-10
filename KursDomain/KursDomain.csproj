@@ -184,6 +184,7 @@
     <Compile Include="IDocuments\MaterialDocumentTypeEnum.cs" />
     <Compile Include="Managers\DocumentsOpenManager.cs" />
     <Compile Include="Managers\NomenklManager2.cs" />
+    <Compile Include="Menu\MenuGeneratorItemVisibleEnum.cs" />
     <Compile Include="References\ResponsibleRightObjectTypeEnum.cs" />
     <Compile Include="RepositoryHelper\NomenklStoreRemainItem.cs" />
     <Compile Include="ICommon\ITreeReference.cs" />
