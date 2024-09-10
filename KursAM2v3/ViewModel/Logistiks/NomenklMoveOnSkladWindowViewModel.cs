@@ -88,6 +88,18 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
+        public override void AddSearchList(object obj)
+        {
+            var form1 = new NomenklMoveOnSklad
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var ctxNomMove = new NomenklMoveOnSkladWindowViewModel(form1);
+            form1.DataContext = ctxNomMove;
+            form1.Show();
+        }
+
+
         public bool ShowProgress
         {
             get => myShowProgress;

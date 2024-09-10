@@ -147,6 +147,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
             frm?.gridDocuments.RefreshData();
         }
 
+        public override void AddSearchList(object obj)
+        {
+            var form = new StandartSearchView { Owner = Application.Current.MainWindow };
+            var dtx = new SearchInvoiceProviderViewModel(form);
+            form.DataContext = dtx;
+            form.Show();
+
+        }
+
         public override void DocumentOpen(object obj)
         {
             if (CurrentDocument == null) return;
