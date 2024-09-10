@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -8,7 +9,14 @@ namespace KursDomain.Menu;
 
 public static class MenuGenerator
 {
-    public static ObservableCollection<MenuButtonInfo> StandartDialogRightBar(IDialogOperation vm)
+    private static bool IsMenuItemVisible(MenuGeneratorItemVisibleEnum menuType,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings)
+    {
+        return menuVisibleSettings.ContainsKey(menuType) && menuVisibleSettings[menuType];
+    }
+
+    public static ObservableCollection<MenuButtonInfo> StandartDialogRightBar(IDialogOperation vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var ret = new ObservableCollection<MenuButtonInfo>
         {
@@ -32,7 +40,8 @@ public static class MenuGenerator
         return ret;
     }
 
-    public static ObservableCollection<MenuButtonInfo> StandartDocRightBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> StandartDocRightBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var prn = new MenuButtonInfo
         {
@@ -103,7 +112,8 @@ public static class MenuGenerator
     }
 
     public static ObservableCollection<MenuButtonInfo> StandartDocWithDeleteRightBar(
-        IFormCommands vm)
+        IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var prn = new MenuButtonInfo
         {
@@ -183,7 +193,8 @@ public static class MenuGenerator
         return ret;
     }
 
-    public static ObservableCollection<MenuButtonInfo> StandartReestrRightBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> StandartReestrRightBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var ret = new ObservableCollection<MenuButtonInfo>
         {
@@ -215,7 +226,7 @@ public static class MenuGenerator
         return ret;
     }
 
-    public static ObservableCollection<MenuButtonInfo> BankOpertionsRightBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> BankOpertionsRightBar(IFormCommands vm, Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var docNew = new MenuButtonInfo
         {
@@ -237,15 +248,7 @@ public static class MenuGenerator
             Image = Application.Current.Resources["imageDocumentNewCopy"] as DrawingImage,
             Command = vm.DocNewCopyCommand
         });
-        //var docDelete = new MenuButtonInfo
-        //{
-        //    Name = "Delete",
-        //    Alignment = Dock.Right,
-        //    HAlignment = HorizontalAlignment.Right,
-        //    Content = Application.Current.Resources["menuDocDelete"] as ControlTemplate,
-        //    ToolTip = "Удалить документ",
-        //    Command = vm.DoсDeleteCommand
-        //};
+        
         var ret = new ObservableCollection<MenuButtonInfo>
         {
             new MenuButtonInfo
@@ -269,7 +272,8 @@ public static class MenuGenerator
         return ret;
     }
 
-    public static ObservableCollection<MenuButtonInfo> KontragentCardRightBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> KontragentCardRightBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var prn = new MenuButtonInfo
         {
@@ -312,7 +316,7 @@ public static class MenuGenerator
     }
 
     public static ObservableCollection<MenuButtonInfo> KontragentCardAddFormRightMenu(
-        IFormCommands vm)
+        IFormCommands vm, Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var prn = new MenuButtonInfo
         {
@@ -364,22 +368,15 @@ public static class MenuGenerator
         return ret;
     }
 
-    public static ObservableCollection<MenuButtonInfo> DocWithRowsLeftBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> DocWithRowsLeftBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var ret = BaseLeftBar(vm);
-        //ret.Add(
-        //    new MenuButtonInfo
-        //    {
-        //        Alignment = Dock.Right,
-        //        HAlignment = HorizontalAlignment.Right,
-        //        Content = Application.Current.Resources["menuRedo"] as ControlTemplate,
-        //        ToolTip = "Восстановить удаленные строки",
-        //        Command = vm.RedoCommand
-        //    });
         return ret;
     }
 
-    public static ObservableCollection<MenuButtonInfo> DocWithCreateLinkDocumentLeftBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> DocWithCreateLinkDocumentLeftBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var ret = BaseLeftBar(vm);
         ret[0].SubMenu.Add(
@@ -396,8 +393,17 @@ public static class MenuGenerator
     }
     //ExportDrawingImage
 
-    public static ObservableCollection<MenuButtonInfo> BaseLeftBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> BaseLeftBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
+        if (menuVisibleSettings is null)
+        {
+            menuVisibleSettings = new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+                {
+                    [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+                };
+        }
+
         var ret = new ObservableCollection<MenuButtonInfo>
         {
             new MenuButtonInfo
@@ -423,18 +429,23 @@ public static class MenuGenerator
                 }
             }
         };
-        ret.Add( new MenuButtonInfo
+        if (IsMenuItemVisible(MenuGeneratorItemVisibleEnum.AddSearchlist, menuVisibleSettings))
         {
-            Alignment = Dock.Right,
-            HAlignment = HorizontalAlignment.Right,
-            Content = Application.Current.Resources["menuAddSearchList"] as ControlTemplate,
-            ToolTip = "Создать дубликат поиска",
-            Command = vm.AddSearchListCommand
-        });
+            ret.Add(new MenuButtonInfo
+            {
+                Alignment = Dock.Right,
+                HAlignment = HorizontalAlignment.Right,
+                Content = Application.Current.Resources["menuAddSearchList"] as ControlTemplate,
+                ToolTip = "Создать дубликат поиска",
+                Command = vm.AddSearchListCommand
+            });
+        }
+
         return ret;
     }
 
-    public static ObservableCollection<MenuButtonInfo> BaseLeftBar(IFormSearchCommands vm)
+    public static ObservableCollection<MenuButtonInfo> BaseLeftBar(IFormSearchCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var ret = new ObservableCollection<MenuButtonInfo>
         {
@@ -451,7 +462,7 @@ public static class MenuGenerator
                         Image = Application.Current.Resources["imageResetLayout"] as DrawingImage,
                         Caption = "Переустановить разметку",
                         Command = vm.ResetLayoutCommand
-                    },
+                    }
                 }
             }
         };
@@ -459,7 +470,7 @@ public static class MenuGenerator
     }
 
     public static ObservableCollection<MenuButtonInfo> RightBarOfKontragentReferens(
-        IFormCommands vm)
+        IFormCommands vm, Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var prn = new MenuButtonInfo
         {
@@ -532,7 +543,8 @@ public static class MenuGenerator
         return ret;
     }
 
-    public static ObservableCollection<MenuButtonInfo> StandartSearchRightBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> StandartSearchRightBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var prn = new MenuButtonInfo
         {
@@ -601,7 +613,8 @@ public static class MenuGenerator
         return ret;
     }
 
-    public static ObservableCollection<MenuButtonInfo> StandartSearchRightBar(IFormSearchCommands vm)
+    public static ObservableCollection<MenuButtonInfo> StandartSearchRightBar(IFormSearchCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var docNew = new MenuButtonInfo
         {
@@ -661,7 +674,7 @@ public static class MenuGenerator
     }
 
     public static ObservableCollection<MenuButtonInfo> StandartAsyncSearchRightBar(
-        IFormCommands vm)
+        IFormCommands vm, Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var prn = new MenuButtonInfo
         {
@@ -735,7 +748,8 @@ public static class MenuGenerator
     /// </summary>
     /// <param name="vm"></param>
     /// <returns></returns>
-    public static ObservableCollection<MenuButtonInfo> StandartInfoRightBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> StandartInfoRightBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         return new ObservableCollection<MenuButtonInfo>
         {
@@ -758,7 +772,8 @@ public static class MenuGenerator
         };
     }
 
-    public static ObservableCollection<MenuButtonInfo> StandartInfoRightBar(IFormSearchCommands vm)
+    public static ObservableCollection<MenuButtonInfo> StandartInfoRightBar(IFormSearchCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         return new ObservableCollection<MenuButtonInfo>
         {
@@ -781,7 +796,8 @@ public static class MenuGenerator
         };
     }
 
-    public static ObservableCollection<MenuButtonInfo> TableEditRightBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> TableEditRightBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         return new ObservableCollection<MenuButtonInfo>
         {
@@ -812,7 +828,8 @@ public static class MenuGenerator
         };
     }
 
-    public static ObservableCollection<MenuButtonInfo> ExitOnlyRightBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> ExitOnlyRightBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         return new ObservableCollection<MenuButtonInfo>
         {
@@ -827,7 +844,8 @@ public static class MenuGenerator
         };
     }
 
-    public static ObservableCollection<MenuButtonInfo> RefreshOnlyRightBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> RefreshOnlyRightBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         return new ObservableCollection<MenuButtonInfo>
         {
@@ -842,7 +860,8 @@ public static class MenuGenerator
         };
     }
 
-    public static ObservableCollection<MenuButtonInfo> CardRightBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> CardRightBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         return new ObservableCollection<MenuButtonInfo>
         {
@@ -881,7 +900,8 @@ public static class MenuGenerator
         };
     }
 
-    public static ObservableCollection<MenuButtonInfo> ReferenceRightBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> ReferenceRightBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         return new ObservableCollection<MenuButtonInfo>
         {
@@ -912,7 +932,8 @@ public static class MenuGenerator
         };
     }
 
-    public static ObservableCollection<MenuButtonInfo> DialogRightBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> DialogRightBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         return new ObservableCollection<MenuButtonInfo>
         {
@@ -943,7 +964,8 @@ public static class MenuGenerator
         };
     }
 
-    public static ObservableCollection<MenuButtonInfo> DialogStandartBar(IDialogOperation vm)
+    public static ObservableCollection<MenuButtonInfo> DialogStandartBar(IDialogOperation vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         return new ObservableCollection<MenuButtonInfo>
         {
@@ -967,7 +989,8 @@ public static class MenuGenerator
     }
 
 
-    public static ObservableCollection<MenuButtonInfo> NomenklCardRightBar(IFormCommands vm)
+    public static ObservableCollection<MenuButtonInfo> NomenklCardRightBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
     {
         var docNew = new MenuButtonInfo
         {
