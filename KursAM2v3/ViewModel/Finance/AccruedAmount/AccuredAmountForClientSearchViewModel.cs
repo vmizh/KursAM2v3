@@ -9,6 +9,7 @@ using Data;
 using KursDomain.Repository;
 using KursAM2.Managers;
 using KursAM2.Repositories.AccruedAmount;
+using KursAM2.View.Base;
 using KursAM2.View.Finance.AccruedAmount;
 using KursDomain;
 using KursDomain.Documents.AccruedAmount;
@@ -127,6 +128,20 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         public ObservableCollection<AccruedAmountForClientViewModel> Documents { set; get; } =
             new ObservableCollection<AccruedAmountForClientViewModel>();
+
+        public override void AddSearchList(object obj)
+        {
+            var aad = new AccuredAmountForClientSearchViewModel();
+            var form = new StandartSearchView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = aad
+            };
+            aad.Form = form;
+            form.Show();
+
+        }
+
 
         public AccruedAmountForClientViewModel CurrentDocument
         {

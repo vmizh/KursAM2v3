@@ -65,6 +65,37 @@ namespace KursAM2.ViewModel.Finance
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
+
+        public override void AddSearchList(object obj)
+        {
+            if (IsConvert)
+            {
+                var form = new StandartSearchView
+                {
+                    Owner = Application.Current.MainWindow
+                };
+                form.DataContext = new MutualAccountingWindowSearchViewModel(true)
+                {
+                    WindowName = "Поиск актов конвертации",
+                    Form = form
+                };
+                form.Show();
+            }
+            else
+            {
+                var form = new StandartSearchView
+                {
+                    Owner = Application.Current.MainWindow
+                };
+                var mutCtx2 = new MutualAccountingWindowSearchViewModel
+                {
+                    WindowName = "Поиск актов взаимозачета",
+                    Form = form
+
+                };
+            }
+        }
+
         public override DateTime StartDate
         {
             get => base.StartDate;

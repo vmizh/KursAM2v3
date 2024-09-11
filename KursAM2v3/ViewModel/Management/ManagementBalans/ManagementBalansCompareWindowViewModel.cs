@@ -95,6 +95,16 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             }
         }
 
+        public override void AddSearchList(object obj)
+        {
+            var form = new ManagementBalansCompareView
+            {
+                Owner = Application.Current.MainWindow
+            };
+            form.DataContext = new ManagementBalansCompareWindowViewModel(form);
+            form.Show();
+
+        }
         public KontragentCompareBalansDeltaItem CurrentKontragent
         {
             get => myCurrentKontragent;

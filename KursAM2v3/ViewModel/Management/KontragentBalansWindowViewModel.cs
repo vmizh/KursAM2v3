@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
 using System.Runtime.Serialization;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core;
@@ -61,7 +62,23 @@ namespace KursAM2.ViewModel.Management
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<KontragentBalansRowViewModel> Documents { set; get; }
 
-        
+        public override void AddSearchList(object obj)
+        {
+            var form = new KontragentBalansView
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var ctxk = new KontragentBalansWindowViewModel
+            {
+                Form = form
+            };
+            form.DataContext = ctxk;
+            form.Show();
+
+
+        }
+
+
         public KontragentPeriod CurrentPeriod
         {
             get => myCurrentPeriod;

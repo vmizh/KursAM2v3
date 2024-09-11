@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using Core;
 using Core.ViewModel.Base;
+using KursAM2.View.Reconciliation;
 using KursDomain;
 using KursDomain.Menu;
 
@@ -52,6 +54,15 @@ namespace KursAM2.ViewModel.Reconcilation
         public ObservableCollection<ActOfResponsibleShort> Acts { set; get; }
         public ObservableCollection<ResponsibleCorporate> ResponsibleSelectedCorporates { set; get; }
 
+        public override void AddSearchList(object obj)
+        {
+            var aorCtx = new AOFViewModel();
+            var form = new ActOfReconciliation { Owner = Application.Current.MainWindow, DataContext = aorCtx };
+            aorCtx.Form = form;
+            form.Show();
+        }
+        
+        
         public Responsible Responsible
         {
             get => myResponsible;

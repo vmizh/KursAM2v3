@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -60,6 +61,19 @@ namespace KursAM2.ViewModel.Management.BreakEven
             DocumentGroup = new ObservableCollection<DocumentRow>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+        }
+
+        public override void AddSearchList(object obj)
+        {
+            var renCtx = new BreakEvenWindowViewModel();
+            var form = new BreakEvenForm2
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = renCtx
+            };
+            renCtx.Form = form;
+            form.Show();
+
         }
 
         public override string LayoutName => "BreakEvenWindowViewModel";

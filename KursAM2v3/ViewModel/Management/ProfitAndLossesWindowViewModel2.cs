@@ -89,6 +89,20 @@ namespace KursAM2.ViewModel.Management
             };
         }
 
+        public override void AddSearchList(object obj)
+        {
+            var ctxpb2 = new ProfitAndLossesWindowViewModel2();
+            var form = new ProfitAndLosses2
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctxpb2
+            };
+            ctxpb2.Form = form;
+            ctxpb2.RaisePropertyAllChanged();
+            form.Show();
+
+        }
+
 
         public ObservableCollection<AccruedDocument> AccruedDocumentList { get; set; } =
             new ObservableCollection<AccruedDocument>();

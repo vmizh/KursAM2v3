@@ -50,6 +50,16 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
         public ObservableCollection<DebitorCreditorRow> Creditors { set; get; }
         public ObservableCollection<KontragentBalansRowViewModel> Operations { set; get; }
 
+        public override void AddSearchList(object obj)
+        {
+            var dbctx = new DebitorCreditorWindowViewModel();
+            var form = new DebitorCreditorView { Owner = System.Windows.Application.Current.MainWindow };
+            dbctx.Form = form;
+            form.DataContext = dbctx;
+            form.Show();
+        }
+
+        
         public DebitorCreditorRow CurrentDebitorCreditor
         {
             get => myCurrentDebitorCreditor;

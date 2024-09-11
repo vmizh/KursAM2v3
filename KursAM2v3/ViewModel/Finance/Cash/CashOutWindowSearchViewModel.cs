@@ -2,11 +2,13 @@ using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
+using KursAM2.View.Finance.Cash;
 using KursDomain;
 using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;
@@ -39,6 +41,20 @@ namespace KursAM2.ViewModel.Finance.Cash
         #endregion
 
         #region Properties
+
+        public override void AddSearchList(object obj)
+        {
+            var form = new CashInSearchView
+            {
+                Owner = Application.Current.MainWindow
+            };
+            form.DataContext = new CashInWindowSearchViewModel
+            {
+                Form = form
+            };
+            form.Show();
+
+        }
 
         public DateTime DateStart
         {

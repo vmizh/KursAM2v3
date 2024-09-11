@@ -376,6 +376,17 @@ namespace KursAM2.ViewModel.Finance
 
         private BankAccount myCurrentBankAccount;
 
+
+        public override void AddSearchList(object obj)
+        {
+            var form = new BankOperationsView2
+            {
+                Owner = Application.Current.MainWindow
+            };
+            form.DataContext = new BankOperationsWindowViewModel2(form);
+            form.Show();
+
+        }
         public BankAccount CurrentBankAccount
         {
             set

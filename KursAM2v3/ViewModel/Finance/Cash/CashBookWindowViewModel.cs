@@ -69,6 +69,20 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         public ObservableCollection<MoneyRemains> MoneyRemains { set; get; } = new ObservableCollection<MoneyRemains>();
 
+        public override void AddSearchList(object obj)
+        {
+            var ctxCash = new CashBookWindowViewModel();
+            var form = new CashBookView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctxCash
+            };
+            ctxCash.Form = form;
+            form.Show();
+
+        }
+        
+        
         public ObservableCollection<DatePeriod> Periods
         {
             get => myPeriods;
