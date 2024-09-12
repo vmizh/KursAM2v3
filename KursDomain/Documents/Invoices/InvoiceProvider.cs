@@ -161,6 +161,8 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     public ObservableCollection<ProviderInvoicePayViewModel> PaymentDocs { set; get; } =
         new ObservableCollection<ProviderInvoicePayViewModel>();
 
+    public DateTime LastChangerDate { get; set; }
+
     public ObservableCollection<IInvoiceProviderRow> Rows { set; get; } =
         new ObservableCollection<IInvoiceProviderRow>();
 
@@ -898,6 +900,8 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
             RaisePropertyChanged();
         }
     }
+
+    public string LastChanger { get; set; }
 
     public decimal? SF_PEREVOZCHIK_DC
     {

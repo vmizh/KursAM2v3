@@ -2,35 +2,50 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
-using KursAM2.Repositories.InvoicesRepositories;
-using KursAM2.View.Base;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Logistiks.Warehouse;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
+using KursDomain.Repository.DocHistoryRepository;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public sealed class WarehouseOrderInSearchViewModel : RSWindowSearchViewModelBase
     {
+        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ISubscriber mySubscriber;
         private readonly WarehouseManager orderManager;
         private WarehouseOrderIn myCurrentDocument;
 
         public WarehouseOrderInSearchViewModel()
         {
+            if (myRedis != null)
+            {
+                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                if (mySubscriber.IsConnected())
+                    mySubscriber.Subscribe(new RedisChannel("WarehouseOrderIn", RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            Console.WriteLine($@"Redis - {message}");
+                            Form.Dispatcher.Invoke(() => UpdateList(message));
+                        });
+            }
+
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             orderManager =
                 new WarehouseManager(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderInSearchViewModel"));
-            StartDate = new  DateTime( DateTime.Today.AddMonths(-1).Year, DateTime.Today.AddMonths(-1).Month,1);
+            StartDate = new DateTime(DateTime.Today.AddMonths(-1).Year, DateTime.Today.AddMonths(-1).Month, 1);
             EndDate = DateTime.Today;
         }
 
@@ -54,6 +69,65 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override string WindowName => "Поиск приходных складских ордеров";
         public override string LayoutName => "WarehouseOrderInSearchViewModel";
+
+        private void UpdateList(RedisValue message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
+            if (msg == null || msg.DocCode == null) return;
+            if (msg.DbId != GlobalOptions.DataBaseId) return;
+            if (msg.OperationType == RedisMessageDocumentOperationTypeEnum.Open
+                || (msg.DocDate ?? DateTime.Today) < StartDate || (msg.DocDate ?? DateTime.Today) > EndDate) return;
+            if (msg.OperationType == RedisMessageDocumentOperationTypeEnum.Delete)
+            {
+                var del = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
+                if (del != null) Documents.Remove(del);
+                return;
+            }
+
+            if (msg.OperationType != RedisMessageDocumentOperationTypeEnum.Create
+                && Documents.All(_ => _.DocCode != msg.DocCode)) return;
+
+            var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
+
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                //var dc = new List<decimal>(new[] { msg.DocCode.Value });
+                var d = ctx.SD_24.FirstOrDefault(_ => _.DOC_CODE == msg.DocCode.Value); /*приходный складской ордер*/
+                if (d is null) return;
+                var doc = new WarehouseOrderIn(d) { State = RowStatus.NotEdited };
+                doc.WarehouseSenderType = doc.KontragentSender != null
+                    ? WarehouseSenderType.Kontragent
+                    : WarehouseSenderType.Store;
+
+                var last = lastDocumentRopository.GetLastChanges(new[] { msg.DocCode.Value });
+                if (last.Count > 0)
+                {
+                    doc.LastChanger = last.First().Value.Item1;
+                    doc.LastChangerDate = last.First().Value.Item2;
+                }
+                else
+                {
+                    doc.LastChanger = doc.CREATOR;
+                    doc.First().LastChangerDate = doc.Date;
+                }
+
+                var old = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
+                if (old != null)
+                    switch (msg.OperationType)
+                    {
+                        case RedisMessageDocumentOperationTypeEnum.Update:
+                        {
+                            var idx = Documents.IndexOf(old);
+                            Documents[idx] = doc;
+                            break;
+                        }
+                        case RedisMessageDocumentOperationTypeEnum.Delete:
+                            Documents.Remove(old);
+                            break;
+                    }
+            }
+        }
 
         #region Commands
 
@@ -116,15 +190,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     Documents.Clear();
                     foreach (var item in rows)
                     {
-                        item.WarehouseSenderType = item.KontragentSender != null ? WarehouseSenderType.Kontragent : WarehouseSenderType.Store;
+                        item.WarehouseSenderType = item.KontragentSender != null
+                            ? WarehouseSenderType.Kontragent
+                            : WarehouseSenderType.Store;
                         Documents.Add(item);
+                    }
 
-                    } 
                     //Documents = new ObservableCollection<WarehouseOrderIn>(rows);
                     RaisePropertyChanged(nameof(Documents));
                 }
-                
-                
             }
             catch (Exception e)
             {
@@ -154,7 +228,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new OrderInView {Owner = Application.Current.MainWindow};
+            var frm = new OrderInView { Owner = Application.Current.MainWindow };
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                 "WarehouseOrderIn", true))
             {
@@ -163,33 +237,32 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             ctx.Document.myState = RowStatus.NewRow;
             frm.DataContext = ctx;
             frm.Show();
-            
         }
 
         public override void DocNewCopy(object obj)
         {
             if (CurrentDocument == null) return;
-            var frm = new OrderInView {Owner = Application.Current.MainWindow};
+            var frm = new OrderInView { Owner = Application.Current.MainWindow };
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(GlobalOptions.GetEntities(),
                     "WarehouseOrderIn", true))
-                {Form = frm};
+                { Form = frm };
             ctx.Document = orderManager.NewOrderInCopy(CurrentDocument);
             ctx.Document.myState = RowStatus.NewRow;
             frm.DataContext = ctx;
             frm.Show();
-            
         }
 
         public override void DocNewCopyRequisite(object obj)
         {
             if (CurrentDocument == null) return;
-            var frm = new OrderInView {Owner = Application.Current.MainWindow};
+            var frm = new OrderInView { Owner = Application.Current.MainWindow };
             var dbContext = GlobalOptions.GetEntities();
             var ctx = new OrderInWindowViewModel(new StandartErrorManager(dbContext,
-                    "WarehouseOrderIn", true), 0)
-                {Form = frm,
-                    Document = orderManager.NewOrderInRecuisite(CurrentDocument)
-                };
+                "WarehouseOrderIn", true), 0)
+            {
+                Form = frm,
+                Document = orderManager.NewOrderInRecuisite(CurrentDocument)
+            };
 
             ctx.Document.myState = RowStatus.NewRow;
             ctx.Document.WarehouseSenderType = ctx.Document.KontragentSender != null
@@ -197,7 +270,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 : WarehouseSenderType.Store;
             frm.DataContext = ctx;
             frm.Show();
-           
         }
 
         #endregion

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,6 +9,8 @@ using Core.WindowsManager;
 using Data;
 using KursAM2.Managers;
 using KursAM2.Repositories;
+using KursAM2.Repositories.InvoicesRepositories;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks.Warehouse;
 using KursDomain;
@@ -16,7 +19,10 @@ using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.Repository;
+using KursDomain.Repository.DocHistoryRepository;
+using Newtonsoft.Json;
 using Reports.Base;
+using StackExchange.Redis;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
@@ -29,17 +35,33 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public readonly GenericKursDBRepository<SD_24> GenericProviderRepository;
 
         // ReSharper disable once NotAccessedField.Local
-        public readonly ISD_24Repository SD_24Repository;
+        public ISD_24Repository SD_24Repository;
 
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private WayBillShort myCurrentDocument;
 
+        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ISubscriber mySubscriber;
+
         public WaybillSearchViewModel()
         {
             GenericProviderRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
             SD_24Repository = new SD_24Repository(UnitOfWork);
+
+            if (myRedis != null)
+            {
+                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                if (mySubscriber.IsConnected())
+                    mySubscriber.Subscribe(new RedisChannel("WayBill", RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            Console.WriteLine($@"Redis - {message}");
+                            Form.Dispatcher.Invoke(() => UpdateList(message));
+                        });
+            }
+
             Documents = new ObservableCollection<WayBillShort>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
@@ -140,36 +162,63 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             ctx.PrintWaybill(null);
         }
 
+        private void UpdateList(RedisValue message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
+            if (msg == null || msg.DocCode == null) return;
+            if (msg.DbId != GlobalOptions.DataBaseId) return;
+            if (msg.OperationType == RedisMessageDocumentOperationTypeEnum.Open
+                || (msg.DocDate ?? DateTime.Today) < StartDate || (msg.DocDate ?? DateTime.Today) > EndDate) return;
+            if (msg.OperationType == RedisMessageDocumentOperationTypeEnum.Delete)
+            {
+                var del = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
+                if (del != null) Documents.Remove(del);
+                return;
+            }
+
+            if (msg.OperationType != RedisMessageDocumentOperationTypeEnum.Create
+                && Documents.All(_ => _.DocCode != msg.DocCode)) return;
+
+            SD_24Repository = new SD_24Repository(UnitOfWork);
+
+            var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
+
+            var list_dc = new List<decimal>(new[] { msg.DocCode.Value });
+            var d = SD_24Repository.GetByDocCodes(list_dc);
+            var data = d.Select(item => new WayBillShort(item)).ToList();
+            var last = lastDocumentRopository.GetLastChanges(list_dc);
+            if (data.Count <= 0) return;
+            if (last.Count > 0)
+            {
+                data.First().LastChanger = last.First().Value.Item1;
+                data.First().LastChangerDate = last.First().Value.Item2;
+            }
+            else
+            {
+                data.First().LastChanger = data.First().CREATOR;
+                data.First().LastChangerDate = data.First().Date;
+            }
+
+            var old = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
+            if (old != null)
+            {
+                switch (msg.OperationType)
+                {
+                    case RedisMessageDocumentOperationTypeEnum.Update:
+                    {
+                        var idx = Documents.IndexOf(old);
+                        Documents[idx] = data.First();
+                        break;
+                    }
+                    case RedisMessageDocumentOperationTypeEnum.Delete:
+                        Documents.Remove(old);
+                        break;
+                }
+            }
+        }
+
         #region Commands
-
-        //private Task Load()
-        //{
-        //    GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
-        //    var res = Task.Factory.StartNew(() =>
-        //    {
-        //        var data = SD_24Repository.GetWayBillAllByDates(StartDate, EndDate);
-        //        List<WayBillShort> w = new List<WayBillShort>();
-        //        foreach (var d in data)
-        //        {
-        //            w.Add(new WayBillShort(d)
-        //            {
-        //                DocCode = d.DOC_CODE,
-        //                InvoiceClient = d.SD_84 != null
-        //                    ? $"С/ф №{d.SD_84.SF_IN_NUM}/{d.SD_84.SF_OUT_NUM} от {d.SD_84.SF_DATE.ToShortDateString()}"
-        //                    : null,
-        //                State = RowStatus.NotEdited
-        //            });
-        //        }
-
-        //        return w;
-        //    });
-        //    Documents.Clear();
-        //    foreach (var d in res.Result) Documents.Add(d);
-        //    RaisePropertyChanged(nameof(Documents));
-        //    DispatcherService.BeginInvoke(SplashScreenService.HideSplashScreen);
-        //    GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
-        //    return res;
-        //}
 
         public override void RefreshData(object data)
         {

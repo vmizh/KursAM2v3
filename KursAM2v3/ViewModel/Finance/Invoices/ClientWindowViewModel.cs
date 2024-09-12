@@ -16,7 +16,6 @@ using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Mvvm.Xpf;
-using DevExpress.Skins;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using Helper;
@@ -113,7 +112,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             WindowName = "Счет-фактура клиенту (новая)";
             CreateReportsMenu();
         }
-        
+
         public ClientWindowViewModel(decimal? dc, bool isLoadPay = true) : this()
         {
             IsLoadPay = isLoadPay;
@@ -717,8 +716,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Command
 
-        
-
         public override bool CanCreateLinkDocument => Document.State == RowStatus.NotEdited &&
                                                       Document.Summa - Document.Rows.Where(_ => _.IsUsluga)
                                                           .Sum(s => s.Summa)
@@ -1199,6 +1196,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
                     mySubscriber.Publish(new RedisChannel("ClientInvoice", RedisChannel.PatternMode.Auto), json);
                 }
+
                 RecalcKontragentBalans.CalcBalans(Document.Client.DocCode, Document.DocDate);
                 nomenklManager.RecalcPrice(myUsedNomenklsDC);
                 foreach (var ndc in Document.Rows.Select(_ => _.Nomenkl.DocCode)) AddUsedNomenkl(ndc);
@@ -1375,6 +1373,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         UnitOfWork.Rollback();
                         WindowManager.ShowError(ex);
                     }
+
                     if (mySubscriber != null && mySubscriber.IsConnected())
                     {
                         var message = new RedisMessage
@@ -1392,8 +1391,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         };
                         var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
                         if (Document.State != RowStatus.NewRow)
-                            mySubscriber.Publish(new RedisChannel("ClientInvoice", RedisChannel.PatternMode.Auto), json);
+                            mySubscriber.Publish(new RedisChannel("ClientInvoice", RedisChannel.PatternMode.Auto),
+                                json);
                     }
+
                     // ReSharper disable once PossibleInvalidOperationException
                     RecalcKontragentBalans.CalcBalans(dc, docdate);
                     if (dilerdc != null)

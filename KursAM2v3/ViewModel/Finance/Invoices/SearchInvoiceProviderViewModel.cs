@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using DevExpress.XtraGrid;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.ViewModel.Finance.Invoices.Base;
@@ -22,6 +24,9 @@ using KursDomain.Event;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
 using KursDomain.Repository;
+using KursDomain.Repository.DocHistoryRepository;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -32,6 +37,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
         //private InvoicesManager invoiceManager = new InvoicesManager();
 
         public readonly GenericKursDBRepository<SD_26> GenericProviderRepository;
+        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ISubscriber mySubscriber;
 
         // ReSharper disable once NotAccessedField.Local
         public IInvoiceProviderRepository InvoiceProviderRepository;
@@ -41,28 +48,29 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
-
-        public SearchInvoiceProviderViewModel()
-        {
-            GenericProviderRepository = new GenericKursDBRepository<SD_26>(UnitOfWork);
-            InvoiceProviderRepository = new InvoiceProviderRepository(UnitOfWork);
-
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
-            RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            Documents = new ObservableCollection<IInvoiceProvider>();
-            SelectedDocs = new ObservableCollection<IInvoiceProvider>();
-            EndDate = DateTime.Today;
-            MainWindowViewModel.EventAggregator.GetEvent<AFterSaveInvoiceProvideEvent>()
-                .Subscribe(OnAfterSaveInvoiceExecute);
-        }
-
         public SearchInvoiceProviderViewModel(Window form) : base(form)
         {
             // ReSharper disable once VirtualMemberCallInConstructor
             GenericProviderRepository = new GenericKursDBRepository<SD_26>(UnitOfWork);
             InvoiceProviderRepository = new InvoiceProviderRepository(UnitOfWork);
+
+            if (myRedis != null)
+            {
+                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                if (mySubscriber.IsConnected())
+                    mySubscriber.Subscribe(new RedisChannel("ProviderInvoice", RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            Console.WriteLine($@"Redis - {message}");
+                            Form.Dispatcher.Invoke(() => UpdateList(message));
+                        });
+            }
+
             Form = form;
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = false
+            });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             Documents = new ObservableCollection<IInvoiceProvider>();
             SelectedDocs = new ObservableCollection<IInvoiceProvider>();
@@ -124,6 +132,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void RefreshData(object data)
         {
             var frm = Form as StandartSearchView;
+            var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
             InvoiceProviderRepository =
                 new InvoiceProviderRepository(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
             Documents.Clear();
@@ -136,6 +145,23 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     frm.loadingIndicator.Visibility = Visibility.Visible;
                 });
                 var result = InvoiceProviderRepository.GetAllByDates(StartDate, EndDate);
+                if (result.Count > 0)
+                {
+                    var lasts = lastDocumentRopository.GetLastChanges(result.Select(_ => _.DocCode).Distinct());
+                    foreach (var r in result)
+                        if (lasts.ContainsKey(r.DocCode))
+                        {
+                            var last = lasts[r.DocCode];
+                            r.LastChanger = last.Item1;
+                            r.LastChangerDate = last.Item2;
+                        }
+                        else
+                        {
+                            r.LastChanger = r.CREATOR;
+                            r.LastChangerDate = r.DocDate;
+                        }
+                }
+
                 frm?.Dispatcher.Invoke(() =>
                 {
                     frm.loadingIndicator.Visibility = Visibility.Hidden;
@@ -152,6 +178,61 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (CurrentDocument == null) return;
             DocumentsOpenManager.Open(
                 DocumentType.InvoiceProvider, CurrentDocument.DocCode);
+        }
+
+        private void UpdateList(RedisValue message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
+            if (msg == null || msg.DocCode == null) return;
+            if (msg.DbId != GlobalOptions.DataBaseId) return;
+            if (msg.OperationType == RedisMessageDocumentOperationTypeEnum.Open
+                || (msg.DocDate ?? DateTime.Today) < StartDate || (msg.DocDate ?? DateTime.Today) > EndDate) return;
+            if (msg.OperationType == RedisMessageDocumentOperationTypeEnum.Delete)
+            {
+                var del = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
+                if (del != null) Documents.Remove(del);
+                return;
+            }
+
+            if (msg.OperationType != RedisMessageDocumentOperationTypeEnum.Create
+                && Documents.All(_ => _.DocCode != msg.DocCode)) return;
+
+            InvoiceProviderRepository =
+                new InvoiceProviderRepository(
+                    new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString)));
+
+            var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
+
+            var dc = new List<decimal>(new[] { msg.DocCode.Value });
+            var data = InvoiceProviderRepository.GetByDocCodes(dc);
+            var last = lastDocumentRopository.GetLastChanges(dc);
+            if (data.Count <= 0) return;
+            if (last.Count > 0)
+            {
+                data.First().LastChanger = last.First().Value.Item1;
+                data.First().LastChangerDate = last.First().Value.Item2;
+            }
+            else
+            {
+                data.First().LastChanger = data.First().CREATOR;
+                data.First().LastChangerDate = data.First().DocDate;
+            }
+
+            var old = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
+            if (old != null)
+                switch (msg.OperationType)
+                {
+                    case RedisMessageDocumentOperationTypeEnum.Update:
+                    {
+                        var idx = Documents.IndexOf(old);
+                        Documents[idx] = data.First();
+                        break;
+                    }
+                    case RedisMessageDocumentOperationTypeEnum.Delete:
+                        Documents.Remove(old);
+                        break;
+                }
         }
 
         public override void DocNewEmpty(object form)

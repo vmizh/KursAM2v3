@@ -290,6 +290,9 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             OnPropertyChanged(propertyName);
             return true;
         }
+
+        public string LastChanger { get; set; }
+        public DateTime LastChangerDate { get; set; }
     }
 
     public class InvoiceProviderRowBase : IInvoiceProviderRow

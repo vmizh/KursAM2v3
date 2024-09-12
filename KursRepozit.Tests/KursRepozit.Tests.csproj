@@ -95,10 +95,6 @@
       <Project>{144670cb-6396-488c-a76d-2e03a3b69e78}</Project>
       <Name>KursRepozit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KursAM2v3\KursAM2.csproj">
-      <Project>{F81539F9-9431-4D87-9BF0-7E195911349D}</Project>
-      <Name>KursAM2</Name>
-    </ProjectReference>
     <ProjectReference Include="..\KursDomain\KursDomain.csproj">
       <Project>{2892B43C-A8F8-4939-9F88-EAB3B8F7108B}</Project>
       <Name>KursDomain</Name>

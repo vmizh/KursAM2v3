@@ -6,7 +6,7 @@ using KursDomain.References;
 
 namespace KursDomain.IDocuments.Finance;
 
-public interface IInvoiceProvider : IDocCode, IDocGuid
+public interface IInvoiceProvider : IDocCode, IDocGuid, ILastChanged
 {
     //[Display(AutoGenerateField = false)] decimal DocCode { set; get; }
     // Поиск счетов-фактур поставщиков 
@@ -73,6 +73,19 @@ public interface IInvoiceProvider : IDocCode, IDocGuid
 
     [Display(AutoGenerateField = true, Name = "Получатель", Order = 9)]
     Kontragent KontrReceiver { set; get; }
+
+    /// <summary>
+    /// Пользователь, последний изменивший документ
+    /// </summary>
+    [Display(AutoGenerateField = true, Name = "Посл.изменил", Order = 21)]
+    public string LastChanger { set; get; }
+
+    /// <summary>
+    /// Дата последнего изменения
+    /// </summary>
+    [Display(AutoGenerateField = true, Name = "Дата посл.изм.", Order = 21)]
+    public DateTime LastChangerDate { set; get; }
+
 
     ObservableCollection<IInvoiceProviderRow> Rows { set; get; }
 }

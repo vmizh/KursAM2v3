@@ -41,6 +41,7 @@ namespace KursAM2.Repositories
         List<SD_24> GetPrihodOrderAllByDates(DateTime dateStart, DateTime dateEnd);
         List<SD_24> GetDocuments(decimal docType, DateTime dateStart, DateTime dateEnd);
         List<SD_24> GetDocuments(decimal docType, string searchText);
+        List<SD_24> GetByDocCodes(List<decimal> listDC);
     }
 
     // ReSharper disable once InconsistentNaming
@@ -295,6 +296,39 @@ namespace KursAM2.Repositories
                 .Include("TD_24.TD_26")
                 .Include("TD_24.TD_241")
                 .Where(_ => srch.Contains(_.DOC_CODE)).ToList();
+        }
+
+        public List<SD_24> GetByDocCodes(List<decimal> listDC)
+        {
+            return Context.SD_24
+                .Include(_ => _.TD_24)
+                .Include("TD_24.TD_26")
+                .Include("TD_24.TD_26.SD_26")
+                .Include("TD_24.SD_175")
+                .Include("TD_24.SD_301")
+                .Include("TD_24.SD_122")
+                .Include("TD_24.SD_170")
+                .Include("TD_24.SD_175")
+                .Include("TD_24.SD_1751")
+                .Include("TD_24.SD_2")
+                .Include("TD_24.SD_254")
+                .Include("TD_24.SD_27")
+                .Include("TD_24.SD_301")
+                .Include("TD_24.SD_3011")
+                .Include("TD_24.SD_3012")
+                .Include("TD_24.SD_303")
+                .Include("TD_24.SD_384")
+                .Include("TD_24.SD_43")
+                .Include("TD_24.SD_83")
+                .Include("TD_24.SD_831")
+                .Include("TD_24.SD_832")
+                .Include("TD_24.SD_84")
+                .Include("TD_24.TD_73")
+                .Include("TD_24.TD_9")
+                .Include("TD_24.TD_84")
+                .Include("TD_24.TD_26")
+                .Include("TD_24.TD_241")
+                .Where(_ => listDC.Contains(_.DOC_CODE)).ToList();
         }
     }
 }

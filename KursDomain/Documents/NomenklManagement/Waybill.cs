@@ -59,6 +59,17 @@ public class WayBillShort : RSViewModelBase, IEntity<SD_24>
     public Kontragent Client => GlobalOptions.ReferencesCache.GetKontragent(Entity.DD_KONTR_POL_DC) as Kontragent;
     public override string Note => Entity.DD_NOTES;
     public string DD_KOMU_PEREDANO => Entity.DD_KOMU_PEREDANO;
+    /// <summary>
+    /// Пользователь, последний изменивший документ
+    /// </summary>
+    [Display(AutoGenerateField = true, Name = "Посл.изменил", Order = 21)]
+    public string LastChanger { set; get; }
+
+    /// <summary>
+    /// Дата последнего изменения
+    /// </summary>
+    [Display(AutoGenerateField = true, Name = "Дата посл.изм.", Order = 21)]
+    public DateTime LastChangerDate { set; get; }
 
     public SD_24 Entity { get; set; }
 

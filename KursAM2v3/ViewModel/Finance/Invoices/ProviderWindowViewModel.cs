@@ -22,6 +22,7 @@ using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl;
 using KursAM2.View.DialogUserControl.Standart;
@@ -47,8 +48,10 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
 using KursDomain.Services;
+using Newtonsoft.Json;
 using Prism.Events;
 using Reports.Base;
+using StackExchange.Redis;
 using Application = System.Windows.Application;
 using InvoiceProviderRow = KursDomain.Documents.Invoices.InvoiceProviderRow;
 using MessageBox = System.Windows.MessageBox;
@@ -309,6 +312,19 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
+        private void ShowNotify(string notify)
+        {
+            if (string.IsNullOrWhiteSpace(notify)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(notify);
+            if (msg == null || msg.UserId == GlobalOptions.UserInfo.KursId) return;
+            if (msg.DocCode == Document.DocCode)
+            {
+                NotifyInfo = msg.Message;
+                var notification = KursNotyficationService.CreateCustomNotification(this);
+                notification.ShowAsync();
+            }
+        }
+
         #endregion
 
         #region Fields
@@ -334,6 +350,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
+        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ISubscriber mySubscriber;
+
         #endregion
 
         #region Constructors
@@ -342,6 +361,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             GenericProviderRepository = new GenericKursDBRepository<SD_26>(UnitOfWork);
             InvoiceProviderRepository = new InvoiceProviderRepository(UnitOfWork);
+
+            if (myRedis != null)
+            {
+                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                if (mySubscriber.IsConnected())
+                    mySubscriber.Subscribe(new RedisChannel("ProviderInvoice", RedisChannel.PatternMode.Auto),
+                        (channel, message) =>
+                        {
+                            if (KursNotyficationService != null)
+                            {
+                                Console.WriteLine($"Redis - {message}");
+                                Form.Dispatcher.Invoke(() => ShowNotify(message));
+                            }
+                        });
+            }
 
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = true;
@@ -425,6 +459,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         #endregion
 
         #region Properties
+        public string NotifyInfo { set; get; }
 
         public Visibility IsPaysEnabled => isPaysEnabled();
 
@@ -1741,6 +1776,27 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
                 DeletedStoreLink.Clear();
                 Document.DeletedRows.Clear();
+                if (mySubscriber != null && mySubscriber.IsConnected())
+                {
+                    var str = Document.State == RowStatus.NewRow ? "создал" : "сохранил";
+                    var message = new RedisMessage
+                    {
+                        DocumentType = DocumentType.InvoiceProvider,
+                        DocCode = Document.DocCode,
+                        DocDate = Document.DocDate,
+                        IsDocument = true,
+                        OperationType = Document.myState == RowStatus.NewRow
+                            ? RedisMessageDocumentOperationTypeEnum.Create
+                            : RedisMessageDocumentOperationTypeEnum.Update,
+                        Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} счет {Document.Description}"
+                    };
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                    mySubscriber.Publish(new RedisChannel("ProviderInvoice", RedisChannel.PatternMode.Auto), json);
+                }
                 MainWindowViewModel.EventAggregator.GetEvent<AFterSaveInvoiceProvideEvent>()
                     .Publish(new AFterSaveInvoiceProvideEventArgs
                     {
