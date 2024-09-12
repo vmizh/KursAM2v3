@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -6,6 +7,7 @@ using Core.ViewModel.Base;
 using Data;
 using KursAM2.Managers;
 using KursAM2.Repositories;
+using KursAM2.View.Base;
 using KursAM2.View.Logistiks.AktSpisaniya;
 using KursDomain;
 using KursDomain.Documents.AktSpisaniya;
@@ -45,7 +47,10 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
             mySignatureRepository = new SignatureRepository(unitOfWork);
             BaseRepository = new GenericKursDBRepository<AktSpisaniyaNomenkl_Title>(unitOfWork);
             AktSpisaniyaNomenklRepository = new AktSpisaniyaNomenkl_TitleRepository(unitOfWork);
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             EndDate = DateTime.Today;
             StartDate = new DateTime(DateTime.Today.Year, 1, 1);
@@ -65,6 +70,20 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<AktSpisaniyaNomenklTitleViewModel> Documents { set; get; } =
             new ObservableCollection<AktSpisaniyaNomenklTitleViewModel>();
+
+        public override void AddSearchList(object obj)
+        {
+            var actCtx = new AktSpisaniyaNomenklSearchViewModel();
+            var  form = new StandartSearchView
+            {
+                Owner = Application.Current.MainWindow
+            };
+            form.DataContext = actCtx;
+            actCtx.Form = form;
+            form.Show();
+
+        }
+
 
         public DateTime EndDate
         {

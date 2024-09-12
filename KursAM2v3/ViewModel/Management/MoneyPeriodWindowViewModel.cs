@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -45,7 +46,10 @@ namespace KursAM2.ViewModel.Management
             CommonOperations = new ObservableCollection<MoneyPeriodRowViewModel>();
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = true;
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             StartDate = new DateTime(DateTime.Today.Year,DateTime.Today.Month,1);
             EndDate = DateTime.Today;

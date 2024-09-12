@@ -25,7 +25,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public WarehouseOrderInSearchViewModel()
         {
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             orderManager =
                 new WarehouseManager(new StandartErrorManager(GlobalOptions.GetEntities(),
@@ -46,6 +49,19 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 RaisePropertyChanged();
             }
             get => myCurrentDocument;
+        }
+
+        public override void AddSearchList(object obj)
+        {
+            var ctxq = new WarehouseOrderInSearchViewModel();
+            var form = new StandartSearchView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctxq
+            };
+            ctxq.Form = form;
+            form.Show();
+
         }
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;

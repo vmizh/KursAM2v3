@@ -15,6 +15,7 @@ using KursDomain;
 using KursDomain.Documents.AccruedAmount;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Menu;
+using System.Collections.Generic;
 
 namespace KursAM2.ViewModel.Finance.AccruedAmount
 {
@@ -27,7 +28,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             GenericRepository = new GenericKursDBRepository<AccruedAmountOfSupplier>(UnitOfWork);
             AccruedAmountOfSupplierRepository = new AccruedAmountOfSupplierRepository(UnitOfWork);
 
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             EndDate = DateTime.Today; 
             StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month - 1, 1);

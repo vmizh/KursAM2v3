@@ -41,7 +41,10 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
             Debitors = new GalleryCollection<DebitorCreditorRow>();
             Creditors = new ObservableCollection<DebitorCreditorRow>();
             Operations = new ObservableCollection<KontragentBalansRowViewModel>();
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
         }
 

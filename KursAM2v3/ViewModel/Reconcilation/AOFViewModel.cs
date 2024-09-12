@@ -25,7 +25,10 @@ namespace KursAM2.ViewModel.Reconcilation
             ResponsibleCorporates = new ObservableCollection<ResponsibleCorporate>();
             Acts = new ObservableCollection<ActOfResponsibleShort>();
             ResponsibleSelectedCorporates = new ObservableCollection<ResponsibleCorporate>();
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             var d = new List<DateTime>();
             var dd = DateTime.Today;

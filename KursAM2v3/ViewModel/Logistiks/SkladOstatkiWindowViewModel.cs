@@ -84,12 +84,27 @@ namespace KursAM2.ViewModel.Logistiks
                 "pack://application:,,,/DevExpress.Images.v23.2;component/SvgImages/Business Objects/BO_Order.svg");
             StoreImage = (ImageSource)svgToImageSource.ProvideValue(null);
 
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             myIsPeriodSet = false;
             myOstatokDate = DateTime.Today;
             getRightOnNomenklReference();
             RefreshReferences();
+        }
+
+        public override void AddSearchList(object obj)
+        {
+            var ctxost = new SkladOstatkiWindowViewModel();
+            var form = new SkladOstatkiView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctxost
+            };
+            ctxost.Form = form;
+            form.Show(); 
         }
 
         private void InitIniFile(IniFileManager userIni)

@@ -48,7 +48,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
 
         public ManagementBalansCompareWindowViewModel()
         {
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = GetRightMenu();
             FirstDate = DateTime.Today;
             SecondDate = DateTime.Today;

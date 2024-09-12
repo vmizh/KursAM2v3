@@ -61,7 +61,10 @@ namespace KursAM2.ViewModel.Management
             WindowName = "Прибыли и убытки";
             LayoutName = "ProfitAndLossesWindowViewModel2";
             ExtendActual = new ObservableCollection<ProfitAndLossesExtendRowViewModel>();
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = GetRightMenu();
             RecalcCurrency = GlobalOptions.SystemProfile.NationalCurrency;
             CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.RUB) as Currency);

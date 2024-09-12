@@ -400,7 +400,7 @@ public static class MenuGenerator
         {
             menuVisibleSettings = new Dictionary<MenuGeneratorItemVisibleEnum, bool>
                 {
-                    [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+                    [MenuGeneratorItemVisibleEnum.AddSearchlist] = false
                 };
         }
 

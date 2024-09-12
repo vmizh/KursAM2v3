@@ -59,7 +59,10 @@ namespace KursAM2.ViewModel.Management.BreakEven
             KontrGroups = new ObservableCollection<BreakEvenKontrGroupViewModel>();
             ManagerGroups = new ObservableCollection<BreakEvenManagerGroupViewModel>();
             DocumentGroup = new ObservableCollection<DocumentRow>();
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
         }
 
@@ -661,7 +664,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                         IsUsluga = true,
                                         KontrSumma = (decimal)d.SFT_SUMMA_K_OPLATE, //Convert.ToDecimal(d.KontrSumma),
                                         KontrSummaCrs = (decimal)d.SFT_SUMMA_K_OPLATE,
-                                        Manager = otvlico != null ? otvlico : "Менециюжер не указан",
+                                        Manager = otvlico != null ? otvlico : "Менеджер не указан",
                                         Naklad = null,
                                         NomenklSumWOReval = 0,
                                         OperCrsName =

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -47,7 +48,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
             GenericProviderRepository = new GenericKursDBRepository<SD_26>(UnitOfWork);
             InvoiceProviderRepository = new InvoiceProviderRepository(UnitOfWork);
 
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             Documents = new ObservableCollection<IInvoiceProvider>();
             SelectedDocs = new ObservableCollection<IInvoiceProvider>();
@@ -62,7 +66,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
             GenericProviderRepository = new GenericKursDBRepository<SD_26>(UnitOfWork);
             InvoiceProviderRepository = new InvoiceProviderRepository(UnitOfWork);
             Form = form;
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             Documents = new ObservableCollection<IInvoiceProvider>();
             SelectedDocs = new ObservableCollection<IInvoiceProvider>();

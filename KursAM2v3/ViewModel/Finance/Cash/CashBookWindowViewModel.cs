@@ -43,7 +43,10 @@ namespace KursAM2.ViewModel.Finance.Cash
         public CashBookWindowViewModel()
         {
             WindowName = "Кассовая книга";
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = SetMenuBar();
             Periods = new ObservableCollection<DatePeriod>();
             IsPeriodEnabled = true;

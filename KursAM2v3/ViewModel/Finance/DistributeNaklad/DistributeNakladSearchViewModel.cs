@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Windows;
@@ -36,7 +37,10 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         public DistributeNakladSearchViewModel(Window form) : base(form)
         {
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             EndDate = DateTime.Today;
             StartDate = new DateTime(DateTime.Now.Year, 1, 1);
@@ -46,7 +50,10 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         public DistributeNakladSearchViewModel()
         {
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             EndDate = DateTime.Today;
             StartDate = EndDate.AddDays(-30);
@@ -73,6 +80,20 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         #endregion
 
         #region Properties
+
+        public  void AddSearchList(object obj)
+        {
+            var dnakForm = new KursBaseSearchWindow
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var v = new DistributeNakladSearchView(dnakForm);
+            dnakForm.modelViewControl.Content = v;
+            ((KursBaseControlViewModel)v.DataContext).Form = dnakForm;
+            dnakForm.DataContext = v.DataContext;
+            dnakForm.Show();
+
+        }
 
         public override string WindowName => "Поиск распределений накладных расходов";
         public override string LayoutName => "DistributeNakladSearchViewModel";

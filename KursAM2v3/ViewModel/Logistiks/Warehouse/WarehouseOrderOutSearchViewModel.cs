@@ -58,7 +58,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         });
             }
 
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             orderManager =
                 new WarehouseManager(new StandartErrorManager(GlobalOptions.GetEntities(),
@@ -89,6 +92,18 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override string WindowName => "Поиск расходных складских ордеров";
         public override string LayoutName => "WarehouseOrderOutSearchViewModel";
+
+        public override void AddSearchList(object obj)
+        {
+            var ctxr = new WarehouseOrderOutSearchViewModel();
+            var form = new StandartSearchView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctxr
+            };
+            ctxr.Form = form;
+            form.Show();
+        }
 
         public WarehouseOrderOut CurrentDocument
         {

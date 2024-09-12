@@ -50,7 +50,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             BalansStructure = new ObservableCollection<ManagementBalanceGroupViewModel>();
             ExtendRows = new ObservableCollection<ManagementBalanceExtendRowViewModel>();
             ExtendRowsActual = new ObservableCollection<ManagementBalanceExtendRowViewModel>();
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = GetRightMenu();
             using (var ent = GlobalOptions.GetEntities())
             {

@@ -42,7 +42,10 @@ namespace KursAM2.ViewModel.Management
             Operations = new ObservableCollection<KontragentBalansRowViewModel>();
             Periods = new ObservableCollection<KontragentPeriod>();
             Documents = new ObservableCollection<KontragentBalansRowViewModel>();
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
         }
 

@@ -66,7 +66,10 @@ namespace KursAM2.ViewModel.Logistiks
 
         public NomenklMoveOnSkladWindowViewModel(Window form) : base(form)
         {
-            LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             StartDate = new DateTime(DateTime.Today.Year, 1, 1);
             IsShowAll = true;

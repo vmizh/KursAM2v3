@@ -340,7 +340,10 @@ namespace KursAM2.ViewModel.Finance
         public BankOperationsWindowViewModel2(Window form) : this()
         {
             Form = form;
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.BankOpertionsRightBar(this);
             Periods = new List<ReminderDatePeriod>(new[]
             {

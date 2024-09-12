@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -41,7 +42,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             GenericProviderRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
             SD_24Repository = new SD_24Repository(UnitOfWork);
             Documents = new ObservableCollection<WayBillShort>();
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
             if (prn != null)
@@ -87,6 +91,21 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             EndDate = DateTime.Today;
         }
         */
+
+        public override void AddSearchList(object obj)
+        {
+            var form = new StandartSearchView
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var ctxNaklad = new WaybillSearchViewModel
+            {
+                Form = form
+            };
+            form.DataContext = ctxNaklad;
+            form.Show();
+
+        }
 
         public WayBillShort CurrentDocument
         {
