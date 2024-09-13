@@ -94,6 +94,8 @@ public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseCon
 
     #region Commands
 
+    
+
 #pragma warning disable 693
     public virtual void ObservableCollection<MenuButtonInfo>(object data)
 #pragma warning restore 693
@@ -116,6 +118,7 @@ public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseCon
         get { return new Command(DocNew, _ => IsDocNewEmptyAllow); }
     }
 
+    
     public virtual void DocNew(object obj)
     {
         if (!IsDocNewCopyAllow && !IsDocNewCopyAllow)
@@ -472,7 +475,15 @@ public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseCon
     public ICommand UndoCommand { get; }
 
     [Display(AutoGenerateField = false)]
-    public ICommand AddSearchListCommand { get; }
+    public ICommand AddSearchListCommand  {
+        get { return new Command(AddSearchList, param => IsDocDeleteAllow); }
+    }
+
+    public virtual void AddSearchList(object odj)
+    {
+
+    }
+
 
     [Display(AutoGenerateField = false)]
     public ICommand CreateLinkDocumentCommand { get; }

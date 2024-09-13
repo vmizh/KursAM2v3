@@ -430,32 +430,32 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         IsLayoutLoaded = true;
     }
 
-    public void RefreshData()
+    public virtual void RefreshData()
     {
         //throw new System.NotImplementedException();
     }
 
-    public void Save()
+    public virtual void Save()
     {
         //throw new NotImplementedException();
     }
 
-    public bool CanSave()
+    public virtual bool CanSave()
     {
         throw new NotImplementedException();
     }
 
-    public void Load(object o)
+    public virtual void Load(object o)
     {
         throw new NotImplementedException();
     }
 
-    public bool CanLoad(object o)
+    public virtual bool CanLoad(object o)
     {
         throw new NotImplementedException();
     }
 
-    public bool Check()
+    public virtual bool Check()
     {
         throw new NotImplementedException();
     }

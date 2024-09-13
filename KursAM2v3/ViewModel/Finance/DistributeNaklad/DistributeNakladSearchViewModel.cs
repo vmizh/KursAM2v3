@@ -81,7 +81,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         #region Properties
 
-        public  void AddSearchList(object obj)
+        public override void AddSearchList(object obj)
         {
             var dnakForm = new KursBaseSearchWindow
             {
