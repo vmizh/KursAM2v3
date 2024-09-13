@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -58,8 +59,24 @@ namespace KursAM2.ViewModel.Management.BreakEven
             KontrGroups = new ObservableCollection<BreakEvenKontrGroupViewModel>();
             ManagerGroups = new ObservableCollection<BreakEvenManagerGroupViewModel>();
             DocumentGroup = new ObservableCollection<DocumentRow>();
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+        }
+
+        public override void AddSearchList(object obj)
+        {
+            var renCtx = new BreakEvenWindowViewModel();
+            var form = new BreakEvenForm2
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = renCtx
+            };
+            renCtx.Form = form;
+            form.Show();
+
         }
 
         public override string LayoutName => "BreakEvenWindowViewModel";
@@ -647,7 +664,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                         IsUsluga = true,
                                         KontrSumma = (decimal)d.SFT_SUMMA_K_OPLATE, //Convert.ToDecimal(d.KontrSumma),
                                         KontrSummaCrs = (decimal)d.SFT_SUMMA_K_OPLATE,
-                                        Manager = otvlico != null ? otvlico : "Менециюжер не указан",
+                                        Manager = otvlico != null ? otvlico : "Менеджер не указан",
                                         Naklad = null,
                                         NomenklSumWOReval = 0,
                                         OperCrsName =

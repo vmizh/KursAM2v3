@@ -50,7 +50,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             BalansStructure = new ObservableCollection<ManagementBalanceGroupViewModel>();
             ExtendRows = new ObservableCollection<ManagementBalanceExtendRowViewModel>();
             ExtendRowsActual = new ObservableCollection<ManagementBalanceExtendRowViewModel>();
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = GetRightMenu();
             using (var ent = GlobalOptions.GetEntities())
             {
@@ -83,6 +86,21 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         public ObservableCollection<CrossCurrencyRate> CurrencyRates { set; get; } =
             new ObservableCollection<CrossCurrencyRate>();
 
+        public override void AddSearchList(object obj)
+        {
+            var ctx1 = new ManagementBalansWindowViewModel { CurrentDate = DateTime.Today };
+            var form = new ManagementBalansView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctx1
+            };
+            form.DataContext = ctx1;
+            ctx1.Form = form;
+            form.Show();
+
+        }
+        
+        
         public CrossCurrencyRate CurrentCurrencyRate
         {
             get => myCurrentCurrencyRate;

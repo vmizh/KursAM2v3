@@ -84,7 +84,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
             InvoiceClientRepository = new InvoiceClientRepository(UnitOfWork);
             WindowName = "Счета фактуры для клиентов";
             Documents = new ObservableCollection<IInvoiceClient>();
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             EndDate = DateTime.Today;
             StartDate = DateHelper.GetFirstDate();

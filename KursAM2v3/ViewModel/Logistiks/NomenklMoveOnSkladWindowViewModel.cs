@@ -66,7 +66,10 @@ namespace KursAM2.ViewModel.Logistiks
 
         public NomenklMoveOnSkladWindowViewModel(Window form) : base(form)
         {
-            LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             StartDate = new DateTime(DateTime.Today.Year, 1, 1);
             IsShowAll = true;
@@ -87,6 +90,18 @@ namespace KursAM2.ViewModel.Logistiks
                 RaisePropertyChanged(nameof(IsDataNotLoaded));
             }
         }
+
+        public override void AddSearchList(object obj)
+        {
+            var form1 = new NomenklMoveOnSklad
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var ctxNomMove = new NomenklMoveOnSkladWindowViewModel(form1);
+            form1.DataContext = ctxNomMove;
+            form1.Show();
+        }
+
 
         public bool ShowProgress
         {

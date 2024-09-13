@@ -48,7 +48,10 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
 
         public ManagementBalansCompareWindowViewModel()
         {
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = GetRightMenu();
             FirstDate = DateTime.Today;
             SecondDate = DateTime.Today;
@@ -95,6 +98,16 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             }
         }
 
+        public override void AddSearchList(object obj)
+        {
+            var form = new ManagementBalansCompareView
+            {
+                Owner = Application.Current.MainWindow
+            };
+            form.DataContext = new ManagementBalansCompareWindowViewModel(form);
+            form.Show();
+
+        }
         public KontragentCompareBalansDeltaItem CurrentKontragent
         {
             get => myCurrentKontragent;

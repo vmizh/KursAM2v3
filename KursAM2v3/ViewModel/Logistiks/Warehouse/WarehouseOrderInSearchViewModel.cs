@@ -63,6 +63,19 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get => myCurrentDocument;
         }
 
+        public override void AddSearchList(object obj)
+        {
+            var ctxq = new WarehouseOrderInSearchViewModel();
+            var form = new StandartSearchView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctxq
+            };
+            ctxq.Form = form;
+            form.Show();
+
+        }
+
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
         public override bool IsDocNewCopyAllow => false;
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;

@@ -43,7 +43,10 @@ namespace KursAM2.ViewModel.Finance.Cash
         public CashBookWindowViewModel()
         {
             WindowName = "Кассовая книга";
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = SetMenuBar();
             Periods = new ObservableCollection<DatePeriod>();
             IsPeriodEnabled = true;
@@ -69,6 +72,20 @@ namespace KursAM2.ViewModel.Finance.Cash
 
         public ObservableCollection<MoneyRemains> MoneyRemains { set; get; } = new ObservableCollection<MoneyRemains>();
 
+        public override void AddSearchList(object obj)
+        {
+            var ctxCash = new CashBookWindowViewModel();
+            var form = new CashBookView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctxCash
+            };
+            ctxCash.Form = form;
+            form.Show();
+
+        }
+        
+        
         public ObservableCollection<DatePeriod> Periods
         {
             get => myPeriods;

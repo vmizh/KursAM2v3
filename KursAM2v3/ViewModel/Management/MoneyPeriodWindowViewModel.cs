@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -7,6 +8,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors;
 using KursAM2.Managers;
+using KursAM2.View.Management;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
@@ -44,7 +46,10 @@ namespace KursAM2.ViewModel.Management
             CommonOperations = new ObservableCollection<MoneyPeriodRowViewModel>();
             IsDocNewCopyAllow = true;
             IsDocNewCopyRequisiteAllow = true;
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             StartDate = new DateTime(DateTime.Today.Year,DateTime.Today.Month,1);
             EndDate = DateTime.Today;
@@ -62,6 +67,19 @@ namespace KursAM2.ViewModel.Management
                 RefreshData(null);
                 RaisePropertyChanged();
             }
+        }
+
+        public override void AddSearchList(object obj)
+        {
+            var form = new MoneyPeriodMove
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var dv = new MoneyPeriodWindowViewModel(form);
+            dv.RefreshData(null);
+            form.DataContext = dv;
+            form.Show();
+
         }
 
         public int TimeOutIndex

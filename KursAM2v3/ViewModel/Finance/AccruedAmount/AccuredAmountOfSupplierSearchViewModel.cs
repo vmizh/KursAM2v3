@@ -9,11 +9,13 @@ using Data;
 using KursDomain.Repository;
 using KursAM2.Managers;
 using KursAM2.Repositories.AccruedAmount;
+using KursAM2.View.Base;
 using KursAM2.View.Finance.AccruedAmount;
 using KursDomain;
 using KursDomain.Documents.AccruedAmount;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Menu;
+using System.Collections.Generic;
 
 namespace KursAM2.ViewModel.Finance.AccruedAmount
 {
@@ -26,7 +28,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             GenericRepository = new GenericKursDBRepository<AccruedAmountOfSupplier>(UnitOfWork);
             AccruedAmountOfSupplierRepository = new AccruedAmountOfSupplierRepository(UnitOfWork);
 
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+            });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             EndDate = DateTime.Today; 
             StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month - 1, 1);
@@ -123,6 +128,20 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         public ObservableCollection<AccruedAmountOfSupplierViewModel> Documents { set; get; } =
             new ObservableCollection<AccruedAmountOfSupplierViewModel>();
+
+        public override void AddSearchList(object obj)
+        {
+            var aap = new AccuredAmountOfSupplierSearchViewModel();
+            var form = new StandartSearchView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = aap
+            };
+            aap.Form = form;
+            form.Show();
+
+        }
+
 
         public AccruedAmountOfSupplierViewModel CurrentDocument
         {

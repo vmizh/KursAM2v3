@@ -25,7 +25,11 @@ namespace KursAM2.ViewModel.Personal
 
         public PersonaReferenceWindowViewModel()
         {
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
+            {
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = false
+            });
+                    ;
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
             CurenciesCollection = GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>().ToList();
             RefreshData(null);

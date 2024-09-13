@@ -69,7 +69,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             Form = form;
             LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
             {
-                [MenuGeneratorItemVisibleEnum.AddSearchlist] = false
+                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
             });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             Documents = new ObservableCollection<IInvoiceProvider>();
@@ -171,6 +171,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             });
             frm?.gridDocuments.RefreshData();
+        }
+
+        public override void AddSearchList(object obj)
+        {
+            var form = new StandartSearchView { Owner = Application.Current.MainWindow };
+            var dtx = new SearchInvoiceProviderViewModel(form);
+            form.DataContext = dtx;
+            form.Show();
+
         }
 
         public override void DocumentOpen(object obj)
