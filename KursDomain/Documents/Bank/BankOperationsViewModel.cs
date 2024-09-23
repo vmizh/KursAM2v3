@@ -83,6 +83,16 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
         }
     }
 
+    public override string Description
+    {
+        get
+        {
+            string operType = VVT_VAL_PRIHOD > 0 ? "приход от" : "расход для";
+            return
+                $"Банковский {operType} {KontragentName}({BankOperationType}) для {BankAccount.ShortName} ({VVT_DOC_NUM})";
+        }
+    }
+
 
     public Guid? AccuredId
     {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -9,7 +10,6 @@ using Core.WindowsManager;
 using Data;
 using KursAM2.Managers;
 using KursAM2.Repositories;
-using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks.Warehouse;
@@ -34,32 +34,39 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public readonly GenericKursDBRepository<SD_24> GenericProviderRepository;
 
-        // ReSharper disable once NotAccessedField.Local
-        public ISD_24Repository SD_24Repository;
+        private readonly ConnectionMultiplexer redis;
+        private readonly ISubscriber mySubscriber;
+
 
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
         private WayBillShort myCurrentDocument;
 
-        private readonly IDatabase myRedis = RedisStore.RedisCache;
-        private readonly ISubscriber mySubscriber;
+        // ReSharper disable once NotAccessedField.Local
+        public ISD_24Repository SD_24Repository;
 
         public WaybillSearchViewModel()
         {
             GenericProviderRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
             SD_24Repository = new SD_24Repository(UnitOfWork);
 
-            if (myRedis != null)
+            try
             {
-                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe(new RedisChannel("WayBill", RedisChannel.PatternMode.Auto),
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.WayBill, RedisChannel.PatternMode.Auto),
                         (_, message) =>
                         {
                             Console.WriteLine($@"Redis - {message}");
                             Form.Dispatcher.Invoke(() => UpdateList(message));
                         });
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
             }
 
             Documents = new ObservableCollection<WayBillShort>();
@@ -87,6 +94,40 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             //начальная дата поиска - 1-е число предыдущего месяца или 1-го января
             StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month != 1 ? DateTime.Today.Month - 1 : 1, 1);
             EndDate = DateTime.Today;
+        }
+
+        public WayBillShort CurrentDocument
+        {
+            get => myCurrentDocument;
+            set
+            {
+                if (myCurrentDocument?.DocCode == value?.DocCode) return;
+                myCurrentDocument = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public override bool IsDocumentOpenAllow => CurrentDocument != null;
+
+        //public override bool IsDocNewCopyAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyAllow => false;
+        public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
+        public override bool IsPrintAllow => CurrentDocument != null;
+
+        // ReSharper disable once CollectionNeverQueried.Global
+        public ObservableCollection<WayBillShort> Documents { set; get; } = new ObservableCollection<WayBillShort>();
+
+        public override string WindowName => "Поиск расходных накладных для клиентов";
+        public override string LayoutName => "WaybillSearchViewModel";
+
+        public Command ExportSFCommand
+        {
+            get { return new Command(ExportSF, _ => IsDocumentOpenAllow); }
+        }
+
+        public Command PrintSFCommand
+        {
+            get { return new Command(PrintSF, _ => IsDocumentOpenAllow); }
         }
 
         /*
@@ -125,41 +166,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             };
             form.DataContext = ctxNaklad;
             form.Show();
-
-        }
-
-        public WayBillShort CurrentDocument
-        {
-            get => myCurrentDocument;
-            set
-            {
-                if (myCurrentDocument?.DocCode == value?.DocCode) return;
-                myCurrentDocument = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public override bool IsDocumentOpenAllow => CurrentDocument != null;
-
-        //public override bool IsDocNewCopyAllow => CurrentDocument != null;
-        public override bool IsDocNewCopyAllow => false;
-        public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
-        public override bool IsPrintAllow => CurrentDocument != null;
-
-        // ReSharper disable once CollectionNeverQueried.Global
-        public ObservableCollection<WayBillShort> Documents { set; get; } = new ObservableCollection<WayBillShort>();
-
-        public override string WindowName => "Поиск расходных накладных для клиентов";
-        public override string LayoutName => "WaybillSearchViewModel";
-
-        public Command ExportSFCommand
-        {
-            get { return new Command(ExportSF, _ => IsDocumentOpenAllow); }
-        }
-
-        public Command PrintSFCommand
-        {
-            get { return new Command(PrintSF, _ => IsDocumentOpenAllow); }
         }
 
         public override void Print(object form)
@@ -220,7 +226,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
             var old = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
             if (old != null)
-            {
                 switch (msg.OperationType)
                 {
                     case RedisMessageDocumentOperationTypeEnum.Update:
@@ -233,13 +238,13 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         Documents.Remove(old);
                         break;
                 }
-            }
         }
 
         #region Commands
 
         public override void RefreshData(object data)
         {
+            var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
             var frm = Form as StandartSearchView;
             Documents.Clear();
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
@@ -258,6 +263,24 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     .ToList();
                 frm?.Dispatcher.Invoke(() =>
                 {
+                    if (result.Count <= 0) return;
+                    if (result.Count > 0)
+                    {
+                        var lasts = lastDocumentRopository.GetLastChanges(result.Select(_ => _.DocCode).Distinct());
+                        foreach (var r in result)
+                            if (lasts.ContainsKey(r.DocCode))
+                            {
+                                var last = lasts[r.DocCode];
+                                r.LastChanger = last.Item1;
+                                r.LastChangerDate = last.Item2;
+                            }
+                            else
+                            {
+                                r.LastChanger = r.CREATOR;
+                                r.LastChangerDate = r.Date;
+                            }
+                    }
+
                     foreach (var d in result) Documents.Add(d);
                     frm.loadingIndicator.Visibility = Visibility.Hidden;
                     RaisePropertyChanged(nameof(Documents));

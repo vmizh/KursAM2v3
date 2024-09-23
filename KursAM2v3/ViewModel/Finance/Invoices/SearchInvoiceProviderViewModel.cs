@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -26,6 +27,7 @@ using KursDomain.Menu;
 using KursDomain.Repository;
 using KursDomain.Repository.DocHistoryRepository;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
@@ -37,8 +39,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
         //private InvoicesManager invoiceManager = new InvoicesManager();
 
         public readonly GenericKursDBRepository<SD_26> GenericProviderRepository;
-        private readonly IDatabase myRedis = RedisStore.RedisCache;
         private readonly ISubscriber mySubscriber;
+        private readonly ConnectionMultiplexer redis;
 
         // ReSharper disable once NotAccessedField.Local
         public IInvoiceProviderRepository InvoiceProviderRepository;
@@ -54,16 +56,45 @@ namespace KursAM2.ViewModel.Finance.Invoices
             GenericProviderRepository = new GenericKursDBRepository<SD_26>(UnitOfWork);
             InvoiceProviderRepository = new InvoiceProviderRepository(UnitOfWork);
 
-            if (myRedis != null)
+            try
             {
-                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
+
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe(new RedisChannel("ProviderInvoice", RedisChannel.PatternMode.Auto),
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.InvoiceProvider, RedisChannel.PatternMode.Auto),
                         (_, message) =>
                         {
                             Console.WriteLine($@"Redis - {message}");
                             Form.Dispatcher.Invoke(() => UpdateList(message));
                         });
+                mySubscriber.Subscribe(
+                    new RedisChannel(RedisMessageChannels.CashOut, RedisChannel.PatternMode.Auto),
+                    (_, message) =>
+                    {
+                        Console.WriteLine($@"Redis - {message}");
+                        Form.Dispatcher.Invoke(() => UpdatePayments(message));
+                    });
+                mySubscriber.Subscribe(
+                    new RedisChannel(RedisMessageChannels.Bank, RedisChannel.PatternMode.Auto),
+                    (_, message) =>
+                    {
+                        Console.WriteLine($@"Redis - {message}");
+                        Form.Dispatcher.Invoke(() => UpdatePayments(message));
+                    });
+
+                mySubscriber.Subscribe(
+                    new RedisChannel(RedisMessageChannels.MutualAccounting, RedisChannel.PatternMode.Auto),
+                    (_, message) =>
+                    {
+                        Console.WriteLine($@"Redis - {message}");
+                        Form.Dispatcher.Invoke(() => UpdateMutualPayments(message));
+                    });
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
             }
 
             Form = form;
@@ -179,7 +210,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var dtx = new SearchInvoiceProviderViewModel(form);
             form.DataContext = dtx;
             form.Show();
-
         }
 
         public override void DocumentOpen(object obj)
@@ -327,6 +357,97 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
 
             StartDate = DateHelper.GetFirstDate();
+        }
+
+        public override void OnWindowClosing(object obj)
+        {
+            mySubscriber.UnsubscribeAll();
+            base.OnWindowClosing(obj);
+        }
+
+        private void UpdatePayments(RedisValue message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
+            if (msg == null || msg.DocCode == null) return;
+            if (msg.DbId != GlobalOptions.DataBaseId) return;
+            if (!msg.ExternalValues.ContainsKey("InvoiceDC")) return;
+            decimal dc;
+            try
+            {
+                dc = Convert.ToDecimal(msg.ExternalValues["InvoiceDC"]);
+            }
+            catch
+            {
+                return;
+            }
+
+            var old = Documents.FirstOrDefault(_ => _.DocCode == dc);
+            if (old == null) return;
+            InvoiceProviderRepository =
+                new InvoiceProviderRepository(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+            var doc = InvoiceProviderRepository.GetByDocCode(dc);
+            var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
+
+            var last = lastDocumentRopository.GetLastChanges(new List<decimal>(new[] { dc }));
+            if (last.Count > 0)
+            {
+                doc.LastChanger = last.First().Value.Item1;
+                doc.LastChangerDate = last.First().Value.Item2;
+            }
+            else
+            {
+                doc.LastChanger = doc.CREATOR;
+                doc.LastChangerDate = doc.DocDate;
+            }
+
+            var idx = Documents.IndexOf(old);
+            Documents[idx] = doc;
+        }
+
+        private void UpdateMutualPayments(RedisValue message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
+            if (msg == null || msg.DocCode == null) return;
+            if (msg.DbId != GlobalOptions.DataBaseId) return;
+            if (!msg.ExternalValues.ContainsKey("ClientInvoiceDCList")) return;
+            var arr = msg.ExternalValues["ClientInvoiceDCList"] as JArray;
+            if (arr is null) return;
+            var listDC = arr.Select(Convert.ToDecimal).ToList();
+            foreach (var dc in listDC)
+            {
+                var old = Documents.FirstOrDefault(_ => _.DocCode == dc);
+
+                InvoiceProviderRepository =
+                    new InvoiceProviderRepository(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+                var doc = InvoiceProviderRepository.GetByDocCode(dc);
+                var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
+                int idx;
+                if (old == null)
+                {
+                    Documents.Add(doc);
+                    idx = Documents.IndexOf(doc);
+                }
+                else
+                {
+                    idx = Documents.IndexOf(old);
+                }
+
+                var last = lastDocumentRopository.GetLastChanges(new List<decimal>(new[] { dc }));
+                if (last.Count > 0)
+                {
+                    doc.LastChanger = last.First().Value.Item1;
+                    doc.LastChangerDate = last.First().Value.Item2;
+                }
+                else
+                {
+                    doc.LastChanger = doc.CREATOR;
+                    doc.LastChangerDate = doc.DocDate;
+                }
+
+                Documents[idx] = doc;
+            }
         }
     }
 }

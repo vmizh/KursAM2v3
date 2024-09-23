@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Configuration;
 using System.Drawing;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Core;
 using DevExpress.Xpf.Editors;
@@ -26,15 +26,24 @@ namespace KursAM2.View
     public partial class StartLogin
     {
         private readonly StartLoginViewModel dtx;
-        private readonly IDatabase myRedis = RedisStore.RedisCache;
         private readonly ISubscriber mySubscriber;
+        private readonly ConnectionMultiplexer redis;
         public bool IsConnectSuccess;
 
         public StartLogin()
         {
             InitializeComponent();
 
-            mySubscriber = myRedis.Multiplexer.GetSubscriber();
+            try
+            {
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
+            }
+
             DataContext = new StartLoginViewModel(this);
             pwdText.Focus();
             dtx = (StartLoginViewModel)DataContext;
@@ -100,13 +109,13 @@ namespace KursAM2.View
                         TypeNameHandling = TypeNameHandling.All
                     };
                     var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
-                    var ch = new RedisChannel("StartLogin", RedisChannel.PatternMode.Auto);
+                    var ch = new RedisChannel(RedisMessageChannels.StartLogin, RedisChannel.PatternMode.Auto);
                     mySubscriber.Publish(ch, json);
                     return;
                 }
+
                 dtx?.bnOk_Click(null);
             }
-            
         }
     }
 }

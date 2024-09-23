@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
-using Data;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
 using KursAM2.ReportManagers;
-using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks.Warehouse;
@@ -24,7 +22,6 @@ using KursDomain.ICommon;
 using KursDomain.IDocuments;
 using KursDomain.Managers;
 using KursDomain.Menu;
-using KursDomain.Repository;
 using KursDomain.Repository.DocHistoryRepository;
 using KursDomain.Repository.SD24Repository;
 using KursDomain.Services;
@@ -38,24 +35,31 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public sealed class WarehouseOrderOutSearchViewModel : RSWindowSearchViewModelBase
     {
-        private readonly IDatabase myRedis = RedisStore.RedisCache;
         private readonly ISubscriber mySubscriber;
+
         private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
         private readonly WarehouseManager orderManager;
+        private readonly ConnectionMultiplexer redis;
         private WarehouseOrderOut myCurrentDocument;
 
         public WarehouseOrderOutSearchViewModel()
         {
-            if (myRedis != null)
+            try
             {
-                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe(new RedisChannel("WarehouseOut", RedisChannel.PatternMode.Auto),
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.WarehouseOrderIn, RedisChannel.PatternMode.Auto),
                         (channel, message) =>
                         {
                             Console.WriteLine($@"Redis - {message}");
                             Form.Dispatcher.Invoke(() => UpdateList(message));
                         });
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
             }
 
             LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
@@ -93,18 +97,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override string WindowName => "Поиск расходных складских ордеров";
         public override string LayoutName => "WarehouseOrderOutSearchViewModel";
 
-        public override void AddSearchList(object obj)
-        {
-            var ctxr = new WarehouseOrderOutSearchViewModel();
-            var form = new StandartSearchView
-            {
-                Owner = Application.Current.MainWindow,
-                DataContext = ctxr
-            };
-            ctxr.Form = form;
-            form.Show();
-        }
-
         public WarehouseOrderOut CurrentDocument
         {
             set
@@ -119,6 +111,18 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
         public override bool IsDocNewCopyAllow => false;
+
+        public override void AddSearchList(object obj)
+        {
+            var ctxr = new WarehouseOrderOutSearchViewModel();
+            var form = new StandartSearchView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctxr
+            };
+            ctxr.Form = form;
+            form.Show();
+        }
 
         private void onUpdateDocument(AFterSaveBaseWrapperEventArgs<WarehouseOutWrapper> obj)
         {
@@ -222,7 +226,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
             using (var ctx = GlobalOptions.GetEntities())
             {
-
                 var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
 
                 var dc = new List<decimal>(new[] { msg.DocCode.Value });
@@ -244,7 +247,6 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 var old = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
 
                 if (old != null)
-                {
                     switch (msg.OperationType)
                     {
                         case RedisMessageDocumentOperationTypeEnum.Update:
@@ -257,11 +259,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             Documents.Remove(old);
                             break;
                     }
-                }
                 else
-                {
                     Documents.Add(newItem);
-                }
             }
         }
 
@@ -298,19 +297,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
                     foreach (var item in Documents)
                     {
-                        var c = ctx.TD_24.Any(_ => _.DDT_RASH_ORD_DC == item.DocCode) ?
-                        ctx.TD_24.Where(_ => _.DDT_RASH_ORD_DC == item.DocCode).Sum(_ => _.DDT_KOL_PRIHOD) : 0;
+                        var c = ctx.TD_24.Any(_ => _.DDT_RASH_ORD_DC == item.DocCode)
+                            ? ctx.TD_24.Where(_ => _.DDT_RASH_ORD_DC == item.DocCode).Sum(_ => _.DDT_KOL_PRIHOD)
+                            : 0;
                         if (c == 0)
-                        {
                             item.FlagShipped = "not";
-                        } else if (c < item.Rows.Sum(_ => _.Quantity))
-                        {
+                        else if (c < item.Rows.Sum(_ => _.Quantity))
                             item.FlagShipped = "part";
-                        }
                         else
-                        {
                             item.FlagShipped = "full";
-                        }
                     }
                 }
             }
@@ -420,10 +415,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 };
                 frm.gridDocumentsTableView.FormatConditions.Add(notShippedFormatCondition);
                 frm.gridDocumentsTableView.FormatConditions.Add(partShippedFormatCondition);
-                
             }
         }
-        
+
         public override void OnWindowClosing(object obj)
         {
             MainWindowViewModel.EventAggregator.GetEvent<AFterDeleteBaseWrapperEvent<WarehouseOutWrapper>>()

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -19,6 +20,7 @@ using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ReportManagers;
 using KursAM2.Repositories;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.DialogUserControl.Invoices.ViewModels;
 using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Helper;
@@ -31,6 +33,8 @@ using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 using InvoiceProviderRow = KursDomain.Documents.Invoices.InvoiceProviderRow;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
@@ -38,7 +42,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
     public sealed class OrderInWindowViewModel : RSWindowViewModelBase
     {
         public readonly GenericKursDBRepository<SD_24> GenericOrderInRepository;
+        private readonly ISubscriber mySubscriber;
+
         private readonly WarehouseManager orderManager;
+        private readonly ConnectionMultiplexer redis;
 
         // ReSharper disable once NotAccessedField.Local
         public readonly ISD_24Repository SD_24Repository;
@@ -51,6 +58,27 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         [SuppressMessage("ReSharper", "VirtualMemberCallInConstructor")]
         public OrderInWindowViewModel(StandartErrorManager errManager)
         {
+            try
+            {
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
+                if (mySubscriber.IsConnected())
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.WarehouseOrderIn, RedisChannel.PatternMode.Auto),
+                        (channel, message) =>
+                        {
+                            if (KursNotyficationService != null)
+                            {
+                                Console.WriteLine($@"Redis - {message}");
+                                Form.Dispatcher.Invoke(() => ShowNotify(message));
+                            }
+                        });
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
+            }
+
             GenericOrderInRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
             SD_24Repository = new SD_24Repository(UnitOfWork);
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
@@ -80,6 +108,28 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public OrderInWindowViewModel(StandartErrorManager errManager, decimal dc)
         {
+            try
+            {
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
+
+                if (mySubscriber.IsConnected())
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.WarehouseOrderIn, RedisChannel.PatternMode.Auto),
+                        (channel, message) =>
+                        {
+                            if (KursNotyficationService != null)
+                            {
+                                Console.WriteLine($"Redis - {message}");
+                                Form.Dispatcher.Invoke(() => ShowNotify(message));
+                            }
+                        });
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
+            }
+
             GenericOrderInRepository = new GenericKursDBRepository<SD_24>(UnitOfWork);
             SD_24Repository = new SD_24Repository(UnitOfWork);
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
@@ -118,12 +168,31 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
                 Document.Rows.ForEach(_ => _.State = RowStatus.NotEdited);
                 Document.State = RowStatus.NotEdited;
-                LastDocumentManager.SaveLastOpenInfo(DocumentType.StoreOrderIn, null, Document.DocCode, 
-                    Document.CREATOR, GlobalOptions.UserInfo.NickName,Document.Description);
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.StoreOrderIn, null, Document.DocCode,
+                    Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
             }
         }
 
+        #region Methods
+
+        private void ShowNotify(string notify)
+        {
+            if (string.IsNullOrWhiteSpace(notify)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(notify);
+            if (msg == null || msg.UserId == GlobalOptions.UserInfo.KursId) return;
+            if (msg.DocCode == Document.DocCode)
+            {
+                NotifyInfo = msg.Message;
+                var notification = KursNotyficationService.CreateCustomNotification(this);
+                notification.ShowAsync();
+            }
+        }
+
+        #endregion
+
         #region Properties
+
+        public string NotifyInfo { set; get; }
 
         public List<KursDomain.References.Warehouse>
             WarehouseList { set; get; } = GlobalOptions.ReferencesCache.GetWarehousesAll()
@@ -209,10 +278,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             var WinManager = new WindowManager();
             if (Document.WarehouseIn == null)
-            {
                 WinManager.ShowWinUIMessageBox("Не выбран склад.", "Ошибка", MessageBoxButton.OK,
                     MessageBoxImage.Error);
-            }
         }
 
         private void SelectSchet()
@@ -236,7 +303,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     LayoutName = "InvoiceProviderSearchMulti",
                     KontragentDC = Document.KontragentSender?.DocCode,
                     ExistingRows = Document.Rows.Select(r =>
-                            new Tuple<decimal, decimal, int>(r.Nomenkl.DocCode, r.LinkInvoice.DocCode, r.LinkInvoice.Code))
+                            new Tuple<decimal, decimal, int>(r.Nomenkl.DocCode, r.LinkInvoice.DocCode,
+                                r.LinkInvoice.Code))
                         .ToList()
                 };
                 dtx.RefreshData(null);
@@ -512,9 +580,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             Document.Entity.DD_POLUCH_NAME = Document.WarehouseIn.Name;
             Document.Entity.DD_TYPE_DC = 2010000001;
             if (Document.Entity.SD_201 != null && UnitOfWork.Context.Entry(Document.Entity.SD_201) != null)
-            {
                 UnitOfWork.Context.Entry(Document.Entity.SD_201).State = EntityState.Unchanged;
-            }
             var ent = UnitOfWork.Context.ChangeTracker.Entries().ToList();
             UnitOfWork.CreateTransaction();
             try
@@ -540,8 +606,32 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 UnitOfWork.Commit();
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.StoreOrderIn), null,
                     Document.DocCode, null, (string)Document.ToJson());
-                LastDocumentManager.SaveLastOpenInfo(DocumentType.StoreOrderIn, null, Document.DocCode, 
-                    Document.CREATOR, GlobalOptions.UserInfo.NickName,Document.Description);
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.StoreOrderIn, null, Document.DocCode,
+                    Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
+                if (mySubscriber != null && mySubscriber.IsConnected())
+                {
+                    var str = Document.State == RowStatus.NewRow ? "создал" : "сохранил";
+                    var message = new RedisMessage
+                    {
+                        DocumentType = DocumentType.StoreOrderIn,
+                        DocCode = Document.DocCode,
+                        DocDate = Document.Date,
+                        IsDocument = true,
+                        OperationType = Document.myState == RowStatus.NewRow
+                            ? RedisMessageDocumentOperationTypeEnum.Create
+                            : RedisMessageDocumentOperationTypeEnum.Update,
+                        Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} ордер {Document.Description}"
+                    };
+                    message.ExternalValues.Add("KontragentDC", Document.KontragentSender.DocCode);
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                    mySubscriber.Publish(
+                        new RedisChannel(RedisMessageChannels.WarehouseOrderIn, RedisChannel.PatternMode.Auto), json);
+                }
+
                 if (Document.DD_KONTR_OTPR_DC != null)
                     RecalcKontragentBalans.CalcBalans(Document.DD_KONTR_OTPR_DC.Value, Document.Date);
             }
@@ -790,6 +880,30 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             UnitOfWork.Context.SD_24.Remove(doc);
                         UnitOfWork.Save();
                         UnitOfWork.Commit();
+                        if (mySubscriber != null && mySubscriber.IsConnected())
+                        {
+                            var message = new RedisMessage
+                            {
+                                DocumentType = DocumentType.StoreOrderIn,
+                                DocCode = Document.DocCode,
+                                DocDate = Document.Date,
+                                IsDocument = true,
+                                OperationType = RedisMessageDocumentOperationTypeEnum.Delete,
+                                Message =
+                                    $"Пользователь '{GlobalOptions.UserInfo.Name}' удалил ордер {Document.Description}"
+                            };
+                            message.ExternalValues.Add("KontragentDC", Document.KontragentSender.DocCode);
+                            var jsonSerializerSettings = new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All
+                            };
+                            var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                            if (Document.State != RowStatus.NewRow)
+                                mySubscriber.Publish(
+                                    new RedisChannel(RedisMessageChannels.WarehouseOrderIn,
+                                        RedisChannel.PatternMode.Auto),
+                                    json);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -881,14 +995,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (Document.WarehouseSenderType == WarehouseSenderType.Kontragent
                 || Document.Rows.Count == 0) return;
             if (obj is EditValueChangedEventArgs args && args.NewValue != null && args.OldValue != null)
-            {
                 if (Document.Rows.Where(_ => _.LinkOrder != null)
                     .Any(_ => _.LinkOrder.SD_24.DD_DATE >= (DateTime)args.NewValue))
                 {
                     args.Handled = false;
                     Document.Date = (DateTime)args.OldValue;
                 }
-            }
         }
 
         #endregion

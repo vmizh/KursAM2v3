@@ -805,9 +805,9 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 RaisePropertyChanged(nameof(Tovars));
                 RaisePropertyChanged(nameof(SelectedTovars));
                 Load(Id);
-                //TODO Сохранить последний документ
-                //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.Naklad, Id, null, Creator,
-                //    GlobalOptions.UserInfo.Name, Description);
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.Naklad, Id, null,
+                    Creator, GlobalOptions.UserInfo.NickName, Description);
+               
             }
 
             catch (Exception ex)
@@ -819,12 +819,12 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         public override bool IsCanSaveData => CanSave();
 
-        public bool CanSave()
+        public override bool CanSave()
         {
             return State != RowStatus.NotEdited || Tovars.Any(_ => _.State != RowStatus.NotEdited);
         }
 
-        public void Load(object o)
+        public override void Load(object o)
         {
             if (o is Guid id)
             {
@@ -1169,7 +1169,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     });
                 }
         }
-
 
         public bool CanAddNakladInvoice()
         {

@@ -1152,8 +1152,34 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                 Rows.Add(newRow);
             }
         Summa = Rows.Sum(_ => _.Summa);
+        LoadPayments();
+        PaySumma = PaymentDocs.Sum(_ => _.Summa);
 
-        Summa = Rows.Sum(_ => _.Summa);
+        //ShipmentRows = new ObservableCollection<ShipmentRowViewModel>();
+        LoadShipments();
+    }
+
+    public void LoadShipments()
+    {
+        ShipmentRows.Clear();
+        if (Entity.TD_84 is not { Count: > 0 }) return;
+
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            var otgruz = ctx.TD_24.Include(_ => _.SD_24)
+                .Where(_ => _.DDT_SFACT_DC == DocCode).ToList();
+            foreach (var r2 in otgruz)
+            {
+                var newItem = new ShipmentRowViewModel(r2);
+                if (r2.SD_24 != null)
+                    newItem.Parent = new WarehouseOrderOut(r2.SD_24);
+                ShipmentRows.Add(newItem);
+            }
+        }
+    }
+
+    public void LoadPayments()
+    {
         using (var ctx = GlobalOptions.GetEntities())
         {
             PaymentDocs.Clear();
@@ -1218,24 +1244,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
             else
             {
                 var p = ctx.CashSFClient.FirstOrDefault(_ => _.Id == Entity.Id);
-                CashPaySumma = p != null ? p.Payed : 0;
-            }
-        }
-
-        //ShipmentRows = new ObservableCollection<ShipmentRowViewModel>();
-        ShipmentRows.Clear();
-        if (Entity.TD_84 is not { Count: > 0 }) return;
-
-        using (var ctx = GlobalOptions.GetEntities())
-        {
-            var otgruz = ctx.TD_24.Include(_ => _.SD_24)
-                .Where(_ => _.DDT_SFACT_DC == DocCode).ToList();
-            foreach (var r2 in otgruz)
-            {
-                var newItem = new ShipmentRowViewModel(r2);
-                if (r2.SD_24 != null)
-                    newItem.Parent = new WarehouseOrderOut(r2.SD_24);
-                ShipmentRows.Add(newItem);
+                CashPaySumma = p?.Payed ?? 0;
             }
         }
     }

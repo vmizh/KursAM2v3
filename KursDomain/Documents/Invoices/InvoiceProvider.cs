@@ -6,6 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -19,6 +20,7 @@ using KursDomain.References;
 using KursDomain.Repository;
 using Newtonsoft.Json;
 using NomenklProductType = KursDomain.References.NomenklProductType;
+using Orientation = System.Windows.Controls.Orientation;
 using ValidationError = Core.Helper.ValidationError;
 
 namespace KursDomain.Documents.Invoices;
@@ -1130,16 +1132,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
                                  t.TD_24.Sum(_ => _.DDT_KOL_PRIHOD);
             }
 
-        if(PaymentDocs == null)
-            PaymentDocs = new ObservableCollection<ProviderInvoicePayViewModel>();
-        else 
-            PaymentDocs.Clear();
-        if (Entity.ProviderInvoicePay != null && Entity.ProviderInvoicePay.Count > 0)
-            foreach (var pay in Entity.ProviderInvoicePay)
-            {
-                var newItem = new ProviderInvoicePayViewModel(pay);
-                PaymentDocs.Add(newItem);
-            }
+        LoadPayments();
 
         SummaFact = 0;
         if (Entity.SD_24 != null)
@@ -1162,6 +1155,21 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
                     }
 
         RaisePropertyChanged(nameof(Summa));
+    }
+
+    public void LoadPayments()
+    {
+        if (PaymentDocs == null)
+            PaymentDocs = new ObservableCollection<ProviderInvoicePayViewModel>();
+        else
+            PaymentDocs.Clear();
+
+        if (Entity.ProviderInvoicePay != null && Entity.ProviderInvoicePay.Count > 0)
+            foreach (var pay in Entity.ProviderInvoicePay)
+            {
+                var newItem = new ProviderInvoicePayViewModel(pay);
+                PaymentDocs.Add(newItem);
+            }
     }
 
     public List<SD_26> LoadList()

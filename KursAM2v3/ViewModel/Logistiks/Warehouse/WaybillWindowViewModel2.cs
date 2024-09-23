@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
@@ -18,6 +18,7 @@ using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.Managers.Invoices;
 using KursAM2.ReportManagers.SFClientAndWayBill;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.DialogUserControl.Invoices.ViewModels;
 using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Helper;
@@ -32,7 +33,9 @@ using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
+using Newtonsoft.Json;
 using Reports.Base;
+using StackExchange.Redis;
 using static KursAM2.View.DialogUserControl.Invoices.ViewModels.InvoiceClientSearchDialogViewModel;
 
 namespace KursAM2.ViewModel.Logistiks.Warehouse
@@ -52,6 +55,28 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             LoadByWhom();
             LeftMenuBar = MenuGenerator.DocWithRowsLeftBar(this);
             RightMenuBar = MenuGenerator.StandartDocWithDeleteRightBar(this);
+            try
+            {
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
+
+                if (mySubscriber.IsConnected())
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.WayBill, RedisChannel.PatternMode.Auto),
+                        (channel, message) =>
+                        {
+                            if (KursNotyficationService != null)
+                            {
+                                Console.WriteLine($@"Redis - {message}");
+                                Form.Dispatcher.Invoke(() => ShowNotify(message));
+                            }
+                        });
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
+            }
+
             var prn = RightMenuBar.FirstOrDefault(_ => _.Name == "Print");
             if (prn != null)
             {
@@ -131,6 +156,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         private readonly WindowManager winManager = new WindowManager();
         public readonly GenericKursDBRepository<SD_24> GenericRepository;
 
+        private readonly ConnectionMultiplexer redis;
+        private readonly ISubscriber mySubscriber;
+
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
@@ -145,6 +173,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         #endregion
 
         #region Properties
+
+        public string NotifyInfo { get; set; }
 
         public Waybill Document
         {
@@ -327,7 +357,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         }
                     }
 
-                Dictionary<DbEntityEntry, EntityState> entityStates =
+                var entityStates =
                     UnitOfWork.Context.ChangeTracker.Entries().ToDictionary(e => e, e => e.State);
 
                 Document.Entity.DD_OTRPAV_NAME = Document.Sender;
@@ -351,13 +381,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                                   $"склад {Document.WarehouseOut} в кол-ве {q.First().OstatokQuantity:0.0}.",
                             "Отрицательные остатки", MessageBoxImage.Error);
                         UnitOfWork.Rollback();
-                        foreach (var ent in  UnitOfWork.Context.ChangeTracker.Entries())
-                        {
-                            if(entityStates.ContainsKey(ent))
-                            {
+                        foreach (var ent in UnitOfWork.Context.ChangeTracker.Entries())
+                            if (entityStates.ContainsKey(ent))
                                 ent.State = entityStates[ent];
-                            }
-                        }
                         if (row.State == RowStatus.NewRow)
                         {
                             Document.Rows.Remove(row);
@@ -369,15 +395,41 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             Document.Rows.Remove(row);
                             Document.Entity.TD_24.Remove(row.Entity);
                         }
+
                         return;
                     }
                 }
-                
+
                 RecalcKontragentBalans.CalcBalans(Document.Client.DocCode, Document.Date, UnitOfWork.Context);
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.AccruedAmountOfSupplier),
                     Document.Id,
                     0, null, (string)Document.ToJson());
                 UnitOfWork.Commit();
+                if (mySubscriber != null && mySubscriber.IsConnected())
+                {
+                    var str = Document.State == RowStatus.NewRow ? "создал" : "сохранил";
+                    var message = new RedisMessage
+                    {
+                        DocumentType = DocumentType.Waybill,
+                        DocCode = Document.DocCode,
+                        DocDate = Document.Date,
+                        IsDocument = true,
+                        OperationType = Document.myState == RowStatus.NewRow
+                            ? RedisMessageDocumentOperationTypeEnum.Create
+                            : RedisMessageDocumentOperationTypeEnum.Update,
+                        Message =
+                            $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} расходная накладная {Document.Description}"
+                    };
+                    message.ExternalValues.Add("KontragentDC",Document.Client.DocCode);
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                    mySubscriber.Publish(
+                        new RedisChannel(RedisMessageChannels.WayBill, RedisChannel.PatternMode.Auto), json);
+                }
+
                 foreach (var r in Document.Rows) r.myState = RowStatus.NotEdited;
                 Document.DeletedRows.Clear();
                 Document.myState = RowStatus.NotEdited;
@@ -435,6 +487,30 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         UnitOfWork.Context.SD_24.Remove(Document.Entity);
                         UnitOfWork.Save();
                         UnitOfWork.Commit();
+                        if (mySubscriber != null && mySubscriber.IsConnected())
+                        {
+                            var message = new RedisMessage
+                            {
+                                DocumentType = DocumentType.Waybill,
+                                DocCode = Document.DocCode,
+                                DocDate = Document.Date,
+                                IsDocument = true,
+                                OperationType = RedisMessageDocumentOperationTypeEnum.Delete,
+                                Message =
+                                    $"Пользователь '{GlobalOptions.UserInfo.Name}' удалил расходную накладную {Document.Description}"
+                            };
+                            message.ExternalValues.Add("KontragentDC",Document.Client.DocCode);
+                            var jsonSerializerSettings = new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All
+                            };
+                            var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                            if (Document.State != RowStatus.NewRow)
+                                mySubscriber.Publish(
+                                    new RedisChannel(RedisMessageChannels.WayBill,
+                                        RedisChannel.PatternMode.Auto),
+                                    json);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -902,6 +978,20 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         #endregion
 
         #region Methods
+
+        private void ShowNotify(string notify)
+        {
+            if (string.IsNullOrWhiteSpace(notify)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(notify);
+            if (msg == null || msg.UserId == GlobalOptions.UserInfo.KursId) return;
+            if (msg.DocCode == Document.DocCode)
+            {
+                NotifyInfo = msg.Message;
+                var notification = KursNotyficationService.CreateCustomNotification(this);
+                notification.ShowAsync();
+            }
+        }
+
 
         private void CreateReports()
         {

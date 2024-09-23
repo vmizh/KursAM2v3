@@ -6,10 +6,21 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
+                 xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                  mc:Ignorable="d"
              Icon="{Binding Source={StaticResource CashInDrawingImage},
              Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
              Title="{Binding WindowName}" Height="300" Width="300">
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:NotificationService x:Name="notificationService"
+                                    ApplicationId="KursAM2v4"
+                                    PredefinedNotificationTemplate="ShortHeaderAndLongText"
+                                    PredefinedNotificationDuration="Long"
+                                    CustomNotificationPosition="BottomRight"
+                                    CustomNotificationTemplate="{StaticResource CustomNotificationTemplate}"
+                                    UseWin8NotificationsIfAvailable="True" />
+
+    </dxmvvm:Interaction.Behaviors>
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
                    Foreground="{Binding DatabaseColor}"

@@ -1,9 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using System.Windows;
-using Core;
-using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -12,6 +11,7 @@ using DevExpress.Mvvm.POCO;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.View.Finance.Cash;
 using KursAM2.View.Helper;
@@ -23,12 +23,28 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {
     public sealed class CashOutWindowViewModel : RSWindowViewModelBase
     {
         #region Methods
+
+        private void ShowNotify(string notify)
+        {
+            if (string.IsNullOrWhiteSpace(notify)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(notify);
+            if (msg == null || msg.UserId == GlobalOptions.UserInfo.KursId) return;
+            if (msg.DocCode == Document.DocCode)
+            {
+                NotifyInfo = msg.Message;
+                var notification = KursNotyficationService.CreateCustomNotification(this);
+                notification.ShowAsync();
+            }
+        }
+
 
         public void CreateMenu()
         {
@@ -64,6 +80,9 @@ namespace KursAM2.ViewModel.Finance.Cash
         public decimal OldSumma;
         private readonly decimal? oldKontrDC;
 
+        private readonly ConnectionMultiplexer redis;
+        private readonly ISubscriber mySubscriber;
+
         #endregion
 
         #region Constructors
@@ -75,6 +94,26 @@ namespace KursAM2.ViewModel.Finance.Cash
             IsDocDeleteAllow = true;
             IsCanSaveData = false;
             WindowName = $"Расходный кассовый ордер от {Document?.Kontragent} в {Document?.Cash?.Name}";
+            try
+            {
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
+
+                if (mySubscriber.IsConnected())
+                    mySubscriber.Subscribe(new RedisChannel(RedisMessageChannels.CashIn, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            if (KursNotyficationService != null)
+                            {
+                                Console.WriteLine($@"Redis - {message}");
+                                Form.Dispatcher.Invoke(() => ShowNotify(message));
+                            }
+                        });
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
+            }
         }
 
         public CashOutWindowViewModel(decimal dc) : this()
@@ -90,6 +129,8 @@ namespace KursAM2.ViewModel.Finance.Cash
         #endregion
 
         #region Properties
+
+        public string NotifyInfo { get; set; }
 
         public ObservableCollection<Currency> CurrencyList { get; set; } = new ObservableCollection<Currency>();
 
@@ -143,7 +184,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             get => myDocument;
             set
             {
-                if (Equals(myDocument ,value)) return;
+                if (Equals(myDocument, value)) return;
                 myDocument = value;
                 RaisePropertyChanged();
             }
@@ -152,6 +193,13 @@ namespace KursAM2.ViewModel.Finance.Cash
         #endregion
 
         #region Commands
+
+        public override void OnWindowClosing(object obj)
+        {
+            mySubscriber?.UnsubscribeAll();
+            base.OnWindowClosing(obj);
+        }
+
 
         public override bool IsDocNewCopyRequisiteAllow => State != RowStatus.NewRow;
 
@@ -169,30 +217,12 @@ namespace KursAM2.ViewModel.Finance.Cash
                         CashManager.InsertDocument(CashDocumentType.CashOut, Document);
                     //CashManager.InsertDocument(CashDocumentType.CashIn, Document);
                     if (Document.SPOST_DC != null)
-                    {
                         context.Database.ExecuteSqlCommand(
                             $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SPOST_DC.Value)}");
-                    }
                     if (sfDC != null && Document.SPOST_DC != sfDC)
-                    {
                         context.Database.ExecuteSqlCommand(
                             $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(sfDC)}");
-                    }
-
                 }
-                //var newKontrDC = Document.KONTRAGENT_DC;
-
-                //if (oldKontrDC != null)
-                //{
-                //    ctx.Database.ExecuteSqlCommand(
-                //        $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(oldKontrDC)}");
-                //}
-
-                //if (newKontrDC != null && newKontrDC != oldKontrDC)
-                //{
-                //    ctx.Database.ExecuteSqlCommand(
-                //        $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(newKontrDC)}");
-                //}
             }
 
             if (BookView is CashBookView bw)
@@ -206,6 +236,35 @@ namespace KursAM2.ViewModel.Finance.Cash
                 RecalcKontragentBalans.CalcBalans((decimal)Document.KONTRAGENT_DC, (DateTime)Document.DATE_ORD);
             LastDocumentManager.SaveLastOpenInfo(DocumentType.CashOut, null, Document.DocCode,
                 Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
+            if (mySubscriber != null && mySubscriber.IsConnected())
+            {
+                var str = Document.State == RowStatus.NewRow ? "создал" : "сохранил";
+                var message = new RedisMessage
+                {
+                    DocumentType = DocumentType.CashOut,
+                    DocCode = Document.DocCode,
+                    Id = Document.Id,
+                    DocDate = Document.DATE_ORD,
+                    IsDocument = true,
+                    OperationType = Document.myState == RowStatus.NewRow
+                        ? RedisMessageDocumentOperationTypeEnum.Create
+                        : RedisMessageDocumentOperationTypeEnum.Update,
+                    Message =
+                        $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} расходный кассовый ордер {Document.Description}"
+                };
+                message.ExternalValues.Add("KontragentDC", Document.KONTRAGENT_DC);
+                message.ExternalValues.Add("PersonaDC", Document.Employee?.DocCode);
+                message.ExternalValues.Add("CashToDC", Document.CASH_TO_DC);
+                message.ExternalValues.Add("InvoiceDC", Document.SPOST_DC);
+                message.ExternalValues.Add("BankAccountDC", Document.BANK_RASCH_SCHET_DC);
+                var jsonSerializerSettings = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                };
+                var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                mySubscriber.Publish(new RedisChannel(RedisMessageChannels.CashOut, RedisChannel.PatternMode.Auto),
+                    json);
+            }
         }
 
         public override void DocDelete(object form)
@@ -228,18 +287,48 @@ namespace KursAM2.ViewModel.Finance.Cash
                                 var ctx = BookView?.DataContext as CashBookWindowViewModel;
                                 CashManager.DeleteDocument(CashDocumentType.CashOut, Document);
                                 if (Document.SPOST_DC != null)
-                                {
                                     using (var context = GlobalOptions.GetEntities())
                                     {
                                         context.Database.ExecuteSqlCommand(
                                             $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SPOST_DC.Value)}");
                                     }
-                                }
+
                                 if (Document.KONTRAGENT_DC != null)
                                     RecalcKontragentBalans.CalcBalans((decimal)Document.KONTRAGENT_DC,
                                         // ReSharper disable once PossibleInvalidOperationException
                                         (DateTime)Document.DATE_ORD);
                                 ctx?.RefreshActual(Document);
+                                if (mySubscriber != null && mySubscriber.IsConnected())
+                                {
+                                    var message = new RedisMessage
+                                    {
+                                        DocumentType = DocumentType.CashOut,
+                                        DocCode = Document.DocCode,
+                                        Id = Document.Id,
+                                        DocDate = Document.DATE_ORD,
+                                        IsDocument = true,
+                                        OperationType = RedisMessageDocumentOperationTypeEnum.Delete,
+                                        Message =
+                                            $"Пользователь '{GlobalOptions.UserInfo.Name}' удалил расходный кассовый ордер {Document.Description}"
+                                    };
+                                    message.ExternalValues.Add("KontragentDC", Document.KONTRAGENT_DC);
+                                    message.ExternalValues.Add("PersonaDC", Document.Employee?.DocCode);
+                                    message.ExternalValues.Add("CashToDC", Document.CASH_TO_DC);
+                                    message.ExternalValues.Add("InvoiceDC", Document.SPOST_DC);
+                                    message.ExternalValues.Add("BankAccountDC", Document.BANK_RASCH_SCHET_DC);
+
+                                    var jsonSerializerSettings = new JsonSerializerSettings
+                                    {
+                                        TypeNameHandling = TypeNameHandling.All
+                                    };
+                                    var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                                    if (Document.State != RowStatus.NewRow)
+                                        mySubscriber.Publish(
+                                            new RedisChannel(RedisMessageChannels.CashOut,
+                                                RedisChannel.PatternMode.Auto),
+                                            json);
+                                }
+
                                 CloseWindow(Form);
                                 return;
                             case MessageBoxResult.No:
@@ -250,13 +339,12 @@ namespace KursAM2.ViewModel.Finance.Cash
                     var ctx1 = BookView?.DataContext as CashBookWindowViewModel;
                     CashManager.DeleteDocument(CashDocumentType.CashOut, Document);
                     if (Document.SPOST_DC != null)
-                    {
                         using (var context = GlobalOptions.GetEntities())
                         {
                             context.Database.ExecuteSqlCommand(
                                 $"EXEC [dbo].[GenerateSFProviderCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SPOST_DC.Value)}");
                         }
-                    }
+
                     ctx1?.RefreshActual(Document);
                     CloseWindow(Form);
                     if (BookView is AccruedAmountOfSupplierView bw)

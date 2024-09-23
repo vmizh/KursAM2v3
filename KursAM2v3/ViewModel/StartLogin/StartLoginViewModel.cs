@@ -37,8 +37,10 @@ namespace KursAM2.ViewModel.StartLogin
 {
     public sealed class StartLoginViewModel : RSWindowViewModelBase
     {
-        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ConnectionMultiplexer redis;
         private readonly ISubscriber mySubscriber;
+
+
         private string myCurrentBoxItem;
         private string myCurrentPassword;
         private string myCurrentUser;
@@ -50,16 +52,21 @@ namespace KursAM2.ViewModel.StartLogin
         public StartLoginViewModel(Window formWindow)
         {
             IsConnectNotExecute = true;
-            if (myRedis != null)
+            try
             {
-                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe(new RedisChannel("StartLogin", RedisChannel.PatternMode.Auto),
+                    mySubscriber.Subscribe(new RedisChannel(RedisMessageChannels.StartLogin, RedisChannel.PatternMode.Auto),
                         (_, message) =>
                         {
                             Console.WriteLine($@"Redis - {message}");
                             StartLoad(message);
                         });
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
             }
 
             var iniFileName = Application.Current.Properties["DataPath"] + "\\User.ini";

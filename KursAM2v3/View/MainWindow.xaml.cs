@@ -193,6 +193,7 @@ namespace KursAM2.View
             if (DataContext is MainWindowViewModel dtx)
             {
                 dtx.Form = this;
+#if RELEASE 
                 var vers = new VersionManager(dtx);
                 var res = vers.CheckVersion();
                 if (res.UpdateStatus == 0)
@@ -207,6 +208,7 @@ namespace KursAM2.View
                         return;
                     }
                     ((MainWindowViewModel)DataContext).IsVersionUpdateStatus = true;
+#endif
 
             }
         }

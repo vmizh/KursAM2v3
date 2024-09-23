@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms;
 using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.XtraPrinting;
 using Helper;
 using KursAM2.Managers.Invoices;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.ViewModel.Management.Calculations;
 using KursDomain;
 using KursDomain.Documents.Bank;
@@ -18,6 +22,9 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Currency;
 using KursDomain.ICommon;
 using KursDomain.References;
+using Newtonsoft.Json;
+using StackExchange.Redis;
+using Application = System.Windows.Application;
 
 namespace KursAM2.Managers
 {
@@ -472,6 +479,38 @@ namespace KursAM2.Managers
 
                         tran.Commit();
                         item.State = RowStatus.NotEdited;
+                        ConnectionMultiplexer redis;
+                        ISubscriber mySubscriber = null;
+                        try
+                        {
+                            redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                            mySubscriber = redis.GetSubscriber();
+                            var message = new RedisMessage
+                            {
+                                DocumentType = DocumentType.Bank,
+                                DocCode = item.DocCode,
+                                DocDate = item.Date,
+                                IsDocument = true,
+                                OperationType = RedisMessageDocumentOperationTypeEnum.Update,
+                                Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' изменил банк.транзакцию {item.Description}"
+                            };
+                            message.ExternalValues.Add("RowCode",item.Code);
+                            message.ExternalValues.Add("BankDC",bankDc);
+                            message.ExternalValues.Add("KontragentDC",item.Kontragent?.DocCode);
+                            message.ExternalValues.Add("InvoiceDC",item.VVT_SFACT_CLIENT_DC);
+                            var jsonSerializerSettings = new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All
+                            };
+                            var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                            mySubscriber.Publish(new RedisChannel(RedisMessageChannels.Bank, RedisChannel.PatternMode.Auto), json);
+                            mySubscriber?.UnsubscribeAll();
+                        }
+                        catch
+                        {
+                            Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
+                        }
+
                     }
                     catch (Exception ex)
                     {
@@ -487,6 +526,18 @@ namespace KursAM2.Managers
 
         private void AddBankOperation(BankOperationsViewModel item, decimal bankDc)
         {
+            ConnectionMultiplexer redis;
+            ISubscriber mySubscriber = null;
+
+            try
+            {
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
+            }
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var tran = ctx.Database.BeginTransaction();
@@ -596,6 +647,27 @@ namespace KursAM2.Managers
 
                     tran.Commit();
                     item.myState = RowStatus.NotEdited;
+                    
+                    var message = new RedisMessage
+                    {
+                        DocumentType = DocumentType.Bank,
+                        DocCode = item.DocCode,
+                        DocDate = item.Date,
+                        IsDocument = true,
+                        OperationType = RedisMessageDocumentOperationTypeEnum.Create,
+                        Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' создал банк.транзакцию {item.Description}"
+                    };
+                    message.ExternalValues.Add("RowCode",code);
+                    message.ExternalValues.Add("BankDC",bankDc);
+                    message.ExternalValues.Add("KontragentDC",item.Kontragent?.DocCode);
+                    message.ExternalValues.Add("InvoiceDC",item.VVT_SFACT_CLIENT_DC);
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                    mySubscriber.Publish(new RedisChannel(RedisMessageChannels.Bank, RedisChannel.PatternMode.Auto), json);
+                    mySubscriber?.UnsubscribeAll();
                 }
                 catch (Exception ex)
                 {
@@ -701,9 +773,6 @@ namespace KursAM2.Managers
 
         public void DeleteBankOperations(BankOperationsViewModel item, decimal bankDc)
         {
-            //if (winManager.ShowWinUIMessageBox("Вы уверенны, что хотите удалить транзакцию?",
-            //    "Запрос", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
-            //    return;
             if (item.VVT_VAL_PRIHOD > 0)
             {
                 var errStr = CheckForNonzero(bankDc, item.Date, item.VVT_VAL_PRIHOD.Value);
@@ -757,6 +826,37 @@ namespace KursAM2.Managers
                     }
 
                     tran.Commit();
+                    ConnectionMultiplexer redis;
+                    ISubscriber mySubscriber = null;
+                    try
+                    {
+                        redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                        mySubscriber = redis.GetSubscriber();
+                        var message = new RedisMessage
+                        {
+                            DocumentType = DocumentType.Bank,
+                            DocCode = item.DocCode,
+                            DocDate = item.Date,
+                            IsDocument = true,
+                            OperationType = RedisMessageDocumentOperationTypeEnum.Delete,
+                            Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' удалил банк.транзакцию {item.Description}"
+                        };
+                        message.ExternalValues.Add("RowCode",item.Code);
+                        message.ExternalValues.Add("BankDC",bankDc);
+                        message.ExternalValues.Add("KontragentDC",item.Kontragent?.DocCode);
+                        message.ExternalValues.Add("InvoiceDC",item.VVT_SFACT_CLIENT_DC);
+                        var jsonSerializerSettings = new JsonSerializerSettings
+                        {
+                            TypeNameHandling = TypeNameHandling.All
+                        };
+                        var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                        mySubscriber.Publish(new RedisChannel(RedisMessageChannels.Bank, RedisChannel.PatternMode.Auto), json);
+                        mySubscriber.UnsubscribeAll();
+                    }
+                    catch
+                    {
+                        Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
+                    }
                 }
                 catch (Exception e)
                 {

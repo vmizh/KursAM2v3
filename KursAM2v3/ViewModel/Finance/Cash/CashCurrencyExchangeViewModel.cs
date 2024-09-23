@@ -87,10 +87,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                 Document.DocCode, null, (string)Document.ToJson());
             LastDocumentManager.SaveLastOpenInfo(DocumentType.CurrencyChange, null, Document.DocCode,
                 Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
-            //TODO Сохранить последний документ
-            //DocumentsOpenManager.SaveLastOpenInfo(DocumentType.CurrencyConvertAccounting, Document.Id, Document.DocCode,
-            //    Document.CREATOR,
-            //    "", Document.Description);
+           
         }
 
         public override void DocDelete(object form)

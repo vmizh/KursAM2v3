@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -18,6 +19,7 @@ using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Management;
 using KursAM2.ViewModel.Management.Calculations;
 using KursDomain;
@@ -25,12 +27,23 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.Repository.DocHistoryRepository;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using StackExchange.Redis;
 
 namespace KursAM2.ViewModel.Management
 {
     [DataContract]
     public class KontragentBalansWindowViewModel : RSWindowViewModelBase
     {
+        private readonly DocHistoryRepository lastDocumentRopository =
+            new DocHistoryRepository(GlobalOptions.GetEntities());
+
+        private readonly ISubscriber mySubscriber;
+
+        private readonly ConnectionMultiplexer redis;
+
         private KontragentBalansRowViewModel myCurrentDocument;
         private KontragentPeriod myCurrentPeriod;
         private Kontragent myKontragent;
@@ -47,6 +60,73 @@ namespace KursAM2.ViewModel.Management
                 [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
             });
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+            try
+            {
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
+
+                if (mySubscriber.IsConnected())
+                {
+                    mySubscriber.Subscribe(new RedisChannel(RedisMessageChannels.Bank, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            Console.WriteLine($@"Redis - {message}");
+                            Form.Dispatcher.Invoke(() => Update(RedisMessageChannels.Bank, message));
+                        });
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.MutualAccounting, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            Console.WriteLine($@"Redis - {message}");
+                            Form.Dispatcher.Invoke(() => Update(RedisMessageChannels.MutualAccounting, message));
+                        });
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.WarehouseOrderIn, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            Console.WriteLine($@"Redis - {message}");
+                            Form.Dispatcher.Invoke(() => Update(RedisMessageChannels.WarehouseOrderIn, message));
+                        });
+                    mySubscriber.Subscribe(new RedisChannel(RedisMessageChannels.CashIn, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            Console.WriteLine($@"Redis - {message}");
+                            Form.Dispatcher.Invoke(() => Update(RedisMessageChannels.CashIn, message));
+                        });
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.WayBill, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            Console.WriteLine($@"Redis - {message}");
+                            Form.Dispatcher.Invoke(() => Update(RedisMessageChannels.WayBill, message));
+                        });
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.CashOut, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            Console.WriteLine($@"Redis - {message}");
+                            Form.Dispatcher.Invoke(() => Update(RedisMessageChannels.CashOut, message));
+                        });
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.InvoiceClient, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            Console.WriteLine($@"Redis - {message}");
+                            Form.Dispatcher.Invoke(() => Update(RedisMessageChannels.InvoiceClient, message));
+                        });
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.InvoiceProvider, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            Console.WriteLine($@"Redis - {message}");
+                            Form.Dispatcher.Invoke(() => Update(RedisMessageChannels.InvoiceProvider, message));
+                        });
+                }
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
+            }
         }
 
         public KontragentBalansWindowViewModel(decimal doccode) : this()
@@ -57,6 +137,8 @@ namespace KursAM2.ViewModel.Management
         public override string LayoutName => "KontragentBalansView";
         public override string WindowName => "Лицевой счет контрагента";
 
+        public string NotifyInfo { get; set; }
+
         public ObservableCollection<KontragentBalansRowViewModel> SelectedDocs { set; get; } =
             new ObservableCollection<KontragentBalansRowViewModel>();
 
@@ -64,22 +146,6 @@ namespace KursAM2.ViewModel.Management
 
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<KontragentBalansRowViewModel> Documents { set; get; }
-
-        public override void AddSearchList(object obj)
-        {
-            var form = new KontragentBalansView
-            {
-                Owner = Application.Current.MainWindow
-            };
-            var ctxk = new KontragentBalansWindowViewModel
-            {
-                Form = form
-            };
-            form.DataContext = ctxk;
-            form.Show();
-
-
-        }
 
 
         public KontragentPeriod CurrentPeriod
@@ -174,6 +240,20 @@ namespace KursAM2.ViewModel.Management
         public Brush BalansBrush
             => LastBalansSumma < 0 ? new SolidColorBrush(Colors.Red) : new SolidColorBrush(Colors.Black);
 
+        public override void AddSearchList(object obj)
+        {
+            var form = new KontragentBalansView
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var ctxk = new KontragentBalansWindowViewModel
+            {
+                Form = form
+            };
+            form.DataContext = ctxk;
+            form.Show();
+        }
+
         private void LoadDocumentsForPeriod()
         {
             Documents.Clear();
@@ -188,6 +268,23 @@ namespace KursAM2.ViewModel.Management
                 var item in
                 Operations.Where(_ => _.DocDate >= CurrentPeriod.DateStart && _.DocDate <= CurrentPeriod.DateEnd))
                 Documents.Add(item);
+            if (Documents.Count > 0)
+            {
+                var lasts = lastDocumentRopository.GetLastChanges(Documents.Select(_ => _.DocCode).Distinct());
+                foreach (var r in Documents)
+                    if (lasts.ContainsKey(r.DocCode))
+                    {
+                        var last = lasts[r.DocCode];
+                        r.LastChanger = last.Item1;
+                        r.LastChangerDate = last.Item2;
+                    }
+                    else
+                    {
+                        r.LastChanger = null;
+                        r.LastChangerDate = r.DocDate;
+                    }
+            }
+
             RaisePropertyChanged(nameof(Documents));
         }
 
@@ -199,6 +296,44 @@ namespace KursAM2.ViewModel.Management
             RaisePropertyChanged(nameof(Documents));
         }
 
+        private void Update(string channels, RedisValue message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
+            if (msg == null || msg.DbId != GlobalOptions.DataBaseId) return;
+            switch (channels)
+            {
+                case RedisMessageChannels.InvoiceProvider:
+                case RedisMessageChannels.InvoiceClient:
+                case RedisMessageChannels.CashIn:
+                case RedisMessageChannels.CashOut:
+                case RedisMessageChannels.Bank:
+                case RedisMessageChannels.WarehouseOrderIn:
+                case RedisMessageChannels.WayBill:
+                    if (!msg.ExternalValues.ContainsKey("KontragentDC") ||
+                        msg.ExternalValues["KontragentDC"] is null) return;
+                    break;
+                case RedisMessageChannels.MutualAccounting:
+                    var arr = msg.ExternalValues["KontragentDCList"] as JArray;
+                    if (arr is null) return;
+                    if (!arr.Contains(Kontragent.DocCode)) return;
+                    break;
+            }
+
+            var period = CurrentPeriod;
+            var doc = CurrentDocument;
+            CurrentPeriod = null;
+            CurrentDocument = null;
+            LoadOperations(myKontragent.DocCode);
+            CurrentPeriod = period;
+            CurrentDocument = doc;
+            if (KursNotyficationService is not null)
+            {
+                NotifyInfo = msg.Message;
+                var notification = KursNotyficationService.CreateCustomNotification(this);
+                notification.ShowAsync();
+            }
+        }
         private void LoadPeriod(IEnumerable<KontragentBalansRowViewModel> rows)
         {
             if (rows == null) return;
@@ -620,6 +755,12 @@ namespace KursAM2.ViewModel.Management
             }
         }
 
+        public override void OnWindowClosing(object obj)
+        {
+            mySubscriber.UnsubscribeAll();
+            base.OnWindowClosing(obj);
+        }
+
         protected override void OnWindowLoaded(object obj)
         {
             base.OnWindowLoaded(obj);
@@ -628,11 +769,9 @@ namespace KursAM2.ViewModel.Management
             frm.treeListPeriodView.ShowTotalSummary = false;
             var nakSummaries = new List<GridSummaryItem>();
             foreach (var s in frm.KontrOperGrid.TotalSummary)
-            {
                 if (s.FieldName == "Nakopit" || s.FieldName == "CrsOperRate")
                     nakSummaries.Add(s);
-            }
-            
+
             foreach (var c in nakSummaries) frm.KontrOperGrid.TotalSummary.Remove(c);
         }
 
@@ -653,9 +792,9 @@ namespace KursAM2.ViewModel.Management
             builder.Property(_ => _.PeriodType).NotAutoGenerated();
             //builder.Property(_ => _.DateEnd).NotAutoGenerated().DisplayName("Конец");
             //builder.Property(_ => _.DateStart).NotAutoGenerated().DisplayName("Начало");
-            builder.Property(_ => _.EndPeriodSumma).AutoGenerated().LocatedAt(1).ReadOnly().DisplayName("Сумма на конец").DisplayFormatString("n2");
+            builder.Property(_ => _.EndPeriodSumma).AutoGenerated().LocatedAt(1).ReadOnly()
+                .DisplayName("Сумма на конец").DisplayFormatString("n2");
             builder.Property(_ => _.Name).AutoGenerated().LocatedAt(0).ReadOnly().DisplayName("Период");
-               
         }
     }
 }

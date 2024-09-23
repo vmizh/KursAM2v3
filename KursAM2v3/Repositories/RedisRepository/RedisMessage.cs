@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
@@ -18,6 +19,8 @@ namespace KursAM2.Repositories.RedisRepository
         public DateTime? DocDate { get; set; }
         public Guid? Id { get; set; }
         public string Message { get; set; }
+
+        public Dictionary<string,object> ExternalValues { get; set; } = new Dictionary<string,object>();
     }
 
     public enum RedisMessageDocumentOperationTypeEnum

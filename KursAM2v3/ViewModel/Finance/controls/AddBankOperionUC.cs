@@ -39,9 +39,6 @@ namespace KursAM2.ViewModel.Finance.controls
             WindowName = "Добавить операцию";
         }
 
-        public ObservableCollection<SDRSchet> SHPZList { set; get; } =
-            new ObservableCollection<SDRSchet>(GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>());
-
         public AddBankOperionUC(decimal docCode) : this()
         {
             CurrentBankOperations = new BankOperationsViewModel { Date = DateTime.Today };
@@ -89,11 +86,13 @@ namespace KursAM2.ViewModel.Finance.controls
                     State = isNew ? RowStatus.NewRow : RowStatus.NotEdited,
                     AccuredId = row.AccuredId,
                     AccuredInfo = row.AccuredInfo,
-                    CurrencyRateForReference = row.CurrencyRateForReference,
-
+                    CurrencyRateForReference = row.CurrencyRateForReference
                 };
             }
         }
+
+        public ObservableCollection<SDRSchet> SHPZList { set; get; } =
+            new ObservableCollection<SDRSchet>(GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>());
 
         public bool IsCurrencyRateNotCanSet =>
             CurrentBankOperations?.Currency != GlobalOptions.SystemProfile.NationalCurrency;
@@ -498,6 +497,7 @@ namespace KursAM2.ViewModel.Finance.controls
                     CurrentBankOperations.VVT_VAL_PRIHOD = 0;
                 }
             }
+
             SFName = null;
         }
 

@@ -648,7 +648,7 @@ namespace KursAM2.View.DialogUserControl
                 ProviderItemsCollection.Clear();
                 if (kontragentDC > 0)
                 {
-                    foreach (var d in InvoicesManager.GetInvoicesProvider(new DateTime(2000, 1, 1), DateTime.Today,
+                    foreach (var d in InvoicesManager.GetInvoicesProvider(DateTime.Today.AddDays(-365), DateTime.Today,
                                  true,
                                  kontragentDC, isAccepted))
                         ProviderItemsCollection.Add(d);
@@ -656,7 +656,7 @@ namespace KursAM2.View.DialogUserControl
                 else
                 {
                     var providerRepository = new InvoiceProviderRepository(GlobalOptions.GetEntities());
-                    foreach (var inv in providerRepository.GetAllByDates(new DateTime(2000, 1, 1), DateTime.Today)
+                    foreach (var inv in providerRepository.GetAllByDates(DateTime.Today.AddDays(-365), DateTime.Today)
                                  .Where(inv => !isUsePayment || inv.Summa > inv.PaySumma)
                                  .Where(inv => !isAccepted || inv.IsAccepted))
                     {
@@ -673,14 +673,14 @@ namespace KursAM2.View.DialogUserControl
                 ClientItemsCollection.Clear();
                 if (kontragentDC > 0)
                 {
-                    foreach (var d in InvoicesManager.GetInvoicesClient(new DateTime(2000, 1, 1), DateTime.Today,
+                    foreach (var d in InvoicesManager.GetInvoicesClient(DateTime.Today.AddDays(-365), DateTime.Today,
                                  isUsePayment, kontragentDC, isAccepted))
                         ClientItemsCollection.Add(d);
                 }
                 else
                 {
                     var clientRepository = new InvoiceClientRepository(GlobalOptions.GetEntities());
-                    foreach (var inv in clientRepository.GetAllByDates(new DateTime(2000, 1, 1), DateTime.Today)
+                    foreach (var inv in clientRepository.GetAllByDates(DateTime.Today.AddDays(-365), DateTime.Today)
                                  .Where(inv => !isUsePayment || inv.Summa > inv.PaySumma)
                                  .Where(inv => !isAccepted || inv.IsAccepted))
                     {

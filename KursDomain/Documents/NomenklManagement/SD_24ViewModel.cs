@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Core.ViewModel.Base;
 using Data;
 using KursDomain.Documents.Invoices;
@@ -56,6 +57,18 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
             RaisePropertyChanged();
         }
     }
+
+    /// <summary>
+    /// Пользователь, последний изменивший документ
+    /// </summary>
+    [Display(AutoGenerateField = true, Name = "Посл.изменил", Order = 21)]
+    public string LastChanger { set; get; }
+
+    /// <summary>
+    /// Дата последнего изменения
+    /// </summary>
+    [Display(AutoGenerateField = true, Name = "Дата посл.изм.", Order = 21)]
+    public DateTime LastChangerDate { set; get; }
 
     public string DocTypeName => Entity.SD_201?.D_NAME;
 

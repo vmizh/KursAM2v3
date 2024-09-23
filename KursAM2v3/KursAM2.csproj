@@ -254,6 +254,7 @@
     <Compile Include="Repositories\InvoicesRepositories\InvoiceProviderRepository.cs" />
     <Compile Include="Repositories\Logistik\SD_24Repository.cs" />
     <Compile Include="Repositories\RedisRepository\RedisMessage.cs" />
+    <Compile Include="Repositories\RedisRepository\RedisMessageChannels.cs" />
     <Compile Include="Repositories\RedisRepository\RedisStore.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\IRefundFromClientRepository.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\RefundFromClientRepository.cs" />

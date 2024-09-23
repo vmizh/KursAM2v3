@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public sealed class OrderOutWindowViewModel2 : RSWindowViewModelBase
     {
-        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ConnectionMultiplexer redis;
         private readonly ISubscriber mySubscriber;
 
         #region Constructor
@@ -48,11 +49,12 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public OrderOutWindowViewModel2(decimal? docDC, IReferencesCache cache, ALFAMEDIAEntities ctx,
             IEventAggregator eventAggregator, IMessageDialogService messageDialogService)
         {
-            if (myRedis != null)
+            try
             {
-                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe(new RedisChannel("WarehouseOut", RedisChannel.PatternMode.Auto),
+                    mySubscriber.Subscribe(new RedisChannel(RedisMessageChannels.WarehouseOrderOut, RedisChannel.PatternMode.Auto),
                         (channel, message) =>
                         {
                             if (KursNotyficationService != null)
@@ -61,6 +63,10 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 Form.Dispatcher.Invoke(() => ShowNotify(message));
                             }
                         });
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
             }
             myCache = cache;
             myContext = ctx ?? new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString);
@@ -129,7 +135,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 };
                 var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
                 if (Document.State != RowStatus.NewRow)
-                    mySubscriber.Publish(new RedisChannel("WarehouseOut", RedisChannel.PatternMode.Auto), json);
+                    mySubscriber.Publish(new RedisChannel(RedisMessageChannels.WarehouseOrderOut, RedisChannel.PatternMode.Auto), json);
             }
 
             myWrapperEventAggregator.GetEvent<AfterUpdateBaseWrapperEvent<WarehouseOutWrapper>>()
@@ -607,7 +613,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     TypeNameHandling = TypeNameHandling.All
                 };
                 var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
-                mySubscriber.Publish(new RedisChannel("WarehouseOut", RedisChannel.PatternMode.Auto), json);
+                mySubscriber.Publish(new RedisChannel(RedisMessageChannels.WarehouseOrderOut, RedisChannel.PatternMode.Auto), json);
             }
             if (isNew)
                 MainWindowViewModel.EventAggregator.GetEvent<AfterAddNewBaseWrapperEvent<WarehouseOutWrapper>>()
@@ -684,7 +690,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         TypeNameHandling = TypeNameHandling.All
                     };
                     var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
-                    mySubscriber.Publish(new RedisChannel("WarehouseOut", RedisChannel.PatternMode.Auto), json);
+                    mySubscriber.Publish(new RedisChannel(RedisMessageChannels.WarehouseOrderOut, RedisChannel.PatternMode.Auto), json);
                 }
             }
 

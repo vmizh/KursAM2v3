@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -71,7 +73,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         // ReSharper disable once NotAccessedField.Local
         private bool IsLoadPay = true;
-        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ConnectionMultiplexer redis;
         private readonly ISubscriber mySubscriber;
 
         #endregion
@@ -80,20 +82,70 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public ClientWindowViewModel()
         {
-            if (myRedis != null)
+            try
             {
-                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe(new RedisChannel("ClientInvoice", RedisChannel.PatternMode.Auto),
-                        (channel, message) =>
+                {
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.InvoiceClient, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
                         {
                             if (KursNotyficationService != null)
                             {
-                                Console.WriteLine($"Redis - {message}");
+                                Console.WriteLine($@"Redis - {message}");
                                 Form.Dispatcher.Invoke(() => ShowNotify(message));
                             }
                         });
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.CashIn, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            if (KursNotyficationService != null)
+                            {
+                                Console.WriteLine($@"Redis - {message}");
+                                Form.Dispatcher.Invoke(() => UpdateCash(message));
+                            }
+                        });
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.Bank, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            if (KursNotyficationService != null)
+                            {
+                                Console.WriteLine($@"Redis - {message}");
+                                Form.Dispatcher.Invoke(() => UpdateCash(message));
+                            }
+                        });
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.MutualAccounting, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            if (KursNotyficationService != null)
+                            {
+                                Console.WriteLine($@"Redis - {message}");
+                                Form.Dispatcher.Invoke(() => UpdateCash(message));
+                            }
+                        });
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.WayBill, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+                            if (KursNotyficationService != null)
+                            {
+                                Console.WriteLine($@"Redis - {message}");
+                                Form.Dispatcher.Invoke(() => UpdateWarehouse(message));
+                            }
+                        });
+
+                }
             }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
+            }
+
 
             ShipmentRowDeleted = new List<ShipmentRowViewModel>();
             GenericClientRepository = new GenericKursDBRepository<SD_84>(UnitOfWork);
@@ -175,7 +227,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 };
                 var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
                 if (Document.State != RowStatus.NewRow)
-                    mySubscriber.Publish(new RedisChannel("ClientInvoice", RedisChannel.PatternMode.Auto), json);
+                    mySubscriber.Publish(
+                        new RedisChannel(RedisMessageChannels.InvoiceClient, RedisChannel.PatternMode.Auto), json);
             }
         }
 
@@ -413,6 +466,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 frm.gridRows.UpdateTotalSummary();
                 RaisePropertyChanged(nameof(Document));
             }
+        }
+
+        public override void OnWindowClosing(object obj)
+        {
+            mySubscriber.UnsubscribeAll();
+            base.OnWindowClosing(obj);
         }
 
         protected override void OnWindowLoaded(object obj)
@@ -683,8 +742,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var newCode = 1;
             foreach (var item in Document.Rows.Where(_ => !_.IsUsluga && _.Quantity > _.Shipped))
             {
-                var n = GlobalOptions.ReferencesCache.GetNomenkl(item.Nomenkl.DocCode) as Nomenkl;
-                if (vm.Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode))
+                if (GlobalOptions.ReferencesCache.GetNomenkl(item.Nomenkl.DocCode) is Nomenkl n &&
+                    vm.Document.Rows.All(_ => _.Nomenkl.DocCode != n.DocCode))
                 {
                     var newItem = new WaybillRow
                     {
@@ -745,7 +804,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private void AddStoreLink(object obj)
         {
             var winManager = new WindowManager();
-            var res = winManager.ShowWinUIMessageBox("Функция не реализована", "Сообщение",
+            winManager.ShowWinUIMessageBox("Функция не реализована", "Сообщение",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
         }
@@ -837,6 +896,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     if (q != null)
                     {
                         item.QuantityOnStores = q.Quantity;
+                        // ReSharper disable once PossibleInvalidOperationException
                         item.LastOperationDate = (DateTime)q.LastOperation;
                     }
 
@@ -959,6 +1019,30 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
+        private void UpdateWarehouse(RedisValue message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
+            if (msg == null || msg.DbId != GlobalOptions.DataBaseId) return;
+            Document.LoadShipments();
+            NotifyInfo = msg.Message;
+            var notification = KursNotyficationService.CreateCustomNotification(this);
+            notification.ShowAsync();
+            RaisePropertyChanged(nameof(Document));
+        }
+
+        private void UpdateCash(RedisValue message)
+        {
+            if (string.IsNullOrWhiteSpace(message)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(message);
+            if (msg == null || msg.DbId != GlobalOptions.DataBaseId) return;
+            Document.LoadPayments();
+            NotifyInfo = msg.Message;
+            var notification = KursNotyficationService.CreateCustomNotification(this);
+            notification.ShowAsync();
+            RaisePropertyChanged(nameof(Document));
+        }
+
         public override void RefreshData(object obj)
         {
             base.RefreshData(obj);
@@ -1019,64 +1103,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
             UpdateVisualObjects();
         }
 
-        private void LoadFromExternal()
-        {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                Document.PaymentDocs.Clear();
-                foreach (var c in ctx.TD_101.Include(_ => _.SD_101)
-                             .Where(_ => _.VVT_SFACT_CLIENT_DC == Document.DocCode))
-                    Document.PaymentDocs.Add(new InvoicePaymentDocument
-                    {
-                        DocCode = c.DOC_CODE,
-                        Code = c.CODE,
-                        DocumentType = DocumentType.Bank,
-                        DocumentName =
-                            // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",
-                        Summa = (decimal)c.VVT_VAL_PRIHOD,
-                        Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as Currency,
-                        Note = c.VVT_DOC_NUM
-                    });
-                foreach (var c in ctx.TD_110.Include(_ => _.SD_110)
-                             .Where(_ => _.VZT_SFACT_DC == Document.DocCode))
-                    Document.PaymentDocs.Add(new InvoicePaymentDocument
-                    {
-                        DocCode = c.DOC_CODE,
-                        Code = c.CODE,
-                        DocumentType = DocumentType.MutualAccounting,
-                        DocumentName =
-                            // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.SD_110.VZ_DATE.ToShortDateString()} на {(decimal)c.VZT_CRS_SUMMA}",
-                        Summa = (decimal)c.VZT_CRS_SUMMA,
-                        Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VZT_CRS_DC) as Currency,
-                        Note = c.VZT_DOC_NUM
-                    });
-                foreach (var c in ctx.SD_33
-                             .Where(_ => _.SFACT_DC == Document.DocCode))
-                    Document.PaymentDocs.Add(new InvoicePaymentDocument
-                    {
-                        DocCode = c.DOC_CODE,
-                        //Code = c.CODE,
-                        DocumentType = DocumentType.CashIn,
-                        DocumentName =
-                            // ReSharper disable once PossibleInvalidOperationException
-                            $"{c.DATE_ORD.Value.ToShortDateString()} на {(decimal)c.CRS_SUMMA} {GlobalOptions.ReferencesCache.GetCashBox(c.CA_DC)}",
-                        Summa = (decimal)c.CRS_SUMMA,
-                        Currency = GlobalOptions.ReferencesCache.GetCurrency(c.CRS_DC) as Currency,
-                        Note = c.NUM_ORD.ToString()
-                    });
-                Document.ShipmentRows.Clear();
-                var facts = ctx.TD_24.Include(_ => _.TD_26).Where(_ => _.DDT_SFACT_DC == Document.DocCode)
-                    .AsNoTracking().ToList();
-                foreach (var fact in facts)
-                    Document.ShipmentRows.Add(new ShipmentRowViewModel(fact)
-                    {
-                        State = RowStatus.NotEdited
-                    });
-            }
-        }
-
         private void RaiseAll()
         {
             foreach (var r in Document.Rows.Cast<InvoiceClientRowViewModel>()) r.RaisePropertyAllChanged();
@@ -1107,7 +1133,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 if (res == MessageBoxResult.Yes) Document.IsAccepted = true;
             }
 
-            var isOldExist = false;
+            bool isOldExist;
             var isCreateNum = true;
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -1189,12 +1215,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             : RedisMessageDocumentOperationTypeEnum.Update,
                         Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} счет {Document.Description}"
                     };
+                    message.ExternalValues.Add("KontragentDC",Document.Client.DocCode);
                     var jsonSerializerSettings = new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.All
                     };
                     var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
-                    mySubscriber.Publish(new RedisChannel("ClientInvoice", RedisChannel.PatternMode.Auto), json);
+                    mySubscriber.Publish(
+                        new RedisChannel(RedisMessageChannels.InvoiceClient, RedisChannel.PatternMode.Auto), json);
                 }
 
                 RecalcKontragentBalans.CalcBalans(Document.Client.DocCode, Document.DocDate);
@@ -1320,7 +1348,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.Rows.Remove(CurrentRow);
                 if (Document.myState != RowStatus.NewRow)
                     Document.myState = RowStatus.Edited;
-                ;
             }
 
             UpdateVisualData(null);
@@ -1365,8 +1392,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         GenericClientRepository.Delete(Document.Entity);
                         UnitOfWork.Save();
                         UnitOfWork.Commit();
-                        //TODO Сохранить последний документ
-                        //DocumentsOpenManager.DeleteFromLastDocument(null, Document.DocCode);
                     }
                     catch (Exception ex)
                     {
@@ -1385,13 +1410,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             OperationType = RedisMessageDocumentOperationTypeEnum.Delete,
                             Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' удалил счет {Document.Description}"
                         };
+                        message.ExternalValues.Add("KontragentDC",Document.Client.DocCode);
                         var jsonSerializerSettings = new JsonSerializerSettings
                         {
                             TypeNameHandling = TypeNameHandling.All
                         };
                         var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
                         if (Document.State != RowStatus.NewRow)
-                            mySubscriber.Publish(new RedisChannel("ClientInvoice", RedisChannel.PatternMode.Auto),
+                            mySubscriber.Publish(
+                                new RedisChannel(RedisMessageChannels.InvoiceClient, RedisChannel.PatternMode.Auto),
                                 json);
                     }
 
@@ -1846,6 +1873,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             public DateTime LastOperationDate { set; get; }
         }
 
+        [SuppressMessage("ReSharper", "UnassignedGetOnlyAutoProperty")]
         private class NomenklQuantityInfo
         {
             public decimal DocCode { get; }

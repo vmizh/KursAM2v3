@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
-using Core;
 using Data;
-using KursDomain.Repository;
 using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.Finance;
+using KursDomain.Repository;
 
 namespace KursAM2.Repositories.InvoicesRepositories
 {
@@ -24,7 +20,6 @@ namespace KursAM2.Repositories.InvoicesRepositories
         void Delete(SD_84 entity);
         List<IInvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd);
         List<IInvoiceClient> GetByDocCodes(List<decimal> dcs);
-      
     }
 
     public class InvoiceClientRepository : GenericKursDBRepository<InvoiceClientViewModel>, IInvoiceClientRepository
@@ -46,7 +41,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
         {
             DetachObjects();
             return new InvoiceClientViewModel(Context.SD_84
-                .FirstOrDefault(_ => _.DOC_CODE == dc), new UnitOfWork<ALFAMEDIAEntities>(),true);
+                .FirstOrDefault(_ => _.DOC_CODE == dc), new UnitOfWork<ALFAMEDIAEntities>(), true);
         }
 
         public InvoiceClientViewModel GetFullCopy(InvoiceClientViewModel doc)
@@ -89,7 +84,5 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 .Select(dc => new InvoiceClientBase(data.Where(_ => _.DocCode == dc)))
                 .Cast<IInvoiceClient>().ToList();
         }
-
-        
     }
 }

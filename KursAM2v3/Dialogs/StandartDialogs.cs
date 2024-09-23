@@ -514,7 +514,7 @@ namespace KursAM2.Dialogs
                             .Include(_ => _.ProviderInvoicePay)
                             .Include(_ => _.ProviderInvoicePay.Select(x => x.TD_101))
                             .Include(_ => _.ProviderInvoicePay.Select(x => x.SD_34))
-                            .First(_ => _.DOC_CODE == ctx.CurrentProviderItem.DocCode);
+                            .First(_ => _.DOC_CODE == ctx.CurrentProviderItem.DocCode );
                         var doc = new InvoiceProvider(d, new UnitOfWork<ALFAMEDIAEntities>(dbctx));
                         return doc;
                     }

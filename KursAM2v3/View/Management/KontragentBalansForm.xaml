@@ -9,6 +9,16 @@
                  x:Class="KursAM2.View.Management.KontragentBalansForm"
                  Title="Лицевой счет контрагента " Height="618.383" Width="1004.218"
                  Icon="pack://siteoforigin:,,,/Images/calculator.png">
+    <dxmvvm:Interaction.Behaviors>
+        <dxmvvm:NotificationService x:Name="notificationService"
+                                    ApplicationId="KursAM2v4"
+                                    PredefinedNotificationTemplate="ShortHeaderAndLongText"
+                                    PredefinedNotificationDuration="Long"
+                                    CustomNotificationPosition="BottomRight"
+                                    CustomNotificationTemplate="{StaticResource CustomNotificationTemplate}"
+                                    UseWin8NotificationsIfAvailable="True" />
+
+    </dxmvvm:Interaction.Behaviors>
     <dx:ThemedWindow.HeaderItems>
         <TextBlock Text="{Binding DatabaseName}"
                    Foreground="{Binding DatabaseColor}"

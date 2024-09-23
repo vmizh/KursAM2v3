@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -8,6 +9,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
 using KursAM2.Repositories.RedisRepository;
+using KursAM2.View.Base;
 using KursAM2.View.Logistiks.Warehouse;
 using KursDomain;
 using KursDomain.Documents.NomenklManagement;
@@ -21,23 +23,29 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 {
     public sealed class WarehouseOrderInSearchViewModel : RSWindowSearchViewModelBase
     {
-        private readonly IDatabase myRedis = RedisStore.RedisCache;
+        private readonly ConnectionMultiplexer redis;
         private readonly ISubscriber mySubscriber;
+
         private readonly WarehouseManager orderManager;
         private WarehouseOrderIn myCurrentDocument;
 
         public WarehouseOrderInSearchViewModel()
         {
-            if (myRedis != null)
+            try
             {
-                mySubscriber = myRedis.Multiplexer.GetSubscriber();
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
                 if (mySubscriber.IsConnected())
-                    mySubscriber.Subscribe(new RedisChannel("WarehouseOrderIn", RedisChannel.PatternMode.Auto),
+                    mySubscriber.Subscribe(new RedisChannel(RedisMessageChannels.WarehouseOrderIn, RedisChannel.PatternMode.Auto),
                         (_, message) =>
                         {
                             Console.WriteLine($@"Redis - {message}");
                             Form.Dispatcher.Invoke(() => UpdateList(message));
                         });
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
             }
 
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -122,7 +130,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 else
                 {
                     doc.LastChanger = doc.CREATOR;
-                    doc.First().LastChangerDate = doc.Date;
+                    doc.LastChangerDate = doc.Date;
                 }
 
                 var old = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
@@ -188,6 +196,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
         public override void RefreshData(object data)
         {
+            var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
             try
             {
@@ -201,11 +210,30 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     foreach (var item in d)
                         rows.Add(new WarehouseOrderIn(item) { State = RowStatus.NotEdited });
                     Documents.Clear();
+                    if (rows.Count > 0)
+                    {
+                        var lasts = lastDocumentRopository.GetLastChanges(rows.Select(_ => _.DocCode).Distinct());
+                        foreach (var r in rows)
+                            if (lasts.ContainsKey(r.DocCode))
+                            {
+                                var last = lasts[r.DocCode];
+                                r.LastChanger = last.Item1;
+                                r.LastChangerDate = last.Item2;
+                            }
+                            else
+                            {
+                                r.LastChanger = r.CREATOR;
+                                r.LastChangerDate = r.Date;
+                            }
+                    }
                     foreach (var item in rows)
                     {
                         item.WarehouseSenderType = item.KontragentSender != null
                             ? WarehouseSenderType.Kontragent
                             : WarehouseSenderType.Store;
+                       
+                            
+                        
                         Documents.Add(item);
                     }
 
