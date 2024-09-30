@@ -148,6 +148,17 @@ namespace KursAM2.ViewModel.Management
         public ObservableCollection<KontragentBalansRowViewModel> Documents { set; get; }
 
 
+        public string PeriodName
+        {
+            set
+            {
+                if (Equals(myPeriodName, value)) return;
+                myPeriodName = value;
+                RaisePropertyChanged();
+            }
+            get => myPeriodName;
+        }
+
         public KontragentPeriod CurrentPeriod
         {
             get => myCurrentPeriod;
@@ -155,6 +166,21 @@ namespace KursAM2.ViewModel.Management
             {
                 if (Equals(myCurrentPeriod, value)) return;
                 myCurrentPeriod = value;
+                switch (myCurrentPeriod?.PeriodType)
+                {
+                    case PeriodType.Year:
+                        PeriodName = myCurrentPeriod.Name;
+                        break;
+                    case PeriodType.Month:
+                        PeriodName = $"{myCurrentPeriod.Name} {myCurrentPeriod.DateStart.Year} г.";
+                        break;
+                    case PeriodType.Day:
+                        PeriodName = myCurrentPeriod.DateStart.ToLongDateString();
+                        break;
+                    default: 
+                        PeriodName = null;
+                        break;
+                }
                 if (myCurrentPeriod != null)
                     LoadDocumentsForPeriod();
                 else
@@ -357,6 +383,9 @@ namespace KursAM2.ViewModel.Management
         public void LoadOperations(decimal doccode)
         {
             Load(doccode);
+            if (!Operations.Any(o =>
+                    Periods.Count == 0 || Periods.Where(_ => _.PeriodType == PeriodType.Day)
+                        .All(_ => _.DateStart != o.DocDate))) return;
             LoadPeriod(Operations);
         }
 
@@ -385,7 +414,7 @@ namespace KursAM2.ViewModel.Management
                               "cast(OPER_CRS_RATE as numeric(18,4)) as CrsOperRate, " +
                               "cast(UCH_CRS_RATE as numeric(18,4)) as CrsUchRate, " +
                               "KONTR_DC as DocCode, " +
-                              "DOC_EXT_NUM as DocExtNum, " +
+                              "CASE WHEN DOC_TYPE_CODE = 101 THEN '' ELSE DOC_EXT_NUM END as DocExtNum, " +
                               "ISNULL(sd_24.DD_NOTES, ISNULL(Sd_26.SF_NOTES, ISNULL(SD_33.NOTES_ORD, " +
                               "ISNULL(SD_34.NOTES_ORD, ISNULL(sd_84.SF_NOTE, ISNULL(td_101.VVT_DOC_NUM, " +
                               "ISNULL(td_110.VZT_DOC_NOTES, ISNULL(sd_430.ASV_NOTES,'')))))))) AS Notes " +
@@ -743,6 +772,7 @@ namespace KursAM2.ViewModel.Management
         }
 
         private string myPeriodModeName = "Показать по всем периодам";
+        private string myPeriodName;
 
         public string PeriodModeName
         {
