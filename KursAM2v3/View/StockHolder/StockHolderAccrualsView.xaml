@@ -48,8 +48,8 @@
                             <dxe:DateEdit MinWidth="100" DockPanel.Dock="Left"
                                           VerticalAlignment="Center"
                                           EditValue="{Binding Document.Date, UpdateSourceTrigger=PropertyChanged}" EditValueChanging="DateEdit_EditValueChanging" />
-                            <Label Content="Примечания " DockPanel.Dock="Left" VerticalAlignment="Center" />
-                            <dxe:TextEdit Margin="10 0"
+                            <Label Content="Примечание:" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="20,0,0,0" />
+                            <dxe:TextEdit Margin="5 0"
                                           AcceptsReturn="True"
                                           TextWrapping="Wrap"
                                           EditValue="{Binding Document.Note, Mode=TwoWay,  UpdateSourceTrigger=PropertyChanged}"
@@ -64,11 +64,11 @@
                                         EnumType="{x:Type iCommon:RowStatus}" />
                                 </dxmvvm:Interaction.Behaviors>
                             </dxe:ComboBoxEdit>
-                            <Label Content="  Статус:" DockPanel.Dock="Right" VerticalAlignment="Center" />
+                            <Label Content="  Статус: " DockPanel.Dock="Right" VerticalAlignment="Center" />
                             <dxe:TextEdit MinWidth="100" DockPanel.Dock="Right"
                                           EditValue="{Binding Document.Creator}" IsReadOnly="True"
                                           VerticalAlignment="Center" />
-                            <Label Content="Создатель: " DockPanel.Dock="Right" VerticalAlignment="Center" />
+                            <Label Content="Создатель:  " DockPanel.Dock="Right" VerticalAlignment="Center" />
                         </DockPanel>
                     </dxlc:LayoutItem>
                 </dxlc:LayoutGroup>
