@@ -253,9 +253,6 @@
     <Compile Include="Repositories\InvoicesRepositories\InvoiceClientRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceProviderRepository.cs" />
     <Compile Include="Repositories\Logistik\SD_24Repository.cs" />
-    <Compile Include="Repositories\RedisRepository\RedisMessage.cs" />
-    <Compile Include="Repositories\RedisRepository\RedisMessageChannels.cs" />
-    <Compile Include="Repositories\RedisRepository\RedisStore.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\IRefundFromClientRepository.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\RefundFromClientRepository.cs" />
     <Compile Include="Repositories\SD_24Repository.cs" />
@@ -2583,6 +2580,10 @@
       <Project>{45442b20-578b-4519-a31c-6ba5102b240f}</Project>
       <Name>Helper</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Kurs.RedisClient\Kurs.RedisClient.csproj">
+      <Project>{f50bcb96-890e-4182-b650-51d5766ecf0f}</Project>
+      <Name>Kurs.RedisClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\KursDomain\KursDomain.csproj">
       <Project>{2892b43c-a8f8-4939-9f88-eab3b8f7108b}</Project>
       <Name>KursDomain</Name>
@@ -2590,6 +2591,10 @@
     <ProjectReference Include="..\LayoutManager\LayoutManager.csproj">
       <Project>{0ac84fa1-a12e-414a-8d3e-ede48e795908}</Project>
       <Name>LayoutManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RedisProvider\RedisProvider.csproj">
+      <Project>{2daadaea-3147-406b-b45c-9977934e4db2}</Project>
+      <Name>RedisProvider</Name>
     </ProjectReference>
     <ProjectReference Include="..\Reports\Reports.csproj">
       <Project>{66a3ecd4-693d-485f-97b2-35aad6ab6d48}</Project>

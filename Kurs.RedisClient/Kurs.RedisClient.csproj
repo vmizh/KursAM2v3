@@ -1,0 +1,542 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F50BCB96-890E-4182-B650-51D5766ECF0F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Kurs.RedisClient</RootNamespace>
+    <AssemblyName>Kurs.RedisClient</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="JetBrains.Annotations, Version=4242.42.42.42, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.2024.2.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=8.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.8.0.1\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Diagnostics.Tracing" />
+    <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ApiAttribute.cs" />
+    <Compile Include="AsyncEx\AsyncManualResetEvent.cs" />
+    <Compile Include="AutoMappingUtils.cs" />
+    <Compile Include="BasicRedisClientManager.Async.cs" />
+    <Compile Include="BasicRedisClientManager.cs" />
+    <Compile Include="BasicRedisClientManager.ICacheClient.cs" />
+    <Compile Include="BasicRedisResolver.cs" />
+    <Compile Include="BufferedReader.Async.cs" />
+    <Compile Include="BufferedReader.cs" />
+    <Compile Include="BufferedStream.cs" />
+    <Compile Include="ByteArrayExtensions.cs" />
+    <Compile Include="Caching\IRedisClientCacheManager.cs" />
+    <Compile Include="Caching\IRemoveByPatternAsync.cs" />
+    <Compile Include="Caching\ICacheClientAsync.cs" />
+    <Compile Include="Caching\ICacheClientExtended.cs" />
+    <Compile Include="Caching\ICacheClient.cs" />
+    <Compile Include="Caching\IRemoveByPattern.cs" />
+    <Compile Include="ApiMemberAttribute.cs" />
+    <Compile Include="NetFxPclExport.cs" />
+    <Compile Include="DataAnnotations\AutoIncrementAttribute.cs" />
+    <Compile Include="DataAnnotations\IgnoreAttribute.cs" />
+    <Compile Include="Diagnostics.cs" />
+    <Compile Include="PclDynamic.cs" />
+    <Compile Include="Redis\Generic\IRedisHash.Generic.Async.cs" />
+    <Compile Include="Redis\Generic\IRedisList.Generic.Async.cs" />
+    <Compile Include="Redis\Generic\IRedisSet.Generic.Async.cs" />
+    <Compile Include="Redis\Generic\IRedisSortedSet.Generic.Async.cs" />
+    <Compile Include="Redis\IHasStats.cs" />
+    <Compile Include="Redis\RedisDiagnostics.cs" />
+    <Compile Include="Redis\IRedisClientsManagerAsync.cs" />
+    <Compile Include="Redis\IRedisNativeClient.cs" />
+    <Compile Include="Redis\RedisNativeClient.cs" />
+    <Compile Include="SvgIcons.cs" />
+    <Compile Include="IconAttribute.cs" />
+    <Compile Include="DataAnnotations\IndexAttribute.cs" />
+    <Compile Include="DisposableExtensions.cs" />
+    <Compile Include="DataAnnotations\SchemaAttribute.cs" />
+    <Compile Include="IO\ResourceVirtualFiles.cs" />
+    <Compile Include="Jobs\BackgroundJob.cs" />
+    <Compile Include="ListExtensions.cs" />
+    <Compile Include="HttpRequestConfig.cs" />
+    <Compile Include="HttpUtils.WebReqauest.cs" />
+    <Compile Include="Script\CaptureScriptBlock.cs" />
+    <Compile Include="Script\CsvScriptBlock.cs" />
+    <Compile Include="Script\EvalScriptBlock.cs" />
+    <Compile Include="Script\FunctionScriptBlock.cs" />
+    <Compile Include="Script\KeyValuesScriptBlock.cs" />
+    <Compile Include="Script\NoopScriptBlock.cs" />
+    <Compile Include="Script\WhileScriptBlock.cs" />
+    <Compile Include="Script\WithScriptBlock.cs" />
+    <Compile Include="Script\PartialScriptBlock.cs" />
+    <Compile Include="Script\RawScriptBlock.cs" />
+    <Compile Include="Script\EachScriptBlock.cs" />
+    <Compile Include="Script\JsUnaryExpression.cs" />
+    <Compile Include="Script\JsTemplateLiteral.cs" />
+    <Compile Include="SharpPagesExtensions.cs" />
+    <Compile Include="PageAttribute.cs" />
+    <Compile Include="Script\HtmlScriptBlocks.cs" />
+    <Compile Include="Script\IScriptPlugin.cs" />
+    <Compile Include="SimpleAppSettings.cs" />
+    <Compile Include="Script\JsBinaryExpression.cs" />
+    <Compile Include="Script\JsAssignmentExpression.cs" />
+    <Compile Include="Script\JsLogicalExpression.cs" />
+    <Compile Include="Script\SharpPages.cs" />
+    <Compile Include="SimpleContainer.cs" />
+    <Compile Include="TaskExt.cs" />
+    <Compile Include="IntExtensions.cs" />
+    <Compile Include="DataAnnotations\DescriptionAttribute.cs" />
+    <Compile Include="ICompressor.cs" />
+    <Compile Include="HttpHeaders.cs" />
+    <Compile Include="RequestScriptUtils.cs" />
+    <Compile Include="Feature.cs" />
+    <Compile Include="Configuration\IAppSettings.cs" />
+    <Compile Include="Configuration\IResolver.cs" />
+    <Compile Include="NavItem.cs" />
+    <Compile Include="Inspect.cs" />
+    <Compile Include="DictionaryExtensions.cs" />
+    <Compile Include="DataAnnotations\AliasAttribute.cs" />
+    <Compile Include="IContainer.cs" />
+    <Compile Include="ExecUtils.cs" />
+    <Compile Include="ICommandAsync.cs" />
+    <Compile Include="AttributeExtensions.cs" />
+    <Compile Include="AttributeBase.cs" />
+    <Compile Include="IReflectAttributeConverter.cs" />
+    <Compile Include="NotesAttribute.cs" />
+    <Compile Include="Command.cs" />
+    <Compile Include="Data\OptimisticConcurrencyException.cs" />
+    <Compile Include="EnumExtensions.cs" />
+    <Compile Include="Extensions\ServiceStackExtensions.cs" />
+    <Compile Include="GistHubGateway.cs" />
+    <Compile Include="HttpMethods.cs" />
+    <Compile Include="HttpUtils.cs" />
+    <Compile Include="IAsyncCommand.cs" />
+    <Compile Include="IHtmlString.cs" />
+    <Compile Include="IO\FileSystemVirtualFiles.cs" />
+    <Compile Include="IO\GetVirtualFiles.cs" />
+    <Compile Include="JSON.cs" />
+    <Compile Include="PathUtils.cs" />
+    <Compile Include="IO\MultiVirtualFiles.cs" />
+    <Compile Include="MimeTypes.cs" />
+    <Compile Include="RequestAttributes.cs" />
+    <Compile Include="Script\DefaultScripts.Web.cs" />
+    <Compile Include="Script\HtmlScripts.cs" />
+    <Compile Include="Script\DefaultScripts.String.cs" />
+    <Compile Include="Script\DefaultScripts.Text.cs" />
+    <Compile Include="Script\ScriptMethodInfo.cs" />
+    <Compile Include="Script\DefaultScriptArray.cs" />
+    <Compile Include="Script\DefaultScriptQuerying.cs" />
+    <Compile Include="Script\ProtectedScripts.cs" />
+    <Compile Include="Script\ScriptExtensions.cs" />
+    <Compile Include="Script\DefaultScript.cs" />
+    <Compile Include="Script\DefaultScript.ErrorHandling.cs" />
+    <Compile Include="Script\JsConditionalExpression.cs" />
+    <Compile Include="Script\JsExpressionUtils.cs" />
+    <Compile Include="Script\JsOperator.cs" />
+    <Compile Include="Script\JsVariableDeclaration.cs" />
+    <Compile Include="Script\RawString.cs" />
+    <Compile Include="Script\ScriptConstants.cs" />
+    <Compile Include="Script\JsCallExpression.cs" />
+    <Compile Include="Script\JsStatement.cs" />
+    <Compile Include="Script\PageFormat.cs" />
+    <Compile Include="Script\ScriptConfig.cs" />
+    <Compile Include="Script\ScriptLanguage.Code.cs" />
+    <Compile Include="Script\ScriptLanguage.cs" />
+    <Compile Include="Script\ScriptLanguage.Template.cs" />
+    <Compile Include="Script\SharpCodePage.cs" />
+    <Compile Include="Script\JsMemberExpression.cs" />
+    <Compile Include="Script\JsToken.cs" />
+    <Compile Include="Script\PageFragment.cs" />
+    <Compile Include="Script\IfScriptBlock.cs" />
+    <Compile Include="Script\PageResult.cs" />
+    <Compile Include="Script\ScriptBlock.cs" />
+    <Compile Include="Script\ScriptContext.cs" />
+    <Compile Include="Script\ΞσΕχπρεσσιον.cs" />
+    <Compile Include="StringUtils.cs" />
+    <Compile Include="Text\CharMemoryExtensions.cs" />
+    <Compile Include="Text\DynamicProxy.cs" />
+    <Compile Include="Text\EmitReflectionOptimizer.cs" />
+    <Compile Include="Text\XmlSerializer.cs" />
+    <Compile Include="TypeExtensions.cs" />
+    <Compile Include="ViewUtils.cs" />
+    <Compile Include="VirtualPathUtils.cs" />
+    <Compile Include="IMeta.cs" />
+    <Compile Include="IO\VirtualFilesExtensions.cs" />
+    <Compile Include="IO\IVirtualFiles.cs" />
+    <Compile Include="IO\IVirtualDirectory.cs" />
+    <Compile Include="IO\IVirtualFile.cs" />
+    <Compile Include="IO\IVirtualNode.cs" />
+    <Compile Include="IO\IVirtualPathProvider.cs" />
+    <Compile Include="IO\MemoryVirtualFiles.cs" />
+    <Compile Include="ResponseError.cs" />
+    <Compile Include="ResponseStatus.cs" />
+    <Compile Include="Model\IResponseStatusConvertible.cs" />
+    <Compile Include="Script\ScriptScopeContext.cs" />
+    <Compile Include="Script\SharpPage.cs" />
+    <Compile Include="StopExecutionException.cs" />
+    <Compile Include="IO\IEndpoint.cs" />
+    <Compile Include="Logging\ILogFactory.cs" />
+    <Compile Include="Logging\LogManager.cs" />
+    <Compile Include="Logging\ILog.cs" />
+    <Compile Include="Logging\NullDebugLogger.cs" />
+    <Compile Include="Logging\NullLogFactory.cs" />
+    <Compile Include="Redis\IRedisEndpoint.cs" />
+    <Compile Include="Redis\RedisEndpoint.cs" />
+    <Compile Include="Script\StopMethods.cs" />
+    <Compile Include="TaskExtensions.cs" />
+    <Compile Include="Data\IEntityStoreAsync.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="CollectionExtensions.cs" />
+    <Compile Include="DynamicNumber.cs" />
+    <Compile Include="Generic\IRedisList.cs" />
+    <Compile Include="Generic\IRedisTypedClient.cs" />
+    <Compile Include="IdUtils.cs" />
+    <Compile Include="Model\IRedisSortedSet.cs" />
+    <Compile Include="Model\IHasNamed.cs" />
+    <Compile Include="Model\IHasId.cs" />
+    <Compile Include="Model\IHasStringId.cs" />
+    <Compile Include="Redis\IRedisClientsManager.cs" />
+    <Compile Include="Redis\IRedisPubSubServer.cs" />
+    <Compile Include="Redis\IRedisNativeClientAsync.cs" />
+    <Compile Include="Redis\SlowlogItem.cs" />
+    <Compile Include="Redis\IRedisSubscriptionAsync.cs" />
+    <Compile Include="Redis\IRedisTransactionAsync.cs" />
+    <Compile Include="Redis\Generic\IRedisTypedPipelineAsync.cs" />
+    <Compile Include="Redis\Generic\IRedisTypedQueueableOperationAsync.cs" />
+    <Compile Include="Redis\Generic\IRedisTypedTransactionAsync.cs" />
+    <Compile Include="Redis\Generic\IRedisTypedClientAsync.cs" />
+    <Compile Include="Redis\IRedisClientAsync.cs" />
+    <Compile Include="Redis\IRedisHashAsync.cs" />
+    <Compile Include="Redis\IRedisListAsync.cs" />
+    <Compile Include="Redis\IRedisSetAsync.cs" />
+    <Compile Include="Redis\IRedisSortedSetAsync.cs" />
+    <Compile Include="Redis\IRedisTransactionBaseAsync.cs" />
+    <Compile Include="Redis\Pipeline\IRedisPipelineAsync.cs" />
+    <Compile Include="Redis\Pipeline\IRedisQueueableOperationAsync.cs" />
+    <Compile Include="Redis\Pipeline\IRedisPipelineSharedAsync.cs" />
+    <Compile Include="Redis\Pipeline\IRedisQueueCompletableOperationAsync.cs" />
+    <Compile Include="Redis\ScanResult.cs" />
+    <Compile Include="Redis\ItemRef.cs" />
+    <Compile Include="Redis\SortOptions.cs" />
+    <Compile Include="Redis\IRedisSubscription.cs" />
+    <Compile Include="Redis\IRedisTransaction.cs" />
+    <Compile Include="Redis\IRedisHash.cs" />
+    <Compile Include="Redis\IRedisList.cs" />
+    <Compile Include="Redis\IRedisSet.cs" />
+    <Compile Include="Redis\Generic\IRedisHash.cs" />
+    <Compile Include="Redis\Generic\IRedisPipelineShared.cs" />
+    <Compile Include="Redis\IRedisTransactionBase.cs" />
+    <Compile Include="Redis\Pipeline\IRedisPipeline.cs" />
+    <Compile Include="Redis\Pipeline\IRedisQueueableOperation.cs" />
+    <Compile Include="Redis\RedisData.cs" />
+    <Compile Include="Redis\Generic\IRedisTypedPipeline.cs" />
+    <Compile Include="Redis\Generic\IRedisSet.cs" />
+    <Compile Include="Redis\Generic\IRedisSortedSet.Generic.cs" />
+    <Compile Include="Redis\Generic\IRedisTransaction.cs" />
+    <Compile Include="Redis\Generic\IRedisTypedQueueableOperation.cs" />
+    <Compile Include="Redis\Pipeline\IRedisQueueCompletableOperation.cs" />
+    <Compile Include="Redis\RedisGep.cs" />
+    <Compile Include="Redis\RedisKeyType.cs" />
+    <Compile Include="Redis\RedisClientType.cs" />
+    <Compile Include="Redis\RedisServerRole.cs" />
+    <Compile Include="TaskUtils.cs" />
+    <Compile Include="PclExport.cs" />
+    <Compile Include="StreamExtensions.cs" />
+    <Compile Include="TextExtensions.cs" />
+    <Compile Include="Commands.cs" />
+    <Compile Include="Common\Support\AssemblyTypeDefinition.cs" />
+    <Compile Include="Data\IEntityStore.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Generic\ManagedListGeneric.cs" />
+    <Compile Include="Generic\QueuedRedisTypedCommand.Async.cs" />
+    <Compile Include="Generic\QueuedRedisTypedCommand.cs" />
+    <Compile Include="Generic\RedisClientHash.Generic.Async.cs" />
+    <Compile Include="Generic\RedisClientHash.Generic.cs" />
+    <Compile Include="Generic\RedisClientList.Generic.Async.cs" />
+    <Compile Include="Generic\RedisClientList.Generic.cs" />
+    <Compile Include="Generic\RedisClientSet.Generic.Async.cs" />
+    <Compile Include="Generic\RedisClientSet.Generic.cs" />
+    <Compile Include="Generic\RedisClientsManagerExtensionsGeneric.cs" />
+    <Compile Include="Generic\RedisClientSortedSet.Generic.Async.cs" />
+    <Compile Include="Generic\RedisClientSortedSet.Generic.cs" />
+    <Compile Include="Generic\RedisTypedClient.Async.cs" />
+    <Compile Include="Generic\RedisTypedClient.cs" />
+    <Compile Include="Generic\RedisTypedClient_App.cs" />
+    <Compile Include="Generic\RedisTypedClient_Hash.cs" />
+    <Compile Include="Generic\RedisTypedClient_List.Async.cs" />
+    <Compile Include="Generic\RedisTypedClient_List.cs" />
+    <Compile Include="Generic\RedisTypedClient_Set.Async.cs" />
+    <Compile Include="Generic\RedisTypedClient_Set.cs" />
+    <Compile Include="Generic\RedisTypedClient_SortedSet.Async.cs" />
+    <Compile Include="Generic\RedisTypedClient_SortedSet.cs" />
+    <Compile Include="Generic\RedisTypedCommandQueue.cs" />
+    <Compile Include="Generic\RedisTypedPipeline.Async.cs" />
+    <Compile Include="Generic\RedisTypedPipeline.cs" />
+    <Compile Include="Generic\RedisTypedTransaction.Async.cs" />
+    <Compile Include="Generic\RedisTypedTransaction.cs" />
+    <Compile Include="IHandleClientDispose.cs" />
+    <Compile Include="IRedisFailover.cs" />
+    <Compile Include="IRedisResolver.cs" />
+    <Compile Include="IRedisSentinel.cs" />
+    <Compile Include="LicenseUtils.cs" />
+    <Compile Include="Pipeline\QueuedRedisCommand.Async.cs" />
+    <Compile Include="Pipeline\QueuedRedisCommand.cs" />
+    <Compile Include="Pipeline\QueuedRedisOperation.Async.cs" />
+    <Compile Include="Pipeline\QueuedRedisOperation.cs" />
+    <Compile Include="Pipeline\RedisAllPurposePipeline.Async.cs" />
+    <Compile Include="Pipeline\RedisAllPurposePipeline.cs" />
+    <Compile Include="Pipeline\RedisCommand.Async.cs" />
+    <Compile Include="Pipeline\RedisCommand.cs" />
+    <Compile Include="Pipeline\RedisCommandQueue.cs" />
+    <Compile Include="Pipeline\RedisPipelineCommand.Async.cs" />
+    <Compile Include="Pipeline\RedisPipelineCommand.cs" />
+    <Compile Include="Pipeline\RedisQueueCompletableOperation.cs" />
+    <Compile Include="PlatformExtensions.cs" />
+    <Compile Include="PooledRedisClientManager.Async.cs" />
+    <Compile Include="PooledRedisClientManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryStringSerilializer.cs" />
+    <Compile Include="RedisClient.Async.cs" />
+    <Compile Include="RedisClient.cs" />
+    <Compile Include="RedisClient.ICacheClient.cs" />
+    <Compile Include="RedisClientExtensions.cs" />
+    <Compile Include="RedisClientHash.Async.cs" />
+    <Compile Include="RedisClientHash.cs" />
+    <Compile Include="RedisClientList.Async.cs" />
+    <Compile Include="RedisClientList.cs" />
+    <Compile Include="RedisClientManagerCacheClient.Async.cs" />
+    <Compile Include="RedisClientManagerCacheClient.cs" />
+    <Compile Include="RedisClientManagerConfig.cs" />
+    <Compile Include="RedisClientSet.Async.cs" />
+    <Compile Include="RedisClientSet.cs" />
+    <Compile Include="RedisClientsManagerExtensions.Async.cs" />
+    <Compile Include="RedisClientsManagerExtensions.cs" />
+    <Compile Include="RedisClientSortedSet.Async.cs" />
+    <Compile Include="RedisClientSortedSet.cs" />
+    <Compile Include="RedisClient_Admin.cs" />
+    <Compile Include="RedisClient_Hash.Async.cs" />
+    <Compile Include="RedisClient_Hash.cs" />
+    <Compile Include="RedisClient_List.Async.cs" />
+    <Compile Include="RedisClient_List.cs" />
+    <Compile Include="RedisClient_Set.Async.cs" />
+    <Compile Include="RedisClient_Set.cs" />
+    <Compile Include="RedisClient_Slowlog.cs" />
+    <Compile Include="RedisClient_SortedSet.Async.cs" />
+    <Compile Include="RedisClient_SortedSet.cs" />
+    <Compile Include="RedisConfig.cs" />
+    <Compile Include="RedisDataExtensions.cs" />
+    <Compile Include="RedisDataInfoExtensions.cs" />
+    <Compile Include="RedisException.cs" />
+    <Compile Include="RedisExtensions.cs" />
+    <Compile Include="RedisLock.Async.cs" />
+    <Compile Include="RedisLock.cs" />
+    <Compile Include="RedisManagerPool.Async.cs" />
+    <Compile Include="RedisManagerPool.cs" />
+    <Compile Include="Redis\RedisNativeClient.Async.cs" />
+    <Compile Include="Redis\RedisNativeClient_Utils.Async.cs" />
+    <Compile Include="Redis\RedisNativeClient_Utils.cs" />
+    <Compile Include="RedisPubSubServer.cs" />
+    <Compile Include="RedisResolver.cs" />
+    <Compile Include="RedisResponseException.cs" />
+    <Compile Include="RedisRetryableException.cs" />
+    <Compile Include="RedisScripts.cs" />
+    <Compile Include="RedisSentinel.cs" />
+    <Compile Include="RedisSentinelResolver.cs" />
+    <Compile Include="RedisSentinelWorker.cs" />
+    <Compile Include="RedisState.cs" />
+    <Compile Include="RedisStats.cs" />
+    <Compile Include="RedisSubscription.Async.cs" />
+    <Compile Include="RedisSubscription.cs" />
+    <Compile Include="Redis\RedisText.cs" />
+    <Compile Include="Redis\IRedisClient.cs" />
+    <Compile Include="ScanResult.cs" />
+    <Compile Include="ShardedConnectionPool.cs" />
+    <Compile Include="ShardedRedisClientManager.cs" />
+    <Compile Include="Support\ConsistentHash.cs" />
+    <Compile Include="Support\Diagnostic\InvokeEventArgs.cs" />
+    <Compile Include="Support\Diagnostic\TrackingFrame.cs" />
+    <Compile Include="Support\Diagnostic\TrackingRedisClientProxy.cs" />
+    <Compile Include="Support\Diagnostic\TrackingRedisClientsManager.cs" />
+    <Compile Include="Support\IOrderedDictionary.cs" />
+    <Compile Include="Support\ISerializer.cs" />
+    <Compile Include="Support\Locking\DisposableDistributedLock.cs" />
+    <Compile Include="Support\Locking\DistributedLock.Async.cs" />
+    <Compile Include="Support\Locking\DistributedLock.cs" />
+    <Compile Include="Support\Locking\IDistributedLock.Async.cs" />
+    <Compile Include="Support\Locking\IDistributedLock.cs" />
+    <Compile Include="Support\Locking\ILockingStrategy.cs" />
+    <Compile Include="Support\Locking\NoLockingStrategy.cs" />
+    <Compile Include="Support\Locking\ReaderWriterLockingStrategy.cs" />
+    <Compile Include="Support\Locking\ReadLock.cs" />
+    <Compile Include="Support\Locking\WriteLock.cs" />
+    <Compile Include="Support\ObjectSerializer.cs" />
+    <Compile Include="Support\OptimizedObjectSerializer.cs" />
+    <Compile Include="Support\OrderedDictionary.cs" />
+    <Compile Include="Support\Queue\IChronologicalWorkQueue.cs" />
+    <Compile Include="Support\Queue\Implementation\RedisChronologicalWorkQueue.cs" />
+    <Compile Include="Support\Queue\Implementation\RedisSequentialWorkQueue.cs" />
+    <Compile Include="Support\Queue\Implementation\RedisSequentialWorkQueue.Locks.cs" />
+    <Compile Include="Support\Queue\Implementation\RedisSimpleWorkQueue.cs" />
+    <Compile Include="Support\Queue\Implementation\RedisWorkQueue.cs" />
+    <Compile Include="Support\Queue\Implementation\SequentialData.cs" />
+    <Compile Include="Support\Queue\Implementation\SerializingRedisClient.cs" />
+    <Compile Include="Support\Queue\ISequentialData.cs" />
+    <Compile Include="Support\Queue\ISequentialWorkQueue.cs" />
+    <Compile Include="Support\Queue\ISimpleWorkQueue.cs" />
+    <Compile Include="Support\RedisNamespace.cs" />
+    <Compile Include="Support\SerializedObjectWrapper.cs" />
+    <Compile Include="Text\AssemblyUtils.cs" />
+    <Compile Include="Text\CacheTypedInfo.cs" />
+    <Compile Include="Text\CsvAttribute.cs" />
+    <Compile Include="Text\CsvStreamExtensions.cs" />
+    <Compile Include="Text\CsvSerializer.cs" />
+    <Compile Include="Text\RuntimeSerializableAttribute.cs" />
+    <Compile Include="Text\Support\DoubleConverter.cs" />
+    <Compile Include="Text\TextConfig.cs" />
+    <Compile Include="Text\Common\StaticParseMethod.cs" />
+    <Compile Include="Text\Common\DeserializeCustomGenericType.cs" />
+    <Compile Include="Text\Common\DeserializeKeyValuePair.cs" />
+    <Compile Include="Text\Common\DeserializeCollection.cs" />
+    <Compile Include="Text\Common\DeserializeBuiltin.cs" />
+    <Compile Include="Text\Common\DeserializeArray.cs" />
+    <Compile Include="Text\Common\DeserializeSpecializedCollections.cs" />
+    <Compile Include="Text\Common\WriteDictionary.cs" />
+    <Compile Include="Text\CsvReader.cs" />
+    <Compile Include="Text\DateTimeExtensions.cs" />
+    <Compile Include="Text\Common\DateTimeSerializer.cs" />
+    <Compile Include="Text\Common\DeserializeListWithElements.cs" />
+    <Compile Include="Text\DefaultMemory.cs" />
+    <Compile Include="Text\JsvFormatter.cs" />
+    <Compile Include="Text\MemoryProvider.cs" />
+    <Compile Include="Text\Common\DeserializeDictionary.cs" />
+    <Compile Include="Text\Common\DeserializeTypeRefJsv.cs" />
+    <Compile Include="Text\Common\DeserializeTypeRefJson.cs" />
+    <Compile Include="Text\Common\DeserializeTypeRef.cs" />
+    <Compile Include="Text\Common\DeserializeTypeUtils.cs" />
+    <Compile Include="Text\Common\DeserilializeType.cs" />
+    <Compile Include="Text\Common\ParseUtils.cs" />
+    <Compile Include="Text\Common\JsReader.cs" />
+    <Compile Include="Text\IStringSerializer.cs" />
+    <Compile Include="Text\CsvConfig.cs" />
+    <Compile Include="Text\CsvWriter.cs" />
+    <Compile Include="Text\JsonObject.cs" />
+    <Compile Include="Text\JsonSerializer.cs" />
+    <Compile Include="Text\Json\JsonReader.Generic.cs" />
+    <Compile Include="Text\Jsv\JsvReader.Generic.cs" />
+    <Compile Include="Text\Pools\BufferPool.cs" />
+    <Compile Include="Text\Pools\CharPool.cs" />
+    <Compile Include="Text\Pools\ObjectPool.cs" />
+    <Compile Include="Text\Pools\SharedPools.cs" />
+    <Compile Include="Text\RecyclableMemoryStream.cs" />
+    <Compile Include="Text\StringBuilderCache.cs" />
+    <Compile Include="Text\StringSpanExtensions.cs" />
+    <Compile Include="Text\Common\WriteType.cs" />
+    <Compile Include="Text\Common\ITypeSerializer.cs" />
+    <Compile Include="Text\Common\JsDelegates.cs" />
+    <Compile Include="Text\Common\JsWriter.cs" />
+    <Compile Include="Text\Common\WriteLists.cs" />
+    <Compile Include="Text\Json\JsonUtils.cs" />
+    <Compile Include="Text\Json\JsonTypeSerializer.cs" />
+    <Compile Include="Text\Json\JsonWriterGeneric.cs" />
+    <Compile Include="Text\Jsv\JsvTypeSerializer.cs" />
+    <Compile Include="Text\Jsv\JsvWriter.Generis.cs" />
+    <Compile Include="Text\ParseAsType.cs" />
+    <Compile Include="Text\Common\JsState.cs" />
+    <Compile Include="Text\Env.cs" />
+    <Compile Include="Text\ITracer.cs" />
+    <Compile Include="Text\JsConfig.cs" />
+    <Compile Include="Text\JsonConfigScope.cs" />
+    <Compile Include="Text\ReflectionExtensions.cs" />
+    <Compile Include="Text\ReflectionOptimizer.cs" />
+    <Compile Include="Text\StringWriterCache.cs" />
+    <Compile Include="Text\Support\TypePair.cs" />
+    <Compile Include="Text\Support\TimeSpanConverter.cs" />
+    <Compile Include="Text\Tracer.cs" />
+    <Compile Include="Text\TranslateWithElements.cs" />
+    <Compile Include="Text\TypeConfig.cs" />
+    <Compile Include="Text\TypeSerializer.cs" />
+    <Compile Include="Transaction\RedisTransaction.Async.cs" />
+    <Compile Include="Transaction\RedisTransaction.cs" />
+    <Compile Include="Transaction\RedisTransactionFailedException.cs" />
+    <Compile Include="TypeConstants.cs" />
+    <Compile Include="TypeFields.cs" />
+    <Compile Include="TypeProperties.cs" />
+    <Compile Include="UtilExtensions.cs" />
+    <Compile Include="ValueTask_Utils.Async.cs" />
+    <Compile Include="VirtualPath\AbstractVirtualPathProviderBase.cs" />
+    <Compile Include="VirtualPath\AbstractVirtualDirectoryBase.cs" />
+    <Compile Include="VirtualPath\AbstractVirtualFileBase.cs" />
+    <Compile Include="VirtualPath\ResourceVirtualDirectory.cs" />
+    <Compile Include="VirtualPath\FileSystemVirtualDirectory.cs" />
+    <Compile Include="VirtualPath\FileSystemVirtualFile.cs" />
+    <Compile Include="VirtualPath\ResourceVirtualFile.cs" />
+    <Compile Include="Web\IRequiresRequest.cs" />
+    <Compile Include="Web\IHttpFile.cs" />
+    <Compile Include="Web\IRequestPreferences.cs" />
+    <Compile Include="Web\IResponse.cs" />
+    <Compile Include="Web\IRequest.cs" />
+    <Compile Include="Web\IHasOptions.cs" />
+    <Compile Include="Web\IStreamWriter.cs" />
+    <Compile Include="WorkerAttribute.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
