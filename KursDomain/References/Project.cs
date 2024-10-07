@@ -12,11 +12,13 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{Id} {Name,nq} {ParentId,nq}")]
-public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparable
+public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparable, ICache
 {
     public int CompareTo(object obj)
     {
@@ -34,11 +36,14 @@ public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparab
 
     public string Name { get; set; }
     public string Notes { get; set; }
+    [JsonIgnore]
     public string Description => $"Проект: {Name}";
     public bool IsDeleted { get; set; }
     public bool IsClosed { get; set; }
     public DateTime DateStart { get; set; }
     public DateTime? DateEnd { get; set; }
+    public decimal? EmployeeDC { set; get; }
+    [JsonIgnore]
     public IEmployee Employee { get; set; }
     public Guid? ParentId { get; set; }
 
@@ -77,6 +82,13 @@ public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparab
     public override int GetHashCode()
     {
         return Id.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
+        if (EmployeeDC is not null)
+            Employee = cache.GetItem<Employee>(EmployeeDC.Value);
     }
 }
 

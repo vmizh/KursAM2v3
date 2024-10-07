@@ -26,10 +26,10 @@ namespace Data
         public string Note { get; set; }
         public System.Guid DbId { get; set; }
     
-        public virtual DataSources DataSources { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SignatureSchemesInfo> SignatureSchemesInfo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Users> Users { get; set; }
+        public virtual DataSources DataSources { get; set; }
     }
 }

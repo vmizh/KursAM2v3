@@ -9,13 +9,20 @@ using Data;
 using KursDomain.Annotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DataContract]
 [DebuggerDisplay("{DocCode,nq}/{Id,nq} {Name,nq}")]
-public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currency>, IComparable
+public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currency>, IComparable, ICache
 {
+
+    public Currency()
+    {
+        LoadFromCache();
+    }
     private string _Code;
     private decimal _DocCode;
     private string _FullName;
@@ -113,6 +120,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
     }
     [DataMember]
     [Display(AutoGenerateField = false, Name = "Описание")]
+    [JsonIgnore]
     public string Description => $"Валюта: {Name} {FullName}";
 
     public override string ToString()
@@ -149,6 +157,11 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
     {
         // ReSharper disable once NonReadonlyMemberInGetHashCode
         return _DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        
     }
 
     public static bool operator ==(Currency left, Currency right)

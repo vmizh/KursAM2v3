@@ -3,12 +3,18 @@ using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class ContractType : IContractType, IDocCode, IName, IEquatable<ContractType>, IComparable
+public class ContractType : IContractType, IDocCode, IName, IEquatable<ContractType>, IComparable, ICache
 {
+    public ContractType()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -28,7 +34,7 @@ public class ContractType : IContractType, IDocCode, IName, IEquatable<ContractT
 
     public string Name { get; set; }
     public string Notes { get; set; }
-
+    [JsonIgnore]
     public string Description
     {
         get
@@ -69,5 +75,10 @@ public class ContractType : IContractType, IDocCode, IName, IEquatable<ContractT
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        
     }
 }

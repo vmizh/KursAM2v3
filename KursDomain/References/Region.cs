@@ -4,12 +4,18 @@ using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq} {ParentDC,nq}")]
-public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>, IComparable
+public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>, IComparable, ICache
 {
+    public Region()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -33,7 +39,9 @@ public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>, IC
     [Display(AutoGenerateField = true, Name = "Примечание")]
     public string Notes { get; set; }
 
-    [Display(AutoGenerateField = false)] public string Description => $"Регион: {Name}";
+    [Display(AutoGenerateField = false)] 
+    [JsonIgnore]
+    public string Description => $"Регион: {Name}";
 
     [Display(AutoGenerateField = false)] public decimal? ParentDC { get; set; }
 
@@ -66,5 +74,10 @@ public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>, IC
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        
     }
 }

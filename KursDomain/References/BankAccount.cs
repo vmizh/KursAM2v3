@@ -10,21 +10,29 @@ using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
 using KursDomain.IReferences.Kontragent;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Bank,nq} {RashAccount,nq}")]
-public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount>, IComparable
+public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount>, IComparable, ICache
 {
+    public BankAccount()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as BankAccount;
         return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
     }
     [Display(AutoGenerateField = true, Name = "Корр.счет", Order = 6)]
+    [JsonIgnore]
     public string CorrAccount => Bank?.CorrAccount;
 
     [Display(AutoGenerateField = true, Name = "БИК", Order = 5)]
+    [JsonIgnore]
     public string BIK => Bank?.BIK;
 
     [Display(AutoGenerateField = false)] public int LastYearOperationsCount { get; set; }
@@ -36,12 +44,18 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
 
     [Display(AutoGenerateField = false)] public short BACurrency { get; set; }
 
+    public decimal? KontragentDC { set; get; }
+
     [Display(AutoGenerateField = true, Name = "Контрагент", Order = 7)]
+    [JsonIgnore]
     public IKontragent Kontragent { get; set; }
 
     [Display(AutoGenerateField = false)] public bool IsTransit { get; set; }
 
+    public decimal? BankDC { set; get; }
+
     [Display(AutoGenerateField = true, Name = "Банк", Order = 4)]
+    [JsonIgnore]
     public IBank Bank { get; set; }
 
     [Display(AutoGenerateField = true, Name = "Отрицат.остатки", Order = 8)]
@@ -52,10 +66,16 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
     [Display(AutoGenerateField = true, Name = "Короткое имя", Order = 1)]
     public string ShortName { get; set; }
 
+    public decimal? CentrResponsibilityDC { set; get; }
+
     [Display(AutoGenerateField = true, Name = "Центр ответственности", Order = 8)]
+    [JsonIgnore]
     public ICentrResponsibility CentrResponsibility { get; set; }
 
+    public decimal? CurrencyDC { set; get; }
+
     [Display(AutoGenerateField = true, Name = "Валюта", Order = 2)]
+    [JsonIgnore]
     public ICurrency Currency { get; set; }
 
     [Display(AutoGenerateField = true, Name = "Нач. учета", Order = 9)]
@@ -88,7 +108,7 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
     }
 
     [Display(AutoGenerateField = false)] public string Notes { get; set; }
-
+    [JsonIgnore]
     public string Description
     {
         get
@@ -126,6 +146,7 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
         RashAccount = entity.BA_RASH_ACC;
         BACurrency = entity.BA_CURRENCY;
         Kontragent = refCache?.GetKontragent(entity.BA_BANK_AS_KONTRAGENT_DC);
+        CentrResponsibility = refCache?.GetCentrResponsibility(entity.BA_CENTR_OTV_DC);
         IsTransit = entity.BA_TRANSIT == 1;
         Bank = refCache?.GetBank(entity.BA_BANKDC);
         IsNegativeRests = entity.BA_NEGATIVE_RESTS == 1;
@@ -142,6 +163,19 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
     {
         // ReSharper disable once NonReadonlyMemberInGetHashCode
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
+        if (CentrResponsibilityDC is not null)
+            CentrResponsibility = cache.GetItem<CentrResponsibility>(CentrResponsibilityDC.Value);
+        if (CurrencyDC is not null)
+            Currency = cache.GetItem<Currency>(CurrencyDC.Value);
+        if (KontragentDC is not null)
+            Kontragent = cache.GetItem<Kontragent>(KontragentDC.Value);
+        if (BankDC is not null)
+            Bank = cache.GetItem<Bank>(BankDC.Value);
     }
 }
 

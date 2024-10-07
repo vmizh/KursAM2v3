@@ -8,12 +8,18 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class PayCondition : IPayCondition, IDocCode, IName, IEquatable<PayCondition>, IComparable
+public class PayCondition : IPayCondition, IDocCode, IName, IEquatable<PayCondition>, IComparable, ICache
 {
+    public PayCondition()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -36,6 +42,7 @@ public class PayCondition : IPayCondition, IDocCode, IName, IEquatable<PayCondit
     public string Notes { get; set; }
 
     [Display(AutoGenerateField = false, Name = "Опичсание")]
+    [JsonIgnore]
     public string Description => $"Условие оплаты: {Name}";
 
     [Display(AutoGenerateField = true, Name = "По умолчанию")]
@@ -64,6 +71,11 @@ public class PayCondition : IPayCondition, IDocCode, IName, IEquatable<PayCondit
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+       
     }
 }
 

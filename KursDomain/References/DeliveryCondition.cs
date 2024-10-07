@@ -3,12 +3,18 @@ using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class DeliveryCondition : IDeliveryCondition, IDocCode, IName, IEquatable<DeliveryCondition>, IComparable
+public class DeliveryCondition : IDeliveryCondition, IDocCode, IName, IEquatable<DeliveryCondition>, IComparable, ICache
 {
+    public DeliveryCondition()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -25,6 +31,7 @@ public class DeliveryCondition : IDeliveryCondition, IDocCode, IName, IEquatable
 
     public string Name { get; set; }
     public string Notes { get; set; }
+    [JsonIgnore]
     public string Description => $"Условие доставки: {Name}";
 
     public override string ToString()
@@ -55,5 +62,10 @@ public class DeliveryCondition : IDeliveryCondition, IDocCode, IName, IEquatable
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+       
     }
 }

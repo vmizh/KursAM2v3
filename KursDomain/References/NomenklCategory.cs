@@ -8,12 +8,18 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences.Nomenkl;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq} {ParentDC,nq} {NomenklCount,nq}")]
-public class NomenklGroup : IDocCode, IDocGuid, IName, INomenklGroup, IEquatable<NomenklGroup>, IComparable
+public class NomenklGroup : IDocCode, IDocGuid, IName, INomenklGroup, IEquatable<NomenklGroup>, IComparable, ICache
 {
+    public NomenklGroup()
+    {
+            LoadFromCache();
+    }
     public int CompareTo(object obj) 
     {
         var c = obj as Unit;
@@ -31,6 +37,7 @@ public class NomenklGroup : IDocCode, IDocGuid, IName, INomenklGroup, IEquatable
 
     public string Name { get; set; }
     public string Notes { get; set; }
+    [JsonIgnore]
     public string Description => $"Ном.категория: {Name}";
     public decimal? ParentDC { get; set; }
     public string PathName { get; set; }
@@ -80,6 +87,11 @@ public class NomenklGroup : IDocCode, IDocGuid, IName, INomenklGroup, IEquatable
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        
     }
 }
 

@@ -21,8 +21,8 @@ namespace Data
         public System.DateTime LastOpen { get; set; }
         public int OpenCount { get; set; }
     
-        public virtual DataSources DataSources { get; set; }
         public virtual KursMenuItem KursMenuItem { get; set; }
         public virtual Users Users { get; set; }
+        public virtual DataSources DataSources { get; set; }
     }
 }

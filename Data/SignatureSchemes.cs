@@ -26,9 +26,9 @@ namespace Data
         public int DocumentTYpeId { get; set; }
         public string Note { get; set; }
     
-        public virtual DataSources DataSources { get; set; }
         public virtual KursMenuItem KursMenuItem { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SignatureSchemesInfo> SignatureSchemesInfo { get; set; }
+        public virtual DataSources DataSources { get; set; }
     }
 }

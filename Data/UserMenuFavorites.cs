@@ -19,8 +19,8 @@ namespace Data
         public System.Guid DbId { get; set; }
         public int MenuId { get; set; }
     
-        public virtual DataSources DataSources { get; set; }
         public virtual KursMenuItem KursMenuItem { get; set; }
         public virtual Users Users { get; set; }
+        public virtual DataSources DataSources { get; set; }
     }
 }

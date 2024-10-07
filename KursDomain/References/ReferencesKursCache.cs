@@ -5,6 +5,9 @@ using System.Data.Entity;
 using System.Data.SqlClient;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
+using Helper;
+using KursDomain.ICommon;
 using KursDomain.IReferences;
 using KursDomain.IReferences.Kontragent;
 using KursDomain.IReferences.Nomenkl;
@@ -25,12 +28,26 @@ public class ReferencesKursCache : IReferencesCache
 
     #endregion
 
+    #region Methods
+
+    private void setNomenklGroupCount(decimal catDC, int cnt = 1)
+    {
+        if (NomenklGroups.TryGetValue(catDC, out var group))
+        {
+            group.NomenklCount += cnt;
+            if (group.ParentDC == null) return;
+            setNomenklGroupCount(group.ParentDC.Value, cnt);
+        }
+    }
+
+    #endregion
+
     #region fields
 
-    [NonSerialized]
-    private readonly KursContext.KursContext Context;
-    [NonSerialized]
-    private readonly SqlConnection sqlConnect;
+    [NonSerialized] private readonly KursContext.KursContext Context;
+
+    [NonSerialized] private readonly SqlConnection sqlConnect;
+
     private DateTime lastTimeCheckTrackerId;
     private readonly int diffSecondsForCheckTracker = 0;
 
@@ -38,8 +55,68 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Properties
 
+    public void UpdateListGuid<T>(IEnumerable<T> list) where T : IDocGuid
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AddOrUpdateGuid<T>(T item) where T : IDocGuid
+    {
+        throw new NotImplementedException();
+    }
+
+    public void DropAllGuid<T>() where T : IDocGuid
+    {
+        throw new NotImplementedException();
+    }
+
+    public void DropGuid<T>(Guid id) where T : IDocGuid
+    {
+        throw new NotImplementedException();
+    }
+
+    public T GetItemGuid<T>(Guid dc) where T : IDocGuid
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<T> GetItemsGuid<T>() where T : IDocGuid
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateList<T>(IEnumerable<T> list) where T : IDocCode
+    {
+        throw new NotImplementedException();
+    }
+
+    public void AddOrUpdate<T>(T item) where T : IDocCode
+    {
+        throw new NotImplementedException();
+    }
+
+    public void DropAll<T>() where T : IDocCode
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Drop<T>(decimal dc) where T : IDocCode
+    {
+        throw new NotImplementedException();
+    }
+
+    public T GetItem<T>(decimal dc) where T : IDocCode
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<T> GetItems<T>() where T : IDocCode
+    {
+        throw new NotImplementedException();
+    }
+
     public bool IsChangeTrackingOn { set; get; }
-    
+
     public DbContext DBContext => Context;
 
     #endregion
@@ -98,16 +175,15 @@ public class ReferencesKursCache : IReferencesCache
             var cmd = sqlConn.CreateCommand();
             cmd.CommandText =
                 @"INSERT INTO dbo.Errors(Id, DbId, UserId, Host, ErrorText, Note, Moment)"
-                + $"VALUES('{Helper.CustomFormat.GuidToSqlString(Guid.NewGuid())}', " +
-                $"'{Helper.CustomFormat.GuidToSqlString(GlobalOptions.DataBaseId)}'," +
-                $"'{Helper.CustomFormat.GuidToSqlString(GlobalOptions.UserInfo.KursId)}'," +
+                + $"VALUES('{CustomFormat.GuidToSqlString(Guid.NewGuid())}', " +
+                $"'{CustomFormat.GuidToSqlString(GlobalOptions.DataBaseId)}'," +
+                $"'{CustomFormat.GuidToSqlString(GlobalOptions.UserInfo.KursId)}'," +
                 $"'{Environment.MachineName}'," +
-                $"'{Helper.CustomFormat.GetFullExceptionTextMessage(ex, methodName)}'," +
-                $"'', '{Helper.CustomFormat.DateToString(DateTime.Now)}')";
+                $"'{CustomFormat.GetFullExceptionTextMessage(ex, methodName)}'," +
+                $"'', '{CustomFormat.DateToString(DateTime.Now)}')";
             cmd.CommandType = CommandType.Text;
             cmd.ExecuteNonQuery();
             sqlConn.Close();
-
         }
     }
 
@@ -354,21 +430,6 @@ public class ReferencesKursCache : IReferencesCache
 
     #endregion
 
-    #region Methods
-
-    private void setNomenklGroupCount(decimal catDC, int cnt = 1)
-    {
-        if (NomenklGroups.TryGetValue(catDC, out var group))
-        {
-            group.NomenklCount += cnt;
-            if (group.ParentDC == null) return;
-            setNomenklGroupCount(group.ParentDC.Value, cnt);
-            
-        }
-    }
-
-    #endregion
-
     #region Форма оплаты SD_189
 
     private void UpdateCachePayForm()
@@ -395,7 +456,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (PayForms.ContainsKey(ch.DocCode))
-                                    ((PayForm) PayForms[ch.DocCode]).LoadFromEntity(item);
+                                    ((PayForm)PayForms[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -455,7 +516,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (PayConditions.ContainsKey(ch.DocCode))
-                                    ((PayCondition) PayConditions[ch.DocCode]).LoadFromEntity(item);
+                                    ((PayCondition)PayConditions[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -537,7 +598,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (ContractTypes.ContainsKey(ch.DocCode))
-                                    ((ContractType) ContractTypes[ch.DocCode]).LoadFromEntity(item);
+                                    ((ContractType)ContractTypes[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -573,8 +634,22 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Методы
 
+    private async void updateInvoiceCache()
+    {
+        var repository = new InvoiceDataCacheRepository();
+        await repository.ResetInvoiceClientPaymentShipmentAsync();
+        await repository.ResetInvoiceProviderPaymentShipmentAsync();
+    }
+
+
     public void StartLoad()
     {
+        var isUpdateInvoice = Convert.ToInt32(GlobalOptions.SystemProfile.Profile.FirstOrDefault(_ =>
+            _.SECTION == "CACHE" &&
+            _.ITEM == "UPDATE_ON_STATY")?.ITEM_VALUE ?? "0");
+        if (isUpdateInvoice == 1)
+            Task.Run(updateInvoiceCache);
+
         Clear();
         var currentTrackingId = Context.Database.SqlQuery<long>("SELECT change_tracking_current_version();");
         KontragentGroupsTrackingId = DeliveryConditionsTrackingId =
@@ -796,7 +871,7 @@ public class ReferencesKursCache : IReferencesCache
             newItem.LoadFromEntity(item, this);
             if (Nomenkls.ContainsKey(newItem.DocCode)) continue;
             Nomenkls.Add(item.DOC_CODE, newItem);
-            setNomenklGroupCount(item.NOM_CATEG_DC,1);
+            setNomenklGroupCount(item.NOM_CATEG_DC);
         }
 
         IsChangeTrackingOn = true;
@@ -863,7 +938,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (MutualSettlementTypes.ContainsKey(ch.DocCode))
-                                    ((MutualSettlementType) MutualSettlementTypes[ch.DocCode]).LoadFromEntity(item);
+                                    ((MutualSettlementType)MutualSettlementTypes[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -923,7 +998,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (SDRSchets.ContainsKey(ch.DocCode))
-                                    ((SDRSchet) SDRSchets[ch.DocCode]).LoadFromEntity(item, this);
+                                    ((SDRSchet)SDRSchets[ch.DocCode]).LoadFromEntity(item, this);
                             }
                         }
 
@@ -957,7 +1032,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (SDRStates.ContainsKey(ch.DocCode))
-                                    ((SDRState) SDRStates[ch.DocCode]).LoadFromEntity(item);
+                                    ((SDRState)SDRStates[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -1052,7 +1127,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (ClientCategories.ContainsKey(ch.DocCode))
-                                    ((ClientCategory) ClientCategories[ch.DocCode]).LoadFromEntity(item);
+                                    ((ClientCategory)ClientCategories[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -1117,7 +1192,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (Currencies.ContainsKey(ch.DocCode))
-                                    ((Currency) Currencies[ch.DocCode]).LoadFromEntity(item);
+                                    ((Currency)Currencies[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -1204,7 +1279,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (Regions.ContainsKey(ch.DocCode))
-                                    ((Region) Regions[ch.DocCode]).LoadFromEntity(item);
+                                    ((Region)Regions[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -1269,7 +1344,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (Units.ContainsKey(ch.DocCode))
-                                    ((Unit) Units[ch.DocCode]).LoadFromEntity(item);
+                                    ((Unit)Units[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -1335,7 +1410,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (Kontragents.ContainsKey(ch.DocCode))
-                                    ((Kontragent) Kontragents[ch.DocCode]).LoadFromEntity(item, this);
+                                    ((Kontragent)Kontragents[ch.DocCode]).LoadFromEntity(item, this);
                             }
                         }
 
@@ -1369,7 +1444,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (KontragentGroups.ContainsKey(ch.Code))
-                                    ((KontragentGroup) KontragentGroups[ch.Code]).LoadFromEntity(item);
+                                    ((KontragentGroup)KontragentGroups[ch.Code]).LoadFromEntity(item);
                             }
                         }
 
@@ -1476,7 +1551,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (Warehouses.ContainsKey(ch.DocCode))
-                                    ((Warehouse) Warehouses[ch.DocCode]).LoadFromEntity(item, this);
+                                    ((Warehouse)Warehouses[ch.DocCode]).LoadFromEntity(item, this);
                             }
                         }
 
@@ -1539,7 +1614,9 @@ public class ReferencesKursCache : IReferencesCache
                         if (item != null)
                         {
                             if (Employees.ContainsKey(item.DOC_CODE))
-                                ((Employee) Employees[item.DOC_CODE]).LoadFromEntity(item, this);
+                            {
+                                ((Employee)Employees[item.DOC_CODE]).LoadFromEntity(item, this);
+                            }
                             else
                             {
                                 var newItem = new Employee();
@@ -1547,6 +1624,7 @@ public class ReferencesKursCache : IReferencesCache
                                 Employees.Add(newItem.DocCode, newItem);
                             }
                         }
+
                         break;
                 }
 
@@ -1630,7 +1708,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (Nomenkls.ContainsKey(ch.DocCode))
-                                    ((Nomenkl) Nomenkls[ch.DocCode]).LoadFromEntity(item, this);
+                                    ((Nomenkl)Nomenkls[ch.DocCode]).LoadFromEntity(item, this);
                             }
                         }
 
@@ -1727,10 +1805,12 @@ public class ReferencesKursCache : IReferencesCache
                     case "U":
                         var item = Context.NomenklMain.AsNoTracking().FirstOrDefault(_ => _.Id == ch.Id);
                         if (item != null)
-                        { 
+                        {
                             if (NomenklMains.ContainsKey(ch.Id))
-                                    ((NomenklMain) NomenklMains[ch.Id]).LoadFromEntity(item, this);
-                            else 
+                            {
+                                ((NomenklMain)NomenklMains[ch.Id]).LoadFromEntity(item, this);
+                            }
+                            else
                             {
                                 var newItem = new NomenklMain();
                                 newItem.LoadFromEntity(item, this);
@@ -1773,7 +1853,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (NomenklGroups.ContainsKey(ch.DocCode))
-                                    ((NomenklGroup) NomenklGroups[ch.DocCode]).LoadFromEntity(item);
+                                    ((NomenklGroup)NomenklGroups[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -1841,7 +1921,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (CashBoxes.ContainsKey(ch.DocCode))
-                                    ((CashBox) CashBoxes[ch.DocCode]).LoadFromEntity(item, this);
+                                    ((CashBox)CashBoxes[ch.DocCode]).LoadFromEntity(item, this);
                             }
                         }
 
@@ -1875,7 +1955,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (Banks.ContainsKey(ch.DocCode))
-                                    ((Bank) Banks[ch.DocCode]).LoadFromEntity(item);
+                                    ((Bank)Banks[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -1980,7 +2060,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (BankAccounts.ContainsKey(ch.DocCode))
-                                    ((BankAccount) BankAccounts[ch.DocCode]).LoadFromEntity(item, this);
+                                    ((BankAccount)BankAccounts[ch.DocCode]).LoadFromEntity(item, this);
                             }
                         }
 
@@ -2018,7 +2098,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (ProductTypes.ContainsKey(ch.DocCode))
-                                    ((ProductType) ProductTypes[ch.DocCode]).LoadFromEntity(item);
+                                    ((ProductType)ProductTypes[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -2082,7 +2162,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (NomenklTypes.ContainsKey(ch.DocCode))
-                                    ((NomenklType) NomenklTypes[ch.DocCode]).LoadFromEntity(item);
+                                    ((NomenklType)NomenklTypes[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -2144,7 +2224,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (CentrResponsibilities.ContainsKey(ch.DocCode))
-                                    ((CentrResponsibility) CentrResponsibilities[ch.DocCode]).LoadFromEntity(item);
+                                    ((CentrResponsibility)CentrResponsibilities[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -2205,7 +2285,7 @@ public class ReferencesKursCache : IReferencesCache
                             else
                             {
                                 if (DeliveryConditions.ContainsKey(ch.DocCode))
-                                    ((DeliveryCondition) DeliveryConditions[ch.DocCode]).LoadFromEntity(item);
+                                    ((DeliveryCondition)DeliveryConditions[ch.DocCode]).LoadFromEntity(item);
                             }
                         }
 
@@ -2262,7 +2342,9 @@ public class ReferencesKursCache : IReferencesCache
                         if (item != null)
                         {
                             if (NomenklProductTypes.ContainsKey(ch.DocCode))
-                                ((NomenklProductType) NomenklProductTypes[ch.DocCode]).LoadFromEntity(item, this);
+                            {
+                                ((NomenklProductType)NomenklProductTypes[ch.DocCode]).LoadFromEntity(item, this);
+                            }
                             else
                             {
                                 var newItem = new NomenklProductType();

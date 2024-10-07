@@ -11,6 +11,8 @@ using KursDomain.Documents.Cash;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
 using KursDomain.IReferences.Kontragent;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
@@ -18,19 +20,46 @@ namespace KursDomain.References;
 ///     Касса
 /// </summary>
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class CashBox : ICashBox, IDocCode, IName, IEquatable<CashBox>, ILoadFromEntity<SD_22>, IComparable
+public class CashBox : ICashBox, IDocCode, IName, IEquatable<CashBox>, ILoadFromEntity<SD_22>, IComparable, ICache
 {
+    public CashBox()
+    {
+        LoadFromCache();
+    }
+
+    public decimal? DefaultCurrencyDC { set; get; }
+    public decimal? KontragentDC { get; set; }
+    public decimal? CentrResponsibilityDC { get; set; }
+
+    public void LoadFromCache()
+    {
+        if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
+        if (CentrResponsibilityDC is not null)
+            CentrResponsibility = cache.GetItem<CentrResponsibility>(CentrResponsibilityDC.Value);
+        if (DefaultCurrencyDC is not null)
+            DefaultCurrency = cache.GetItem<Currency>(DefaultCurrencyDC.Value);
+        if (KontragentDC is not null)
+            Kontragent = cache.GetItem<Kontragent>(KontragentDC.Value);
+    }
+
+    [JsonIgnore] public ICurrency DefaultCurrency { get; set; }
+
+    public bool IsNegativeRests { get; set; }
+
+    [JsonIgnore] public IKontragent Kontragent { get; set; }
+
+    [JsonIgnore] public ICentrResponsibility CentrResponsibility { get; set; }
+
+    public bool IsNoBalans { get; set; }
+
+    [JsonIgnore] public IEnumerable<ICashBoxStartRests> StartRests { get; set; }
+
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
-        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+        return c == null ? 0 : string.Compare(Name, c.Name, StringComparison.Ordinal);
     }
-    public ICurrency DefaultCurrency { get; set; }
-    public bool IsNegativeRests { get; set; }
-    public IKontragent Kontragent { get; set; }
-    public ICentrResponsibility CentrResponsibility { get; set; }
-    public bool IsNoBalans { get; set; }
-    public IEnumerable<ICashBoxStartRests> StartRests { get; set; }
+
     public decimal DocCode { get; set; }
 
     public bool Equals(CashBox other)
@@ -38,15 +67,6 @@ public class CashBox : ICashBox, IDocCode, IName, IEquatable<CashBox>, ILoadFrom
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
         return DocCode == other.DocCode;
-    }
-
-    public string Name { get; set; }
-    public string Notes { get; set; }
-    public string Description => $"Касса: {Name}";
-
-    public override string ToString()
-    {
-        return Name;
     }
 
     public void LoadFromEntity(SD_22 entity, IReferencesCache referencesCache)
@@ -65,12 +85,22 @@ public class CashBox : ICashBox, IDocCode, IName, IEquatable<CashBox>, ILoadFrom
         }
     }
 
+    public string Name { get; set; }
+    public string Notes { get; set; }
+
+    [JsonIgnore] public string Description => $"Касса: {Name}";
+
+    public override string ToString()
+    {
+        return Name;
+    }
+
     public override bool Equals(object obj)
     {
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((CashBox) obj);
+        return Equals((CashBox)obj);
     }
 
     public override int GetHashCode()
@@ -215,7 +245,7 @@ public class CashViewModel : RSViewModelBase, IEntity<SD_22>
         {
             if (myIsCanNegative == value) return;
             myIsCanNegative = value;
-            CA_NEGATIVE_RESTS = (short?) (myIsCanNegative ? 1 : 0);
+            CA_NEGATIVE_RESTS = (short?)(myIsCanNegative ? 1 : 0);
             RaisePropertyChanged();
         }
     }

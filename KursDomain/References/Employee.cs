@@ -11,12 +11,18 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq}/{Id} {Description,nq}")]
-public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employee>, IComparable
+public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employee>, IComparable, ICache
 {
+    public Employee()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -28,6 +34,8 @@ public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employe
     public string NameFirst { get; set; }
     public string NameSecond { get; set; }
     public string NameLast { get; set; }
+    public decimal? CurrencyDC { set; get; }
+    [JsonIgnore]
     public ICurrency Currency { get; set; }
     public string Position { get; set; }
     public bool IsDeleted { get; set; }
@@ -39,6 +47,7 @@ public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employe
         return DocCode == other.DocCode;
     }
 
+    [JsonIgnore]
     public string Name
     {
         get => $"{NameLast} {NameFirst} {NameSecond}";
@@ -46,6 +55,7 @@ public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employe
     }
 
     public string Notes { get; set; }
+    [JsonIgnore]
     public string Description => $"Сотрудник: {Name} Таб.№:{TabelNumber} {Currency}";
 
     public override string ToString()
@@ -79,6 +89,13 @@ public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employe
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
+        if (CurrencyDC is not null)
+            Currency = cache.GetItem<Currency>(CurrencyDC.Value);
     }
 }
 

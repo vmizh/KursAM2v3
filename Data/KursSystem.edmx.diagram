@@ -5,7 +5,6 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="af6b363c9f4647ea936a2499ba9ada88" Name="Diagram1">
-        <EntityTypeShape EntityType="KursSystemModel.DataSources" Width="1.5" PointX="0.75" PointY="13.75" IsExpanded="true" />
         <EntityTypeShape EntityType="KursSystemModel.Errors" Width="1.5" PointX="3" PointY="14.5" IsExpanded="true" />
         <EntityTypeShape EntityType="KursSystemModel.FormLayout" Width="1.5" PointX="7.5" PointY="25.75" IsExpanded="true" />
         <EntityTypeShape EntityType="KursSystemModel.KontragentCashes" Width="1.5" PointX="6" PointY="14.625" IsExpanded="true" />
@@ -24,14 +23,6 @@
         <EntityTypeShape EntityType="KursSystemModel.UserRoles" Width="1.5" PointX="6" PointY="6" IsExpanded="true" />
         <EntityTypeShape EntityType="KursSystemModel.Users" Width="1.5" PointX="5.25" PointY="22.125" IsExpanded="true" />
         <EntityTypeShape EntityType="KursSystemModel.Versions" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
-        <AssociationConnector Association="KursSystemModel.FK_Errors_DbId" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.FK_KontragentCashes_DBId" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.FK_LastDocument_DbId" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.FK_LastMenuUserSearch_DbId" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.FK_SignatureSchemes_DbId" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.FK_SignatureType_DbId" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.FK_UserMenuFavorites_DbId" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.FK_UserMenuRight_DBId" ManuallyRouted="false" />
         <AssociationConnector Association="KursSystemModel.FK_Errors_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="KursSystemModel.FK_FormLayout_FormId" ManuallyRouted="false" />
         <AssociationConnector Association="KursSystemModel.FK_FormLayout_UserId" ManuallyRouted="false" />
@@ -50,11 +41,20 @@
         <AssociationConnector Association="KursSystemModel.FK_UserMenuFavorites_UserId" ManuallyRouted="false" />
         <AssociationConnector Association="KursSystemModel.SignatureLink" ManuallyRouted="false" />
         <AssociationConnector Association="KursSystemModel.UserRolesLinkMenuItem" ManuallyRouted="false" />
-        <AssociationConnector Association="KursSystemModel.UsersLinkDB" ManuallyRouted="false" />
         <EntityTypeShape EntityType="KursSystemModel.ObjectRightResposibilityCenter" Width="1.5" PointX="8.375" PointY="4.75" />
         <EntityTypeShape EntityType="KursSystemModel.UserRightsResponsibilityCenter" Width="1.5" PointX="10.5" PointY="21.125" />
-        <AssociationConnector Association="KursSystemModel.FK_UserRightsResponsibilityCenter_DbId" />
         <AssociationConnector Association="KursSystemModel.FK_UserRightsResponsibilityCenter_UserId" />
+        <EntityTypeShape EntityType="KursSystemModel.DataSources" Width="1.5" PointX="0.75" PointY="20.125" />
+        <AssociationConnector Association="KursSystemModel.FK_Errors_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_KontragentCashes_DBId" />
+        <AssociationConnector Association="KursSystemModel.FK_LastDocument_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_LastMenuUserSearch_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_SignatureSchemes_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_SignatureType_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_UserMenuFavorites_DbId" />
+        <AssociationConnector Association="KursSystemModel.FK_UserMenuRight_DBId" />
+        <AssociationConnector Association="KursSystemModel.FK_UserRightsResponsibilityCenter_DbId" />
+        <AssociationConnector Association="KursSystemModel.UsersLinkDB" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

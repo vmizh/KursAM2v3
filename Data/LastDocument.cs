@@ -25,7 +25,7 @@ namespace Data
         public System.DateTime LastOpen { get; set; }
         public string Description { get; set; }
     
-        public virtual DataSources DataSources { get; set; }
         public virtual Users Users { get; set; }
+        public virtual DataSources DataSources { get; set; }
     }
 }

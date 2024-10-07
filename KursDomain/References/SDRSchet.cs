@@ -8,12 +8,18 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq}")]
-public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>, IComparable
+public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>, IComparable, ICache
 {
+    public SDRSchet()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -36,12 +42,16 @@ public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>, ICompa
     public string Notes { get; set; }
 
     [Display(AutoGenerateField = false, Name = "Описание")]
+    [JsonIgnore]
     public string Description => $"Счет дох/расх: {Name}";
 
     [Display(AutoGenerateField = true, Name = "Удален")]
     public bool IsDeleted { get; set; }
 
+    public decimal? SDRStateDC { get; set; }
+
     [Display(AutoGenerateField = true, Name = "Статья")]
+    [JsonIgnore]
     public ISDRState SDRState { get; set; }
 
     [Display(AutoGenerateField = true, Name = "Под отчет")]
@@ -82,6 +92,10 @@ public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>, ICompa
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
     }
 }
 

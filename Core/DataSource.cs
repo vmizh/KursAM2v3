@@ -17,6 +17,7 @@ namespace Core
         public string User { set; get; }
         public string Password { set; get; }
         public Brush Color { set; get; }
+        public int? RedisDBId { set; get; }
 
         public string GetConnectionString()
         {

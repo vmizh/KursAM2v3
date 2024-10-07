@@ -17,6 +17,7 @@
           <Property Name="DBName" Type="varchar" MaxLength="50" />
           <Property Name="Color" Type="varchar" MaxLength="50" />
           <Property Name="IsVisible" Type="bit" />
+          <Property Name="RedisDBId" Type="int" />
         </EntityType>
         <EntityType Name="Errors">
           <Key>
@@ -808,29 +809,6 @@
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="KursSystemModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
-        <EntityType Name="DataSources">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Guid" Nullable="false" />
-          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="ShowName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Order" Type="Int32" />
-          <Property Name="Server" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DBName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="Color" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="IsVisible" Type="Boolean" />
-          <NavigationProperty Name="Errors" Relationship="Self.FK_Errors_DbId" FromRole="DataSources" ToRole="Errors" />
-          <NavigationProperty Name="KontragentCashes" Relationship="Self.FK_KontragentCashes_DBId" FromRole="DataSources" ToRole="KontragentCashes" />
-          <NavigationProperty Name="LastDocument" Relationship="Self.FK_LastDocument_DbId" FromRole="DataSources" ToRole="LastDocument" />
-          <NavigationProperty Name="LastMenuUserSearch" Relationship="Self.FK_LastMenuUserSearch_DbId" FromRole="DataSources" ToRole="LastMenuUserSearch" />
-          <NavigationProperty Name="SignatureSchemes" Relationship="Self.FK_SignatureSchemes_DbId" FromRole="DataSources" ToRole="SignatureSchemes" />
-          <NavigationProperty Name="SignatureType" Relationship="Self.FK_SignatureType_DbId" FromRole="DataSources" ToRole="SignatureType" />
-          <NavigationProperty Name="UserMenuFavorites" Relationship="Self.FK_UserMenuFavorites_DbId" FromRole="DataSources" ToRole="UserMenuFavorites" />
-          <NavigationProperty Name="UserMenuRight" Relationship="Self.FK_UserMenuRight_DBId" FromRole="DataSources" ToRole="UserMenuRight" />
-          <NavigationProperty Name="Users" Relationship="Self.UsersLinkDB" FromRole="DataSources" ToRole="Users" />
-          <NavigationProperty Name="UserRightsResponsibilityCenter" Relationship="KursSystemModel.FK_UserRightsResponsibilityCenter_DbId" FromRole="DataSources" ToRole="UserRightsResponsibilityCenter" />
-        </EntityType>
         <EntityType Name="Errors">
           <Key>
             <PropertyRef Name="Id" />
@@ -842,8 +820,8 @@
           <Property Name="ErrorText" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Note" Type="String" MaxLength="500" FixedLength="false" Unicode="false" />
           <Property Name="Moment" Type="DateTime" Nullable="false" Precision="3" />
-          <NavigationProperty Name="DataSources" Relationship="Self.FK_Errors_DbId" FromRole="Errors" ToRole="DataSources" />
           <NavigationProperty Name="Users" Relationship="Self.FK_Errors_UserId" FromRole="Errors" ToRole="Users" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_Errors_DbId" FromRole="Errors" ToRole="DataSources" />
         </EntityType>
         <EntityType Name="FormLayout">
           <Key>
@@ -871,8 +849,8 @@
           <Property Name="LastUpdate" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="DBId" Type="Guid" Nullable="false" />
           <Property Name="UserId" Type="Guid" Nullable="false" />
-          <NavigationProperty Name="DataSources" Relationship="Self.FK_KontragentCashes_DBId" FromRole="KontragentCashes" ToRole="DataSources" />
           <NavigationProperty Name="Users" Relationship="Self.FK_KontragentCashes_UserId" FromRole="KontragentCashes" ToRole="Users" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_KontragentCashes_DBId" FromRole="KontragentCashes" ToRole="DataSources" />
         </EntityType>
         <EntityType Name="KursMenuGroup">
           <Key>
@@ -922,8 +900,8 @@
           <Property Name="LastChanger" Type="String" MaxLength="500" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="LastOpen" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="DataSources" Relationship="Self.FK_LastDocument_DbId" FromRole="LastDocument" ToRole="DataSources" />
           <NavigationProperty Name="Users" Relationship="Self.FK_LastDocument_UserId" FromRole="LastDocument" ToRole="Users" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_LastDocument_DbId" FromRole="LastDocument" ToRole="DataSources" />
         </EntityType>
         <EntityType Name="LastMenuUserSearch">
           <Key>
@@ -935,9 +913,9 @@
           <Property Name="MenuId" Type="Int32" Nullable="false" />
           <Property Name="LastOpen" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="OpenCount" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="DataSources" Relationship="Self.FK_LastMenuUserSearch_DbId" FromRole="LastMenuUserSearch" ToRole="DataSources" />
           <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_LastMenuUserSearch_MenuId" FromRole="LastMenuUserSearch" ToRole="KursMenuItem" />
           <NavigationProperty Name="Users" Relationship="Self.FK_LastMenuUserSearch_UserId" FromRole="LastMenuUserSearch" ToRole="Users" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_LastMenuUserSearch_DbId" FromRole="LastMenuUserSearch" ToRole="DataSources" />
         </EntityType>
         <EntityType Name="Log">
           <Key>
@@ -962,9 +940,9 @@
           <Property Name="Name" Type="String" MaxLength="200" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="DocumentTYpeId" Type="Int32" Nullable="false" />
           <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="DataSources" Relationship="Self.FK_SignatureSchemes_DbId" FromRole="SignatureSchemes" ToRole="DataSources" />
           <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_SignatureSchemes_DocumentTYpeId" FromRole="SignatureSchemes" ToRole="KursMenuItem" />
           <NavigationProperty Name="SignatureSchemesInfo" Relationship="Self.FK_SignatureSchemesInfo_SchemeId" FromRole="SignatureSchemes" ToRole="SignatureSchemesInfo" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_SignatureSchemes_DbId" FromRole="SignatureSchemes" ToRole="DataSources" />
         </EntityType>
         <EntityType Name="SignatureSchemesInfo">
           <Key>
@@ -989,9 +967,9 @@
           <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Note" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="DbId" Type="Guid" Nullable="false" />
-          <NavigationProperty Name="DataSources" Relationship="Self.FK_SignatureType_DbId" FromRole="SignatureType" ToRole="DataSources" />
           <NavigationProperty Name="SignatureSchemesInfo" Relationship="Self.FK_SignatureSchemesInfo_SignId" FromRole="SignatureType" ToRole="SignatureSchemesInfo" />
           <NavigationProperty Name="Users" Relationship="Self.SignatureLink" FromRole="SignatureType" ToRole="Users" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_SignatureType_DbId" FromRole="SignatureType" ToRole="DataSources" />
         </EntityType>
         <EntityType Name="TasksLog">
           <Key>
@@ -1010,9 +988,9 @@
           <Property Name="UserId" Type="Guid" Nullable="false" />
           <Property Name="DbId" Type="Guid" Nullable="false" />
           <Property Name="MenuId" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="DataSources" Relationship="Self.FK_UserMenuFavorites_DbId" FromRole="UserMenuFavorites" ToRole="DataSources" />
           <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_UserMenuFavorites_MenuId" FromRole="UserMenuFavorites" ToRole="KursMenuItem" />
           <NavigationProperty Name="Users" Relationship="Self.FK_UserMenuFavorites_UserId" FromRole="UserMenuFavorites" ToRole="Users" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_UserMenuFavorites_DbId" FromRole="UserMenuFavorites" ToRole="DataSources" />
         </EntityType>
         <EntityType Name="UserMenuOrder">
           <Key>
@@ -1033,8 +1011,8 @@
           <Property Name="LoginName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="MenuId" Type="Int32" Nullable="false" />
           <Property Name="IsReadOnly" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="DataSources" Relationship="Self.FK_UserMenuRight_DBId" FromRole="UserMenuRight" ToRole="DataSources" />
           <NavigationProperty Name="KursMenuItem" Relationship="Self.FK_UserMenuRight_MenuId" FromRole="UserMenuRight" ToRole="KursMenuItem" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_UserMenuRight_DBId" FromRole="UserMenuRight" ToRole="DataSources" />
         </EntityType>
         <EntityType Name="UserRoles">
           <Key>
@@ -1065,10 +1043,10 @@
           <NavigationProperty Name="LastMenuUserSearch" Relationship="Self.FK_LastMenuUserSearch_UserId" FromRole="Users" ToRole="LastMenuUserSearch" />
           <NavigationProperty Name="UserMenuFavorites" Relationship="Self.FK_UserMenuFavorites_UserId" FromRole="Users" ToRole="UserMenuFavorites" />
           <NavigationProperty Name="SignatureType" Relationship="Self.SignatureLink" FromRole="Users" ToRole="SignatureType" />
-          <NavigationProperty Name="DataSources" Relationship="Self.UsersLinkDB" FromRole="Users" ToRole="DataSources" />
           <NavigationProperty Name="UserRightsResponsibilityCenter" Relationship="KursSystemModel.FK_UserRightsResponsibilityCenter_UserId" FromRole="Users" ToRole="UserRightsResponsibilityCenter" />
           <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
           <Property Name="PasswordSalt" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.UsersLinkDB" FromRole="Users" ToRole="DataSources" />
         </EntityType>
         <EntityType Name="Versions">
           <Key>
@@ -1082,102 +1060,6 @@
           <Property Name="DateCreate" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
         </EntityType>
-        <Association Name="FK_Errors_DbId">
-          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
-          <End Role="Errors" Type="Self.Errors" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Errors">
-              <PropertyRef Name="DbId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_KontragentCashes_DBId">
-          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
-          <End Role="KontragentCashes" Type="Self.KontragentCashes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="KontragentCashes">
-              <PropertyRef Name="DBId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_LastDocument_DbId">
-          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
-          <End Role="LastDocument" Type="Self.LastDocument" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="LastDocument">
-              <PropertyRef Name="DbId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_LastMenuUserSearch_DbId">
-          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
-          <End Role="LastMenuUserSearch" Type="Self.LastMenuUserSearch" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="LastMenuUserSearch">
-              <PropertyRef Name="DbId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_SignatureSchemes_DbId">
-          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
-          <End Role="SignatureSchemes" Type="Self.SignatureSchemes" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="SignatureSchemes">
-              <PropertyRef Name="DbId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_SignatureType_DbId">
-          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
-          <End Role="SignatureType" Type="Self.SignatureType" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="SignatureType">
-              <PropertyRef Name="DbId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserMenuFavorites_DbId">
-          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
-          <End Role="UserMenuFavorites" Type="Self.UserMenuFavorites" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="UserMenuFavorites">
-              <PropertyRef Name="DbId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <Association Name="FK_UserMenuRight_DBId">
-          <End Role="DataSources" Type="Self.DataSources" Multiplicity="1" />
-          <End Role="UserMenuRight" Type="Self.UserMenuRight" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="UserMenuRight">
-              <PropertyRef Name="DBId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Errors_UserId">
           <End Role="Users" Type="Self.Users" Multiplicity="1" />
           <End Role="Errors" Type="Self.Errors" Multiplicity="*" />
@@ -1378,12 +1260,7 @@
           <End Role="KursMenuItem" Type="Self.KursMenuItem" Multiplicity="*" />
           <End Role="UserRoles" Type="Self.UserRoles" Multiplicity="*" />
         </Association>
-        <Association Name="UsersLinkDB">
-          <End Role="DataSources" Type="Self.DataSources" Multiplicity="*" />
-          <End Role="Users" Type="Self.Users" Multiplicity="*" />
-        </Association>
         <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="DataSources" EntityType="Self.DataSources" />
           <EntitySet Name="Errors" EntityType="Self.Errors" />
           <EntitySet Name="FormLayout" EntityType="Self.FormLayout" />
           <EntitySet Name="KontragentCashes" EntityType="Self.KontragentCashes" />
@@ -1402,38 +1279,6 @@
           <EntitySet Name="UserRoles" EntityType="Self.UserRoles" />
           <EntitySet Name="Users" EntityType="Self.Users" />
           <EntitySet Name="Versions" EntityType="Self.Versions" />
-          <AssociationSet Name="FK_Errors_DbId" Association="Self.FK_Errors_DbId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="Errors" EntitySet="Errors" />
-          </AssociationSet>
-          <AssociationSet Name="FK_KontragentCashes_DBId" Association="Self.FK_KontragentCashes_DBId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="KontragentCashes" EntitySet="KontragentCashes" />
-          </AssociationSet>
-          <AssociationSet Name="FK_LastDocument_DbId" Association="Self.FK_LastDocument_DbId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="LastDocument" EntitySet="LastDocument" />
-          </AssociationSet>
-          <AssociationSet Name="FK_LastMenuUserSearch_DbId" Association="Self.FK_LastMenuUserSearch_DbId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SignatureSchemes_DbId" Association="Self.FK_SignatureSchemes_DbId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
-          </AssociationSet>
-          <AssociationSet Name="FK_SignatureType_DbId" Association="Self.FK_SignatureType_DbId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="SignatureType" EntitySet="SignatureType" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserMenuFavorites_DbId" Association="Self.FK_UserMenuFavorites_DbId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
-          </AssociationSet>
-          <AssociationSet Name="FK_UserMenuRight_DBId" Association="Self.FK_UserMenuRight_DBId">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="UserMenuRight" EntitySet="UserMenuRight" />
-          </AssociationSet>
           <AssociationSet Name="FK_Errors_UserId" Association="Self.FK_Errors_UserId">
             <End Role="Users" EntitySet="Users" />
             <End Role="Errors" EntitySet="Errors" />
@@ -1506,19 +1351,52 @@
             <End Role="KursMenuItem" EntitySet="KursMenuItem" />
             <End Role="UserRoles" EntitySet="UserRoles" />
           </AssociationSet>
-          <AssociationSet Name="UsersLinkDB" Association="Self.UsersLinkDB">
-            <End Role="DataSources" EntitySet="DataSources" />
-            <End Role="Users" EntitySet="Users" />
-          </AssociationSet>
           <EntitySet Name="ObjectRightResposibilityCenter" EntityType="KursSystemModel.ObjectRightResposibilityCenter" />
           <EntitySet Name="UserRightsResponsibilityCenter" EntityType="KursSystemModel.UserRightsResponsibilityCenter" />
+          <AssociationSet Name="FK_UserRightsResponsibilityCenter_UserId" Association="KursSystemModel.FK_UserRightsResponsibilityCenter_UserId">
+            <End Role="Users" EntitySet="Users" />
+            <End Role="UserRightsResponsibilityCenter" EntitySet="UserRightsResponsibilityCenter" />
+          </AssociationSet>
+          <EntitySet Name="DataSources" EntityType="KursSystemModel.DataSources" />
+          <AssociationSet Name="FK_Errors_DbId" Association="KursSystemModel.FK_Errors_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="Errors" EntitySet="Errors" />
+          </AssociationSet>
+          <AssociationSet Name="FK_KontragentCashes_DBId" Association="KursSystemModel.FK_KontragentCashes_DBId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="KontragentCashes" EntitySet="KontragentCashes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastDocument_DbId" Association="KursSystemModel.FK_LastDocument_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="LastDocument" EntitySet="LastDocument" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastMenuUserSearch_DbId" Association="KursSystemModel.FK_LastMenuUserSearch_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="LastMenuUserSearch" EntitySet="LastMenuUserSearch" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignatureSchemes_DbId" Association="KursSystemModel.FK_SignatureSchemes_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="SignatureSchemes" EntitySet="SignatureSchemes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SignatureType_DbId" Association="KursSystemModel.FK_SignatureType_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="SignatureType" EntitySet="SignatureType" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuFavorites_DbId" Association="KursSystemModel.FK_UserMenuFavorites_DbId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="UserMenuFavorites" EntitySet="UserMenuFavorites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserMenuRight_DBId" Association="KursSystemModel.FK_UserMenuRight_DBId">
+            <End Role="DataSources" EntitySet="DataSources" />
+            <End Role="UserMenuRight" EntitySet="UserMenuRight" />
+          </AssociationSet>
           <AssociationSet Name="FK_UserRightsResponsibilityCenter_DbId" Association="KursSystemModel.FK_UserRightsResponsibilityCenter_DbId">
             <End Role="DataSources" EntitySet="DataSources" />
             <End Role="UserRightsResponsibilityCenter" EntitySet="UserRightsResponsibilityCenter" />
           </AssociationSet>
-          <AssociationSet Name="FK_UserRightsResponsibilityCenter_UserId" Association="KursSystemModel.FK_UserRightsResponsibilityCenter_UserId">
+          <AssociationSet Name="UsersLinkDB" Association="KursSystemModel.UsersLinkDB">
+            <End Role="DataSources" EntitySet="DataSources" />
             <End Role="Users" EntitySet="Users" />
-            <End Role="UserRightsResponsibilityCenter" EntitySet="UserRightsResponsibilityCenter" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="ObjectRightResposibilityCenter">
@@ -1539,21 +1417,9 @@
           <Property Name="DbId" Type="Guid" Nullable="false" />
           <Property Name="UserId" Type="Guid" Nullable="false" />
           <Property Name="RespCentDC" Type="Decimal" Nullable="false" Precision="18" Scale="0" />
-          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_UserRightsResponsibilityCenter_DbId" FromRole="UserRightsResponsibilityCenter" ToRole="DataSources" />
           <NavigationProperty Name="Users" Relationship="KursSystemModel.FK_UserRightsResponsibilityCenter_UserId" FromRole="UserRightsResponsibilityCenter" ToRole="Users" />
+          <NavigationProperty Name="DataSources" Relationship="KursSystemModel.FK_UserRightsResponsibilityCenter_DbId" FromRole="UserRightsResponsibilityCenter" ToRole="DataSources" />
         </EntityType>
-        <Association Name="FK_UserRightsResponsibilityCenter_DbId">
-          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
-          <End Type="KursSystemModel.UserRightsResponsibilityCenter" Role="UserRightsResponsibilityCenter" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="DataSources">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="UserRightsResponsibilityCenter">
-              <PropertyRef Name="DbId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_UserRightsResponsibilityCenter_UserId">
           <End Type="KursSystemModel.Users" Role="Users" Multiplicity="1" />
           <End Type="KursSystemModel.UserRightsResponsibilityCenter" Role="UserRightsResponsibilityCenter" Multiplicity="*" />
@@ -1566,26 +1432,148 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="DataSources">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="ShowName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Order" Type="Int32" />
+          <Property Name="Server" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DBName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Color" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="IsVisible" Type="Boolean" />
+          <Property Name="RedisDBId" Type="Int32" />
+          <NavigationProperty Name="Errors" Relationship="KursSystemModel.FK_Errors_DbId" FromRole="DataSources" ToRole="Errors" />
+          <NavigationProperty Name="KontragentCashes" Relationship="KursSystemModel.FK_KontragentCashes_DBId" FromRole="DataSources" ToRole="KontragentCashes" />
+          <NavigationProperty Name="LastDocument" Relationship="KursSystemModel.FK_LastDocument_DbId" FromRole="DataSources" ToRole="LastDocument" />
+          <NavigationProperty Name="LastMenuUserSearch" Relationship="KursSystemModel.FK_LastMenuUserSearch_DbId" FromRole="DataSources" ToRole="LastMenuUserSearch" />
+          <NavigationProperty Name="SignatureSchemes" Relationship="KursSystemModel.FK_SignatureSchemes_DbId" FromRole="DataSources" ToRole="SignatureSchemes" />
+          <NavigationProperty Name="SignatureType" Relationship="KursSystemModel.FK_SignatureType_DbId" FromRole="DataSources" ToRole="SignatureType" />
+          <NavigationProperty Name="UserMenuFavorites" Relationship="KursSystemModel.FK_UserMenuFavorites_DbId" FromRole="DataSources" ToRole="UserMenuFavorites" />
+          <NavigationProperty Name="UserMenuRight" Relationship="KursSystemModel.FK_UserMenuRight_DBId" FromRole="DataSources" ToRole="UserMenuRight" />
+          <NavigationProperty Name="UserRightsResponsibilityCenter" Relationship="KursSystemModel.FK_UserRightsResponsibilityCenter_DbId" FromRole="DataSources" ToRole="UserRightsResponsibilityCenter" />
+          <NavigationProperty Name="Users" Relationship="KursSystemModel.UsersLinkDB" FromRole="DataSources" ToRole="Users" />
+        </EntityType>
+        <Association Name="FK_Errors_DbId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.Errors" Role="Errors" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Errors">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_KontragentCashes_DBId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.KontragentCashes" Role="KontragentCashes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="KontragentCashes">
+              <PropertyRef Name="DBId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LastDocument_DbId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.LastDocument" Role="LastDocument" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastDocument">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LastMenuUserSearch_DbId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.LastMenuUserSearch" Role="LastMenuUserSearch" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="LastMenuUserSearch">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SignatureSchemes_DbId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.SignatureSchemes" Role="SignatureSchemes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SignatureSchemes">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SignatureType_DbId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.SignatureType" Role="SignatureType" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SignatureType">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMenuFavorites_DbId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.UserMenuFavorites" Role="UserMenuFavorites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuFavorites">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserMenuRight_DBId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.UserMenuRight" Role="UserMenuRight" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserMenuRight">
+              <PropertyRef Name="DBId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserRightsResponsibilityCenter_DbId">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="1" />
+          <End Type="KursSystemModel.UserRightsResponsibilityCenter" Role="UserRightsResponsibilityCenter" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DataSources">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRightsResponsibilityCenter">
+              <PropertyRef Name="DbId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="UsersLinkDB">
+          <End Type="KursSystemModel.DataSources" Role="DataSources" Multiplicity="*" />
+          <End Type="KursSystemModel.Users" Role="Users" Multiplicity="*" />
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="KursSystemModelStoreContainer" CdmEntityContainer="Entities">
-          <EntitySetMapping Name="DataSources">
-            <EntityTypeMapping TypeName="KursSystemModel.DataSources">
-              <MappingFragment StoreEntitySet="DataSources">
-                <ScalarProperty Name="Id" ColumnName="Id" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="ShowName" ColumnName="ShowName" />
-                <ScalarProperty Name="Order" ColumnName="Order" />
-                <ScalarProperty Name="Server" ColumnName="Server" />
-                <ScalarProperty Name="DBName" ColumnName="DBName" />
-                <ScalarProperty Name="Color" ColumnName="Color" />
-                <ScalarProperty Name="IsVisible" ColumnName="IsVisible" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
           <EntitySetMapping Name="Errors">
             <EntityTypeMapping TypeName="KursSystemModel.Errors">
               <MappingFragment StoreEntitySet="Errors">
@@ -1825,14 +1813,6 @@
               <ScalarProperty Name="id" ColumnName="RolesId" />
             </EndProperty>
           </AssociationSetMapping>
-          <AssociationSetMapping Name="UsersLinkDB" TypeName="KursSystemModel.UsersLinkDB" StoreEntitySet="UsersLinkDB">
-            <EndProperty Name="DataSources">
-              <ScalarProperty Name="Id" ColumnName="DBId" />
-            </EndProperty>
-            <EndProperty Name="Users">
-              <ScalarProperty Name="Id" ColumnName="UserId" />
-            </EndProperty>
-          </AssociationSetMapping>
           <EntitySetMapping Name="ObjectRightResposibilityCenter">
             <EntityTypeMapping TypeName="KursSystemModel.ObjectRightResposibilityCenter">
               <MappingFragment StoreEntitySet="ObjectRightResposibilityCenter">
@@ -1854,6 +1834,29 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="DataSources">
+            <EntityTypeMapping TypeName="KursSystemModel.DataSources">
+              <MappingFragment StoreEntitySet="DataSources">
+                <ScalarProperty Name="RedisDBId" ColumnName="RedisDBId" />
+                <ScalarProperty Name="IsVisible" ColumnName="IsVisible" />
+                <ScalarProperty Name="Color" ColumnName="Color" />
+                <ScalarProperty Name="DBName" ColumnName="DBName" />
+                <ScalarProperty Name="Server" ColumnName="Server" />
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="ShowName" ColumnName="ShowName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="UsersLinkDB" TypeName="KursSystemModel.UsersLinkDB" StoreEntitySet="UsersLinkDB">
+            <EndProperty Name="Users">
+              <ScalarProperty Name="Id" ColumnName="UserId" />
+            </EndProperty>
+            <EndProperty Name="DataSources">
+              <ScalarProperty Name="Id" ColumnName="DBId" />
+            </EndProperty>
+          </AssociationSetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

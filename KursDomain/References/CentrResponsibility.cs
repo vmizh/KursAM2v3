@@ -10,12 +10,17 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq} {ParentDC,nq}")]
-public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEquatable<CentrResponsibility>, IComparable
+public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEquatable<CentrResponsibility>, IComparable, ICache
 {
+    public CentrResponsibility()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -62,6 +67,11 @@ public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEquat
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+       
     }
 }
 

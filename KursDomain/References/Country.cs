@@ -4,12 +4,18 @@ using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq} {ParentDC,nq}")]
-public class Country : ICountry, IDocGuid, IName, IEquatable<Country>, IComparable
+public class Country : ICountry, IDocGuid, IName, IEquatable<Country>, IComparable, ICache
 {
+    public Country()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -27,6 +33,7 @@ public class Country : ICountry, IDocGuid, IName, IEquatable<Country>, IComparab
 
     public string Location { get; set; }
     public string LocationPrecise { get; set; }
+    [JsonIgnore]
     public byte[] Flag { get; set; }
     public Guid Id { get; set; }
 
@@ -40,6 +47,7 @@ public class Country : ICountry, IDocGuid, IName, IEquatable<Country>, IComparab
     [MaxLength(150)] public string Name { get; set; }
 
     public string Notes { get; set; }
+    [JsonIgnore]
     public string Description => $"Страна: {Name}";
 
     public override string ToString()
@@ -98,5 +106,10 @@ public class Country : ICountry, IDocGuid, IName, IEquatable<Country>, IComparab
     public override int GetHashCode()
     {
         return Id.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        
     }
 }

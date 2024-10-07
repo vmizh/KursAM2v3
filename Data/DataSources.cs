@@ -25,8 +25,8 @@ namespace Data
             this.SignatureType = new HashSet<SignatureType>();
             this.UserMenuFavorites = new HashSet<UserMenuFavorites>();
             this.UserMenuRight = new HashSet<UserMenuRight>();
-            this.Users = new HashSet<Users>();
             this.UserRightsResponsibilityCenter = new HashSet<UserRightsResponsibilityCenter>();
+            this.Users = new HashSet<Users>();
         }
     
         public System.Guid Id { get; set; }
@@ -37,6 +37,7 @@ namespace Data
         public string DBName { get; set; }
         public string Color { get; set; }
         public Nullable<bool> IsVisible { get; set; }
+        public Nullable<int> RedisDBId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Errors> Errors { get; set; }
@@ -55,8 +56,8 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserMenuRight> UserMenuRight { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Users> Users { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserRightsResponsibilityCenter> UserRightsResponsibilityCenter { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Users> Users { get; set; }
     }
 }

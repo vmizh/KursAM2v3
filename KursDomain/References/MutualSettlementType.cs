@@ -3,6 +3,8 @@ using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
@@ -10,8 +12,12 @@ namespace KursDomain.References;
 ///     Тип взаимозачета
 /// </summary>
 [DebuggerDisplay("{DocCode,nq} {Name,nq} Валют.конверт.:{IsCurrencyConvert,nq}")]
-public class MutualSettlementType : IMutualSettlementType, IDocCode, IName, IEquatable<MutualSettlementType>, IComparable
+public class MutualSettlementType : IMutualSettlementType, IDocCode, IName, IEquatable<MutualSettlementType>, IComparable, ICache
 {
+    public MutualSettlementType()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -29,6 +35,7 @@ public class MutualSettlementType : IMutualSettlementType, IDocCode, IName, IEqu
     public bool IsCurrencyConvert { get; set; }
     public string Name { get; set; }
     public string Notes { get; set; }
+    [JsonIgnore]
     public string Description => $"Тип взаимозачета: {Name}";
 
     public void LoadFromEntity(SD_111 entity)
@@ -60,5 +67,10 @@ public class MutualSettlementType : IMutualSettlementType, IDocCode, IName, IEqu
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        
     }
 }

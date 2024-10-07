@@ -61,6 +61,7 @@ public static class GlobalOptions
     public static User UserInfo { set; get; }
     public static string DataBaseName { set; get; }
     public static Guid DataBaseId { set; get; }
+    public static int? RedisDBId { set; get; } 
     public static Brush DatabaseColor { set; get; }
 
     public static SystemProfile SystemProfile { set; get; }

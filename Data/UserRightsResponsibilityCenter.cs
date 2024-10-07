@@ -19,7 +19,7 @@ namespace Data
         public System.Guid UserId { get; set; }
         public decimal RespCentDC { get; set; }
     
-        public virtual DataSources DataSources { get; set; }
         public virtual Users Users { get; set; }
+        public virtual DataSources DataSources { get; set; }
     }
 }

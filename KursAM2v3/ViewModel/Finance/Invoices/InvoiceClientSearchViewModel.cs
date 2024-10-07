@@ -522,7 +522,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             });
         }
-
         public override void DocumentOpen(object form)
         {
             if (CurrentDocument == null) return;

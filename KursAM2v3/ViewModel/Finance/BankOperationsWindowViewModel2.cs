@@ -120,19 +120,19 @@ namespace KursAM2.ViewModel.Finance
                     k.State = RowStatus.NewRow;
                     manager.SaveBankOperations(k, CurrentBankAccount.DocCode, 0);
                     if (k.VVT_SFACT_POSTAV_DC != null)
-                    {
                         using (var context = GlobalOptions.GetEntities())
                         {
-                            context.Database.ExecuteSqlCommand($"EXEC dbo.GenerateSFProviderCash {Helper.CustomFormat.DecimalToSqlDecimal(k.VVT_SFACT_POSTAV_DC)}");
+                            context.Database.ExecuteSqlCommand(
+                                $"EXEC dbo.GenerateSFProviderCash {CustomFormat.DecimalToSqlDecimal(k.VVT_SFACT_POSTAV_DC)}");
                         }
-                    }
+
                     if (k.VVT_SFACT_CLIENT_DC != null)
-                    {
                         using (var context = GlobalOptions.GetEntities())
                         {
-                            context.Database.ExecuteSqlCommand($"EXEC dbo.GenerateSFClientCash {Helper.CustomFormat.DecimalToSqlDecimal(k.VVT_SFACT_CLIENT_DC)}");
+                            context.Database.ExecuteSqlCommand(
+                                $"EXEC dbo.GenerateSFClientCash {CustomFormat.DecimalToSqlDecimal(k.VVT_SFACT_CLIENT_DC)}");
                         }
-                    }
+
                     BankOperationsCollection.Add(k);
                     BankOperationsCollection.First(_ => _.DOC_CODE == k.DOC_CODE && _.Code == k.Code).State =
                         RowStatus.NotEdited;
@@ -249,7 +249,6 @@ namespace KursAM2.ViewModel.Finance
                         .Distinct().ToList();
                     if (data.Count > 0)
                         ctx.Document.CurrencyFrom = GlobalOptions.ReferencesCache.GetCurrency(data.First()) as Currency;
-
                 }
                 catch (Exception e)
                 {
@@ -278,19 +277,19 @@ namespace KursAM2.ViewModel.Finance
             var date = CurrentBankOperations.Date;
             manager.DeleteBankOperations(CurrentBankOperations, CurrentBankAccount.DocCode);
             if (sfPostDC != null)
-            {
                 using (var context = GlobalOptions.GetEntities())
                 {
-                    context.Database.ExecuteSqlCommand($"EXEC dbo.GenerateSFProviderCash {Helper.CustomFormat.DecimalToSqlDecimal(sfPostDC)}");
+                    context.Database.ExecuteSqlCommand(
+                        $"EXEC dbo.GenerateSFProviderCash {CustomFormat.DecimalToSqlDecimal(sfPostDC)}");
                 }
-            }
+
             if (sfFactDC != null)
-            {
                 using (var context = GlobalOptions.GetEntities())
                 {
-                    context.Database.ExecuteSqlCommand($"EXEC dbo.GenerateSFClientCash {Helper.CustomFormat.DecimalToSqlDecimal(sfFactDC)}");
+                    context.Database.ExecuteSqlCommand(
+                        $"EXEC dbo.GenerateSFClientCash {CustomFormat.DecimalToSqlDecimal(sfFactDC)}");
                 }
-            }
+
             UpdateValueInWindow(CurrentBankOperations);
             var dd = Periods.Where(_ => _.DateStart <= date && _.PeriodType == PeriodType.Day)
                 .Max(_ => _.DateStart);
@@ -388,8 +387,8 @@ namespace KursAM2.ViewModel.Finance
             };
             form.DataContext = new BankOperationsWindowViewModel2(form);
             form.Show();
-
         }
+
         public BankAccount CurrentBankAccount
         {
             set
@@ -398,11 +397,9 @@ namespace KursAM2.ViewModel.Finance
                 if (myCurrentBankAccount == value) return;
                 myCurrentBankAccount = value;
                 if (myCurrentBankAccount != null)
-                {
                     //Currency =
                     //    GlobalOptions.ReferencesCache.GetBankAccount(myCurrentBankAccount.DocCode).Currency as Currency;
                     GetPeriods();
-                }
 
                 RaisePropertyChanged();
                 RaisePropertyChanged(nameof(Periods));

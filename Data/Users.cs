@@ -24,8 +24,8 @@ namespace Data
             this.LastMenuUserSearch = new HashSet<LastMenuUserSearch>();
             this.UserMenuFavorites = new HashSet<UserMenuFavorites>();
             this.SignatureType = new HashSet<SignatureType>();
-            this.DataSources = new HashSet<DataSources>();
             this.UserRightsResponsibilityCenter = new HashSet<UserRightsResponsibilityCenter>();
+            this.DataSources = new HashSet<DataSources>();
         }
     
         public System.Guid Id { get; set; }
@@ -55,8 +55,8 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SignatureType> SignatureType { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<DataSources> DataSources { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UserRightsResponsibilityCenter> UserRightsResponsibilityCenter { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<DataSources> DataSources { get; set; }
     }
 }

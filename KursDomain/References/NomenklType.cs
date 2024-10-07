@@ -3,12 +3,18 @@ using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
 using KursDomain.IReferences.Nomenkl;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class NomenklType : IDocCode, IName, INomenklType, IEquatable<NomenklType>, IComparable
+public class NomenklType : IDocCode, IName, INomenklType, IEquatable<NomenklType>, IComparable, ICache
 {
+    public NomenklType()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -25,6 +31,7 @@ public class NomenklType : IDocCode, IName, INomenklType, IEquatable<NomenklType
 
     public string Name { get; set; }
     public string Notes { get; set; }
+    [JsonIgnore]
     public string Description => $"Тип продукции: {Name}";
     public bool IsDeleted { get; set; }
 
@@ -58,5 +65,9 @@ public class NomenklType : IDocCode, IName, INomenklType, IEquatable<NomenklType
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
     }
 }

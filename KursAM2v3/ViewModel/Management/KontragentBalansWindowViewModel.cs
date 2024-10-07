@@ -489,6 +489,8 @@ namespace KursAM2.ViewModel.Management
             base.RefreshData(obj);
             if (myKontragent == null) return;
             CurrentPeriod = null;
+            Periods.Clear();
+            Operations.Clear();
             LoadOperations(myKontragent.DocCode);
         }
 

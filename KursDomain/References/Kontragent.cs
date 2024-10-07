@@ -14,20 +14,25 @@ using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
 using KursDomain.IReferences.Kontragent;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq} {Currency,nq}")]
-public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kontragent>, IComparable
+public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kontragent>, IComparable, ICache
 {
-    public int CompareTo(object obj)
-    {
-        var c = obj as Unit;
-        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
-    }
     public Kontragent()
     {
         DocCode = -1;
+        
+    }
+
+    
+    public int CompareTo(object obj)
+    {
+        var c = obj as Unit;
+        return c == null ? 0 : string.Compare(Name, c.Name, StringComparison.Ordinal);
     }
 
     [Display(AutoGenerateField = false, Name = "DocCode")]
@@ -49,7 +54,10 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
     [Display(AutoGenerateField = true, Name = "Полное имя")]
     public string FullName { get; set; }
 
+    public decimal? GroupDC { get; set; }
+
     [Display(AutoGenerateField = false, Name = "Группа")]
+    [JsonIgnore]
     public IKontragentGroup Group { get; set; }
 
     [Display(AutoGenerateField = true, Name = "ИНН")]
@@ -86,15 +94,21 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
     public string Passport { get; set; }
 
     [Display(AutoGenerateField = true, Name = "Работник")]
+    [JsonIgnore]
     public IEmployee Employee { get; set; }
 
+    public decimal? ClientCategoryDC { get; set; }
     [Display(AutoGenerateField = true, Name = "Категогрия")]
+    [JsonIgnore]
     public IClientCategory ClientCategory { get; set; }
 
     [Display(AutoGenerateField = true, Name = "Вкл.в баланс")]
     public bool IsBalans { get; set; }
 
+    public decimal? CurrencyDC { set; get; }
+
     [Display(AutoGenerateField = true, Name = "Валюта", Order = 1)]
+    [JsonIgnore]
     public ICurrency Currency { get; set; }
 
     [Display(AutoGenerateField = true, Name = "Нач.Сумма")]
@@ -107,10 +121,16 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
     [Display(AutoGenerateField = true, Name = "EMail")]
     public string EMail { get; set; }
 
+    public decimal? ResponsibleEmployeeDC { get; set; }
+
     [Display(AutoGenerateField = true, Name = "Ответственный")]
+    [JsonIgnore]
     public IEmployee ResponsibleEmployee { get; set; }
 
+    public decimal? RegionDC { get; set; }
+
     [Display(AutoGenerateField = true, Name = "Регион")]
+    [JsonIgnore]
     public IRegion Region { get; set; }
 
     [Display(AutoGenerateField = false, Name = "")]
@@ -122,6 +142,7 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
     [Display(AutoGenerateField = true, Name = "Примечание")]
     public string Notes { get; set; }
 
+    [JsonIgnore]
     [Display(AutoGenerateField = false, Name = "Описание")]
     public string Description => $"Контрагент: {Name}({Currency})";
 
@@ -149,12 +170,12 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
     {
         if (entity == null) return;
         DocCode = entity.DOC_CODE;
-        StartBalans = entity.START_BALANS ?? new DateTime(2000,1,1);
-        ResponsibleEmployee = refCache.GetEmployee(entity.OTVETSTV_LICO);
+        StartBalans = entity.START_BALANS ?? new DateTime(2000, 1, 1);
         Name = entity.NAME;
-        Group = refCache?.GetKontragentGroup(entity.EG_ID);
         Notes = entity.NOTES;
-        Currency = refCache?.GetCurrency(entity.VALUTA_DC);
+        ResponsibleEmployee = refCache.GetEmployee(entity.OTVETSTV_LICO);
+        Currency = refCache.GetCurrency(entity.VALUTA_DC);
+        Group = refCache.GetKontragentGroup(entity.EG_ID);
         IsBalans = entity.FLAG_BALANS == 1;
         IsDeleted = entity.DELETED == 1;
         Id = entity.Id;
@@ -165,12 +186,25 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((Kontragent) obj);
+        return Equals((Kontragent)obj);
     }
 
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
+        if (ClientCategoryDC is not null)
+            ClientCategory = cache.GetItem<ClientCategory>(ClientCategoryDC.Value);
+        if (ResponsibleEmployeeDC is not null)
+            ResponsibleEmployee = cache.GetItem<Employee>(ResponsibleEmployeeDC.Value);
+        if (CurrencyDC is not null)
+            Currency = cache.GetItem<Currency>(CurrencyDC.Value);
+        if (RegionDC is not null)
+            Region = cache.GetItem<Region>(RegionDC.Value);
     }
 }
 
@@ -336,7 +370,7 @@ public class KontragentViewModel : RSViewModelBase, IEntity<SD_43>, IDataErrorIn
         get => FLAG_BALANS == 1;
         set
         {
-            FLAG_BALANS = (short?) (value ? 1 : 0);
+            FLAG_BALANS = (short?)(value ? 1 : 0);
             RaisePropertyChanged();
         }
     }
@@ -346,7 +380,7 @@ public class KontragentViewModel : RSViewModelBase, IEntity<SD_43>, IDataErrorIn
         get => FLAG_0UR_1PHYS == 1;
         set
         {
-            FLAG_0UR_1PHYS = (short?) (value ? 1 : 0);
+            FLAG_0UR_1PHYS = (short?)(value ? 1 : 0);
             RaisePropertyChanged();
         }
     }
@@ -444,7 +478,7 @@ public class KontragentViewModel : RSViewModelBase, IEntity<SD_43>, IDataErrorIn
         set
         {
             if (Entity.DELETED == 1 == value) return;
-            Entity.DELETED = (short?) (value ? 1 : 0);
+            Entity.DELETED = (short?)(value ? 1 : 0);
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(DELETED));
         }
@@ -1090,11 +1124,11 @@ public class KontragentViewModel : RSViewModelBase, IEntity<SD_43>, IDataErrorIn
             OtvetstLico = otv;
         if (Entity.SD_43_GRUZO != null && Entity.SD_43_GRUZO.Count > 0)
             foreach (var item in Entity.SD_43_GRUZO.ToList())
-                GruzoRequisities.Add(new KontragentGruzoRequisite(item) {myState = RowStatus.NotEdited});
+                GruzoRequisities.Add(new KontragentGruzoRequisite(item) { myState = RowStatus.NotEdited });
         if (Entity.TD_43 != null && Entity.TD_43.Count > 0)
             foreach (var item in Entity.TD_43.ToList())
             {
-                var newItem = new KontragentBank(item) {myState = RowStatus.NotEdited};
+                var newItem = new KontragentBank(item) { myState = RowStatus.NotEdited };
                 KontragentBanks.Add(newItem);
             }
 

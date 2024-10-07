@@ -8,6 +8,8 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
@@ -15,8 +17,13 @@ namespace KursDomain.References;
 ///     Форма платежа
 /// </summary>
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class PayForm : IPayForm, IDocCode, IName, IEquatable<PayForm>, IComparable
+public class PayForm : IPayForm, IDocCode, IName, IEquatable<PayForm>, IComparable, ICache
 {
+    public PayForm()
+    {
+        LoadFromCache();
+    }
+
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -38,6 +45,7 @@ public class PayForm : IPayForm, IDocCode, IName, IEquatable<PayForm>, IComparab
     public string Notes { get; set; }
 
     [Display(AutoGenerateField = false, Name = "Описание")]
+    [JsonIgnore]
     public string Description => $"Форма оплаты: {Name}";
 
     public override string ToString()
@@ -62,6 +70,11 @@ public class PayForm : IPayForm, IDocCode, IName, IEquatable<PayForm>, IComparab
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        
     }
 }
 

@@ -25,7 +25,6 @@ namespace Data
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<DataSources> DataSources { get; set; }
         public virtual DbSet<Errors> Errors { get; set; }
         public virtual DbSet<FormLayout> FormLayout { get; set; }
         public virtual DbSet<KontragentCashes> KontragentCashes { get; set; }
@@ -46,5 +45,6 @@ namespace Data
         public virtual DbSet<Versions> Versions { get; set; }
         public virtual DbSet<ObjectRightResposibilityCenter> ObjectRightResposibilityCenter { get; set; }
         public virtual DbSet<UserRightsResponsibilityCenter> UserRightsResponsibilityCenter { get; set; }
+        public virtual DbSet<DataSources> DataSources { get; set; }
     }
 }

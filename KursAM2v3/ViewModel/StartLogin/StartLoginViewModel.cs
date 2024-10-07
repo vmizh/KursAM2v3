@@ -29,6 +29,7 @@ using KursDomain;
 using KursDomain.DBContext;
 using KursDomain.Documents.Employee;
 using KursDomain.References;
+using KursDomain.References.RedisCache;
 using KursDomain.Repository;
 using Newtonsoft.Json;
 using StackExchange.Redis;
@@ -308,11 +309,12 @@ namespace KursAM2.ViewModel.StartLogin
                 GlobalOptions.SystemProfile = new SystemProfile();
             }
 
-            var refer = new ReferencesKursCache(new KursDBContext(GlobalOptions.SqlConnectionString).Context);
-            refer.StartLoad();
-            GlobalOptions.ReferencesCache = refer;
+            
             SetUserProfile(newUser.NickName.ToUpper());
+            //GlobalOptions.ReferencesCache = new ReferencesKursCache(new KursDBContext(GlobalOptions.SqlConnectionString).Context);
+            GlobalOptions.ReferencesCache = new RedisCacheReferences();
             SetGlobalProfile();
+            GlobalOptions.ReferencesCache.StartLoad();
             using (var dbContext = GlobalOptions.GetEntities())
             {
                 var bankSql =
@@ -459,11 +461,12 @@ namespace KursAM2.ViewModel.StartLogin
                 });
             }
 
-            var refer = new ReferencesKursCache(new KursDBContext(GlobalOptions.SqlConnectionString).Context);
-            refer.StartLoad();
-            GlobalOptions.ReferencesCache = refer;
-            SetUserProfile(newUser.NickName.ToUpper());
+            //GlobalOptions.ReferencesCache = new ReferencesKursCache(new KursDBContext(GlobalOptions.SqlConnectionString).Context); 
+            GlobalOptions.ReferencesCache = new RedisCacheReferences();
             SetGlobalProfile();
+            GlobalOptions.ReferencesCache.StartLoad();
+           
+            SetUserProfile(newUser.NickName.ToUpper());
             using (var dbContext = GlobalOptions.GetEntities())
             {
                 var bankSql =
@@ -627,6 +630,7 @@ namespace KursAM2.ViewModel.StartLogin
 
                 GlobalOptions.DataBaseName = SelectedDataSource.ShowName;
                 GlobalOptions.DataBaseId = SelectedDataSource.Id;
+                GlobalOptions.RedisDBId = SelectedDataSource.RedisDBId;
                 GlobalOptions.DatabaseColor = SelectedDataSource.Color;
                 GlobalOptions.SqlConnectionString =
                     SelectedDataSource.GetConnectionString(CurrentUser, CurrentPassword);
@@ -794,7 +798,7 @@ namespace KursAM2.ViewModel.StartLogin
                     {
                         CommandText =
                             "SELECT d.Name AS Name, d.ShowName AS ShowName, d.[Order] AS 'Order', d.Server as 'Server', " +
-                            "d.DBName AS 'DBName', d.Color AS 'Color', d.Id as 'Id'  FROM DataSources d " +
+                            "d.DBName AS 'DBName', d.Color AS 'Color', d.Id as 'Id', d.RedisDBId as 'RedisDBId'  FROM DataSources d " +
                             "INNER JOIN  UsersLinkDB link ON link.DBId = d.Id " +
                             $"INNER JOIN  Users u ON u.Id = link.UserId AND UPPER(u.Name) = '{CurrentUser.ToUpper()}'  " +
                             "WHERE isnull(IsVisible,0) = 1 " +
@@ -813,7 +817,8 @@ namespace KursAM2.ViewModel.StartLogin
                                 DBName = (string)reader.GetValue(4),
                                 Color = (SolidColorBrush)new BrushConverter().ConvertFromString(
                                     (string)reader.GetValue(5)),
-                                Id = reader.GetGuid(6)
+                                Id = reader.GetGuid(6),
+                                RedisDBId =  (int?)reader.GetValue(7),
                             });
                     }
 

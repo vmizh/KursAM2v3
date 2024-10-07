@@ -8,12 +8,18 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>, IComparable
+public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>, IComparable, ICache
 {
+    public SDRState()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -30,6 +36,7 @@ public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>, ICompa
 
     public string Name { get; set; }
     public string Notes { get; set; }
+    [JsonIgnore]
     public string Description => $"Статья дох/расх: {Name}";
     public string Shifr { get; set; }
     public decimal? ParentDC { get; set; }
@@ -66,6 +73,11 @@ public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>, ICompa
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        
     }
 }
 

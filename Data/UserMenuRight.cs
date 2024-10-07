@@ -20,7 +20,7 @@ namespace Data
         public int MenuId { get; set; }
         public bool IsReadOnly { get; set; }
     
-        public virtual DataSources DataSources { get; set; }
         public virtual KursMenuItem KursMenuItem { get; set; }
+        public virtual DataSources DataSources { get; set; }
     }
 }

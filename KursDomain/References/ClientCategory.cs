@@ -7,6 +7,7 @@ using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
@@ -29,6 +30,7 @@ public class ClientCategory : IClientCategory, IDocCode, IName, IEquatable<Clien
 
     public string Name { get; set; }
     public string Notes { get; set; }
+    [JsonIgnore]
     public string Description => $"Категория контрагента: {Name}";
 
     public void LoadFromEntity(SD_148 entity)

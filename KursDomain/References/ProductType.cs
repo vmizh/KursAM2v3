@@ -3,11 +3,13 @@ using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
 using KursDomain.IReferences.Nomenkl;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq} {ParentDC,nq}")]
-public class ProductType : IProductType, IDocCode, IName, IEquatable<ProductType>, IComparable
+public class ProductType : IProductType, IDocCode, IName, IEquatable<ProductType>, IComparable, ICache
 {
     public int CompareTo(object obj)
     {
@@ -25,6 +27,7 @@ public class ProductType : IProductType, IDocCode, IName, IEquatable<ProductType
 
     public string Name { get; set; }
     public string Notes { get; set; }
+    [JsonIgnore]
     public string Description => $"Тип продукции: {Name}";
     public decimal? ParentDC { get; set; }
     public string FullName { get; set; }
@@ -53,5 +56,9 @@ public class ProductType : IProductType, IDocCode, IName, IEquatable<ProductType
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
     }
 }

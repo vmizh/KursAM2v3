@@ -1,5 +1,8 @@
 ﻿namespace KursAM2.Repositories.RedisRepository
 {
+    /// <summary>
+    /// Каналы для обмена сообщений с редис
+    /// </summary>
     public static class RedisMessageChannels
     {
         public const string InvoiceProvider = "InvoiceProvider";

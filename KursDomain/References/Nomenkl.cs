@@ -14,12 +14,18 @@ using Helper;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
 using KursDomain.IReferences.Nomenkl;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {NomenklNumber,nq} {Name,nq} {Currency,nq}")]
-public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl, IComparable
+public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl, IComparable, ICache
 {
+    public Nomenkl()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -58,12 +64,18 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     [ReadOnly(true)]
     public string NomenklNumber { get; set; }
 
+    public decimal? UnitDC { set; get; }
+
     [Display(AutoGenerateField = true, Name = "Ед.изм.")]
     [ReadOnly(true)]
+    [JsonIgnore]
     public IUnit Unit { get; set; }
+
+    public decimal? GroupDC { set; get; }
 
     [Display(AutoGenerateField = false, Name = "Категория")]
     [ReadOnly(true)]
+    [JsonIgnore]
     public INomenklGroup Group { get; set; }
 
     [Display(AutoGenerateField = true, Name = "Полное имя")]
@@ -82,24 +94,36 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     [ReadOnly(true)]
     public bool IsNakladExpense { get; set; }
 
+    public decimal? CurrencyDC { set; get; }
+
     [Display(AutoGenerateField = true, Name = "Валюта")]
     [ReadOnly(true)]
+    [JsonIgnore]
     public ICurrency Currency { get; set; }
 
     [Display(AutoGenerateField = true, Name = "НДС,%")]
     [ReadOnly(true)]
     public decimal? DefaultNDSPercent { get; set; }
 
+    public decimal? NomenklTypeDC { set; get; }
+
     [Display(AutoGenerateField = true, Name = "Тип товара")]
     [ReadOnly(true)]
+    [JsonIgnore]
     public INomenklType NomenklType { get; set; }
+
+    public decimal? SDRSchetDC { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Счет. дох/расх")]
     [ReadOnly(true)]
+    [JsonIgnore]
     public ISDRSchet SDRSchet { get; set; }
+
+    public decimal? ProductTypeDC { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Тип продукции")]
     [ReadOnly(true)]
+    [JsonIgnore]
     public IProductType ProductType { get; set; }
 
     [Display(AutoGenerateField = true, Name = "Удален")]
@@ -114,8 +138,11 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     [ReadOnly(true)]
     public bool IsUslugaInRentabelnost { get; set; }
 
+    public Guid? NomenklMainId { set; get; }
+
     [Display(AutoGenerateField = false, Name = "Основная ном.")]
     [ReadOnly(true)]
+    [JsonIgnore]
     public INomenklMain NomenklMain { get; set; }
 
     public override string ToString()
@@ -169,6 +196,25 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     {
         // ReSharper disable once NonReadonlyMemberInGetHashCode
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
+        if (UnitDC is not null)
+            Unit = cache.GetItem<Unit>(UnitDC.Value);
+        if (GroupDC is not null)
+            Group = cache.GetItem<NomenklGroup>(GroupDC.Value);
+        if (CurrencyDC is not null)
+            Currency = cache.GetItem<Currency>(CurrencyDC.Value);
+        if (NomenklTypeDC is not null)
+            NomenklType = cache.GetItem<NomenklType>(NomenklTypeDC.Value);
+        if (SDRSchetDC is not null)
+            SDRSchet = cache.GetItem<SDRSchet>(SDRSchetDC.Value);
+        if (ProductTypeDC is not null)
+            ProductType = cache.GetItem<ProductType>(ProductTypeDC.Value);
+        if (NomenklMainId is not null)
+            NomenklMain = cache.GetItemGuid<NomenklMain>(NomenklMainId.Value);
     }
 }
 

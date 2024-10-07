@@ -9,6 +9,8 @@ using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.Annotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
@@ -16,8 +18,12 @@ namespace KursDomain.References;
 ///     Банк основные реквизиты
 /// </summary>
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq}")]
-public class Bank : IBank, IDocCode, IName, IEquatable<Bank>, IComparable
+public class Bank : IBank, IDocCode, IName, IEquatable<Bank>, IComparable, ICache
 {
+    public Bank()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -54,6 +60,7 @@ public class Bank : IBank, IDocCode, IName, IEquatable<Bank>, IComparable
     public string Notes { get; set; }
 
     [Display(AutoGenerateField = false, Name = "Описание", Order = 6)]
+    [JsonIgnore]
     public string Description => $"Банк: {Name}";
 
     public override string ToString()
@@ -89,6 +96,11 @@ public class Bank : IBank, IDocCode, IName, IEquatable<Bank>, IComparable
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        
     }
 }
 

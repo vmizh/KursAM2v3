@@ -8,6 +8,8 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences.Kontragent;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
@@ -20,7 +22,8 @@ public class DataAnnotationsKontragentGroup : DataAnnotationForFluentApiBase, IM
     }
 }
 
-public class DataAnnotationsKontragentGroupViewModel : DataAnnotationForFluentApiBase, IMetadataProvider<KontragentGroupViewModel>
+public class DataAnnotationsKontragentGroupViewModel : DataAnnotationForFluentApiBase,
+    IMetadataProvider<KontragentGroupViewModel>
 {
     void IMetadataProvider<KontragentGroupViewModel>.BuildMetadata(MetadataBuilder<KontragentGroupViewModel> builder)
     {
@@ -31,13 +34,18 @@ public class DataAnnotationsKontragentGroupViewModel : DataAnnotationForFluentAp
 
 [DebuggerDisplay("{Id,nq} {Name,nq} {ParentId,nq}")]
 [MetadataType(typeof(DataAnnotationsKontragentGroup))]
-public class KontragentGroup : IName, IKontragentGroup, IEquatable<KontragentGroup>, IComparable
+public class KontragentGroup : IName, IKontragentGroup, IEquatable<KontragentGroup>, IComparable, IDocCode, ICache
 {
+    public KontragentGroup()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
-        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+        return c == null ? 0 : string.Compare(Name, c.Name, StringComparison.Ordinal);
     }
+
     public bool Equals(KontragentGroup other)
     {
         if (ReferenceEquals(null, other)) return false;
@@ -50,6 +58,7 @@ public class KontragentGroup : IName, IKontragentGroup, IEquatable<KontragentGro
     public int? ParentId { get; set; }
     public string Name { get; set; }
     public string Notes { get; set; }
+    [JsonIgnore]
     public string Description { get; set; }
 
     public bool Equals(KontragentGroup cat1, KontragentGroup cat2)
@@ -84,12 +93,23 @@ public class KontragentGroup : IName, IKontragentGroup, IEquatable<KontragentGro
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((KontragentGroup) obj);
+        return Equals((KontragentGroup)obj);
     }
 
     public override int GetHashCode()
     {
         return Id;
+    }
+
+    public void LoadFromCache()
+    {
+        
+    }
+
+    public decimal DocCode
+    {
+        get => Id;
+        set => Id = Convert.ToInt32(value);
     }
 }
 
@@ -125,7 +145,7 @@ public class KontragentGroupViewModel : RSViewModelBase, IEntity<UD_43>
         set
         {
             if (EG_ID == value) return;
-            EG_ID = (int) value;
+            EG_ID = (int)value;
             RaisePropertyChanged();
         }
     }
@@ -169,7 +189,7 @@ public class KontragentGroupViewModel : RSViewModelBase, IEntity<UD_43>
         set
         {
             if (EG_PARENT_ID == value) return;
-            EG_PARENT_ID = (int?) value;
+            EG_PARENT_ID = (int?)value;
             RaisePropertyChanged();
         }
     }
@@ -191,7 +211,7 @@ public class KontragentGroupViewModel : RSViewModelBase, IEntity<UD_43>
         set
         {
             if (EG_DELETED == 1 == value) return;
-            EG_DELETED = (short?) (value ? 1 : 0);
+            EG_DELETED = (short?)(value ? 1 : 0);
             RaisePropertyChanged();
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using KursDomain.ICommon;
 using KursDomain.IReferences.Kontragent;
 using KursDomain.IReferences.Nomenkl;
 
@@ -11,38 +12,70 @@ namespace KursDomain.IReferences;
 /// </summary>
 public interface IReferencesCache
 {
+    void UpdateListGuid<T>(IEnumerable<T> list) where T : IDocGuid;
+    void AddOrUpdateGuid<T>(T item) where T : IDocGuid;
+    void DropAllGuid<T>() where T : IDocGuid;
+    void DropGuid<T>(Guid id) where T : IDocGuid;
+    T GetItemGuid<T>(Guid dc) where T : IDocGuid;
+    IEnumerable<T> GetItemsGuid<T>() where T : IDocGuid;
+   
+    void UpdateList<T>(IEnumerable<T> list) where T : IDocCode;
+    void AddOrUpdate<T>(T item) where T : IDocCode;
+    void DropAll<T>() where T : IDocCode;
+    void Drop<T>(decimal dc) where T : IDocCode;
+    T GetItem<T>(decimal dc) where T : IDocCode;
+    IEnumerable<T> GetItems<T>() where T : IDocCode;
+
+
     public bool IsChangeTrackingOn { set; get; }
 
     public DbContext DBContext { get; }
+
+    //Справочник касс
 
     ICashBox GetCashBox(decimal? dc);
     ICashBox GetCashBox(decimal dc);
     IEnumerable<ICashBox> GetCashBoxAll();
 
+    //Справочник базовых условий поставки
+
     IDeliveryCondition GetDeliveryCondition(decimal dc);
     IDeliveryCondition GetDeliveryCondition(decimal? dc);
     IEnumerable<IDeliveryCondition> GetDeliveryConditionAll();
 
+    //Справочник типов материальных ценностей (SD_119)
+
     INomenklType GetNomenklType(decimal? dc);
     IEnumerable<INomenklType> GetNomenklTypeAll();
+
+    //Справочник типов продукции (SD_77)
 
     INomenklProductType GetNomenklProductType(decimal? dc);
     INomenklProductType GetNomenklProductType(decimal dc);
 
     IEnumerable<INomenklProductType> GetNomenklProductTypesAll();
 
+    //Справочник видов продукции (SD_50)
+
     IProductType GetProductType(decimal? dc);
     IProductType GetProductType(decimal dc);
     IEnumerable<IProductType> GetProductTypeAll();
 
+    //Справочник центров ответственности (SD_40)
+
     ICentrResponsibility GetCentrResponsibility(decimal? dc);
     IEnumerable<ICentrResponsibility> GetCentrResponsibilitiesAll();
+
+    // Банки (SD_44)
 
     IBank GetBank(decimal? dc);
     IEnumerable<IBank> GetBanksAll();
 
+    // Банковские счета (SD_114)
+
     IBankAccount GetBankAccount(decimal? dc);
     IEnumerable<IBankAccount> GetBankAccountAll();
+
 
     IKontragentGroup GetKontragentGroup(int? id);
     IEnumerable<IKontragentGroup> GetKontragentCategoriesAll();

@@ -3,12 +3,18 @@ using System.Diagnostics;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
 using KursDomain.IReferences.Nomenkl;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{Id} {NomenklNumber,nq} {Name,nq}")]
-public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain>, IComparable<NomenklMain>, IComparable
+public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain>, IComparable<NomenklMain>, IComparable, ICache
 {
+    public NomenklMain()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -35,20 +41,32 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
     public string Name { get; set; }
     public string Notes { get; set; }
     // ReSharper disable once UnassignedGetOnlyAutoProperty
+    [JsonIgnore]
     public string Description { get; }
     public string NomenklNumber { get; set; }
+    public decimal? UnitDC { set; get; }
+    [JsonIgnore]
     public IUnit Unit { get; set; }
+    public decimal? CategoryDC { get; set; }
+    [JsonIgnore]
     public INomenklGroup Category { get; set; }
     public string FullName { get; set; }
     public bool IsUsluga { get; set; }
     public bool IsProguct { get; set; }
     public bool IsNakladExpense { get; set; }
+    public decimal? NomenklTypeDC { set; get; }
+    [JsonIgnore]
     public INomenklType NomenklType { get; set; }
+    [JsonIgnore]
+    public decimal? ProductTypeDC { set; get; }
+    [JsonIgnore]
     public IProductType ProductType { get; set; }
     public bool IsDeleted { get; set; }
     public bool IsCurrencyTransfer { get; set; }
     public bool IsRentabelnost { get; set; }
     public bool IsOnlyState { get; set; }
+    public Guid? CountryId { get; set; }
+    [JsonIgnore]
     public ICountry Country { get; set; }
 
 
@@ -109,5 +127,19 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
         // ReSharper disable once NonReadonlyMemberInGetHashCode
         return Id.GetHashCode();
     }
-    
+
+    public void LoadFromCache()
+    {
+        if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
+        if (UnitDC is not null)
+            Unit = cache.GetItem<Unit>(UnitDC.Value);
+        if (CategoryDC is not null)
+            Category = cache.GetItem<NomenklGroup>(CategoryDC.Value);
+        if (NomenklTypeDC is not null)
+            NomenklType = cache.GetItem<NomenklType>(NomenklTypeDC.Value);
+        if (ProductTypeDC is not null)
+            ProductType = cache.GetItem<ProductType>(ProductTypeDC.Value);
+        if (CountryId is not null)
+            Country = cache.GetItemGuid<Country>(CountryId.Value);
+    }
 }

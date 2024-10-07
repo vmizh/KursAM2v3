@@ -5,15 +5,22 @@ using System.Diagnostics;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
+using DevExpress.Emf;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq}")]
-public class Warehouse : IWarehouse, IDocCode, IDocGuid, IName, IEquatable<Warehouse>, IComparable
+public class Warehouse : IWarehouse, IDocCode, IDocGuid, IName, IEquatable<Warehouse>, IComparable, ICache
 {
+    public Warehouse()
+    {
+        LoadFromCache();
+    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -31,8 +38,14 @@ public class Warehouse : IWarehouse, IDocCode, IDocGuid, IName, IEquatable<Wareh
 
     public string Name { get; set; }
     public string Notes { get; set; }
+    [JsonIgnore]
     public string Description => $"Склад {Name} Кладовщик: {StoreKeeper}";
+
+    public decimal? StoreKeeperDC { set; get; }
+    [JsonIgnore]
     public IEmployee StoreKeeper { get; set; }
+    public decimal? RegionDC { set; get; }
+    [JsonIgnore]
     public IRegion Region { get; set; }
     public bool IsNegativeRest { get; set; }
     public bool IsDeleted { get; set; }
@@ -64,6 +77,15 @@ public class Warehouse : IWarehouse, IDocCode, IDocGuid, IName, IEquatable<Wareh
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
+        if (RegionDC is not null)
+            Region = cache.GetItem<Region>(RegionDC.Value);
+        if(StoreKeeperDC is not null) 
+            StoreKeeper = cache.GetItem<Employee>(StoreKeeperDC.Value);
     }
 }
 

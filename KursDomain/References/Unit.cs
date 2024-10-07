@@ -8,12 +8,18 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.IReferences.Nomenkl;
+using KursDomain.References.RedisCache;
+using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
-public class Unit : IUnit, IDocCode, IName, IEquatable<Unit>,IComparable
+public class Unit : IUnit, IDocCode, IName, IEquatable<Unit>,IComparable, ICache
 {
+    public Unit()
+    {
+        LoadFromCache();
+    }
     public decimal DocCode { get; set; }
 
     public bool Equals(Unit other)
@@ -25,6 +31,7 @@ public class Unit : IUnit, IDocCode, IName, IEquatable<Unit>,IComparable
 
     public string Name { get; set; }
     public string Notes { get; set; }
+    [JsonIgnore]
     public string Description => $"Ед. изм.: {Name}";
     public string OKEI { get; set; }
     public string OKEI_Code { get; set; }
@@ -59,6 +66,11 @@ public class Unit : IUnit, IDocCode, IName, IEquatable<Unit>,IComparable
     public override int GetHashCode()
     {
         return DocCode.GetHashCode();
+    }
+
+    public void LoadFromCache()
+    {
+        
     }
 
     public int CompareTo(object obj)

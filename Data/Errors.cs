@@ -22,7 +22,7 @@ namespace Data
         public string Note { get; set; }
         public System.DateTime Moment { get; set; }
     
-        public virtual DataSources DataSources { get; set; }
         public virtual Users Users { get; set; }
+        public virtual DataSources DataSources { get; set; }
     }
 }
