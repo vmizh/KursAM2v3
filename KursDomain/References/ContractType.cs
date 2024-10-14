@@ -11,10 +11,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
 public class ContractType : IContractType, IDocCode, IName, IEquatable<ContractType>, IComparable, ICache
 {
-    public ContractType()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -81,4 +77,6 @@ public class ContractType : IContractType, IDocCode, IName, IEquatable<ContractT
     {
         
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }

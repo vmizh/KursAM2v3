@@ -70,13 +70,16 @@ public class TD_24BaseWrapper : BaseWrapper<TD_24>, IEquatable<TD_24BaseWrapper>
         }
     }
 
+    private References.Nomenkl myNomenkl;
+
     [Display(AutoGenerateField = true, Name = "Номенклатура")]
     public References.Nomenkl Nomenkl
     {
-        get => myCache.GetNomenkl(Model.DDT_NOMENKL_DC) as References.Nomenkl;
+        get => myNomenkl;//myCache.GetNomenkl(Model.DDT_NOMENKL_DC) as References.Nomenkl;
         set
         {
             if (Model.DDT_NOMENKL_DC == value?.DocCode) return;
+            myNomenkl = value;
             Model.DDT_NOMENKL_DC = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }
@@ -130,13 +133,16 @@ public class TD_24BaseWrapper : BaseWrapper<TD_24>, IEquatable<TD_24BaseWrapper>
         }
     }
 
+    private Unit myUnit;
+
     [Display(AutoGenerateField = true, Name = "Ед.изм.")]
     public Unit Unit
     {
-        get => myCache.GetUnit(Model.DDT_ED_IZM_DC) as Unit;
+        get => myUnit; //myCache.GetUnit(Model.DDT_ED_IZM_DC) as Unit;
         set
         {
             if (Model.DDT_ED_IZM_DC == value?.DocCode) return;
+            myUnit = value;
             Model.DDT_ED_IZM_DC = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }
@@ -156,14 +162,17 @@ public class TD_24BaseWrapper : BaseWrapper<TD_24>, IEquatable<TD_24BaseWrapper>
         get => myInvoiceProviderRow;
     }
 
+    private Currency myCurrency;
+
 
     [Display(AutoGenerateField = true, Name = "Валюта")]
     public Currency Currency
     {
-        get => myCache.GetCurrency(Model.DDT_CRS_DC) as Currency;
+        get => myCurrency;//myCache.GetCurrency(Model.DDT_CRS_DC) as Currency;
         set
         {
             if (Model.DDT_CRS_DC == value?.DocCode) return;
+            myCurrency = value;
             Model.DDT_CRS_DC = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }
@@ -183,16 +192,19 @@ public class TD_24BaseWrapper : BaseWrapper<TD_24>, IEquatable<TD_24BaseWrapper>
         get => myInvoiceClientRow;
     }
 
+    private Kontragent myDiler;
+
     [Display(AutoGenerateField = true, Name = "Дилер")]
     public Kontragent Diler
     {
         set
         {
             if (Model.DDT_DILER_DC == value?.DocCode) return;
+            myDiler = value;
             Model.DDT_DILER_DC = value?.DocCode;
             RaisePropertyChanged();
         }
-        get => myCache.GetKontragent(Model.DDT_DILER_DC) as Kontragent;
+        get => myDiler; //myCache.GetKontragent(Model.DDT_DILER_DC) as Kontragent;
     }
 
     
@@ -302,13 +314,16 @@ public class TD_24BaseWrapper : BaseWrapper<TD_24>, IEquatable<TD_24BaseWrapper>
         }
     }
 
+    private SDRSchet mySHPZ;
+
     [Display(AutoGenerateField = true, Name = "Счет дох/расх")]
     public SDRSchet SHPZ
     {
-        get => myCache.GetSDRSchet(Model.DDT_SHPZ_DC) as SDRSchet;
+        get => mySHPZ; //myCache.GetSDRSchet(Model.DDT_SHPZ_DC) as SDRSchet;
         set
         {
             if (Model.DDT_SHPZ_DC == value?.DocCode) return;
+            mySHPZ = value;
             Model.DDT_SHPZ_DC = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }
@@ -351,13 +366,17 @@ public class TD_24BaseWrapper : BaseWrapper<TD_24>, IEquatable<TD_24BaseWrapper>
         }
     }
 
+    private Warehouse myWarehouseOut;
+
+
     [Display(AutoGenerateField = true, Name = "Склад-отправитель")]
     public virtual Warehouse WarehouseOut
     {
-        get => myCache.GetWarehouse(Model.DDT_SKLAD_OTPR_DC) as Warehouse;
+        get => myWarehouseOut; //myCache.GetWarehouse(Model.DDT_SKLAD_OTPR_DC) as Warehouse;
         set
         {
             if (Model.DDT_SKLAD_OTPR_DC == value?.DocCode) return;
+            myWarehouseOut = value;
             Model.DDT_SKLAD_OTPR_DC = value?.DocCode;
             RaisePropertyChanged();
         }

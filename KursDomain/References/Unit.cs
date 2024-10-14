@@ -16,10 +16,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
 public class Unit : IUnit, IDocCode, IName, IEquatable<Unit>,IComparable, ICache
 {
-    public Unit()
-    {
-        LoadFromCache();
-    }
     public decimal DocCode { get; set; }
 
     public bool Equals(Unit other)
@@ -72,6 +68,8 @@ public class Unit : IUnit, IDocCode, IName, IEquatable<Unit>,IComparable, ICache
     {
         
     }
+
+    public DateTime LastUpdateServe { get; set; }
 
     public int CompareTo(object obj)
     {

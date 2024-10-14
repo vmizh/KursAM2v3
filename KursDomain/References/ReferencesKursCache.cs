@@ -55,7 +55,12 @@ public class ReferencesKursCache : IReferencesCache
 
     #region Properties
 
-    public void UpdateListGuid<T>(IEnumerable<T> list) where T : IDocGuid
+    public void UpdateListGuid<T>(IEnumerable<T> list, DateTime? nowFix) where T : IDocGuid
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateAllGuid<T>() where T : IDocGuid
     {
         throw new NotImplementedException();
     }
@@ -80,12 +85,22 @@ public class ReferencesKursCache : IReferencesCache
         throw new NotImplementedException();
     }
 
-    public IEnumerable<T> GetItemsGuid<T>() where T : IDocGuid
+    public IEnumerable<T> GetAllGuid<T>() where T : IDocGuid
     {
         throw new NotImplementedException();
     }
 
-    public void UpdateList<T>(IEnumerable<T> list) where T : IDocCode
+    public IEnumerable<T> GetListGuid<T>(IEnumerable<Guid> ids) where T : IDocGuid
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateList<T>(IEnumerable<T> list, DateTime? nowFix) where T : IDocCode
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateAll<T>() where T : IDocCode
     {
         throw new NotImplementedException();
     }
@@ -110,7 +125,12 @@ public class ReferencesKursCache : IReferencesCache
         throw new NotImplementedException();
     }
 
-    public IEnumerable<T> GetItems<T>() where T : IDocCode
+    public IEnumerable<T> GetAll<T>() where T : IDocCode
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<T> GetList<T>(IEnumerable<decimal> dcs) where T : IDocCode
     {
         throw new NotImplementedException();
     }
@@ -1768,6 +1788,11 @@ public class ReferencesKursCache : IReferencesCache
             NomenklsTrackingId != GetCurrentChangeTrackingId())
             UpdateCacheNomenkl();
         return Nomenkls.Values.ToList();
+    }
+
+    public IEnumerable<INomenkl> GetNomenkls(IEnumerable<decimal> dcList)
+    {
+        throw new NotImplementedException();
     }
 
     public INomenklMain GetNomenklMain(Guid? id)

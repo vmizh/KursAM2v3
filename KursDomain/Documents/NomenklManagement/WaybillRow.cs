@@ -29,7 +29,7 @@ public class WaybillRow : TD_24ViewModel
         }
 
         Currency = GlobalOptions.ReferencesCache.GetNomenkl(Entity.DDT_NOMENKL_DC)?.Currency as References.Currency;
-        SchetLinkedRowViewModel = new InvoiceClientRowViewModel(entity.TD_84);
+        SchetLinkedRowViewModel = new InvoiceClientRowViewModel(entity.TD_84,true,false);
     }
 
     public string IndoiceClientName => InvoiceClientViewModel?.Name;

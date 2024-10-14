@@ -125,9 +125,11 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public Nomenkl Nomenkl
     {
-        get => GlobalOptions.ReferencesCache.GetNomenkl(DDT_NOMENKL_DC) as Nomenkl;
+        get => myNomenkl; //GlobalOptions.ReferencesCache.GetNomenkl(DDT_NOMENKL_DC) as Nomenkl;
         set
         {
+            if(myNomenkl == value) return;
+            myNomenkl = value;
             if (value != null)
             {
                 DDT_NOMENKL_DC = value.DocCode;
@@ -216,11 +218,12 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public virtual Unit Unit
     {
-        get => GlobalOptions.ReferencesCache.GetUnit(DDT_ED_IZM_DC) as Unit;
+        get => myUnit;// GlobalOptions.ReferencesCache.GetUnit(DDT_ED_IZM_DC) as Unit;
         set
         {
             // ReSharper disable once PossibleUnintendedReferenceComparison
-            if (GlobalOptions.ReferencesCache.GetUnit(DDT_ED_IZM_DC) == value) return;
+            if (myUnit == value) return;
+            myUnit = value;
             DDT_ED_IZM_DC = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }
@@ -615,11 +618,11 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
 
     public SDRSchet SDRSchet
     {
-        get => (DDT_SHPZ_DC != null ? GlobalOptions.ReferencesCache.GetSDRSchet(DDT_SHPZ_DC) : null) as SDRSchet;
+        get => mySDRSchet;
         set
         {
-            if (mySDRSchet != null && mySDRSchet.Equals(value)) return;
-            //mySDRSchet = value;
+            if (mySDRSchet == value) return;
+            mySDRSchet = value;
             if (value != null)
                 DDT_SHPZ_DC = value.DocCode;
             RaisePropertyChanged();

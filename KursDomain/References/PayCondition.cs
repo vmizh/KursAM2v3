@@ -16,10 +16,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
 public class PayCondition : IPayCondition, IDocCode, IName, IEquatable<PayCondition>, IComparable, ICache
 {
-    public PayCondition()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -77,6 +73,8 @@ public class PayCondition : IPayCondition, IDocCode, IName, IEquatable<PayCondit
     {
        
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 /// <summary>

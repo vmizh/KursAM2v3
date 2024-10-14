@@ -26,14 +26,19 @@ public class ShipmentRowViewModel : TD_24ViewModel
         Entity = entity ?? DefaultValue();
         if (isParentInclude && Entity.SD_24 != null)
             Waybill = new Waybill(Entity.SD_24);
+        myNomenkl = GlobalOptions.ReferencesCache.GetNomenkl(DDT_NOMENKL_DC) as Nomenkl;
     }
+
+    private Nomenkl myNomenkl;
+
 
     public new Nomenkl Nomenkl
     {
-        get => GlobalOptions.ReferencesCache.GetNomenkl(Entity.DDT_NOMENKL_DC) as Nomenkl;
+        get => myNomenkl;// GlobalOptions.ReferencesCache.GetNomenkl(Entity.DDT_NOMENKL_DC) as Nomenkl;
         set
         {
             if (Entity.DDT_NOMENKL_DC == value.DocCode) return;
+            myNomenkl = value;
             Entity.DDT_NOMENKL_DC = value.DocCode;
             RaisePropertyChanged();
         }

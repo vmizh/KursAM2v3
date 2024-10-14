@@ -18,10 +18,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq} {Bank,nq} {RashAccount,nq}")]
 public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount>, IComparable, ICache
 {
-    public BankAccount()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as BankAccount;
@@ -145,18 +141,18 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
         RashAccCode = entity.BA_RASH_ACC_CODE;
         RashAccount = entity.BA_RASH_ACC;
         BACurrency = entity.BA_CURRENCY;
-        Kontragent = refCache?.GetKontragent(entity.BA_BANK_AS_KONTRAGENT_DC);
-        CentrResponsibility = refCache?.GetCentrResponsibility(entity.BA_CENTR_OTV_DC);
         IsTransit = entity.BA_TRANSIT == 1;
-        Bank = refCache?.GetBank(entity.BA_BANKDC);
         IsNegativeRests = entity.BA_NEGATIVE_RESTS == 1;
         BABankAccount = entity.BA_BANK_ACCOUNT;
         ShortName = entity.BA_ACC_SHORTNAME;
-        Currency = refCache?.GetCurrency(entity.CurrencyDC);
         StartDate = entity.StartDate;
         StartSumma = entity.StartSumma;
         DateNonZero = entity.DateNonZero;
         DocCode = entity.DOC_CODE;
+        Kontragent = refCache?.GetKontragent(entity.BA_BANK_AS_KONTRAGENT_DC);
+        CentrResponsibility = refCache?.GetCentrResponsibility(entity.BA_CENTR_OTV_DC);
+        Currency = refCache?.GetCurrency(entity.CurrencyDC);
+        Bank = refCache?.GetBank(entity.BA_BANKDC);
     }
 
     public override int GetHashCode()
@@ -177,6 +173,8 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
         if (BankDC is not null)
             Bank = cache.GetItem<Bank>(BankDC.Value);
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationBankAccount))]

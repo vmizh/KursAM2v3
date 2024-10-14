@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using Data;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.TransferOut;
+using KursDomain.IReferences.Nomenkl;
 using KursDomain.References;
 using KursDomain.Wrapper.Base;
 using Prism.Events;
@@ -92,14 +93,17 @@ public class TransferOutBalansRowsWrapper : BaseWrapper<TransferOutBalansRows>,
         set => SetValue(value);
     }
 
+    private References.Nomenkl myNomenkl;
+
     [Display(AutoGenerateField = true, Name = "Номенклатура", Order = 2)]
     [ReadOnly(true)]
     public References.Nomenkl Nomenkl
     {
-        get => GlobalOptions.ReferencesCache.GetNomenkl(Model.NomenklDC) as References.Nomenkl;
+        get => myNomenkl; // GlobalOptions.ReferencesCache.GetNomenkl(Model.NomenklDC) as References.Nomenkl;
         set
         {
             if (Model.NomenklDC == (value?.DocCode ?? 0)) return;
+            myNomenkl = value;
             SetValue(value?.DocCode ?? 0, nameof(TransferOutBalansRows.NomenklDC));
         }
     }

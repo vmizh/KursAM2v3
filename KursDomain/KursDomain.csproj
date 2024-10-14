@@ -239,7 +239,6 @@
     <Compile Include="RedisRepositories\RedisDataCacheSets.cs" />
     <Compile Include="RedisRepositories\RedisMessage.cs" />
     <Compile Include="RedisRepositories\RedisMessageChannels.cs" />
-    <Compile Include="RedisRepositories\RedisStore.cs" />
     <Compile Include="References\RedisCache\IDCGuidRelations.cs" />
     <Compile Include="References\RedisCache\InvoicePaymentShipment.cs" />
     <Compile Include="References\RedisCache\PaymentShipmentInvoiceTypeEnum.cs" />

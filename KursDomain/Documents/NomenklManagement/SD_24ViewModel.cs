@@ -118,15 +118,18 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         }
     }
 
+    private References.Warehouse myWarehouseOut;
+
     /// <summary>
     ///     Склад отправитель
     /// </summary>
     public References.Warehouse WarehouseOut
     {
-        get => GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_OTPR_DC) as References.Warehouse;
+        get => myWarehouseOut; //GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_OTPR_DC) as References.Warehouse;
         set
         {
             if (Entity.DD_SKLAD_OTPR_DC == value?.DocCode) return;
+            myWarehouseOut = value;
             Entity.DD_SKLAD_OTPR_DC = value?.DocCode;
             Entity.DD_OTRPAV_NAME = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_OTPR_DC))?.Name;
             RaisePropertyChanged();
@@ -134,15 +137,18 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         }
     }
 
+    private References.Warehouse myWarehouseIn;
+
     /// <summary>
     ///     Склад получатель
     /// </summary>
     public References.Warehouse WarehouseIn
     {
-        get => GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC) as References.Warehouse;
+        get => myWarehouseIn; // GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC) as References.Warehouse;
         set
         {
             if (Entity.DD_SKLAD_POL_DC == value?.DocCode) return;
+            myWarehouseIn = value;
             Entity.DD_SKLAD_POL_DC = value?.DocCode;
             Entity.DD_POLUCH_NAME = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC))?.Name;
             RaisePropertyChanged();
@@ -150,15 +156,18 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         }
     }
 
+    private Kontragent myKontragentSender;
+
     /// <summary>
     ///     Контрагент отправитель
     /// </summary>
     public Kontragent KontragentSender
     {
-        get => GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_OTPR_DC) as Kontragent;
+        get => myKontragentSender; //GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_OTPR_DC) as Kontragent;
         set
         {
             if (DD_KONTR_OTPR_DC == value?.DocCode) return;
+            myKontragentSender = value;
             DD_KONTR_OTPR_DC = value?.DocCode;
             Entity.DD_OTRPAV_NAME = ((IName)GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_OTPR_DC))?.Name;
             RaisePropertyChanged();
@@ -166,15 +175,18 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         }
     }
 
+    private Kontragent myKontragentViewModelReceiver;
+
     /// <summary>
     ///     Контрагент получатель
     /// </summary>
     public Kontragent KontragentViewModelReceiver
     {
-        get => GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_POL_DC) as Kontragent;
+        get => myKontragentViewModelReceiver; //GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_POL_DC) as Kontragent;
         set
         {
             if (DD_KONTR_POL_DC == value?.DocCode) return;
+            myKontragentViewModelReceiver = value;
             DD_KONTR_POL_DC = value?.DocCode;
             Entity.DD_POLUCH_NAME = ((IName)GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_POL_DC)).Name;
             RaisePropertyChanged();
@@ -182,13 +194,16 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         }
     }
 
+    private References.Employee myKladovshik;
+
     public References.Employee Kladovshik
     {
         // ReSharper disable once RedundantCast
-        get => GlobalOptions.ReferencesCache.GetEmployee(Entity.DD_KLADOV_TN as int?) as References.Employee;
+        get => myKladovshik;//  GlobalOptions.ReferencesCache.GetEmployee(Entity.DD_KLADOV_TN as int?) as References.Employee;
         set
         {
             if (Entity.DD_KLADOV_TN == value?.TabelNumber) return;
+            myKladovshik = value;
             Entity.DD_KLADOV_TN = value?.TabelNumber;
             RaisePropertyChanged();
         }

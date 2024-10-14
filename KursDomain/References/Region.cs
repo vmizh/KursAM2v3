@@ -12,10 +12,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq} {ParentDC,nq}")]
 public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>, IComparable, ICache
 {
-    public Region()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -80,4 +76,6 @@ public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>, IC
     {
         
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }

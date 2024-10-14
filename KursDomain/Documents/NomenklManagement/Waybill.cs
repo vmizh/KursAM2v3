@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using Core.Helper;
 using Core.ViewModel.Base;
@@ -110,12 +111,12 @@ public class Waybill : SD_24ViewModel, IDocument<Waybill>
         Rows.CollectionChanged += (o, args) => State = RowStatus.Edited;
         DeletedRows = new List<WaybillRow>();
         if (entity == null) return;
-        InvoiceClientViewModel = entity.SD_84 != null ? new InvoiceClientViewModel(entity.SD_84) : null;
         Client = GlobalOptions.ReferencesCache.GetKontragent(Entity.DD_KONTR_POL_DC) as Kontragent;
         Store = GlobalOptions.ReferencesCache.GetWarehouse(entity.DD_SKLAD_OTPR_DC) as References.Warehouse;
         if (entity.TD_24.Count <= 0) return;
         foreach (var row in entity.TD_24)
             Rows.Add(new WaybillRow(row));
+        InvoiceClientViewModel = entity.SD_84 != null ? new InvoiceClientViewModel(entity.SD_84) : null;
     }
 
     public References.Currency DocCurrency =>

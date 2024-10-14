@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Data;
+using KursDomain.References;
 using KursDomain.Repository.Base;
 
 namespace KursDomain.Repository.NomenklRepository;
@@ -15,5 +16,8 @@ public interface INomenklRepository : IKursGenericRepository<SD_83, decimal>
 
     public Task<List<NomenklQuantityInfo>> GetNomenklQuantityAsync(decimal skladDC, decimal nomDC, DateTime dateStart,
         DateTime dateEnd);
+
+    public IEnumerable<Nomenkl> FindByName(string name);
+    public IEnumerable<Nomenkl> GetByGroupDC(decimal groupDC);
 
 }

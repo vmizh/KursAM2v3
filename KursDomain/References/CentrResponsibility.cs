@@ -17,10 +17,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq} {Name,nq} {ParentDC,nq}")]
 public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEquatable<CentrResponsibility>, IComparable, ICache
 {
-    public CentrResponsibility()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -73,6 +69,8 @@ public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEquat
     {
        
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 [DataContract]

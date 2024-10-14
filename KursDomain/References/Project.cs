@@ -90,6 +90,8 @@ public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparab
         if (EmployeeDC is not null)
             Employee = cache.GetItem<Employee>(EmployeeDC.Value);
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationsProjectsViewModel))]

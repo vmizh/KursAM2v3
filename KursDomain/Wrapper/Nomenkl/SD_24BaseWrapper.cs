@@ -122,65 +122,80 @@ public class SD_24BaseWrapper : BaseWrapper<SD_24>, IEquatable<TD_24BaseWrapper>
         get => Model.DD_EXT_NUM;
     }
 
+    private Warehouse myWarehouseOut;
+
     [Display(AutoGenerateField = true, Name = "Склад-отправитель")]
     public virtual Warehouse WarehouseOut
     {
-        get => myCache.GetWarehouse(Model.DD_SKLAD_OTPR_DC) as Warehouse;
+        get => myWarehouseOut; //myCache.GetWarehouse(Model.DD_SKLAD_OTPR_DC) as Warehouse;
         set
         {
             if (Model.DD_SKLAD_OTPR_DC == value?.DocCode) return;
+            myWarehouseOut = value;
             Model.DD_SKLAD_OTPR_DC = value?.DocCode;
             Model.DD_POLUCH_NAME = value?.Name;
             RaisePropertyChanged();
         }
     }
 
+    private Warehouse myWarehouseIn;
+
     [Display(AutoGenerateField = true, Name = "Склад-получатель")]
     public virtual Warehouse WarehouseIn
     {
-        get => myCache.GetWarehouse(Model.DD_SKLAD_POL_DC) as Warehouse;
+        get => myWarehouseIn; //myCache.GetWarehouse(Model.DD_SKLAD_POL_DC) as Warehouse;
         set
         {
             if (Model.DD_SKLAD_POL_DC == value?.DocCode) return;
+            myWarehouseIn = value;
             Model.DD_SKLAD_POL_DC = value?.DocCode;
             Model.DD_OTRPAV_NAME = value?.Name;
             RaisePropertyChanged();
         }
     }
 
+    private Kontragent myKontargentSender;
+
     [Display(AutoGenerateField = true, Name = "Контрагент-отправитель")]
     public virtual Kontragent KontargentSender
     {
-        get => myCache.GetKontragent(Model.DD_KONTR_OTPR_DC) as Kontragent;
+        get => myKontargentSender; // myCache.GetKontragent(Model.DD_KONTR_OTPR_DC) as Kontragent;
         set
         {
             if (Model.DD_KONTR_OTPR_DC == value?.DocCode) return;
+            myKontargentSender = value;
             Model.DD_OTRPAV_NAME = value?.Name;
             Model.DD_KONTR_OTPR_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
 
+    private Kontragent myKontragent;
+
     [Display(AutoGenerateField = true, Name = "Контрагент-получатель")]
     public virtual Kontragent KontargentRecepient
     {
-        get => myCache.GetKontragent(Model.DD_KONTR_POL_DC) as Kontragent;
+        get => myKontragent; // myCache.GetKontragent(Model.DD_KONTR_POL_DC) as Kontragent;
         set
         {
             if (Model.DD_KONTR_POL_DC == value?.DocCode) return;
+            myKontragent = value;
             Model.DD_KONTR_POL_DC = value?.DocCode;
             Model.DD_POLUCH_NAME = value?.Name;
             RaisePropertyChanged();
         }
     }
 
+    private Employee myStoreKeeper;
+
     [Display(AutoGenerateField = true, Name = "Кладовщик")]
     public virtual Employee StoreKeeper
     {
-        get => myCache.GetEmployee(Model.DD_KLADOV_TN) as Employee;
+        get => myStoreKeeper; //myCache.GetEmployee(Model.DD_KLADOV_TN) as Employee;
         set
         {
             if (Model.DD_KLADOV_TN == value?.TabelNumber) return;
+            myStoreKeeper = value;
             Model.DD_KLADOV_TN = value?.TabelNumber;
             RaisePropertyChanged();
         }
@@ -198,13 +213,17 @@ public class SD_24BaseWrapper : BaseWrapper<SD_24>, IEquatable<TD_24BaseWrapper>
         }
     }
 
+    private Employee myPersonaRecepient;
+
+
     [Display(AutoGenerateField = true, Name = "Лицо-получатель")]
     public virtual Employee PersonaRecepient
     {
-        get => myCache.GetEmployee(Model.DD_POLUCHATEL_TN) as Employee;
+        get => myPersonaRecepient; // myCache.GetEmployee(Model.DD_POLUCHATEL_TN) as Employee;
         set
         {
             if (Model.DD_POLUCHATEL_TN == value?.TabelNumber) return;
+            myPersonaRecepient = value;
             Model.DD_POLUCHATEL_TN = value?.TabelNumber;
             RaisePropertyChanged();
         }
@@ -234,14 +253,16 @@ public class SD_24BaseWrapper : BaseWrapper<SD_24>, IEquatable<TD_24BaseWrapper>
         }
     }
 
+    private Employee myPersonaSendNomenkl;
 
     [Display(AutoGenerateField = true, Name = "Сдал товар")]
     public virtual Employee PersonaSendNomenkl
     {
-        get => myCache.GetEmployee(Model.DD_KTO_SDAL_TN) as Employee;
+        get => myPersonaSendNomenkl; //myCache.GetEmployee(Model.DD_KTO_SDAL_TN) as Employee;
         set
         {
             if (Model.DD_KTO_SDAL_TN == value?.TabelNumber) return;
+            myPersonaSendNomenkl = value;
             Model.DD_KTO_SDAL_TN = value?.TabelNumber;
             RaisePropertyChanged();
         }
@@ -295,25 +316,31 @@ public class SD_24BaseWrapper : BaseWrapper<SD_24>, IEquatable<TD_24BaseWrapper>
         }
     }
 
+    private Warehouse myWarehouseTo;
+
     [Display(AutoGenerateField = true, Name = "Отпуск на склад")]
     public virtual Warehouse WarehouseTo
     {
-        get => myCache.GetWarehouse(Model.DD_OTPUSK_NA_SKLAD_DC) as Warehouse;
+        get => myWarehouseTo; //myCache.GetWarehouse(Model.DD_OTPUSK_NA_SKLAD_DC) as Warehouse;
         set
         {
             if (Model.DD_OTPUSK_NA_SKLAD_DC == value?.DocCode) return;
+            myWarehouseTo = value;
             Model.DD_OTPUSK_NA_SKLAD_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
 
+    private Warehouse myWarehouseFrom;
+
     [Display(AutoGenerateField = true, Name = "Приход со склада")]
     public virtual Warehouse WarehouseFrom
     {
-        get => myCache.GetWarehouse(Model.DD_PRIHOD_SO_SKLADA_DC) as Warehouse;
+        get => myWarehouseFrom; //myCache.GetWarehouse(Model.DD_PRIHOD_SO_SKLADA_DC) as Warehouse;
         set
         {
             if (Model.DD_PRIHOD_SO_SKLADA_DC == value?.DocCode) return;
+            myWarehouseFrom = value;
             Model.DD_PRIHOD_SO_SKLADA_DC = value?.DocCode;
             RaisePropertyChanged();
         }

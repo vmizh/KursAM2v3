@@ -18,6 +18,7 @@ using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 using KursDomain.Repository;
+using KursDomain.Repository.NomenklRepository;
 using Newtonsoft.Json;
 using NomenklProductType = KursDomain.References.NomenklProductType;
 
@@ -891,39 +892,51 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
     }
 
 
+    private Kontragent myReceiver;
+
     public Kontragent Receiver
     {
         //SF_RECEIVER_KONTR_DC
-        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_RECEIVER_KONTR_DC) as Kontragent;
+        get => myReceiver; // GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_RECEIVER_KONTR_DC) as Kontragent;
         set
         {
-            if (GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_RECEIVER_KONTR_DC) == value) return;
+            //if (GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_RECEIVER_KONTR_DC) == value) return;
+            if(myReceiver == value) return;
+            myReceiver = value;
             Entity.SF_RECEIVER_KONTR_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
 
+    private Kontragent myClient;
+
     public Kontragent Client
     {
-        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_CLIENT_DC) as Kontragent;
+        get => myClient;// GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_CLIENT_DC) as Kontragent;
         set
         {
-            if (GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_CLIENT_DC) == value) return;
+            //if (GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_CLIENT_DC) == value) return;
+            if (myClient == value) return;
+            myClient = value;
             Entity.SF_CLIENT_DC = value?.DocCode;
             Entity.SF_CLIENT_NAME = value?.Name;
             RaisePropertyChanged();
         }
     }
 
+    private References.Employee myPersonaResponsible;
+
     /// <summary>
     ///     Ответственный
     /// </summary>
     public References.Employee PersonaResponsible
     {
-        get => GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) as References.Employee;
+        get => myPersonaResponsible; // GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) as References.Employee;
         set
         {
-            if (GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) == value) return;
+            //if (GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) == value) return;
+            if(myPersonaResponsible == value) return;
+            myPersonaResponsible = value;
             Entity.PersonalResponsibleDC = value?.DocCode;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(EmployeeTabelNumber));
@@ -932,45 +945,60 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
 
     public string LastChanger { get; set; }
 
+    private CentrResponsibility myCO;
+
     public CentrResponsibility CO
     {
-        get => GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) as CentrResponsibility;
+        get => myCO; //GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) as CentrResponsibility;
         set
         {
-            if (GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) == value) return;
+            //if (GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) == value) return;
+            if(myCO == value) return;
+            myCO = value;
             Entity.SF_CENTR_OTV_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
 
+    private NomenklProductType myVzaimoraschetType;
+
     public NomenklProductType VzaimoraschetType
     {
-        get => GlobalOptions.ReferencesCache.GetNomenklProductType(Entity.SF_VZAIMOR_TYPE_DC) as NomenklProductType;
+        get => myVzaimoraschetType; // GlobalOptions.ReferencesCache.GetNomenklProductType(Entity.SF_VZAIMOR_TYPE_DC) as NomenklProductType;
         set
         {
-            if (GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.SF_VZAIMOR_TYPE_DC) == value) return;
+            //if (GlobalOptions.ReferencesCache.GetNomenklProductType(Entity.SF_VZAIMOR_TYPE_DC) == value) return;
+            if (myVzaimoraschetType == value) return;
+            myVzaimoraschetType = value;
             Entity.SF_VZAIMOR_TYPE_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
 
+    private PayForm myFormRaschet;
+
     public PayForm FormRaschet
     {
-        get => GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) as PayForm;
+        get => myFormRaschet; // GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) as PayForm;
         set
         {
-            if (GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) == value) return;
+            //if (GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) == value) return;
+            if (myFormRaschet == value) return;
+            myFormRaschet = value;
             Entity.SF_FORM_RASCH_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
 
+    private PayCondition myPayCondition;
     public PayCondition PayCondition
     {
-        get => GlobalOptions.ReferencesCache.GetPayCondition(Entity.SF_PAY_COND_DC) as PayCondition;
+        get => myPayCondition; //GlobalOptions.ReferencesCache.GetPayCondition(Entity.SF_PAY_COND_DC) as PayCondition;
         set
         {
-            if (GlobalOptions.ReferencesCache.GetPayCondition(Entity.SF_PAY_COND_DC) == value) return;
+            //if (GlobalOptions.ReferencesCache.GetPayCondition(Entity.SF_PAY_COND_DC) == value) return;
+            if(myPayCondition == value) return;
+            myPayCondition = value;
             if (value != null)
                 Entity.SF_PAY_COND_DC = value.DocCode;
             RaisePropertyChanged();
@@ -989,12 +1017,16 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         }
     }
 
+    private References.Currency myCurrency;
+
     public References.Currency Currency
     {
-        get => GlobalOptions.ReferencesCache.GetCurrency(Entity.SF_CRS_DC) as References.Currency;
+        get => myCurrency; //GlobalOptions.ReferencesCache.GetCurrency(Entity.SF_CRS_DC) as References.Currency;
         set
         {
-            if (GlobalOptions.ReferencesCache.GetCurrency(Entity.SF_CRS_DC) == value) return;
+            //if (GlobalOptions.ReferencesCache.GetCurrency(Entity.SF_CRS_DC) == value) return;
+            if (myCurrency == value) return;
+            myCurrency = value;
             if (value != null)
             {
                 Entity.SF_CRS_DC = value.DocCode;
@@ -1134,7 +1166,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) as PayForm;
         PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(Entity.SD_179?.DOC_CODE) as PayCondition;
         VzaimoraschetType =
-            GlobalOptions.ReferencesCache.GetMutualSettlementType(Entity.SD_77?.DOC_CODE) as NomenklProductType;
+            GlobalOptions.ReferencesCache.GetNomenklProductType(Entity.SD_77?.DOC_CODE) as NomenklProductType;
         PersonaResponsible =
             GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) as References.Employee;
         if (Rows == null)
@@ -1143,19 +1175,23 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
             Rows.Clear();
         //Rows = new ObservableCollection<IInvoiceClientRow>();
         if (Entity.TD_84 != null && Entity.TD_84.Count > 0)
+        {
+            var noms = GlobalOptions.ReferencesCache.GetNomenkls(Entity.TD_84.Select(_ => _.SFT_NEMENKL_DC)).Cast<Nomenkl>().ToList();
             foreach (var t in Entity.TD_84)
             {
-                var newRow = new InvoiceClientRowViewModel(t)
+                var newRow = new InvoiceClientRowViewModel(t, true, false)
                 {
-                    Parent = this
+                    Parent = this,
+                    Nomenkl = noms.FirstOrDefault(_ => _.DocCode == t.SFT_NEMENKL_DC),
+                    SDRSchet = t.SFT_SHPZ_DC is null ? null : GlobalOptions.ReferencesCache.GetSDRSchet(t.SFT_SHPZ_DC.Value) as SDRSchet
                 };
                 Rows.Add(newRow);
             }
+        }
+
         Summa = Rows.Sum(_ => _.Summa);
         LoadPayments();
         PaySumma = PaymentDocs.Sum(_ => _.Summa);
-
-        //ShipmentRows = new ObservableCollection<ShipmentRowViewModel>();
         LoadShipments();
     }
 
@@ -1171,8 +1207,8 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
             foreach (var r2 in otgruz)
             {
                 var newItem = new ShipmentRowViewModel(r2);
-                if (r2.SD_24 != null)
-                    newItem.Parent = new WarehouseOrderOut(r2.SD_24);
+                //if (r2.SD_24 != null)
+                //    newItem.Parent = new WarehouseOrderOut(r2.SD_24);
                 ShipmentRows.Add(newItem);
             }
         }

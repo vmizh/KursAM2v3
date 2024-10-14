@@ -67,6 +67,8 @@ public class NomenklProductType : IName, IDocCode, INomenklProductType, IEquatab
             SDRSchet = cache.GetItem<SDRSchet>(SDRSchetDC.Value);
     }
 
+    public DateTime LastUpdateServe { get; set; }
+
     public override string ToString()
     {
         return Name;

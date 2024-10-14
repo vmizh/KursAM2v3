@@ -19,10 +19,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq}/{Id} {Description,nq}")]
 public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employee>, IComparable, ICache
 {
-    public Employee()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -97,6 +93,8 @@ public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employe
         if (CurrencyDC is not null)
             Currency = cache.GetItem<Currency>(CurrencyDC.Value);
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 public class DataAnnotationsDialogEmployeeViewModel : DataAnnotationForFluentApiBase,

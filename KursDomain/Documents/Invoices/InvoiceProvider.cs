@@ -865,12 +865,15 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         }
     }
 
+    private CentrResponsibility myCO;
+
     public CentrResponsibility CO
     {
-        get => GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) as CentrResponsibility;
+        get => myCO; // GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) as CentrResponsibility;
         set
         {
-            if (Equals(GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC), value)) return;
+            if (myCO == value) return;
+            myCO = value;
             Entity.SF_CENTR_OTV_DC = value?.DocCode;
             RaisePropertyChanged();
         }
@@ -883,21 +886,24 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         {
             if (Entity.SF_POLUCH_KONTR_DC == value) return;
             Entity.SF_POLUCH_KONTR_DC = value;
-            KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POLUCH_KONTR_DC) as Kontragent;
+            myKontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POLUCH_KONTR_DC) as Kontragent;
             RaisePropertyChanged(nameof(KontrReceiver));
             RaisePropertyChanged();
         }
     }
+
+    private Kontragent myKontrReceiver;
 
     /// <summary>
     ///     Контрагент - получатель
     /// </summary>
     public Kontragent KontrReceiver
     {
-        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POLUCH_KONTR_DC) as Kontragent;
+        get => myKontrReceiver; // GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POLUCH_KONTR_DC) as Kontragent;
         set
         {
-            if (Equals(GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POLUCH_KONTR_DC), value)) return;
+            if (myKontrReceiver == value) return;
+            myKontrReceiver = value;
             Entity.SF_POLUCH_KONTR_DC = value?.DocCode;
             RaisePropertyChanged();
         }

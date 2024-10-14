@@ -19,11 +19,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
 public class PayForm : IPayForm, IDocCode, IName, IEquatable<PayForm>, IComparable, ICache
 {
-    public PayForm()
-    {
-        LoadFromCache();
-    }
-
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -76,6 +71,8 @@ public class PayForm : IPayForm, IDocCode, IName, IEquatable<PayForm>, IComparab
     {
         
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 /// <summary>

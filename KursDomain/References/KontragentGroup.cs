@@ -36,10 +36,6 @@ public class DataAnnotationsKontragentGroupViewModel : DataAnnotationForFluentAp
 [MetadataType(typeof(DataAnnotationsKontragentGroup))]
 public class KontragentGroup : IName, IKontragentGroup, IEquatable<KontragentGroup>, IComparable, IDocCode, ICache
 {
-    public KontragentGroup()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -105,6 +101,8 @@ public class KontragentGroup : IName, IKontragentGroup, IEquatable<KontragentGro
     {
         
     }
+
+    public DateTime LastUpdateServe { get; set; }
 
     public decimal DocCode
     {

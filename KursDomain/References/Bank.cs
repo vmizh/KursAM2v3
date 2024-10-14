@@ -20,10 +20,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq}")]
 public class Bank : IBank, IDocCode, IName, IEquatable<Bank>, IComparable, ICache
 {
-    public Bank()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -102,6 +98,8 @@ public class Bank : IBank, IDocCode, IName, IEquatable<Bank>, IComparable, ICach
     {
         
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationsBankViewModel))]

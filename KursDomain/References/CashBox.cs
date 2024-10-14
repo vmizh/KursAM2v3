@@ -22,11 +22,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
 public class CashBox : ICashBox, IDocCode, IName, IEquatable<CashBox>, ILoadFromEntity<SD_22>, IComparable, ICache
 {
-    public CashBox()
-    {
-        LoadFromCache();
-    }
-
     public decimal? DefaultCurrencyDC { set; get; }
     public decimal? KontragentDC { get; set; }
     public decimal? CentrResponsibilityDC { get; set; }
@@ -41,6 +36,8 @@ public class CashBox : ICashBox, IDocCode, IName, IEquatable<CashBox>, ILoadFrom
         if (KontragentDC is not null)
             Kontragent = cache.GetItem<Kontragent>(KontragentDC.Value);
     }
+
+    public DateTime LastUpdateServe { get; set; }
 
     [JsonIgnore] public ICurrency DefaultCurrency { get; set; }
 
@@ -71,18 +68,13 @@ public class CashBox : ICashBox, IDocCode, IName, IEquatable<CashBox>, ILoadFrom
 
     public void LoadFromEntity(SD_22 entity, IReferencesCache referencesCache)
     {
-        DefaultCurrency = referencesCache?.GetCurrency(entity.CA_CRS_DC);
         IsNegativeRests = entity.CA_NEGATIVE_RESTS == 1;
-        Kontragent = referencesCache?.GetKontragent(entity.CA_KONTR_DC);
-        CentrResponsibility = referencesCache?.GetCentrResponsibility(entity.CA_CENTR_OTV_DC);
         IsNoBalans = entity.CA_NEGATIVE_RESTS == 1;
         DocCode = entity.DOC_CODE;
         Name = entity.CA_NAME;
-        if (entity.TD_22 != null)
-        {
-            //var newRest = new Cash
-            //var rests = 
-        }
+        DefaultCurrency = referencesCache?.GetCurrency(entity.CA_CRS_DC);
+        Kontragent = referencesCache?.GetKontragent(entity.CA_KONTR_DC);
+        CentrResponsibility = referencesCache?.GetCentrResponsibility(entity.CA_CENTR_OTV_DC);
     }
 
     public string Name { get; set; }

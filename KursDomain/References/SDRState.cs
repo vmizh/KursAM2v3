@@ -16,10 +16,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
 public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>, IComparable, ICache
 {
-    public SDRState()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -79,6 +75,8 @@ public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>, ICompa
     {
         
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationsSDRState))]

@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Core.ViewModel.Base;
 using Data;
 using KursDomain;
 using KursDomain.IDocuments.Finance;
@@ -12,8 +13,10 @@ using KursDomain.References;
 namespace KursAM2.ViewModel.Finance.Invoices.Base
 {
     [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
-    public class InvoiceClientBase : IInvoiceClient
+    public class InvoiceClientBase :  RSViewModelBase, IInvoiceClient
     {
+        private Kontragent myClient;
+
         public InvoiceClientBase(SD_84 entity)
         {
             if (entity == null)
@@ -71,10 +74,21 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public PayCondition PayCondition { get; set; }
 
         public Kontragent Receiver { get; set; }
-        public Kontragent Client { get; set; }
+
+        public Kontragent Client
+        {
+            get => myClient;
+            set
+            {
+                if (Equals(value, myClient)) return;
+                myClient = value;
+                RaisePropertyChanged();
+            }
+        }
+
         public Kontragent Diler { get; set; }
 
-        public decimal DocCode { get; set; }
+        public override decimal DocCode { get; set; }
         public Guid Id { get; set; }
         public CentrResponsibility CO { get; set; }
         public NomenklProductType VzaimoraschetType { get; set; }
@@ -85,7 +99,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public Currency Currency { get; set; }
         public decimal SummaOtgruz { get; set; }
         public decimal DilerSumma { get; set; }
-        public string Note { get; set; }
+        public override string Note { get; set; }
         public bool IsAccepted { get; set; }
         public decimal Summa { get; set; }
         public string CREATOR { get; set; }

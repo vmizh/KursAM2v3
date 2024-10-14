@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.Entity;
 using KursDomain.ICommon;
@@ -12,19 +13,23 @@ namespace KursDomain.IReferences;
 /// </summary>
 public interface IReferencesCache
 {
-    void UpdateListGuid<T>(IEnumerable<T> list) where T : IDocGuid;
+    void UpdateListGuid<T>(IEnumerable<T> list, DateTime? nowFix) where T : IDocGuid;
     void AddOrUpdateGuid<T>(T item) where T : IDocGuid;
     void DropAllGuid<T>() where T : IDocGuid;
     void DropGuid<T>(Guid id) where T : IDocGuid;
     T GetItemGuid<T>(Guid dc) where T : IDocGuid;
-    IEnumerable<T> GetItemsGuid<T>() where T : IDocGuid;
+    IEnumerable<T> GetAllGuid<T>() where T : IDocGuid;
+
+    IEnumerable<T> GetListGuid<T>(IEnumerable<Guid> ids) where T : IDocGuid;
    
-    void UpdateList<T>(IEnumerable<T> list) where T : IDocCode;
+    void UpdateList<T>(IEnumerable<T> list, DateTime? nowFix) where T : IDocCode;
     void AddOrUpdate<T>(T item) where T : IDocCode;
     void DropAll<T>() where T : IDocCode;
     void Drop<T>(decimal dc) where T : IDocCode;
     T GetItem<T>(decimal dc) where T : IDocCode;
-    IEnumerable<T> GetItems<T>() where T : IDocCode;
+    IEnumerable<T> GetAll<T>() where T : IDocCode;
+
+    IEnumerable<T> GetList<T>(IEnumerable<decimal> dcs) where T : IDocCode;
 
 
     public bool IsChangeTrackingOn { set; get; }
@@ -90,6 +95,8 @@ public interface IReferencesCache
     INomenkl GetNomenkl(decimal? dc);
     INomenkl GetNomenkl(decimal dc);
     IEnumerable<INomenkl> GetNomenklsAll();
+
+    IEnumerable<INomenkl> GetNomenkls(IEnumerable<decimal> dcList);
 
 
     INomenklMain GetNomenklMain(Guid? id);

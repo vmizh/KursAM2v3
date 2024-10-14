@@ -7,12 +7,13 @@ using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References.RedisCache;
 using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
 [DebuggerDisplay("{DocCode,nq} {Name,nq} {ParentDC,nq")]
-public class ClientCategory : IClientCategory, IDocCode, IName, IEquatable<ClientCategory>, IComparable
+public class ClientCategory : IClientCategory, IDocCode, IName, IEquatable<ClientCategory>, IComparable, ICache
 {
     public int CompareTo(object obj)
     {
@@ -63,6 +64,13 @@ public class ClientCategory : IClientCategory, IDocCode, IName, IEquatable<Clien
         // ReSharper disable once NonReadonlyMemberInGetHashCode
         return DocCode.GetHashCode();
     }
+
+    public void LoadFromCache()
+    {
+       
+    }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 /// <summary>

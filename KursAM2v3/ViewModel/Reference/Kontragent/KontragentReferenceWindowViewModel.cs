@@ -574,7 +574,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         private void KontragentAddCopy(object obj)
         {
-            SD_43 doc = null;
+            SD_43 doc;
             using (var context = GlobalOptions.GetEntities())
             {
                 doc = context.SD_43.Include(_ => _.TD_43)

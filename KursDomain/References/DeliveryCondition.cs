@@ -11,10 +11,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
 public class DeliveryCondition : IDeliveryCondition, IDocCode, IName, IEquatable<DeliveryCondition>, IComparable, ICache
 {
-    public DeliveryCondition()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -68,4 +64,6 @@ public class DeliveryCondition : IDeliveryCondition, IDocCode, IName, IEquatable
     {
        
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }

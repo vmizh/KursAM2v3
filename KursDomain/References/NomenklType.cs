@@ -11,10 +11,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq} {Name,nq}")]
 public class NomenklType : IDocCode, IName, INomenklType, IEquatable<NomenklType>, IComparable, ICache
 {
-    public NomenklType()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -70,4 +66,6 @@ public class NomenklType : IDocCode, IName, INomenklType, IEquatable<NomenklType
     public void LoadFromCache()
     {
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }

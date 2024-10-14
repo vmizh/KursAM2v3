@@ -125,12 +125,15 @@ public sealed class AccruedAmountForClientRowViewModel : RSViewModelBase, IDataE
         }
     }
 
+    private Nomenkl myNomenkl;
+
     public Nomenkl Nomenkl
     {
-        get => GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) as Nomenkl;
+        get => myNomenkl;// GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) as Nomenkl;
         set
         {
             if (GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) == value) return;
+            myNomenkl = value;
             if (value != null)
             {
                 Entity.NomenklDC = value.DocCode;

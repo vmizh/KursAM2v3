@@ -22,10 +22,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq} {NomenklNumber,nq} {Name,nq} {Currency,nq}")]
 public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl, IComparable, ICache
 {
-    public Nomenkl()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -64,6 +60,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     [ReadOnly(true)]
     public string NomenklNumber { get; set; }
 
+    [Display(AutoGenerateField = false)]
     public decimal? UnitDC { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Ед.изм.")]
@@ -71,6 +68,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     [JsonIgnore]
     public IUnit Unit { get; set; }
 
+    [Display(AutoGenerateField = false)]
     public decimal? GroupDC { set; get; }
 
     [Display(AutoGenerateField = false, Name = "Категория")]
@@ -94,6 +92,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     [ReadOnly(true)]
     public bool IsNakladExpense { get; set; }
 
+    [Display(AutoGenerateField = false)]
     public decimal? CurrencyDC { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Валюта")]
@@ -105,6 +104,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     [ReadOnly(true)]
     public decimal? DefaultNDSPercent { get; set; }
 
+    [Display(AutoGenerateField = false)]
     public decimal? NomenklTypeDC { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Тип товара")]
@@ -112,6 +112,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     [JsonIgnore]
     public INomenklType NomenklType { get; set; }
 
+    [Display(AutoGenerateField = false)]
     public decimal? SDRSchetDC { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Счет. дох/расх")]
@@ -119,6 +120,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     [JsonIgnore]
     public ISDRSchet SDRSchet { get; set; }
 
+    [Display(AutoGenerateField = false)]
     public decimal? ProductTypeDC { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Тип продукции")]
@@ -138,6 +140,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     [ReadOnly(true)]
     public bool IsUslugaInRentabelnost { get; set; }
 
+    [Display(AutoGenerateField = false)]
     public Guid? NomenklMainId { set; get; }
 
     [Display(AutoGenerateField = false, Name = "Основная ном.")]
@@ -167,21 +170,21 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
         IsUsluga = entity.NOM_0MATER_1USLUGA == 1;
         IsProguct = entity.NOM_1PROD_0MATER == 1;
         IsNakladExpense = entity.NOM_1NAKLRASH_0NO == 1;
-        DefaultNDSPercent = (decimal?) entity.NOM_NDS_PERCENT;
+        DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT;
         IsDeleted = entity.NOM_DELETED == 1;
         IsCurrencyTransfer = entity.IsCurrencyTransfer ?? false;
         IsUslugaInRentabelnost = entity.IsUslugaInRent ?? false;
         UpdateDate = entity.UpdateDate ?? DateTime.MinValue;
-        MainId = entity.MainId ?? Guid.Empty;
         NomenklMain = refCache.GetNomenklMain(entity.MainId);
+        MainId = entity.MainId ?? Guid.Empty;
         if (NomenklMain.IsCurrencyTransfer != IsCurrencyTransfer)
             IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer;
         NomenklNumber = NomenklMain.NomenklNumber + ' ' + refCache.GetCurrency(entity.NOM_SALE_CRS_DC);
+        NomenklType = NomenklMain.NomenklType;
+        ProductType = NomenklMain.ProductType;
         Unit = refCache.GetUnit(entity.NOM_ED_IZM_DC);
         Currency = refCache.GetCurrency(entity.NOM_SALE_CRS_DC);
         Group = refCache.GetNomenklGroup(entity.NOM_CATEG_DC);
-        NomenklType = NomenklMain.NomenklType;
-        ProductType = NomenklMain.ProductType;
     }
 
     public override bool Equals(object obj)
@@ -216,6 +219,8 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
         if (NomenklMainId is not null)
             NomenklMain = cache.GetItemGuid<NomenklMain>(NomenklMainId.Value);
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationsNomenklViewModel))]

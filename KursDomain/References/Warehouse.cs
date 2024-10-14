@@ -17,10 +17,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq}")]
 public class Warehouse : IWarehouse, IDocCode, IDocGuid, IName, IEquatable<Warehouse>, IComparable, ICache
 {
-    public Warehouse()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -87,6 +83,8 @@ public class Warehouse : IWarehouse, IDocCode, IDocGuid, IName, IEquatable<Wareh
         if(StoreKeeperDC is not null) 
             StoreKeeper = cache.GetItem<Employee>(StoreKeeperDC.Value);
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationsStore))]

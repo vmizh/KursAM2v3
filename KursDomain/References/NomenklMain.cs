@@ -11,10 +11,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{Id} {NomenklNumber,nq} {Name,nq}")]
 public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain>, IComparable<NomenklMain>, IComparable, ICache
 {
-    public NomenklMain()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -87,10 +83,6 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
         Name = entity.Name;
         Notes = entity.Note;
         NomenklNumber = entity.NomenklNumber;
-        Unit = refCache?.GetUnit(entity.UnitDC);
-        Category = refCache?.GetNomenklGroup(entity.CategoryDC);
-        NomenklType = refCache?.GetNomenklType(entity.TypeDC);
-        ProductType = refCache?.GetProductType(entity.ProductDC);
         FullName = entity.FullName;
         IsUsluga = entity.IsUsluga;
         IsProguct = entity.IsComplex;
@@ -98,6 +90,10 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
         IsOnlyState = entity.IsOnlyState ?? false;
         IsCurrencyTransfer = entity.IsCurrencyTransfer ?? false;
         IsRentabelnost = entity.IsRentabelnost ?? false;
+        Unit = refCache?.GetUnit(entity.UnitDC);
+        Category = refCache?.GetNomenklGroup(entity.CategoryDC);
+        NomenklType = refCache?.GetNomenklType(entity.TypeDC);
+        ProductType = refCache?.GetProductType(entity.ProductDC);
     }
 
     public bool Equals(IDocGuid x, IDocGuid y)
@@ -142,4 +138,6 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
         if (CountryId is not null)
             Country = cache.GetItemGuid<Country>(CountryId.Value);
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }

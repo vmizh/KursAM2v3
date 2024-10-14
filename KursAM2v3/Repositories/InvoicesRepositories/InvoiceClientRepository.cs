@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using Data;
 using KursAM2.ViewModel.Finance.Invoices.Base;
@@ -72,7 +73,9 @@ namespace KursAM2.Repositories.InvoicesRepositories
         public List<IInvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd)
         {
             var data = Context.InvoiceClientQuery.Where(_ => _.DocDate >= dateStart && _.DocDate <= dateEnd)
+                .AsNoTracking()
                 .OrderByDescending(_ => _.DocDate).ToList();
+            var dd = data.FirstOrDefault(_ => _.ClientDC == 10430003379);
             return data.Select(_ => _.DocCode).Distinct()
                 .Select(dc => new InvoiceClientBase(data.Where(_ => _.DocCode == dc))).Cast<IInvoiceClient>().ToList();
         }

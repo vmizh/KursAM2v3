@@ -173,12 +173,12 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
         StartBalans = entity.START_BALANS ?? new DateTime(2000, 1, 1);
         Name = entity.NAME;
         Notes = entity.NOTES;
-        ResponsibleEmployee = refCache.GetEmployee(entity.OTVETSTV_LICO);
-        Currency = refCache.GetCurrency(entity.VALUTA_DC);
-        Group = refCache.GetKontragentGroup(entity.EG_ID);
         IsBalans = entity.FLAG_BALANS == 1;
         IsDeleted = entity.DELETED == 1;
         Id = entity.Id;
+        ResponsibleEmployee = refCache.GetEmployee(entity.OTVETSTV_LICO);
+        Currency = refCache.GetCurrency(entity.VALUTA_DC);
+        Group = refCache.GetKontragentGroup(entity.EG_ID);
     }
 
     public override bool Equals(object obj)
@@ -206,6 +206,8 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
         if (RegionDC is not null)
             Region = cache.GetItem<Region>(RegionDC.Value);
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 public class DataAnnotationsKontragent : DataAnnotationForFluentApiBase, IMetadataProvider<KontragentViewModel>

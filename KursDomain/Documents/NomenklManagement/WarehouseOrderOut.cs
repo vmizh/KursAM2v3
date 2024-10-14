@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -43,24 +44,41 @@ public sealed class WarehouseOrderOut : SD_24ViewModel, ILastChanged
         using (var ctx = GlobalOptions.GetEntities())
         {
             Entity = entity ?? DefaultValue();
-            var data = Entity.TD_24;
-            if (data != null && data.Count != 0)
+            var data = Entity.TD_24.ToList();
+            var dd = new List<TD_24>();
+            var dist = new List<decimal>();
+            
+            if (data.Count != 0)
+            {
+                foreach (var row in data.Where(_ => _.DDT_RASH_ORD_DC is not null))
+                {
+                    if (dist.Contains(row.DDT_RASH_ORD_DC.Value)) continue;
+                    dist.Add(row.DDT_RASH_ORD_DC.Value);
+                    var s = ctx.TD_24.Include(_ => _.SD_24).Where(_ => _.DOC_CODE == row.DDT_RASH_ORD_DC);
+                    var ss = s.FirstOrDefault(_ => _.CODE == row.DDT_RASH_ORD_CODE);
+                    if(ss != null) { dd.Add(ss); }
+                }
+
                 foreach (var item in data)
                 {
                     var r = new WarehouseOrderOutRow(item) { Parent = this };
-                    var ordIn = ctx.TD_24.Include(_ => _.SD_24).FirstOrDefault(_ =>
+                    var ordIn = dd.FirstOrDefault(_ =>
                         _.DDT_RASH_ORD_DC == item.DOC_CODE && _.DDT_RASH_ORD_CODE == item.CODE);
                     if (ordIn != null)
                     {
-                        var h = new WarehouseOrderIn();
-                        h.Entity = ordIn.SD_24;
+                        var h = new WarehouseOrderIn
+                        {
+                            Entity = ordIn.SD_24
+                        };
                         r.OrderInRow = new WarehouseOrderInRow(ordIn)
                         {
                             Parent = h
                         };
                     }
+
                     Rows.Add(r);
                 }
+            }
         }
 
         myState = RowStatus.NotEdited;
@@ -186,6 +204,12 @@ public sealed class WarehouseOrderOut : SD_24ViewModel, ILastChanged
             myLastChangerDate = value;
             RaisePropertyChanged();
         }
+    }
+
+    private class LinkDoc
+    {
+        public decimal DC { set; get; }
+        public int Code { set; get; }
     }
 }
 

@@ -16,10 +16,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq}")]
 public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>, IComparable, ICache
 {
-    public SDRSchet()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -97,6 +93,8 @@ public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>, ICompa
     public void LoadFromCache()
     {
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 /// <summary>

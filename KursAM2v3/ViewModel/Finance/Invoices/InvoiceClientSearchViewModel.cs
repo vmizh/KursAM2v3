@@ -21,6 +21,7 @@ using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.Invoices;
+using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
@@ -517,11 +518,16 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     frm.loadingIndicator.Visibility = Visibility.Hidden;
                     foreach (var d in result)
+                    {
+                        ((InvoiceClientBase)d).RaisePropertyAllChanged();
                         Documents.Add(d);
+                    }
                 });
                 GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             });
+            RaisePropertyChanged(nameof(Documents));
         }
+
         public override void DocumentOpen(object form)
         {
             if (CurrentDocument == null) return;

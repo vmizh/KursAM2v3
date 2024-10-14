@@ -242,12 +242,15 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
         }
     }
 
+    private NomenklType myNomenklType;
+
     public NomenklType NomenklType
     {
-        get => GlobalOptions.ReferencesCache.GetNomenklType(Entity.TypeDC) as NomenklType;
+        get => myNomenklType; // GlobalOptions.ReferencesCache.GetNomenklType(Entity.TypeDC) as NomenklType;
         set
         {
-            if (GlobalOptions.ReferencesCache.GetNomenklType(Entity.TypeDC) == value) return;
+            if (myNomenklType == value) return;
+            myNomenklType = value;
             if(value != null)
                 Entity.TypeDC = value.DocCode;
             RaisePropertyChanged();

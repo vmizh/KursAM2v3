@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-    
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -28,20 +27,22 @@
             <control:WindowMenu Height="60" DockPanel.Dock="Top" />
             <DockPanel DockPanel.Dock="Top" LastChildFill="False">
                 <dxe:DateEdit Width="120" EditValue="{Binding StartDate}"
-                              IsEnabled="{Binding IsDateEnabled}" 
-                              DockPanel.Dock="Left"/>
+                              IsEnabled="{Binding IsDateEnabled}"
+                              DockPanel.Dock="Left" />
                 <Label Content="по" Margin="10,0,5,0" />
                 <dxe:DateEdit Width="120" EditValue="{Binding EndDate}"
                               IsEnabled="{Binding IsDateEnabled}"
-                              DockPanel.Dock="Left"/>
+                              DockPanel.Dock="Left" />
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right">
-                    <Label Content="Строка поиска:" Visibility="{Binding IsCanSearch, Converter={StaticResource booleanToVisibilityConverter}}" Margin="0,0,5,0"/>
+                    <Label Content="Строка поиска:"
+                           Visibility="{Binding IsCanSearch, Converter={StaticResource booleanToVisibilityConverter}}"
+                           Margin="0,0,5,0" />
                     <dxe:TextEdit
                         MinWidth="150"
                         Margin="5 0"
                         Visibility="{Binding IsCanSearch, Converter={StaticResource booleanToVisibilityConverter}}"
-                        EditValue="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        ></dxe:TextEdit>
+                        EditValue="{Binding SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    </dxe:TextEdit>
                 </StackPanel>
             </DockPanel>
             <dxg:GridControl
@@ -49,27 +50,25 @@
                 Name="gridDocuments"
                 Margin="0,20,0,0"
                 dx:DXSerializer.SerializationID="gridDocuments"
-                ItemsSource="{Binding Documents, UpdateSourceTrigger=PropertyChanged}"
+                ItemsSource="{Binding Documents, Mode=TwoWay, NotifyOnSourceUpdated=True, 
+                NotifyOnTargetUpdated=True, UpdateSourceTrigger=PropertyChanged}"
                 CurrentItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
                 SelectedItem="{Binding CurrentDocument, UpdateSourceTrigger=PropertyChanged}"
                 SelectedItems="{Binding SelectedDocuments, UpdateSourceTrigger=PropertyChanged}"
                 CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
-                AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn"
-                >
+                AutoGeneratingColumn="GridDocuments_OnAutoGeneratingColumn">
                 <dxg:GridControl.View>
                     <dxg:TableView
                         Name="gridDocumentsTableView"
-                        Style="{StaticResource TableView.Search}" 
-                        >
-                       
+                        Style="{StaticResource TableView.Search}">
                     </dxg:TableView>
                 </dxg:GridControl.View>
             </dxg:GridControl>
         </DockPanel>
         <base:LoadingIndicator x:Name="loadingIndicator" Visibility="Hidden" VerticalAlignment="Center"
-                                   HorizontalAlignment="Center"
-                                   Width="100"
-                                   Height="100"
-                                   RenderTransformOrigin="0.17,1.122" />
+                               HorizontalAlignment="Center"
+                               Width="100"
+                               Height="100"
+                               RenderTransformOrigin="0.17,1.122" />
     </Grid>
 </dx:ThemedWindow>

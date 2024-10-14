@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using Core.WindowsManager;
 using Data;
 using Helper;
+using KursDomain.References;
+using KursDomain.References.RedisCache;
 using KursDomain.Repository.Base;
+using ServiceStack.Redis;
 
 namespace KursDomain.Repository.NomenklRepository;
 public class NomenklMoveInfo
@@ -66,6 +70,9 @@ public class NomenklQuantityInfoExt : NomenklQuantityInfo
 public class NomenklRepository : KursGenericRepository<SD_83, ALFAMEDIAEntities, decimal>,
     INomenklRepository
 {
+    private readonly RedisManagerPool redisManager =
+        new RedisManagerPool(ConfigurationManager.AppSettings["redis.connection"]);
+
     public NomenklRepository(ALFAMEDIAEntities context) : base(context)
     {
     }
@@ -153,6 +160,31 @@ public class NomenklRepository : KursGenericRepository<SD_83, ALFAMEDIAEntities,
                 WindowManager.ShowError(ex);
                 throw;
             }
+        }
+    }
+
+    public IEnumerable<Nomenkl> FindByName(string name)
+    {
+        var n = name.ToLower();
+        using (var redisClient = redisManager.GetClient())
+        {
+            redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+            var redis = redisClient.As<Nomenkl>();
+            var list = redis.Lists["Cache:Nomenkl"].GetAll()
+                .Where(_ => (_.NomenklNumber + _.FullName + _.Name + _.Notes).ToLower().Contains(n));
+            return GlobalOptions.ReferencesCache.GetNomenkls(list.Select(_ => _.DocCode)).Cast<Nomenkl>();
+        }
+    }
+
+    public IEnumerable<Nomenkl> GetByGroupDC(decimal groupDC)
+    {
+        using (var redisClient = redisManager.GetClient())
+        {
+            redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+            var redis = redisClient.As<Nomenkl>();
+            var list = redis.Lists["Cache:Nomenkl"].GetAll()
+                .Where(_ => _.GroupDC == groupDC);
+            return GlobalOptions.ReferencesCache.GetNomenkls(list.Select(_ => _.DocCode)).Cast<Nomenkl>();
         }
     }
 }

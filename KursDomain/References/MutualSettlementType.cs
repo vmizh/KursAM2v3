@@ -14,10 +14,6 @@ namespace KursDomain.References;
 [DebuggerDisplay("{DocCode,nq} {Name,nq} Валют.конверт.:{IsCurrencyConvert,nq}")]
 public class MutualSettlementType : IMutualSettlementType, IDocCode, IName, IEquatable<MutualSettlementType>, IComparable, ICache
 {
-    public MutualSettlementType()
-    {
-        LoadFromCache();
-    }
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -73,4 +69,6 @@ public class MutualSettlementType : IMutualSettlementType, IDocCode, IName, IEqu
     {
         
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }

@@ -64,12 +64,7 @@ namespace KursAM2.View.DialogUserControl.Standart
 
         #region Commands
 
-        //public override void RefreshData(object obj)
-        //{
-        //    ItemsCollection.Clear();
-        //    ItemsCollection = new ObservableCollection<T>(loadMethod(SearchText));
-        //}
-
+        
         public override void Ok(object obj)
         {
             DialogResult = true;

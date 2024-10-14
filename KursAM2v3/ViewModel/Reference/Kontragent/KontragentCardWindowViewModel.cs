@@ -33,6 +33,8 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         public ObservableCollection<KontragentGruzoRequisite> DeletedKontragentGruzoRequisites =
             new ObservableCollection<KontragentGruzoRequisite>();
 
+        public bool IsCanSetIncludeInBalans = GlobalOptions.UserInfo.IsAdmin;
+
         private TileBarItem mySelectedTab;
 
         public KontragentCardWindowViewModel()
@@ -72,8 +74,6 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             else
                 NewData(groupId);
         }
-
-        public bool IsCanSetIncludeInBalans = GlobalOptions.UserInfo.IsAdmin;
 
         public ObservableCollection<KontragentClientCategory> Categories { set; get; }
             = new ObservableCollection<KontragentClientCategory>();
@@ -687,7 +687,15 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                     Kontragent.myState = RowStatus.NotEdited;
                     foreach (var b in BankAndAccounts) b.myState = RowStatus.NotEdited;
                     foreach (var g in Kontragent.GruzoRequisities) g.myState = RowStatus.NotEdited;
-                    var k = GlobalOptions.ReferencesCache.GetKontragent(Kontragent.DocCode);
+                    //GlobalOptions.ReferencesCache.GetKontragent(Kontragent.DocCode);
+                    var kontr = new KursDomain.References.Kontragent();
+                    kontr.LoadFromEntity(Kontragent.Entity,GlobalOptions.ReferencesCache);
+                    kontr.GroupDC = ((IDocCode)kontr.Group)?.DocCode;
+                    kontr.ClientCategoryDC = ((IDocCode)kontr.ClientCategory)?.DocCode;
+                    kontr.ResponsibleEmployeeDC = ((IDocCode)kontr.ResponsibleEmployee)?.DocCode;
+                    kontr.RegionDC = ((IDocCode)kontr.Region)?.DocCode;
+                    kontr.CurrencyDC = ((IDocCode)kontr.Currency)?.DocCode;
+                    GlobalOptions.ReferencesCache.AddOrUpdate(kontr);
                 }
                 catch (Exception e)
                 {

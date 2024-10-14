@@ -19,10 +19,6 @@ namespace KursDomain.References;
 public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currency>, IComparable, ICache
 {
 
-    public Currency()
-    {
-        LoadFromCache();
-    }
     private string _Code;
     private decimal _DocCode;
     private string _FullName;
@@ -163,6 +159,8 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
     {
         
     }
+    [DataMember]
+    public DateTime LastUpdateServe { get; set; }
 
     public static bool operator ==(Currency left, Currency right)
     {

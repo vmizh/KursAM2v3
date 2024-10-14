@@ -61,4 +61,6 @@ public class ProductType : IProductType, IDocCode, IName, IEquatable<ProductType
     public void LoadFromCache()
     {
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }

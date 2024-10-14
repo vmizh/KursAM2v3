@@ -28,7 +28,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         IsNDSInPrice = isNDSInPrice;
     }
 
-    public InvoiceClientRowViewModel(TD_84 entity, bool isNDSInPrice = true)
+    public InvoiceClientRowViewModel(TD_84 entity, bool isNDSInPrice = true, bool isLoadRef = true)
     {
         if (entity == null)
         {
@@ -37,7 +37,8 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         else
         {
             Entity = entity;
-            LoadReference();
+            if(isLoadRef)
+                LoadReference();
             CalcRow();
         }
 
@@ -475,13 +476,18 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         }
     }
 
+    private Nomenkl myNomenkl;
+    
     public Nomenkl Nomenkl
     {
-        get => GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC) as Nomenkl;
+        get => myNomenkl; //GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC) as Nomenkl;
         set
         {
-            if (Equals(GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC), value)) return;
-            Entity.SFT_NEMENKL_DC = value.DocCode;
+            //if (Equals(GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC), value)) return;
+            if(myNomenkl == value) return;
+            myNomenkl = value;
+            if(value != null)
+                Entity.SFT_NEMENKL_DC = value.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -571,12 +577,16 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         }
     }
 
+    private SDRSchet mySDRSchet;
+
     public SDRSchet SDRSchet
     {
-        get => GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC) as SDRSchet;
+        get => mySDRSchet; //GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC) as SDRSchet;
         set
         {
-            if (Equals(GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC), value)) return;
+            //if (Equals(GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC), value)) return;
+            if(mySDRSchet == value) return;
+            mySDRSchet = value;
             Entity.SFT_SHPZ_DC = value?.DocCode;
             RaisePropertyChanged();
         }

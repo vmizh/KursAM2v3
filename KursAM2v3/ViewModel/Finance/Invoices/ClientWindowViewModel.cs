@@ -1569,6 +1569,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         // ReSharper disable once PossibleNullReferenceException
                         DocCode = Document.DocCode,
                         Code = newCode,
+                        Nomenkl = item,
                         Parent = Document,
                         NDSPercent = nds,
                         Quantity = 1,
@@ -1576,9 +1577,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         IsNDSInPrice = Document.IsNDSIncludeInPrice,
                         Note = "",
                         Id = Guid.NewGuid(),
-                        DocId = Document.Id
+                        DocId = Document.Id,
                     };
-                    r.Entity.SFT_NEMENKL_DC = item.DocCode;
+                    //r.Entity.SFT_NEMENKL_DC = item.DocCode;
                     Document?.Rows.Add(r);
                     if (Document != null)
                         Document.Entity.TD_84.Add(r.Entity);

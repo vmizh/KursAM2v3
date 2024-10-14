@@ -93,6 +93,8 @@ public class NomenklGroup : IDocCode, IDocGuid, IName, INomenklGroup, IEquatable
     {
         
     }
+
+    public DateTime LastUpdateServe { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationsSD_82ViewModel))]
