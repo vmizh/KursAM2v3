@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading;
+using KursAM2.Repositories.RedisRepository;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
 using KursDomain.IReferences.Kontragent;
 using KursDomain.IReferences.Nomenkl;
+using Newtonsoft.Json;
 using ServiceStack.Redis;
 
 namespace KursDomain.References.RedisCache;
@@ -29,11 +34,38 @@ public class RedisCacheReferences : IReferencesCache
     private readonly RedisManagerPool redisManager =
         new RedisManagerPool(ConfigurationManager.AppSettings["redis.connection"]);
 
+
     private bool isStartLoad = true;
+
+    public RedisCacheReferences()
+    {
+        ThreadPool.QueueUserWorkItem(x =>
+        {
+            using (var redisClient = new RedisClient(ConfigurationManager.AppSettings["redis.connection"]))
+            {
+                using (var subscription = redisClient.CreateSubscription())
+                {
+                    subscription.OnSubscribe = channel => { Console.WriteLine($"Client #{channel} Subscribed"); };
+                    subscription.OnUnSubscribe = channel => { Console.WriteLine($"Client #{channel} UnSubscribed"); };
+                    subscription.OnMessage = UpdateReferences;
+
+                    subscription.SubscribeToChannelsMatching("Cache:*");
+                }
+            }
+        });
+    }
 
     public IEnumerable<T> GetList<T>(IEnumerable<decimal> dcs) where T : IDocCode
     {
-        throw new NotImplementedException();
+        if (dcs is null) return Enumerable.Empty<T>();
+        var idList = dcs.ToList();
+        using (var redisClient = redisManager.GetClient())
+        {
+            redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+            var redis = redisClient.As<T>();
+            var list = redis.Lists[$"Cache:{typeof(T).Name}"].GetAll().Where(_ => idList.Contains(_.DocCode));
+            return list;
+        }
     }
 
     public bool IsChangeTrackingOn { get; set; }
@@ -53,7 +85,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return CashBoxes[dc];
             var item = GetItem<CashBox>(dc);
             if (item is null) return null;
-            CashBoxes.Add(dc, item);
+            CashBoxes[dc] = item;
             return CashBoxes[dc];
         }
 
@@ -96,7 +128,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return NomenklTypes[dc.Value];
             var item = GetItem<NomenklType>(dc.Value);
             if (item is null) return null;
-            NomenklTypes.Add(dc.Value, item);
+            NomenklTypes[dc.Value] = item;
             return NomenklTypes[dc.Value];
         }
 
@@ -129,7 +161,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return NomenklProductTypes[dc];
             var item = GetItem<NomenklProductType>(dc);
             if (item is null) return null;
-            NomenklProductTypes.Add(dc, item);
+            NomenklProductTypes[dc] = item;
             return NomenklProductTypes[dc];
         }
 
@@ -161,7 +193,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return ProductTypes[dc];
             var item = GetItem<ProductType>(dc);
             if (item is null) return null;
-            ProductTypes.Add(dc, item);
+            ProductTypes[dc] = item;
             return ProductTypes[dc];
         }
 
@@ -189,7 +221,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return CentrResponsibilities[dc.Value];
             var item = GetItem<CentrResponsibility>(dc.Value);
             if (item is null) return null;
-            CentrResponsibilities.Add(dc.Value, item);
+            CentrResponsibilities[dc.Value] = item;
             return CentrResponsibilities[dc.Value];
         }
 
@@ -217,7 +249,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return Banks[dc.Value];
             var item = GetItem<Bank>(dc.Value);
             if (item is null) return null;
-            Banks.Add(dc.Value, item);
+            Banks[dc.Value] = item;
             return Banks[dc.Value];
         }
 
@@ -245,7 +277,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return BankAccounts[dc.Value];
             var item = GetItem<BankAccount>(dc.Value);
             if (item is null) return null;
-            BankAccounts.Add(dc.Value, item);
+            BankAccounts[dc.Value] = item;
             return BankAccounts[dc.Value];
         }
 
@@ -274,7 +306,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return KontragentGroups[dc];
             var item = GetItem<KontragentGroup>(dc);
             if (item is null) return null;
-            KontragentGroups.Add(dc, item);
+            KontragentGroups[dc] = item;
             return KontragentGroups[dc];
         }
 
@@ -307,7 +339,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return Kontragents[dc];
             var item = GetItem<Kontragent>(dc);
             if (item is null) return null;
-            Kontragents.Add(dc, item);
+            Kontragents[dc] = item;
             return Kontragents[dc];
         }
 
@@ -349,7 +381,7 @@ public class RedisCacheReferences : IReferencesCache
             var item = list.FirstOrDefault(_ => _.Id == id);
             if (item is null) return null;
             ((ICache)item)?.LoadFromCache();
-            Nomenkls.Add(item.DocCode, item);
+            Nomenkls[item.DocCode] = item;
             return item;
         }
     }
@@ -368,7 +400,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return Nomenkls[dc];
             var item = GetItem<Nomenkl>(dc);
             if (item is null) return null;
-            Nomenkls.Add(dc, item);
+            Nomenkls[dc] = item;
             return Nomenkls[dc];
         }
 
@@ -393,8 +425,8 @@ public class RedisCacheReferences : IReferencesCache
     {
         if (dcList == null || !dcList.Any()) return new List<INomenkl>();
         var list = dcList.ToList();
-       
-        var timers = GetChangeTracker<Nomenkl>(); 
+
+        var timers = GetChangeTracker<Nomenkl>();
         var nomenkls = GetRawAll<Nomenkl>().Where(_ => list.Contains(_.DocCode)).ToList();
         var newItems = list.Where(dc => !Nomenkls.ContainsKey(dc)).ToList();
         foreach (var dc in newItems)
@@ -402,8 +434,9 @@ public class RedisCacheReferences : IReferencesCache
             var d = nomenkls.FirstOrDefault(_ => _.DocCode == dc);
             if (d is null) continue;
             ((ICache)d).LoadFromCache();
-            Nomenkls.Add(dc,d);
+            Nomenkls.Add(dc, d);
         }
+
         var updItems = (from dc in list.Except(newItems)
             let track = timers.FirstOrDefault(_ => _.Id == dc.ToString())
             where track != null && ((ICache)Nomenkls[dc]).LastUpdateServe < track.UpdateTime
@@ -433,7 +466,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOutGuid(itemCache)) return NomenklMains[id];
             var item = GetItemGuid<NomenklMain>(id);
             if (item is null) return null;
-            NomenklMains.Add(id, item);
+            NomenklMains[id] = item;
             return NomenklMains[id];
         }
 
@@ -461,7 +494,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return NomenklGroups[dc.Value];
             var item = GetItem<NomenklGroup>(dc.Value);
             if (item is null) return null;
-            NomenklGroups.Add(dc.Value, item);
+            NomenklGroups[dc.Value] = item;
             return NomenklGroups[dc.Value];
         }
 
@@ -493,7 +526,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return Warehouses[dc];
             var item = GetItem<Warehouse>(dc);
             if (item is null) return null;
-            Warehouses.Add(dc, item);
+            Warehouses[dc] = item;
             return Warehouses[dc];
         }
 
@@ -531,7 +564,7 @@ public class RedisCacheReferences : IReferencesCache
             var item = list.FirstOrDefault(_ => _.TabelNumber == tabelNumber);
             if (item is null) return null;
             ((ICache)item)?.LoadFromCache();
-            Employees.Add(item.DocCode, item);
+            Employees[item.DocCode] = item;
             return item;
         }
     }
@@ -545,7 +578,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return Employees[dc.Value];
             var item = GetItem<Employee>(dc.Value);
             if (item is null) return null;
-            Employees.Add(dc.Value, item);
+            Employees[dc.Value] = item;
             return Employees[dc.Value];
         }
 
@@ -578,7 +611,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return SDRSchets[dc.Value];
             var item = GetItem<SDRSchet>(dc.Value);
             if (item is null) return null;
-            SDRSchets.Add(dc.Value, item);
+            SDRSchets[dc.Value] = item;
             return SDRSchets[dc.Value];
         }
 
@@ -611,7 +644,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return SDRStates[dc.Value];
             var item = GetItem<SDRState>(dc.Value);
             if (item is null) return null;
-            SDRStates.Add(dc.Value, item);
+            SDRStates[dc.Value] = item;
             return SDRStates[dc.Value];
         }
 
@@ -644,7 +677,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return ClientCategories[dc.Value];
             var item = GetItem<ClientCategory>(dc.Value);
             if (item is null) return null;
-            ClientCategories.Add(dc.Value, item);
+            ClientCategories[dc.Value] = item;
             return ClientCategories[dc.Value];
         }
 
@@ -681,7 +714,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return Currencies[dc];
             var item = GetItem<Currency>(dc);
             if (item is null) return null;
-            Currencies.Add(dc, item);
+            Currencies[dc] = item;
             return Currencies[dc];
         }
 
@@ -719,7 +752,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return Regions[dc.Value];
             var item = GetItem<Region>(dc.Value);
             if (item is null) return null;
-            Regions.Add(dc.Value, item);
+            Regions[dc.Value] = item;
             return Regions[dc.Value];
         }
 
@@ -753,7 +786,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return Units[dc.Value];
             var item = GetItem<Unit>(dc.Value);
             if (item is null) return null;
-            Units.Add(dc.Value, item);
+            Units[dc.Value] = item;
             return Units[dc.Value];
         }
 
@@ -785,7 +818,7 @@ public class RedisCacheReferences : IReferencesCache
             var itemCache = MutualSettlementTypes[dc.Value] as MutualSettlementType;
             if (!IsTimerOut(itemCache)) return MutualSettlementTypes[dc.Value];
             var item = GetItem<MutualSettlementType>(dc.Value);
-            MutualSettlementTypes.Add(dc.Value, item);
+            MutualSettlementTypes[dc.Value] = item;
             return MutualSettlementTypes[dc.Value];
         }
 
@@ -812,7 +845,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOutGuid(itemCache)) return Projects[id.Value];
             var item = GetItemGuid<Project>(id.Value);
             if (item is null) return null;
-            Projects.Add(id.Value, item);
+            Projects[id.Value] = item;
             return Projects[id.Value];
         }
 
@@ -840,7 +873,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return ContractTypes[dc.Value];
             var item = GetItem<ContractType>(dc.Value);
             if (item is null) return null;
-            ContractTypes.Add(dc.Value, item);
+            ContractTypes[dc.Value] = item;
             return ContractTypes[dc.Value];
         }
 
@@ -868,7 +901,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return PayForms[dc.Value];
             var item = GetItem<PayForm>(dc.Value);
             if (item is null) return null;
-            PayForms.Add(dc.Value, item);
+            PayForms[dc.Value] = item;
             return PayForms[dc.Value];
         }
 
@@ -896,7 +929,7 @@ public class RedisCacheReferences : IReferencesCache
             if (!IsTimerOut(itemCache)) return PayConditions[dc.Value];
             var item = GetItem<PayCondition>(dc.Value);
             if (item is null) return null;
-            PayConditions.Add(dc.Value, item);
+            PayConditions[dc.Value] = item;
             return PayConditions[dc.Value];
         }
 
@@ -937,7 +970,6 @@ public class RedisCacheReferences : IReferencesCache
 
                 DropAll<Currency>();
                 UpdateList(Currencies.Values.Cast<Currency>(), now);
-
 
                 foreach (var item in Context.Countries.AsNoTracking().ToList())
                 {
@@ -1063,7 +1095,7 @@ public class RedisCacheReferences : IReferencesCache
 
                 DropAll<KontragentGroup>();
                 UpdateList(KontragentGroups.Values.Cast<KontragentGroup>(), now);
-                
+
                 foreach (var item in Context.SD_119.AsNoTracking().ToList())
                 {
                     var newItem = new NomenklType();
@@ -1302,9 +1334,7 @@ public class RedisCacheReferences : IReferencesCache
                     nomenklClient.Db = GlobalOptions.RedisDBId ?? 0;
                     var noms = nomenklClient.As<Nomenkl>().Lists["Cache:Nomenkl"].GetAll();
                     foreach (var g in NomenklGroups.Values.Cast<NomenklGroup>().Where(_ => _.ParentDC is null))
-                    {
                         g.NomenklCount = getCountNomenklGroup(g, noms);
-                    }
                 }
 
                 UpdateList(NomenklGroups.Values.Cast<NomenklGroup>(), now);
@@ -1315,14 +1345,77 @@ public class RedisCacheReferences : IReferencesCache
         isStartLoad = false;
     }
 
+    private void UpdateReferences(string channel, string msg)
+    {
+        if (string.IsNullOrWhiteSpace(msg)) return;
+        var message = JsonConvert.DeserializeObject<RedisMessage>(msg);
+        if (message == null || message.DbId != GlobalOptions.DataBaseId) return;
+
+        using (var Context = GlobalOptions.GetEntities())
+        {
+            switch (channel)
+            {
+                case RedisMessageChannels.BankReference:
+                case RedisMessageChannels.RegionReference:
+                case RedisMessageChannels.BankAccountReference:
+                case RedisMessageChannels.CashBoxReference:
+                case RedisMessageChannels.CentrResponsibilityReference:
+                case RedisMessageChannels.ClientCategoryReference:
+                case RedisMessageChannels.ContractTypeReference:
+                case RedisMessageChannels.CountryReference:
+                case RedisMessageChannels.CurrencyReference:
+                case RedisMessageChannels.DeliveryConditionReference:
+                case RedisMessageChannels.EmployeeReference:
+                case RedisMessageChannels.KontragentGroupReference:
+                case RedisMessageChannels.MutualSettlementTypeReference:
+                case RedisMessageChannels.NomenklGroupReference:
+                case RedisMessageChannels.NomenklMainReference:
+                case RedisMessageChannels.NomenklProductTypeReference:
+                case RedisMessageChannels.NomenklTypeReference:
+                case RedisMessageChannels.PayConditionReference:
+                case RedisMessageChannels.PayFormReference:
+                case RedisMessageChannels.ProjectReference:
+                case RedisMessageChannels.ProductTypeReference:
+                case RedisMessageChannels.SDRSchetReference:
+                case RedisMessageChannels.SDRStateReference:
+                case RedisMessageChannels.WarehouseReference:
+                case RedisMessageChannels.UnitReference:
+                    break;
+                case RedisMessageChannels.KontragentReference:
+                    if (message.DocCode is null) return;
+                    if (Kontragents.ContainsKey(message.DocCode.Value))
+                    {
+                        var entity = Context.SD_43.Include(_ => _.SD_2).FirstOrDefault();
+                        if (entity is null) return;
+                        var kontr = new Kontragent
+                        {
+                            DocCode = entity.DOC_CODE,
+                            StartBalans = entity.START_BALANS ?? new DateTime(2000, 1, 1),
+                            Name = entity.NAME,
+                            Notes = entity.NOTES,
+                            IsBalans = entity.FLAG_BALANS == 1,
+                            IsDeleted = entity.DELETED == 1,
+                            Id = entity.Id,
+                            CurrencyDC = entity.VALUTA_DC,
+                            GroupDC = entity.EG_ID,
+                            ResponsibleEmployeeDC = entity.SD_2.DOC_CODE
+                        };
+                        Kontragents[message.DocCode.Value] = kontr;
+                    }
+
+                    break;
+                default:
+                    Console.WriteLine($"{channel} - не обработан");
+                    break;
+            }
+        }
+    }
+
     private int getCountNomenklGroup(NomenklGroup grp, List<Nomenkl> noms)
     {
         var subGroups =
             NomenklGroups.Values.Cast<NomenklGroup>().Where(_ => _.ParentDC == grp.DocCode).ToList();
-        if (!subGroups.Any())
-        {
-            return noms.Count(_ => _.GroupDC == grp.DocCode);
-        }
+        if (!subGroups.Any()) return noms.Count(_ => _.GroupDC == grp.DocCode);
 
         var cnt = noms.Count(_ => _.GroupDC == grp.DocCode);
         foreach (var sg in subGroups)
@@ -1534,6 +1627,22 @@ public class RedisCacheReferences : IReferencesCache
             if (oldTimer is not null)
                 timers.Lists[$"Cache:{typeof(T).Name}:Timers"].RemoveValue(oldTimer);
             timers.Lists[$"Cache:{typeof(T).Name}:Timers"].Add(newTimer);
+            var message = new RedisMessage
+            {
+                DocumentType = DocumentType.None,
+                Id = item.Id,
+                DocDate = DateTime.Now,
+                IsDocument = false,
+                OperationType = RedisMessageDocumentOperationTypeEnum.Execute,
+                Message =
+                    $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник {typeof(T).Name} '{item.Id}'"
+            };
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+            redisClient.PublishMessage(getChannelName(typeof(T).Name),
+                JsonConvert.SerializeObject(message, jsonSerializerSettings));
         }
     }
 
@@ -1597,7 +1706,7 @@ public class RedisCacheReferences : IReferencesCache
 
     public IEnumerable<T> GetListGuid<T>(IEnumerable<Guid> ids) where T : IDocGuid
     {
-        if(ids is null) return Enumerable.Empty<T>();
+        if (ids is null) return Enumerable.Empty<T>();
         var idList = ids.ToList();
         using (var redisClient = redisManager.GetClient())
         {
@@ -1683,7 +1792,56 @@ public class RedisCacheReferences : IReferencesCache
             if (oldTimer is not null)
                 timers.Lists[$"Cache:{typeof(T).Name}:Timers"].RemoveValue(oldTimer);
             timers.Lists[$"Cache:{typeof(T).Name}:Timers"].Add(newTimer);
+            var message = new RedisMessage
+            {
+                DocumentType = DocumentType.None,
+                DocCode = item.DocCode,
+                DocDate = DateTime.Now,
+                IsDocument = false,
+                OperationType = RedisMessageDocumentOperationTypeEnum.Execute,
+                Message =
+                    $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник {typeof(T).Name} {item.DocCode}"
+            };
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+            redisClient.PublishMessage(getChannelName(typeof(T).Name),
+                JsonConvert.SerializeObject(message, jsonSerializerSettings));
         }
+    }
+
+    private string getChannelName(string typeName)
+    {
+        return typeName switch
+        {
+            "Kontragent" => RedisMessageChannels.KontragentReference,
+            "CashBox" => RedisMessageChannels.CashBoxReference,
+            "DeliveryCondition" => RedisMessageChannels.DeliveryConditionReference,
+            "NomenklType" => RedisMessageChannels.NomenklTypeReference,
+            "NomenklProductType" => RedisMessageChannels.NomenklProductTypeReference,
+            "ProductType" => RedisMessageChannels.ProductTypeReference,
+            "CentrResponsibility" => RedisMessageChannels.CentrResponsibilityReference,
+            "Bank" => RedisMessageChannels.BankReference,
+            "BankAccount" => RedisMessageChannels.BankAccountReference,
+            "KontragentGroup" => RedisMessageChannels.KontragentGroupReference,
+            "Nomenkl" => RedisMessageChannels.NomenklReference,
+            "NomenklMain" => RedisMessageChannels.NomenklMainReference,
+            "NomenklGroup" => RedisMessageChannels.NomenklGroupReference,
+            "Warehouse" => RedisMessageChannels.WarehouseReference,
+            "Employee" => RedisMessageChannels.EmployeeReference,
+            "SDRSchet" => RedisMessageChannels.SDRSchetReference,
+            "SDRState" => RedisMessageChannels.SDRStateReference,
+            "Currency" => RedisMessageChannels.CurrencyReference,
+            "Country" => RedisMessageChannels.CountryReference,
+            "Region" => RedisMessageChannels.RegionReference,
+            "Unit" => RedisMessageChannels.UnitReference,
+            "MutualSettlementType" => RedisMessageChannels.MutualSettlementTypeReference,
+            "Project" => RedisMessageChannels.ProjectReference,
+            "PayForm" => RedisMessageChannels.PayFormReference,
+            "PayCondition" => RedisMessageChannels.PayConditionReference,
+            _ => string.Empty
+        };
     }
 
     public void DropAll<T>() where T : IDocCode

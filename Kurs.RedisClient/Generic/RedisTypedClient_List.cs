@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using ServiceStack.Model;
+using ServiceStack.Redis.Pipeline;
 
 namespace ServiceStack.Redis.Generic
 {
@@ -89,10 +90,19 @@ namespace ServiceStack.Redis.Generic
         //TODO: replace it with a pipeline implementation ala AddRangeToSet
         public void AddRangeToList(IRedisList<T> fromList, IEnumerable<T> values)
         {
-            foreach (var value in values)
+            //foreach (var value in values)
+            //{
+            //    AddItemToList(fromList, value);
+            //}
+
+            var pipeline = client.CreatePipelineCommand();
+            foreach (var item in values)
             {
-                AddItemToList(fromList, value);
+                pipeline.WriteCommand(Commands.LPush, fromList.Id.ToUtf8Bytes(), SerializeValue(item));
+                //client.RPush(fromList.Id, SerializeValue(value));
             }
+            pipeline.Flush();
+            _ = pipeline.ReadAllAsInts();
         }
 
         public void PrependItemToList(IRedisList<T> fromList, T value)

@@ -12,6 +12,7 @@ using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Xpf.Grid.Native;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.View.KursReferences;
@@ -483,6 +484,7 @@ namespace KursAM2.ViewModel.Reference
                     try
                     {
                         foreach (var r in Cashs.Where(_ => _.State != RowStatus.NotEdited))
+                        {
                             switch (r.State)
                             {
                                 case RowStatus.NewRow:
@@ -493,6 +495,11 @@ namespace KursAM2.ViewModel.Reference
                                     break;
                             }
 
+                            var c = new CashBox();
+                            c.LoadFromEntity(r.Entity, GlobalOptions.ReferencesCache);
+                            GlobalOptions.ReferencesCache.AddOrUpdate(c);
+                        }
+
                         var newKontrAcc = ctx.TD_43.Where(_ =>
                             _.DOC_CODE == GlobalOptions.SystemProfile.OwnerKontragent.DocCode);
                         var newKontrAccCode = 1;
@@ -500,6 +507,7 @@ namespace KursAM2.ViewModel.Reference
                             newKontrAccCode = newKontrAcc.Max(c => c.CODE) + 1;
                         var newDC = ctx.SD_114.Any() ? ctx.SD_114.Max(_ => _.DOC_CODE) + 1 : 11140000001;
                         foreach (var b in Banks.Where(_ => _.State != RowStatus.NotEdited))
+                        {
                             switch (b.State)
                             {
                                 case RowStatus.NewRow:
@@ -511,6 +519,11 @@ namespace KursAM2.ViewModel.Reference
                                     updateBank(ctx, b);
                                     break;
                             }
+
+                            var acc = new BankAccount();
+                            acc.LoadFromEntity(b.Entity, GlobalOptions.ReferencesCache);
+                            GlobalOptions.ReferencesCache.AddOrUpdate(acc);
+                        }
 
                         ctx.SaveChanges();
                         transaction.Commit();
