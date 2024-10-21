@@ -133,7 +133,7 @@ public class SD_24BaseWrapper : BaseWrapper<SD_24>, IEquatable<TD_24BaseWrapper>
             if (Model.DD_SKLAD_OTPR_DC == value?.DocCode) return;
             myWarehouseOut = value;
             Model.DD_SKLAD_OTPR_DC = value?.DocCode;
-            Model.DD_POLUCH_NAME = value?.Name;
+            Model.DD_POLUCH_NAME = value?.Name ?? string.Empty;
             RaisePropertyChanged();
         }
     }
@@ -181,7 +181,7 @@ public class SD_24BaseWrapper : BaseWrapper<SD_24>, IEquatable<TD_24BaseWrapper>
             if (Model.DD_KONTR_POL_DC == value?.DocCode) return;
             myKontragent = value;
             Model.DD_KONTR_POL_DC = value?.DocCode;
-            Model.DD_POLUCH_NAME = value?.Name;
+            Model.DD_POLUCH_NAME = value?.Name ?? string.Empty;
             RaisePropertyChanged();
         }
     }
@@ -244,11 +244,11 @@ public class SD_24BaseWrapper : BaseWrapper<SD_24>, IEquatable<TD_24BaseWrapper>
     [Display(AutoGenerateField = true, Name = "Получатель")]
     public virtual string RecepientName
     {
-        get => Model.DD_POLUCH_NAME;
+        get => Model.DD_POLUCH_NAME ?? string.Empty;
         set
         {
             if (Model.DD_POLUCH_NAME == value) return;
-            Model.DD_POLUCH_NAME = value;
+            Model.DD_POLUCH_NAME = value ?? string.Empty;
             RaisePropertyChanged();
         }
     }

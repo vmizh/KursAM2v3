@@ -113,10 +113,14 @@ public class Waybill : SD_24ViewModel, IDocument<Waybill>
         if (entity == null) return;
         Client = GlobalOptions.ReferencesCache.GetKontragent(Entity.DD_KONTR_POL_DC) as Kontragent;
         Store = GlobalOptions.ReferencesCache.GetWarehouse(entity.DD_SKLAD_OTPR_DC) as References.Warehouse;
+        
         if (entity.TD_24.Count <= 0) return;
         foreach (var row in entity.TD_24)
             Rows.Add(new WaybillRow(row));
         InvoiceClientViewModel = entity.SD_84 != null ? new InvoiceClientViewModel(entity.SD_84) : null;
+        if (InvoiceClientViewModel is not null)
+            KontragentViewModelReceiver =
+                GlobalOptions.ReferencesCache.GetKontragent(InvoiceClientViewModel.SF_RECEIVER_KONTR_DC) as Kontragent;
     }
 
     public References.Currency DocCurrency =>
@@ -146,7 +150,7 @@ public class Waybill : SD_24ViewModel, IDocument<Waybill>
             if (myClient == value) return;
             myClient = value;
             Entity.DD_KONTR_POL_DC = myClient?.DocCode;
-            Entity.DD_POLUCH_NAME = myClient?.Name;
+            Entity.DD_POLUCH_NAME = myClient?.Name ?? string.Empty;
             RaisePropertyChanged();
         }
     }

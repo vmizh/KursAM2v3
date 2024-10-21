@@ -361,7 +361,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     UnitOfWork.Context.ChangeTracker.Entries().ToDictionary(e => e, e => e.State);
 
                 Document.Entity.DD_OTRPAV_NAME = Document.Sender;
-                Document.Entity.DD_POLUCH_NAME = Document.Receiver;
+                Document.Entity.DD_POLUCH_NAME = Document.Receiver ?? string.Empty;
                 UnitOfWork.CreateTransaction();
                 UnitOfWork.Save();
                 LastDocumentManager.SaveLastOpenInfo(DocumentType.Waybill, null, Document.DocCode,

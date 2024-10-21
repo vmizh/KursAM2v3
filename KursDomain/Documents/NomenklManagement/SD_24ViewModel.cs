@@ -150,7 +150,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
             if (Entity.DD_SKLAD_POL_DC == value?.DocCode) return;
             myWarehouseIn = value;
             Entity.DD_SKLAD_POL_DC = value?.DocCode;
-            Entity.DD_POLUCH_NAME = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC))?.Name;
+            Entity.DD_POLUCH_NAME = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC))?.Name ?? string.Empty;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Receiver));
         }
@@ -188,7 +188,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
             if (DD_KONTR_POL_DC == value?.DocCode) return;
             myKontragentViewModelReceiver = value;
             DD_KONTR_POL_DC = value?.DocCode;
-            Entity.DD_POLUCH_NAME = ((IName)GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_POL_DC)).Name;
+            Entity.DD_POLUCH_NAME = ((IName)GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_POL_DC)).Name ?? string.Empty;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Sender));
         }
