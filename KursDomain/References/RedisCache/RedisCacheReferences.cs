@@ -403,6 +403,7 @@ public class RedisCacheReferences : IReferencesCache
 
     public INomenkl GetNomenkl(decimal dc)
     {
+        string cacheName = "Cache:Nomenkl:Timers";
         if (Nomenkls.ContainsKey(dc))
         {
             var itemCache = Nomenkls[dc] as Nomenkl;
@@ -411,10 +412,10 @@ public class RedisCacheReferences : IReferencesCache
             if (item is null) return null;
             ((ICache)item).LastUpdateServe = DateTime.Now;
             Nomenkls[dc] = item;
-            var c = timersDict["Cache:Nomenkl:Timers"].FirstOrDefault(_ => _.Id == dc.ToString());
+            var c = timersDict[cacheName].FirstOrDefault(_ => _.Id == dc.ToString());
             if (c is null)
             {
-                timersDict["Cache:Nomenkl:Timers"].Add(new ItemReferenceUpdate()
+                timersDict[cacheName].Add(new ItemReferenceUpdate()
                 {
                     Id = dc.ToString(),
                     UpdateTime = ((ICache)item).LastUpdateServe
@@ -431,11 +432,18 @@ public class RedisCacheReferences : IReferencesCache
         var itemNew = GetItem<Nomenkl>(dc);
         if (itemNew is null) return null;
         ((ICache)itemNew).LastUpdateServe = DateTime.Now;
+        if (!timersDict.ContainsKey(cacheName))
+        {
+            timersDict.Add(cacheName, new List<ItemReferenceUpdate>());
+            timersDictLast.Add(cacheName, DateTime.MinValue);
+        }
+
         timersDict["Cache:Nomenkl:Timers"].Add(new ItemReferenceUpdate
         {
             Id = dc.ToString(),
             UpdateTime = ((ICache)itemNew).LastUpdateServe
         });
+
         Nomenkls.Add(dc, itemNew);
         return Nomenkls[dc];
     }
@@ -1694,10 +1702,14 @@ public class RedisCacheReferences : IReferencesCache
             redisClient.Db = GlobalOptions.RedisDBId ?? 0;
             var redis = redisClient.As<T>();
             var timers = redisClient.As<ItemReferenceUpdate>();
-            var list = redisClient.GetKeysByPattern($"Cache:{typeof(T).Name}:*");
-            foreach (var key in list.Where(_ => !_.Contains("Timers")))
+            var list = redisClient.GetKeysByPattern($"Cache:{typeof(T).Name}:*").Where(_ => !_.Contains("Timers")).ToList();
+            using (var trans = redisClient.CreateTransaction())
             {
-                redisClient.Remove(key);
+                foreach (var item in list)
+                {
+                    trans.QueueCommand(r => r.Remove($"Cache:{typeof(T).Name}:{item}")); 
+                }
+                trans.Commit();
             }
             timers.Lists[$"Cache:{typeof(T).Name}:Timers"].RemoveAll();
         }
@@ -1918,13 +1930,16 @@ public class RedisCacheReferences : IReferencesCache
             redisClient.Db = GlobalOptions.RedisDBId ?? 0;
             var redis = redisClient.As<T>();
             var timers = redisClient.As<ItemReferenceUpdate>();
-            var list = redisClient.GetKeysByPattern($"Cache:{typeof(T).Name}:*");
-            foreach (var key in list.Where(_ => !_.Contains("Timers")))
+            var list = redisClient.GetKeysByPattern($"Cache:{typeof(T).Name}:*").Where(_ => !_.Contains("Timers"))
+                .ToList();
+            using (var trans = redisClient.CreateTransaction())
             {
-                redisClient.Remove(key);
+                foreach (var item in list)
+                {
+                    trans.QueueCommand(r => r.Remove($"Cache:{typeof(T).Name}:{item}")); 
+                }
+                trans.Commit();
             }
-
-            //redis.Lists[$"Cache:{typeof(T).Name}"].RemoveAll();
             timers.Lists[$"Cache:{typeof(T).Name}:Timers"].RemoveAll();
         }
     }

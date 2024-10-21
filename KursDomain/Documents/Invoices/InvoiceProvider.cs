@@ -1224,7 +1224,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
     {
         return
             $"С/ф (поставщика) №{SF_POSTAV_NUM}/{SF_IN_NUM} от {DocDate.ToShortDateString()} " +
-            $"от: {Kontragent} сумма: {Summa} {Currency}";
+            $"от: {Kontragent} сумма: {Summa:N2} {Currency}";
     }
 
     #endregion Methods
