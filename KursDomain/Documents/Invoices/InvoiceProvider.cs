@@ -1115,6 +1115,15 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     public void LoadReferences()
     {
+        if (Entity.SF_CENTR_OTV_DC is not null)
+        {
+            CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) as CentrResponsibility;
+        }
+
+        if (Entity.SF_POLUCH_KONTR_DC is not null)
+        {
+            KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POLUCH_KONTR_DC) as Kontragent;
+        }
         if (Entity.PersonalResponsibleDC == null && Entity.TABELNUMBER > 0)
         {
             PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(Entity.TABELNUMBER) as References.Employee;
