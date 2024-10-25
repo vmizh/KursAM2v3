@@ -79,6 +79,7 @@ public class Bank : IBank, IDocCode, IName, IEquatable<Bank>, IComparable, ICach
         CorrAccount = entity.CORRESP_ACC;
         BIK = entity.POST_CODE;
         NickName = string.IsNullOrWhiteSpace(entity.BANK_NICKNAME) ? entity.BANK_NAME : entity.BANK_NICKNAME;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -99,7 +100,8 @@ public class Bank : IBank, IDocCode, IName, IEquatable<Bank>, IComparable, ICach
         
     }
 
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationsBankViewModel))]

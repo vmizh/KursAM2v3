@@ -185,6 +185,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
         Unit = refCache.GetUnit(entity.NOM_ED_IZM_DC);
         Currency = refCache.GetCurrency(entity.NOM_SALE_CRS_DC);
         Group = refCache.GetNomenklGroup(entity.NOM_CATEG_DC);
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -205,22 +206,20 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     {
         if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
         if (UnitDC is not null)
-            Unit = cache.GetItem<Unit>(UnitDC.Value);
+            Unit = cache.GetUnit(UnitDC.Value);
         if (GroupDC is not null)
-            Group = cache.GetItem<NomenklGroup>(GroupDC.Value);
+            Group = cache.GetNomenklGroup(GroupDC.Value);
         if (CurrencyDC is not null)
-            Currency = cache.GetItem<Currency>(CurrencyDC.Value);
+            Currency = cache.GetCurrency(CurrencyDC.Value);
         if (NomenklTypeDC is not null)
-            NomenklType = cache.GetItem<NomenklType>(NomenklTypeDC.Value);
+            NomenklType = cache.GetNomenklType(NomenklTypeDC.Value);
         if (SDRSchetDC is not null)
-            SDRSchet = cache.GetItem<SDRSchet>(SDRSchetDC.Value);
+            SDRSchet = cache.GetSDRSchet(SDRSchetDC.Value);
         if (ProductTypeDC is not null)
-            ProductType = cache.GetItem<ProductType>(ProductTypeDC.Value);
+            ProductType = cache.GetProductType(ProductTypeDC.Value);
         if (NomenklMainId is not null)
-            NomenklMain = cache.GetItemGuid<NomenklMain>(NomenklMainId.Value);
+            NomenklMain = cache.GetNomenklMain(NomenklMainId.Value);
     }
-
-    public DateTime LastUpdateServe { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationsNomenklViewModel))]

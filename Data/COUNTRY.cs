@@ -31,6 +31,7 @@ namespace Data
         public string LOCATION { get; set; }
         public string LOCATION_PRECISE { get; set; }
         public byte[] SMALL_FLAG { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<TD_84> TD_84 { get; set; }

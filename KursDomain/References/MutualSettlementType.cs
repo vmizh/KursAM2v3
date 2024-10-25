@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
@@ -45,6 +46,7 @@ public class MutualSettlementType : IMutualSettlementType, IDocCode, IName, IEqu
         DocCode = entity.DOC_CODE;
         IsCurrencyConvert = entity.IsCurrencyConvert;
         Name = entity.ZACH_NAME;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override string ToString()
@@ -69,6 +71,6 @@ public class MutualSettlementType : IMutualSettlementType, IDocCode, IName, IEqu
     {
         
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }

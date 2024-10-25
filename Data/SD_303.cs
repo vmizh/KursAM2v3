@@ -82,6 +82,7 @@ namespace Data
         public Nullable<short> SHPZ_1TARIFIC_0NO { get; set; }
         public Nullable<short> SHPZ_1ZARPLATA_0NO { get; set; }
         public Nullable<short> SHPZ_NOT_USE_IN_OTCH_DDS { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }

@@ -139,6 +139,7 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
         FullName = entity.CRS_NAME;
         IsActive = entity.CRS_ACTIVE == 1;
         Id = entity.Id;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -160,7 +161,8 @@ public class Currency : ICurrency, IDocCode, IName, IDocGuid, IEquatable<Currenc
         
     }
     [DataMember]
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 
     public static bool operator ==(Currency left, Currency right)
     {

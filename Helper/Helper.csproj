@@ -67,6 +67,7 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
@@ -118,6 +119,10 @@
     <ProjectReference Include="..\Data\Data.csproj">
       <Project>{ae6bdc42-9b1e-4f09-8923-2295b1c87212}</Project>
       <Name>Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Kurs.RedisClient\Kurs.RedisClient.csproj">
+      <Project>{f50bcb96-890e-4182-b650-51d5766ecf0f}</Project>
+      <Name>Kurs.RedisClient</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

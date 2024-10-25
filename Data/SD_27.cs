@@ -80,6 +80,7 @@ namespace Data
         public Nullable<bool> IsDeleted { get; set; }
         public Nullable<System.Guid> ParentId { get; set; }
         public Nullable<bool> IsOutBalans { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AD_27> AD_27 { get; set; }

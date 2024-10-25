@@ -1413,8 +1413,7 @@ namespace KursAM2.Managers
                         if (d.TABELNUMBER != null)
                         {
                             doc.KontragnetTypeName = "Сотрудник";
-                            doc.KontragnetName = ((IName) GlobalOptions.ReferencesCache.GetEmployees()
-                                .FirstOrDefault(_ => _.TabelNumber == d.TABELNUMBER))?.Name;
+                            doc.KontragnetName = ((IName) GlobalOptions.ReferencesCache.GetEmployee(d.TABELNUMBER))?.Name;
                         }
 
                         if (d.BANK_RASCH_SCHET_DC != null)

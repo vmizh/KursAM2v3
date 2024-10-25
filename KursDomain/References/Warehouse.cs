@@ -60,6 +60,7 @@ public class Warehouse : IWarehouse, IDocCode, IDocGuid, IName, IEquatable<Wareh
         Name = entity.SKL_NAME;
         Region = refCache.GetRegion(entity.SKL_REGION_DC);
         StoreKeeper = refCache.GetEmployee(entity.TABELNUMBER);
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -79,12 +80,12 @@ public class Warehouse : IWarehouse, IDocCode, IDocGuid, IName, IEquatable<Wareh
     {
         if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
         if (RegionDC is not null)
-            Region = cache.GetItem<Region>(RegionDC.Value);
+            Region = cache.GetRegion(RegionDC.Value);
         if(StoreKeeperDC is not null) 
-            StoreKeeper = cache.GetItem<Employee>(StoreKeeperDC.Value);
+            StoreKeeper = cache.GetEmployee(StoreKeeperDC.Value);
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationsStore))]

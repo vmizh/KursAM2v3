@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
@@ -38,6 +39,7 @@ public class ProductType : IProductType, IDocCode, IName, IEquatable<ProductType
         Name = entity.PROD_NAME;
         FullName = entity.PROD_FULL_NAME;
         ParentDC = entity.PROD_PARENT_DC;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override string ToString()
@@ -61,6 +63,6 @@ public class ProductType : IProductType, IDocCode, IName, IEquatable<ProductType
     public void LoadFromCache()
     {
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }

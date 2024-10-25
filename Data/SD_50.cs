@@ -30,6 +30,7 @@ namespace Data
         public string PROD_ED_IZM { get; set; }
         public Nullable<decimal> PROD_PARENT_DC { get; set; }
         public string PROD_FULL_NAME { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<NomenklMain> NomenklMain { get; set; }

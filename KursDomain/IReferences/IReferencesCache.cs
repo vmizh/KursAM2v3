@@ -18,6 +18,7 @@ public interface IReferencesCache
     void DropAllGuid<T>() where T : IDocGuid;
     void DropGuid<T>(Guid id) where T : IDocGuid;
     T GetItemGuid<T>(Guid dc) where T : IDocGuid;
+    T GetItemGuid<T>(string key) where T : IDocGuid;
     IEnumerable<T> GetAllGuid<T>() where T : IDocGuid;
 
     IEnumerable<T> GetListGuid<T>(IEnumerable<Guid> ids) where T : IDocGuid;
@@ -27,12 +28,20 @@ public interface IReferencesCache
     void DropAll<T>() where T : IDocCode;
     void Drop<T>(decimal dc) where T : IDocCode;
     T GetItem<T>(decimal dc) where T : IDocCode;
+    T GetItem<T>(string dc) where T : IDocCode;
     IEnumerable<T> GetAll<T>() where T : IDocCode;
 
-    IEnumerable<T> GetList<T>(IEnumerable<decimal> dcs) where T : IDocCode;
+    bool IsKeyExists(string key);
 
+    /// <summary>
+    /// Для сохранения контрагентов, товаров и сотрудников. Два ключа - doc_code/id doc_code/tabelnumber
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="list"></param>
+    /// <param name="nowFix"></param>
+    void UpdateList2<T>(IEnumerable<T> list, DateTime? nowFix);
 
-    public bool IsChangeTrackingOn { set; get; }
+   public bool IsChangeTrackingOn { set; get; }
 
     public DbContext DBContext { get; }
 
@@ -96,13 +105,14 @@ public interface IReferencesCache
     INomenkl GetNomenkl(decimal dc);
     IEnumerable<INomenkl> GetNomenklsAll();
 
-    IEnumerable<INomenkl> GetNomenkls(IEnumerable<decimal> dcList);
+   // IEnumerable<INomenkl> GetNomenkls(IEnumerable<decimal> dcList);
 
 
     INomenklMain GetNomenklMain(Guid? id);
     INomenklMain GetNomenklMain(Guid id);
     IEnumerable<INomenklMain> GetNomenklMainAll();
 
+    IEnumerable<INomenkl> GetNomenkl(IEnumerable<decimal> dcList);
 
     INomenklGroup GetNomenklGroup(decimal? dc);
     IEnumerable<INomenklGroup> GetNomenklGroupAll();

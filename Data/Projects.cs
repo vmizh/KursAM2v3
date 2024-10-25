@@ -33,6 +33,7 @@ namespace Data
         public Nullable<System.DateTime> DateEnd { get; set; }
         public Nullable<decimal> ManagerDC { get; set; }
         public Nullable<System.Guid> ParentId { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProjectCurrencyNomenkl> ProjectCurrencyNomenkl { get; set; }

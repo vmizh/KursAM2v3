@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
@@ -38,6 +39,7 @@ public class NomenklProductType : IName, IDocCode, INomenklProductType, IEquatab
         DocCode = entity.DOC_CODE;
         Name = entity.TV_NAME;
         SDRSchet = cache.GetSDRSchet(entity.TV_SHPZ_DC);
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public string Name { get; set; }
@@ -64,10 +66,10 @@ public class NomenklProductType : IName, IDocCode, INomenklProductType, IEquatab
     {
         if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
         if (SDRSchetDC is not null)
-            SDRSchet = cache.GetItem<SDRSchet>(SDRSchetDC.Value);
+            SDRSchet = cache.GetSDRSchet(SDRSchetDC.Value);
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 
     public override string ToString()
     {

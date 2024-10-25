@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core.EntityViewModel;
@@ -1159,6 +1160,8 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
 
     public void LoadReferences()
     {
+        Stopwatch sw = new Stopwatch();
+        sw.Start();
         Currency = GlobalOptions.ReferencesCache.GetCurrency(Entity.SF_CRS_DC) as References.Currency;
         Client = GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_CLIENT_DC) as Kontragent;
         CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) as CentrResponsibility;
@@ -1173,26 +1176,32 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
             Rows = new ObservableCollection<IInvoiceClientRow>();
         else
             Rows.Clear();
+        sw.Stop();
+        var sw1 = new Stopwatch();
+        sw1.Start();
         //Rows = new ObservableCollection<IInvoiceClientRow>();
         if (Entity.TD_84 != null && Entity.TD_84.Count > 0)
         {
-            var noms = GlobalOptions.ReferencesCache.GetNomenkls(Entity.TD_84.Select(_ => _.SFT_NEMENKL_DC)).Cast<Nomenkl>().ToList();
+            //var noms = GlobalOptions.ReferencesCache.GetNomenkls(Entity.TD_84.Select(_ => _.SFT_NEMENKL_DC)).Cast<Nomenkl>().ToList();
             foreach (var t in Entity.TD_84)
             {
-                var newRow = new InvoiceClientRowViewModel(t, true, false)
+                var newRow = new InvoiceClientRowViewModel(t)
                 {
                     Parent = this,
-                    Nomenkl = noms.FirstOrDefault(_ => _.DocCode == t.SFT_NEMENKL_DC),
+                    //Nomenkl =  GlobalOptions.ReferencesCache.GetNomenkl(t.SFT_NEMENKL_DC) as Nomenkl,
                     SDRSchet = t.SFT_SHPZ_DC is null ? null : GlobalOptions.ReferencesCache.GetSDRSchet(t.SFT_SHPZ_DC.Value) as SDRSchet
                 };
                 Rows.Add(newRow);
             }
         }
-
+        sw1.Stop();
+        var sw2 = new Stopwatch();
+        sw2.Start();
         Summa = Rows.Sum(_ => _.Summa);
         LoadPayments();
         PaySumma = PaymentDocs.Sum(_ => _.Summa);
         LoadShipments();
+        sw2.Stop();
     }
 
     public void LoadShipments()

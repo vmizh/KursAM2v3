@@ -32,6 +32,7 @@ namespace Data
         public Nullable<short> OOT_NALOG_S_PRODAZH { get; set; }
         public Nullable<double> OOT_NALOG_PERCENT { get; set; }
         public Nullable<decimal> OOT_USL_OPL_DEF_DC { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DogovorClient> DogovorClient { get; set; }

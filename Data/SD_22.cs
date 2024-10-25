@@ -41,6 +41,7 @@ namespace Data
         public Nullable<decimal> CA_CENTR_OTV_DC { get; set; }
         public Nullable<decimal> CA_KONTR_DC { get; set; }
         public Nullable<short> CA_NO_BALANS { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ND_22> ND_22 { get; set; }

@@ -26,6 +26,7 @@ namespace Data
         public Nullable<int> EG_PARENT_ID { get; set; }
         public Nullable<short> EG_DELETED { get; set; }
         public Nullable<short> EG_BALANS_GROUP { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_43> SD_43 { get; set; }

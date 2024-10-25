@@ -57,6 +57,7 @@ public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>, IC
         DocCode = entity.DOC_CODE;
         ParentDC = entity.REG_PARENT_DC;
         Name = entity.REG_NAME;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -76,6 +77,6 @@ public class Region : IRegion, IDocCode, IDocGuid, IName, IEquatable<Region>, IC
     {
         
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }

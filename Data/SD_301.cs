@@ -133,6 +133,7 @@ namespace Data
         public Nullable<int> ORDER_IMPOTANCE { get; set; }
         public string NalogCode { get; set; }
         public string NalogName { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AktSpisaniyaNomenkl_Title> AktSpisaniyaNomenkl_Title { get; set; }

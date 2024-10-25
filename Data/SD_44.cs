@@ -32,6 +32,7 @@ namespace Data
         public string SUB_CORR_ACC { get; set; }
         public string ADDRESS { get; set; }
         public string BANK_NICKNAME { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_114> SD_114 { get; set; }

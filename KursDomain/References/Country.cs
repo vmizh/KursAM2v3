@@ -64,6 +64,7 @@ public class Country : ICountry, IDocGuid, IName, IEquatable<Country>, IComparab
         Alpha3 = entity.ALPHA3;
         Location = entity.LOCATION;
         LocationPrecise = entity.LOCATION_PRECISE;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public void LoadFromEntity(Countries entity)
@@ -108,6 +109,6 @@ public class Country : ICountry, IDocGuid, IName, IEquatable<Country>, IComparab
     {
         
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }

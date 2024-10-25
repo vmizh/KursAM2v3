@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
@@ -64,6 +65,6 @@ public class DeliveryCondition : IDeliveryCondition, IDocCode, IName, IEquatable
     {
        
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }

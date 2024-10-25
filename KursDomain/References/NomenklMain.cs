@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
@@ -94,6 +95,7 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
         Category = refCache?.GetNomenklGroup(entity.CategoryDC);
         NomenklType = refCache?.GetNomenklType(entity.TypeDC);
         ProductType = refCache?.GetProductType(entity.ProductDC);
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public bool Equals(IDocGuid x, IDocGuid y)
@@ -138,6 +140,6 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
         if (CountryId is not null)
             Country = cache.GetItemGuid<Country>(CountryId.Value);
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }

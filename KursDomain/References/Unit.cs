@@ -49,6 +49,7 @@ public class Unit : IUnit, IDocCode, IName, IEquatable<Unit>,IComparable, ICache
         Name = entity.ED_IZM_NAME;
         OKEI = entity.ED_IZM_OKEI;
         OKEI_Code = entity.ED_IZM_OKEI_CODE;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -68,8 +69,8 @@ public class Unit : IUnit, IDocCode, IName, IEquatable<Unit>,IComparable, ICache
     {
         
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 
     public int CompareTo(object obj)
     {

@@ -23,6 +23,7 @@ namespace Data
         public decimal DOC_CODE { get; set; }
         public string ZACH_NAME { get; set; }
         public bool IsCurrencyConvert { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_110> SD_110 { get; set; }

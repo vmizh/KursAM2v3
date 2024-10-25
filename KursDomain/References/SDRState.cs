@@ -56,6 +56,7 @@ public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>, ICompa
         ParentDC = entity.SZ_PARENT_DC;
         IsDohod = entity.SZ_1DOHOD_0_RASHOD == 1;
         Name = entity.SZ_NAME;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -75,8 +76,8 @@ public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>, ICompa
     {
         
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationsSDRState))]

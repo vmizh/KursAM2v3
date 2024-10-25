@@ -72,6 +72,7 @@ public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employe
         NameSecond = entity.NAME_SECOND;
         TabelNumber = entity.TABELNUMBER;
         Position = entity.STATUS_NOTES;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -91,10 +92,11 @@ public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employe
     {
         if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
         if (CurrencyDC is not null)
-            Currency = cache.GetItem<Currency>(CurrencyDC.Value);
+            Currency = cache.GetCurrency(CurrencyDC.Value);
     }
 
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }
 
 public class DataAnnotationsDialogEmployeeViewModel : DataAnnotationForFluentApiBase,

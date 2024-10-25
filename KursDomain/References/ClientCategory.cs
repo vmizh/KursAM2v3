@@ -44,6 +44,7 @@ public class ClientCategory : IClientCategory, IDocCode, IName, IEquatable<Clien
 
         DocCode = entity.DOC_CODE;
         Name = entity.CK_NAME;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override string ToString()
@@ -69,8 +70,8 @@ public class ClientCategory : IClientCategory, IDocCode, IName, IEquatable<Clien
     {
        
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }
 
 /// <summary>

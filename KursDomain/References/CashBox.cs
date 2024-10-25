@@ -30,14 +30,15 @@ public class CashBox : ICashBox, IDocCode, IName, IEquatable<CashBox>, ILoadFrom
     {
         if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
         if (CentrResponsibilityDC is not null)
-            CentrResponsibility = cache.GetItem<CentrResponsibility>(CentrResponsibilityDC.Value);
+            CentrResponsibility = cache.GetCentrResponsibility(CentrResponsibilityDC.Value);
         if (DefaultCurrencyDC is not null)
-            DefaultCurrency = cache.GetItem<Currency>(DefaultCurrencyDC.Value);
+            DefaultCurrency = cache.GetCurrency(DefaultCurrencyDC.Value);
         if (KontragentDC is not null)
-            Kontragent = cache.GetItem<Kontragent>(KontragentDC.Value);
+            Kontragent = cache.GetKontragent(KontragentDC.Value);
     }
 
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 
     [JsonIgnore] public ICurrency DefaultCurrency { get; set; }
 
@@ -75,6 +76,7 @@ public class CashBox : ICashBox, IDocCode, IName, IEquatable<CashBox>, ILoadFrom
         DefaultCurrency = referencesCache?.GetCurrency(entity.CA_CRS_DC);
         Kontragent = referencesCache?.GetKontragent(entity.CA_KONTR_DC);
         CentrResponsibility = referencesCache?.GetCentrResponsibility(entity.CA_CENTR_OTV_DC);
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public string Name { get; set; }

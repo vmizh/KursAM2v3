@@ -38,6 +38,7 @@ namespace Data
         public Nullable<bool> IsRentabelnost { get; set; }
         public Nullable<bool> IsCurrencyTransfer { get; set; }
         public Nullable<bool> IsOnlyState { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         public virtual Countries Countries { get; set; }
         public virtual SD_50 SD_50 { get; set; }

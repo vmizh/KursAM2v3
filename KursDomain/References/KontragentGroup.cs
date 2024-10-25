@@ -77,6 +77,7 @@ public class KontragentGroup : IName, IKontragentGroup, IEquatable<KontragentGro
         Name = entity.EG_NAME;
         IsDeleted = entity.EG_DELETED == 1;
         ParentId = entity.EG_PARENT_ID;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override string ToString()
@@ -101,8 +102,8 @@ public class KontragentGroup : IName, IKontragentGroup, IEquatable<KontragentGro
     {
         
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 
     public decimal DocCode
     {

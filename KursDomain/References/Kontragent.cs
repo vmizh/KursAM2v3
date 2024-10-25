@@ -179,6 +179,7 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
         ResponsibleEmployee = refCache.GetEmployee(entity.OTVETSTV_LICO);
         Currency = refCache.GetCurrency(entity.VALUTA_DC);
         Group = refCache.GetKontragentGroup(entity.EG_ID);
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -198,16 +199,16 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
     {
         if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
         if (ClientCategoryDC is not null)
-            ClientCategory = cache.GetItem<ClientCategory>(ClientCategoryDC.Value);
+            ClientCategory = cache.GetClientCategory(ClientCategoryDC.Value);
         if (ResponsibleEmployeeDC is not null)
-            ResponsibleEmployee = cache.GetItem<Employee>(ResponsibleEmployeeDC.Value);
+            ResponsibleEmployee = cache.GetEmployee(ResponsibleEmployeeDC.Value);
         if (CurrencyDC is not null)
-            Currency = cache.GetItem<Currency>(CurrencyDC.Value);
+            Currency = cache.GetCurrency(CurrencyDC.Value);
         if (RegionDC is not null)
-            Region = cache.GetItem<Region>(RegionDC.Value);
+            Region = cache.GetRegion(RegionDC.Value);
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }
 
 public class DataAnnotationsKontragent : DataAnnotationForFluentApiBase, IMetadataProvider<KontragentViewModel>

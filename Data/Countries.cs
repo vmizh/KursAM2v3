@@ -28,6 +28,7 @@ namespace Data
         public decimal Iso { get; set; }
         public string Name { get; set; }
         public string ForeignName { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<NomenklMain> NomenklMain { get; set; }

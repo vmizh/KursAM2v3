@@ -112,6 +112,7 @@ namespace Data
         public string STATUS_NOTES { get; set; }
         public Nullable<System.DateTime> PAYROL_DATE { get; set; }
         public Nullable<decimal> PAYROL_START { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AD_2> AD_2 { get; set; }

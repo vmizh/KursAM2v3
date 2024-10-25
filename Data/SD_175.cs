@@ -37,6 +37,7 @@ namespace Data
         public Nullable<short> ED_IZM_MONEY { get; set; }
         public Nullable<short> ED_IZM_INT { get; set; }
         public string ED_IZM_OKEI_CODE { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<NomenklMain> NomenklMain { get; set; }

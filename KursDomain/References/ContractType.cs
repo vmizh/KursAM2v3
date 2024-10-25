@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
@@ -58,6 +59,7 @@ public class ContractType : IContractType, IDocCode, IName, IEquatable<ContractT
         IsAadditionalAgreement = entity.TD_DOP_SOGL == 1;
         IsBuy = entity.TD_0BUY_1SALE == 0;
         IsDiler = entity.TD_DILER == 1;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -77,6 +79,6 @@ public class ContractType : IContractType, IDocCode, IName, IEquatable<ContractT
     {
         
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }

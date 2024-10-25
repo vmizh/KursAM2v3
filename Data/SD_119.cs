@@ -31,6 +31,7 @@ namespace Data
         public Nullable<short> MC_TARA { get; set; }
         public Nullable<short> MC_TRANSPORT { get; set; }
         public Nullable<short> MC_PREDOPLATA { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<NomenklMain> NomenklMain { get; set; }

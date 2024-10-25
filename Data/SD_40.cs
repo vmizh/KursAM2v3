@@ -50,6 +50,7 @@ namespace Data
         public string CENT_NAME { get; set; }
         public Nullable<decimal> CENT_PARENT_DC { get; set; }
         public Nullable<int> IS_DELETED { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AD_83> AD_83 { get; set; }

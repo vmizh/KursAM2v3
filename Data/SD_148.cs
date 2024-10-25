@@ -34,6 +34,7 @@ namespace Data
         public Nullable<double> CK_NACEN_DEFAULT_KOMPL { get; set; }
         public Nullable<short> CK_IMMEDIATE_PRICE_CHANGE { get; set; }
         public string CK_GROUP { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_161> SD_161 { get; set; }

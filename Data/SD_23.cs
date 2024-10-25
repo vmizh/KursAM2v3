@@ -31,6 +31,7 @@ namespace Data
         public string REG_NAME { get; set; }
         public Nullable<decimal> REG_PARENT_DC { get; set; }
         public Nullable<decimal> REG_STRANA_DC { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_23> SD_231 { get; set; }

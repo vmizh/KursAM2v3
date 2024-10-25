@@ -27,6 +27,7 @@ namespace Data
         public string PT_NAME { get; set; }
         public Nullable<short> DEFAULT_VALUE { get; set; }
         public Nullable<double> PT_DAYS_OPL { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DogovorClient> DogovorClient { get; set; }

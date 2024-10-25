@@ -219,11 +219,15 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
         }
     }
 
+    private Kontragent myKontragent;
+
     public Kontragent Kontragent
     {
-        get => GlobalOptions.ReferencesCache.GetKontragent(Entity.VZT_KONTR_DC) as Kontragent;
+        get => myKontragent; //GlobalOptions.ReferencesCache.GetKontragent(Entity.VZT_KONTR_DC) as Kontragent;
         set
         {
+            if(myKontragent == value) return;
+            myKontragent = value;
             if (value != null)
             {
                 Entity.VZT_CRS_DC = ((IDocCode)value.Currency).DocCode;

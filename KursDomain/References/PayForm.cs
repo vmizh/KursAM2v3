@@ -52,6 +52,7 @@ public class PayForm : IPayForm, IDocCode, IName, IEquatable<PayForm>, IComparab
     {
         DocCode = entity.DOC_CODE;
         Name = entity.OOT_NAME;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -71,8 +72,8 @@ public class PayForm : IPayForm, IDocCode, IName, IEquatable<PayForm>, IComparab
     {
         
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }
 
 /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Data;
 using KursDomain.ICommon;
@@ -47,6 +48,7 @@ public class NomenklType : IDocCode, IName, INomenklType, IEquatable<NomenklType
         DocCode = entity.DOC_CODE;
         Name = entity.MC_NAME;
         IsDeleted = entity.MC_DELETED == 1;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
         
     }
 
@@ -66,6 +68,6 @@ public class NomenklType : IDocCode, IName, INomenklType, IEquatable<NomenklType
     public void LoadFromCache()
     {
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }

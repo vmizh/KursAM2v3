@@ -75,6 +75,7 @@ public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>, ICompa
         IsPodOtchet = entity.SHPZ_PODOTCHET == 1;
         IsEmployeePayment = entity.SHPZ_1ZARPLATA_0NO == 1;
         Name = entity.SHPZ_NAME;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -93,8 +94,8 @@ public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>, ICompa
     public void LoadFromCache()
     {
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }
 
 /// <summary>

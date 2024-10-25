@@ -231,6 +231,8 @@
     <Compile Include="Managers\DocumentsOpenManager.cs" />
     <Compile Include="Managers\NomenklManager2.cs" />
     <Compile Include="Menu\MenuGeneratorItemVisibleEnum.cs" />
+    <Compile Include="RedisRepositories\Base\IRedisGeneric.cs" />
+    <Compile Include="RedisRepositories\Base\RedisGeneric.cs" />
     <Compile Include="RedisRepositories\IInvoiceDataCacheRepository.cs" />
     <Compile Include="RedisRepositories\InvoiceDataCacheRepository.cs" />
     <Compile Include="RedisRepositories\RedisDataCacheSets.cs" />

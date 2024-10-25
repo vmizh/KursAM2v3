@@ -163,6 +163,7 @@ public class NomenklRepository : KursGenericRepository<SD_83, ALFAMEDIAEntities,
         }
     }
 
+  
     public IEnumerable<Nomenkl> FindByName(string name)
     {
         var n = name.ToLower();
@@ -172,10 +173,11 @@ public class NomenklRepository : KursGenericRepository<SD_83, ALFAMEDIAEntities,
             var redis = redisClient.As<Nomenkl>();
             var list = redis.Lists["Cache:Nomenkl"].GetAll()
                 .Where(_ => (_.NomenklNumber + _.FullName + _.Name + _.Notes).ToLower().Contains(n));
-            return GlobalOptions.ReferencesCache.GetNomenkls(list.Select(_ => _.DocCode)).Cast<Nomenkl>();
+            return
+                new List<Nomenkl>(); //GlobalOptions.ReferencesCache.GetNomenkl(list.Select(_ => _.DocCode)).Cast<Nomenkl>();
         }
     }
-
+    
     public IEnumerable<Nomenkl> GetByGroupDC(decimal groupDC)
     {
         using (var redisClient = redisManager.GetClient())
@@ -184,7 +186,7 @@ public class NomenklRepository : KursGenericRepository<SD_83, ALFAMEDIAEntities,
             var redis = redisClient.As<Nomenkl>();
             var list = redis.Lists["Cache:Nomenkl"].GetAll()
                 .Where(_ => _.GroupDC == groupDC);
-            return GlobalOptions.ReferencesCache.GetNomenkls(list.Select(_ => _.DocCode)).Cast<Nomenkl>();
+            return new List<Nomenkl>();
         }
     }
 }

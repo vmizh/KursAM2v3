@@ -69,6 +69,7 @@ public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparab
         ParentId = entity.ParentId;
         Name = entity.Name;
         Notes = entity.Note;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -88,10 +89,10 @@ public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparab
     {
         if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
         if (EmployeeDC is not null)
-            Employee = cache.GetItem<Employee>(EmployeeDC.Value);
+            Employee = cache.GetEmployee(EmployeeDC.Value);
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationsProjectsViewModel))]

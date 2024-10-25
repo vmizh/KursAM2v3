@@ -54,6 +54,7 @@ public class PayCondition : IPayCondition, IDocCode, IName, IEquatable<PayCondit
         DocCode = entity.DOC_CODE;
         Name = entity.PT_NAME;
         IsDefault = entity.DEFAULT_VALUE == 1;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -73,8 +74,8 @@ public class PayCondition : IPayCondition, IDocCode, IName, IEquatable<PayCondit
     {
        
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }
 
 /// <summary>

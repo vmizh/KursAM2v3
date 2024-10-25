@@ -85,6 +85,11 @@ public class ReferencesKursCache : IReferencesCache
         throw new NotImplementedException();
     }
 
+    public T GetItemGuid<T>(string key) where T : IDocGuid
+    {
+        throw new NotImplementedException();
+    }
+
     public IEnumerable<T> GetAllGuid<T>() where T : IDocGuid
     {
         throw new NotImplementedException();
@@ -125,7 +130,22 @@ public class ReferencesKursCache : IReferencesCache
         throw new NotImplementedException();
     }
 
+    public T GetItem<T>(string dc) where T : IDocCode
+    {
+        throw new NotImplementedException();
+    }
+
     public IEnumerable<T> GetAll<T>() where T : IDocCode
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsKeyExists(string key)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void UpdateList2<T>(IEnumerable<T> list, DateTime? nowFix)
     {
         throw new NotImplementedException();
     }
@@ -1850,6 +1870,11 @@ public class ReferencesKursCache : IReferencesCache
     }
 
     public IEnumerable<INomenklMain> GetNomenklMainAll()
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<INomenkl> GetNomenkl(IEnumerable<decimal> dcList)
     {
         throw new NotImplementedException();
     }

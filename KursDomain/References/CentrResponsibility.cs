@@ -50,6 +50,7 @@ public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEquat
         FullName = entity.CENT_FULLNAME;
         ParentDC = entity.CENT_PARENT_DC;
         IsDeleted = entity.IS_DELETED == 1;
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override bool Equals(object obj)
@@ -69,8 +70,8 @@ public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEquat
     {
        
     }
-
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }
 
 [DataContract]

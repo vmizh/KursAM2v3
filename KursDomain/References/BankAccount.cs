@@ -153,6 +153,7 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
         CentrResponsibility = refCache?.GetCentrResponsibility(entity.BA_CENTR_OTV_DC);
         Currency = refCache?.GetCurrency(entity.CurrencyDC);
         Bank = refCache?.GetBank(entity.BA_BANKDC);
+        UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 
     public override int GetHashCode()
@@ -165,16 +166,17 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
     {
         if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
         if (CentrResponsibilityDC is not null)
-            CentrResponsibility = cache.GetItem<CentrResponsibility>(CentrResponsibilityDC.Value);
+            CentrResponsibility = cache.GetCentrResponsibility(CentrResponsibilityDC.Value);
         if (CurrencyDC is not null)
-            Currency = cache.GetItem<Currency>(CurrencyDC.Value);
+            Currency = cache.GetCurrency(CurrencyDC.Value);
         if (KontragentDC is not null)
-            Kontragent = cache.GetItem<Kontragent>(KontragentDC.Value);
+            Kontragent = cache.GetKontragent(KontragentDC.Value);
         if (BankDC is not null)
-            Bank = cache.GetItem<Bank>(BankDC.Value);
+            Bank = cache.GetBank(BankDC.Value);
     }
 
-    public DateTime LastUpdateServe { get; set; }
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationBankAccount))]

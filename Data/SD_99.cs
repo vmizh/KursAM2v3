@@ -26,6 +26,7 @@ namespace Data
         public string SZ_SHIFR { get; set; }
         public Nullable<decimal> SZ_PARENT_DC { get; set; }
         public Nullable<short> SZ_1DOHOD_0_RASHOD { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_303> SD_303 { get; set; }

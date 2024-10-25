@@ -33,6 +33,7 @@ namespace Data
         public Nullable<short> TD_IN_SF_WITH_TEK_PRICES { get; set; }
         public Nullable<short> TD_USE_PRICES_FOR_ZAKUPOK { get; set; }
         public Nullable<short> TD_DAVLENCH_DOG { get; set; }
+        public Nullable<System.DateTime> UpdateDate { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DogovorClient> DogovorClient { get; set; }
