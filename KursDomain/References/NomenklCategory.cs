@@ -92,7 +92,7 @@ public class NomenklGroup : IDocCode, IDocGuid, IName, INomenklGroup, IEquatable
 
     public void LoadFromCache()
     {
-        
+       
     }
     [Display(AutoGenerateField = false, Name = "Посл.обновление")]
     public DateTime UpdateDate { get; set; }

@@ -180,13 +180,19 @@ public class NomenklRepository : KursGenericRepository<SD_83, ALFAMEDIAEntities,
     
     public IEnumerable<Nomenkl> GetByGroupDC(decimal groupDC)
     {
-        using (var redisClient = redisManager.GetClient())
+        using (var ctx = GlobalOptions.GetEntities())
         {
-            redisClient.Db = GlobalOptions.RedisDBId ?? 0;
-            var redis = redisClient.As<Nomenkl>();
-            var list = redis.Lists["Cache:Nomenkl"].GetAll()
-                .Where(_ => _.GroupDC == groupDC);
-            return new List<Nomenkl>();
+            var dc_list = ctx.SD_83.Where(_ => _.NOM_CATEG_DC == groupDC).Select(x => x.DOC_CODE).ToList();
+            return GlobalOptions.ReferencesCache.GetNomenkl(dc_list).Cast<Nomenkl>();
+        }
+    }
+
+    public IEnumerable<Nomenkl> GetUsluga()
+    {
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            var dc_list = ctx.SD_83.Where(_ => _.NOM_0MATER_1USLUGA == 1).Select(x => x.DOC_CODE).ToList();
+            return GlobalOptions.ReferencesCache.GetNomenkl(dc_list).Cast<Nomenkl>();
         }
     }
 }

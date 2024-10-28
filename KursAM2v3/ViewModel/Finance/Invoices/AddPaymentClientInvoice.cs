@@ -35,7 +35,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var data = ctx.TD_101
-                    .Include(_ => _.SD_101)
+                    .Include(_ => _.SD_101.SD_114.SD_44)
                     .Include(_ => _.SD_114)
                     .Include(_ => _.SD_114.SD_44)
                     .Where(_ => _.VVT_KONTRAGENT == kontrDC

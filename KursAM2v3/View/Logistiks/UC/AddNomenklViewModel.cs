@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using DevExpress.Xpf.CodeView;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
@@ -129,6 +130,12 @@ namespace KursAM2.View.Logistiks.UC
                 NomenklGroup =
                     new ObservableCollection<NomenklGroup>(GlobalOptions.ReferencesCache.GetNomenklGroupAll()
                         .Cast<NomenklGroup>());
+                if (!IsNotUsluga)
+                {
+                    myDataUserControl.treeListPermissionStruct.IsEnabled = false;
+                    NomenklItemCollection.AddRange(nomenklRepository.GetUsluga());
+                    NomenklItem.AddRange(NomenklItemCollection);
+                }
 
                 //if (IsNotUsluga)
                 //{

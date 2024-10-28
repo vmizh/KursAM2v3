@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
+using System.Threading;
 using System.Windows;
+using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using KursAM2.Managers;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
+using KursDomain.References.RedisCache;
+using ServiceStack.Redis;
 
 namespace KursAM2.View.DialogUserControl
 {
@@ -105,8 +110,48 @@ namespace KursAM2.View.DialogUserControl
 
         public DependencyObject LayoutControl { get; }
 
+        private void loadAllKontragent()
+        {
+            if (GlobalOptions.ReferencesCache is not RedisCacheReferences) return;
+            while (((RedisCacheReferences)GlobalOptions.ReferencesCache).isStartLoad)
+            {
+                Thread.Sleep(3000);
+            }
+            RedisManagerPool redisManager =
+                new RedisManagerPool(ConfigurationManager.AppSettings["redis.connection"]);
+            using (var redisClient = redisManager.GetClient())
+            {
+                redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+                var redis = redisClient.As<Kontragent>();
+                var allKeys = redisClient.GetKeysByPattern("Cache:Kontragent:*").ToList();
+                var kontrs = ((RedisCacheReferences)GlobalOptions.ReferencesCache).Kontragents;
+                var keys = (from k in allKeys
+                    let dc = Convert.ToDecimal(k.Split('@')[0].Split(':')[2])
+                    where !kontrs.ContainsKey(dc) &&
+                          ((ICache)kontrs[dc]).UpdateDate != Convert.ToDateTime(k.Split('@')[1])
+                    select k).ToList();
+                if (!keys.Any()) return;
+                using (var pipe = redis.CreatePipeline())
+                {
+                    
+                    foreach (var key in keys)
+                        pipe.QueueCommand(r => r.GetValue(key),
+                            x =>
+                            {
+                                x.LoadFromCache();
+                                if (kontrs.ContainsKey(x.DocCode))
+                                    kontrs[x.DocCode] = x;
+                                else kontrs.Add(x.DocCode, x);
+                            });
+
+                    pipe.Flush();
+                }
+            }
+        }
+
         private void LoadKontragentFromReference()
         {
+            //loadAllKontragent();
             var KontrList = new List<Kontragent>();
             try
             {
@@ -215,12 +260,34 @@ namespace KursAM2.View.DialogUserControl
         public override void SearchClear(object obj)
         {
             SearchText = null;
-            LoadKontragentFromReference();
+            Search(null);
         }
 
         public override void Search(object obj)
-        {
+        { 
             KontragentCollection.Clear();
+            if (string.IsNullOrEmpty(SearchText))
+            {
+                foreach (var k in GlobalOptions.ReferencesCache.GetKontragentsAll().Cast<Kontragent>())
+                {
+                    KontragentCollection.Add(new Kontragent
+                    {
+                        DocCode = k.DocCode,
+                        Name = k.Name,
+                        Currency = k.Currency,
+                        ResponsibleEmployee = k.ResponsibleEmployee,
+                        FullName = k.FullName,
+                        IsBalans = k.IsBalans,
+                        INN = k.INN,
+                        IsDeleted = k.IsDeleted,
+                        Notes = k.Notes,
+                        StartBalans = k.StartBalans
+                    });
+                }
+
+                return;
+            }
+           
             try
             {
                 foreach (var k in GlobalOptions.ReferencesCache.GetKontragentsAll().Cast<Kontragent>())

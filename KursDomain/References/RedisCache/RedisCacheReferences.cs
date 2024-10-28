@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms.VisualStyles;
 using KursAM2.Repositories.RedisRepository;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
@@ -51,10 +52,11 @@ public class RedisCacheReferences : IReferencesCache
     private readonly RedisManagerPool redisManager =
         new RedisManagerPool(ConfigurationManager.AppSettings["redis.connection"]);
 
-    private bool isStartLoad = true;
+    public bool isStartLoad = true;
 
     public RedisCacheReferences()
     {
+        isStartLoad = true;
         ThreadPool.QueueUserWorkItem(x =>
         {
             using (var redisClient = new RedisClient(ConfigurationManager.AppSettings["redis.connection"]))
@@ -388,11 +390,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<CentrResponsibility>();
             CentrResponsibilities.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:CentrResponsibility:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:CentrResponsibility:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -570,11 +572,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<KontragentGroup>();
             KontragentGroups.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:KontragentGroup:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:KontragentGroup:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             if (KontragentGroups.ContainsKey(x.Id))
@@ -649,17 +651,20 @@ public class RedisCacheReferences : IReferencesCache
         using (var redisClient = redisManager.GetClient())
         {
             redisClient.Db = GlobalOptions.RedisDBId ?? 0;
-            if (cacheKeysDict.ContainsKey(cacheName) &&
-                !((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec))
+            if (!cacheKeysDict.ContainsKey(cacheName))
+                LoadCacheKeys(cacheName);
+
+            if((Kontragents.Any() || (DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec)
+               && Kontragents.Count == cacheKeysDict[cacheName].CachKeys.Count)
                 return Kontragents.Values.ToList();
-            LoadCacheKeys(cacheName);
+            
             var redis = redisClient.As<Kontragent>();
             Kontragents.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:Kontragent:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:Kontragent:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -670,7 +675,6 @@ public class RedisCacheReferences : IReferencesCache
                 pipe.Flush();
             }
         }
-
         return Kontragents.Values.ToList();
     }
 
@@ -744,11 +748,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<Nomenkl>();
             Nomenkls.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:Nomenkl:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:Nomenkl:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -829,7 +833,37 @@ public class RedisCacheReferences : IReferencesCache
 
     public IEnumerable<INomenkl> GetNomenkl(IEnumerable<decimal> dcList)
     {
-        throw new NotImplementedException();
+        var cacheName = "Nomenkl";
+        var list = dcList.ToList();
+        if (!list.Any()) return new List<Nomenkl>();
+        using (var redisClient = redisManager.GetClient())
+        {
+            redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+            if (cacheKeysDict.ContainsKey(cacheName))
+                 LoadCacheKeys(cacheName);
+            var redis = redisClient.As<Nomenkl>();
+            var keys = (from dc in list.Where(_ => !Nomenkls.ContainsKey(_))
+                select cacheKeysDict[cacheName].CachKeys.FirstOrDefault(_ => _.DocCode == dc)
+                into t
+                where t != null
+                select t.Key).ToList();
+            if (!keys.Any()) return Nomenkls.Keys.Where(list.Contains).Select(n => Nomenkls[n] as Nomenkl).ToList();
+            using (var pipe = redis.CreatePipeline())
+            {
+                foreach (var key in keys)
+                    pipe.QueueCommand(r => r.GetValue(key),
+                        x =>
+                        {
+                            x.LoadFromCache();
+                            if (Nomenkls.ContainsKey(x.DocCode)) Nomenkls[x.DocCode] = x;
+                            else Nomenkls.Add(x.DocCode, x);
+                        });
+
+                pipe.Flush();
+            }
+
+            return Nomenkls.Keys.Where(list.Contains).Select(n => Nomenkls[n] as Nomenkl).ToList();
+        }
     }
 
     public INomenklGroup GetNomenklGroup(decimal? dc)
@@ -874,11 +908,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<NomenklGroup>();
             NomenklGroups.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:NomenklGroup:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:NomenklGroup:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -1053,11 +1087,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<Employee>();
             Employees.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:Employee:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:Employee:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -1254,11 +1288,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<ClientCategory>();
             ClientCategories.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:ClientCategory:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:ClientCategory:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -1320,11 +1354,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<Currency>();
             Currencies.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:Currency:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:Currency:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict["Currency"].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -1634,10 +1668,10 @@ public class RedisCacheReferences : IReferencesCache
         using (var redisClient = redisManager.GetClient())
         {
             redisClient.Db = GlobalOptions.RedisDBId ?? 0;
-            if (cacheKeysDict.ContainsKey(cacheName) &&
-                !((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec))
+            if(!cacheKeysDict.ContainsKey(cacheName))
+                LoadCacheKeys(cacheName);
+            if (!((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec))
                 return Projects.Values.ToList();
-            LoadCacheKeys(cacheName);
             var redis = redisClient.As<Project>();
             Projects.Clear();
             var keys = redisClient.GetKeysByPattern("Cache:Project:*").ToList();
@@ -2175,15 +2209,18 @@ public class RedisCacheReferences : IReferencesCache
 
                 var cnts = Context.Database.SqlQuery<NomGroupCount>(
                     "SELECT NOM_CATEG_DC AS DocCode, count(*) AS Count from sd_83 GROUP BY NOM_CATEG_DC").ToList();
-                var dictCount = new Dictionary<decimal, int>();
-                foreach (var cnt in cnts) dictCount.Add(cnt.DocCode, cnt.Count);
+                var dictCount = cnts.ToDictionary(cnt => cnt.DocCode, cnt => cnt.Count);
                 foreach (var item in Context.SD_82.AsNoTracking().ToList())
                 {
                     var newItem = new NomenklGroup();
-                    newItem.NomenklCount = getCountNomenklGroup(newItem, dictCount);
                     newItem.LoadFromEntity(item);
                     if (!NomenklGroups.ContainsKey(newItem.DocCode))
                         NomenklGroups.Add(newItem.DocCode, newItem);
+                }
+
+                foreach (var grp in NomenklGroups.Values.Cast<NomenklGroup>())
+                {
+                    grp.NomenklCount = getCountNomenklGroup(grp, dictCount);
                 }
 
                 DropAll<NomenklGroup>();
@@ -2258,23 +2295,26 @@ public class RedisCacheReferences : IReferencesCache
 
                 DropAll<Nomenkl>();
                 UpdateList2(Nomenkls.Values.Cast<Nomenkl>(), now);
-
-
-                //LoadCacheKeysAll();
             }
             else
             {
                 Task.Run(() =>
                 {
-                    GetCountriesAll();
                     GetCurrenciesAll();
+                    GetClientCategoriesAll();
+                    GetKontragentCategoriesAll();
+                    GetCentrResponsibilitiesAll();
+                    GetEmployees();
+                    GetKontragentsAll();
+                });
+                
+
+                Task.Run(() =>
+                {
+                    GetCountriesAll();
                     GetUnitsAll();
                     GetCashBoxAll();
-                    GetCentrResponsibilitiesAll();
-                    GetClientCategoriesAll();
                     GetContractsTypeAll();
-                    GetEmployees();
-                    GetKontragentCategoriesAll();
                     GetMutualSettlementTypeAll();
                     GetNomenklGroupAll();
                     GetNomenklProductTypesAll();
@@ -2288,7 +2328,7 @@ public class RedisCacheReferences : IReferencesCache
                     GetSDRSchetAll();
                     GetWarehousesAll();
                     GetDeliveryConditionAll();
-                    //GetKontragentsAll();
+                   
                     //GetNomenklMainAll();
                     //GetNomenklsAll();
                 });
@@ -2296,7 +2336,6 @@ public class RedisCacheReferences : IReferencesCache
         }
 
         //ClearAll();
-        isStartLoad = false;
     }
 
     private int getCountNomenklGroup(NomenklGroup grp, Dictionary<decimal, int> noms)
@@ -2538,9 +2577,9 @@ public class RedisCacheReferences : IReferencesCache
     private readonly Dictionary<decimal, IDeliveryCondition> DeliveryConditions =
         new Dictionary<decimal, IDeliveryCondition>();
 
-    private Dictionary<decimal, IKontragent> Kontragents = new Dictionary<decimal, IKontragent>();
-    private Dictionary<decimal, INomenkl> Nomenkls = new Dictionary<decimal, INomenkl>();
-    private readonly Dictionary<Guid, INomenklMain> NomenklMains = new Dictionary<Guid, INomenklMain>();
+    public Dictionary<decimal, IKontragent> Kontragents = new Dictionary<decimal, IKontragent>();
+    public Dictionary<decimal, INomenkl> Nomenkls = new Dictionary<decimal, INomenkl>();
+    public readonly Dictionary<Guid, INomenklMain> NomenklMains = new Dictionary<Guid, INomenklMain>();
 
     private readonly Dictionary<decimal, INomenklGroup> NomenklGroups =
         new Dictionary<decimal, INomenklGroup>();

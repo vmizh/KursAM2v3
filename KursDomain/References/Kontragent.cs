@@ -170,6 +170,7 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
     {
         if (entity == null) return;
         DocCode = entity.DOC_CODE;
+        FullName = entity.NAME_FULL;
         StartBalans = entity.START_BALANS ?? new DateTime(2000, 1, 1);
         Name = entity.NAME;
         Notes = entity.NOTES;
