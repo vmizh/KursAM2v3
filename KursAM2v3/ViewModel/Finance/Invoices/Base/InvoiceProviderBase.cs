@@ -60,8 +60,14 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             DocDate = doc.Date;
             Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.PostDC) as Kontragent;
             Summa = doc.Summa ?? 0;
-            SummaFact = (invList.Where(_ => _.IsUsluga ?? false).Sum(_ => _.Summa) ?? 0) +
-                        invList.Sum(g => g.ShippedSumma);
+            SummaFact = 0;
+            foreach (var s in invList)
+            {
+                if (s.IsUsluga ?? false)
+                    SummaFact += (s.Price ?? 0) * s.Quantity;
+                else
+                    SummaFact += s.ShippedSumma;
+            }
             Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CurrencyDC) as Currency;
             PaySumma = doc.PaySumma;
             IsPay = Summa <= PaySumma;
