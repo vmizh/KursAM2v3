@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.CodeView;
 using KursDomain;
-using KursDomain.ICommon;
 using KursDomain.References;
 using KursDomain.Repository.NomenklRepository;
 
@@ -23,9 +21,10 @@ namespace KursAM2.View.Logistiks.UC
         private Nomenkl myCurrentSelectNomenkl;
         private AddNomenklUC myDataUserControl;
 
-        private NomenklRepository nomenklRepository = new NomenklRepository(GlobalOptions.GetEntities());
         // ReSharper disable once FieldCanBeMadeReadOnly.Local
         private bool myIsNotUsluga;
+
+        private readonly NomenklRepository nomenklRepository = new NomenklRepository(GlobalOptions.GetEntities());
 
         public AddNomenklViewModel(Currency crs = null, bool isNotUsluga = false)
         {
@@ -107,10 +106,7 @@ namespace KursAM2.View.Logistiks.UC
         public void GetNomenklItem()
         {
             NomenklItem.Clear();
-            foreach (var nom in nomenklRepository.GetByGroupDC(CurrentGroup.DocCode))
-            {
-                NomenklItem.Add(nom);
-            }
+            foreach (var nom in nomenklRepository.GetByGroupDC(CurrentGroup.DocCode)) NomenklItem.Add(nom);
             //foreach (var item in NomenklItemCollection)
             //    if (((IDocCode)item.Group).DocCode == CurrentGroup.DocCode)
             //        NomenklItem.Add(item);
@@ -136,54 +132,10 @@ namespace KursAM2.View.Logistiks.UC
                     NomenklItemCollection.AddRange(nomenklRepository.GetUsluga());
                     NomenklItem.AddRange(NomenklItemCollection);
                 }
-
-                //if (IsNotUsluga)
-                //{
-                //    NomenklItemCollection.AddRange(currentCrs == null
-                //        ? GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>().ToList()
-                //        : GlobalOptions.ReferencesCache.GetNomenklsAll()
-                //            .Where(_ => ((IDocCode)_.Currency).DocCode == currentCrs.DocCode).Cast<Nomenkl>().ToList());
-                //}
-                //else
-                //{
-                //    myDataUserControl.treeListPermissionStruct.IsEnabled = false;
-                //    NomenklItemCollection.AddRange(GlobalOptions.ReferencesCache.GetNomenklsAll()
-                //        .Where(_ => _.IsUsluga && ((IDocCode)_.Currency).DocCode == currentCrs.DocCode).Cast<Nomenkl>());
-                //    NomenklItem.AddRange(NomenklItemCollection);
-                //}
-
-                //CalcCommonSumAsync();
             }
             catch (Exception e)
             {
                 WindowManager.ShowError(e);
-            }
-        }
-
-        private async Task CalcCommonSumAsync()
-        {
-            await Task.Run(() => CalcCommonSum());
-        }
-
-        private void CalcCommonSum()
-        {
-            var parents = NomenklGroup.Select(_ => _.ParentDC).Distinct().ToList();
-            var lasts = NomenklGroup.Where(n => parents.All(_ => _ != n.DocCode)).ToList();
-            foreach (var node in lasts)
-            {
-                node.NomenklCount = GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>()
-                    .Count(_ => ((IDocCode)_.Group).DocCode == node.DocCode);
-                var prevn = node;
-                var n = NomenklGroup.FirstOrDefault(_ => _.DocCode == node.ParentDC);
-                if (n == null) continue;
-                while (n != null)
-                {
-                    var c = GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>()
-                        .Count(_ => ((IDocCode)_.Group).DocCode == n.DocCode);
-                    n.NomenklCount = n.NomenklCount + prevn.NomenklCount + c;
-                    prevn = n;
-                    n = NomenklGroup.FirstOrDefault(_ => _.DocCode == n.ParentDC);
-                }
             }
         }
 
@@ -223,7 +175,6 @@ namespace KursAM2.View.Logistiks.UC
         {
             NomenklItem.Clear();
             foreach (var n in nomenklRepository.FindByName(SearchText))
-            {
                 switch (IsNotUsluga)
                 {
                     case true:
@@ -231,12 +182,11 @@ namespace KursAM2.View.Logistiks.UC
                         break;
                     default:
                     {
-                        if(n.IsUsluga)
+                        if (n.IsUsluga)
                             NomenklItem.Add(n);
                         break;
                     }
                 }
-            }
             //foreach (var n in GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>().ToList())
             //{
             //    var srch = SearchText.ToUpper();

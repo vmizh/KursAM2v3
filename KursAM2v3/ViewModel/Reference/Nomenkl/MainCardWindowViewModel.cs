@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Data.Entity;
@@ -17,6 +18,7 @@ using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using NomenklMain = Data.NomenklMain;
+using System.Runtime.Remoting.Contexts;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
@@ -205,6 +207,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public override void SaveData(object data)
         {
+            List<Guid> savedListId = new List<Guid>();
+            List<decimal> savedListDC = new List<decimal>();
             decimal newDC = 0;
             var state = NomenklMain.State;
 
@@ -258,6 +262,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     IsOnlyState = NomenklMain.IsOnlyState
                                 };
                                 ctx.NomenklMain.Add(newItem);
+                                savedListId.Add(newItem.Id);
                                 var crsDC = GlobalOptions.SystemProfile.NationalCurrency.DocCode;
                                 var newNomItem = new SD_83
                                 {
@@ -280,6 +285,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer
                                 };
                                 ctx.SD_83.Add(newNomItem);
+                                savedListDC.Add(newDC);
+
                                 break;
                             case RowStatus.Edited:
                                 var nomFormMain = ctx.SD_83.Where(_ => _.MainId == NomenklMain.Id).ToList();
@@ -317,6 +324,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     nom.IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer;
                                 }
 
+                                savedListId.Add(NomenklMain.Id);
                                 break;
                         }
 
@@ -324,11 +332,77 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         tnx.Commit();
                         NomenklMain.myState = RowStatus.NotEdited;
                         RaisePropertyChanged(nameof(IsCanSaveData));
-                        foreach (var nom in NomenklMain.NomenklCollection)
+                        savedListDC.AddRange(from nom in NomenklMain.NomenklCollection
+                            let n = GlobalOptions.ReferencesCache.GetNomenkl(nom.DocCode)
+                            select nom.DocCode);
+
+                        foreach (var item in from id in savedListId.Distinct()
+                                 select ctx.NomenklMain.AsNoTracking().FirstOrDefault(_ => _.Id == id)
+                                 into entity
+                                 where entity is not null
+                                 select new KursDomain.References.NomenklMain()
+                                 {
+                                     Id = entity.Id,
+                                     Name = entity.Name,
+                                     Notes = entity.Note,
+                                     NomenklNumber = entity.NomenklNumber,
+                                     FullName = entity.FullName,
+                                     IsUsluga = entity.IsUsluga,
+                                     IsProguct = entity.IsComplex,
+                                     IsNakladExpense = entity.IsNakladExpense,
+                                     IsOnlyState = entity.IsOnlyState ?? false,
+                                     IsCurrencyTransfer = entity.IsCurrencyTransfer ?? false,
+                                     IsRentabelnost = entity.IsRentabelnost ?? false,
+                                     UnitDC = entity.UnitDC,
+                                     CategoryDC = entity.CategoryDC,
+                                     NomenklTypeDC = entity.TypeDC,
+                                     ProductTypeDC = entity.ProductDC
+                                 })
                         {
-                            var n = GlobalOptions.ReferencesCache.GetNomenkl(nom.DocCode);
+                            GlobalOptions.ReferencesCache.AddOrUpdateGuid(item);
                         }
-                        
+
+                        foreach (var item in from dc in savedListDC.Distinct()
+                                 select ctx.SD_83.Include(_ => _.NomenklMain).AsNoTracking()
+                                     .FirstOrDefault(_ => _.DOC_CODE == dc)
+                                 into entity
+                                 where entity is not null
+                                 select new KursDomain.References.Nomenkl
+                                 {
+                                     DocCode = entity.DOC_CODE,
+                                     Id = entity.Id,
+                                     Name = entity.NOM_NAME,
+                                     FullName =
+                                         entity.NOM_FULL_NAME,
+                                     Notes = entity.NOM_NOTES,
+                                     IsUsluga =
+                                         entity.NOM_0MATER_1USLUGA == 1,
+                                     IsProguct = entity.NOM_1PROD_0MATER == 1,
+                                     IsNakladExpense =
+                                         entity.NOM_1NAKLRASH_0NO == 1,
+                                     DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT,
+                                     IsDeleted =
+                                         entity.NOM_DELETED == 1,
+                                     IsUslugaInRentabelnost =
+                                         entity.IsUslugaInRent ?? false,
+                                     UpdateDate =
+                                         entity.UpdateDate ?? DateTime.MinValue,
+                                     MainId =
+                                         entity.MainId ?? Guid.Empty,
+                                     IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
+                                     NomenklNumber =
+                                         entity.NOM_NOMENKL,
+                                     NomenklTypeDC =
+                                         entity.NomenklMain.TypeDC,
+                                     ProductTypeDC = entity.NomenklMain.ProductDC,
+                                     UnitDC = entity.NOM_ED_IZM_DC,
+                                     CurrencyDC = entity.NOM_SALE_CRS_DC,
+                                     GroupDC = entity.NOM_CATEG_DC
+                                 })
+                        {
+                            GlobalOptions.ReferencesCache.AddOrUpdate(item);
+                        }
+
                         //foreach (var n in dcs) MainReferences.LoadNomenkl(n);
                     }
                     catch (Exception ex)
@@ -339,7 +413,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                     }
 
                     ParentReference?.LoadNomMainForCategory(null);
-                    var mainNom = GlobalOptions.ReferencesCache.GetNomenklMain(NomenklMain.Id);
+                    GlobalOptions.ReferencesCache.GetNomenklMain(NomenklMain.Id);
                 }
 
                 if (state == RowStatus.NewRow)

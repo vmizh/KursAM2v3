@@ -7,6 +7,7 @@ using Core.WindowsManager;
 using Data;
 using Helper;
 using KursDomain.References;
+using System.Data.Entity;
 using KursDomain.References.RedisCache;
 using KursDomain.Repository.Base;
 using ServiceStack.Redis;
@@ -167,17 +168,64 @@ public class NomenklRepository : KursGenericRepository<SD_83, ALFAMEDIAEntities,
     public IEnumerable<Nomenkl> FindByName(string name)
     {
         var n = name.ToLower();
-        using (var redisClient = redisManager.GetClient())
+        using (var ctx = GlobalOptions.GetEntities())
         {
-            redisClient.Db = GlobalOptions.RedisDBId ?? 0;
-            var redis = redisClient.As<Nomenkl>();
-            var list = redis.Lists["Cache:Nomenkl"].GetAll()
-                .Where(_ => (_.NomenklNumber + _.FullName + _.Name + _.Notes).ToLower().Contains(n));
-            return
-                new List<Nomenkl>(); //GlobalOptions.ReferencesCache.GetNomenkl(list.Select(_ => _.DocCode)).Cast<Nomenkl>();
+            var data = ctx.SD_83.AsNoTracking()
+                .Where(_ => (_.NOM_NOMENKL + _.NOM_FULL_NAME + _.NOM_POLNOE_IMIA + _.NOM_NOTES).ToLower().Contains(n)).ToList();
+            var notInCacheList = (from dc in data.Select(_ => _.DOC_CODE)
+                let key = ((RedisCacheReferences)GlobalOptions.ReferencesCache).cacheKeysDict["Nomenkl"]
+                    .CachKeys.FirstOrDefault(_ => _.DocCode == dc)
+                where key is null
+                select dc).ToList();
+            if (notInCacheList.Any())
+                updateNomenklCache(notInCacheList);
+            return GlobalOptions.ReferencesCache.GetNomenkl(data.Select(_ => _.DOC_CODE)).Cast<Nomenkl>();
         }
     }
-    
+
+    private void updateNomenklCache(List<decimal> list)
+    {
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            foreach (var item in ctx.SD_83.Include(_ => _.NomenklMain).AsNoTracking().ToList().Select(entity =>
+                         new Nomenkl
+                         {
+                             DocCode = entity.DOC_CODE,
+                             Id = entity.Id,
+                             Name = entity.NOM_NAME,
+                             FullName =
+                                 entity.NOM_FULL_NAME,
+                             Notes = entity.NOM_NOTES,
+                             IsUsluga =
+                                 entity.NOM_0MATER_1USLUGA == 1,
+                             IsProguct = entity.NOM_1PROD_0MATER == 1,
+                             IsNakladExpense =
+                                 entity.NOM_1NAKLRASH_0NO == 1,
+                             DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT,
+                             IsDeleted =
+                                 entity.NOM_DELETED == 1,
+                             IsUslugaInRentabelnost =
+                                 entity.IsUslugaInRent ?? false,
+                             UpdateDate =
+                                 entity.UpdateDate ?? DateTime.MinValue,
+                             MainId =
+                                 entity.MainId ?? Guid.Empty,
+                             IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
+                             NomenklNumber =
+                                 entity.NOM_NOMENKL,
+                             NomenklTypeDC =
+                                 entity.NomenklMain.TypeDC,
+                             ProductTypeDC = entity.NomenklMain.ProductDC,
+                             UnitDC = entity.NOM_ED_IZM_DC,
+                             CurrencyDC = entity.NOM_SALE_CRS_DC,
+                             GroupDC = entity.NOM_CATEG_DC
+                         }))
+            {
+                GlobalOptions.ReferencesCache.AddOrUpdate(item);
+            }
+        }
+    }
+
     public IEnumerable<Nomenkl> GetByGroupDC(decimal groupDC)
     {
         using (var ctx = GlobalOptions.GetEntities())

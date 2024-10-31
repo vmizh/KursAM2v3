@@ -12,7 +12,6 @@ using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using DevExpress.Xpf.Grid.Native;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.View.KursReferences;
@@ -250,7 +249,6 @@ namespace KursAM2.ViewModel.Reference
                                 ctx.SaveChanges();
                                 transaction.Commit();
                                 Banks.Remove(CurrentBank);
-                                
                             }
                             catch (Exception ex)
                             {

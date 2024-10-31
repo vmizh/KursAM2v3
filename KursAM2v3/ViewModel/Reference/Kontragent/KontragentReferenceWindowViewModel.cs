@@ -369,29 +369,27 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
         private bool GroupSave(KontragentGroupViewModel cat)
         {
-            var newId = cat.EG_ID;
             using (var ctx = GlobalOptions.GetEntities())
             {
                 using (var tnx = new TransactionScope())
                 {
                     try
                     {
+                        int id = 0;
                         switch (cat.State)
                         {
                             case RowStatus.Edited:
-                                var oldcat = ctx.UD_43.SingleOrDefault(_ => _.EG_ID == cat.EG_ID);
+                                id = cat.EG_ID;
+                                var oldcat = ctx.UD_43.SingleOrDefault(_ => _.EG_ID == id);
                                 if (oldcat == null) return false;
                                 oldcat.EG_NAME = cat.Name;
                                 oldcat.EG_PARENT_ID = cat.EG_PARENT_ID;
                                 break;
                             case RowStatus.NewRow:
-                                newId = ctx.UD_43.Any() ? ctx.UD_43.Max(_ => _.EG_ID) : 0;
-                                if (newId == 0)
-                                    newId = 1;
-                                else newId = newId + 1;
+                                id = ctx.UD_43.Any() ? ctx.UD_43.Max(_ => _.EG_ID)+1 : 1;
                                 var newItem = new UD_43
                                 {
-                                    EG_ID = newId,
+                                    EG_ID = id,
                                     EG_PARENT_ID = cat.EG_PARENT_ID,
                                     EG_NAME = cat.Name
                                 };
@@ -401,7 +399,14 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
                         ctx.SaveChanges();
                         tnx.Complete();
-                        cat.EG_ID = newId;
+                        var ent = ctx.UD_43.FirstOrDefault(_ => _.EG_ID == id);
+                        if (ent != null)
+                        {
+                            var cacheItem = new KontragentGroup();
+                            cacheItem.LoadFromEntity(ent);
+                            GlobalOptions.ReferencesCache.AddOrUpdate(cacheItem);
+                        }
+                        cat.EG_ID = id;
                         cat.State = RowStatus.NotEdited;
                     }
                     catch (Exception ex)

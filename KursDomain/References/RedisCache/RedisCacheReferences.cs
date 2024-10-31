@@ -47,7 +47,7 @@ public class RedisCacheReferences : IReferencesCache
 {
     public const int MaxTimersSec = 10800; // 3 часа
 
-    private readonly Dictionary<string, CacheKeys> cacheKeysDict = new Dictionary<string, CacheKeys>();
+    public readonly Dictionary<string, CacheKeys> cacheKeysDict = new Dictionary<string, CacheKeys>();
 
     private readonly RedisManagerPool redisManager =
         new RedisManagerPool(ConfigurationManager.AppSettings["redis.connection"]);
@@ -200,11 +200,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<NomenklType>();
             NomenklTypes.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:NomenklType:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:NomenklType:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -265,11 +265,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<NomenklProductType>();
             NomenklProductTypes.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:NomenklProductType:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:NomenklProductType:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -329,11 +329,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<ProductType>();
             ProductTypes.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:ProductType:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:ProductType:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -451,11 +451,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<Bank>();
             Banks.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:Bank:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:Bank:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -512,11 +512,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<BankAccount>();
             BankAccounts.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:BankAccount:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:BankAccount:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -710,9 +710,8 @@ public class RedisCacheReferences : IReferencesCache
 
     public INomenkl GetNomenkl(decimal dc)
     {
-        if (!cacheKeysDict.ContainsKey("Nomenkl"))
+        if (!cacheKeysDict.ContainsKey("Nomenkl") || (DateTime.Now - cacheKeysDict["Nomenkl"].LoadMoment).TotalSeconds > MaxTimersSec)
             LoadCacheKeys("Nomenkl");
-
         var key = cacheKeysDict["Nomenkl"].CachKeys.SingleOrDefault(_ => _.DocCode == dc);
         Nomenkl itemNew = null;
         if (key is not null)
@@ -812,11 +811,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<NomenklMain>();
             NomenklMains.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:NomenklMain:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:NomenklMain:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -927,6 +926,7 @@ public class RedisCacheReferences : IReferencesCache
         return NomenklGroups.Values.ToList();
     }
 
+    
     public IWarehouse GetWarehouse(decimal? dc)
     {
         return dc is null ? null : GetWarehouse(dc.Value);
@@ -977,11 +977,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<Warehouse>();
             Warehouses.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:Warehouse:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:Warehouse:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -1155,11 +1155,11 @@ public class RedisCacheReferences : IReferencesCache
 
             var redis = redisClient.As<SDRSchet>();
             SDRSchets.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:SDRSchet:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:SDRSchet:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key), x =>
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key), x =>
                     {
                         x.LoadFromCache();
                         if (SDRSchets.ContainsKey(x.DocCode))
@@ -1221,11 +1221,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<SDRState>();
             SDRStates.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:SDRState:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:SDRState:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -1416,11 +1416,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<Country>();
             Countries.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:Country:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:Country:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -1483,11 +1483,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<Region>();
             Regions.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:Region:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:Region:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -1548,11 +1548,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<Unit>();
             Units.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:Unit:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:Unit:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -1611,11 +1611,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<MutualSettlementType>();
             MutualSettlementTypes.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:MutualSettlementType:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:MutualSettlementType:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -1674,11 +1674,11 @@ public class RedisCacheReferences : IReferencesCache
                 return Projects.Values.ToList();
             var redis = redisClient.As<Project>();
             Projects.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:Project:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:Project:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -1735,11 +1735,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<ContractType>();
             ContractTypes.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:ContractType:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:ContractType:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -1797,11 +1797,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<PayForm>();
             PayForms.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:PayForm:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:PayForm:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -1859,11 +1859,11 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<PayCondition>();
             PayConditions.Clear();
-            var keys = redisClient.GetKeysByPattern("Cache:PayCondition:*").ToList();
+            //var keys = redisClient.GetKeysByPattern("Cache:PayCondition:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
-                foreach (var key in keys)
-                    pipe.QueueCommand(r => r.GetValue(key),
+                foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                    pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
                             x.LoadFromCache();
@@ -2449,53 +2449,162 @@ public class RedisCacheReferences : IReferencesCache
             switch (channel)
             {
                 case RedisMessageChannels.BankReference:
+                    if (message.DocCode is null) return;
+                    GetBank(message.DocCode);
+                    break;
                 case RedisMessageChannels.RegionReference:
+                    if (message.DocCode is null) return;
+                    GetRegion(message.DocCode);
+                    break;
                 case RedisMessageChannels.BankAccountReference:
+                    if (message.DocCode is null) return;
+                    GetBankAccount(message.DocCode);
+                    break;
                 case RedisMessageChannels.CashBoxReference:
+                    if (message.DocCode is null) return;
+                    GetCashBox(message.DocCode);
+                    break;
                 case RedisMessageChannels.CentrResponsibilityReference:
+                    if (message.DocCode is null) return;
+                    GetCentrResponsibility(message.DocCode);
+                    break;
                 case RedisMessageChannels.ClientCategoryReference:
+                    if (message.DocCode is null) return;
+                    GetClientCategory(message.DocCode);
+                    break;
                 case RedisMessageChannels.ContractTypeReference:
+                    if (message.DocCode is null) return;
+                    GetContractType(message.DocCode);
+                    break;
                 case RedisMessageChannels.CountryReference:
+                    if (message.Id is null) return;
+                    GetCountry(message.Id);
+                    break;
                 case RedisMessageChannels.CurrencyReference:
+                    if (message.DocCode is null) return;
+                    GetCurrency(message.DocCode);
+                    break;
                 case RedisMessageChannels.DeliveryConditionReference:
+                    if (message.DocCode is null) return;
+                    GetDeliveryCondition(message.DocCode);
+                    break;
                 case RedisMessageChannels.EmployeeReference:
+                    if (message.DocCode is null) return;
+                    GetEmployee(message.DocCode);
+                    break;
                 case RedisMessageChannels.KontragentGroupReference:
+                    if (message.DocCode is null) return;
+                    GetKontragentGroup(Convert.ToInt32(message.DocCode));
+                    break;
                 case RedisMessageChannels.MutualSettlementTypeReference:
+                    if (message.DocCode is null) return;
+                    GetMutualSettlementType(message.DocCode);
+                    break;
                 case RedisMessageChannels.NomenklGroupReference:
+                    if (message.DocCode is null) return;
+                    GetNomenklGroup(message.DocCode);
+                    break;
                 case RedisMessageChannels.NomenklMainReference:
+                    if (message.Id is null) return;
+                    var nm_item = GetItemGuid<NomenklMain>((string)message.ExternalValues["RedisKey"]);
+                    nm_item.LoadFromCache();
+                    var nm_oldKey = cacheKeysDict["NomenklMain"].CachKeys.SingleOrDefault(_ => _.Id == message.Id);
+                    if (nm_oldKey is null)
+                    {
+                        cacheKeysDict["NomenklMain"].CachKeys.Add(new CachKey()
+                        {
+                            Key = (string)message.ExternalValues["RedisKey"],
+                            //DocCode = message.DocCode,
+                            Id = nm_item.Id,
+                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                        });
+                    }
+
+                    if (NomenklMains.ContainsKey(message.Id.Value))
+                        NomenklMains[message.Id.Value] = nm_item;
+                    else NomenklMains.Add(message.Id.Value,nm_item);
+                    break;
                 case RedisMessageChannels.NomenklProductTypeReference:
+                    if (message.DocCode is null) return;
+                    GetNomenklProductType(message.DocCode);
+                    break;
                 case RedisMessageChannels.NomenklTypeReference:
+                    if (message.DocCode is null) return;
+                    GetNomenklType(message.DocCode);
+                    break;
                 case RedisMessageChannels.PayConditionReference:
+                    if (message.DocCode is null) return;
+                    GetPayCondition(message.DocCode);
+                    break;
                 case RedisMessageChannels.PayFormReference:
+                    if (message.DocCode is null) return;
+                    GetPayForm(message.DocCode);
+                    break;
                 case RedisMessageChannels.ProjectReference:
+                    if (message.Id is null) return;
+                    GetProject(message.Id);
+                    break;
                 case RedisMessageChannels.ProductTypeReference:
+                    if (message.DocCode is null) return;
+                    GetProductType(message.DocCode);
+                    break;
                 case RedisMessageChannels.SDRSchetReference:
+                    if (message.DocCode is null) return;
+                    GetSDRSchet(message.DocCode);
+                    break;
                 case RedisMessageChannels.SDRStateReference:
+                    if (message.DocCode is null) return;
+                    GetSDRState(message.DocCode);
+                    break;
                 case RedisMessageChannels.WarehouseReference:
+                    if (message.DocCode is null) return;
+                    GetWarehouse(message.DocCode);
+                    break;
                 case RedisMessageChannels.UnitReference:
+                    if (message.DocCode is null) return;
+                    GetUnit(message.DocCode);
                     break;
                 case RedisMessageChannels.KontragentReference:
                     if (message.DocCode is null) return;
-                    if (Kontragents.ContainsKey(message.DocCode.Value))
+                    var k_item = GetItem<Kontragent>((string)message.ExternalValues["RedisKey"]);
+                    k_item.LoadFromCache();
+                    var k_oldKey = cacheKeysDict["Kontragent"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    if (k_oldKey is null)
                     {
-                        var entity = Context.SD_43.Include(_ => _.SD_2).FirstOrDefault();
-                        if (entity is null) return;
-                        var kontr = new Kontragent
+                        cacheKeysDict["Kontragent"].CachKeys.Add(new CachKey()
                         {
-                            DocCode = entity.DOC_CODE,
-                            StartBalans = entity.START_BALANS ?? new DateTime(2000, 1, 1),
-                            Name = entity.NAME,
-                            Notes = entity.NOTES,
-                            IsBalans = entity.FLAG_BALANS == 1,
-                            IsDeleted = entity.DELETED == 1,
-                            Id = entity.Id,
-                            CurrencyDC = entity.VALUTA_DC,
-                            GroupDC = entity.EG_ID,
-                            ResponsibleEmployeeDC = entity.SD_2.DOC_CODE
-                        };
-                        Kontragents[message.DocCode.Value] = kontr;
+                            Key = (string)message.ExternalValues["RedisKey"],
+                            DocCode = message.DocCode,
+                            Id = k_item.Id,
+                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                        });
                     }
 
+                    if (Kontragents.ContainsKey(message.DocCode.Value))
+                        Kontragents[message.DocCode.Value] = k_item;
+                    else Kontragents.Add(message.DocCode.Value,k_item);
+                    break;
+                case RedisMessageChannels.NomenklReference:
+                    if (message.DocCode is null) return;
+                    if(!cacheKeysDict.ContainsKey("Nomenkl"))
+                        LoadCacheKeys("Nomenkl");
+                    var item = GetItem<Nomenkl>((string)message.ExternalValues["RedisKey"]);
+                    item.LoadFromCache();
+                    var oldKey = cacheKeysDict["Nomenkl"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    if (oldKey is null)
+                    {
+                        cacheKeysDict["Nomenkl"].CachKeys.Add(new CachKey()
+                        {
+                            Key = (string)message.ExternalValues["RedisKey"],
+                            DocCode = message.DocCode,
+                            Id = item.Id,
+                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                        });
+                    }
+
+                    if (Nomenkls.ContainsKey(message.DocCode.Value))
+                        Nomenkls[message.DocCode.Value] = item;
+                    else Nomenkls.Add(message.DocCode.Value,item);
                     break;
                 default:
                     Console.WriteLine($"{channel} - не обработан");
@@ -2646,7 +2755,18 @@ public class RedisCacheReferences : IReferencesCache
             var redis = redisClient.As<T>();
             var now = DateTime.Now;
             ((ICache)item).UpdateDate = now;
-            redis.SetValue($"Cache:{typeof(T).Name}:{item.Id}@{now}", item);
+            var name = $"{ typeof(T).Name}";
+            string key = name switch
+            {
+                "Kontragent" or "Nomenkl" => $"Cache:{typeof(T).Name}:{((IDocCode)item).DocCode}:{item.Id}@{now}",
+                _ => $"Cache:{typeof(T).Name}:{item.Id}@{now}"
+            };
+            var olds = redisClient.GetKeysByPattern($"{key.Split('@')[0]}*");
+            foreach (var oldKey in olds)
+            {
+                redisClient.Remove(oldKey);
+            }
+            redis.SetValue(key, item);
             var message = new RedisMessage
             {
                 DocumentType = DocumentType.None,
@@ -2657,6 +2777,7 @@ public class RedisCacheReferences : IReferencesCache
                 Message =
                     $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник {typeof(T).Name} '{item.Id}'"
             };
+            message.ExternalValues.Add("RedisKey",key);
             var jsonSerializerSettings = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
@@ -2711,7 +2832,7 @@ public class RedisCacheReferences : IReferencesCache
             else
             {
                 var key = enumerable.First();
-                var name = $"Cache:{typeof(T).Name}";
+                var name = $"{typeof(T).Name}";
                 switch (name)
                 {
                     case "Kontragent":
@@ -2888,7 +3009,20 @@ public class RedisCacheReferences : IReferencesCache
             var redis = redisClient.As<T>();
             var now = DateTime.Now;
             ((ICache)item).UpdateDate = now;
-            redis.SetValue($"Cache:{typeof(T).Name}:{item.DocCode}@{now}", item);
+            var name = $"{typeof(T).Name}";
+
+            string key = name switch
+            {
+                "Kontragent" or "Nomenkl" => $"Cache:{typeof(T).Name}:{item.DocCode}:{((IDocGuid)item).Id}@{now}",
+                "Employee" => $"Cache:{typeof(T).Name}:{item.DocCode}:{((IEmployee)item).TabelNumber}@{now}",
+                _ => $"Cache:{typeof(T).Name}:{item.DocCode}@{now}"
+            };
+            var olds = redisClient.GetKeysByPattern($"{key.Split('@')[0]}*");
+            foreach (var oldKey in olds)
+            {
+                redisClient.Remove(oldKey);
+            }
+            redis.SetValue(key, item);
             var message = new RedisMessage
             {
                 DocumentType = DocumentType.None,
@@ -2899,6 +3033,7 @@ public class RedisCacheReferences : IReferencesCache
                 Message =
                     $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник {typeof(T).Name} '{item.DocCode}'"
             };
+            message.ExternalValues.Add("RedisKey",key);
             var jsonSerializerSettings = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
@@ -3037,6 +3172,7 @@ public class RedisCacheReferences : IReferencesCache
         }
     }
 
+    
     public T GetItem<T>(string key) where T : IDocCode
     {
         using (var redisClient = redisManager.GetClient())

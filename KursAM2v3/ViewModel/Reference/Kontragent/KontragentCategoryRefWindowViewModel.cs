@@ -111,6 +111,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                             if (old != null) ctx.SD_148.Remove(old);
                         }
 
+                        var itemsDC = new List<decimal>();
                         var newDC = ctx.SD_148.Any() ? ctx.SD_148.Max(_ => _.DOC_CODE) : 1480000001;
                         foreach (var r in CategoryCollection.Where(_ => _.State != RowStatus.NotEdited))
                             switch (r.State)
@@ -126,6 +127,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                                     ed.CK_MIN_OBOROT = r.CK_MIN_OBOROT;
                                     ed.CK_NACEN_DEFAULT_KOMPL = r.CK_NACEN_DEFAULT_KOMPL;
                                     ed.CK_NACEN_DEFAULT_ROZN = r.CK_NACEN_DEFAULT_ROZN;
+                                    itemsDC.Add(r.DocCode);
                                     break;
                                 case RowStatus.NewRow:
                                     newDC++;
@@ -142,11 +144,21 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                                             CK_NACEN_DEFAULT_ROZN = r.CK_NACEN_DEFAULT_ROZN
                                         }
                                     );
+                                    itemsDC.Add(newDC);
                                     break;
                             }
 
                         ctx.SaveChanges();
                         tnx.Complete();
+                        foreach (var dc in itemsDC)
+                        {
+                            var ent = ctx.SD_148.FirstOrDefault(_ => _.DOC_CODE == dc);
+                            if (ent == null) continue;
+                            var caheItem = new ClientCategory();
+                            caheItem.LoadFromEntity(ent);
+                            GlobalOptions.ReferencesCache.AddOrUpdate(caheItem);
+                        }
+                        
                         foreach (var r in CategoryCollection)
                             r.myState = RowStatus.NotEdited;
                         CategoryDeleteCollection.Clear();
