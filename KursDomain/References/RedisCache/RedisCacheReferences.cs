@@ -2328,6 +2328,8 @@ public class RedisCacheReferences : IReferencesCache
                     GetSDRSchetAll();
                     GetWarehousesAll();
                     GetDeliveryConditionAll();
+                    LoadCacheKeys("NomeklMain");
+                    LoadCacheKeys("Nomenkl");
                    
                     //GetNomenklMainAll();
                     //GetNomenklsAll();

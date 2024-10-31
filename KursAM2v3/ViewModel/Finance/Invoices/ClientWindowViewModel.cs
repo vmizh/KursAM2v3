@@ -931,6 +931,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         // ReSharper disable once PossibleNullReferenceException
                         DocCode = Document.DocCode,
                         Code = newCode,
+                        Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(item.DocCode) as Nomenkl,
                         Parent = Document,
                         NDSPercent = nds,
                         Quantity = 1,
