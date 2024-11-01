@@ -1350,7 +1350,11 @@ public class RedisCacheReferences : IReferencesCache
             redisClient.Db = GlobalOptions.RedisDBId ?? 0;
             if (cacheKeysDict.ContainsKey(cacheName) &&
                 !((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec))
-                return Currencies.Values.ToList();
+            {
+                if(Currencies.Count == cacheKeysDict[cacheName].CachKeys.Count)
+                    return Currencies.Values.ToList();
+            }
+
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<Currency>();
             Currencies.Clear();
@@ -2160,6 +2164,11 @@ public class RedisCacheReferences : IReferencesCache
                             ResponsibleEmployeeDC = entity.SD_2.DOC_CODE
                         })
                     .ToDictionary<Kontragent, decimal, IKontragent>(newItem => newItem.DocCode, newItem => newItem);
+                foreach (var k in Kontragents.Values.Cast<Kontragent>())
+                {
+                    k.LoadFromCache();
+                }
+
                 DropAll<Kontragent>();
                 UpdateList2(Kontragents.Values.Cast<Kontragent>().ToList(), now);
 
@@ -2184,6 +2193,10 @@ public class RedisCacheReferences : IReferencesCache
                         BankDC = entity.BA_BANKDC
                     })
                     .ToDictionary<BankAccount, decimal, IBankAccount>(newItem => newItem.DocCode, newItem => newItem);
+                foreach (var k in BankAccounts.Values.Cast<BankAccount>())
+                {
+                    k.LoadFromCache();
+                }
 
                 DropAll<BankAccount>();
                 UpdateList(BankAccounts.Values.Cast<BankAccount>(), now);
@@ -2203,6 +2216,11 @@ public class RedisCacheReferences : IReferencesCache
                         CentrResponsibilityDC = entity.CA_CENTR_OTV_DC
                     })
                     .ToDictionary<CashBox, decimal, ICashBox>(newItem => newItem.DocCode, newItem => newItem);
+                foreach (var k in CashBoxes.Values.Cast<CashBox>())
+                {
+                    k.LoadFromCache();
+                }
+
                 DropAll<CashBox>();
                 UpdateList(CashBoxes.Values.Cast<CashBox>(), now);
                 GetCashBoxAll();
@@ -2298,16 +2316,17 @@ public class RedisCacheReferences : IReferencesCache
             }
             else
             {
+                GetCurrenciesAll();
+                GetClientCategoriesAll();
+                GetKontragentCategoriesAll();
+                GetCentrResponsibilitiesAll();
                 Task.Run(() =>
                 {
-                    GetCurrenciesAll();
-                    GetClientCategoriesAll();
-                    GetKontragentCategoriesAll();
-                    GetCentrResponsibilitiesAll();
+
                     GetEmployees();
                     GetKontragentsAll();
                 });
-                
+
 
                 Task.Run(() =>
                 {
@@ -2330,7 +2349,7 @@ public class RedisCacheReferences : IReferencesCache
                     GetDeliveryConditionAll();
                     LoadCacheKeys("NomeklMain");
                     LoadCacheKeys("Nomenkl");
-                   
+
                     //GetNomenklMainAll();
                     //GetNomenklsAll();
                 });
