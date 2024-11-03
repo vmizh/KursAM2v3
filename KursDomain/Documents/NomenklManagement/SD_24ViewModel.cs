@@ -128,7 +128,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         get => myWarehouseOut; //GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_OTPR_DC) as References.Warehouse;
         set
         {
-            if (Entity.DD_SKLAD_OTPR_DC == value?.DocCode) return;
+            if (myWarehouseOut == value) return;
             myWarehouseOut = value;
             Entity.DD_SKLAD_OTPR_DC = value?.DocCode;
             Entity.DD_OTRPAV_NAME = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_OTPR_DC))?.Name;

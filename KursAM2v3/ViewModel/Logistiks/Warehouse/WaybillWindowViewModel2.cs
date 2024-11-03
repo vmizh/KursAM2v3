@@ -241,7 +241,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         }
 
         public List<KursDomain.References.Warehouse> Sklads =>
-            GlobalOptions.ReferencesCache.GetWarehousesAll().Where(_ => _.IsOutBalans != true && _.IsDeleted == false)
+            GlobalOptions.ReferencesCache.GetWarehousesAll().Where(_ => _.IsDeleted == false)
                 .Cast<KursDomain.References.Warehouse>().OrderBy(_ => _.Name).ToList();
 
         // ReSharper disable once CollectionNeverUpdated.Global

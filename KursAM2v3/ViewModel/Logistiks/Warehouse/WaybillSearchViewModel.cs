@@ -261,30 +261,38 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                         State = RowStatus.NotEdited
                     })
                     .ToList();
-                frm?.Dispatcher.Invoke(() =>
+                if (result.Any())
                 {
-                    if (result.Count <= 0) return;
-                    if (result.Count > 0)
+                    frm?.Dispatcher.Invoke(() =>
                     {
-                        var lasts = lastDocumentRopository.GetLastChanges(result.Select(_ => _.DocCode).Distinct());
-                        foreach (var r in result)
-                            if (lasts.ContainsKey(r.DocCode))
-                            {
-                                var last = lasts[r.DocCode];
-                                r.LastChanger = last.Item1;
-                                r.LastChangerDate = last.Item2;
-                            }
-                            else
-                            {
-                                r.LastChanger = r.CREATOR;
-                                r.LastChangerDate = r.Date;
-                            }
-                    }
+                        if (result.Count <= 0) return;
+                        if (result.Count > 0)
+                        {
+                            var lasts = lastDocumentRopository.GetLastChanges(result.Select(_ => _.DocCode).Distinct());
+                            foreach (var r in result)
+                                if (lasts.ContainsKey(r.DocCode))
+                                {
+                                    var last = lasts[r.DocCode];
+                                    r.LastChanger = last.Item1;
+                                    r.LastChangerDate = last.Item2;
+                                }
+                                else
+                                {
+                                    r.LastChanger = r.CREATOR;
+                                    r.LastChangerDate = r.Date;
+                                }
+                        }
 
-                    foreach (var d in result) Documents.Add(d);
-                    frm.loadingIndicator.Visibility = Visibility.Hidden;
-                    RaisePropertyChanged(nameof(Documents));
-                });
+                        foreach (var d in result) Documents.Add(d);
+                        frm.loadingIndicator.Visibility = Visibility.Hidden;
+                        RaisePropertyChanged(nameof(Documents));
+                    });
+                }
+                else
+                {
+                    frm?.Dispatcher.Invoke(() => { frm.loadingIndicator.Visibility = Visibility.Hidden; });
+                }
+
                 GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
             });
         }

@@ -113,6 +113,7 @@ public class Waybill : SD_24ViewModel, IDocument<Waybill>
         if (entity == null) return;
         Client = GlobalOptions.ReferencesCache.GetKontragent(Entity.DD_KONTR_POL_DC) as Kontragent;
         Store = GlobalOptions.ReferencesCache.GetWarehouse(entity.DD_SKLAD_OTPR_DC) as References.Warehouse;
+        WarehouseOut = Store;
         
         if (entity.TD_24.Count <= 0) return;
         foreach (var row in entity.TD_24)
@@ -134,7 +135,7 @@ public class Waybill : SD_24ViewModel, IDocument<Waybill>
         get => myStore;
         set
         {
-            if (myStore != null && myStore.Equals(value)) return;
+            if (myStore == value) return;
             myStore = value;
             Entity.DD_SKLAD_OTPR_DC = myStore?.DocCode;
             Entity.DD_OTRPAV_NAME = myStore?.Name;

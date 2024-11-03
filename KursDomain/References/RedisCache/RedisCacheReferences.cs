@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms.VisualStyles;
 using KursAM2.Repositories.RedisRepository;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
@@ -17,6 +16,7 @@ using Newtonsoft.Json;
 using ServiceStack.Redis;
 using ServiceStack.Text;
 using ServiceStack.Text.Common;
+using StackExchange.Redis;
 
 namespace KursDomain.References.RedisCache;
 
@@ -53,10 +53,11 @@ public class RedisCacheReferences : IReferencesCache
         new RedisManagerPool(ConfigurationManager.AppSettings["redis.connection"]);
 
     public bool isStartLoad = true;
-
+    
     public RedisCacheReferences()
     {
         isStartLoad = true;
+
         ThreadPool.QueueUserWorkItem(x =>
         {
             using (var redisClient = new RedisClient(ConfigurationManager.AppSettings["redis.connection"]))
@@ -2272,7 +2273,7 @@ public class RedisCacheReferences : IReferencesCache
                 DropAllGuid<NomenklMain>();
                 UpdateListGuid(NomenklMains.Values.Cast<NomenklMain>(), now);
 
-                Nomenkls = new Dictionary<decimal, INomenkl>();
+                var noms = new Dictionary<decimal, INomenkl>();
                 foreach (var entity in Context.SD_83.Include(_ => _.NomenklMain).AsNoTracking())
                 {
                     var item = new Nomenkl
@@ -2308,11 +2309,15 @@ public class RedisCacheReferences : IReferencesCache
                         GroupDC = entity.NOM_CATEG_DC
                     };
                     //item.LoadFromEntity(entity,this);
-                    Nomenkls.Add(item.DocCode, item);
+                    foreach (var n in noms.Values)
+                    {
+                        ((ICache)n).LoadFromCache();
+                    }
+                    noms.Add(item.DocCode, item);
                 }
 
                 DropAll<Nomenkl>();
-                UpdateList2(Nomenkls.Values.Cast<Nomenkl>(), now);
+                UpdateList2(noms.Values.Cast<Nomenkl>(), now);
             }
             else
             {

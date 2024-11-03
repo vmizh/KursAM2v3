@@ -3,6 +3,7 @@ using Core.Helper;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.Documents.Invoices;
+using KursDomain.References;
 
 namespace KursDomain.Documents.NomenklManagement;
 
@@ -28,8 +29,11 @@ public class WaybillRow : TD_24ViewModel
             return;
         }
 
-        Currency = GlobalOptions.ReferencesCache.GetNomenkl(Entity.DDT_NOMENKL_DC)?.Currency as References.Currency;
+        var n = GlobalOptions.ReferencesCache.GetNomenkl(Entity.DDT_NOMENKL_DC);
+        Currency = n?.Currency as References.Currency;
         SchetLinkedRowViewModel = new InvoiceClientRowViewModel(entity.TD_84,true,false);
+        if(n != null)
+            Unit = n.Unit as Unit;
     }
 
     public string IndoiceClientName => InvoiceClientViewModel?.Name;

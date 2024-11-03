@@ -8,6 +8,7 @@ using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
+using KursDomain.IReferences.Nomenkl;
 using KursDomain.References;
 
 // ReSharper disable CompareOfFloatsByEqualityOperator
@@ -1534,6 +1535,7 @@ public class TD_24ViewModel : RSViewModelBase, IEntity<TD_24>
     private void LoadReference()
     {
         myNomenkl = GlobalOptions.ReferencesCache.GetNomenkl(DDT_NOMENKL_DC) as Nomenkl;
+        myUnit = (Unit)myNomenkl?.Unit;
     }
 
     public virtual void Save(TD_24 doc)
