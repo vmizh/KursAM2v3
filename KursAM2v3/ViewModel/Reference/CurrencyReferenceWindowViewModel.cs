@@ -130,6 +130,12 @@ namespace KursAM2.ViewModel.Reference
             {
                 unitOfWork.Save();
                 unitOfWork.Commit();
+                foreach (var crs in CurrencyCollection.Where(_ => _.State != RowStatus.NotEdited))
+                {
+                    var c = new Currency();
+                    c.LoadFromEntity(crs.Entity);
+                    GlobalOptions.ReferencesCache.AddOrUpdate(c);
+                }
                 isCurrencyDeleted = false;
             }
             catch (Exception ex)

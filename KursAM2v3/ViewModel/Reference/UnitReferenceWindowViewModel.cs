@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using KursAM2.Managers.Nomenkl;
+using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
@@ -60,20 +61,25 @@ namespace KursAM2.ViewModel.Reference
 
         public override void SaveData(object data)
         {
-            var lst = new List<UnitViewModel>();
-            foreach (var row in Rows)
-                if (row.State != RowStatus.NotEdited)
-                    lst.Add(row);
-            foreach (var row in DeletedRows)
-                lst.Add(row);
-            if (lst.Count > 0)
-                if (UnitManager.Save(lst))
+            var lst = Rows.Where(row => row.State != RowStatus.NotEdited).ToList();
+            lst.AddRange(DeletedRows);
+            if (lst.Count <= 0) return;
+            if (!UnitManager.Save(lst)) return;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                foreach (var r in Rows.Where(_ => _.State != RowStatus.NotEdited))
                 {
-                    foreach (var r in Rows)
-                        r.myState = RowStatus.NotEdited;
-                    DeletedRows.Clear();
-                    RaisePropertyChanged(nameof(IsCanSaveData));
+                    var ent = ctx.SD_175.FirstOrDefault(_ => _.DOC_CODE == r.DocCode);
+                    if (ent == null) continue;
+                    var c = new Unit();
+                    c.LoadFromEntity(ent);
+                    GlobalOptions.ReferencesCache.AddOrUpdate(c);
+                    r.myState = RowStatus.NotEdited;
                 }
+            }
+
+            DeletedRows.Clear();
+            RaisePropertyChanged(nameof(IsCanSaveData));
         }
 
         public ICommand ItemNewEmptyCommand

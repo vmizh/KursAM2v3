@@ -178,16 +178,23 @@ namespace KursAM2.ViewModel.Reference
 
         public override void SaveData(object data)
         {
-            var lst = new List<WarehouseViewModel>();
-            foreach (var row in Rows)
-                if (row.State != RowStatus.NotEdited)
-                    lst.Add(row);
-            foreach (var row in DeletedRows)
-                lst.Add((WarehouseViewModel)row);
+            var lst = Rows.Where(row => row.State != RowStatus.NotEdited).ToList();
+            lst.AddRange(DeletedRows.Cast<WarehouseViewModel>());
             if (lst.Count <= 0) return;
             if (!Manager.Save(lst)) return;
-            foreach (var r in Rows)
-                r.myState = RowStatus.NotEdited;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                foreach (var r in Rows.Where(_ => _.State != RowStatus.NotEdited))
+                {
+                    var ent = ctx.SD_27.FirstOrDefault(_ => _.DOC_CODE == r.DocCode);
+                    if (ent == null) continue;
+                    var c = new Warehouse();
+                    c.LoadFromEntity(ent, GlobalOptions.ReferencesCache);
+                    GlobalOptions.ReferencesCache.AddOrUpdate(c);
+                    r.myState = RowStatus.NotEdited;
+                }
+            }
+
             DeletedRows.Clear();
             RaisePropertyChanged(nameof(IsCanSaveData));
         }

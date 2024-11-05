@@ -239,8 +239,18 @@ namespace KursAM2.ViewModel.Reference
                 return;
             }
 
-            foreach (var r in Rows)
-                r.myState = RowStatus.NotEdited;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                foreach (var r in Rows.Where(_ => _.State != RowStatus.NotEdited))
+                {
+                    var ent = ctx.SD_23.FirstOrDefault(_ => _.DOC_CODE == r.DocCode);
+                    if (ent == null) continue;
+                    var c = new KursDomain.References.Region();
+                    c.LoadFromEntity(ent);
+                    GlobalOptions.ReferencesCache.AddOrUpdate(c);
+                    r.myState = RowStatus.NotEdited;
+                }
+            }
             DeletedRows.Clear();
             RaisePropertyChanged(nameof(IsCanSaveData));
         }

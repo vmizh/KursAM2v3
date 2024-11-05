@@ -11,6 +11,7 @@ using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using static DevExpress.Utils.Drawing.Helpers.NativeMethods;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -110,8 +111,16 @@ namespace KursAM2.ViewModel.Reference
 
                         ctx.SaveChanges();
                         tn.Commit();
-                        foreach (var r in Rows)
+                        foreach (var r in Rows.Where(_ => _.State != RowStatus.NotEdited))
+                        {
+                            var ent = ctx.SD_189.FirstOrDefault(_ => _.DOC_CODE == r.DocCode);
+                            if (ent == null) continue;
+                            var c = new PayForm();
+                            c.LoadFromEntity(ent);
+                            GlobalOptions.ReferencesCache.AddOrUpdate(c);
                             r.myState = RowStatus.NotEdited;
+                        }
+
                         DeletedRows.Clear();
                     }
                     catch (Exception ex)

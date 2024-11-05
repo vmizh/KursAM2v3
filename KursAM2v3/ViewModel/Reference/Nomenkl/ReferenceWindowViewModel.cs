@@ -709,6 +709,9 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             var newgrp = NomenklManager.CategoryAdd(category, null);
             CategoryCollection.Add(newgrp);
             CurrentCategory = newgrp;
+            var c = new NomenklGroup();
+            c.LoadFromEntity(CurrentCategory.Entity);
+            GlobalOptions.ReferencesCache.AddOrUpdate(c);
         }
 
         public ICommand TreeAddChildCommand
@@ -731,6 +734,9 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             if (newgrp == null) return;
             CategoryCollection.Add(newgrp);
             CurrentCategory = newgrp;
+            var c = new NomenklGroup();
+            c.LoadFromEntity(CurrentCategory.Entity);
+            GlobalOptions.ReferencesCache.AddOrUpdate(c);
         }
 
         public ICommand TreeAddOneLevelCommand
@@ -752,6 +758,9 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             var newgrp = NomenklManager.CategoryAdd(category, CurrentCategory.ParentDC);
             CategoryCollection.Add(newgrp);
             CurrentCategory = newgrp;
+            var c = new NomenklGroup();
+            c.LoadFromEntity(CurrentCategory.Entity);
+            GlobalOptions.ReferencesCache.AddOrUpdate(c);
         }
 
         public ICommand TreeEditCommand
@@ -779,6 +788,9 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             CurrentCategory.Name = oldCat.Name;
             CurrentCategory.Note = oldCat.Note;
             CurrentCategory.State = RowStatus.NotEdited;
+            var c = new NomenklGroup();
+            c.LoadFromEntity(CurrentCategory.Entity);
+            GlobalOptions.ReferencesCache.AddOrUpdate(c);
         }
 
         private bool CategorySave(NomenklGroupViewModel cat)

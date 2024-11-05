@@ -435,6 +435,12 @@ public class NomenklMainViewModel : RSViewModelBase, IEntity<NomenklMain>, IData
             ProductType.LoadFromEntity(Entity.SD_50);
         }
 
+        if (Entity.SD_119 != null)
+        {
+            NomenklType = new NomenklType();
+            NomenklType.LoadFromEntity(Entity.SD_119);
+        }
+
         if (Entity.SD_83 == null || Entity.SD_83.Count <= 0) return;
         foreach (var n in Entity.SD_83)
             NomenklCollection.Add(new NomenklViewModel(n));

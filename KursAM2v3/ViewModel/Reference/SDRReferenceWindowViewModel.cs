@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.XtraReports.Design.ParameterEditor;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
@@ -230,7 +231,8 @@ namespace KursAM2.ViewModel.Reference
         public override void SaveData(object data)
         {
             // ReSharper disable once CollectionNeverUpdated.Local
-            var changedDC = new Dictionary<decimal, decimal>();
+            var sdr_shets = new List<decimal>();
+            var sdr_states = new List<decimal>();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 using (var tnx = ctx.Database.BeginTransaction())
@@ -265,6 +267,7 @@ namespace KursAM2.ViewModel.Reference
                                     u.SHPZ_STATIA_DC = stateNewDC;
                                 }
                                 item.DocCode = stateNewDC;
+                                sdr_states.Add(stateNewDC);
                                 stateNewDC++;
                             }
                         }
@@ -283,6 +286,7 @@ namespace KursAM2.ViewModel.Reference
                                         SZ_1DOHOD_0_RASHOD = item.SZ_1DOHOD_0_RASHOD
                                     };
                                     ctx.SD_99.Add(newItem);
+                                    sdr_states.Add(newItem.DOC_CODE);
                                     break;
                                 case RowStatus.Edited:
                                     var editItem = ctx.SD_99.FirstOrDefault(_ => _.DOC_CODE == item.DocCode);
@@ -291,9 +295,10 @@ namespace KursAM2.ViewModel.Reference
                                         editItem.SZ_NAME = item.Name;
                                         editItem.SZ_SHIFR = item.SZ_SHIFR;
                                         editItem.SZ_PARENT_DC = item.SZ_PARENT_DC;
-                                        editItem.SZ_1DOHOD_0_RASHOD = item.SZ_1DOHOD_0_RASHOD;
+                                        editItem.SZ_1DOHOD_0_RASHOD = item.SZ_1DOHOD_0_RASHOD;  
+                                        sdr_states.Add(editItem.DOC_CODE);
                                     }
-
+                                  
                                     break;
                             }
 
@@ -325,6 +330,7 @@ namespace KursAM2.ViewModel.Reference
                                         SHPZ_1ZARPLATA_0NO = sch.Entity.SHPZ_1ZARPLATA_0NO,
                                         SHPZ_NOT_USE_IN_OTCH_DDS = sch.Entity.SHPZ_NOT_USE_IN_OTCH_DDS
                                     });
+                                    sdr_shets.Add(newSchetDC);
                                     newSchetDC++;
                                     break;
                                 case RowStatus.Edited:
@@ -332,15 +338,36 @@ namespace KursAM2.ViewModel.Reference
                                     if (edSch == null) continue;
                                     edSch.SHPZ_NAME = sch.Name;
                                     edSch.SHPZ_SHIRF = sch.SHPZ_SHIRF;
+                                    sdr_shets.Add(edSch.DOC_CODE);
                                     break;
                             }
                         }
                         ctx.SaveChanges();
                         tnx.Commit();
+                        foreach (var dc in sdr_shets)
+                        {
+                            var ent = ctx.SD_303.FirstOrDefault(_ => _.DOC_CODE == dc);
+                            if (ent == null) continue;
+                            var c = new SDRSchet();
+                            c.LoadFromEntity(ent,GlobalOptions.ReferencesCache);
+                            GlobalOptions.ReferencesCache.AddOrUpdate(c);
+                        }
+                        foreach (var dc in sdr_states)
+                        {
+                            var ent = ctx.SD_99.FirstOrDefault(_ => _.DOC_CODE == dc);
+                            if (ent == null) continue;
+                            var c = new SDRState();
+                            c.LoadFromEntity(ent);
+                            GlobalOptions.ReferencesCache.AddOrUpdate(c);
+                        }
+                        sdr_shets.Clear();
+                        sdr_states.Clear();
                         RefreshData(null);
                     }
                     catch (Exception ex)
                     {
+                        sdr_shets.Clear();
+                        sdr_states.Clear();
                         tnx.Rollback();
                         WindowManager.ShowError(ex);
                     }
