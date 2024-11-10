@@ -1061,7 +1061,16 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var ent = ctx.SD_2.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
+                if (ent is null) return null;
+                var newItem = new Employee();
+                newItem.LoadFromEntity(ent, this);
+                UpdateList2(new List<Employee>(new [] {newItem}));
+                Employees.Add(dc.Value, newItem);
+                return Employees[dc.Value];
+            }
         }
 
         if (Employees.ContainsKey(dc.Value))
@@ -1089,7 +1098,6 @@ public class RedisCacheReferences : IReferencesCache
             LoadCacheKeys(cacheName);
             var redis = redisClient.As<Employee>();
             Employees.Clear();
-            //var keys = redisClient.GetKeysByPattern("Cache:Employee:*").ToList();
             using (var pipe = redis.CreatePipeline())
             {
                 foreach (var key in cacheKeysDict[cacheName].CachKeys)
@@ -2074,6 +2082,7 @@ public class RedisCacheReferences : IReferencesCache
                     newItem.LoadFromEntity(item, this);
                     if (!Employees.ContainsKey(newItem.DocCode))
                         Employees.Add(newItem.DocCode, newItem);
+                    else Employees[newItem.DocCode] = newItem;
                 }
 
                 foreach (var item in Employees.Values.Cast<Employee>())
@@ -2502,7 +2511,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("BankAccount");
                     var ba_item = GetItem<BankAccount>((string)message.ExternalValues["RedisKey"]);
                     ba_item.LoadFromCache();
-                    var ba_oldKey = cacheKeysDict["BankAccount"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var ba_oldKey = cacheKeysDict["BankAccount"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (ba_oldKey is null)
                         cacheKeysDict["BankAccount"].CachKeys.Add(new CachKey
                         {
@@ -2520,7 +2530,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("CashBox");
                     var cb_item = GetItem<CashBox>((string)message.ExternalValues["RedisKey"]);
                     cb_item.LoadFromCache();
-                    var cb_oldKey = cacheKeysDict["CashBox"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var cb_oldKey = cacheKeysDict["CashBox"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (cb_oldKey is null)
                         cacheKeysDict["CashBox"].CachKeys.Add(new CachKey
                         {
@@ -2538,7 +2549,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("CentrResponsibility");
                     var cr_item = GetItem<CentrResponsibility>((string)message.ExternalValues["RedisKey"]);
                     cr_item.LoadFromCache();
-                    var cr_oldKey = cacheKeysDict["CentrResponsibility"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var cr_oldKey = cacheKeysDict["CentrResponsibility"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (cr_oldKey is null)
                         cacheKeysDict["CentrResponsibility"].CachKeys.Add(new CachKey
                         {
@@ -2556,7 +2568,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("ClientCategory");
                     var cc_item = GetItem<ClientCategory>((string)message.ExternalValues["RedisKey"]);
                     cc_item.LoadFromCache();
-                    var cc_oldKey = cacheKeysDict["ClientCategory"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var cc_oldKey = cacheKeysDict["ClientCategory"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (cc_oldKey is null)
                         cacheKeysDict["ClientCategory"].CachKeys.Add(new CachKey
                         {
@@ -2574,7 +2587,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("ContractType");
                     var ct_item = GetItem<ContractType>((string)message.ExternalValues["RedisKey"]);
                     ct_item.LoadFromCache();
-                    var ct_oldKey = cacheKeysDict["ContractType"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var ct_oldKey = cacheKeysDict["ContractType"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (ct_oldKey is null)
                         cacheKeysDict["ContractType"].CachKeys.Add(new CachKey
                         {
@@ -2596,7 +2610,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("Currency");
                     var crs_item = GetItem<Currency>((string)message.ExternalValues["RedisKey"]);
                     crs_item.LoadFromCache();
-                    var crs_oldKey = cacheKeysDict["Currency"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var crs_oldKey = cacheKeysDict["Currency"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (crs_oldKey is null)
                         cacheKeysDict["Currency"].CachKeys.Add(new CachKey
                         {
@@ -2618,7 +2633,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("Employee");
                     var emp_item = GetItem<Employee>((string)message.ExternalValues["RedisKey"]);
                     emp_item.LoadFromCache();
-                    var emp_oldKey = cacheKeysDict["Employee"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var emp_oldKey = cacheKeysDict["Employee"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (emp_oldKey is null)
                         cacheKeysDict["Employee"].CachKeys.Add(new CachKey
                         {
@@ -2636,7 +2652,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("KontragentGroup");
                     var kg_item = GetItem<KontragentGroup>((string)message.ExternalValues["RedisKey"]);
                     kg_item.LoadFromCache();
-                    var kg_oldKey = cacheKeysDict["KontragentGroup"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var kg_oldKey = cacheKeysDict["KontragentGroup"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (kg_oldKey is null)
                         cacheKeysDict["KontragentGroup"].CachKeys.Add(new CachKey
                         {
@@ -2654,7 +2671,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("MutualSettlementType");
                     var mst_item = GetItem<MutualSettlementType>((string)message.ExternalValues["RedisKey"]);
                     mst_item.LoadFromCache();
-                    var mst_oldKey = cacheKeysDict["MutualSettlementType"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var mst_oldKey = cacheKeysDict["MutualSettlementType"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (mst_oldKey is null)
                         cacheKeysDict["MutualSettlementType"].CachKeys.Add(new CachKey
                         {
@@ -2672,7 +2690,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("NomenklGroup");
                     var ng_item = GetItem<NomenklGroup>((string)message.ExternalValues["RedisKey"]);
                     ng_item.LoadFromCache();
-                    var ng_oldKey = cacheKeysDict["NomenklGroup"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var ng_oldKey = cacheKeysDict["NomenklGroup"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (ng_oldKey is null)
                         cacheKeysDict["NomenklGroup"].CachKeys.Add(new CachKey
                         {
@@ -2709,7 +2728,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("NomenklProductType");
                     var npt_item = GetItem<NomenklProductType>((string)message.ExternalValues["RedisKey"]);
                     npt_item.LoadFromCache();
-                    var npt_oldKey = cacheKeysDict["NomenklProductType"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var npt_oldKey = cacheKeysDict["NomenklProductType"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (npt_oldKey is null)
                         cacheKeysDict["NomenklProductType"].CachKeys.Add(new CachKey
                         {
@@ -2727,7 +2747,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("NomenklType");
                     var nt_item = GetItem<NomenklType>((string)message.ExternalValues["RedisKey"]);
                     nt_item.LoadFromCache();
-                    var nt_oldKey = cacheKeysDict["NomenklType"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var nt_oldKey = cacheKeysDict["NomenklType"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (nt_oldKey is null)
                         cacheKeysDict["NomenklType"].CachKeys.Add(new CachKey
                         {
@@ -2745,7 +2766,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("PayCondition");
                     var pc_item = GetItem<PayCondition>((string)message.ExternalValues["RedisKey"]);
                     pc_item.LoadFromCache();
-                    var pc_oldKey = cacheKeysDict["PayCondition"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var pc_oldKey = cacheKeysDict["PayCondition"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (pc_oldKey is null)
                         cacheKeysDict["PayCondition"].CachKeys.Add(new CachKey
                         {
@@ -2763,7 +2785,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("PayForm");
                     var pf_item = GetItem<PayForm>((string)message.ExternalValues["RedisKey"]);
                     pf_item.LoadFromCache();
-                    var pf_oldKey = cacheKeysDict["PayForm"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var pf_oldKey = cacheKeysDict["PayForm"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (pf_oldKey is null)
                         cacheKeysDict["PayForm"].CachKeys.Add(new CachKey
                         {
@@ -2785,7 +2808,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("ProductType");
                     var pt_item = GetItem<ProductType>((string)message.ExternalValues["RedisKey"]);
                     pt_item.LoadFromCache();
-                    var pt_oldKey = cacheKeysDict["ProductType"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var pt_oldKey = cacheKeysDict["ProductType"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (pt_oldKey is null)
                         cacheKeysDict["ProductType"].CachKeys.Add(new CachKey
                         {
@@ -2803,7 +2827,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("SDRSchet");
                     var sds_item = GetItem<SDRSchet>((string)message.ExternalValues["RedisKey"]);
                     sds_item.LoadFromCache();
-                    var sds_oldKey = cacheKeysDict["SDRSchet"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var sds_oldKey = cacheKeysDict["SDRSchet"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (sds_oldKey is null)
                         cacheKeysDict["SDRSchet"].CachKeys.Add(new CachKey
                         {
@@ -2821,7 +2846,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("SDRState");
                     var sdt_item = GetItem<SDRState>((string)message.ExternalValues["RedisKey"]);
                     sdt_item.LoadFromCache();
-                    var sdt_oldKey = cacheKeysDict["SDRState"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var sdt_oldKey = cacheKeysDict["SDRState"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (sdt_oldKey is null)
                         cacheKeysDict["SDRState"].CachKeys.Add(new CachKey
                         {
@@ -2839,7 +2865,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("Warehouse");
                     var w_item = GetItem<Warehouse>((string)message.ExternalValues["RedisKey"]);
                     w_item.LoadFromCache();
-                    var w_oldKey = cacheKeysDict["Warehouse"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var w_oldKey = cacheKeysDict["Warehouse"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (w_oldKey is null)
                         cacheKeysDict["Warehouse"].CachKeys.Add(new CachKey
                         {
@@ -2972,11 +2999,13 @@ public class RedisCacheReferences : IReferencesCache
     }
 
 
+    [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
     private class NomGroupCount
     {
-        public decimal DocCode { get; }
-        public int Count { get; }
+        public decimal DocCode { get; set; }
+        public int Count { get; set; }
     }
+
 
     #region Dictionaries
 

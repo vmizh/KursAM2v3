@@ -275,6 +275,57 @@ namespace KursAM2.ViewModel.Personal
                             WindowManager.ShowError(ex);
                         }
 
+                    foreach (var p in ent.TD_101.Include(_ => _.SD_101).AsNoTracking()
+                                 .Where(t => t.SD_101.VV_START_DATE <= dt)
+                                 .Where(p => p.EmployeeDC != null)
+                                 .ToList())
+                    {
+                        try
+                        {
+                            //if (p.CRS_KOEF == null) continue;
+                            var per =
+                                GlobalOptions.ReferencesCache.GetEmployee(p.EmployeeDC) as Employee;
+                            var crs = GlobalOptions.ReferencesCache.GetCurrency(p.VVT_CRS_DC) as Currency;
+                            if (p.SD_101.VV_START_DATE == null) continue;
+                            if (per == null) continue;
+                            var s = new EmployeePayDocumentViewModel
+                            {
+                                Employee = per,
+                                Crs = crs,
+                                DocDate = p.SD_101.VV_START_DATE,
+                                DocSumma = p.VVT_VAL_RASHOD ?? 0,
+                                PlatSumma = p.VVT_VAL_RASHOD ?? 0,
+                                PlatSummaEmp =
+                                    Math.Round(CalcSummaWithRate(((IDocCode)per.Currency).DocCode, p.VVT_CRS_DC,
+                                        p.VVT_VAL_RASHOD ?? 0,
+                                        1), 2),
+                                SummaEmp = 0,
+                                PlatDocNotes = p.VVT_DOC_NUM,
+                                PlatDocName = "Банковский платеж",
+                                PayType = "Выплата",
+                                NachRUB = 0,
+                                NachUSD = 0,
+                                NachEUR = 0,
+                                // ReSharper disable PossibleInvalidOperationException
+                                RUB =
+                                    (decimal)
+                                    (crs.Name == "RUB" || crs.Name == "RUR"
+                                        ? p.VVT_VAL_RASHOD
+                                        : 0),
+                                USD = (decimal)(crs.Name == "USD" ? p.VVT_VAL_RASHOD : 0),
+                                EUR = (decimal)(crs.Name == "EUR" ? p.VVT_VAL_RASHOD : 0),
+                                DocCode = p.DOC_CODE
+                                // ReSharper restore PossibleInvalidOperationException
+                            };
+                            if (persRight.Any(t => t == s.Employee.DocCode))
+                                Documents.Add(s);
+                        }
+                        catch (Exception ex)
+                        {
+                            WindowManager.ShowError(ex);
+                        }
+                    }
+
                     var maxDate = dt;
                     var minDate = dt;
                     if (Documents.Count > 0)

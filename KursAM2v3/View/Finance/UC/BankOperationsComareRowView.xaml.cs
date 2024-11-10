@@ -181,6 +181,9 @@ namespace KursAM2.View.Finance.UC
 
                 switch (dtx.BankOperationType)
                 {
+                    case BankOperationType.Employee:
+                        var emp = StandartDialogs.SelectEmployee();
+                        break;
                     case BankOperationType.Kontragent:
                         var k = StandartDialogs.SelectKontragent(dtx.Currency);
                         if (k == null) return;
@@ -255,6 +258,11 @@ namespace KursAM2.View.Finance.UC
 
                 switch (dtc.BankOperationType)
                 {
+                    case BankOperationType.Employee:
+                        var emp = StandartDialogs.SelectEmployee();
+                        if (emp is null) return;
+                        dtc.CurrentBankOperations.Employee = emp;
+                        break;
                     case BankOperationType.Kontragent:
                         var k = StandartDialogs.SelectKontragent(dtc.Currency);
                         if (k == null) return;

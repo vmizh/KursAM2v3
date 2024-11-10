@@ -380,11 +380,13 @@ namespace KursAM2.ViewModel.Finance.controls
 
         public bool IsPrihodSummaEnabled => CurrentBankOperations.BankOperationType == BankOperationType.BankOut
                                             || CurrentBankOperations.BankOperationType == BankOperationType.CashOut
-                                            || CurrentBankOperations.BankOperationType == BankOperationType.Kontragent;
+                                            || CurrentBankOperations.BankOperationType == BankOperationType.Kontragent
+                                            || CurrentBankOperations.BankOperationType == BankOperationType.Employee;
 
         public bool IsRashodSummaEnabled => CurrentBankOperations.BankOperationType == BankOperationType.BankIn
                                             || CurrentBankOperations.BankOperationType == BankOperationType.CashIn
-                                            || CurrentBankOperations.BankOperationType == BankOperationType.Kontragent;
+                                            || CurrentBankOperations.BankOperationType == BankOperationType.Kontragent
+                                            || CurrentBankOperations.BankOperationType == BankOperationType.Employee;
 
 
         public bool IsKontragentEnabled => CurrentBankOperations.VVT_SFACT_CLIENT_DC == null &&

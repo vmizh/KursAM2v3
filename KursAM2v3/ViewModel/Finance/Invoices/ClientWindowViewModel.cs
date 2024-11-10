@@ -470,7 +470,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void OnWindowClosing(object obj)
         {
-            mySubscriber.UnsubscribeAll();
+            mySubscriber?.UnsubscribeAll();
             base.OnWindowClosing(obj);
         }
 

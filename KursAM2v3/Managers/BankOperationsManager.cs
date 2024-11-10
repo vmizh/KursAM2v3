@@ -444,6 +444,7 @@ namespace KursAM2.Managers
                         oldItem.VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC;
                         oldItem.AccuredId = item.AccuredId;
                         oldItem.CurrencyRateForReference = item.CurrencyRateForReference;
+                        oldItem.EmployeeDC = item.Employee?.DocCode;
 
                         if (item.VVT_SFACT_POSTAV_DC != null)
                         {
@@ -576,7 +577,8 @@ namespace KursAM2.Managers
                             VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
                             VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
                             AccuredId = item.AccuredId,
-                            CurrencyRateForReference = item.CurrencyRateForReference
+                            CurrencyRateForReference = item.CurrencyRateForReference,
+                            EmployeeDC = item.Employee?.DocCode
                         });
                         item.DocCode = thisDate.DOC_CODE;
                         item.Code = code;
@@ -620,7 +622,8 @@ namespace KursAM2.Managers
                             VVT_SFACT_CLIENT_DC = item.VVT_SFACT_CLIENT_DC,
                             VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
                             AccuredId = item.AccuredId,
-                            CurrencyRateForReference = item.CurrencyRateForReference
+                            CurrencyRateForReference = item.CurrencyRateForReference,
+                            EmployeeDC = item.Employee?.DocCode
                         });
                     }
 
@@ -666,7 +669,7 @@ namespace KursAM2.Managers
                         TypeNameHandling = TypeNameHandling.All
                     };
                     var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
-                    mySubscriber.Publish(new RedisChannel(RedisMessageChannels.Bank, RedisChannel.PatternMode.Auto), json);
+                    mySubscriber?.Publish(new RedisChannel(RedisMessageChannels.Bank, RedisChannel.PatternMode.Auto), json);
                     mySubscriber?.UnsubscribeAll();
                 }
                 catch (Exception ex)
@@ -717,7 +720,8 @@ namespace KursAM2.Managers
                     VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
                     IsCurrencyChange = true,
                     AccuredId = item.AccuredId,
-                    CurrencyRateForReference = item.CurrencyRateForReference
+                    CurrencyRateForReference = item.CurrencyRateForReference,
+                    EmployeeDC = item.Employee?.DocCode
                 });
                 item.DocCode = thisDate.DOC_CODE;
                 ctx.SaveChanges();
@@ -762,7 +766,8 @@ namespace KursAM2.Managers
                     VVT_SFACT_POSTAV_DC = item.VVT_SFACT_POSTAV_DC,
                     IsCurrencyChange = true,
                     AccuredId = item.AccuredId,
-                    CurrencyRateForReference = item.CurrencyRateForReference
+                    CurrencyRateForReference = item.CurrencyRateForReference,
+                    EmployeeDC = item.Employee?.DocCode
                 });
                 ctx.SaveChanges();
                 item.myState = RowStatus.NotEdited;

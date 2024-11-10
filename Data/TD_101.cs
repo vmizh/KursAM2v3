@@ -59,6 +59,7 @@ namespace Data
         public Nullable<System.Guid> AccuredId { get; set; }
         public Nullable<decimal> CurrencyRateForReference { get; set; }
         public Nullable<System.Guid> StockHolderId { get; set; }
+        public Nullable<decimal> EmployeeDC { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }

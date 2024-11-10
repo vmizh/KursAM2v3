@@ -14,5 +14,6 @@ public enum BankOperationType
     [Display(Name = "Банк получатель")] BankIn = 5,
     [Display(Name = "Банк отправитель")] BankOut = 6,
     [Display(Name = "Не выбран")] NotChoice = 1,
-    [Display(Name = "Обмен валюты")] CurrencyChange = 7
+    [Display(Name = "Обмен валюты")] CurrencyChange = 7,
+    [Display(Name = "Сотрудник")] Employee = 8
 }

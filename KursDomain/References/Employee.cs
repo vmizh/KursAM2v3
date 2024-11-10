@@ -65,6 +65,7 @@ public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employe
     {
         DocCode = entity.DOC_CODE;
         Currency = refCache.GetCurrency(entity.crs_dc);
+        CurrencyDC = entity.crs_dc;
         Guid.TryParse(entity.ID, out var id);
         Id = id;
         NameFirst = entity.NAME_FIRST;
