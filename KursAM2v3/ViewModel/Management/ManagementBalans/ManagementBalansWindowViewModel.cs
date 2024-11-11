@@ -1267,25 +1267,25 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     Name = ((IName)s).Name,
                     Order = 1,
                     SummaRUB =
-                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.RUB)
+                        data.Where(_ => _.NomDC == CurrencyCode.RUB)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     SummaUSD =
-                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.USD)
+                        data.Where(_ => _.NomDC == CurrencyCode.USD)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     SummaEUR =
-                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.EUR)
+                        data.Where(_ => _.NomDC == CurrencyCode.EUR)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     SummaGBP =
-                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.GBP)
+                        data.Where(_ => _.NomDC == CurrencyCode.GBP)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     SummaCHF =
-                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.CHF)
+                        data.Where(_ => _.NomDC == CurrencyCode.CHF)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     SummaSEK =
-                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.SEK)
+                        data.Where(_ => _.NomDC == CurrencyCode.SEK)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     SummaCNY =
-                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.CNY)
+                        data.Where(_ => _.NomDC == CurrencyCode.CNY)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     ObjectDC = ((IDocCode)s).DocCode
                 };

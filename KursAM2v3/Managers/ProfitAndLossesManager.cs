@@ -1212,6 +1212,40 @@ namespace KursAM2.Managers
 
                     Extend.Add(newOp);
                 }
+
+                var data2 = (from td101 in ent.TD_101.Include(_ => _.SD_101)
+                        from sd2 in ent.SD_2
+                            where sd2.DOC_CODE == td101.EmployeeDC
+                                && td101.SD_101.VV_START_DATE >= DateStart && td101.SD_101.VV_START_DATE <= DateEnd
+                        select new
+                        {
+                            Date = td101.SD_101.VV_START_DATE,
+                            SotrCrsDC = sd2.crs_dc,
+                            TabelNumber = sd2.TABELNUMBER,
+                            Name = sd2.NAME,
+                            Summa = td101.VVT_VAL_RASHOD,
+                            OperCrsDC = sd2.crs_dc,
+                            SDRSchetDC = td101.VVT_SHPZ_DC
+                        }).ToList();
+                foreach (var d in data2)
+                {
+                    var newOp = new ProfitAndLossesExtendRowViewModel
+                    {
+                        GroupId = Guid.Parse("{B96B2906-C5AA-4566-B77F-F3E4B912E72E}"),
+                        Name = emps.Single(_ => _.TABELNUMBER == d.TabelNumber).NAME,
+                        Date = d.Date,
+                        DocTypeCode = (DocumentType)903,
+                        SDRSchet = d.SDRSchetDC != null
+                            ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
+                            : null,
+                        SDRState = d.SDRSchetDC == null
+                            ? null
+                            : GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value).SDRState as SDRState
+                    };
+                    SetCurrenciesValue(newOp, d.OperCrsDC, 0, d.Summa);
+
+                    Extend.Add(newOp);
+                }
             }
         }
 

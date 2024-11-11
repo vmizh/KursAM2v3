@@ -314,7 +314,7 @@ namespace KursAM2.ViewModel.Personal
                                         : 0),
                                 USD = (decimal)(crs.Name == "USD" ? p.VVT_VAL_RASHOD : 0),
                                 EUR = (decimal)(crs.Name == "EUR" ? p.VVT_VAL_RASHOD : 0),
-                                DocCode = p.DOC_CODE
+                                DocCode = p.CODE
                                 // ReSharper restore PossibleInvalidOperationException
                             };
                             if (persRight.Any(t => t == s.Employee.DocCode))
@@ -367,7 +367,7 @@ namespace KursAM2.ViewModel.Personal
                         Summa = r.Summa,
                         SummaEmp = r.SummaEmp,
                         PlatDocNotes = r.PlatDocNotes,
-                        PlatDocName = r.PayType == "Выплата"
+                        PlatDocName = r.PayType == "Выплата" && !r.PlatDocName.Contains("Банковский")
                             ? "№" + r.PlatDocName.Replace("Расходный кассовый ордер № ", string.Empty)
                             : r.PlatDocName,
                         PayType = r.PayType,
@@ -386,7 +386,7 @@ namespace KursAM2.ViewModel.Personal
                 }
                 else
                 {
-                    if (old.PayType == "Выплата")
+                    if (old.PayType == "Выплата" &&  !r.PlatDocName.Contains("Банковский"))
                     {
                         var s = r.PlatDocName.Replace("Расходный кассовый ордер № ", string.Empty);
                         old.PlatDocName += ", №" + s;
@@ -626,8 +626,18 @@ namespace KursAM2.ViewModel.Personal
                     form.DataContext = ctx;
                     break;
                 case "Выплата":
-                    if(CurrentPayDocument.DocCode > 0 )
-                        DocumentsOpenManager.Open(DocumentType.CashOut, CurrentPayDocument.DocCode);
+                    if (CurrentPayDocument.DocCode > 0)
+                    {
+                        if (!CurrentPayDocument.PlatDocName.Contains("Банковский"))
+                        {
+                            DocumentsOpenManager.Open(DocumentType.CashOut, CurrentPayDocument.DocCode);
+                        }
+                        else
+                        {
+                            DocumentsOpenManager.Open(DocumentType.Bank, CurrentPayDocument.DocCode);
+                        }
+                    }
+
                     break;
             }
         }

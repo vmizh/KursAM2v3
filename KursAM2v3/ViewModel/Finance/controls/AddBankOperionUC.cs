@@ -30,6 +30,7 @@ namespace KursAM2.ViewModel.Finance.controls
         private BankOperationsViewModel myCurrentBankOperations;
         private BankOperationsComareRowView myDataUserControl;
         private string myOperType;
+        private bool myIsNotCurrencyChange;
 
 
         public AddBankOperionUC()
@@ -86,9 +87,11 @@ namespace KursAM2.ViewModel.Finance.controls
                     State = isNew ? RowStatus.NewRow : RowStatus.NotEdited,
                     AccuredId = row.AccuredId,
                     AccuredInfo = row.AccuredInfo,
-                    CurrencyRateForReference = row.CurrencyRateForReference
+                    CurrencyRateForReference = row.CurrencyRateForReference,
+                    Employee = row.Employee
                 };
             }
+            RaisePropertyChanged(nameof(IsNotCurrencyChange));
         }
 
         public ObservableCollection<SDRSchet> SHPZList { set; get; } =
@@ -124,7 +127,19 @@ namespace KursAM2.ViewModel.Finance.controls
 
         public bool IsCanOpenAccured => CurrentBankOperations.AccuredId != null;
 
-        public bool IsNotCurrencyChange => CurrentBankOperations?.IsCurrencyChange == false;
+        public bool IsNotCurrencyChange
+        {
+            set => myIsNotCurrencyChange = value;
+            get
+            {
+                return CurrentBankOperations?.IsCurrencyChange switch
+                {
+                    false when CurrentBankOperations?.BankOperationType != BankOperationType.Employee => true,
+                    _ => false
+                };
+            }
+        }
+
 
         public ICommand SFNameRemoveCommand
         {
@@ -213,6 +228,7 @@ namespace KursAM2.ViewModel.Finance.controls
                 RaisePropertyChanged(nameof(KontragentName));
                 RaisePropertyChanged(nameof(PrihodEditMode));
                 RaisePropertyChanged(nameof(RashodEditMode));
+                RaisePropertyChanged(nameof(IsNotCurrencyChange));
 
                 SetBrushForPrihodRashod();
             }

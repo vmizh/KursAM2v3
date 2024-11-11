@@ -139,7 +139,7 @@
                                     HorizontalAlignment="Stretch"
                                     Height="25"
                                     IsReadOnly="True"
-                                    IsEnabled="{Binding IsNotCurrencyChange}"
+                                    IsEnabled="{Binding IsNotCurrencyChange, NotifyOnSourceUpdated=True,  NotifyOnTargetUpdated=True}"
                                     EditValue="{Binding SFName, NotifyOnSourceUpdated=True,  NotifyOnTargetUpdated=True}"
                                     IsTextEditable="False"
                                     Margin="0 0 0 5"

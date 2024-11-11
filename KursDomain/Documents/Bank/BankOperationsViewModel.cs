@@ -60,6 +60,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
         SHPZList = GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList();
         updateReferences();
         RaisePropertyChanged(nameof(SHPZList));
+        RaisePropertyChanged(nameof(IsNotCurrencyChange));
     }
 
     public bool NotAllowSummaPrihodChanged => BankOperationType == BankOperationType.BankIn ||
@@ -69,7 +70,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
                                               BankOperationType == BankOperationType.CashOut;
 
     public bool IsChangeTypeEnable => State == RowStatus.NewRow;
-    public bool IsNotCurrencyChange => Entity.IsCurrencyChange == false;
+    public bool IsNotCurrencyChange => Entity.IsCurrencyChange == false || BankOperationType == BankOperationType.Employee;
 
     public BankOperationType BankOperationType
     {
@@ -885,6 +886,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
             CashOut != null ? BankOperationType.CashOut :
             BankAccountIn != null ? BankOperationType.BankIn :
             BankAccountOut != null ? BankOperationType.BankOut :
+            Employee != null ? BankOperationType.Employee :
             IsCurrencyChange ? BankOperationType.CurrencyChange :
             BankOperationType.NotChoice;
     }

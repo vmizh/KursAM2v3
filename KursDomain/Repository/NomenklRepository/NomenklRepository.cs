@@ -62,7 +62,7 @@ public class NomenklQuantityInfoExt : NomenklQuantityInfo
         OstatokQuantity = item.OstatokQuantity;
         OstatokSumma = item.OstatokSumma;
         OstatokNaklSumma = item.OstatokNaklSumma;
-        Nomenkl = (KursDomain.References.Nomenkl)GlobalOptions.ReferencesCache.GetNomenkl(item.NomDC);
+        //Nomenkl = (Nomenkl)GlobalOptions.ReferencesCache.GetNomenkl(item.NomDC);
     }
 
     public KursDomain.References.Nomenkl Nomenkl { set; get; }

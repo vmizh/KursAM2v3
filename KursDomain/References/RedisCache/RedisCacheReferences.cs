@@ -177,7 +177,16 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var ent = ctx.SD_119.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
+                if (ent is null) return null;
+                var newItem = new NomenklType();
+                newItem.LoadFromEntity(ent);
+                UpdateList2(new List<NomenklType>(new [] {newItem}));
+                NomenklTypes.Add(dc.Value, newItem);
+                return NomenklTypes[dc.Value];
+            }
         }
 
         if (NomenklTypes.ContainsKey(dc.Value))
