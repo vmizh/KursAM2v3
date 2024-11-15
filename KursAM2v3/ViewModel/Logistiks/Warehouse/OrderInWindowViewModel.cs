@@ -343,6 +343,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             DDT_SPOST_ROW_CODE = row.CODE,
                             DDT_CRS_DC = ((IDocCode)nom.Currency).DocCode,
                             DDT_NOMENKL_DC = ((IDocCode)nom).DocCode,
+                            DDT_ED_IZM_DC =  ((IDocCode)nom.Unit).DocCode,
                             Id = Guid.NewGuid(),
                             DocId = Document.Id
                         };
