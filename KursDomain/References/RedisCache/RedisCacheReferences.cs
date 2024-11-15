@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Helper.Extensions;
 using KursAM2.Repositories.RedisRepository;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
@@ -13,6 +14,7 @@ using KursDomain.IReferences;
 using KursDomain.IReferences.Kontragent;
 using KursDomain.IReferences.Nomenkl;
 using Newtonsoft.Json;
+using ServiceStack;
 using ServiceStack.Redis;
 using ServiceStack.Text;
 using ServiceStack.Text.Common;
@@ -624,14 +626,30 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_43.Include(_ => _.SD_2).FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new Kontragent
+                {
+                    DocCode = entity.DOC_CODE,
+                    StartBalans = entity.START_BALANS ?? new DateTime(2000, 1, 1),
+                    Name = entity.NAME,
+                    Notes = entity.NOTES,
+                    IsBalans = entity.FLAG_BALANS == 1,
+                    IsDeleted = entity.DELETED == 1,
+                    Id = entity.Id,
+                    CurrencyDC = entity.VALUTA_DC,
+                    GroupDC = entity.EG_ID,
+                    ResponsibleEmployeeDC = entity.SD_2?.DOC_CODE
+                };
+                newItem.LoadFromEntity(entity,this);
+                UpdateList2(new List<Kontragent>(new [] {newItem}));
+                Kontragents.AddOrUpdate(dc,newItem);
+            }
+            
         }
-
-        if (Kontragents.ContainsKey(dc))
-            Kontragents[dc] = itemNew;
-        else
-            Kontragents.Add(dc, itemNew);
-
+        Kontragents.AddOrUpdate(dc,itemNew);
         return Kontragents[dc];
     }
 
@@ -735,14 +753,49 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_83.Include(_ => _.NomenklMain).FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new Nomenkl
+                {
+                    DocCode = entity.DOC_CODE,
+                    Id = entity.Id,
+                    Name = entity.NOM_NAME,
+                    FullName =
+                        entity.NOM_FULL_NAME,
+                    Notes = entity.NOM_NOTES,
+                    IsUsluga =
+                        entity.NOM_0MATER_1USLUGA == 1,
+                    IsProguct = entity.NOM_1PROD_0MATER == 1,
+                    IsNakladExpense =
+                        entity.NOM_1NAKLRASH_0NO == 1,
+                    DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT,
+                    IsDeleted =
+                        entity.NOM_DELETED == 1,
+                    IsUslugaInRentabelnost =
+                        entity.IsUslugaInRent ?? false,
+                    UpdateDate =
+                        entity.UpdateDate ?? DateTime.MinValue,
+                    MainId =
+                        entity.MainId ?? Guid.Empty,
+                    IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
+                    NomenklNumber =
+                        entity.NOM_NOMENKL,
+                    NomenklTypeDC =
+                        entity.NomenklMain.TypeDC,
+                    ProductTypeDC = entity.NomenklMain.ProductDC,
+                    UnitDC = entity.NOM_ED_IZM_DC,
+                    CurrencyDC = entity.NOM_SALE_CRS_DC,
+                    GroupDC = entity.NOM_CATEG_DC
+                };
+                newItem.LoadFromEntity(entity, this);
+                UpdateList2(new List<Nomenkl>(new[] { newItem }));
+                Nomenkls.AddOrUpdate(dc, newItem);
+            }
         }
 
-        if (Nomenkls.ContainsKey(dc))
-            Nomenkls[dc] = itemNew;
-        else
-            Nomenkls.Add(dc, itemNew);
-
+        Nomenkls.AddOrUpdate(dc, itemNew);
         return Nomenkls[dc];
     }
 
