@@ -101,13 +101,22 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_22.Include(_ => _.TD_22).FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new CashBox
+                {
+                    DocCode = entity.DOC_CODE,
+                    
+                };
+                newItem.LoadFromEntity(entity, this);
+                UpdateList2(new List<CashBox>(new[] { newItem }));
+                CashBoxes.AddOrUpdate(dc, newItem);
+            }
         }
 
-        if (CashBoxes.ContainsKey(dc))
-            CashBoxes[dc] = itemNew;
-        else
-            CashBoxes.Add(dc, itemNew);
+        CashBoxes.AddOrUpdate(dc, itemNew);
 
         return CashBoxes[dc];
     }
@@ -253,7 +262,18 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_77.FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new NomenklProductType
+                {
+                    DocCode = entity.DOC_CODE,
+                };
+                newItem.LoadFromEntity(entity, this);
+                UpdateList2(new List<NomenklProductType>(new[] { newItem }));
+                NomenklProductTypes.AddOrUpdate(dc, newItem);
+            }
         }
 
         if (NomenklProductTypes.ContainsKey(dc))
@@ -317,7 +337,18 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_50.FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new ProductType
+                {
+                    DocCode = entity.DOC_CODE,
+                };
+                newItem.LoadFromEntity(entity);
+                UpdateList2(new List<ProductType>(new[] { newItem }));
+                ProductTypes.AddOrUpdate(dc, newItem);
+            }
         }
 
         if (ProductTypes.ContainsKey(dc))
@@ -378,7 +409,18 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new CentrResponsibility
+                {
+                    DocCode = entity.DOC_CODE,
+                };
+                newItem.LoadFromEntity(entity);
+                UpdateList2(new List<CentrResponsibility>(new[] { newItem }));
+                CentrResponsibilities.AddOrUpdate(dc.Value, newItem);
+            }
         }
 
         if (CentrResponsibilities.ContainsKey(dc.Value))
@@ -439,7 +481,18 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_44.FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new Bank
+                {
+                    DocCode = entity.DOC_CODE,
+                };
+                newItem.LoadFromEntity(entity);
+                UpdateList2(new List<Bank>(new[] { newItem }));
+                Banks.AddOrUpdate(dc.Value, newItem);
+            }
         }
 
         if (Banks.ContainsKey(dc.Value))
@@ -500,7 +553,18 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_114.FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new BankAccount
+                {
+                    DocCode = entity.DOC_CODE,
+                };
+                newItem.LoadFromEntity(entity, this);
+                UpdateList2(new List<BankAccount>(new[] { newItem }));
+                BankAccounts.AddOrUpdate(dc.Value, newItem);
+            }
         }
 
         if (BankAccounts.ContainsKey(dc.Value))
@@ -560,7 +624,18 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.UD_43.FirstOrDefault(_ => _.EG_ID == id.Value);
+                if (entity is null) return null;
+                var newItem = new KontragentGroup
+                {
+                    Id = entity.EG_ID,
+                };
+                newItem.LoadFromEntity(entity);
+                UpdateList2(new List<KontragentGroup>(new[] { newItem }));
+                KontragentGroups.AddOrUpdate(id.Value, newItem);
+            }
         }
 
         if (KontragentGroups.ContainsKey(id.Value))
@@ -852,7 +927,19 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.NomenklMain.FirstOrDefault(_ => _.Id == id);
+                if (entity is null) return null;
+                var newItem = new NomenklMain
+                {
+                    Id = entity.Id,
+        
+                };
+                newItem.LoadFromEntity(entity, this);
+                UpdateList2(new List<NomenklMain>(new[] { newItem }));
+                NomenklMains.AddOrUpdate(id, newItem);
+            }
         }
 
         if (NomenklMains.ContainsKey(id))
@@ -948,7 +1035,19 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_82.FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new NomenklGroup
+                {
+                    DocCode = entity.DOC_CODE,
+                    
+                };
+                newItem.LoadFromEntity(entity);
+                UpdateList2(new List<NomenklGroup>(new[] { newItem }));
+                NomenklGroups.AddOrUpdate(dc.Value, newItem);
+            }
         }
 
         if (NomenklGroups.ContainsKey(dc.Value))
@@ -1013,7 +1112,19 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_27.FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new Warehouse
+                {
+                    DocCode = entity.DOC_CODE,
+                    Id = entity.Id,
+                };
+                newItem.LoadFromEntity(entity, this);
+                UpdateList2(new List<Warehouse>(new[] { newItem }));
+                Warehouses.AddOrUpdate(dc, newItem);
+            }
         }
 
         if (Warehouses.ContainsKey(dc))
@@ -1198,7 +1309,18 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_303.FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new SDRSchet
+                {
+                    DocCode = entity.DOC_CODE,
+                };
+                newItem.LoadFromEntity(entity, this);
+                UpdateList2(new List<SDRSchet>(new[] { newItem }));
+                SDRSchets.AddOrUpdate(dc.Value, newItem);
+            }
         }
 
         if (SDRSchets.ContainsKey(dc.Value))
@@ -1265,7 +1387,18 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_99.FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new SDRState
+                {
+                    DocCode = entity.DOC_CODE,
+                };
+                newItem.LoadFromEntity(entity);
+                UpdateList2(new List<SDRState>(new[] { newItem }));
+                SDRStates.AddOrUpdate(dc.Value, newItem);
+            }
         }
 
         if (SDRStates.ContainsKey(dc.Value))
@@ -1529,7 +1662,18 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_23.FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new Region
+                {
+                    DocCode = entity.DOC_CODE,
+                };
+                newItem.LoadFromEntity(entity);
+                UpdateList2(new List<Region>(new[] { newItem }));
+                Regions.AddOrUpdate(dc.Value, newItem);
+            }
         }
 
         if (Regions.ContainsKey(dc.Value))
@@ -1594,7 +1738,19 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_175.FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new Unit
+                {
+                    DocCode = entity.DOC_CODE,
+        
+                };
+                newItem.LoadFromEntity(entity);
+                UpdateList2(new List<Unit>(new[] { newItem }));
+                Units.AddOrUpdate(dc.Value, newItem);
+            }
         }
 
         if (Units.ContainsKey(dc.Value))

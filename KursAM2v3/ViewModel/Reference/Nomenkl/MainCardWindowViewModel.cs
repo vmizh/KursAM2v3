@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Data.Entity;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core.EntityViewModel.NomenklManagement;
@@ -18,7 +18,6 @@ using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using NomenklMain = Data.NomenklMain;
-using System.Runtime.Remoting.Contexts;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
@@ -101,7 +100,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             }
         }
 
-        public bool IsMultyCurrency => NomenklMain?.NomenklCollection.Count == 1 || NomenklMain?.State == RowStatus.NewRow;
+        public bool IsMultyCurrency =>
+            NomenklMain?.NomenklCollection.Count == 1 || NomenklMain?.State == RowStatus.NewRow;
 
         public NomenklMainViewModel NomenklMain
         {
@@ -194,7 +194,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                     ctx.NomenklMain
                         .Include(_ => _.SD_119)
                         .Include(_ => _.SD_175)
-                        .Include(_ => _.SD_82)                           
+                        .Include(_ => _.SD_82)
                         .Include(_ => _.SD_83)
                         .Include(_ => _.SD_50)
                         .Include(_ => _.Countries)
@@ -207,8 +207,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public override void SaveData(object data)
         {
-            List<Guid> savedListId = new List<Guid>();
-            List<decimal> savedListDC = new List<decimal>();
+            var savedListId = new List<Guid>();
+            var savedListDC = new List<decimal>();
             decimal newDC = 0;
             var state = NomenklMain.State;
 
@@ -340,7 +340,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                  select ctx.NomenklMain.AsNoTracking().FirstOrDefault(_ => _.Id == id)
                                  into entity
                                  where entity is not null
-                                 select new KursDomain.References.NomenklMain()
+                                 select new KursDomain.References.NomenklMain
                                  {
                                      Id = entity.Id,
                                      Name = entity.Name,
@@ -358,9 +358,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                      NomenklTypeDC = entity.TypeDC,
                                      ProductTypeDC = entity.ProductDC
                                  })
-                        {
                             GlobalOptions.ReferencesCache.AddOrUpdateGuid(item);
-                        }
 
                         foreach (var item in from dc in savedListDC.Distinct()
                                  select ctx.SD_83.Include(_ => _.NomenklMain).AsNoTracking()
@@ -399,9 +397,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                      CurrencyDC = entity.NOM_SALE_CRS_DC,
                                      GroupDC = entity.NOM_CATEG_DC
                                  })
-                        {
                             GlobalOptions.ReferencesCache.AddOrUpdate(item);
-                        }
 
                         //foreach (var n in dcs) MainReferences.LoadNomenkl(n);
                     }

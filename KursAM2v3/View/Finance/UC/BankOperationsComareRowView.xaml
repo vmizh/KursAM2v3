@@ -129,7 +129,7 @@
                 <dxlc:LayoutItem Label="Счет доходов/расходов">
                      <dxe:ComboBoxEdit HorizontalAlignment="Stretch"
                               ItemsSource="{Binding SHPZList}"
-                              IsEnabled="{Binding IsNotCurrencyChange}"
+                              IsEnabled="{Binding IsSDREnable}"
                               Height="25"
                               SelectedItem="{Binding SHPZ, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                               Margin="0 0 0 5" />
@@ -173,7 +173,7 @@
                                     AcceptsReturn="True"
                                     TextWrapping="Wrap"
                                     Height="55"
-                                  IsEnabled="{Binding IsNotCurrencyChange}"
+                                  IsEnabled="{Binding IsNoteEnable}"
                              Margin="0 0 0 5" />
                 </dxlc:LayoutItem>
             </dxlc:LayoutGroup>

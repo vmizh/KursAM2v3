@@ -31,6 +31,8 @@ namespace KursAM2.ViewModel.Finance.controls
         private BankOperationsComareRowView myDataUserControl;
         private string myOperType;
         private bool myIsNotCurrencyChange;
+        private bool myIsSDREnable;
+        private bool myIsNoteEnable;
 
 
         public AddBankOperionUC()
@@ -126,6 +128,18 @@ namespace KursAM2.ViewModel.Finance.controls
         public string KontragentName => CurrentBankOperations?.KontragentName;
 
         public bool IsCanOpenAccured => CurrentBankOperations.AccuredId != null;
+
+        public bool IsSDREnable
+        {
+            get => CurrentBankOperations?.BankOperationType != BankOperationType.CurrencyChange;
+            set => myIsSDREnable = value;
+        }
+
+        public bool IsNoteEnable
+        {
+            get => CurrentBankOperations?.BankOperationType != BankOperationType.CurrencyChange;
+            set => myIsNoteEnable = value;
+        }
 
         public bool IsNotCurrencyChange
         {
