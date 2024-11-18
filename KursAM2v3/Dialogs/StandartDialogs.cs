@@ -245,7 +245,7 @@ namespace KursAM2.Dialogs
 
         public static VZPaymentRow SelectVZOperationForProviderInvoice(decimal kontrDC)
         {
-            var ctx = new AddPaymentVZClientInvoice(kontrDC)
+            var ctx = new AddPaymentVZProviderInvoice(kontrDC)
             {
                 WindowName =
                     $"Выбор проводки акта вазимозачета для {((IName) GlobalOptions.ReferencesCache.GetKontragent(kontrDC)).Name}"
