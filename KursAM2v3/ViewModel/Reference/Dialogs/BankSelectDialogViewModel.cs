@@ -113,7 +113,7 @@ namespace KursAM2.ViewModel.Reference.Dialogs
 
         public override void DocNewEmpty(object form)
         {
-            base.DocNewEmpty(form);
+            AddNewBank(null);
         }
 
         private void DeleteBank(object obj)
