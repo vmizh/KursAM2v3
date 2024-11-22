@@ -117,7 +117,11 @@ public class BankViewModel : RSViewModelBase, IEntity<SD_44>
     public BankViewModel(SD_44 entity)
     {
         Entity = entity ?? DefaultValue();
+        if (Entity.SD_114 != null && Entity.SD_114.Count > 0)
+            IsUsed = true;
     }
+
+    public bool IsUsed { set; get; }
 
     public override decimal DocCode
     {

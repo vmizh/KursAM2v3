@@ -2,6 +2,7 @@
 using KursDomain.References;
 using KursDomain.Repository;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Runtime.Remoting.Contexts;
 
@@ -23,7 +24,7 @@ namespace KursAM2.Repositories
 
         public List<BankViewModel> GetAllBanks()
         {
-            return Context.SD_44.ToList().Select(c => new BankViewModel(c)).ToList();
+            return Context.SD_44.Include(_ => _.SD_114).ToList().Select(c => new BankViewModel(c)).ToList();
         }
     }
 }

@@ -79,7 +79,7 @@ namespace KursAM2.ViewModel.Reference
 
         public ICommand RemoveItemCommand
         {
-            get { return new Command(RemoveItem, _ => CurrentBank != null); }
+            get { return new Command(RemoveItem, _ => CurrentBank != null && !CurrentBank.IsUsed); }
         }
 
         private void RemoveItem(object obj)
@@ -136,10 +136,18 @@ namespace KursAM2.ViewModel.Reference
             {
                 unitOfWork.Save();
                 unitOfWork.Commit();
-                foreach (var crs in BankCollection.Where(_ => _.State != RowStatus.NotEdited))
+                foreach (var b in BankCollection.Where(_ => _.State != RowStatus.NotEdited))
                 {
+                    if (string.IsNullOrEmpty(b.Name))
+                    {
+                        unitOfWork.Context.SD_44.Remove(CurrentBank.Entity);
+                        BankCollection.Remove(CurrentBank);
+                        isBankDeleted = b.State != RowStatus.NewRow;
+                        continue;
+                    }
+
                     var c = new Bank();
-                    c.LoadFromEntity(crs.Entity);
+                    c.LoadFromEntity(b.Entity);
                     GlobalOptions.ReferencesCache.AddOrUpdate(c);
                 }
                 isBankDeleted = false;
