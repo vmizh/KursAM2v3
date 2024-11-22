@@ -24,7 +24,9 @@ namespace KursAM2.Repositories
 
         public List<BankViewModel> GetAllBanks()
         {
-            return Context.SD_44.Include(_ => _.SD_114).ToList().Select(c => new BankViewModel(c)).ToList();
+            return Context.SD_44.Include(_ => _.SD_114)
+                .Include(_ => _.TD_43)
+                .ToList().Select(c => new BankViewModel(c)).ToList();
         }
     }
 }
