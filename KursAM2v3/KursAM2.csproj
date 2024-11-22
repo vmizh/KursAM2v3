@@ -243,6 +243,7 @@
     </Compile>
     <Compile Include="Repositories\AccruedAmount\AccruedAmountRepositories.cs" />
     <Compile Include="Repositories\AktSpisaniyaNomenkl_TitleRepository.cs" />
+    <Compile Include="Repositories\BankRepositories.cs" />
     <Compile Include="Repositories\CurrencyRepozitories.cs" />
     <Compile Include="Repositories\DistributeNakladRepository.cs" />
     <Compile Include="Repositories\DogovorsRepositories\DogovorClientRepository.cs" />
@@ -354,6 +355,7 @@
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorProviderViewModel.cs" />
     <Compile Include="ViewModel\MenuSearchWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\AccruedAmountTypeWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\BankReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\CurrencyReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\Dialogs\SelectKursMainMenuItemViewModel.cs" />
     <Compile Include="ViewModel\Reference\FormPayReferenceWindowViewModel.cs" />
@@ -457,6 +459,9 @@
       <DependentUpon>InvoiceClientSelectRowsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Helper\GridLayoutHelper.cs" />
+    <Compile Include="View\KursReferences\UC\BankReferenceUC.xaml.cs">
+      <DependentUpon>BankReferenceUC.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\KursReferences\UC\CurrencyReferenceUC.xaml.cs">
       <DependentUpon>CurrencyReferenceUC.xaml</DependentUpon>
     </Compile>
@@ -1306,6 +1311,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Finance\UC\InvoiceClientSelectRowsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\KursReferences\UC\BankReferenceUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

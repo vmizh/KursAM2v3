@@ -251,6 +251,16 @@ namespace KursAM2.View
                         formcrs.Show();
                         break;
 
+                    case "Справочник банков":
+                        var bankref = new BankReferenceWindowViewModel();
+                        var formbank = new KursStandartFormView
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = bankref
+                        };
+                        formbank.Show();
+                        break;
+
                     //Лицевые счета акционеров
                     case "Лицевые счета акционеров":
                         var shbls = new StockHoldersBalancesWindowViewModel();

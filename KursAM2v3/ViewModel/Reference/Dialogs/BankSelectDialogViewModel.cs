@@ -113,7 +113,16 @@ namespace KursAM2.ViewModel.Reference.Dialogs
 
         public override void DocNewEmpty(object form)
         {
-            AddNewBank(null);
+            var bankref = new BankReferenceWindowViewModel();
+            var formbank = new KursStandartFormView
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = bankref
+            };
+            formbank.Show();
+            if (winCurrentService == null) return;
+            DialogResult = true;
+            winCurrentService.Close();
         }
 
         private void DeleteBank(object obj)
