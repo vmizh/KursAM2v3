@@ -258,6 +258,7 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow,
                             DataContext = bankref
                         };
+                        bankref.Form = formbank;
                         formbank.Show();
                         break;
 
