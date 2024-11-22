@@ -696,6 +696,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     DDT_SPOST_ROW_CODE = row.Code,
                     DDT_CRS_DC = ((IDocCode)row.Nomenkl.Currency).DocCode,
                     DDT_NOMENKL_DC = ((IDocCode)row.Nomenkl).DocCode,
+                    DDT_ED_IZM_DC = ((IDocCode)row.Nomenkl.Unit).DocCode,
                     Id = Guid.NewGuid(),
                     DocId = vm.Document.Id
                 };
