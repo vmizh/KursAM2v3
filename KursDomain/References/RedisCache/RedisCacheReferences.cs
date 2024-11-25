@@ -14,7 +14,6 @@ using KursDomain.IReferences;
 using KursDomain.IReferences.Kontragent;
 using KursDomain.IReferences.Nomenkl;
 using Newtonsoft.Json;
-using ServiceStack;
 using ServiceStack.Redis;
 using ServiceStack.Text;
 using ServiceStack.Text.Common;
@@ -25,6 +24,19 @@ public interface ICache
 {
     DateTime UpdateDate { set; get; }
     void LoadFromCache();
+}
+
+internal static class PagingUtils
+{
+    public static IEnumerable<T> Page<T>(this IEnumerable<T> en, int pageSize, int page)
+    {
+        return en.Skip(page * pageSize).Take(pageSize);
+    }
+
+    public static IQueryable<T> Page<T>(this IQueryable<T> en, int pageSize, int page)
+    {
+        return en.Skip(page * pageSize).Take(pageSize);
+    }
 }
 
 public record CachKey
@@ -107,8 +119,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (entity is null) return null;
                 var newItem = new CashBox
                 {
-                    DocCode = entity.DOC_CODE,
-                    
+                    DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<CashBox>(new[] { newItem }));
@@ -194,7 +205,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (ent is null) return null;
                 var newItem = new NomenklType();
                 newItem.LoadFromEntity(ent);
-                UpdateList2(new List<NomenklType>(new [] {newItem}));
+                UpdateList2(new List<NomenklType>(new[] { newItem }));
                 NomenklTypes.Add(dc.Value, newItem);
                 return NomenklTypes[dc.Value];
             }
@@ -268,7 +279,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (entity is null) return null;
                 var newItem = new NomenklProductType
                 {
-                    DocCode = entity.DOC_CODE,
+                    DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<NomenklProductType>(new[] { newItem }));
@@ -343,7 +354,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (entity is null) return null;
                 var newItem = new ProductType
                 {
-                    DocCode = entity.DOC_CODE,
+                    DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<ProductType>(new[] { newItem }));
@@ -415,7 +426,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (entity is null) return null;
                 var newItem = new CentrResponsibility
                 {
-                    DocCode = entity.DOC_CODE,
+                    DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<CentrResponsibility>(new[] { newItem }));
@@ -487,7 +498,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (entity is null) return null;
                 var newItem = new Bank
                 {
-                    DocCode = entity.DOC_CODE,
+                    DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<Bank>(new[] { newItem }));
@@ -559,7 +570,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (entity is null) return null;
                 var newItem = new BankAccount
                 {
-                    DocCode = entity.DOC_CODE,
+                    DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<BankAccount>(new[] { newItem }));
@@ -630,7 +641,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (entity is null) return null;
                 var newItem = new KontragentGroup
                 {
-                    Id = entity.EG_ID,
+                    Id = entity.EG_ID
                 };
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<KontragentGroup>(new[] { newItem }));
@@ -718,13 +729,13 @@ public class RedisCacheReferences : IReferencesCache
                     GroupDC = entity.EG_ID,
                     ResponsibleEmployeeDC = entity.SD_2?.DOC_CODE
                 };
-                newItem.LoadFromEntity(entity,this);
-                UpdateList2(new List<Kontragent>(new [] {newItem}));
-                Kontragents.AddOrUpdate(dc,newItem);
+                newItem.LoadFromEntity(entity, this);
+                UpdateList2(new List<Kontragent>(new[] { newItem }));
+                Kontragents.AddOrUpdate(dc, newItem);
             }
-            
         }
-        Kontragents.AddOrUpdate(dc,itemNew);
+
+        Kontragents.AddOrUpdate(dc, itemNew);
         return Kontragents[dc];
     }
 
@@ -813,11 +824,13 @@ public class RedisCacheReferences : IReferencesCache
 
     public INomenkl GetNomenkl(decimal dc)
     {
+        Nomenkl itemNew = null;
+
         if (!cacheKeysDict.ContainsKey("Nomenkl") ||
             (DateTime.Now - cacheKeysDict["Nomenkl"].LoadMoment).TotalSeconds > MaxTimersSec)
             LoadCacheKeys("Nomenkl");
         var key = cacheKeysDict["Nomenkl"].CachKeys.SingleOrDefault(_ => _.DocCode == dc);
-        Nomenkl itemNew = null;
+
         if (key is not null)
         {
             if (Nomenkls.TryGetValue(dc, out var Nomenkl))
@@ -830,8 +843,9 @@ public class RedisCacheReferences : IReferencesCache
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var entity = ctx.SD_83.Include(_ => _.NomenklMain).FirstOrDefault(_ => _.DOC_CODE == dc);
+                var entity = ctx.SD_83.FirstOrDefault(_ => _.DOC_CODE == dc);
                 if (entity is null) return null;
+                var nMain = GetNomenklMain(entity.MainId);
                 var newItem = new Nomenkl
                 {
                     DocCode = entity.DOC_CODE,
@@ -854,12 +868,12 @@ public class RedisCacheReferences : IReferencesCache
                         entity.UpdateDate ?? DateTime.MinValue,
                     MainId =
                         entity.MainId ?? Guid.Empty,
-                    IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
+                    IsCurrencyTransfer = nMain.IsCurrencyTransfer,
                     NomenklNumber =
                         entity.NOM_NOMENKL,
                     NomenklTypeDC =
-                        entity.NomenklMain.TypeDC,
-                    ProductTypeDC = entity.NomenklMain.ProductDC,
+                        ((IDocCode)nMain.NomenklType).DocCode,
+                    ProductTypeDC = ((IDocCode)nMain.ProductType).DocCode,
                     UnitDC = entity.NOM_ED_IZM_DC,
                     CurrencyDC = entity.NOM_SALE_CRS_DC,
                     GroupDC = entity.NOM_CATEG_DC
@@ -933,8 +947,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (entity is null) return null;
                 var newItem = new NomenklMain
                 {
-                    Id = entity.Id,
-        
+                    Id = entity.Id
                 };
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<NomenklMain>(new[] { newItem }));
@@ -1041,8 +1054,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (entity is null) return null;
                 var newItem = new NomenklGroup
                 {
-                    DocCode = entity.DOC_CODE,
-                    
+                    DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<NomenklGroup>(new[] { newItem }));
@@ -1119,7 +1131,7 @@ public class RedisCacheReferences : IReferencesCache
                 var newItem = new Warehouse
                 {
                     DocCode = entity.DOC_CODE,
-                    Id = entity.Id,
+                    Id = entity.Id
                 };
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<Warehouse>(new[] { newItem }));
@@ -1240,7 +1252,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (ent is null) return null;
                 var newItem = new Employee();
                 newItem.LoadFromEntity(ent, this);
-                UpdateList2(new List<Employee>(new [] {newItem}));
+                UpdateList2(new List<Employee>(new[] { newItem }));
                 Employees.Add(dc.Value, newItem);
                 return Employees[dc.Value];
             }
@@ -1315,7 +1327,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (entity is null) return null;
                 var newItem = new SDRSchet
                 {
-                    DocCode = entity.DOC_CODE,
+                    DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<SDRSchet>(new[] { newItem }));
@@ -1393,7 +1405,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (entity is null) return null;
                 var newItem = new SDRState
                 {
-                    DocCode = entity.DOC_CODE,
+                    DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<SDRState>(new[] { newItem }));
@@ -1668,7 +1680,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (entity is null) return null;
                 var newItem = new Region
                 {
-                    DocCode = entity.DOC_CODE,
+                    DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<Region>(new[] { newItem }));
@@ -1744,8 +1756,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (entity is null) return null;
                 var newItem = new Unit
                 {
-                    DocCode = entity.DOC_CODE,
-        
+                    DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<Unit>(new[] { newItem }));
@@ -2482,7 +2493,7 @@ public class RedisCacheReferences : IReferencesCache
                         ProductTypeDC = entity.ProductDC
                     };
                     //item.LoadFromEntity(entity,this);
-                    NomenklMains.Add(item.Id, item);
+                    NomenklMains.AddOrUpdate(item.Id, item);
                 }
 
                 DropAllGuid<NomenklMain>();
@@ -2576,6 +2587,104 @@ public class RedisCacheReferences : IReferencesCache
         }
 
         //ClearAll();
+    }
+
+    public void UpdateNomeklMain(IEnumerable<Guid> ids)
+    {
+        var pageSize = 500;
+        var pageIndex = 0;
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            var load_ids = ids.Where(id => !NomenklMains.ContainsKey(id)).ToList();
+
+            var maxIdx = load_ids.Count / pageSize;
+            for (var i = 0; i < maxIdx; i++)
+            {
+                var list = load_ids.Page(pageSize, i);
+                var data = ctx.NomenklMain.Where(_ => list.Contains(_.Id)).ToList();
+                var loadItems = new List<NomenklMain>();
+                foreach (var item in data.Select(entity => new NomenklMain
+                         {
+                             Id = entity.Id,
+                             Name = entity.Name,
+                             Notes = entity.Note,
+                             NomenklNumber = entity.NomenklNumber,
+                             FullName = entity.FullName,
+                             IsUsluga = entity.IsUsluga,
+                             IsProguct = entity.IsComplex,
+                             IsNakladExpense = entity.IsNakladExpense,
+                             IsOnlyState = entity.IsOnlyState ?? false,
+                             IsCurrencyTransfer = entity.IsCurrencyTransfer ?? false,
+                             IsRentabelnost = entity.IsRentabelnost ?? false,
+                             UnitDC = entity.UnitDC,
+                             CategoryDC = entity.CategoryDC,
+                             NomenklTypeDC = entity.TypeDC,
+                             ProductTypeDC = entity.ProductDC
+                         }))
+                {
+                    NomenklMains.AddOrUpdate(item.Id, item);
+                    loadItems.Add(item);
+                }
+
+                UpdateListGuid(loadItems);
+            }
+        }
+    }
+
+    public void UpdateNomenkl(IEnumerable<decimal> docDCs)
+    {
+        var pageSize = 500;
+        var pageIndex = 0;
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            var load_ids = docDCs.Where(dc => !Nomenkls.ContainsKey(dc)).ToList();
+            var maxIdx = load_ids.Count / pageSize;
+            for (var i = 0; i < maxIdx; i++)
+            {
+                var list = load_ids.Page(pageSize, i);
+                var data = ctx.SD_83.Where(_ => list.Contains(_.DOC_CODE)).Include(sd83 => sd83.NomenklMain).ToList();
+                var loadItems = new List<Nomenkl>();
+                foreach (var item in data.Select(entity => new Nomenkl
+                         {
+                             DocCode = entity.DOC_CODE,
+                             Id = entity.Id,
+                             Name = entity.NOM_NAME,
+                             FullName =
+                                 entity.NOM_FULL_NAME,
+                             Notes = entity.NOM_NOTES,
+                             IsUsluga =
+                                 entity.NOM_0MATER_1USLUGA == 1,
+                             IsProguct = entity.NOM_1PROD_0MATER == 1,
+                             IsNakladExpense =
+                                 entity.NOM_1NAKLRASH_0NO == 1,
+                             DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT,
+                             IsDeleted =
+                                 entity.NOM_DELETED == 1,
+                             IsUslugaInRentabelnost =
+                                 entity.IsUslugaInRent ?? false,
+                             UpdateDate =
+                                 entity.UpdateDate ?? DateTime.MinValue,
+                             MainId =
+                                 entity.MainId ?? Guid.Empty,
+                             IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
+                             NomenklNumber =
+                                 entity.NOM_NOMENKL,
+                             NomenklTypeDC =
+                                 entity.NomenklMain.TypeDC,
+                             ProductTypeDC = entity.NomenklMain.ProductDC,
+                             UnitDC = entity.NOM_ED_IZM_DC,
+                             CurrencyDC = entity.NOM_SALE_CRS_DC,
+                             GroupDC = entity.NOM_CATEG_DC
+                         }))
+                {
+                    ((ICache)item).LoadFromCache();
+                    Nomenkls.AddOrUpdate(item.DocCode, item);
+                    loadItems.Add(item);
+                }
+
+                UpdateList2(loadItems);
+            }
+        }
     }
 
     private int getCountNomenklGroup(NomenklGroup grp, Dictionary<decimal, int> noms)
@@ -2683,7 +2792,6 @@ public class RedisCacheReferences : IReferencesCache
         if (string.IsNullOrWhiteSpace(msg)) return;
         var message = JsonConvert.DeserializeObject<RedisMessage>(msg);
         if (message == null || message.DbId != GlobalOptions.DataBaseId) return;
-
         using (var Context = GlobalOptions.GetEntities())
         {
             switch (channel)
@@ -2693,13 +2801,15 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("Bank");
                     var b_item = GetItem<Bank>((string)message.ExternalValues["RedisKey"]);
                     b_item.LoadFromCache();
-                    var b_oldKey = cacheKeysDict["Bank"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var b_oldKey = cacheKeysDict["Bank"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (b_oldKey is null)
                         cacheKeysDict["Bank"].CachKeys.Add(new CachKey
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (Banks.ContainsKey(message.DocCode.Value))
@@ -2711,13 +2821,15 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("Region");
                     var r_item = GetItem<Region>((string)message.ExternalValues["RedisKey"]);
                     r_item.LoadFromCache();
-                    var r_oldKey = cacheKeysDict["Region"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var r_oldKey = cacheKeysDict["Region"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (r_oldKey is null)
                         cacheKeysDict["Region"].CachKeys.Add(new CachKey
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (Regions.ContainsKey(message.DocCode.Value))
@@ -2736,7 +2848,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (BankAccounts.ContainsKey(message.DocCode.Value))
@@ -2755,7 +2868,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (CashBoxes.ContainsKey(message.DocCode.Value))
@@ -2774,7 +2888,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (CentrResponsibilities.ContainsKey(message.DocCode.Value))
@@ -2793,7 +2908,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (ClientCategories.ContainsKey(message.DocCode.Value))
@@ -2812,7 +2928,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (ContractTypes.ContainsKey(message.DocCode.Value))
@@ -2835,7 +2952,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (Currencies.ContainsKey(message.DocCode.Value))
@@ -2858,7 +2976,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (Employees.ContainsKey(message.DocCode.Value))
@@ -2877,7 +2996,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (KontragentGroups.ContainsKey((int)message.DocCode.Value))
@@ -2896,7 +3016,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (MutualSettlementTypes.ContainsKey(message.DocCode.Value))
@@ -2915,7 +3036,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (NomenklGroups.ContainsKey(message.DocCode.Value))
@@ -2934,7 +3056,8 @@ public class RedisCacheReferences : IReferencesCache
                             Key = (string)message.ExternalValues["RedisKey"],
                             //DocCode = message.DocCode,
                             Id = nm_item.Id,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (NomenklMains.ContainsKey(message.Id.Value))
@@ -2953,7 +3076,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (NomenklProductTypes.ContainsKey(message.DocCode.Value))
@@ -2972,7 +3096,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (NomenklTypes.ContainsKey(message.DocCode.Value))
@@ -2991,7 +3116,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (PayConditions.ContainsKey(message.DocCode.Value))
@@ -3010,7 +3136,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (PayForms.ContainsKey(message.DocCode.Value))
@@ -3033,7 +3160,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (ProductTypes.ContainsKey(message.DocCode.Value))
@@ -3052,7 +3180,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (SDRSchets.ContainsKey(message.DocCode.Value))
@@ -3071,7 +3200,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (SDRStates.ContainsKey(message.DocCode.Value))
@@ -3090,7 +3220,8 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (Warehouses.ContainsKey(message.DocCode.Value))
@@ -3102,13 +3233,15 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("Unit");
                     var u_item = GetItem<Unit>((string)message.ExternalValues["RedisKey"]);
                     u_item.LoadFromCache();
-                    var u_oldKey = cacheKeysDict["Unit"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var u_oldKey = cacheKeysDict["Unit"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (u_oldKey is null)
                         cacheKeysDict["Unit"].CachKeys.Add(new CachKey
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (Units.ContainsKey(message.DocCode.Value))
@@ -3128,7 +3261,8 @@ public class RedisCacheReferences : IReferencesCache
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
                             Id = k_item.Id,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (Kontragents.ContainsKey(message.DocCode.Value))
@@ -3140,14 +3274,16 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("Nomenkl");
                     var item = GetItem<Nomenkl>((string)message.ExternalValues["RedisKey"]);
                     item.LoadFromCache();
-                    var oldKey = cacheKeysDict["Nomenkl"].CachKeys.SingleOrDefault(_ => _.DocCode == message.DocCode);
+                    var oldKey = cacheKeysDict["Nomenkl"].CachKeys
+                        .SingleOrDefault(_ => _.DocCode == message.DocCode);
                     if (oldKey is null)
                         cacheKeysDict["Nomenkl"].CachKeys.Add(new CachKey
                         {
                             Key = (string)message.ExternalValues["RedisKey"],
                             DocCode = message.DocCode,
                             Id = item.Id,
-                            LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                            LastUpdate =
+                                Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
                     if (Nomenkls.ContainsKey(message.DocCode.Value))

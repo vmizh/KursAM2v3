@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BindingHelper.cs" />
+    <Compile Include="PagingUtils.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="GridLayoutHelper.cs" />
     <Compile Include="CustomDXGridLocalizer.cs" />

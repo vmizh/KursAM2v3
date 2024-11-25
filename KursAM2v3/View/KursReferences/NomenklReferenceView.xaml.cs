@@ -1,6 +1,5 @@
 ﻿using System.Windows.Controls;
 using System.Windows.Input;
-using DevExpress.Utils;
 using DevExpress.Xpf.Grid;
 using KursDomain.ICommon;
 using KursDomain.References;

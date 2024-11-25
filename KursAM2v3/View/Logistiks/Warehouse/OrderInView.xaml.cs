@@ -66,20 +66,7 @@ namespace KursAM2.View.Logistiks.Warehouse
                     break;
                 case nameof(inv.NomNomenkl):
                     e.Column.ReadOnly = true;
-                    //e.Column.EditSettings = new TextEditSettings
-                    //{
-                    //    HorizontalContentAlignment = EditSettingsHorizontalAlignment.Center
-                    //};
                     break;
-                // case nameof(inv.Nomenkl):
-                //     var nomenklEdit = new ButtonEditSettings
-                //     {
-                //         TextWrapping = TextWrapping.Wrap,
-                //         IsTextEditable = false
-                //     };
-                //     nomenklEdit.DefaultButtonClick += Nomenkl_DefaultButtonClick;
-                //     e.Column.EditSettings = nomenklEdit;
-                //     break;
                 case nameof(inv.Note):
                     e.Column.EditSettings = new MemoEditSettings
                     {

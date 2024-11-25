@@ -18,6 +18,8 @@ using KursDomain.Documents.Management;
 using KursDomain.ICommon;
 using KursDomain.Managers;
 using KursDomain.References;
+using KursDomain.References.RedisCache;
+using NomenklMain = KursDomain.References.NomenklMain;
 
 namespace KursAM2.Managers
 {
@@ -172,6 +174,106 @@ namespace KursAM2.Managers
             }
         }
 
+        private void updateNomenklCache(List<decimal> nomDCs)
+        {
+            if (GlobalOptions.ReferencesCache is not RedisCacheReferences) return;
+            var cache = (RedisCacheReferences)GlobalOptions.ReferencesCache;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var mains = new Dictionary<Guid, NomenklMain>();
+                var noms = new Dictionary<decimal, KursDomain.References.Nomenkl>();
+
+                var mainIDs = new List<Guid>();
+                var nomsDCs = new List<decimal>();
+                var allNoms = ctx.SD_83.Select(_ => new { DocCode = _.DOC_CODE, MainId = _.MainId });
+                foreach (var item in allNoms)
+                {
+                    if (!cache.NomenklMains.ContainsKey(item.MainId.Value))
+                    {
+                        mainIDs.Add(item.MainId.Value);
+                    }
+
+                    if (!cache.Nomenkls.ContainsKey(item.DocCode))
+                    {
+                        nomsDCs.Add(item.DocCode);
+                    }
+                }
+
+                foreach (var entity in ctx.NomenklMain.AsNoTracking().ToList())
+                {
+                    if (mainIDs.Contains(entity.Id))
+                    {
+                        var item = new NomenklMain
+                        {
+                            Id = entity.Id,
+                            Name = entity.Name,
+                            Notes = entity.Note,
+                            NomenklNumber = entity.NomenklNumber,
+                            FullName = entity.FullName,
+                            IsUsluga = entity.IsUsluga,
+                            IsProguct = entity.IsComplex,
+                            IsNakladExpense = entity.IsNakladExpense,
+                            IsOnlyState = entity.IsOnlyState ?? false,
+                            IsCurrencyTransfer = entity.IsCurrencyTransfer ?? false,
+                            IsRentabelnost = entity.IsRentabelnost ?? false,
+                            UnitDC = entity.UnitDC,
+                            CategoryDC = entity.CategoryDC,
+                            NomenklTypeDC = entity.TypeDC,
+                            ProductTypeDC = entity.ProductDC
+                        };
+                        //item.LoadFromEntity(entity,this);
+                        mains.Add(item.Id, item);
+                    }
+                }
+
+                cache.UpdateListGuid(mains.Values);
+
+                foreach (var entity in ctx.SD_83.Include(_ => _.NomenklMain).AsNoTracking())
+                {
+                    if (nomsDCs.Contains(entity.DOC_CODE))
+                    {
+                        var item = new KursDomain.References.Nomenkl
+                        {
+                            DocCode = entity.DOC_CODE,
+                            Id = entity.Id,
+                            Name = entity.NOM_NAME,
+                            FullName =
+                                entity.NOM_FULL_NAME,
+                            Notes = entity.NOM_NOTES,
+                            IsUsluga =
+                                entity.NOM_0MATER_1USLUGA == 1,
+                            IsProguct = entity.NOM_1PROD_0MATER == 1,
+                            IsNakladExpense =
+                                entity.NOM_1NAKLRASH_0NO == 1,
+                            DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT,
+                            IsDeleted =
+                                entity.NOM_DELETED == 1,
+                            IsUslugaInRentabelnost =
+                                entity.IsUslugaInRent ?? false,
+                            UpdateDate =
+                                entity.UpdateDate ?? DateTime.MinValue,
+                            MainId =
+                                entity.MainId ?? Guid.Empty,
+                            IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
+                            NomenklNumber =
+                                entity.NOM_NOMENKL,
+                            NomenklTypeDC =
+                                entity.NomenklMain.TypeDC,
+                            ProductTypeDC = entity.NomenklMain.ProductDC,
+                            UnitDC = entity.NOM_ED_IZM_DC,
+                            CurrencyDC = entity.NOM_SALE_CRS_DC,
+                            GroupDC = entity.NOM_CATEG_DC
+                        };
+                        noms.Add(item.DocCode, item);
+                    }
+
+                    cache.UpdateList(noms.Values);
+                }
+
+                
+            }
+        }
+
         public void CalcTovar()
         {
             using (var ent = GlobalOptions.GetEntities())
@@ -313,6 +415,9 @@ namespace KursAM2.Managers
                 var dictLosses = data.Select(_ => _.TypeProdName)
                     .Distinct()
                     .ToDictionary(d => d, _ => Guid.NewGuid());
+                //updateNomenklCache(data.Select(_ => _.NomenklDC).Distinct().ToList());
+                if (GlobalOptions.ReferencesCache is RedisCacheReferences cache)
+                    cache.UpdateNomenkl(data.Select(_ => _.NomenklDC).Distinct().ToList());
                 foreach (var e in from d in data
                          let nom =
                              GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl
@@ -495,13 +600,16 @@ namespace KursAM2.Managers
                     .Where(
                         _ =>
                             _.SD_24.DD_DATE >= DateStart && _.SD_24.DD_DATE <= DateEnd &&
-                            _.SD_24.DD_TYPE_DC == 2010000005);
+                            _.SD_24.DD_TYPE_DC == 2010000005).ToList();
                 var newPrihodId = Guid.NewGuid();
                 spisanieTovara = Guid.NewGuid();
+                if (GlobalOptions.ReferencesCache is RedisCacheReferences cache2)
+                    cache2.UpdateNomenkl(nomPrihod.Select(_ => _.DDT_NOMENKL_DC).Distinct().ToList());
                 foreach (var d in nomPrihod)
                 {
                     var nom =
-                        GlobalOptions.ReferencesCache.GetNomenkl(d.DDT_NOMENKL_DC) as KursDomain.References.Nomenkl;
+                            GlobalOptions.ReferencesCache.GetNomenkl(d.DDT_NOMENKL_DC) as KursDomain.References.Nomenkl;
+                    
                     var e = new
                     {
                         GroupId = newPrihodId,
@@ -511,15 +619,15 @@ namespace KursAM2.Managers
                         nom.DocCode,
                         Quantity = Convert.ToDecimal(d.DDT_KOL_PRIHOD),
                         // ReSharper disable once PossibleInvalidOperationException
-                        Price = (decimal)d.DDT_TAX_CENA,
+                        Price = d.DDT_TAX_CENA ?? 0,
                         // ReSharper disable once PossibleInvalidOperationException
-                        Profit = d.DDT_KOL_PRIHOD * (decimal)d.DDT_TAX_CENA,
+                        Profit = d.DDT_KOL_PRIHOD * (d.DDT_TAX_CENA ?? 0),
                         Loss = d.DDT_KOL_RASHOD *
                                NomenklViewModel.PriceWithOutNaklad(d.DDT_NOMENKL_DC,
                                    d.SD_24.DD_DATE),
                         Result =
                             // ReSharper disable once PossibleInvalidOperationException
-                            d.DDT_KOL_PRIHOD * (decimal)d.DDT_TAX_CENA -
+                            d.DDT_KOL_PRIHOD * (d.DDT_TAX_CENA ?? 0) -
                             d.DDT_KOL_RASHOD *
                             NomenklViewModel.PriceWithOutNaklad(d.DDT_NOMENKL_DC,
                                 d.SD_24.DD_DATE),
@@ -3100,10 +3208,7 @@ namespace KursAM2.Managers
             }
         }
 
-        public void CalcProviderNaklad()
-        {
-        }
-
+        
         public override void RefreshData(object obj)
         {
         }
