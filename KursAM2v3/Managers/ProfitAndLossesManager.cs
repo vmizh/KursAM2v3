@@ -756,10 +756,10 @@ namespace KursAM2.Managers
                     if (d.START_SUMMA < 0)
                     {
                         newOp.GroupId = Guid.Parse("{15DF4D79-D608-412A-87A8-1560714A706A}");
-                        newOp.Name = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.DOC_CODE)).Name;
+                        newOp.Name = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.DOC_CODE))?.Name;
                         newOp.DocCode = d.DOC_CODE;
                         newOp.Quantity = 0;
-                        newOp.Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.DOC_CODE)).Name;
+                        newOp.Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.DOC_CODE))?.Name;
                         // ReSharper disable once PossibleInvalidOperationException
                         newOp.Date = (DateTime)d.START_BALANS;
                         newOp.Note = d.NOTES;
@@ -768,10 +768,10 @@ namespace KursAM2.Managers
                     else
                     {
                         newOp.GroupId = Guid.Parse("{2D07127B-72A8-4018-B9A8-62C7A78CB9C3}");
-                        newOp.Name = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.DOC_CODE)).Name;
+                        newOp.Name = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.DOC_CODE))?.Name;
                         newOp.DocCode = d.DOC_CODE;
                         newOp.Quantity = 0;
-                        newOp.Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.DOC_CODE)).Name;
+                        newOp.Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.DOC_CODE))?.Name;
                         // ReSharper disable once PossibleInvalidOperationException
                         newOp.Date = (DateTime)d.START_BALANS;
                         newOp.Note = d.NOTES;

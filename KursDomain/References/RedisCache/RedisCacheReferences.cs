@@ -2635,9 +2635,38 @@ public class RedisCacheReferences : IReferencesCache
     {
         var pageSize = 500;
         var pageIndex = 0;
+        var out_dcs = new List<decimal>();
+        var in_dcs = new List<string>();
+        foreach (var dc in docDCs.ToList())
+        {
+            var key = cacheKeysDict["Nomenkl"].CachKeys.SingleOrDefault(_ => _.DocCode == dc);
+            if(key is null) out_dcs.Add(dc);
+            else
+            {
+                in_dcs.Add(key.Key);
+            }
+        }
+        
+        using (var redisClient = redisManager.GetClient())
+        {
+            redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+            var redis = redisClient.As<Nomenkl>();
+            var noms = redis.GetValues(in_dcs);
+            foreach (var n in noms)
+            {
+                ((ICache)n).LoadFromCache();
+            }
+           
+            foreach (var n in noms)
+            {
+                Nomenkls.AddOrUpdate(n.DocCode,n);
+            }
+        }
+        
+
         using (var ctx = GlobalOptions.GetEntities())
         {
-            var load_ids = docDCs.Where(dc => !Nomenkls.ContainsKey(dc)).ToList();
+            var load_ids = out_dcs.Where(dc => !Nomenkls.ContainsKey(dc)).ToList();
             var maxIdx = load_ids.Count / pageSize;
             for (var i = 0; i < maxIdx; i++)
             {

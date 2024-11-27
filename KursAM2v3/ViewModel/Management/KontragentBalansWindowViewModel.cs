@@ -789,7 +789,7 @@ namespace KursAM2.ViewModel.Management
 
         public override void OnWindowClosing(object obj)
         {
-            mySubscriber.UnsubscribeAll();
+            mySubscriber?.UnsubscribeAll();
             base.OnWindowClosing(obj);
         }
 
