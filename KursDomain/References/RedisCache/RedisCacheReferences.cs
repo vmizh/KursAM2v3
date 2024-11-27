@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Core.WindowsManager;
 using Helper.Extensions;
 using KursAM2.Repositories.RedisRepository;
 using KursDomain.Documents.CommonReferences;
@@ -124,6 +125,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<CashBox>(new[] { newItem }));
                 CashBoxes.AddOrUpdate(dc, newItem);
+                return CashBoxes[dc];
             }
         }
 
@@ -284,6 +286,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<NomenklProductType>(new[] { newItem }));
                 NomenklProductTypes.AddOrUpdate(dc, newItem);
+                return NomenklProductTypes[dc];
             }
         }
 
@@ -359,6 +362,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<ProductType>(new[] { newItem }));
                 ProductTypes.AddOrUpdate(dc, newItem);
+                return ProductTypes[dc];
             }
         }
 
@@ -431,6 +435,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<CentrResponsibility>(new[] { newItem }));
                 CentrResponsibilities.AddOrUpdate(dc.Value, newItem);
+                return CentrResponsibilities[dc.Value];
             }
         }
 
@@ -503,6 +508,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<Bank>(new[] { newItem }));
                 Banks.AddOrUpdate(dc.Value, newItem);
+                return Banks[dc.Value];
             }
         }
 
@@ -575,6 +581,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<BankAccount>(new[] { newItem }));
                 BankAccounts.AddOrUpdate(dc.Value, newItem);
+                return BankAccounts[dc.Value];
             }
         }
 
@@ -646,6 +653,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<KontragentGroup>(new[] { newItem }));
                 KontragentGroups.AddOrUpdate(id.Value, newItem);
+                return KontragentGroups[id.Value];
             }
         }
 
@@ -882,6 +890,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<Nomenkl>(new[] { newItem }));
                 Nomenkls.AddOrUpdate(dc, newItem);
+                return Nomenkls[dc];
             }
         }
 
@@ -953,14 +962,10 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<NomenklMain>(new[] { newItem }));
                 NomenklMains.AddOrUpdate(id, newItem);
+                return NomenklMains[id];
             }
         }
-
-        if (NomenklMains.ContainsKey(id))
-            NomenklMains[id] = itemNew;
-        else
-            NomenklMains.Add(id, itemNew);
-
+        NomenklMains.AddOrUpdate(id, itemNew);
         return NomenklMains[id];
     }
 
@@ -1060,14 +1065,11 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<NomenklGroup>(new[] { newItem }));
                 NomenklGroups.AddOrUpdate(dc.Value, newItem);
+                return NomenklGroups[dc.Value];
+
             }
         }
-
-        if (NomenklGroups.ContainsKey(dc.Value))
-            NomenklGroups[dc.Value] = itemNew;
-        else
-            NomenklGroups.Add(dc.Value, itemNew);
-
+        NomenklGroups.AddOrUpdate(dc.Value, itemNew);
         return NomenklGroups[dc.Value];
     }
 
@@ -1137,6 +1139,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<Warehouse>(new[] { newItem }));
                 Warehouses.AddOrUpdate(dc, newItem);
+                return Warehouses[dc];
             }
         }
 
@@ -1333,6 +1336,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<SDRSchet>(new[] { newItem }));
                 SDRSchets.AddOrUpdate(dc.Value, newItem);
+                return SDRSchets[dc.Value];
             }
         }
 
@@ -1411,6 +1415,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<SDRState>(new[] { newItem }));
                 SDRStates.AddOrUpdate(dc.Value, newItem);
+                return SDRStates[dc.Value];
             }
         }
 
@@ -1686,6 +1691,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<Region>(new[] { newItem }));
                 Regions.AddOrUpdate(dc.Value, newItem);
+                return Regions[dc.Value];
             }
         }
 
@@ -1762,6 +1768,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity);
                 UpdateList2(new List<Unit>(new[] { newItem }));
                 Units.AddOrUpdate(dc.Value, newItem);
+                return Units[dc.Value];
             }
         }
 
@@ -2638,82 +2645,91 @@ public class RedisCacheReferences : IReferencesCache
         var pageIndex = 0;
         var out_dcs = new List<decimal>();
         var in_dcs = new List<string>();
-        foreach (var dc in docDCs.ToList())
+        try
         {
-            var key = cacheKeysDict["Nomenkl"].CachKeys.SingleOrDefault(_ => _.DocCode == dc);
-            if(key is null) out_dcs.Add(dc);
-            else
+            foreach (var dc in docDCs.ToList())
             {
-                in_dcs.Add(key.Key);
-            }
-        }
-        
-        using (var redisClient = redisManager.GetClient())
-        {
-            redisClient.Db = GlobalOptions.RedisDBId ?? 0;
-            var redis = redisClient.As<Nomenkl>();
-            var noms = redis.GetValues(in_dcs);
-            foreach (var n in noms)
-            {
-                ((ICache)n).LoadFromCache();
-            }
-           
-            foreach (var n in noms)
-            {
-                Nomenkls.AddOrUpdate(n.DocCode,n);
-            }
-        }
-        
-
-        using (var ctx = GlobalOptions.GetEntities())
-        {
-            var load_ids = out_dcs.Where(dc => !Nomenkls.ContainsKey(dc)).ToList();
-            var maxIdx = load_ids.Count / pageSize;
-            for (var i = 0; i < maxIdx; i++)
-            {
-                var list = load_ids.Page(pageSize, i);
-                var data = ctx.SD_83.Where(_ => list.Contains(_.DOC_CODE)).Include(sd83 => sd83.NomenklMain).ToList();
-                var loadItems = new List<Nomenkl>();
-                foreach (var item in data.Select(entity => new Nomenkl
-                         {
-                             DocCode = entity.DOC_CODE,
-                             Id = entity.Id,
-                             Name = entity.NOM_NAME,
-                             FullName =
-                                 entity.NOM_FULL_NAME,
-                             Notes = entity.NOM_NOTES,
-                             IsUsluga =
-                                 entity.NOM_0MATER_1USLUGA == 1,
-                             IsProguct = entity.NOM_1PROD_0MATER == 1,
-                             IsNakladExpense =
-                                 entity.NOM_1NAKLRASH_0NO == 1,
-                             DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT,
-                             IsDeleted =
-                                 entity.NOM_DELETED == 1,
-                             IsUslugaInRentabelnost =
-                                 entity.IsUslugaInRent ?? false,
-                             UpdateDate =
-                                 entity.UpdateDate ?? DateTime.MinValue,
-                             MainId =
-                                 entity.MainId ?? Guid.Empty,
-                             IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
-                             NomenklNumber =
-                                 entity.NOM_NOMENKL,
-                             NomenklTypeDC =
-                                 entity.NomenklMain.TypeDC,
-                             ProductTypeDC = entity.NomenklMain.ProductDC,
-                             UnitDC = entity.NOM_ED_IZM_DC,
-                             CurrencyDC = entity.NOM_SALE_CRS_DC,
-                             GroupDC = entity.NOM_CATEG_DC
-                         }))
+                var key = cacheKeysDict["Nomenkl"].CachKeys.SingleOrDefault(_ => _.DocCode == dc);
+                if (key is null) out_dcs.Add(dc);
+                else
                 {
-                    ((ICache)item).LoadFromCache();
-                    Nomenkls.AddOrUpdate(item.DocCode, item);
-                    loadItems.Add(item);
+                    in_dcs.Add(key.Key);
+                }
+            }
+
+            using (var redisClient = redisManager.GetClient())
+            {
+                redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+                var redis = redisClient.As<Nomenkl>();
+                var noms = redis.GetValues(in_dcs);
+                foreach (var n in noms)
+                {
+                    ((ICache)n).LoadFromCache();
                 }
 
-                UpdateList2(loadItems);
+                foreach (var n in noms)
+                {
+                    Nomenkls.AddOrUpdate(n.DocCode, n);
+                }
             }
+
+
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var load_ids = out_dcs.Where(dc => !Nomenkls.ContainsKey(dc)).ToList();
+                var maxIdx = load_ids.Count / pageSize;
+                for (var i = 0; i < maxIdx; i++)
+                {
+                    var list = load_ids.Page(pageSize, i);
+                    var data = ctx.SD_83.Where(_ => list.Contains(_.DOC_CODE)).Include(sd83 => sd83.NomenklMain)
+                        .ToList();
+                    var loadItems = new List<Nomenkl>();
+                    foreach (var item in data.Select(entity => new Nomenkl
+                             {
+                                 DocCode = entity.DOC_CODE,
+                                 Id = entity.Id,
+                                 Name = entity.NOM_NAME,
+                                 FullName =
+                                     entity.NOM_FULL_NAME,
+                                 Notes = entity.NOM_NOTES,
+                                 IsUsluga =
+                                     entity.NOM_0MATER_1USLUGA == 1,
+                                 IsProguct = entity.NOM_1PROD_0MATER == 1,
+                                 IsNakladExpense =
+                                     entity.NOM_1NAKLRASH_0NO == 1,
+                                 DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT,
+                                 IsDeleted =
+                                     entity.NOM_DELETED == 1,
+                                 IsUslugaInRentabelnost =
+                                     entity.IsUslugaInRent ?? false,
+                                 UpdateDate =
+                                     entity.UpdateDate ?? DateTime.MinValue,
+                                 MainId =
+                                     entity.MainId ?? Guid.Empty,
+                                 IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
+                                 NomenklNumber =
+                                     entity.NOM_NOMENKL,
+                                 NomenklTypeDC =
+                                     entity.NomenklMain.TypeDC,
+                                 ProductTypeDC = entity.NomenklMain.ProductDC,
+                                 UnitDC = entity.NOM_ED_IZM_DC,
+                                 CurrencyDC = entity.NOM_SALE_CRS_DC,
+                                 GroupDC = entity.NOM_CATEG_DC
+                             }))
+                    {
+                        ((ICache)item).LoadFromCache();
+                        Nomenkls.AddOrUpdate(item.DocCode, item);
+                        loadItems.Add(item);
+                    }
+
+                    UpdateList2(loadItems);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            var win = new WindowManager();
+            win.ShowMessageBox(ex.Message, "Ошибка");
         }
     }
 
