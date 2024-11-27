@@ -206,7 +206,7 @@ public class RedisCacheReferences : IReferencesCache
                 var newItem = new NomenklType();
                 newItem.LoadFromEntity(ent);
                 UpdateList2(new List<NomenklType>(new[] { newItem }));
-                NomenklTypes.Add(dc.Value, newItem);
+                NomenklTypes.AddOrUpdate(dc.Value, newItem);
                 return NomenklTypes[dc.Value];
             }
         }
@@ -732,6 +732,7 @@ public class RedisCacheReferences : IReferencesCache
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<Kontragent>(new[] { newItem }));
                 Kontragents.AddOrUpdate(dc, newItem);
+                return Kontragents[dc];
             }
         }
 
@@ -873,7 +874,7 @@ public class RedisCacheReferences : IReferencesCache
                         entity.NOM_NOMENKL,
                     NomenklTypeDC =
                         ((IDocCode)nMain.NomenklType).DocCode,
-                    ProductTypeDC = ((IDocCode)nMain.ProductType).DocCode,
+                    ProductTypeDC = ((IDocCode)nMain.ProductType)?.DocCode,
                     UnitDC = entity.NOM_ED_IZM_DC,
                     CurrencyDC = entity.NOM_SALE_CRS_DC,
                     GroupDC = entity.NOM_CATEG_DC
