@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
@@ -65,6 +66,8 @@ public class RedisCacheReferences : IReferencesCache
 
     private readonly RedisManagerPool redisManager =
         new RedisManagerPool(ConfigurationManager.AppSettings["redis.connection"]);
+
+    public bool isNomenklCacheLoad = true;
 
     public bool isStartLoad = true;
 
@@ -965,6 +968,7 @@ public class RedisCacheReferences : IReferencesCache
                 return NomenklMains[id];
             }
         }
+
         NomenklMains.AddOrUpdate(id, itemNew);
         return NomenklMains[id];
     }
@@ -1066,9 +1070,9 @@ public class RedisCacheReferences : IReferencesCache
                 UpdateList2(new List<NomenklGroup>(new[] { newItem }));
                 NomenklGroups.AddOrUpdate(dc.Value, newItem);
                 return NomenklGroups[dc.Value];
-
             }
         }
+
         NomenklGroups.AddOrUpdate(dc.Value, itemNew);
         return NomenklGroups[dc.Value];
     }
@@ -2585,6 +2589,7 @@ public class RedisCacheReferences : IReferencesCache
                     GetSDRSchetAll();
                     GetWarehousesAll();
                     GetDeliveryConditionAll();
+
                     LoadCacheKeys("NomeklMain");
                     LoadCacheKeys("Nomenkl");
 
@@ -2601,6 +2606,8 @@ public class RedisCacheReferences : IReferencesCache
     {
         var pageSize = 500;
         var pageIndex = 0;
+        if (!cacheKeysDict.ContainsKey("NomenklMain"))
+            LoadCacheKeys("NomenklMain");
         using (var ctx = GlobalOptions.GetEntities())
         {
             var load_ids = ids.Where(id => !NomenklMains.ContainsKey(id)).ToList();
@@ -2647,14 +2654,13 @@ public class RedisCacheReferences : IReferencesCache
         var in_dcs = new List<string>();
         try
         {
+            while (isNomenklCacheLoad) Thread.Sleep(new TimeSpan(0, 0, 5));
             foreach (var dc in docDCs.ToList())
             {
                 var key = cacheKeysDict["Nomenkl"].CachKeys.SingleOrDefault(_ => _.DocCode == dc);
                 if (key is null) out_dcs.Add(dc);
                 else
-                {
                     in_dcs.Add(key.Key);
-                }
             }
 
             using (var redisClient = redisManager.GetClient())
@@ -2662,15 +2668,9 @@ public class RedisCacheReferences : IReferencesCache
                 redisClient.Db = GlobalOptions.RedisDBId ?? 0;
                 var redis = redisClient.As<Nomenkl>();
                 var noms = redis.GetValues(in_dcs);
-                foreach (var n in noms)
-                {
-                    ((ICache)n).LoadFromCache();
-                }
+                foreach (var n in noms) ((ICache)n).LoadFromCache();
 
-                foreach (var n in noms)
-                {
-                    Nomenkls.AddOrUpdate(n.DocCode, n);
-                }
+                foreach (var n in noms) Nomenkls.AddOrUpdate(n.DocCode, n);
             }
 
 
@@ -2749,6 +2749,7 @@ public class RedisCacheReferences : IReferencesCache
         return cnt;
     }
 
+
     private void LoadCacheKeysAll()
     {
         LoadCacheKeys("Kontragent");
@@ -2780,6 +2781,7 @@ public class RedisCacheReferences : IReferencesCache
 
     private void LoadCacheKeys(string name)
     {
+        var resultList = new ConcurrentBag<CachKey>();
         if (!cacheKeysDict.ContainsKey(name))
             cacheKeysDict.Add(name, new CacheKeys());
         using (var redisClient = redisManager.GetClient())
@@ -2787,12 +2789,13 @@ public class RedisCacheReferences : IReferencesCache
             redisClient.Db = GlobalOptions.RedisDBId ?? 0;
             var keys = redisClient.GetKeysByPattern($"Cache:{name}:*").ToList();
             cacheKeysDict[name].CachKeys.Clear();
-            foreach (var key in keys)
+            Parallel.ForEach(keys, key =>
+            {
                 switch (name)
                 {
                     case "Kontragent":
                     case "Nomenkl":
-                        cacheKeysDict[name].CachKeys.Add(new CachKey
+                        resultList.Add(new CachKey
                         {
                             DocCode = Convert.ToDecimal(key.Split('@')[0].Split(':')[2]),
                             Id = Guid.Parse(key.Split('@')[0].Split(':')[3]),
@@ -2801,7 +2804,7 @@ public class RedisCacheReferences : IReferencesCache
                         });
                         break;
                     case "Employee":
-                        cacheKeysDict[name].CachKeys.Add(new CachKey
+                        resultList.Add(new CachKey
                         {
                             DocCode = Convert.ToDecimal(key.Split('@')[0].Split(':')[2]),
                             TabelNumber = Convert.ToInt32(key.Split('@')[0].Split(':')[3]),
@@ -2812,7 +2815,7 @@ public class RedisCacheReferences : IReferencesCache
                     case "NomenklMain":
                     case "Country":
                     case "Project":
-                        cacheKeysDict[name].CachKeys.Add(new CachKey
+                        resultList.Add(new CachKey
                         {
                             Id = Guid.Parse(key.Split('@')[0].Split(':')[2]),
                             LastUpdate = Convert.ToDateTime(key.Split('@')[1]),
@@ -2820,7 +2823,7 @@ public class RedisCacheReferences : IReferencesCache
                         });
                         break;
                     default:
-                        cacheKeysDict[name].CachKeys.Add(new CachKey
+                        resultList.Add(new CachKey
                         {
                             DocCode = Convert.ToDecimal(key.Split('@')[0].Split(':')[2]),
                             LastUpdate = Convert.ToDateTime(key.Split('@')[1]),
@@ -2828,10 +2831,82 @@ public class RedisCacheReferences : IReferencesCache
                         });
                         break;
                 }
+            });
 
+            cacheKeysDict[name].CachKeys = new List<CachKey>(resultList);
             cacheKeysDict[name].LoadMoment = DateTime.Now;
+            if (name == "Nomenkl")
+                isNomenklCacheLoad = false;
         }
     }
+    //private void LoadCacheKeys(string name)
+    //{
+    //    if (!cacheKeysDict.ContainsKey(name))
+    //        cacheKeysDict.Add(name, new CacheKeys());
+    //    using (var redisClient = redisManager.GetClient())
+    //    {
+    //        redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+    //        var keys = redisClient.GetKeysByPattern($"Cache:{name}:*").ToList();
+    //        cacheKeysDict[name].CachKeys.Clear();
+    //        foreach (var key in keys)
+    //            switch (name)
+    //            {
+    //                case "Kontragent":
+    //                case "Nomenkl":
+    //                    if (cacheKeysDict[name].CachKeys.Count > 0 && cacheKeysDict[name].CachKeys.Any(_ =>
+    //                            (_?.DocCode ?? 0) == Convert.ToDecimal(key.Split('@')[0].Split(':')[2])))
+    //                        continue;
+    //                    cacheKeysDict[name].CachKeys.Add(new CachKey
+    //                    {
+    //                        DocCode = Convert.ToDecimal(key.Split('@')[0].Split(':')[2]),
+    //                        Id = Guid.Parse(key.Split('@')[0].Split(':')[3]),
+    //                        LastUpdate = Convert.ToDateTime(key.Split('@')[1]),
+    //                        Key = key
+    //                    });
+    //                    break;
+    //                case "Employee":
+    //                    if (cacheKeysDict[name].CachKeys.Count > 0 && cacheKeysDict[name].CachKeys.Any(_ =>
+    //                            (_?.DocCode ?? 0)  == Convert.ToDecimal(key.Split('@')[0].Split(':')[2])))
+    //                        continue;
+    //                    cacheKeysDict[name].CachKeys.Add(new CachKey
+    //                    {
+    //                        DocCode = Convert.ToDecimal(key.Split('@')[0].Split(':')[2]),
+    //                        TabelNumber = Convert.ToInt32(key.Split('@')[0].Split(':')[3]),
+    //                        LastUpdate = Convert.ToDateTime(key.Split('@')[1]),
+    //                        Key = key
+    //                    });
+    //                    break;
+    //                case "NomenklMain":
+    //                case "Country":
+    //                case "Project":
+    //                    if (cacheKeysDict[name].CachKeys.Count > 0 && cacheKeysDict[name].CachKeys.Any(_ =>
+    //                            (_?.Id ?? Guid.Empty)  == Guid.Parse(key.Split('@')[0].Split(':')[2])))
+    //                        continue;
+    //                    cacheKeysDict[name].CachKeys.Add(new CachKey
+    //                    {
+    //                        Id = Guid.Parse(key.Split('@')[0].Split(':')[2]),
+    //                        LastUpdate = Convert.ToDateTime(key.Split('@')[1]),
+    //                        Key = key
+    //                    });
+    //                    break;
+    //                default:
+    //                    if (cacheKeysDict[name].CachKeys.Count > 0 && cacheKeysDict[name].CachKeys.Any(_ =>
+    //                            _.DocCode == Convert.ToDecimal(key.Split('@')[0].Split(':')[2])))
+    //                        continue;
+    //                    cacheKeysDict[name].CachKeys.Add(new CachKey
+    //                    {
+    //                        DocCode = Convert.ToDecimal(key.Split('@')[0].Split(':')[2]),
+    //                        LastUpdate = Convert.ToDateTime(key.Split('@')[1]),
+    //                        Key = key
+    //                    });
+    //                    break;
+    //            }
+
+    //        cacheKeysDict[name].LoadMoment = DateTime.Now;
+    //        if (name == "Nomenkl")
+    //            isNomenklCacheLoad = false;
+    //    }
+    //}
 
     private void UpdateReferences(string channel, string msg)
     {
