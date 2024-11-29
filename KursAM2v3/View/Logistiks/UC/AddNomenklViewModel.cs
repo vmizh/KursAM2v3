@@ -129,7 +129,9 @@ namespace KursAM2.View.Logistiks.UC
                 if (!IsNotUsluga)
                 {
                     myDataUserControl.treeListPermissionStruct.IsEnabled = false;
-                    NomenklItemCollection.AddRange(nomenklRepository.GetUsluga());
+                    NomenklItemCollection.AddRange(currentCrs is not null
+                        ? nomenklRepository.GetUsluga().Where(_ => Equals(_.Currency, currentCrs))
+                        : nomenklRepository.GetUsluga());
                     NomenklItem.AddRange(NomenklItemCollection);
                 }
             }

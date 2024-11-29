@@ -2546,11 +2546,6 @@ public class RedisCacheReferences : IReferencesCache
                         CurrencyDC = entity.NOM_SALE_CRS_DC,
                         GroupDC = entity.NOM_CATEG_DC
                     };
-                    //item.LoadFromEntity(entity,this);
-                    //foreach (var n in noms.Values)
-                    //{
-                    //    ((ICache)n).LoadFromCache();
-                    //}
                     noms.Add(item.DocCode, item);
                 }
 
@@ -2568,7 +2563,6 @@ public class RedisCacheReferences : IReferencesCache
                     GetEmployees();
                     GetKontragentsAll();
                 });
-
 
                 Task.Run(() =>
                 {
@@ -2592,9 +2586,6 @@ public class RedisCacheReferences : IReferencesCache
 
                     LoadCacheKeys("NomeklMain");
                     LoadCacheKeys("Nomenkl");
-
-                    //GetNomenklMainAll();
-                    //GetNomenklsAll();
                 });
             }
         }
