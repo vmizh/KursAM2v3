@@ -1261,7 +1261,7 @@ public class RedisCacheReferences : IReferencesCache
                 var newItem = new Employee();
                 newItem.LoadFromEntity(ent, this);
                 UpdateList2(new List<Employee>(new[] { newItem }));
-                Employees.Add(dc.Value, newItem);
+                Employees.AddOrUpdate(dc.Value, newItem);
                 return Employees[dc.Value];
             }
         }

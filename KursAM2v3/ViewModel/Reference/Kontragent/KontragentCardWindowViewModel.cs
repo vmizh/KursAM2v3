@@ -20,6 +20,7 @@ using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using static DevExpress.Utils.Drawing.Helpers.NativeMethods;
 using Region = KursDomain.Documents.CommonReferences.Region;
 
 namespace KursAM2.ViewModel.Reference.Kontragent
@@ -681,21 +682,30 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                     }
 
                     ctx.SaveChanges();
-
+                    if (IsNewDoc)
+                        Kontragent.DocCode = newDC;
                     DeletedBankAndAccountses.Clear();
                     DeletedKontragentGruzoRequisites.Clear();
                     Kontragent.myState = RowStatus.NotEdited;
                     foreach (var b in BankAndAccounts) b.myState = RowStatus.NotEdited;
                     foreach (var g in Kontragent.GruzoRequisities) g.myState = RowStatus.NotEdited;
                     //GlobalOptions.ReferencesCache.GetKontragent(Kontragent.DocCode);
-                    var kontr = new KursDomain.References.Kontragent();
-                    kontr.LoadFromEntity(Kontragent.Entity,GlobalOptions.ReferencesCache);
-                    kontr.GroupDC = ((IDocCode)kontr.Group)?.DocCode;
-                    kontr.ClientCategoryDC = ((IDocCode)kontr.ClientCategory)?.DocCode;
-                    kontr.ResponsibleEmployeeDC = ((IDocCode)kontr.ResponsibleEmployee)?.DocCode;
-                    kontr.RegionDC = ((IDocCode)kontr.Region)?.DocCode;
-                    kontr.CurrencyDC = ((IDocCode)kontr.Currency)?.DocCode;
-                    GlobalOptions.ReferencesCache.AddOrUpdate(kontr);
+                    var entity = ctx.SD_43.Include(_ => _.SD_2).FirstOrDefault(_ => _.DOC_CODE == Kontragent.DocCode);
+                    var newItem = new KursDomain.References.Kontragent
+                    {
+                        DocCode = entity.DOC_CODE,
+                        StartBalans = entity.START_BALANS ?? new DateTime(2000, 1, 1),
+                        Name = entity.NAME,
+                        Notes = entity.NOTES,
+                        IsBalans = entity.FLAG_BALANS == 1,
+                        IsDeleted = entity.DELETED == 1,
+                        Id = entity.Id,
+                        CurrencyDC = entity.VALUTA_DC,
+                        GroupDC = entity.EG_ID,
+                        ResponsibleEmployeeDC = entity.SD_2?.DOC_CODE
+                    };
+                    newItem.LoadFromEntity(entity, GlobalOptions.ReferencesCache);
+                    GlobalOptions.ReferencesCache.AddOrUpdate(newItem);
                 }
                 catch (Exception e)
                 {

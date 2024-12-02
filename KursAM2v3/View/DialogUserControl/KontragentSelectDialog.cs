@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -9,6 +10,7 @@ using KursAM2.Managers;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
+using KursDomain.References.RedisCache;
 
 namespace KursAM2.View.DialogUserControl
 {
@@ -105,48 +107,10 @@ namespace KursAM2.View.DialogUserControl
 
         public DependencyObject LayoutControl { get; }
 
-        //private void loadAllKontragent()
-        //{
-        //    if (GlobalOptions.ReferencesCache is not RedisCacheReferences) return;
-        //    while (((RedisCacheReferences)GlobalOptions.ReferencesCache).isStartLoad)
-        //    {
-        //        Thread.Sleep(3000);
-        //    }
-        //    RedisManagerPool redisManager =
-        //        new RedisManagerPool(ConfigurationManager.AppSettings["redis.connection"]);
-        //    using (var redisClient = redisManager.GetClient())
-        //    {
-        //        redisClient.Db = GlobalOptions.RedisDBId ?? 0;
-        //        var redis = redisClient.As<Kontragent>();
-        //        var allKeys = redisClient.GetKeysByPattern("Cache:Kontragent:*").ToList();
-        //        var kontrs = ((RedisCacheReferences)GlobalOptions.ReferencesCache).Kontragents;
-        //        var keys = (from k in allKeys
-        //            let dc = Convert.ToDecimal(k.Split('@')[0].Split(':')[2])
-        //            where !kontrs.ContainsKey(dc) &&
-        //                  ((ICache)kontrs[dc]).UpdateDate != Convert.ToDateTime(k.Split('@')[1])
-        //            select k).ToList();
-        //        if (!keys.Any()) return;
-        //        using (var pipe = redis.CreatePipeline())
-        //        {
-
-        //            foreach (var key in keys)
-        //                pipe.QueueCommand(r => r.GetValue(key),
-        //                    x =>
-        //                    {
-        //                        x.LoadFromCache();
-        //                        if (kontrs.ContainsKey(x.DocCode))
-        //                            kontrs[x.DocCode] = x;
-        //                        else kontrs.Add(x.DocCode, x);
-        //                    });
-
-        //            pipe.Flush();
-        //        }
-        //    }
-        //}
-
         private void LoadKontragentFromReference()
         {
-            //loadAllKontragent();
+            while (((RedisCacheReferences)GlobalOptions.ReferencesCache).isNomenklCacheLoad)
+                Thread.Sleep(new TimeSpan(0, 0, 5));
             var KontrList = new List<Kontragent>();
             try
             {
@@ -170,6 +134,7 @@ namespace KursAM2.View.DialogUserControl
                         });
                     }
                 else
+                {
                     KontrList.AddRange(from k in KontragentManager.GetAllKontragentSortedByUsed()
                             .Where(_ => ((Currency)_.Currency).DocCode == Currency.DocCode)
                             .ToList()
@@ -187,6 +152,7 @@ namespace KursAM2.View.DialogUserControl
                             Notes = k.Notes,
                             StartBalans = k.StartBalans
                         });
+                }
 
                 KontragentCollection = IsBalans != null
                     ? IsBalans.Value
