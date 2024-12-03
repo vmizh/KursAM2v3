@@ -8,6 +8,7 @@ using Core.Helper;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.Documents.Invoices;
+using KursDomain.References;
 using Newtonsoft.Json;
 
 namespace KursDomain.Documents.NomenklManagement;
@@ -32,6 +33,10 @@ public class WarehouseOrderIn : SD_24ViewModel
         if (Entity.TD_24 != null && Entity.TD_24.Count != 0)
             foreach (var item in Entity.TD_24)
                 rtemp.Add(new WarehouseOrderInRow(item) { Parent = this });
+        if (Entity.DD_SKLAD_POL_DC is not null)
+            WarehouseIn = GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC.Value) as References.Warehouse;
+        if (Entity.DD_KONTR_OTPR_DC is not null)
+            KontragentSender = GlobalOptions.ReferencesCache.GetKontragent(Entity.DD_KONTR_OTPR_DC.Value) as Kontragent;
         Rows = new ObservableCollection<WarehouseOrderInRow>(rtemp);
     }
 

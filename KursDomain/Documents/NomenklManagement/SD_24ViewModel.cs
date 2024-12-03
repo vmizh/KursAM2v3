@@ -147,7 +147,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         get => myWarehouseIn; // GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC) as References.Warehouse;
         set
         {
-            if (Entity.DD_SKLAD_POL_DC == value?.DocCode) return;
+            if (myWarehouseIn == value) return;
             myWarehouseIn = value;
             Entity.DD_SKLAD_POL_DC = value?.DocCode;
             Entity.DD_POLUCH_NAME = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC))?.Name ?? string.Empty;
@@ -166,7 +166,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
         get => myKontragentSender; //GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_OTPR_DC) as Kontragent;
         set
         {
-            if (DD_KONTR_OTPR_DC == value?.DocCode) return;
+            if (myKontragentSender == value) return;
             myKontragentSender = value;
             DD_KONTR_OTPR_DC = value?.DocCode;
             Entity.DD_OTRPAV_NAME = ((IName)GlobalOptions.ReferencesCache.GetKontragent(DD_KONTR_OTPR_DC))?.Name;
