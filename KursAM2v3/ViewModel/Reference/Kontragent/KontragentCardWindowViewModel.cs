@@ -683,7 +683,11 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 
                     ctx.SaveChanges();
                     if (IsNewDoc)
+                    {
                         Kontragent.DocCode = newDC;
+                        Id = Guid.NewGuid();
+                    }
+
                     DeletedBankAndAccountses.Clear();
                     DeletedKontragentGruzoRequisites.Clear();
                     Kontragent.myState = RowStatus.NotEdited;

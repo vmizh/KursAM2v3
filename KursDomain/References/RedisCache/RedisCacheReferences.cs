@@ -836,6 +836,7 @@ public class RedisCacheReferences : IReferencesCache
 
     public INomenkl GetNomenkl(decimal dc)
     {
+        while (isNomenklCacheLoad) Thread.Sleep(new TimeSpan(0, 0, 5));
         Nomenkl itemNew = null;
 
         if (!cacheKeysDict.ContainsKey("Nomenkl") ||
@@ -2551,6 +2552,7 @@ public class RedisCacheReferences : IReferencesCache
 
                 DropAll<Nomenkl>();
                 UpdateList2(noms.Values.Cast<Nomenkl>(), now);
+                isNomenklCacheLoad = false;
             }
             else
             {
