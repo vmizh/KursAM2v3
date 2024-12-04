@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.CodeView;
 using KursDomain;
 using KursDomain.References;
+using KursDomain.References.RedisCache;
 using KursDomain.Repository.NomenklRepository;
 
 namespace KursAM2.View.Logistiks.UC
@@ -176,6 +178,8 @@ namespace KursAM2.View.Logistiks.UC
         public void SearchNomenkl(object obj)
         {
             NomenklItem.Clear();
+            while (((RedisCacheReferences)GlobalOptions.ReferencesCache).isNomenklCacheLoad)
+                Thread.Sleep(new TimeSpan(0, 0, 5));
             foreach (var n in nomenklRepository.FindByName(SearchText))
                 switch (IsNotUsluga)
                 {
@@ -189,26 +193,6 @@ namespace KursAM2.View.Logistiks.UC
                         break;
                     }
                 }
-            //foreach (var n in GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>().ToList())
-            //{
-            //    var srch = SearchText.ToUpper();
-            //    if (n.Name.ToUpper().Contains(srch) || (n.FullName?.ToUpper().Contains(srch) ?? false)
-            //                                        || n.NomenklNumber.ToUpper().Contains(srch)
-            //                                        || (n.Notes?.ToUpper().Contains(srch) ?? false))
-            //    {
-            //        if (currentCrs != null)
-            //        {
-            //            if (((IDocCode)n.Currency).DocCode == currentCrs.DocCode)
-            //                NomenklItem.Add(n);
-            //        }
-            //        else
-            //        {
-            //            NomenklItem.Add(n);
-            //        }
-            //    }
-
-            //    if (NomenklItem.Count > 0) myDataUserControl.treeListPermissionStruct.IsEnabled = false;
-            //}
         }
 
         public ICommand ClearSearchCommand

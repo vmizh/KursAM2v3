@@ -1321,12 +1321,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 return;
             }
 
-            //GlobalOptions.ReferencesCache.UpdateNomenklForMain(CurrentRow.Nomenkl.MainId);
-            var noms = GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>().Where(_ =>
-                    _.MainId == CurrentRow.Nomenkl.MainId
-                    && ((IDocCode)_.Currency).DocCode !=
-                    ((IDocCode)CurrentRow.Nomenkl.Currency).DocCode)
-                .ToList();
+            var main = GlobalOptions.ReferencesCache.GetNomenklMain(CurrentRow.Nomenkl.MainId);
+            var nomDCs = main.Nomenkls.Where(_ => _ != Document.Currency.DocCode).ToList();
+            var noms = nomDCs.Select(dc => GlobalOptions.ReferencesCache.GetNomenkl(dc)).OfType<Nomenkl>().
+                Where(_ => ((IDocCode)_.Currency).DocCode != ((IDocCode)CurrentRow.Nomenkl.Currency).DocCode ).ToList();
             if (noms.Count == 0) return;
             Nomenkl n;
             if (noms.Count > 1)

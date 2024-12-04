@@ -1,4 +1,6 @@
-﻿namespace KursDomain.IReferences.Nomenkl;
+﻿using System.Collections.Generic;
+
+namespace KursDomain.IReferences.Nomenkl;
 
 public interface INomenklMain
 {
@@ -16,4 +18,6 @@ public interface INomenklMain
     bool IsRentabelnost { set; get; }
     bool IsOnlyState { set; get; }
     ICountry Country { set; get; }
+
+    List<decimal> Nomenkls { set; get; }
 }

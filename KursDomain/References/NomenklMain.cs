@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
+using System.Linq;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
 using KursDomain.IReferences.Nomenkl;
@@ -65,6 +67,8 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
     public Guid? CountryId { get; set; }
     [JsonIgnore]
     public ICountry Country { get; set; }
+
+    public List<decimal> Nomenkls { set; get; } = new List<decimal>();
 
 
     public override string ToString()

@@ -2485,7 +2485,7 @@ public class RedisCacheReferences : IReferencesCache
                 UpdateList(NomenklGroups.Values.Cast<NomenklGroup>(), now);
                 GetNomenklGroupAll();
 
-                foreach (var entity in Context.NomenklMain.AsNoTracking().ToList())
+                foreach (var entity in Context.NomenklMain.Include(_ => _.SD_83).AsNoTracking().ToList())
                 {
                     var item = new NomenklMain
                     {
@@ -2503,7 +2503,8 @@ public class RedisCacheReferences : IReferencesCache
                         UnitDC = entity.UnitDC,
                         CategoryDC = entity.CategoryDC,
                         NomenklTypeDC = entity.TypeDC,
-                        ProductTypeDC = entity.ProductDC
+                        ProductTypeDC = entity.ProductDC,
+                        Nomenkls = new List<decimal>(entity.SD_83.Select(_ => _.DOC_CODE))
                     };
                     //item.LoadFromEntity(entity,this);
                     NomenklMains.AddOrUpdate(item.Id, item);
