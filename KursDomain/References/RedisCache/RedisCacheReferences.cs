@@ -3822,6 +3822,7 @@ public class RedisCacheReferences : IReferencesCache
             };
             var olds = redisClient.GetKeysByPattern($"{key.Split('@')[0]}*");
             foreach (var oldKey in olds) redisClient.Remove(oldKey);
+            redisClient.Save();
             redis.SetValue(key, item);
             var message = new RedisMessage
             {

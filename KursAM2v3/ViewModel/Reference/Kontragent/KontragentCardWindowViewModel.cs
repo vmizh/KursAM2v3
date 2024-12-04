@@ -495,6 +495,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                 try
                 {
                     var CurrentCategory = ClientCategory?.DocCode;
+                    var newId = Guid.NewGuid();
                     var newDC = ctx.SD_43.Any() ? ctx.SD_43.Max(_ => _.DOC_CODE) + 1 : 10430000001;
                     var OtvetstvennojeLico = OtvetstLico?.TabelNumber;
                     var myValuteDC = CurrentCurrencies?.DocCode;
@@ -504,6 +505,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                     {
                         ctx.SD_43.Add(new SD_43
                         {
+                            Id = newId,
                             DOC_CODE = newDC,
                             INN = Kontragent.INN,
                             NAME = Kontragent.Name,
@@ -682,19 +684,14 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                     }
 
                     ctx.SaveChanges();
-                    if (IsNewDoc)
-                    {
-                        Kontragent.DocCode = newDC;
-                        Id = Guid.NewGuid();
-                    }
-
+                    decimal dc = IsNewDoc ? newDC : Kontragent.DocCode;
                     DeletedBankAndAccountses.Clear();
                     DeletedKontragentGruzoRequisites.Clear();
                     Kontragent.myState = RowStatus.NotEdited;
                     foreach (var b in BankAndAccounts) b.myState = RowStatus.NotEdited;
                     foreach (var g in Kontragent.GruzoRequisities) g.myState = RowStatus.NotEdited;
                     //GlobalOptions.ReferencesCache.GetKontragent(Kontragent.DocCode);
-                    var entity = ctx.SD_43.Include(_ => _.SD_2).FirstOrDefault(_ => _.DOC_CODE == Kontragent.DocCode);
+                    var entity = ctx.SD_43.Include(_ => _.SD_2).FirstOrDefault(_ => _.DOC_CODE == dc);
                     var newItem = new KursDomain.References.Kontragent
                     {
                         DocCode = entity.DOC_CODE,
