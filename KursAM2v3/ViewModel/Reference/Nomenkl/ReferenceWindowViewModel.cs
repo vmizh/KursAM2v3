@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
@@ -20,6 +21,7 @@ using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using NomenklMain = KursDomain.References.NomenklMain;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
@@ -133,9 +135,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 reloadCurrencies();
                 if (myCurrentNomenklMain != null)
                     foreach (var n in myCurrentNomenklMain.NomenklCollection)
-                    {
                         n.State = RowStatus.NotEdited;
-                    }
 
                 RaisePropertyChanged();
             }
@@ -213,10 +213,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             CurrentNomenklCollection.Clear();
             try
             {
-                foreach (var nom in CurrentNomenklMain.NomenklCollection)
-                {
-                    CurrentNomenklCollection.Add(nom);
-                }
+                foreach (var nom in CurrentNomenklMain.NomenklCollection) CurrentNomenklCollection.Add(nom);
             }
             catch (Exception ex)
             {
@@ -329,6 +326,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 {
                     try
                     {
+                        SD_83 d = null;
                         switch (nom.State)
                         {
                             case RowStatus.NewRow:
@@ -354,7 +352,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 ctx.SD_83.Add(newItem);
                                 break;
                             case RowStatus.Edited:
-                                var d = ctx.SD_83.FirstOrDefault(_ => _.DOC_CODE == nom.DocCode);
+                                d = ctx.SD_83.FirstOrDefault(_ => _.DOC_CODE == nom.DocCode);
                                 if (d == null) return;
                                 d.NOM_NAME = nom.Name;
                                 d.NOM_NOMENKL = nom.NomenklNumber;
@@ -366,6 +364,74 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
                         ctx.SaveChanges();
                         tnx.Commit();
+                        SD_83 entity = null;
+                        entity = nom.State == RowStatus.NewRow
+                            ? ctx.SD_83.Include(_ => _.NomenklMain).FirstOrDefault(_ => _.DOC_CODE == newDC)
+                            : d;
+                        if (entity != null)
+                        {
+                            var updItem = new KursDomain.References.Nomenkl
+                            {
+                                DocCode = entity.DOC_CODE,
+                                Id = entity.Id,
+                                Name = entity.NOM_NAME,
+                                FullName =
+                                    entity.NOM_FULL_NAME,
+                                Notes = entity.NOM_NOTES,
+                                IsUsluga =
+                                    entity.NOM_0MATER_1USLUGA == 1,
+                                IsProguct = entity.NOM_1PROD_0MATER == 1,
+                                IsNakladExpense =
+                                    entity.NOM_1NAKLRASH_0NO == 1,
+                                DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT,
+                                IsDeleted =
+                                    entity.NOM_DELETED == 1,
+                                IsUslugaInRentabelnost =
+                                    entity.IsUslugaInRent ?? false,
+                                UpdateDate =
+                                    entity.UpdateDate ?? DateTime.MinValue,
+                                MainId =
+                                    entity.MainId ?? Guid.Empty,
+                                IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
+                                NomenklNumber =
+                                    entity.NOM_NOMENKL,
+                                NomenklTypeDC =
+                                    entity.NomenklMain.TypeDC,
+                                ProductTypeDC = entity.NomenklMain.ProductDC,
+                                UnitDC = entity.NOM_ED_IZM_DC,
+                                CurrencyDC = entity.NOM_SALE_CRS_DC,
+                                GroupDC = entity.NOM_CATEG_DC
+                            };
+                            updItem.LoadFromEntity(entity, GlobalOptions.ReferencesCache);
+                            GlobalOptions.ReferencesCache.AddOrUpdate(updItem);
+                        }
+
+                        var mentity = ctx.NomenklMain.Include(_ => _.SD_83).FirstOrDefault(_ => _.Id == nom.MainId);
+                        if (mentity is not null)
+                        {
+                            var updMain = new NomenklMain
+                            {
+                                Id = mentity.Id,
+                                Name = mentity.Name,
+                                Notes = mentity.Note,
+                                NomenklNumber = mentity.NomenklNumber,
+                                FullName = mentity.FullName,
+                                IsUsluga = mentity.IsUsluga,
+                                IsProguct = mentity.IsComplex,
+                                IsNakladExpense = mentity.IsNakladExpense,
+                                IsOnlyState = mentity.IsOnlyState ?? false,
+                                IsCurrencyTransfer = mentity.IsCurrencyTransfer ?? false,
+                                IsRentabelnost = mentity.IsRentabelnost ?? false,
+                                UnitDC = mentity.UnitDC,
+                                CategoryDC = mentity.CategoryDC,
+                                NomenklTypeDC = mentity.TypeDC,
+                                ProductTypeDC = mentity.ProductDC,
+                                Nomenkls = new List<decimal>(mentity.SD_83.Select(_ => _.DOC_CODE))
+                            };
+                            updMain.LoadFromEntity(mentity, GlobalOptions.ReferencesCache);
+                            GlobalOptions.ReferencesCache.AddOrUpdateGuid(updMain);
+                        }
+
                         nom.myState = RowStatus.NotEdited;
                     }
                     catch (Exception ex)
@@ -394,6 +460,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                             {
                                 case RowStatus.NewRow:
                                     var newDC = ctx.SD_83.Any() ? ctx.SD_83.Max(_ => _.DOC_CODE) + 1 : 10830000001;
+                                    nom.DocCode = newDC;
                                     var newItem = new SD_83
                                     {
                                         DOC_CODE = newDC,
@@ -425,8 +492,80 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     break;
                             }
 
+                        foreach (var nom in CurrentNomenklMain.NomenklCollection)
+                        {
+                            SD_83 entity = null;
+                            entity = ctx.SD_83.Include(_ => _.NomenklMain)
+                                .FirstOrDefault(_ => _.DOC_CODE == nom.DOC_CODE);
+                            if (entity != null)
+                            {
+                                var updItem = new KursDomain.References.Nomenkl
+                                {
+                                    DocCode = entity.DOC_CODE,
+                                    Id = entity.Id,
+                                    Name = entity.NOM_NAME,
+                                    FullName =
+                                        entity.NOM_FULL_NAME,
+                                    Notes = entity.NOM_NOTES,
+                                    IsUsluga =
+                                        entity.NOM_0MATER_1USLUGA == 1,
+                                    IsProguct = entity.NOM_1PROD_0MATER == 1,
+                                    IsNakladExpense =
+                                        entity.NOM_1NAKLRASH_0NO == 1,
+                                    DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT,
+                                    IsDeleted =
+                                        entity.NOM_DELETED == 1,
+                                    IsUslugaInRentabelnost =
+                                        entity.IsUslugaInRent ?? false,
+                                    UpdateDate =
+                                        entity.UpdateDate ?? DateTime.MinValue,
+                                    MainId =
+                                        entity.MainId ?? Guid.Empty,
+                                    IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
+                                    NomenklNumber =
+                                        entity.NOM_NOMENKL,
+                                    NomenklTypeDC =
+                                        entity.NomenklMain.TypeDC,
+                                    ProductTypeDC = entity.NomenklMain.ProductDC,
+                                    UnitDC = entity.NOM_ED_IZM_DC,
+                                    CurrencyDC = entity.NOM_SALE_CRS_DC,
+                                    GroupDC = entity.NOM_CATEG_DC
+                                };
+                                updItem.LoadFromEntity(entity, GlobalOptions.ReferencesCache);
+                                GlobalOptions.ReferencesCache.AddOrUpdate(updItem);
+                            }
+                        }
+
                         ctx.SaveChanges();
                         tnx.Commit();
+
+                        var mentity = ctx.NomenklMain.Include(_ => _.SD_83)
+                            .FirstOrDefault(_ => _.Id == CurrentNomenklMain.Id);
+                        if (mentity is not null)
+                        {
+                            var updMain = new NomenklMain
+                            {
+                                Id = mentity.Id,
+                                Name = mentity.Name,
+                                Notes = mentity.Note,
+                                NomenklNumber = mentity.NomenklNumber,
+                                FullName = mentity.FullName,
+                                IsUsluga = mentity.IsUsluga,
+                                IsProguct = mentity.IsComplex,
+                                IsNakladExpense = mentity.IsNakladExpense,
+                                IsOnlyState = mentity.IsOnlyState ?? false,
+                                IsCurrencyTransfer = mentity.IsCurrencyTransfer ?? false,
+                                IsRentabelnost = mentity.IsRentabelnost ?? false,
+                                UnitDC = mentity.UnitDC,
+                                CategoryDC = mentity.CategoryDC,
+                                NomenklTypeDC = mentity.TypeDC,
+                                ProductTypeDC = mentity.ProductDC,
+                                Nomenkls = new List<decimal>(mentity.SD_83.Select(_ => _.DOC_CODE))
+                            };
+                            updMain.LoadFromEntity(mentity, GlobalOptions.ReferencesCache);
+                            GlobalOptions.ReferencesCache.AddOrUpdateGuid(updMain);
+                        }
+
                         foreach (var nm in NomenklMainCollection)
                             nm.myState = RowStatus.NotEdited;
                         foreach (var nom in CurrentNomenklMain.NomenklCollection)
@@ -591,17 +730,15 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public void NomenklMainEdit(object obj)
         {
-            
-                var ctx = new MainCardWindowViewModel
-                {
-                    ParentReference = this,
-                    NomenklMain = CurrentNomenklMain
-                };
-                // ReSharper disable once UseObjectOrCollectionInitializer
-                var form = new NomenklMainCardView { Owner = Application.Current.MainWindow };
-                form.Show();
-                form.DataContext = ctx;
-            
+            var ctx = new MainCardWindowViewModel
+            {
+                ParentReference = this,
+                NomenklMain = CurrentNomenklMain
+            };
+            // ReSharper disable once UseObjectOrCollectionInitializer
+            var form = new NomenklMainCardView { Owner = Application.Current.MainWindow };
+            form.Show();
+            form.DataContext = ctx;
         }
 
         public ICommand NomenklMainCopyCommand
@@ -937,11 +1074,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             SearchText = null;
             CurrentNomenklCollection.Clear();
             NomenklMainCollection.Clear();
-
         }
 
         #endregion
-
-        
     }
 }

@@ -957,11 +957,12 @@ public class RedisCacheReferences : IReferencesCache
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var entity = ctx.NomenklMain.FirstOrDefault(_ => _.Id == id);
+                var entity = ctx.NomenklMain.Include(_ => _.SD_83).FirstOrDefault(_ => _.Id == id);
                 if (entity is null) return null;
                 var newItem = new NomenklMain
                 {
-                    Id = entity.Id
+                    Id = entity.Id,
+                    Nomenkls = new List<decimal>(entity.SD_83.Select(_ => _.DOC_CODE))
                 };
                 newItem.LoadFromEntity(entity, this);
                 UpdateList2(new List<NomenklMain>(new[] { newItem }));
@@ -3143,9 +3144,7 @@ public class RedisCacheReferences : IReferencesCache
                                 Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
-                    if (MutualSettlementTypes.ContainsKey(message.DocCode.Value))
-                        MutualSettlementTypes[message.DocCode.Value] = mst_item;
-                    else MutualSettlementTypes.Add(message.DocCode.Value, mst_item);
+                    MutualSettlementTypes.AddOrUpdate(message.DocCode.Value, mst_item);
                     break;
                 case RedisMessageChannels.NomenklGroupReference:
                     if (message.DocCode is null) return;
@@ -3163,9 +3162,7 @@ public class RedisCacheReferences : IReferencesCache
                                 Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                         });
 
-                    if (NomenklGroups.ContainsKey(message.DocCode.Value))
-                        NomenklGroups[message.DocCode.Value] = ng_item;
-                    else NomenklGroups.Add(message.DocCode.Value, ng_item);
+                    NomenklGroups.AddOrUpdate(message.DocCode.Value, ng_item);
                     break;
                 case RedisMessageChannels.NomenklMainReference:
                     if (message.Id is null) return;
