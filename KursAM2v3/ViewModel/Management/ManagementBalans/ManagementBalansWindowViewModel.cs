@@ -316,7 +316,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private void KontragentAccountOpen(object obj)
         {
             var ctxk = new KontragentBalansWindowViewModel(CurrentExtendItem.Kontragent.DocCode);
-            var frm = new KontragentBalansForm { Owner = Application.Current.MainWindow, DataContext = ctxk };
+            var frm = new KontragentBalansView { Owner = Application.Current.MainWindow, DataContext = ctxk };
             ctxk.Form = frm;
             frm.Show();
         }

@@ -1000,7 +1000,6 @@
       <DependentUpon>DebitorCreditorView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Management\KontargentDialogSelect.xaml.cs" />
-    <Compile Include="View\Management\KontragentBalansForm.xaml.cs" />
     <Compile Include="View\Management\KontragentRightsControl.xaml.cs" />
     <Compile Include="View\Management\ManagementBalansCompareView.xaml.cs">
       <DependentUpon>ManagementBalansCompareView.xaml</DependentUpon>
@@ -1862,10 +1861,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Management\KontargentDialogSelect.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="View\Management\KontragentBalansForm.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
