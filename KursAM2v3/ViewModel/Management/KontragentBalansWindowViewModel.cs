@@ -131,7 +131,7 @@ namespace KursAM2.ViewModel.Management
 
         public KontragentBalansWindowViewModel(decimal doccode) : this()
         {
-            StartKontragent = Kontragents.Single(_ => _.DocCode == doccode);
+            Kontragent = Kontragents.Single(_ => _.DocCode == doccode);
         }
 
         public override string LayoutName => "KontragentBalansView";

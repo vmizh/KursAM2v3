@@ -1559,14 +1559,22 @@ public class RedisCacheReferences : IReferencesCache
         }
         else
         {
-            return null;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.SD_301.FirstOrDefault(_ => _.DOC_CODE == dc);
+                if (entity is null) return null;
+                var newItem = new Currency
+                {
+                    DocCode = entity.DOC_CODE
+                };
+                newItem.LoadFromEntity(entity);
+                UpdateList(new List<Currency>(new[] { newItem }));
+                Currencies.AddOrUpdate(dc, newItem);
+                return Currencies[dc];
+            }
         }
 
-        if (Currencies.ContainsKey(dc))
-            Currencies[dc] = itemNew;
-        else
-            Currencies.Add(dc, itemNew);
-
+        Currencies.AddOrUpdate(dc,itemNew);
         return Currencies[dc];
     }
 
