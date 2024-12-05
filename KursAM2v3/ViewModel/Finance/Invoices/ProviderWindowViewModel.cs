@@ -518,10 +518,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (Document.PaymentDocs.Count == 0) return Visibility.Visible;
             if (Document.PaymentDocs.Any(_ => _.CashDC != null) && !Document
                     .PaymentDocs
-                    .Any(_ => GlobalOptions.UserInfo.CashAccess.Contains(_.CashBook.DocCode))) return Visibility.Hidden;
+                    .Any(_ => _.CashBook is not null && GlobalOptions.UserInfo.CashAccess.Contains(_.CashBook.DocCode))) return Visibility.Hidden;
             if (Document.PaymentDocs.Any(_ => _.BankCode != null) && !Document
                     .PaymentDocs
-                    .Any(_ => GlobalOptions.UserInfo.BankAccess.Contains(_.Bank.DocCode))) return Visibility.Hidden;
+                    .Any(_ => _.Bank is not null && GlobalOptions.UserInfo.BankAccess.Contains(_.Bank.DocCode))) return Visibility.Hidden;
             return Visibility.Visible;
         }
 
@@ -1472,18 +1472,29 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get { return new Command(AddNomenklSimple, _ => Document?.Currency != null); }
         }
 
-        private IEnumerable<Nomenkl> LoadNomenkl(string srchText)
+        private IEnumerable<Nomenkl> LoadNomenkl(string srchText, decimal? crsDC)
         {
-            return GlobalOptions.ReferencesCache.GetNomenklsAll()
-                .Where(_ => ((IDocCode)_.Currency).DocCode == Document.Currency.DocCode).Cast<Nomenkl>().Where(_ =>
-                    (_.Name + _.NomenklNumber + _.FullName).ToUpper().Contains(srchText.ToUpper()));
+            List<Nomenkl> ret = new List<Nomenkl>();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var data = ctx.SD_83.Where(_ =>
+                    (_.NOM_NAME + _.NOM_NOMENKL + _.NOM_FULL_NAME + _.NOM_NOTES).ToUpper()
+                    .Contains(srchText.ToUpper())).ToList();
+                if (crsDC is null)
+                    ret.AddRange(data.Select(n => GlobalOptions.ReferencesCache.GetNomenkl(n.DOC_CODE) as Nomenkl));
+                else
+                    ret.AddRange(data.Where(_ => _.NOM_SALE_CRS_DC == crsDC.Value).Select(n =>
+                        GlobalOptions.ReferencesCache.GetNomenkl(n.DOC_CODE) as Nomenkl));
+            }
+
+            return ret;
         }
 
 
         private void AddNomenklSimple(object obj)
         {
             decimal defaultNDS;
-            var dtx = new TableSearchWindowViewMove<Nomenkl>(LoadNomenkl, "Выбор номенклатур", "NomenklSipleListView");
+            var dtx = new TableSearchWindowViewMove<Nomenkl>(LoadNomenkl, "Выбор номенклатур", "NomenklSipleListView",Document.Currency.DocCode);
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Выбор номенклатур", dtx) == MessageResult.OK
                 || dtx.DialogResult)

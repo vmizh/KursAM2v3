@@ -171,14 +171,11 @@ public class NomenklRepository : KursGenericRepository<SD_83, ALFAMEDIAEntities,
         using (var ctx = GlobalOptions.GetEntities())
         {
             var data = ctx.SD_83.AsNoTracking()
-                .Where(_ => (_.NOM_NOMENKL + _.NOM_FULL_NAME + _.NOM_POLNOE_IMIA + _.NOM_NOTES).ToLower().Contains(n)).ToList();
-            var notInCacheList = (from dc in data.Select(_ => _.DOC_CODE)
-                let key = ((RedisCacheReferences)GlobalOptions.ReferencesCache).cacheKeysDict["Nomenkl"]
-                    .CachKeys.FirstOrDefault(_ => _.DocCode == dc)
-                where key is null
-                select dc).ToList();
-            if (notInCacheList.Any())
-                updateNomenklCache(notInCacheList);
+                .Where(_ => (_.NOM_NOMENKL + _.NOM_FULL_NAME + _.NOM_POLNOE_IMIA + _.NOM_NOTES).ToLower().Contains(n.ToLower())).ToList();
+           
+            if (data.Select(_ => _.DOC_CODE).Any())
+                ((RedisCacheReferences)GlobalOptions.ReferencesCache).UpdateList2(data.Select(_ => _.DOC_CODE).ToList());
+            var r = GlobalOptions.ReferencesCache.GetNomenkl(data.Select(_ => _.DOC_CODE));
             return GlobalOptions.ReferencesCache.GetNomenkl(data.Select(_ => _.DOC_CODE)).Cast<Nomenkl>();
         }
     }

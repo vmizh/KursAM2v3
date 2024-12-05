@@ -8,6 +8,7 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.CodeView;
 using KursDomain;
+using KursDomain.ICommon;
 using KursDomain.References;
 using KursDomain.References.RedisCache;
 using KursDomain.Repository.NomenklRepository;
@@ -108,10 +109,16 @@ namespace KursAM2.View.Logistiks.UC
         public void GetNomenklItem()
         {
             NomenklItem.Clear();
-            foreach (var nom in nomenklRepository.GetByGroupDC(CurrentGroup.DocCode)) NomenklItem.Add(nom);
-            //foreach (var item in NomenklItemCollection)
-            //    if (((IDocCode)item.Group).DocCode == CurrentGroup.DocCode)
-            //        NomenklItem.Add(item);
+            foreach (var nom in nomenklRepository.GetByGroupDC(CurrentGroup.DocCode))
+            {
+                if(currentCrs is null)
+                    NomenklItem.Add(nom);
+                else
+                {
+                    if(((IDocCode)nom.Currency).DocCode == currentCrs.DocCode)
+                        NomenklItem.Add(nom);
+                }
+            }
         }
 
         #region command
@@ -184,12 +191,19 @@ namespace KursAM2.View.Logistiks.UC
                 switch (IsNotUsluga)
                 {
                     case true:
-                        NomenklItem.Add(n);
+                        if(currentCrs is null)
+                            NomenklItem.Add(n);
+                        else 
+                            if(((IDocCode)n.Currency).DocCode == currentCrs.DocCode)
+                                NomenklItem.Add(n);
                         break;
                     default:
                     {
                         if (n.IsUsluga)
-                            NomenklItem.Add(n);
+                            if (currentCrs is null)
+                                NomenklItem.Add(n);
+                            else if (((IDocCode)n.Currency).DocCode == currentCrs.DocCode)
+                                NomenklItem.Add(n);
                         break;
                     }
                 }

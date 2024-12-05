@@ -873,7 +873,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get { return new Command(AddNomenklSimple, _ => Document?.Currency != null); }
         }
 
-        private IEnumerable<NomenklInfo> LoadNomenkl(string srchText)
+        private IEnumerable<NomenklInfo> LoadNomenkl(string srchText, decimal? crsDC)
         {
             var ret = new List<NomenklInfo>();
             var sql =
@@ -903,14 +903,17 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     ret.Add(item);
                 }
 
-                return ret.OrderByDescending(_ => _.QuantityOnStores).ThenBy(_ => _.Name);
+                return crsDC is null
+                    ? ret.OrderByDescending(_ => _.QuantityOnStores).ThenBy(_ => _.Name)
+                    : ret.Where(_ => ((IDocCode)_.Currency).DocCode == crsDC.Value)
+                        .OrderByDescending(_ => _.QuantityOnStores).ThenBy(_ => _.Name);
             }
         }
 
         private void AddNomenklSimple(object obj)
         {
             var dtx = new TableSearchWindowViewMove<NomenklInfo>(LoadNomenkl, "Выбор номенклатур",
-                "NomenklSipmleListView");
+                "NomenklSipmleListView", Document.Currency.DocCode);
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Выбор номенклатур", dtx) == MessageResult.OK
                 || dtx.DialogResult)

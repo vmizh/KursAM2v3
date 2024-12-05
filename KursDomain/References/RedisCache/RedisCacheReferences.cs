@@ -126,7 +126,7 @@ public class RedisCacheReferences : IReferencesCache
                     DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity, this);
-                UpdateList2(new List<CashBox>(new[] { newItem }));
+                UpdateList(new List<CashBox>(new[] { newItem }));
                 CashBoxes.AddOrUpdate(dc, newItem);
                 return CashBoxes[dc];
             }
@@ -210,7 +210,7 @@ public class RedisCacheReferences : IReferencesCache
                 if (ent is null) return null;
                 var newItem = new NomenklType();
                 newItem.LoadFromEntity(ent);
-                UpdateList2(new List<NomenklType>(new[] { newItem }));
+                UpdateList(new List<NomenklType>(new[] { newItem }));
                 NomenklTypes.AddOrUpdate(dc.Value, newItem);
                 return NomenklTypes[dc.Value];
             }
@@ -287,7 +287,7 @@ public class RedisCacheReferences : IReferencesCache
                     DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity, this);
-                UpdateList2(new List<NomenklProductType>(new[] { newItem }));
+                UpdateList(new List<NomenklProductType>(new[] { newItem }));
                 NomenklProductTypes.AddOrUpdate(dc, newItem);
                 return NomenklProductTypes[dc];
             }
@@ -363,7 +363,7 @@ public class RedisCacheReferences : IReferencesCache
                     DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
-                UpdateList2(new List<ProductType>(new[] { newItem }));
+                UpdateList(new List<ProductType>(new[] { newItem }));
                 ProductTypes.AddOrUpdate(dc, newItem);
                 return ProductTypes[dc];
             }
@@ -436,7 +436,7 @@ public class RedisCacheReferences : IReferencesCache
                     DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
-                UpdateList2(new List<CentrResponsibility>(new[] { newItem }));
+                UpdateList(new List<CentrResponsibility>(new[] { newItem }));
                 CentrResponsibilities.AddOrUpdate(dc.Value, newItem);
                 return CentrResponsibilities[dc.Value];
             }
@@ -509,7 +509,7 @@ public class RedisCacheReferences : IReferencesCache
                     DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
-                UpdateList2(new List<Bank>(new[] { newItem }));
+                UpdateList(new List<Bank>(new[] { newItem }));
                 Banks.AddOrUpdate(dc.Value, newItem);
                 return Banks[dc.Value];
             }
@@ -582,16 +582,13 @@ public class RedisCacheReferences : IReferencesCache
                     DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity, this);
-                UpdateList2(new List<BankAccount>(new[] { newItem }));
+                UpdateList(new List<BankAccount>(new[] { newItem }));
                 BankAccounts.AddOrUpdate(dc.Value, newItem);
                 return BankAccounts[dc.Value];
             }
         }
 
-        if (BankAccounts.ContainsKey(dc.Value))
-            BankAccounts[dc.Value] = itemNew;
-        else
-            BankAccounts.Add(dc.Value, itemNew);
+        BankAccounts.AddOrUpdate(dc.Value, itemNew);
 
         return BankAccounts[dc.Value];
     }
@@ -654,7 +651,7 @@ public class RedisCacheReferences : IReferencesCache
                     Id = entity.EG_ID
                 };
                 newItem.LoadFromEntity(entity);
-                UpdateList2(new List<KontragentGroup>(new[] { newItem }));
+                UpdateList(new List<KontragentGroup>(new[] { newItem }));
                 KontragentGroups.AddOrUpdate(id.Value, newItem);
                 return KontragentGroups[id.Value];
             }
@@ -1008,8 +1005,10 @@ public class RedisCacheReferences : IReferencesCache
 
     public IEnumerable<INomenkl> GetNomenkl(IEnumerable<decimal> dcList)
     {
+        
         var cacheName = "Nomenkl";
         var list = dcList.ToList();
+        UpdateNomenkl(list);
         if (!list.Any()) return new List<Nomenkl>();
         using (var redisClient = redisManager.GetClient())
         {
@@ -1069,7 +1068,7 @@ public class RedisCacheReferences : IReferencesCache
                     DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
-                UpdateList2(new List<NomenklGroup>(new[] { newItem }));
+                UpdateList(new List<NomenklGroup>(new[] { newItem }));
                 NomenklGroups.AddOrUpdate(dc.Value, newItem);
                 return NomenklGroups[dc.Value];
             }
@@ -1143,7 +1142,7 @@ public class RedisCacheReferences : IReferencesCache
                     Id = entity.Id
                 };
                 newItem.LoadFromEntity(entity, this);
-                UpdateList2(new List<Warehouse>(new[] { newItem }));
+                UpdateList(new List<Warehouse>(new[] { newItem }));
                 Warehouses.AddOrUpdate(dc, newItem);
                 return Warehouses[dc];
             }
@@ -1340,7 +1339,7 @@ public class RedisCacheReferences : IReferencesCache
                     DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity, this);
-                UpdateList2(new List<SDRSchet>(new[] { newItem }));
+                UpdateList(new List<SDRSchet>(new[] { newItem }));
                 SDRSchets.AddOrUpdate(dc.Value, newItem);
                 return SDRSchets[dc.Value];
             }
@@ -1419,7 +1418,7 @@ public class RedisCacheReferences : IReferencesCache
                     DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
-                UpdateList2(new List<SDRState>(new[] { newItem }));
+                UpdateList(new List<SDRState>(new[] { newItem }));
                 SDRStates.AddOrUpdate(dc.Value, newItem);
                 return SDRStates[dc.Value];
             }
@@ -1703,7 +1702,7 @@ public class RedisCacheReferences : IReferencesCache
                     DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
-                UpdateList2(new List<Region>(new[] { newItem }));
+                UpdateList(new List<Region>(new[] { newItem }));
                 Regions.AddOrUpdate(dc.Value, newItem);
                 return Regions[dc.Value];
             }
@@ -1780,7 +1779,7 @@ public class RedisCacheReferences : IReferencesCache
                     DocCode = entity.DOC_CODE
                 };
                 newItem.LoadFromEntity(entity);
-                UpdateList2(new List<Unit>(new[] { newItem }));
+                UpdateList(new List<Unit>(new[] { newItem }));
                 Units.AddOrUpdate(dc.Value, newItem);
                 return Units[dc.Value];
             }

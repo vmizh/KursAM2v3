@@ -9,7 +9,8 @@ namespace KursAM2.View.DialogUserControl.Standart
 
     public class NomenklWithQuantityWindowView<T> : TableSearchWindowViewMove<T>
     {
-        public NomenklWithQuantityWindowView(GetData loadDatamethod, string winName, string layoutName) : base(loadDatamethod, winName, layoutName)
+        public NomenklWithQuantityWindowView(GetData loadDatamethod, string winName, string layoutName) 
+            : base(loadDatamethod, winName, layoutName, null)
         {
             
         }
@@ -17,16 +18,19 @@ namespace KursAM2.View.DialogUserControl.Standart
 
     public class TableSearchWindowViewMove<T> : RSWindowViewModelBase
     {
-        public delegate IEnumerable<T> GetData(string searchText);
+        public delegate IEnumerable<T> GetData(string searchText, decimal? crsDC);
+
+        private decimal? myCrsDC;
 
         #region Constructors
 
-        public TableSearchWindowViewMove(GetData loadDatamethod, string winName, string layoutName)
+        public TableSearchWindowViewMove(GetData loadDatamethod, string winName, string layoutName, decimal? crsDC)
         {
             LayoutName = layoutName;
             WindowName = winName;
             loadMethod = loadDatamethod;
             CustomDataUserControl = new TableWithSearch();
+            myCrsDC = crsDC;
         }
 
         #endregion
@@ -86,7 +90,7 @@ namespace KursAM2.View.DialogUserControl.Standart
         private void SearchTextChanging(object obj)
         {
             ItemsCollection.Clear();
-            foreach (var n in loadMethod(SearchText)) ItemsCollection.Add(n);
+            foreach (var n in loadMethod(SearchText,myCrsDC)) ItemsCollection.Add(n);
         }
 
         #endregion
