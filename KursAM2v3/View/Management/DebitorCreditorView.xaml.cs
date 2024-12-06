@@ -86,7 +86,9 @@ namespace KursAM2.View.Management
             {
                 if (!(DataContext is DebitorCreditorWindowViewModel ctx)) return;
                 var frm = new KontragentBalansView {Owner = Application.Current.MainWindow};
-                var ctxk = new KontragentBalansWindowViewModel(ctx.CurrentDebitor.KontrInfo.DOC_CODE);
+                var ctxk = new KontragentBalansWindowViewModel(ctx.CurrentDebitor.KontrInfo.DOC_CODE){
+                    Form = frm
+                };
                 frm.DataContext = ctxk;
                 frm.Show();
             }
@@ -102,7 +104,9 @@ namespace KursAM2.View.Management
             {
                 if (!(DataContext is DebitorCreditorWindowViewModel ctx)) return;
                 var frm = new KontragentBalansView {Owner = Application.Current.MainWindow, };
-                var ctxk = new KontragentBalansWindowViewModel(ctx.CurrentCreditor.KontrInfo.DOC_CODE);
+                var ctxk = new KontragentBalansWindowViewModel(ctx.CurrentCreditor.KontrInfo.DOC_CODE){
+                    Form = frm
+                };
                 frm.DataContext = ctxk;
                 frm.Show();
             }
@@ -117,7 +121,7 @@ namespace KursAM2.View.Management
             {
                 if (!(DataContext is DebitorCreditorWindowViewModel ctx)) return;
                 var frm = new KontragentBalansView { Owner = Application.Current.MainWindow, };
-                var ctxk = new KontragentBalansWindowViewModel(ctx.CurrentDebitorCreditor.KontrInfo.DOC_CODE);
+                var ctxk = new KontragentBalansWindowViewModel(ctx.CurrentDebitorCreditor.KontrInfo.DOC_CODE) { Form = frm };
                 frm.DataContext = ctxk; 
                 frm.Show();
             }

@@ -69,7 +69,10 @@ namespace KursAM2.View.Finance
         {
             if (dataContext?.CurrentPurchase.SD_24.DD_KONTR_OTPR_DC == null) return; 
             var frm = new KontragentBalansView {Owner = Application.Current.MainWindow, };
-            var ctxk = new KontragentBalansWindowViewModel(dataContext.CurrentPurchase.SD_24.DD_KONTR_OTPR_DC.Value);
+            var ctxk = new KontragentBalansWindowViewModel(dataContext.CurrentPurchase.SD_24.DD_KONTR_OTPR_DC.Value)
+            {
+                Form = frm
+            };
             frm.DataContext = ctxk;
             frm.Show();
         }

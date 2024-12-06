@@ -1271,7 +1271,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             try
             { 
                 var frm = new KontragentBalansView { Owner = Application.Current.MainWindow,  };
-                var ctxk = new KontragentBalansWindowViewModel(CurrentKontragent.KontragentDC);
+                var ctxk = new KontragentBalansWindowViewModel(CurrentKontragent.KontragentDC){
+                    Form = frm
+                };
                 frm.DataContext = ctxk;
                 frm.Show();
             }
@@ -1832,7 +1834,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
         private void KontragentAccountOpen(object obj)
         {
             var frm = new KontragentBalansView { Owner = Application.Current.MainWindow,  };
-            var ctxk = new KontragentBalansWindowViewModel((decimal)CurrentExtendItem?.DocCode);
+            var ctxk = new KontragentBalansWindowViewModel((decimal)CurrentExtendItem?.DocCode){
+                Form = frm
+            };
             frm.DataContext = ctxk;
             frm.Show();
         }
