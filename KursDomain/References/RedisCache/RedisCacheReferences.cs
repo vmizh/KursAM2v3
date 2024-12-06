@@ -814,7 +814,7 @@ public class RedisCacheReferences : IReferencesCache
             using (var redisClient = redisManager.GetClient())
             {
                 redisClient.Db = GlobalOptions.RedisDBId ?? 0;
-                var redis = redisClient.As<Nomenkl>();
+                //var redis = redisClient.As<Nomenkl>();
                 var keys = redisClient.GetKeysByPattern($"*{id}*");
                 var enumerable = keys.ToList();
                 if (!enumerable.Any()) return default;

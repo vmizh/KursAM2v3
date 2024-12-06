@@ -491,9 +491,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     AddUsedNomenkl(r.Nomenkl.DocCode);
                     foreach (var rr in r.CurrencyConvertRows)
                     {
+                        if (rr.Nomenkl is null && rr.NomenklId != Guid.Empty)
+                        {
+                            rr.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(rr.NomenklId) as Nomenkl;
+                        }
                         rr.Rate = rate;
                         rr.myState = RowStatus.NotEdited;
-                        AddUsedNomenkl(rr.Nomenkl.DocCode);
+                        if(rr.Nomenkl is not null)
+                            AddUsedNomenkl(rr.Nomenkl.DocCode);
                     }
 
                     r.myState = RowStatus.NotEdited;

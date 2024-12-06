@@ -67,9 +67,10 @@ namespace KursAM2.View.Finance
 
         private void MenuOpenBalansKontragent_Click(object sender, RoutedEventArgs e)
         {
-            if (dataContext?.CurrentPurchase.SD_24.DD_KONTR_OTPR_DC == null) return;
+            if (dataContext?.CurrentPurchase.SD_24.DD_KONTR_OTPR_DC == null) return; 
+            var frm = new KontragentBalansView {Owner = Application.Current.MainWindow, };
             var ctxk = new KontragentBalansWindowViewModel(dataContext.CurrentPurchase.SD_24.DD_KONTR_OTPR_DC.Value);
-            var frm = new KontragentBalansView {Owner = Application.Current.MainWindow, DataContext = ctxk};
+            frm.DataContext = ctxk;
             frm.Show();
         }
 

@@ -108,7 +108,7 @@ public sealed class InvoiceProviderRowCurrencyConvertViewModel : RSViewModelBase
         set
         {
             if (Entity.NomenklId == value.Id) return;
-            Entity.NomenklId = value.Id;
+            Entity.NomenklId = value.Id ;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(NomenkNumber));
         }
