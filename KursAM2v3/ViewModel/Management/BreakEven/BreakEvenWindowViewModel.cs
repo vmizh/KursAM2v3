@@ -8,6 +8,8 @@ using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Xpf.Editors;
+using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Managers;
@@ -997,6 +999,32 @@ namespace KursAM2.ViewModel.Management.BreakEven
                     sums.Add(s);
 
             foreach (var s in sums) frm.gridNomenkl.TotalSummary.Remove(s);
+
+            for (int i = 0; i < frm.gridNomenkl.TotalSummary.Count; i++)
+            {
+                if (frm.gridNomenkl.TotalSummary[i].FieldName == "NomenklProfit")
+                {
+                    frm.gridNomenkl.TotalSummary.Remove(frm.gridNomenkl.TotalSummary[i]);
+                    break;
+                }
+            }
+
+            foreach (var cols1 in frm.gridNomenkl.Columns) 
+            {
+                if (cols1.FieldName == "NomenklProfit")
+                {
+                    cols1.EditSettings = new CalcEditSettings()
+                    {
+                        //DisplayFormat = "n1",
+                        MaskUseAsDisplayFormat = true,
+                        MaskType=MaskType.Numeric,
+                        Mask="p1",
+                        AllowDefaultButton = false
+                    };
+                    ;
+                }
+
+            }
         }
 
         #region Commands
