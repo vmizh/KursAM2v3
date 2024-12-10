@@ -12,7 +12,7 @@ namespace KursDomain.Tests.Fakes
         {
             SqlConnectionStringBuilder sqlBuild = new SqlConnectionStringBuilder
             {
-                DataSource = "localhost",
+                DataSource = "main9",
                 InitialCatalog = "AlfaTest",
                 UserID = "KursUser",
                 Password = "KursUser",
