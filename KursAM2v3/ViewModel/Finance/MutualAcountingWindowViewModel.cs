@@ -23,6 +23,7 @@ using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Currency;
 using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
 using KursDomain.Menu;
@@ -42,6 +43,8 @@ namespace KursAM2.ViewModel.Finance
 
         private readonly ConnectionMultiplexer redis;
         private readonly ISubscriber mySubscriber;
+
+        private CrossCurrencyRate myCurrentCurrencyRate;
 
 
         public MutualAcountingWindowViewModel()
@@ -107,6 +110,19 @@ namespace KursAM2.ViewModel.Finance
         public bool IsCanCreditorCrsChanged => IsCurrencyConvert && CreditorCollection.Count == 0;
 
         public string NotifyInfo { get; set; }
+
+        public CrossCurrencyRate CurrentCurrencyRate
+        {
+            get => myCurrentCurrencyRate;
+            set
+            {
+                if (Equals(myCurrentCurrencyRate, value)) return;
+                myCurrentCurrencyRate = value;
+                RaisePropertyChanged();
+            }
+        }
+        public ObservableCollection<CrossCurrencyRate> CurrencyRates { set; get; } =
+            new ObservableCollection<CrossCurrencyRate>();
 
         public ObservableCollection<MutualAccountingDebitorViewModel> DebitorCollection { set; get; } =
             new ObservableCollection<MutualAccountingDebitorViewModel>();
@@ -470,6 +486,11 @@ namespace KursAM2.ViewModel.Finance
 
         public override void RefreshData(object obj)
         {
+            var crsrate = new CrossCurrencyRate();
+            crsrate.SetRates(DateTime.Today);
+            foreach (var c in crsrate.CurrencyList)
+                CurrencyRates.Add(c);
+            CurrentCurrencyRate = CurrencyRates[0];
             var WinManager = new WindowManager();
             try
             {
@@ -532,6 +553,7 @@ namespace KursAM2.ViewModel.Finance
                 }
 
                 UpdateDebitorCreditorCollections(null);
+                
                 Document.myState = RowStatus.NotEdited;
                 RaisePropertyChanged(nameof(IsCanSaveData));
             }

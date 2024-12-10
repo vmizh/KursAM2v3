@@ -286,7 +286,7 @@ namespace KursAM2.Managers.Base
             CheckedInfo = null;
             if (doc == null)
             {
-                CheckedInfo = "Пустой документ";
+                CheckedInfo = "пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ";
                 return false;
             }
 
@@ -294,31 +294,31 @@ namespace KursAM2.Managers.Base
             var ret = true;
             if (doc.VZ_DATE == DateTime.MinValue)
             {
-                info.Append("Не установлена дата документа.\n");
+                info.Append("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.\n");
                 ret = false;
             }
 
             if (doc.CreditorCurrency == null)
             {
-                info.Append("Не установлена валюта документа.\n");
+                info.Append("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.\n");
                 ret = false;
             }
 
             if (doc.DebitorCurrency == null)
             {
-                info.Append("Не установлена валюта документа.\n");
+                info.Append("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.\n");
                 ret = false;
             }
 
             if (doc.VZ_TYPE_DC < 1111000001)
             {
-                info.Append("Не выбран тип взаимозачета.\n");
+                info.Append("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.\n");
                 ret = false;
             }
 
             if (string.IsNullOrWhiteSpace(doc.CREATOR))
             {
-                info.Append("Не установлен создатель документа.\n");
+                info.Append("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.\n");
                 ret = false;
             }
 
@@ -327,7 +327,7 @@ namespace KursAM2.Managers.Base
                 {
                     if (r.DocCode != doc.DocCode)
                     {
-                        info.Append("Doc-Code строки не равен коду документа.\n");
+                        info.Append("Doc-Code пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.\n");
                         ret = false;
                     }
 
@@ -533,31 +533,31 @@ namespace KursAM2.Managers.Base
             var info = new StringBuilder();
             if (r.Code < 1)
             {
-                info.Append("Не установлен код строки.\n");
+                info.Append("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.\n");
                 ret = false;
             }
 
             if (r.VZT_CRS_DC < 3010000001)
             {
-                info.Append("Не выбрана валюта строки.\n");
+                info.Append("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.\n");
                 ret = false;
             }
 
             if (r.VZT_DOC_DATE == DateTime.MinValue)
             {
-                info.Append("Не установлена дата строки.\n");
+                info.Append("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.\n");
                 ret = false;
             }
 
             if (r.VZT_VZAIMOR_TYPE_DC < 10770000001)
             {
-                info.Append("Не выбран тип взаиморасчета строки.\n");
+                info.Append("пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.\n");
                 ret = false;
             }
 
             if (r.VZT_1MYDOLZH_0NAMDOLZH < 0 || r.VZT_1MYDOLZH_0NAMDOLZH > 1)
             {
-                info.Append("Неправильно вставлен флаг для проводки в строке.\n");
+                info.Append("пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.\n");
                 ret = false;
             }
 
