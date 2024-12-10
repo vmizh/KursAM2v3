@@ -83,8 +83,10 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
         {
             Entity.VZ_RIGHT_UCH_CRS_SUM =
                 Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0;
-            Entity.VZ_PRIBIL_UCH_CRS_SUM = Entity.VZ_RIGHT_UCH_CRS_SUM - Entity.VZ_LEFT_UCH_CRS_SUM;
-            //RaisePropertyChanged(nameof(VZ_PRIBIL_UCH_CRS_SUM));
+            if (DebitorCurrency != CreditorCurrency)
+                Entity.VZ_PRIBIL_UCH_CRS_SUM = 0;
+            else
+                Entity.VZ_PRIBIL_UCH_CRS_SUM = Entity.VZ_RIGHT_UCH_CRS_SUM - Entity.VZ_LEFT_UCH_CRS_SUM;
             return Entity.VZ_RIGHT_UCH_CRS_SUM;
         }
     }
@@ -95,8 +97,10 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
         {
             Entity.VZ_LEFT_UCH_CRS_SUM =
                 Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0;
-            Entity.VZ_PRIBIL_UCH_CRS_SUM = Entity.VZ_RIGHT_UCH_CRS_SUM - Entity.VZ_LEFT_UCH_CRS_SUM;
-            //RaisePropertyChanged(nameof(VZ_PRIBIL_UCH_CRS_SUM));
+            if (DebitorCurrency != CreditorCurrency)
+                Entity.VZ_PRIBIL_UCH_CRS_SUM = 0;
+            else
+                Entity.VZ_PRIBIL_UCH_CRS_SUM = Entity.VZ_RIGHT_UCH_CRS_SUM - Entity.VZ_LEFT_UCH_CRS_SUM;
             return Entity.VZ_LEFT_UCH_CRS_SUM;
         }
     }
@@ -123,13 +127,13 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
     }
 
     /// <summary>
-    /// Пользователь, последний изменивший документ
+    ///     Пользователь, последний изменивший документ
     /// </summary>
     [Display(AutoGenerateField = true, Name = "Посл.изменил", Order = 21)]
     public string LastChanger { set; get; }
 
     /// <summary>
-    /// Дата последнего изменения
+    ///     Дата последнего изменения
     /// </summary>
     [Display(AutoGenerateField = true, Name = "Дата посл.изм.", Order = 21)]
     public DateTime LastChangerDate { set; get; }

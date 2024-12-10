@@ -26,6 +26,7 @@ using KursDomain.ICommon;
 using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.References.RedisCache;
 using KursDomain.Repository.NomenklRepository;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -1260,7 +1261,9 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                 var newId = Guid.NewGuid();
                 var data1 = nomenklManager.GetNomenklStoreQuantity(((IDocCode)s).DocCode, new DateTime(2000, 1, 1),
                     CurrentDate);
+                ((RedisCacheReferences)GlobalOptions.ReferencesCache).UpdateNomenkl(data1.Select(_ => _.NomDC));
                 var data = data1.Select(d => new NomenklQuantityInfoExt(d)).ToList();
+                if (data.Count == 0) continue;
                 var newSklad = new ManagementBalanceGroupViewModel
                 {
                     Id = newId,
@@ -1268,25 +1271,25 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     Name = ((IName)s).Name,
                     Order = 1,
                     SummaRUB =
-                        data.Where(_ => _.NomDC == CurrencyCode.RUB)
+                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.RUB)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     SummaUSD =
-                        data.Where(_ => _.NomDC == CurrencyCode.USD)
+                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.USD)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     SummaEUR =
-                        data.Where(_ => _.NomDC == CurrencyCode.EUR)
+                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.EUR)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     SummaGBP =
-                        data.Where(_ => _.NomDC == CurrencyCode.GBP)
+                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.GBP)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     SummaCHF =
-                        data.Where(_ => _.NomDC == CurrencyCode.CHF)
+                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.CHF)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     SummaSEK =
-                        data.Where(_ => _.NomDC == CurrencyCode.SEK)
+                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.SEK)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     SummaCNY =
-                        data.Where(_ => _.NomDC == CurrencyCode.CNY)
+                        data.Where(_ => ((IDocCode)_.Nomenkl.Currency).DocCode == CurrencyCode.CNY)
                             .Sum(_ => GetRound(_.OstatokSumma)),
                     ObjectDC = ((IDocCode)s).DocCode
                 };
