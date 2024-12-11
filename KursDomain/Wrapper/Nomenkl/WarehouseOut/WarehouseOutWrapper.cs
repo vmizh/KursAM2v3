@@ -13,6 +13,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.Event;
 using KursDomain.ICommon;
 using KursDomain.IReferences;
+using KursDomain.References;
 using Newtonsoft.Json;
 using Prism.Events;
 
@@ -118,6 +119,8 @@ public class WarehouseOutWrapper : SD_24BaseWrapper
     {
         var orders = myContext.TD_24.Include(_ => _.SD_24)
             .Where(_ => _.DDT_RASH_ORD_DC == Model.DOC_CODE).AsNoTracking().ToList();
+        if (Model.DD_SKLAD_OTPR_DC != null)
+            WarehouseOut = GlobalOptions.ReferencesCache.GetWarehouse(Model.DD_SKLAD_OTPR_DC) as Warehouse;
         if (Model.TD_24 is { Count: > 0 })
             foreach (var row in Model.TD_24)
             {
