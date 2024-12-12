@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -930,337 +931,358 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
 
             var frm = Form as ManagementBalansCompareView;
             frm?.NavigateTo(typeof(EmptyUI));
-            myFirstBalans = new ManagementBalansWindowViewModel { CurrentDate = FirstDate };
-            myFirstBalans.RefreshData(null);
-            mySecondBalans = new ManagementBalansWindowViewModel { CurrentDate = SecondDate };
-            mySecondBalans.RefreshData(null);
-            var storeSection = myFirstBalans.BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
-                .Single(t => t.Tag == BalansSection.Store)
-                .Id);
-            var newId = Guid.NewGuid();
-            var newGrp = new ManagementBalanceGroupViewModel
+            Task.Run(() =>
             {
-                Id = newId,
-                ParentId = storeSection.Id,
-                Name = "Товары в пути",
-                Order = 1,
-                Summa = 0,
-                SummaEUR = 0,
-                SummaUSD = 0,
-                SummaRUB = 0,
-                SummaCNY = 0,
-                SummaCHF = 0,
-                SummaGBP = 0,
-                ObjectDC = 10270000000
-            };
-            if (myFirstBalans.BalansStructure.Any(_ => _.Name == "Товары в пути") &&
-                !mySecondBalans.BalansStructure.Any(_ => _.Name == "Товары в пути"))
-            {
-                mySecondBalans.BalansStructure.Add(newGrp);
-            }
-
-            if (!myFirstBalans.BalansStructure.Any(_ => _.Name == "Товары в пути") &&
-                mySecondBalans.BalansStructure.Any(_ => _.Name == "Товары в пути"))
-            {
-                myFirstBalans.BalansStructure.Add(newGrp);
-            }
-
-            Data.Clear();
-            var head = myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Head);
-            Data.Add(new ManagementBalansCompareGroupViewModel
-            {
-                Id = head.Id,
-                ParentId = head.ParentId,
-                Name = head.Name,
-                Tag = head.Tag,
-                ObjectDC = head.ObjectDC
-            });
-            foreach (var d in myFirstBalans.BalansStructure.Where(
-                         _ => _.ParentId == myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Head).Id))
-                Data.Add(new ManagementBalansCompareGroupViewModel
+                frm?.Dispatcher.Invoke(() =>
                 {
-                    Id = d.Id,
-                    ParentId = d.ParentId,
-                    Name = d.Name,
-                    Tag = d.Tag,
-                    ObjectDC = d.ObjectDC
+                    if (frm.DataContext is ManagementBalansCompareWindowViewModel dtx) dtx.IsCanRefresh = false;
+                    frm.loadingIndicator.Visibility = Visibility.Visible;
                 });
-            foreach (var item in Data)
-            {
-                var i1 = myFirstBalans.BalansStructure.FirstOrDefault(_ => _.Id == item.Id);
-                var i2 = mySecondBalans.BalansStructure.FirstOrDefault(_ => _.Id == item.Id);
-                item.SummaRUB = i1?.SummaRUB ?? 0;
-                item.SummaCHF = i1?.SummaCHF ?? 0;
-                item.SummaEUR = i1?.SummaEUR ?? 0;
-                item.SummaUSD = i1?.SummaUSD ?? 0;
-                item.SummaGBP = i1?.SummaGBP ?? 0;
-                item.SummaSEK = i1?.SummaSEK ?? 0;
-                
-                item.SummaRUB2 = i2?.SummaRUB ?? 0;
-                item.SummaCHF2 = i2?.SummaCHF ?? 0;
-                item.SummaEUR2 = i2?.SummaEUR ?? 0;
-                item.SummaUSD2 = i2?.SummaUSD ?? 0;
-                item.SummaGBP2 = i2?.SummaGBP ?? 0;
-                item.SummaSEK2 = i2?.SummaSEK ?? 0;
-                
-                item.SummaCNY = i1?.SummaCNY ?? 0;
-                item.SummaCNY2 = i2?.SummaCNY ?? 0;
-            }
+                myFirstBalans = new ManagementBalansWindowViewModel { CurrentDate = FirstDate };
+                myFirstBalans.RefreshData(null);
+                mySecondBalans = new ManagementBalansWindowViewModel { CurrentDate = SecondDate };
+                mySecondBalans.RefreshData(null);
 
-            // Касса
-            var cashId = Data.Single(_ => _.Id == myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Cash)
-                .Id);
-            var cash2 = (from item1 in mySecondBalans.BalansStructure.Where(_ => _.ParentId == cashId.Id)
-                where myFirstBalans.BalansStructure.All(item2 => item2.ObjectDC != item1.ObjectDC)
-                select item1).ToList();
-            foreach (var i1 in myFirstBalans.BalansStructure.Where(_ => _.ParentId == cashId.Id))
-            {
-                var i2 =
-                    mySecondBalans.BalansStructure.FirstOrDefault(_ => _.ObjectDC == i1.ObjectDC);
-                var newItem = new ManagementBalansCompareGroupViewModel
+
+                var storeSection = myFirstBalans.BalansStructure.Single(_ => _.Id == myBalansBuilder.Structure
+                    .Single(t => t.Tag == BalansSection.Store)
+                    .Id);
+                var newId = Guid.NewGuid();
+                var newGrp = new ManagementBalanceGroupViewModel
                 {
-                    Id = i1.Id,
-                    ParentId = i1.ParentId,
-                    Name = i1.Name,
-                    ObjectDC = i1.ObjectDC,
-                    // ReSharper disable ConstantConditionalAccessQualifier
-                    SummaRUB = i1?.SummaRUB ?? 0,
-                    SummaCHF = i1?.SummaCHF ?? 0,
-                    SummaEUR = i1?.SummaEUR ?? 0,
-                    SummaUSD = i1?.SummaUSD ?? 0,
-                    SummaGBP = i1?.SummaGBP ?? 0,
-                    SummaSEK = i1?.SummaSEK ?? 0,
-                    SummaRUB2 = i2?.SummaRUB ?? 0,
-                    SummaCHF2 = i2?.SummaCHF ?? 0,
-                    SummaEUR2 = i2?.SummaEUR ?? 0,
-                    SummaUSD2 = i2?.SummaUSD ?? 0,
-                    SummaGBP2 = i2?.SummaGBP ?? 0,
-                    SummaSEK2 = i2?.SummaSEK ?? 0,
-
-                    SummaCNY = i1?.SummaCNY ?? 0,
-                    SummaCNY2 = i2?.SummaCNY ?? 0
-                    // ReSharper restore ConstantConditionalAccessQualifier
+                    Id = newId,
+                    ParentId = storeSection.Id,
+                    Name = "Товары в пути",
+                    Order = 1,
+                    Summa = 0,
+                    SummaEUR = 0,
+                    SummaUSD = 0,
+                    SummaRUB = 0,
+                    SummaCNY = 0,
+                    SummaCHF = 0,
+                    SummaGBP = 0,
+                    ObjectDC = 10270000000
                 };
-                Data.Add(newItem);
-            }
-
-            if (cash2.Count > 0)
-                foreach (var i2 in cash2)
+                if (myFirstBalans.BalansStructure.Any(_ => _.Name == "Товары в пути") &&
+                    !mySecondBalans.BalansStructure.Any(_ => _.Name == "Товары в пути"))
                 {
-                    var newItem = new ManagementBalansCompareGroupViewModel
-                    {
-                        Id = i2.Id,
-                        ParentId = i2.ParentId,
-                        Name = i2.Name,
-                        ObjectDC = i2.ObjectDC,
-                        SummaRUB = 0,
-                        SummaCHF = 0,
-                        SummaEUR = 0,
-                        SummaUSD = 0,
-                        SummaGBP = 0,
-                        SummaSEK = 0,
-                        SummaCNY = 0,
-                        SummaRUB2 = i2?.SummaRUB ?? 0,
-                        SummaCHF2 = i2?.SummaCHF ?? 0,
-                        SummaEUR2 = i2?.SummaEUR ?? 0,
-                        SummaUSD2 = i2?.SummaUSD ?? 0,
-                        SummaGBP2 = i2?.SummaGBP ?? 0,
-                        SummaSEK2 = i2?.SummaSEK ?? 0,
-                        SummaCNY2 = i2?.SummaCNY ?? 0,
-                    };
-                    Data.Add(newItem);
+                    mySecondBalans.BalansStructure.Add(newGrp);
                 }
 
-            // банк
-            var bankId = Data.Single(_ => _.Id == myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Bank)
-                .Id);
-            var bank2 = (from item1 in mySecondBalans.BalansStructure.Where(_ => _.ParentId == bankId.Id)
-                where myFirstBalans.BalansStructure.All(item2 => item2.ObjectDC != item1.ObjectDC)
-                select item1).ToList();
-            foreach (var i1 in myFirstBalans.BalansStructure.Where(_ => _.ParentId == bankId.Id))
-            {
-                var i2 =
-                    mySecondBalans.BalansStructure.FirstOrDefault(_ => _.ObjectDC == i1.ObjectDC);
-                var newItem = new ManagementBalansCompareGroupViewModel
+                if (!myFirstBalans.BalansStructure.Any(_ => _.Name == "Товары в пути") &&
+                    mySecondBalans.BalansStructure.Any(_ => _.Name == "Товары в пути"))
                 {
-                    Id = i1.Id,
-                    ParentId = i1.ParentId,
-                    Name = i1.Name,
-                    ObjectDC = i1.ObjectDC,
-                    SummaRUB = i1?.SummaRUB ?? 0,
-                    SummaCHF = i1?.SummaCHF ?? 0,
-                    SummaEUR = i1?.SummaEUR ?? 0,
-                    SummaUSD = i1?.SummaUSD ?? 0,
-                    SummaGBP = i1?.SummaGBP ?? 0,
-                    SummaSEK = i1?.SummaSEK ?? 0,
-                    SummaRUB2 = i2?.SummaRUB ?? 0,
-                    SummaCHF2 = i2?.SummaCHF ?? 0,
-                    SummaEUR2 = i2?.SummaEUR ?? 0,
-                    SummaUSD2 = i2?.SummaUSD ?? 0,
-                    SummaGBP2 = i2?.SummaGBP ?? 0,
-                    SummaSEK2 = i2?.SummaSEK ?? 0,
-                    
-                    SummaCNY = i1?.SummaCNY ?? 0,
-                    SummaCNY2 = i2?.SummaCNY ?? 0
-                };
-                Data.Add(newItem);
-            }
-
-            if (bank2.Count > 0)
-                foreach (var i2 in bank2)
-                {
-                    var newItem = new ManagementBalansCompareGroupViewModel
-                    {
-                        Id = i2.Id,
-                        ParentId = i2.ParentId,
-                        Name = i2.Name,
-                        ObjectDC = i2.ObjectDC,
-                        SummaRUB = 0,
-                        SummaCHF = 0,
-                        SummaEUR = 0,
-                        SummaUSD = 0,
-                        SummaGBP = 0,
-                        SummaSEK = 0,  
-                        SummaCNY = 0,
-
-                        SummaRUB2 = i2?.SummaRUB ?? 0,
-                        SummaCHF2 = i2?.SummaCHF ?? 0,
-                        SummaEUR2 = i2?.SummaEUR ?? 0,
-                        SummaUSD2 = i2?.SummaUSD ?? 0,
-                        SummaGBP2 = i2?.SummaGBP ?? 0,
-                        SummaSEK2 = i2?.SummaSEK ?? 0,
-                        SummaCNY2 = i2?.SummaCNY ?? 0
-                    };
-                    Data.Add(newItem);
+                    myFirstBalans.BalansStructure.Add(newGrp);
                 }
 
-            // склады
-            var storeId = Data.Single(_ => _.Id == myFirstBalans.BalansStructure
-                .Single(t => t.Tag == BalansSection.Store)
-                .Id);
-            var store2 = (from item1 in mySecondBalans.BalansStructure.Where(_ => _.ParentId == storeId.Id)
-                where myFirstBalans.BalansStructure.All(item2 => item2.ObjectDC != item1.ObjectDC)
-                select item1).ToList();
-            foreach (var i1 in myFirstBalans.BalansStructure.Where(_ => _.ParentId == storeId.Id))
-            {
-                var i2 =
-                    mySecondBalans.BalansStructure.FirstOrDefault(_ => _.ObjectDC == i1.ObjectDC);
-                var newItem = new ManagementBalansCompareGroupViewModel
+                frm?.Dispatcher.Invoke(() =>
                 {
-                    Id = i1.Id,
-                    ParentId = i1.ParentId,
-                    Name = i1.Name,
-                    ObjectDC = i1.ObjectDC,
-                    SummaRUB = i1?.SummaRUB ?? 0,
-                    SummaCHF = i1?.SummaCHF ?? 0,
-                    SummaEUR = i1?.SummaEUR ?? 0,
-                    SummaUSD = i1?.SummaUSD ?? 0,
-                    SummaGBP = i1?.SummaGBP ?? 0,
-                    SummaSEK = i1?.SummaSEK ?? 0,
-                    SummaRUB2 = i2?.SummaRUB ?? 0,
-                    SummaCHF2 = i2?.SummaCHF ?? 0,
-                    SummaEUR2 = i2?.SummaEUR ?? 0,
-                    SummaUSD2 = i2?.SummaUSD ?? 0,
-                    SummaGBP2 = i2?.SummaGBP ?? 0,
-                    SummaSEK2 = i2?.SummaSEK ?? 0,
-
-                     
-                    SummaCNY = i1?.SummaCNY ?? 0,
-                    SummaCNY2 = i2?.SummaCNY ?? 0
-                };
-                Data.Add(newItem);
-            }
-
-            if (store2.Count > 0)
-                foreach (var i2 in store2)
-                {
-                    var newItem = new ManagementBalansCompareGroupViewModel
+                    Data.Clear();
+                    var head = myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Head);
+                    Data.Add(new ManagementBalansCompareGroupViewModel
                     {
-                        Id = i2.Id,
-                        ParentId = i2.ParentId,
-                        Name = i2.Name,
-                        ObjectDC = i2.ObjectDC,
-                        SummaRUB = 0,
-                        SummaCHF = 0,
-                        SummaEUR = 0,
-                        SummaUSD = 0,
-                        SummaGBP = 0,
-                        SummaSEK = 0,
-                        SummaRUB2 = i2?.SummaRUB ?? 0,
-                        SummaCHF2 = i2?.SummaCHF ?? 0,
-                        SummaEUR2 = i2?.SummaEUR ?? 0,
-                        SummaUSD2 = i2?.SummaUSD ?? 0,
-                        SummaGBP2 = i2?.SummaGBP ?? 0,
-                        SummaSEK2 = i2?.SummaSEK ?? 0,
-                        
-                        SummaCNY = 0,
-                        SummaCNY2 = i2?.SummaCNY ?? 0
-                    };
-                    Data.Add(newItem);
-                }
-
-            var ch = myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Head);
-            var form = (ManagementBalansCompareView)Form;
-            if (form != null)
-            {
-                TreeListControlBand b;
-                var frm1 = frm.ManagementBalansCompareMainUI;
-                foreach (var col in frm1.treeListBalans.Columns)
-                {
-                    switch (col.FieldName)
+                        Id = head.Id,
+                        ParentId = head.ParentId,
+                        Name = head.Name,
+                        Tag = head.Tag,
+                        ObjectDC = head.ObjectDC
+                    });
+                    foreach (var d in myFirstBalans.BalansStructure.Where(
+                                 _ => _.ParentId == myFirstBalans.BalansStructure
+                                     .Single(t => t.Tag == BalansSection.Head)
+                                     .Id))
+                        Data.Add(new ManagementBalansCompareGroupViewModel
+                        {
+                            Id = d.Id,
+                            ParentId = d.ParentId,
+                            Name = d.Name,
+                            Tag = d.Tag,
+                            ObjectDC = d.ObjectDC
+                        });
+                    foreach (var item in Data)
                     {
-                        case "SummaEUR":
-                            b =
-                                frm1.treeListBalans.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "SummaEUR"));
-                            if (b != null)
-                                b.Visible = Data.Sum(_ => _.SummaEUR) != 0 || Data.Sum(_ => _.SummaEUR2) != 0;
-                            break;
-                        case "SummaUSD":
-                            b =
-                                frm1.treeListBalans.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "SummaUSD"));
-                            if (b != null)
-                                b.Visible = Data.Sum(_ => _.SummaUSD) != 0 || Data.Sum(_ => _.SummaUSD2) != 0;
-                            break;
-                        case "SummaRUB":
-                            b =
-                                frm1.treeListBalans.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "SummaRUB"));
-                            if (b != null)
-                                b.Visible = Data.Sum(_ => _.SummaRUB) != 0 || Data.Sum(_ => _.SummaRUB2) != 0;
-                            break;
-                        case "SummaGBP":
-                            b =
-                                frm1.treeListBalans.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "SummaGBP"));
-                            if (b != null)
-                                b.Visible = Data.Sum(_ => _.SummaGBP) != 0 || Data.Sum(_ => _.SummaGBP2) != 0;
-                            break;
-                        case "SummaCHF":
-                            b =
-                                frm1.treeListBalans.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "SummaCHF"));
-                            if (b != null)
-                                b.Visible = Data.Sum(_ => _.SummaCHF) != 0 || Data.Sum(_ => _.SummaCHF2) != 0;
-                            break;
-                        case "SummaSEK":
-                            b =
-                                frm1.treeListBalans.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "SummaSEK"));
-                            if (b != null)
-                                b.Visible = Data.Sum(_ => _.SummaSEK) != 0 || Data.Sum(_ => _.SummaSEK2) != 0;
-                            break;
-                        case "SummaCNY":
-                            b =
-                                frm1.treeListBalans.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "SummaCNY"));
-                            if (b != null)
-                                b.Visible = Data.Sum(_ => _.SummaCNY) != 0 || Data.Sum(_ => _.SummaCNY2) != 0;
-                            break;
+                        var i1 = myFirstBalans.BalansStructure.FirstOrDefault(_ => _.Id == item.Id);
+                        var i2 = mySecondBalans.BalansStructure.FirstOrDefault(_ => _.Id == item.Id);
+                        item.SummaRUB = i1?.SummaRUB ?? 0;
+                        item.SummaCHF = i1?.SummaCHF ?? 0;
+                        item.SummaEUR = i1?.SummaEUR ?? 0;
+                        item.SummaUSD = i1?.SummaUSD ?? 0;
+                        item.SummaGBP = i1?.SummaGBP ?? 0;
+                        item.SummaSEK = i1?.SummaSEK ?? 0;
+
+                        item.SummaRUB2 = i2?.SummaRUB ?? 0;
+                        item.SummaCHF2 = i2?.SummaCHF ?? 0;
+                        item.SummaEUR2 = i2?.SummaEUR ?? 0;
+                        item.SummaUSD2 = i2?.SummaUSD ?? 0;
+                        item.SummaGBP2 = i2?.SummaGBP ?? 0;
+                        item.SummaSEK2 = i2?.SummaSEK ?? 0;
+
+                        item.SummaCNY = i1?.SummaCNY ?? 0;
+                        item.SummaCNY2 = i2?.SummaCNY ?? 0;
                     }
-                }
-            }
+
+                    // Касса
+                    var cashId = Data.Single(_ => _.Id == myFirstBalans.BalansStructure
+                        .Single(t => t.Tag == BalansSection.Cash)
+                        .Id);
+                    var cash2 = (from item1 in mySecondBalans.BalansStructure.Where(_ => _.ParentId == cashId.Id)
+                        where myFirstBalans.BalansStructure.All(item2 => item2.ObjectDC != item1.ObjectDC)
+                        select item1).ToList();
+                    foreach (var i1 in myFirstBalans.BalansStructure.Where(_ => _.ParentId == cashId.Id))
+                    {
+                        var i2 =
+                            mySecondBalans.BalansStructure.FirstOrDefault(_ => _.ObjectDC == i1.ObjectDC);
+                        var newItem = new ManagementBalansCompareGroupViewModel
+                        {
+                            Id = i1.Id,
+                            ParentId = i1.ParentId,
+                            Name = i1.Name,
+                            ObjectDC = i1.ObjectDC,
+                            // ReSharper disable ConstantConditionalAccessQualifier
+                            SummaRUB = i1?.SummaRUB ?? 0,
+                            SummaCHF = i1?.SummaCHF ?? 0,
+                            SummaEUR = i1?.SummaEUR ?? 0,
+                            SummaUSD = i1?.SummaUSD ?? 0,
+                            SummaGBP = i1?.SummaGBP ?? 0,
+                            SummaSEK = i1?.SummaSEK ?? 0,
+                            SummaRUB2 = i2?.SummaRUB ?? 0,
+                            SummaCHF2 = i2?.SummaCHF ?? 0,
+                            SummaEUR2 = i2?.SummaEUR ?? 0,
+                            SummaUSD2 = i2?.SummaUSD ?? 0,
+                            SummaGBP2 = i2?.SummaGBP ?? 0,
+                            SummaSEK2 = i2?.SummaSEK ?? 0,
+
+                            SummaCNY = i1?.SummaCNY ?? 0,
+                            SummaCNY2 = i2?.SummaCNY ?? 0
+                            // ReSharper restore ConstantConditionalAccessQualifier
+                        };
+                        Data.Add(newItem);
+                    }
+
+                    if (cash2.Count > 0)
+                        foreach (var i2 in cash2)
+                        {
+                            var newItem = new ManagementBalansCompareGroupViewModel
+                            {
+                                Id = i2.Id,
+                                ParentId = i2.ParentId,
+                                Name = i2.Name,
+                                ObjectDC = i2.ObjectDC,
+                                SummaRUB = 0,
+                                SummaCHF = 0,
+                                SummaEUR = 0,
+                                SummaUSD = 0,
+                                SummaGBP = 0,
+                                SummaSEK = 0,
+                                SummaCNY = 0,
+                                SummaRUB2 = i2?.SummaRUB ?? 0,
+                                SummaCHF2 = i2?.SummaCHF ?? 0,
+                                SummaEUR2 = i2?.SummaEUR ?? 0,
+                                SummaUSD2 = i2?.SummaUSD ?? 0,
+                                SummaGBP2 = i2?.SummaGBP ?? 0,
+                                SummaSEK2 = i2?.SummaSEK ?? 0,
+                                SummaCNY2 = i2?.SummaCNY ?? 0,
+                            };
+                            Data.Add(newItem);
+                        }
+
+                    // банк
+                    var bankId = Data.Single(_ => _.Id == myFirstBalans.BalansStructure
+                        .Single(t => t.Tag == BalansSection.Bank)
+                        .Id);
+                    var bank2 = (from item1 in mySecondBalans.BalansStructure.Where(_ => _.ParentId == bankId.Id)
+                        where myFirstBalans.BalansStructure.All(item2 => item2.ObjectDC != item1.ObjectDC)
+                        select item1).ToList();
+                    foreach (var i1 in myFirstBalans.BalansStructure.Where(_ => _.ParentId == bankId.Id))
+                    {
+                        var i2 =
+                            mySecondBalans.BalansStructure.FirstOrDefault(_ => _.ObjectDC == i1.ObjectDC);
+                        var newItem = new ManagementBalansCompareGroupViewModel
+                        {
+                            Id = i1.Id,
+                            ParentId = i1.ParentId,
+                            Name = i1.Name,
+                            ObjectDC = i1.ObjectDC,
+                            SummaRUB = i1?.SummaRUB ?? 0,
+                            SummaCHF = i1?.SummaCHF ?? 0,
+                            SummaEUR = i1?.SummaEUR ?? 0,
+                            SummaUSD = i1?.SummaUSD ?? 0,
+                            SummaGBP = i1?.SummaGBP ?? 0,
+                            SummaSEK = i1?.SummaSEK ?? 0,
+                            SummaRUB2 = i2?.SummaRUB ?? 0,
+                            SummaCHF2 = i2?.SummaCHF ?? 0,
+                            SummaEUR2 = i2?.SummaEUR ?? 0,
+                            SummaUSD2 = i2?.SummaUSD ?? 0,
+                            SummaGBP2 = i2?.SummaGBP ?? 0,
+                            SummaSEK2 = i2?.SummaSEK ?? 0,
+
+                            SummaCNY = i1?.SummaCNY ?? 0,
+                            SummaCNY2 = i2?.SummaCNY ?? 0
+                        };
+                        Data.Add(newItem);
+                    }
+
+                    if (bank2.Count > 0)
+                        foreach (var i2 in bank2)
+                        {
+                            var newItem = new ManagementBalansCompareGroupViewModel
+                            {
+                                Id = i2.Id,
+                                ParentId = i2.ParentId,
+                                Name = i2.Name,
+                                ObjectDC = i2.ObjectDC,
+                                SummaRUB = 0,
+                                SummaCHF = 0,
+                                SummaEUR = 0,
+                                SummaUSD = 0,
+                                SummaGBP = 0,
+                                SummaSEK = 0,
+                                SummaCNY = 0,
+
+                                SummaRUB2 = i2?.SummaRUB ?? 0,
+                                SummaCHF2 = i2?.SummaCHF ?? 0,
+                                SummaEUR2 = i2?.SummaEUR ?? 0,
+                                SummaUSD2 = i2?.SummaUSD ?? 0,
+                                SummaGBP2 = i2?.SummaGBP ?? 0,
+                                SummaSEK2 = i2?.SummaSEK ?? 0,
+                                SummaCNY2 = i2?.SummaCNY ?? 0
+                            };
+                            Data.Add(newItem);
+                        }
+
+                    // склады
+                    var storeId = Data.Single(_ => _.Id == myFirstBalans.BalansStructure
+                        .Single(t => t.Tag == BalansSection.Store)
+                        .Id);
+                    var store2 = (from item1 in mySecondBalans.BalansStructure.Where(_ => _.ParentId == storeId.Id)
+                        where myFirstBalans.BalansStructure.All(item2 => item2.ObjectDC != item1.ObjectDC)
+                        select item1).ToList();
+                    foreach (var i1 in myFirstBalans.BalansStructure.Where(_ => _.ParentId == storeId.Id))
+                    {
+                        var i2 =
+                            mySecondBalans.BalansStructure.FirstOrDefault(_ => _.ObjectDC == i1.ObjectDC);
+                        var newItem = new ManagementBalansCompareGroupViewModel
+                        {
+                            Id = i1.Id,
+                            ParentId = i1.ParentId,
+                            Name = i1.Name,
+                            ObjectDC = i1.ObjectDC,
+                            SummaRUB = i1?.SummaRUB ?? 0,
+                            SummaCHF = i1?.SummaCHF ?? 0,
+                            SummaEUR = i1?.SummaEUR ?? 0,
+                            SummaUSD = i1?.SummaUSD ?? 0,
+                            SummaGBP = i1?.SummaGBP ?? 0,
+                            SummaSEK = i1?.SummaSEK ?? 0,
+                            SummaRUB2 = i2?.SummaRUB ?? 0,
+                            SummaCHF2 = i2?.SummaCHF ?? 0,
+                            SummaEUR2 = i2?.SummaEUR ?? 0,
+                            SummaUSD2 = i2?.SummaUSD ?? 0,
+                            SummaGBP2 = i2?.SummaGBP ?? 0,
+                            SummaSEK2 = i2?.SummaSEK ?? 0,
+
+
+                            SummaCNY = i1?.SummaCNY ?? 0,
+                            SummaCNY2 = i2?.SummaCNY ?? 0
+                        };
+                        Data.Add(newItem);
+                    }
+
+                    if (store2.Count > 0)
+                        foreach (var i2 in store2)
+                        {
+                            var newItem = new ManagementBalansCompareGroupViewModel
+                            {
+                                Id = i2.Id,
+                                ParentId = i2.ParentId,
+                                Name = i2.Name,
+                                ObjectDC = i2.ObjectDC,
+                                SummaRUB = 0,
+                                SummaCHF = 0,
+                                SummaEUR = 0,
+                                SummaUSD = 0,
+                                SummaGBP = 0,
+                                SummaSEK = 0,
+                                SummaRUB2 = i2?.SummaRUB ?? 0,
+                                SummaCHF2 = i2?.SummaCHF ?? 0,
+                                SummaEUR2 = i2?.SummaEUR ?? 0,
+                                SummaUSD2 = i2?.SummaUSD ?? 0,
+                                SummaGBP2 = i2?.SummaGBP ?? 0,
+                                SummaSEK2 = i2?.SummaSEK ?? 0,
+
+                                SummaCNY = 0,
+                                SummaCNY2 = i2?.SummaCNY ?? 0
+                            };
+                            Data.Add(newItem);
+                        }
+
+                    var ch = myFirstBalans.BalansStructure.Single(t => t.Tag == BalansSection.Head);
+                    var form = (ManagementBalansCompareView)Form;
+                    if (form != null)
+                    {
+                        TreeListControlBand b;
+                        var frm1 = frm.ManagementBalansCompareMainUI;
+                        foreach (var col in frm1.treeListBalans.Columns)
+                        {
+                            switch (col.FieldName)
+                            {
+                                case "SummaEUR":
+                                    b =
+                                        frm1.treeListBalans.Bands.FirstOrDefault(
+                                            _ => _.Columns.Any(c => c.FieldName == "SummaEUR"));
+                                    if (b != null)
+                                        b.Visible = Data.Sum(_ => _.SummaEUR) != 0 || Data.Sum(_ => _.SummaEUR2) != 0;
+                                    break;
+                                case "SummaUSD":
+                                    b =
+                                        frm1.treeListBalans.Bands.FirstOrDefault(
+                                            _ => _.Columns.Any(c => c.FieldName == "SummaUSD"));
+                                    if (b != null)
+                                        b.Visible = Data.Sum(_ => _.SummaUSD) != 0 || Data.Sum(_ => _.SummaUSD2) != 0;
+                                    break;
+                                case "SummaRUB":
+                                    b =
+                                        frm1.treeListBalans.Bands.FirstOrDefault(
+                                            _ => _.Columns.Any(c => c.FieldName == "SummaRUB"));
+                                    if (b != null)
+                                        b.Visible = Data.Sum(_ => _.SummaRUB) != 0 || Data.Sum(_ => _.SummaRUB2) != 0;
+                                    break;
+                                case "SummaGBP":
+                                    b =
+                                        frm1.treeListBalans.Bands.FirstOrDefault(
+                                            _ => _.Columns.Any(c => c.FieldName == "SummaGBP"));
+                                    if (b != null)
+                                        b.Visible = Data.Sum(_ => _.SummaGBP) != 0 || Data.Sum(_ => _.SummaGBP2) != 0;
+                                    break;
+                                case "SummaCHF":
+                                    b =
+                                        frm1.treeListBalans.Bands.FirstOrDefault(
+                                            _ => _.Columns.Any(c => c.FieldName == "SummaCHF"));
+                                    if (b != null)
+                                        b.Visible = Data.Sum(_ => _.SummaCHF) != 0 || Data.Sum(_ => _.SummaCHF2) != 0;
+                                    break;
+                                case "SummaSEK":
+                                    b =
+                                        frm1.treeListBalans.Bands.FirstOrDefault(
+                                            _ => _.Columns.Any(c => c.FieldName == "SummaSEK"));
+                                    if (b != null)
+                                        b.Visible = Data.Sum(_ => _.SummaSEK) != 0 || Data.Sum(_ => _.SummaSEK2) != 0;
+                                    break;
+                                case "SummaCNY":
+                                    b =
+                                        frm1.treeListBalans.Bands.FirstOrDefault(
+                                            _ => _.Columns.Any(c => c.FieldName == "SummaCNY"));
+                                    if (b != null)
+                                        b.Visible = Data.Sum(_ => _.SummaCNY) != 0 || Data.Sum(_ => _.SummaCNY2) != 0;
+                                    break;
+                            }
+                        }
+                    }
+
+
+                    if (frm.DataContext is ManagementBalansCompareWindowViewModel dtx) dtx.IsCanRefresh = false;
+                    frm.loadingIndicator.Visibility = Visibility.Hidden;
+                });
+            });
 
             RaisePropertyChanged(nameof(Data));
         }

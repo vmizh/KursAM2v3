@@ -16,17 +16,7 @@ namespace KursAM2.View.Management
         public BreakEvenForm2()
         {
             InitializeComponent();
-            //
-            ////GridControlLocalizer.Active = new CustomDXGridLocalizer();
-            ////EditorLocalizer.Active = new CustomEditorsLocalizer();
-
-            //EventManager.RegisterClassHandler(typeof(GridColumn), DXSerializer.AllowPropertyEvent,
-            //    new AllowPropertyEventHandler((d, e) =>
-            //    {
-            //        if (!e.Property.Name.Contains("Header")) return;
-            //        e.Allow = false;
-            //        e.Handled = true;
-            //    }));
+           
         }
 
 
@@ -35,9 +25,6 @@ namespace KursAM2.View.Management
             e.Column.Name = e.Column.FieldName;
         }
 
-        private void GridCurrency_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
-        {
-            e.Column.Name = "Crs_" + e.Column.FieldName;
-        }
+        
     }
 }
