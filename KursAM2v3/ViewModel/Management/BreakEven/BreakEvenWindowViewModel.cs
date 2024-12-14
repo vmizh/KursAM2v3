@@ -4,10 +4,14 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Data;
+using DevExpress.Mvvm;
+using DevExpress.Mvvm.Xpf;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -66,6 +70,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
             });
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+            CustomNomenklSummaryCommand = new DelegateCommand<RowSummaryArgs>(CustomNomenklSummary, true);
         }
 
         public override void AddSearchList(object obj)
@@ -1004,9 +1009,15 @@ namespace KursAM2.ViewModel.Management.BreakEven
             {
                 if (frm.gridNomenkl.TotalSummary[i].FieldName == "NomenklProfit")
                 {
-                    frm.gridNomenkl.TotalSummary.Remove(frm.gridNomenkl.TotalSummary[i]);
+                    frm.gridNomenkl.TotalSummary[i].SummaryType = SummaryItemType.Custom;
+                    
+                    frm.gridNomenkl.TotalSummary[i].Alignment = GridSummaryItemAlignment.Right;
+                    frm.gridNomenkl.TotalSummary[i].DisplayFormat = "p1";
+                    frm.gridNomenkl.TotalSummary[i].ShowInColumn = "NomenklProfit";
+                   
                     break;
                 }
+
             }
 
             foreach (var cols1 in frm.gridNomenkl.Columns) 
@@ -1025,9 +1036,117 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 }
 
             }
+
+            foreach (var cols1 in frm.gridKontr.Columns) 
+            {
+                if (cols1.FieldName == "NomenklProfit")
+                {
+                    cols1.EditSettings = new CalcEditSettings()
+                    {
+                        //DisplayFormat = "n1",
+                        MaskUseAsDisplayFormat = true,
+                        MaskType=MaskType.Numeric,
+                        Mask="p1",
+                        AllowDefaultButton = false
+                    };
+                    ;
+                }
+
+            }
+            foreach (var cols1 in frm.gridManager.Columns) 
+            {
+                if (cols1.FieldName == "NomenklProfit")
+                {
+                    cols1.EditSettings = new CalcEditSettings()
+                    {
+                        //DisplayFormat = "n1",
+                        MaskUseAsDisplayFormat = true,
+                        MaskType=MaskType.Numeric,
+                        Mask="p1",
+                        AllowDefaultButton = false
+                    };
+                    ;
+                }
+
+            }
+            foreach (var cols1 in frm.gridCO.Columns) 
+            {
+                if (cols1.FieldName == "NomenklProfit")
+                {
+                    cols1.EditSettings = new CalcEditSettings()
+                    {
+                        //DisplayFormat = "n1",
+                        MaskUseAsDisplayFormat = true,
+                        MaskType=MaskType.Numeric,
+                        Mask="p1",
+                        AllowDefaultButton = false
+                    };
+                    ;
+                }
+
+            }
+
         }
 
         #region Commands
+
+        public ICommand CustomNomenklSummaryCommand
+        {
+            get;
+            private set;
+        }
+
+        private void CustomNomenklSummary(RowSummaryArgs obj)
+        {
+            // NomenklProfit => Result > 0 && Cost > 0  ? (Summa - DilerSumma)/Cost -1  : 0;
+            var frm = Form as BreakEvenForm2;
+            if (frm == null) return;
+            
+            GridSummaryItem sum_Summa=null;
+            GridSummaryItem sum_Dilersumma=null;
+            GridSummaryItem sum_Cost= null;
+            GridSummaryItem sum_Result = null;
+            
+            foreach (var scol in frm.gridNomenkl.TotalSummary)
+            {
+                switch (scol.FieldName) 
+                {
+                    case "Summa":
+                        sum_Summa = scol;
+                        break;
+                    case "DilerSumma":
+                        sum_Dilersumma = scol;
+                        break;
+                    case "Cost":
+                        sum_Cost = scol;
+                        break;
+                    case "Result":
+                        sum_Result = scol;
+                        break;
+                }
+
+            }
+
+            var args = obj as RowSummaryArgs;
+            if (args == null) return;
+            if(args.SummaryItem.PropertyName != "NomenklProfit")
+                return;
+            if(args.SummaryProcess == SummaryProcess.Start) {
+                args.TotalValue = 0;
+            } 
+            if(args.SummaryProcess == SummaryProcess.Calculate)
+            {
+
+                args.TotalValue =
+                    ((decimal)frm.gridNomenkl.GetTotalSummaryValue(sum_Summa) -
+                     (decimal)frm.gridNomenkl.GetTotalSummaryValue(sum_Dilersumma)) /
+                    (decimal)frm.gridNomenkl.GetTotalSummaryValue(sum_Cost) - 1;
+
+                
+                //args.TotalValue = (int)args.TotalValue + 1;
+            }
+
+        }
 
         public ICommand SelectedTabChildChangedCommand
         {

@@ -49,7 +49,8 @@
                                          dxg:DataControlSerializationOptions.RemoveOldColumns="True"
                                          ItemsSource="{Binding NomenklGroups, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
                                          CurrentItemChanged="NomenklTableView_FocusedRowChanged"
-                                         CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}">
+                                         CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
+                                         CustomSummaryCommand="{Binding CustomNomenklSummaryCommand}">
                             <dxg:GridControl.Columns>
                                 <dxg:GridColumn Name="nomCol1" Header="Номенклатурный номер"
                                                 FieldName="NomenklNumber" />
