@@ -254,6 +254,8 @@
     <Compile Include="Repositories\InvoicesRepositories\InvoiceClientRepository.cs" />
     <Compile Include="Repositories\InvoicesRepositories\InvoiceProviderRepository.cs" />
     <Compile Include="Repositories\Logistik\SD_24Repository.cs" />
+    <Compile Include="Repositories\NomenklReturn\INomenklReturnOfClientRepository.cs" />
+    <Compile Include="Repositories\NomenklReturn\NomenklReturnOfClientRepository.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\IRefundFromClientRepository.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\RefundFromClientRepository.cs" />
     <Compile Include="Repositories\SD_24Repository.cs" />

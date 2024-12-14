@@ -228,6 +228,10 @@
     <Compile Include="IDocuments\ILastChanged.cs" />
     <Compile Include="IDocuments\ILastDocument.cs" />
     <Compile Include="IDocuments\MaterialDocumentTypeEnum.cs" />
+    <Compile Include="IDocuments\NomenklReturn\INomenklReturnToProviderRow.cs" />
+    <Compile Include="IDocuments\NomenklReturn\INomenklReturnOfClient.cs" />
+    <Compile Include="IDocuments\NomenklReturn\INomenklReturnOfClientRow.cs" />
+    <Compile Include="IDocuments\NomenklReturn\INomenklReturnToProvider.cs" />
     <Compile Include="Managers\DocumentsOpenManager.cs" />
     <Compile Include="Managers\NomenklManager2.cs" />
     <Compile Include="Menu\MenuGeneratorItemVisibleEnum.cs" />
