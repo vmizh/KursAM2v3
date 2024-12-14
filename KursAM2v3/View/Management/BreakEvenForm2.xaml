@@ -53,7 +53,8 @@
                                          ItemsSource="{Binding NomenklGroups, NotifyOnSourceUpdated=True,NotifyOnTargetUpdated=True}"
                                          CurrentItem="{Binding CurrentNomenkl, UpdateSourceTrigger=PropertyChanged}"
                                          CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
-                                         AutoGeneratingColumn="Grid_OnAutoGeneratingColumn">
+                                         AutoGeneratingColumn="Grid_OnAutoGeneratingColumn"
+                                         CustomSummaryCommand="{Binding CustomNomenklSummaryCommand}">
                             <dxg:GridControl.View>
                                 <dxg:TableView Name="gridNomenklView"
                                                UseIndicatorForSelection="True"
