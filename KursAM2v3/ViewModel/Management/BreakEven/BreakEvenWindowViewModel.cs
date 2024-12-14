@@ -70,6 +70,11 @@ namespace KursAM2.ViewModel.Management.BreakEven
             });
             RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
             CustomNomenklSummaryCommand = new DelegateCommand<RowSummaryArgs>(CustomNomenklSummary, true);
+            CustomKontrSummaryCommand = new DelegateCommand<RowSummaryArgs>(CustomKontrSummary, true);
+            CustomCOSummaryCommand= new DelegateCommand<RowSummaryArgs>(CustomCOSummary, true);
+            CustomManagerSummaryCommand = new DelegateCommand<RowSummaryArgs>(CustomManagerSummary, true);
+
+
         }
 
         public override string LayoutName => "BreakEvenWindowViewModel";
@@ -1062,7 +1067,76 @@ namespace KursAM2.ViewModel.Management.BreakEven
         #region Commands
 
         public ICommand CustomNomenklSummaryCommand { get; private set; }
+        public ICommand CustomKontrSummaryCommand { get; private set; }
+        public ICommand CustomCOSummaryCommand { get; private set; }
+        public ICommand CustomManagerSummaryCommand { get; private set; }
 
+        private void calcSumma(GridControl grid, RowSummaryArgs args)
+        {
+            GridSummaryItem sum_Summa = null;
+            GridSummaryItem sum_Dilersumma = null;
+            GridSummaryItem sum_Cost = null;
+            GridSummaryItem sum_Result = null;
+
+            foreach (var scol in grid.TotalSummary)
+                switch (scol.FieldName)
+                {
+                    case "Summa":
+                        sum_Summa = scol;
+                        break;
+                    case "DilerSumma":
+                        sum_Dilersumma = scol;
+                        break;
+                    case "Cost":
+                        sum_Cost = scol;
+                        break;
+                    case "Result":
+                        sum_Result = scol;
+                        break;
+                }
+    
+            if (args == null) return;
+            if (args.SummaryItem.PropertyName != "NomenklProfit")
+                return;
+            if (args.SummaryProcess == SummaryProcess.Start) args.TotalValue = 0;
+            if (args.SummaryProcess == SummaryProcess.Calculate)
+                args.TotalValue =
+                    ((decimal)grid.GetTotalSummaryValue(sum_Summa) -
+                     (decimal)grid.GetTotalSummaryValue(sum_Dilersumma)) /
+                    (decimal)grid.GetTotalSummaryValue(sum_Cost) - 1;
+        }
+
+        private void CustomNomenklSummary(RowSummaryArgs obj)
+        {
+            var frm = Form as BreakEvenForm2;
+            if (frm == null) return;
+            calcSumma(frm.gridNomenkl, obj);
+        }
+
+        private void CustomKontrSummary(RowSummaryArgs obj)
+        {
+            var frm = Form as BreakEvenForm2;
+            if (frm == null) return;
+            calcSumma(frm.gridKontr, obj);
+        }
+
+        private void CustomCOSummary(RowSummaryArgs obj)
+        {
+            var frm = Form as BreakEvenForm2;
+            if (frm == null) return;
+            calcSumma(frm.gridCO, obj);
+        }
+
+        private void CustomManagerSummary(RowSummaryArgs obj)
+        {
+            var frm = Form as BreakEvenForm2;
+            if (frm == null) return;
+            calcSumma(frm.gridManager, obj);
+        }
+
+
+
+        /*
         private void CustomNomenklSummary(RowSummaryArgs obj)
         {
             // NomenklProfit => Result > 0 && Cost > 0  ? (Summa - DilerSumma)/Cost -1  : 0;
@@ -1103,6 +1177,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                     (decimal)frm.gridNomenkl.GetTotalSummaryValue(sum_Cost) - 1;
             //args.TotalValue = (int)args.TotalValue + 1;
         }
+        */
 
         public ICommand SelectedTabChildChangedCommand
         {

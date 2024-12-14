@@ -88,8 +88,9 @@
                                          ItemsSource="{Binding KontrGroups}"
                                          CurrentItem="{Binding CurrentKontragent, UpdateSourceTrigger=PropertyChanged}"
                                          CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
-                                         AutoGeneratingColumn="Grid_OnAutoGeneratingColumn">
-                            <dxg:GridControl.View>
+                                         AutoGeneratingColumn="Grid_OnAutoGeneratingColumn"
+                                         CustomSummaryCommand="{Binding CustomKontrSummaryCommand}">
+                                         <dxg:GridControl.View>
                                 <dxg:TableView Style="{StaticResource TableView.Standart}"
                                                UseIndicatorForSelection="True"
                                                Name="gridKontrView">
@@ -123,7 +124,8 @@
                                          CurrentItem="{Binding CurrentCO, UpdateSourceTrigger=PropertyChanged}"
                                          CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
                                          ItemsSource="{Binding CoGroups}"
-                                         AutoGeneratingColumn="Grid_OnAutoGeneratingColumn">
+                                         AutoGeneratingColumn="Grid_OnAutoGeneratingColumn"
+                                         CustomSummaryCommand="{Binding CustomCOSummaryCommand}">
                             <dxg:GridControl.View>
                                 <dxg:TableView Style="{StaticResource TableView.Standart}"
                                                Name="gridCOView">
@@ -159,7 +161,8 @@
                                          ItemsSource="{Binding ManagerGroups}"
                                          CurrentItem="{Binding CurrentManager, UpdateSourceTrigger=PropertyChanged}"
                                          CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
-                                         AutoGeneratingColumn="Grid_OnAutoGeneratingColumn">
+                                         AutoGeneratingColumn="Grid_OnAutoGeneratingColumn"
+                                         CustomSummaryCommand="{Binding CustomManagerSummaryCommand}">
                             <dxg:GridControl.View>
                                 <dxg:TableView Style="{StaticResource TableView.Standart}"
                                                Name="gridManagerView"
