@@ -2161,6 +2161,18 @@
         <EntityTypeShape EntityType="ALFAMEDIA.EXT_SqlQueries" Width="1.5" PointX="47.375" PointY="3.75" />
         <EntityTypeShape EntityType="ALFAMEDIA.NOMENKL_RECALC" Width="1.5" PointX="5.375" PointY="47.75" />
         <AssociationConnector Association="ALFAMEDIA.FK_TransferOutBalans_CurrencyDC" />
+        <EntityTypeShape EntityType="ALFAMEDIA.NomenklReturnOfClient" Width="1.5" PointX="66.25" PointY="700" />
+        <EntityTypeShape EntityType="ALFAMEDIA.NomenklReturnOfClientRow" Width="1.5" PointX="69.5" PointY="738.5" />
+        <EntityTypeShape EntityType="ALFAMEDIA.NomenklReturnToProvider" Width="1.5" PointX="62.75" PointY="692.25" />
+        <EntityTypeShape EntityType="ALFAMEDIA.NomenklReturnToProviderRow" Width="1.5" PointX="69" PointY="734.625" />
+        <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnOfClient_InvoiceClientDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnOfClient_KontragentDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnOfClientRow_DocId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnOfClientRow_NomenklDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnToProvider_InvoiceProviderDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnToProvider_KontregentDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnToProviderRow_DocId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnToProviderRow_NomenklDC" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

@@ -699,6 +699,18 @@
     <Compile Include="NomenklMoveWithPrice.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="NomenklReturnOfClient.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="NomenklReturnOfClientRow.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="NomenklReturnToProvider.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
+    <Compile Include="NomenklReturnToProviderRow.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="NomenklStatus.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

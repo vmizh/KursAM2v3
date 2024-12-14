@@ -807,6 +807,10 @@ namespace Data
         public virtual DbSet<StorageLocations> StorageLocations { get; set; }
         public virtual DbSet<EXT_SqlQueries> EXT_SqlQueries { get; set; }
         public virtual DbSet<NOMENKL_RECALC> NOMENKL_RECALC { get; set; }
+        public virtual DbSet<NomenklReturnOfClient> NomenklReturnOfClient { get; set; }
+        public virtual DbSet<NomenklReturnOfClientRow> NomenklReturnOfClientRow { get; set; }
+        public virtual DbSet<NomenklReturnToProvider> NomenklReturnToProvider { get; set; }
+        public virtual DbSet<NomenklReturnToProviderRow> NomenklReturnToProviderRow { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

@@ -112,6 +112,8 @@ namespace Data
             this.SD_396 = new HashSet<SD_396>();
             this.ClientServiceAct = new HashSet<ClientServiceAct>();
             this.ProviderServiceAct = new HashSet<ProviderServiceAct>();
+            this.NomenklReturnOfClient = new HashSet<NomenklReturnOfClient>();
+            this.NomenklReturnToProvider = new HashSet<NomenklReturnToProvider>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -367,5 +369,9 @@ namespace Data
         public virtual ICollection<ClientServiceAct> ClientServiceAct { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProviderServiceAct> ProviderServiceAct { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<NomenklReturnOfClient> NomenklReturnOfClient { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<NomenklReturnToProvider> NomenklReturnToProvider { get; set; }
     }
 }
