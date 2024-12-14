@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
@@ -24,6 +22,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using Application = System.Windows.Application;
 
 // ReSharper disable CollectionNeverQueried.Global
 namespace KursAM2.ViewModel.Management.BreakEven
@@ -73,25 +72,15 @@ namespace KursAM2.ViewModel.Management.BreakEven
             CustomNomenklSummaryCommand = new DelegateCommand<RowSummaryArgs>(CustomNomenklSummary, true);
         }
 
-        public override void AddSearchList(object obj)
-        {
-            var renCtx = new BreakEvenWindowViewModel();
-            var form = new BreakEvenForm2
-            {
-                Owner = Application.Current.MainWindow,
-                DataContext = renCtx
-            };
-            renCtx.Form = form;
-            form.Show();
-
-        }
-
         public override string LayoutName => "BreakEvenWindowViewModel";
         public override string WindowName => "Рентабельность";
+
         // ReSharper disable once CollectionNeverQueried.Global
         public ObservableCollection<DocumentRow> DocumentGroup { set; get; }
+
         public ObservableCollection<DocumentCrsRow> DocumentCurrencyGroup { set; get; } =
             new ObservableCollection<DocumentCrsRow>();
+
         public ObservableCollection<BreakEvenNomGroupViewModel> NomenklGroups { set; get; }
         public ObservableCollection<BreakEvenCOrGroupViewModel> CoGroups { set; get; }
         public ObservableCollection<BreakEvenKontrGroupViewModel> KontrGroups { set; get; }
@@ -227,6 +216,18 @@ namespace KursAM2.ViewModel.Management.BreakEven
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null
                                                     && DocumentsOpenManager.IsDocumentOpen(CurrentDocument.DocType);
+
+        public override void AddSearchList(object obj)
+        {
+            var renCtx = new BreakEvenWindowViewModel();
+            var form = new BreakEvenForm2
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = renCtx
+            };
+            renCtx.Form = form;
+            form.Show();
+        }
 
         private void UpdateForKontragent(string name)
         {
@@ -693,7 +694,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                 }
                         }
 
-                    foreach(var d in ent.Database.SqlQuery<BreakEvenTemp>(sql))
+                    foreach (var d in ent.Database.SqlQuery<BreakEvenTemp>(sql))
                     {
                         if (d.NomSumm == 0) continue;
                         var nom = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as Nomenkl;
@@ -950,166 +951,131 @@ namespace KursAM2.ViewModel.Management.BreakEven
                 ManagerGroups.Add(d);
         }
 
-        protected override void OnWindowLoaded(object obj)
+        private void setSums(GridControl grid)
         {
-            base.OnWindowLoaded(obj);
+            grid.TotalSummary.Clear();
+            foreach (var col in grid.Columns)
+            {
+                if (col.FieldName.Contains("One"))
+                    continue;
+                if (col.FieldType != typeof(decimal) && col.FieldType != typeof(decimal?)) continue;
+                GridSummaryItem summary;
+                if (col.FieldName == "NomenklProfit")
+                    summary = new GridSummaryItem
+                    {
+                        SummaryType = SummaryItemType.Custom,
+                        ShowInColumn = col.FieldName,
+                        DisplayFormat = "{0:p1}",
+                        FieldName = col.FieldName
+                    };
+                else
+                    summary = new GridSummaryItem
+                    {
+                        SummaryType = SummaryItemType.Sum,
+                        ShowInColumn = col.FieldName,
+                        DisplayFormat = "{0:n2}",
+                        FieldName = col.FieldName
+                    };
+
+                grid.TotalSummary.Add(summary);
+            }
+        }
+
+        public override void UpdateVisualObjects()
+        {
             var frm = Form as BreakEvenForm2;
             if (frm == null) return;
             var cols = new List<GridColumn>();
 
-            cols.Clear();
-            cols.AddRange(frm.gridDocument.Columns.Where(s => s.FieldName.Contains("One")));
-            foreach (var s in cols) frm.gridDocument.Columns.Remove(s);
+            setSums(frm.gridDocument);
+            setSums(frm.gridNomenkl);
+            setSums(frm.gridCO);
+            setSums(frm.gridKontr);
+            setSums(frm.gridManager);
 
-            cols.Clear();
-            cols.AddRange(frm.gridCO.Columns.Where(s => s.FieldName.Contains("One")));
-            foreach (var s in cols) frm.gridCO.Columns.Remove(s);
+            //foreach (var cols1 in frm.gridKontr.Columns) 
+            //{
+            //    if (cols1.FieldName == "NomenklProfit")
+            //    {
+            //        cols1.EditSettings = new CalcEditSettings()
+            //        {
+            //            //DisplayFormat = "n1",
+            //            MaskUseAsDisplayFormat = true,
+            //            MaskType=MaskType.Numeric,
+            //            Mask="p1",
+            //            AllowDefaultButton = false
+            //        };
+            //        ;
+            //    }
 
-            cols.Clear();
-            cols.AddRange(frm.gridKontr.Columns.Where(s => s.FieldName.Contains("One")));
-            foreach (var s in cols) frm.gridKontr.Columns.Remove(s);
+            //}
+            //foreach (var cols1 in frm.gridManager.Columns) 
+            //{
+            //    if (cols1.FieldName == "NomenklProfit")
+            //    {
+            //        cols1.EditSettings = new CalcEditSettings()
+            //        {
+            //            //DisplayFormat = "n1",
+            //            MaskUseAsDisplayFormat = true,
+            //            MaskType=MaskType.Numeric,
+            //            Mask="p1",
+            //            AllowDefaultButton = false
+            //        };
+            //        ;
+            //    }
 
-            cols.Clear();
-            cols.AddRange(frm.gridManager.Columns.Where(s => s.FieldName.Contains("One")));
-            foreach (var s in cols) frm.gridManager.Columns.Remove(s);
+            //}
+            //foreach (var cols1 in frm.gridCO.Columns) 
+            //{
+            //    if (cols1.FieldName == "NomenklProfit")
+            //    {
+            //        cols1.EditSettings = new CalcEditSettings()
+            //        {
+            //            //DisplayFormat = "n1",
+            //            MaskUseAsDisplayFormat = true,
+            //            MaskType=MaskType.Numeric,
+            //            Mask="p1",
+            //            AllowDefaultButton = false
+            //        };
+            //        ;
+            //    }
 
+            //}
 
-            var sums = new List<GridSummaryItem>();
-            foreach (var s in frm.gridCO.TotalSummary)
-                if (s.FieldName == "Price" || s.FieldName == "Quantity")
-                    sums.Add(s);
+            //foreach (var sumCol in frm.gridNomenkl.TotalSummary)
+            //{
+            //    if (sumCol.FieldName != "NomenklProfit") continue;
+            //    sumCol.SummaryType = SummaryItemType.Custom;
+            //    sumCol.Alignment = GridSummaryItemAlignment.Right;
+            //    sumCol.DisplayFormat = "p1";
+            //    sumCol.ShowInColumn = "NomenklProfit";
+            //    break;
+            //}
+        }
 
-            foreach (var s in sums) frm.gridCO.TotalSummary.Remove(s);
-            sums.Clear();
-            foreach (var s in frm.gridDocument.TotalSummary)
-                if (s.FieldName == "Price" || s.FieldName == "Quantity" )
-                    sums.Add(s);
-
-            foreach (var s in sums) frm.gridDocument.TotalSummary.Remove(s);
-            sums.Clear();
-            foreach (var s in frm.gridKontr.TotalSummary)
-                if (s.FieldName == "Price" || s.FieldName == "Quantity" )
-                    sums.Add(s);
-
-            foreach (var s in sums) frm.gridKontr.TotalSummary.Remove(s);
-            sums.Clear();
-            foreach (var s in frm.gridManager.TotalSummary)
-                if (s.FieldName == "Price" || s.FieldName == "Quantity" )
-                    sums.Add(s);
-
-            foreach (var s in sums) frm.gridManager.TotalSummary.Remove(s);
-            sums.Clear();
-            foreach (var s in frm.gridNomenkl.TotalSummary)
-                if (s.FieldName == "Price" || s.FieldName == "Quantity")
-                    sums.Add(s);
-
-            foreach (var s in sums) frm.gridNomenkl.TotalSummary.Remove(s);
-
-            for (int i = 0; i < frm.gridNomenkl.TotalSummary.Count; i++)
-            {
-                if (frm.gridNomenkl.TotalSummary[i].FieldName == "NomenklProfit")
-                {
-                    frm.gridNomenkl.TotalSummary[i].SummaryType = SummaryItemType.Custom;
-                    
-                    frm.gridNomenkl.TotalSummary[i].Alignment = GridSummaryItemAlignment.Right;
-                    frm.gridNomenkl.TotalSummary[i].DisplayFormat = "p1";
-                    frm.gridNomenkl.TotalSummary[i].ShowInColumn = "NomenklProfit";
-                   
-                    break;
-                }
-
-            }
-
-            foreach (var cols1 in frm.gridNomenkl.Columns) 
-            {
-                if (cols1.FieldName == "NomenklProfit")
-                {
-                    cols1.EditSettings = new CalcEditSettings()
-                    {
-                        //DisplayFormat = "n1",
-                        MaskUseAsDisplayFormat = true,
-                        MaskType=MaskType.Numeric,
-                        Mask="p1",
-                        AllowDefaultButton = false
-                    };
-                    ;
-                }
-
-            }
-
-            foreach (var cols1 in frm.gridKontr.Columns) 
-            {
-                if (cols1.FieldName == "NomenklProfit")
-                {
-                    cols1.EditSettings = new CalcEditSettings()
-                    {
-                        //DisplayFormat = "n1",
-                        MaskUseAsDisplayFormat = true,
-                        MaskType=MaskType.Numeric,
-                        Mask="p1",
-                        AllowDefaultButton = false
-                    };
-                    ;
-                }
-
-            }
-            foreach (var cols1 in frm.gridManager.Columns) 
-            {
-                if (cols1.FieldName == "NomenklProfit")
-                {
-                    cols1.EditSettings = new CalcEditSettings()
-                    {
-                        //DisplayFormat = "n1",
-                        MaskUseAsDisplayFormat = true,
-                        MaskType=MaskType.Numeric,
-                        Mask="p1",
-                        AllowDefaultButton = false
-                    };
-                    ;
-                }
-
-            }
-            foreach (var cols1 in frm.gridCO.Columns) 
-            {
-                if (cols1.FieldName == "NomenklProfit")
-                {
-                    cols1.EditSettings = new CalcEditSettings()
-                    {
-                        //DisplayFormat = "n1",
-                        MaskUseAsDisplayFormat = true,
-                        MaskType=MaskType.Numeric,
-                        Mask="p1",
-                        AllowDefaultButton = false
-                    };
-                    ;
-                }
-
-            }
-
+        protected override void OnWindowLoaded(object obj)
+        {
+            base.OnWindowLoaded(obj);
+            UpdateVisualObjects();
         }
 
         #region Commands
 
-        public ICommand CustomNomenklSummaryCommand
-        {
-            get;
-            private set;
-        }
+        public ICommand CustomNomenklSummaryCommand { get; private set; }
 
         private void CustomNomenklSummary(RowSummaryArgs obj)
         {
             // NomenklProfit => Result > 0 && Cost > 0  ? (Summa - DilerSumma)/Cost -1  : 0;
             var frm = Form as BreakEvenForm2;
             if (frm == null) return;
-            
-            GridSummaryItem sum_Summa=null;
-            GridSummaryItem sum_Dilersumma=null;
-            GridSummaryItem sum_Cost= null;
+
+            GridSummaryItem sum_Summa = null;
+            GridSummaryItem sum_Dilersumma = null;
+            GridSummaryItem sum_Cost = null;
             GridSummaryItem sum_Result = null;
-            
+
             foreach (var scol in frm.gridNomenkl.TotalSummary)
-            {
-                switch (scol.FieldName) 
+                switch (scol.FieldName)
                 {
                     case "Summa":
                         sum_Summa = scol;
@@ -1125,27 +1091,17 @@ namespace KursAM2.ViewModel.Management.BreakEven
                         break;
                 }
 
-            }
-
-            var args = obj as RowSummaryArgs;
+            var args = obj;
             if (args == null) return;
-            if(args.SummaryItem.PropertyName != "NomenklProfit")
+            if (args.SummaryItem.PropertyName != "NomenklProfit")
                 return;
-            if(args.SummaryProcess == SummaryProcess.Start) {
-                args.TotalValue = 0;
-            } 
-            if(args.SummaryProcess == SummaryProcess.Calculate)
-            {
-
+            if (args.SummaryProcess == SummaryProcess.Start) args.TotalValue = 0;
+            if (args.SummaryProcess == SummaryProcess.Calculate)
                 args.TotalValue =
                     ((decimal)frm.gridNomenkl.GetTotalSummaryValue(sum_Summa) -
                      (decimal)frm.gridNomenkl.GetTotalSummaryValue(sum_Dilersumma)) /
                     (decimal)frm.gridNomenkl.GetTotalSummaryValue(sum_Cost) - 1;
-
-                
-                //args.TotalValue = (int)args.TotalValue + 1;
-            }
-
+            //args.TotalValue = (int)args.TotalValue + 1;
         }
 
         public ICommand SelectedTabChildChangedCommand
