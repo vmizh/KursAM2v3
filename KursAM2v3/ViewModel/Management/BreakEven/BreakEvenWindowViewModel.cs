@@ -998,64 +998,6 @@ namespace KursAM2.ViewModel.Management.BreakEven
             setSums(frm.gridKontr);
             setSums(frm.gridManager);
 
-            //foreach (var cols1 in frm.gridKontr.Columns) 
-            //{
-            //    if (cols1.FieldName == "NomenklProfit")
-            //    {
-            //        cols1.EditSettings = new CalcEditSettings()
-            //        {
-            //            //DisplayFormat = "n1",
-            //            MaskUseAsDisplayFormat = true,
-            //            MaskType=MaskType.Numeric,
-            //            Mask="p1",
-            //            AllowDefaultButton = false
-            //        };
-            //        ;
-            //    }
-
-            //}
-            //foreach (var cols1 in frm.gridManager.Columns) 
-            //{
-            //    if (cols1.FieldName == "NomenklProfit")
-            //    {
-            //        cols1.EditSettings = new CalcEditSettings()
-            //        {
-            //            //DisplayFormat = "n1",
-            //            MaskUseAsDisplayFormat = true,
-            //            MaskType=MaskType.Numeric,
-            //            Mask="p1",
-            //            AllowDefaultButton = false
-            //        };
-            //        ;
-            //    }
-
-            //}
-            //foreach (var cols1 in frm.gridCO.Columns) 
-            //{
-            //    if (cols1.FieldName == "NomenklProfit")
-            //    {
-            //        cols1.EditSettings = new CalcEditSettings()
-            //        {
-            //            //DisplayFormat = "n1",
-            //            MaskUseAsDisplayFormat = true,
-            //            MaskType=MaskType.Numeric,
-            //            Mask="p1",
-            //            AllowDefaultButton = false
-            //        };
-            //        ;
-            //    }
-
-            //}
-
-            //foreach (var sumCol in frm.gridNomenkl.TotalSummary)
-            //{
-            //    if (sumCol.FieldName != "NomenklProfit") continue;
-            //    sumCol.SummaryType = SummaryItemType.Custom;
-            //    sumCol.Alignment = GridSummaryItemAlignment.Right;
-            //    sumCol.DisplayFormat = "p1";
-            //    sumCol.ShowInColumn = "NomenklProfit";
-            //    break;
-            //}
         }
 
         protected override void OnWindowLoaded(object obj)
@@ -1099,7 +1041,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             if (args.SummaryItem.PropertyName != "NomenklProfit")
                 return;
             if (args.SummaryProcess == SummaryProcess.Start) args.TotalValue = 0;
-            if (args.SummaryProcess == SummaryProcess.Calculate)
+            if ((args.SummaryProcess == SummaryProcess.Calculate) && ((decimal)grid.GetTotalSummaryValue(sum_Cost) > 0))
                 args.TotalValue =
                     ((decimal)grid.GetTotalSummaryValue(sum_Summa) -
                      (decimal)grid.GetTotalSummaryValue(sum_Dilersumma)) /

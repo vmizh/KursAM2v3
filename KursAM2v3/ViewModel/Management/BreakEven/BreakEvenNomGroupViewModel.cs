@@ -45,7 +45,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
     public class BreakEvenNomGroupViewModel : CommonRow
     {
         public string NomenklNumber { set; get; }
-        public decimal NomenklProfit => Summa > 0 && Result > 0 ?  (Summa - DilerSumma)/Cost -1  : 0;
+        public decimal NomenklProfit => Summa > 0 && Result > 0 && Cost > 0 ?  (Summa - DilerSumma)/Cost -1  : 0;
       // (цена/себест -1)*100   
     }
 }

@@ -12,7 +12,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
         public decimal KontrCurrentBalans { set; get; }
         public string KontrCrs { set; get; }
         public Kontragent Kontragent { set; get; }
-        public decimal NomenklProfit => Result > 0 && Cost > 0  ? (Summa - DilerSumma)/Cost -1  : 0;
+        public decimal NomenklProfit => Summa > 0 && Result > 0 && Cost > 0  ? (Summa - DilerSumma)/Cost -1  : 0;
 
     }
 

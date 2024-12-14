@@ -7,7 +7,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
     [MetadataType(typeof(DataAnnotationsCommonRowWithoutCurrency2))]
     public class BreakEvenManagerGroupViewModel : CommonRow
     {
-        public decimal NomenklProfit => Result > 0 && Cost > 0  ? (Summa - DilerSumma)/Cost -1  : 0;
+        public decimal NomenklProfit => Summa > 0 && Result > 0 && Cost > 0 ? (Summa - DilerSumma)/Cost -1  : 0;
     }
     public class DataAnnotationsCommonRowWithoutCurrency2 : DataAnnotationForFluentApiBase,
         IMetadataProvider<BreakEvenManagerGroupViewModel>
