@@ -130,7 +130,7 @@ public class SD_24BaseWrapper : BaseWrapper<SD_24>, IEquatable<TD_24BaseWrapper>
         get => myWarehouseOut; //myCache.GetWarehouse(Model.DD_SKLAD_OTPR_DC) as Warehouse;
         set
         {
-            if (Model.DD_SKLAD_OTPR_DC == value?.DocCode) return;
+            if (myWarehouseOut is not null && Model.DD_SKLAD_OTPR_DC == value?.DocCode) return;
             myWarehouseOut = value;
             Model.DD_SKLAD_OTPR_DC = value?.DocCode;
             Model.DD_POLUCH_NAME = value?.Name ?? string.Empty;

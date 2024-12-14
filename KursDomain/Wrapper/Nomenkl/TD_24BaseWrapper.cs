@@ -21,6 +21,8 @@ public class TD_24BaseWrapper : BaseWrapper<TD_24>, IEquatable<TD_24BaseWrapper>
     {
         myCache = cache;
         myContext = context;
+        if (Nomenkl is null)
+            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(Model.DDT_NOMENKL_DC) as References.Nomenkl;
     }
 
     #endregion
@@ -78,7 +80,7 @@ public class TD_24BaseWrapper : BaseWrapper<TD_24>, IEquatable<TD_24BaseWrapper>
         get => myNomenkl;//myCache.GetNomenkl(Model.DDT_NOMENKL_DC) as References.Nomenkl;
         set
         {
-            if (Model.DDT_NOMENKL_DC == value?.DocCode) return;
+            if (myNomenkl is not null && Model.DDT_NOMENKL_DC == value?.DocCode) return;
             myNomenkl = value;
             Model.DDT_NOMENKL_DC = value?.DocCode ?? 0;
             RaisePropertyChanged();

@@ -2,7 +2,6 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.WindowsUI.Navigation;
 using KursAM2.View.Behaviors;
 using KursDomain;

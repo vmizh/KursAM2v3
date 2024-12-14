@@ -21,6 +21,7 @@ using KursDomain.ICommon;
 using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.References.RedisCache;
 using KursDomain.Repository.DocHistoryRepository;
 using KursDomain.Repository.NomenklRepository;
 using KursDomain.Repository.StorageLocationsRepositury;
@@ -1480,6 +1481,7 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void LoadForAllSklads4()
         {
+            var nomsDCs = new HashSet<decimal>();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var sklDCList = ctx.NomenklMoveForCalc.Select(_ => _.StoreDC).Distinct().AsNoTracking();
@@ -1498,6 +1500,11 @@ namespace KursAM2.ViewModel.Logistiks
                     moveInfo[(decimal)sklDC] = nomenklManager.GetNomenklStoreMove((decimal)sklDC, StartDate, EndDate);
                 }
 
+                foreach (var n in skladsInfo.Values.SelectMany(ninfo => ninfo))
+                {
+                    nomsDCs.Add(n.NomDC);
+                }
+                ((RedisCacheReferences)GlobalOptions.ReferencesCache).UpdateNomenkl(nomsDCs);
                 var listTemp = new List<NomenklMoveOnSkladViewModel>();
                 foreach (var sklDC in skladsInfo.Keys)
                 foreach (var n in skladsInfo[sklDC])
@@ -1672,10 +1679,12 @@ namespace KursAM2.ViewModel.Logistiks
             switch (CurrentDocument.DocumentName)
             {
                 case "Приходный складской ордер":
+                case "Приходный складской ордер (Внутреннее перемещение)":
                 case "Приходный складской ордер(неоттаксированный приход)":
                     DocumentsOpenManager.Open(DocumentType.StoreOrderIn, CurrentDocument.DocCode);
                     break;
                 case "Расходный складской ордер":
+                case "Расходный складской ордер  (внутреннее перемещение)":
                     DocumentsOpenManager.Open(DocumentType.StoreOrderIn, CurrentDocument.DocCode);
                     break;
                 case "Акт валютной конвертации товара":
