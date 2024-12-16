@@ -19,6 +19,7 @@ using KursDomain.ICommon;
 using KursDomain.Managers;
 using KursDomain.References;
 using KursDomain.References.RedisCache;
+using BankAccount = FinanceAnalitic.BankAccount;
 using NomenklMain = KursDomain.References.NomenklMain;
 
 namespace KursAM2.Managers
@@ -34,10 +35,10 @@ namespace KursAM2.Managers
         public List<CURRENCY_RATES_CB> MyRates = new List<CURRENCY_RATES_CB>();
         private Guid spisanieTovara;
 
-        public ProfitAndLossesManager(ProfitAndLossesWindowViewModel vm)
-        {
-            DataViewModel = vm;
-        }
+        //public ProfitAndLossesManager(ProfitAndLossesWindowViewModel vm)
+        //{
+        //    DataViewModel = vm;
+        //}
 
         public ProfitAndLossesManager(ProfitAndLossesWindowViewModel2 vm)
         {
@@ -1660,7 +1661,7 @@ namespace KursAM2.Managers
                                                          && sd83.NOM_0MATER_1USLUGA == 1
                                                          && sd84.SF_DATE >= DateStart && sd84.SF_DATE <= DateEnd
                     //&& (sd84.SF_DATE >= sd43.START_BALANS)
-                    select new ProfitAndLossesWindowViewModel.NakladTemp
+                    select new ProfitAndLossesWindowViewModel2.NakladTemp
                     {
                         DocCode = sd84.DOC_CODE,
                         Id = Guid.NewGuid(),
@@ -1696,7 +1697,7 @@ namespace KursAM2.Managers
                     //    td26.SFT_NAKLAD_KONTR_DC == sd26.SF_POST_DC)
                     //&& td26.SFT_IS_NAKLAD == 0
                     //&& sd26.IsInvoiceNakald  == false
-                    select new ProfitAndLossesWindowViewModel.NakladTemp
+                    select new ProfitAndLossesWindowViewModel2.NakladTemp
                     {
                         DocCode = sd26.DOC_CODE,
                         Code = td26.CODE,
@@ -3056,6 +3057,82 @@ namespace KursAM2.Managers
                         };
                         SetCurrenciesValue(newOp, ((IDocCode)kontr.Currency).DocCode, 0m,
                             (d.Loss ?? 0) * (decimal)d.Percent / (100 - (decimal)d.Percent));
+
+                        Extend.Add(newOp);
+                        ExtendNach.Add(newOp);
+                    }
+                }
+
+                var dataBankIn = (from sd33 in ent.SD_33
+                    // ReSharper disable once AccessToDisposedClosure
+                    from sd114 in ent.SD_114
+                    where sd33.DATE_ORD >= DateStart && sd33.DATE_ORD <= DateEnd
+                                                     && sd114.DOC_CODE == sd33.BANK_RASCH_SCHET_DC
+                                                     // ReSharper disable once CompareOfFloatsByEqualityOperator
+                                                     && sd33.KONTR_CRS_SUM_CORRECT_PERCENT != null &&
+                                                     // ReSharper disable once CompareOfFloatsByEqualityOperator
+                                                     sd33.KONTR_CRS_SUM_CORRECT_PERCENT != 0
+                    select new
+                    {
+                        Date = sd33.DATE_ORD,
+                        CrsDC = sd33.CRS_DC,
+                        Name = "Приходный кассовый ордер",
+                        Note = "№" + sd33.NUM_ORD + " от " + sd33.DATE_ORD + " Банк - " + sd114.BA_ACC_SHORTNAME,
+                        DocCode = sd33.DOC_CODE,
+                        Price = sd33.SUMM_ORD,
+                        Quantity = 1,
+                        Profit = sd33.SUMM_ORD,
+                        Loss = 0,
+                        Result = sd33.SUMM_ORD,
+                        KontrDC = sd33.BANK_RASCH_SCHET_DC,
+                        Percent = sd33.KONTR_CRS_SUM_CORRECT_PERCENT
+                    }).ToList();
+                foreach (var d in dataBankIn)
+                {
+                    //var crsRate = GetRate(MyRates, (decimal) d.CrsDC,
+                    //    GlobalOptions.SystemProfile.MainCurrency.DocCode, (DateTime) d.Date);
+                    var bankAcc = GlobalOptions.ReferencesCache.GetBankAccount(d.KontrDC);
+                    if (d.Percent == null) continue;
+                    if (d.Percent > 0)
+                    {
+                        var newOp = new ProfitAndLossesExtendRowViewModel
+                        {
+                            GroupId = Guid.Parse("{E9D63300-829B-4CB1-AA05-68EC3A73C459}"),
+                            Name = d.Name,
+                            Note = d.Note,
+                            DocCode = d.DocCode,
+                            Quantity = d.Quantity,
+                            // ReSharper disable once PossibleInvalidOperationException
+                            Price = (decimal)d.Price * (decimal)d.Percent / (100 - (decimal)d.Percent),
+                            Kontragent = ((IName)bankAcc).Name,
+                            // ReSharper disable once PossibleInvalidOperationException
+                            Date = (DateTime)d.Date,
+                            DocTypeCode = DocumentType.CashIn
+                        };
+                        SetCurrenciesValue(newOp, ((IDocCode)bankAcc.Currency).DocCode, 0m,
+                            (d.Profit ?? 0) * (decimal)d.Percent / (100 - (decimal)d.Percent));
+
+                        Extend.Add(newOp);
+                        ExtendNach.Add(newOp);
+                    }
+                    else
+                    {
+                        var newOp = new ProfitAndLossesExtendRowViewModel
+                        {
+                            GroupId = Guid.Parse("{836CC414-BEF4-4371-A253-47D2E8F4535F}"),
+                            Name = d.Name,
+                            Note = d.Note,
+                            DocCode = d.DocCode,
+                            Quantity = d.Quantity,
+                            // ReSharper disable once PossibleInvalidOperationException
+                            Price = (decimal)d.Price * (decimal)d.Percent / (100 - (decimal)d.Percent),
+                            Kontragent = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC)).Name,
+                            // ReSharper disable once PossibleInvalidOperationException
+                            Date = (DateTime)d.Date,
+                            DocTypeCode = DocumentType.CashIn
+                        };
+                        SetCurrenciesValue(newOp, ((IDocCode)bankAcc.Currency).DocCode,
+                            (d.Profit ?? 0) * (decimal)d.Percent / (100 - (decimal)d.Percent), 0m);
 
                         Extend.Add(newOp);
                         ExtendNach.Add(newOp);

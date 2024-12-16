@@ -38,7 +38,7 @@ namespace KursAM2.View.Management
 
         private void ManagementBalansView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (DataContext is ProfitAndLossesWindowViewModel ctx)
+            if (DataContext is ProfitAndLossesWindowViewModel2 ctx)
                 // ReSharper disable once PossibleNullReferenceException
                 Dispatcher.BeginInvoke((Action) (() => rateCrsRecalc.EditValue =
                     ctx.CurrenciesForRecalc.First(_ => _.Name == "RUR" || _.Name == "RUB")));
@@ -57,7 +57,7 @@ namespace KursAM2.View.Management
 
         private void GridControlMain_OnSelectedItemChanged(object sender, SelectedItemChangedEventArgs e)
         {
-            if (!(DataContext is ProfitAndLossesWindowViewModel ctx)) return;
+            if (!(DataContext is ProfitAndLossesWindowViewModel2 ctx)) return;
             if (e.NewItem is ProfitAndLossesMainRowViewModel v) ctx.UpdateExtend(v.Id);
             if (!(e.NewItem is ProfitAndLossesMainRowViewModel item))
             {
@@ -70,7 +70,7 @@ namespace KursAM2.View.Management
 
         private void GridControlMain_OnSelectedItemChanged2(object sender, SelectedItemChangedEventArgs e)
         {
-            if (!(DataContext is ProfitAndLossesWindowViewModel ctx)) return;
+            if (!(DataContext is ProfitAndLossesWindowViewModel2 ctx)) return;
             if (e.NewItem is ProfitAndLossesMainRowViewModel v) ctx.UpdateExtend2(v.Id);
             if (!(e.NewItem is ProfitAndLossesMainRowViewModel item))
             {
@@ -82,7 +82,7 @@ namespace KursAM2.View.Management
 
         private void LayoutTabs_OnSelectedTabChildChanged(object sender, ValueChangedEventArgs<FrameworkElement> e)
         {
-            if (!(DataContext is ProfitAndLossesWindowViewModel ctx)) return;
+            if (!(DataContext is ProfitAndLossesWindowViewModel2 ctx)) return;
             if (e.NewValue.Name == "LayoutGroupBalans")
             {
                 ctx.UpdateExtend();
@@ -107,7 +107,7 @@ namespace KursAM2.View.Management
 
         private void GridControlExtend_OnCustomSummary(object sender, CustomSummaryEventArgs e)
         {
-            if (!(DataContext is ProfitAndLossesWindowViewModel ctx)) return;
+            if (!(DataContext is ProfitAndLossesWindowViewModel2 ctx)) return;
             var colsum = (GridSummaryItem) e.Item;
             if (colsum == null || colsum.FieldName != "AktZachetResult") return;
             var d = Math.Round(

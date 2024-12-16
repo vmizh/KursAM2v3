@@ -949,6 +949,7 @@ namespace KursAM2.ViewModel.Management
         public class NakladTemp
         {
             public decimal DocCode { set; get; }
+            public int Code { set; get; }
             public Guid Id { set; get; }
             public DateTime Date { set; get; }
             public decimal NomenklDC { set; get; }
@@ -958,8 +959,8 @@ namespace KursAM2.ViewModel.Management
             public string COName { set; get; }
 
             /// <summary>
-            ///     Вспомогательная переменная для перевода вещественного
-            ///     числа в десятичное в запросах к EF
+            ///     Вспомогательная переменна для перевода вещемтвенного
+            ///     числа в десятично в запросах к EF
             /// </summary>
             public double DoubleQuantity { set; get; }
 
@@ -972,6 +973,8 @@ namespace KursAM2.ViewModel.Management
             public double? SfUchCurrencyRate { get; set; }
             public decimal? SDRSchetDC { get; set; }
             public bool IsNaklad { set; get; }
+
+            public decimal? CODC { set; get; }
         }
 
         #region Calc

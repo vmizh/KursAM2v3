@@ -33,7 +33,7 @@ namespace KursAM2.View.Management
 
         private void ManagementBalansView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (DataContext is ProfitAndLossesWindowViewModel ctx)
+            if (DataContext is ProfitAndLossesWindowViewModel2 ctx)
                 // ReSharper disable once PossibleNullReferenceException
                 Dispatcher.BeginInvoke((Action) (() => rateCrsRecalc.EditValue =
                     ctx.CurrenciesForRecalc.First(_ => _.Name == "RUR" || _.Name == "RUB")));

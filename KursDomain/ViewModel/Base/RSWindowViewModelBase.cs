@@ -105,6 +105,9 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     [Display(AutoGenerateField = false)]
     protected INotificationService KursNotyficationService => this.GetService<INotificationService>();
 
+    [Display(AutoGenerateField = false)]
+    protected INavigationService NavigationService => this.GetRequiredService<INavigationService>();
+
 
     [Display(AutoGenerateField = false)]
     public bool IsLoading

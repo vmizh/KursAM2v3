@@ -29,7 +29,7 @@ namespace KursAM2.View.Management.Controls
         }
         private void LayoutTabs_OnSelectedTabChildChanged(object sender, ValueChangedEventArgs<FrameworkElement> e)
         {
-            if (!(DataContext is ProfitAndLossesWindowViewModel ctx)) return;
+            if (!(DataContext is ProfitAndLossesWindowViewModel2 ctx)) return;
             if (e.NewValue.Name == "LayoutGroupBalans")
             {
                 ctx.UpdateExtend();
@@ -50,7 +50,7 @@ namespace KursAM2.View.Management.Controls
 
         private void GridControlMain_OnSelectedItemChanged(object sender, SelectedItemChangedEventArgs e)
         {
-            if (!(DataContext is ProfitAndLossesWindowViewModel ctx)) return;
+            if (!(DataContext is ProfitAndLossesWindowViewModel2 ctx)) return;
             if (e.NewItem is ProfitAndLossesMainRowViewModel v) ctx.UpdateExtend(v.Id);
             //if (!(e.NewItem is ProfitAndLossesMainRowViewModel item))
             //{
@@ -63,7 +63,7 @@ namespace KursAM2.View.Management.Controls
 
         private void GridControlMain_OnSelectedItemChanged2(object sender, SelectedItemChangedEventArgs e)
         {
-            if (!(DataContext is ProfitAndLossesWindowViewModel ctx)) return;
+            if (!(DataContext is ProfitAndLossesWindowViewModel2 ctx)) return;
             if (e.NewItem is ProfitAndLossesMainRowViewModel v) ctx.UpdateExtend2(v.Id);
             //if (!(e.NewItem is ProfitAndLossesMainRowViewModel item))
             //{

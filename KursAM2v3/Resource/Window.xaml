@@ -6,7 +6,8 @@
                     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
                     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                     xmlns:behaviors="clr-namespace:KursAM2.View.Behaviors"
-                    xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui">
+                    xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
+                    xmlns:navigation="http://schemas.devexpress.com/winfx/2008/xaml/windowsui/navigation">
    <Style TargetType="{x:Type dxg:GridColumn}">
         <Setter Property="HorizontalHeaderContentAlignment" Value="Center" />
     </Style>
@@ -75,6 +76,7 @@
                             </dx:DialogService.DialogStyle>
                         </dx:DialogService>
                         <dxwui:WinUIDialogService x:Name="WinUIDialogServiceUI" ViewTemplate="{StaticResource dialogServiceTemplateUI}"/>
+                        <navigation:FrameDocumentUIService/>
                     </ItemsControl>
                 </DataTemplate>
             </Setter.Value>

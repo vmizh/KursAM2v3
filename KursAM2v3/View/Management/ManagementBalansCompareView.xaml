@@ -22,7 +22,7 @@
                    VerticalAlignment="Center" HorizontalAlignment="Right" />
     </dx:ThemedWindow.HeaderItems>
     <Grid>
-        <DockPanel>
+        <DockPanel Style="{StaticResource DXServices}">
             <DockPanel DockPanel.Dock="Top">
                 <control:WindowMenu Height="60" DockPanel.Dock="Top" />
                 <StackPanel DockPanel.Dock="Top">
@@ -35,13 +35,17 @@
                             x:Name="dateBalans"
                             EditValue="{Binding FirstDate, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                             HorizontalAlignment="Left"
-                            Margin="5,5,0,0" VerticalAlignment="Top" Width="150" />
+                            Margin="5,5,0,0" VerticalAlignment="Top" Width="150"
+                            IsEnabled="{Binding IsCanRefresh}"
+                            />
                         <Label VerticalAlignment="Center" Margin="5,5,0,0">сравнить с</Label>
                         <dxe:DateEdit
                             x:Name="dateBalansCompare"
                             EditValue="{Binding SecondDate, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                             HorizontalAlignment="Left"
-                            Margin="5,5,0,0" VerticalAlignment="Top" Width="150" />
+                            Margin="5,5,0,0" VerticalAlignment="Top" Width="150"
+                            IsEnabled="{Binding IsCanRefresh}"
+                            />
                     </StackPanel>
                 </StackPanel>
             </DockPanel>
@@ -53,8 +57,7 @@
                 <dxlc:LayoutGroup Header="LayoutGroup" dxlc:LayoutControl.AllowVerticalSizing="True">
                     <dxwui:NavigationFrame Source="EmptyUI" Name="navigationFrame"
                                            AnimationType="SlideHorizontal"
-                                           NavigationCacheMode="Disabled"
-                                           Navigated="NavigationFrame_OnNavigated">
+                                           NavigationCacheMode="Disabled">
                         <dxmvvm:Interaction.Behaviors>
                             <behaviors:FrameBalansNavigation />
                         </dxmvvm:Interaction.Behaviors>

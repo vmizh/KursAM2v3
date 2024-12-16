@@ -358,6 +358,7 @@
     <Compile Include="ViewModel\Logistiks\Warehouse\OrderInWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorClientViewModel.cs" />
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorProviderViewModel.cs" />
+    <Compile Include="ViewModel\Management\VzaimozachetRow.cs" />
     <Compile Include="ViewModel\MenuSearchWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\AccruedAmountTypeWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\BankReferenceWindowViewModel.cs" />
@@ -797,7 +798,6 @@
     <Compile Include="ViewModel\Management\ManagementBalans\ManagementBalansWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\ProfitAndLossesExtendRowViewModel.cs" />
     <Compile Include="ViewModel\Management\ProfitAndLossesMainRowViewModel.cs" />
-    <Compile Include="ViewModel\Management\ProfitAndLossesWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\ShopDocumentViewModel.cs" />
     <Compile Include="ViewModel\Management\ShopHeaderViewModel.cs" />
     <Compile Include="ViewModel\Management\ShopNomenklViewModel.cs" />
