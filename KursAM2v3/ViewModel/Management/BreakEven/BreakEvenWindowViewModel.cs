@@ -998,6 +998,19 @@ namespace KursAM2.ViewModel.Management.BreakEven
             setSums(frm.gridKontr);
             setSums(frm.gridManager);
 
+            foreach (var col in frm.gridNomenkl.TotalSummary) 
+            {
+                switch (col.FieldName) 
+                {
+                    case "Price":
+                        col.Visible = false;
+                        break;
+                    case "Quantity":
+                        col.Visible = false;
+                        break;
+                }
+            }
+
         }
 
         protected override void OnWindowLoaded(object obj)
@@ -1041,7 +1054,10 @@ namespace KursAM2.ViewModel.Management.BreakEven
             if (args.SummaryItem.PropertyName != "NomenklProfit")
                 return;
             if (args.SummaryProcess == SummaryProcess.Start) args.TotalValue = 0;
-            if ((args.SummaryProcess == SummaryProcess.Calculate) && ((decimal)grid.GetTotalSummaryValue(sum_Cost) > 0))
+            if (args.SummaryProcess == SummaryProcess.Calculate 
+                && (decimal)grid.GetTotalSummaryValue(sum_Cost) > 0 
+                && (decimal)grid.GetTotalSummaryValue(sum_Result) > 0) 
+
                 args.TotalValue =
                     ((decimal)grid.GetTotalSummaryValue(sum_Summa) -
                      (decimal)grid.GetTotalSummaryValue(sum_Dilersumma)) /
