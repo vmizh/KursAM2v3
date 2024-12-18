@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using Data;
+using KursDomain.References;
 
 namespace KursDomain.IDocuments.NomenklReturn;
 
@@ -12,6 +13,9 @@ public interface INomenklReturnOfClient
     public DateTime DocDate { get; set; }
     public decimal KontragentDC { get; set; }
     public decimal? InvoiceClientDC { get; set; }
+    public Currency Currency { get; }
+    public decimal SummaWarehouse { get; set; }
+    public decimal SummaClient { get; set; }
     public string Note { get; set; }
 
     public ObservableCollection<INomenklReturnOfClientRow> Rows { set; get; }

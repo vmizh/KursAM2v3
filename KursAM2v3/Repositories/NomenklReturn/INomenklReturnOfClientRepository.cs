@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Data;
+using KursDomain.IDocuments.NomenklReturn;
 
 namespace KursAM2.Repositories.NomenklReturn
 {
     public interface INomenklReturnOfClientRepository
     {
-        public void AddOrUpdate(NomenklReturnOfClient entity);
+        public void AddOrUpdate(INomenklReturnOfClient entity);
         public void Delete(Guid id);
-        public NomenklReturnOfClient Get(Guid id);
-        public IEnumerable<NomenklReturnOfClient> GetAll();
-        public IEnumerable<NomenklReturnOfClient> GetForPeriod(DateTime start, DateTime end);
+        public INomenklReturnOfClient Get(Guid id);
+        public IEnumerable<INomenklReturnOfClient> GetAll();
+        public IEnumerable<INomenklReturnOfClient> GetForPeriod(DateTime start, DateTime end);
     }
 }
