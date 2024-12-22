@@ -70,7 +70,8 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
                                               BankOperationType == BankOperationType.CashOut;
 
     public bool IsChangeTypeEnable => State == RowStatus.NewRow;
-    public bool IsNotCurrencyChange => Entity.IsCurrencyChange == false || BankOperationType == BankOperationType.Employee;
+    // public bool IsNotCurrencyChange => Entity.IsCurrencyChange == false || BankOperationType == BankOperationType.Employee;
+    public bool IsNotCurrencyChange => BankOperationType == BankOperationType.Kontragent;
 
     public BankOperationType BankOperationType
     {
@@ -126,6 +127,11 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
             RaisePropertyChanged();
         }
     }
+
+    public string BankName => BankAccount?.Name;
+
+
+     
 
     public bool IsCurrencyRateNotCanSet => Equals(BankAccount.Currency, GlobalOptions.SystemProfile.NationalCurrency);
 

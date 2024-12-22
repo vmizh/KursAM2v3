@@ -41,6 +41,8 @@
         </Style>
     </UserControl.Resources>
     <DockPanel>
+        <Label DockPanel.Dock="Top" Content="{Binding BankName}" Height= "25"
+               Foreground="Blue" FontSize="16" Margin="10,0" />
         <dxlc:LayoutControl Orientation="Horizontal" VerticalAlignment="Center" Height="275" Margin="0,0,0,-25">
             <dxlc:LayoutGroup Orientation="Vertical" Margin="0 0 15 0">
                 <dxlc:LayoutItem Label="Дата">
