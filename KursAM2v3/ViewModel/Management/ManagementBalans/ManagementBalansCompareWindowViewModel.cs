@@ -1279,8 +1279,8 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
                     }
 
 
-                    if (frm.DataContext is ManagementBalansCompareWindowViewModel dtx) dtx.IsCanRefresh = false;
-                    frm.loadingIndicator.Visibility = Visibility.Hidden;
+                    if (frm.DataContext is ManagementBalansCompareWindowViewModel dtx) dtx.IsCanRefresh = true;
+                        frm.loadingIndicator.Visibility = Visibility.Hidden;
                 });
             });
 

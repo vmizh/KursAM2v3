@@ -143,15 +143,12 @@ namespace KursAM2.ViewModel.Finance.controls
 
         public bool IsNotCurrencyChange
         {
-            set => myIsNotCurrencyChange = value;
-            get
+            set
             {
-                return CurrentBankOperations?.IsCurrencyChange switch
-                {
-                    false when CurrentBankOperations?.BankOperationType != BankOperationType.Employee => true,
-                    _ => false
-                };
+                myIsNotCurrencyChange = value;
+                RaisePropertyChanged();
             }
+            get => CurrentBankOperations?.BankOperationType == BankOperationType.Kontragent;
         }
 
 
@@ -408,15 +405,26 @@ namespace KursAM2.ViewModel.Finance.controls
 
         // ReSharper disable once InconsistentNaming
 
-        public bool IsPrihodSummaEnabled => CurrentBankOperations.BankOperationType == BankOperationType.BankOut
-                                            || CurrentBankOperations.BankOperationType == BankOperationType.CashOut
-                                            || CurrentBankOperations.BankOperationType == BankOperationType.Kontragent
+        // public bool IsPrihodSummaEnabled => CurrentBankOperations.BankOperationType == BankOperationType.BankOut
+        //                                     || CurrentBankOperations.BankOperationType == BankOperationType.CashOut
+        //                                     || CurrentBankOperations.BankOperationType == BankOperationType.Kontragent
+        //                                     || CurrentBankOperations.BankOperationType == BankOperationType.Employee;
+        public bool IsPrihodSummaEnabled => CurrentBankOperations.BankOperationType == BankOperationType.Kontragent
                                             || CurrentBankOperations.BankOperationType == BankOperationType.Employee;
 
-        public bool IsRashodSummaEnabled => CurrentBankOperations.BankOperationType == BankOperationType.BankIn
-                                            || CurrentBankOperations.BankOperationType == BankOperationType.CashIn
-                                            || CurrentBankOperations.BankOperationType == BankOperationType.Kontragent
-                                            || CurrentBankOperations.BankOperationType == BankOperationType.Employee;
+
+
+
+        // public bool IsRashodSummaEnabled => CurrentBankOperations.BankOperationType == BankOperationType.BankIn
+        //                                     || CurrentBankOperations.BankOperationType == BankOperationType.CashIn
+        //                                     || CurrentBankOperations.BankOperationType == BankOperationType.Kontragent
+        //                                     || CurrentBankOperations.BankOperationType == BankOperationType.Employee;
+        public bool IsRashodSummaEnabled => CurrentBankOperations.BankOperationType == BankOperationType.Kontragent
+                                            || CurrentBankOperations.BankOperationType == BankOperationType.Employee
+                                            || CurrentBankOperations.BankOperationType == BankOperationType.BankIn;
+
+        public string BankName => BankAccount?.Name;
+
 
 
         public bool IsKontragentEnabled => CurrentBankOperations.VVT_SFACT_CLIENT_DC == null &&
@@ -437,6 +445,7 @@ namespace KursAM2.ViewModel.Finance.controls
                         if (VVT_VAL_RASHOD > 0)
                             return EditModeEnum.CanEditButZero;
                         return EditModeEnum.CanEdit;
+                    case BankOperationType.Employee:
                     case BankOperationType.BankOut:
                     case BankOperationType.CashOut:
                         return EditModeEnum.CanEdit;
@@ -454,7 +463,8 @@ namespace KursAM2.ViewModel.Finance.controls
                 {
                     case BankOperationType.BankIn:
                     case BankOperationType.CashIn:
-                        return EditModeEnum.CanEdit;
+                      case BankOperationType.Employee:
+                      return EditModeEnum.CanEdit;
                     case BankOperationType.Kontragent:
                         if (VVT_VAL_PRIHOD > 0)
                             return EditModeEnum.CanEditButZero;

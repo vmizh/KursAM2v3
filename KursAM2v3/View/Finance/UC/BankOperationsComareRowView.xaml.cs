@@ -4,9 +4,11 @@ using System.Data.Entity;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
+using System.Windows.Forms.VisualStyles;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors;
+using DevExpress.XtraSpreadsheet.Import.OpenXml;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Finance.controls;
@@ -16,6 +18,7 @@ using KursDomain.Documents.Cash;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
 using KursDomain.References;
+using ServiceStack;
 
 namespace KursAM2.View.Finance.UC
 {
@@ -56,7 +59,7 @@ namespace KursAM2.View.Finance.UC
                 if (dtx.Currency == null)
                 {
                     winMan.ShowWinUIMessageBox(
-                        "Перед выбором контрагента, необходимо выбрать валюту опреции", "Предупреждение",
+                        "Перед выбором контрагента, необходимо выбрать валюту операции", "Предупреждение",
                         MessageBoxButton.OK,
                         MessageBoxImage.Warning);
                     return;
@@ -88,7 +91,7 @@ namespace KursAM2.View.Finance.UC
                 if (dtc.Currency == null)
                 {
                     winMan.ShowWinUIMessageBox("Предупреждение",
-                        "Перед выбором контрагента, необходимо выбрать валюту опреции", MessageBoxButton.OK,
+                        "Перед выбором контрагента, необходимо выбрать валюту операции", MessageBoxButton.OK,
                         MessageBoxImage.Warning);
                     return;
                 }
@@ -319,32 +322,39 @@ namespace KursAM2.View.Finance.UC
         private void Consumption_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
         {
             if (Consumption.Value > 0) Incoming.Value = 0;
-            if ((decimal)e.NewValue > maxSumma)
-                Consumption.Value = maxSumma;
+            if ((BankOperationType)TypeKontragent.EditValue == BankOperationType.Kontragent)
+                if ((decimal)e.NewValue > maxSumma)
+                    Consumption.Value = maxSumma;
         }
 
         private void Incoming_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
         {
             if (Incoming.Value > 0) Consumption.Value = 0;
-            if ((decimal)e.NewValue > maxSumma)
-                Incoming.Value = maxSumma;
+            if ((BankOperationType)TypeKontragent.EditValue == BankOperationType.Kontragent)
+                if ((decimal)e.NewValue > maxSumma)
+                    Incoming.Value = maxSumma;
         }
 
         private void BaseEdit_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
         {
-            Kontragent.Text = null;
             var dtx = DataContext as AddBankOperionUC;
             if (dtx == null) return;
             var t = (BankOperationType)TypeKontragent.EditValue;
+            dtx.SFName = null;
+            dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC = null;
+            dtx.Payment = null;
+            SFNameButtonItem.IsEnabled = false;
+            Kontragent.Text = null;
+            dtx.CurrentBankOperations.Employee = null;
+            dtx.VVT_VAL_PRIHOD = 0;
+            dtx.VVT_VAL_RASHOD = 0;
+
             switch (t)
             {
                 case BankOperationType.CashOut:
-                    Incoming.IsReadOnly = false;
-                    Consumption.IsReadOnly = true;
-                    break;
                 case BankOperationType.CashIn:
                     Incoming.IsReadOnly = true;
-                    Consumption.IsReadOnly = false;
+                    Consumption.IsReadOnly = true;
                     break;
                 case BankOperationType.BankIn:
                     Incoming.IsReadOnly = true;
@@ -355,16 +365,22 @@ namespace KursAM2.View.Finance.UC
                     Incoming.IsReadOnly = true;
                     Consumption.IsReadOnly = true;
                     break;
-                default:
+                case BankOperationType.Kontragent:
+                    SFNameButtonItem.IsEnabled = true;
+                    Incoming.IsReadOnly = false;
+                    Consumption.IsReadOnly = false;
+                    break;
+                case BankOperationType.Employee:
+                    Incoming.IsReadOnly = false;
+                    Consumption.IsReadOnly = false;
+                    break;
+                    default:
                     Incoming.IsReadOnly = false;
                     Consumption.IsReadOnly = false;
                     break;
             }
-
-            SFNameButtonItem.IsEnabled = (BankOperationType)TypeKontragent.EditValue == BankOperationType.Kontragent
-                ? true
-                : false;
-        }
+             dtx.VVT_DOC_NUM = null;
+      }
 
         private void SFName_OnDefaultButtonClick(object sender, RoutedEventArgs e)
         {
@@ -386,6 +402,7 @@ namespace KursAM2.View.Finance.UC
                 {
                     Incoming.IsEnabled = true;
                     Consumption.IsEnabled = false;
+                    TypeKontragent.IsEnabled = false;
                     if (dtx != null)
                     {
                         if (d2.DocDate != dtx.Date)
@@ -480,6 +497,8 @@ namespace KursAM2.View.Finance.UC
             var dtx = DataContext as AddBankOperionUC;
             var dtx2 = DataContext as BankOperationsViewModel;
             if (dtx == null && dtx2 == null) return;
+            TypeKontragent.IsEnabled = true;
+
             if (dtx != null)
             {
                 if (dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC == null &&
@@ -500,9 +519,13 @@ namespace KursAM2.View.Finance.UC
                 dtx.CurrentBankOperations.VVT_SFACT_POSTAV_DC = null;
                 dtx.SFName = null;
                 dtx.Payment = null;
+                dtx.CurrentBankOperations.Kontragent = null;
+                
 
                 dtx.VVT_VAL_RASHOD = 0;
                 dtx.VVT_VAL_PRIHOD = 0;
+                dtx.VVT_DOC_NUM = null;
+
             }
 
             if (dtx2 != null)
@@ -525,7 +548,15 @@ namespace KursAM2.View.Finance.UC
                 dtx2.Payment = null;
                 dtx2.VVT_VAL_RASHOD = 0;
                 dtx2.VVT_VAL_PRIHOD = 0;
+                dtx2.Kontragent.Name = null;
+                dtx2.VVT_DOC_NUM = null;
+
+
             }
+
+            Kontragent.Text = null;
+            Consumption.IsEnabled = true;
+            Incoming.IsEnabled = true;
         }
 
         private void AccuredEdit_OnDefaultButtonClick(object sender, RoutedEventArgs e)
