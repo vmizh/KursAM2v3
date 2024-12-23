@@ -13,6 +13,18 @@ public class NomenklReturnOfClientSearch : INomenklReturnOfClient
     [Display(AutoGenerateField = true, Name = "Контрагент")]
     public Kontragent Kontragent => GlobalOptions.ReferencesCache.GetKontragent(KontragentDC) as Kontragent;
 
+    /// <summary>
+    ///     Пользователь, последний изменивший документ
+    /// </summary>
+    [Display(AutoGenerateField = true, Name = "Посл.изменил", Order = 21)]
+    public string LastChanger { set; get; }
+
+    /// <summary>
+    ///     Дата последнего изменения
+    /// </summary>
+    [Display(AutoGenerateField = true, Name = "Дата посл.изм.", Order = 21)]
+    public DateTime LastChangerDate { set; get; }
+
     [Display(AutoGenerateField = false)] public Guid Id { get; set; }
 
     [Display(AutoGenerateField = true, Name = "№")]
@@ -49,7 +61,11 @@ public class NomenklReturnOfClientSearch : INomenklReturnOfClient
     [DisplayFormat(DataFormatString = "n2")]
     public string Note { get; set; }
 
-    [Display(AutoGenerateField = false)] public ObservableCollection<INomenklReturnOfClientRow> Rows { get; set; }
+    [Display(AutoGenerateField = true, Name = "Создатель")]
+    [ReadOnly(true)]
+    public string Creator { get; set; }
+
+    [Display(AutoGenerateField = false)] public ObservableCollection<NomenklReturnOfClientRowViewModel> Rows { get; set; }
 
     [Display(AutoGenerateField = false)] public NomenklReturnOfClient Entity { get; set; }
 }

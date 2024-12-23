@@ -11,5 +11,9 @@ namespace KursAM2.Repositories.NomenklReturn
         public INomenklReturnOfClient Get(Guid id);
         public IEnumerable<INomenklReturnOfClient> GetAll();
         public IEnumerable<INomenklReturnOfClient> GetForPeriod(DateTime start, DateTime end);
+
+        public INomenklReturnOfClient CrateNewEmpty();
+        public INomenklReturnOfClient CrateNewRequisite(Guid id);
+        public INomenklReturnOfClient CrateNewCopy(Guid id);
     }
 }

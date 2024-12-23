@@ -27,6 +27,7 @@ namespace Data
         public decimal KontragentDC { get; set; }
         public Nullable<decimal> InvoiceClientDC { get; set; }
         public string Note { get; set; }
+        public string Creator { get; set; }
     
         public virtual SD_84 SD_84 { get; set; }
         public virtual SD_43 SD_43 { get; set; }

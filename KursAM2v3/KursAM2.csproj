@@ -194,6 +194,7 @@
     <Compile Include="Auxiliary\SaveHistoryStart.cs" />
     <Compile Include="Auxiliary\ErrorServiceViewModel.cs" />
     <Compile Include="Auxiliary\MessageManager.cs" />
+    <Compile Include="MapperConfig.cs" />
     <Compile Include="Dialogs\InvoiceProviderDialogs.cs" />
     <Compile Include="Dialogs\StandartDialogs.cs" />
     <Compile Include="DragAndDrop\CustomDataControlDragElement.cs" />
@@ -287,6 +288,8 @@
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenklTitleWIndowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\DialogSelectExistNomOnSkaldViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\NomenklRemainsOnSkladWithPrice.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklReturn\NomenklReturnOfClientSearchViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklReturn\NomenklReturnOfClientWindowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\TransferOut\TransferOutBalansRemainsDocument.cs" />
     <Compile Include="ViewModel\Logistiks\TransferOut\TransferOutBalansRemainsViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\TransferOut\TransferOutBalansSearchViewModel.cs" />
@@ -562,6 +565,9 @@
     </Compile>
     <Compile Include="View\Logistiks\InventorySheetView2.xaml.cs">
       <DependentUpon>InventorySheetView2.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\NomenklReturn\NomenklReturnOfClientView.xaml.cs">
+      <DependentUpon>NomenklReturnOfClientView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\SkladOstatkiView.xaml.cs">
       <DependentUpon>SkladOstatkiView.xaml</DependentUpon>
@@ -1441,6 +1447,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Logistiks\InventorySheetView2.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\NomenklReturn\NomenklReturnOfClientView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

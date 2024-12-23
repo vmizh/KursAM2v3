@@ -42,6 +42,7 @@ using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Logistiks.AktSpisaniya;
+using KursAM2.ViewModel.Logistiks.NomenklReturn;
 using KursAM2.ViewModel.Logistiks.TransferOut;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Management;
@@ -225,6 +226,18 @@ namespace KursAM2.View
                 Window form;
                 switch (formName)
                 {
+                    //Возврат товара от клиента
+                    case "Возврат товара от клиента":
+                        var retClient = new NomenklReturnOfClientSearchViewModel();
+                        form = new StandartSearchView
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = retClient
+                        };
+                        retClient.Form = form;
+                        form.Show();
+                        break;
+
                     case "Перевод за баланс":
                         var transOut = new TransferOutBalansSearchViewModel();
                         transOut.Show();

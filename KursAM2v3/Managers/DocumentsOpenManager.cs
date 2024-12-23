@@ -17,6 +17,7 @@ using KursAM2.View.Finance.Invoices;
 using KursAM2.View.KursReferences;
 using KursAM2.View.Logistiks;
 using KursAM2.View.Logistiks.AktSpisaniya;
+using KursAM2.View.Logistiks.NomenklReturn;
 using KursAM2.View.Logistiks.Warehouse;
 using KursAM2.View.Personal;
 using KursAM2.View.StockHolder;
@@ -28,6 +29,7 @@ using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Logistiks.AktSpisaniya;
+using KursAM2.ViewModel.Logistiks.NomenklReturn;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Personal;
 using KursAM2.ViewModel.Reference;
@@ -435,11 +437,26 @@ namespace KursAM2.Managers
             switch (docType)
             {
                 case DocumentType.NomenklTransfer:
-                    OpenNomenklTransfer(id);
+                    OpenNomenklReturnOfClient(id);
+                    break;
+                case DocumentType.NomenklReturnOfClient:
+                    OpenNomenklReturnOfClient(id);
                     break;
                 default:
                     return;
             }
+        }
+
+        private static NomenklReturnOfClientWindowViewModel OpenNomenklReturnOfClient(Guid id)
+        {
+            var frm = new NomenklReturnOfClientView()
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var ctx = new NomenklReturnOfClientWindowViewModel(id) { Form = frm };
+            frm.DataContext = ctx;
+            frm.Show();
+            return ctx;
         }
 
         private static NomenklTransferWindowViewModel OpenNomenklTransfer(Guid id)

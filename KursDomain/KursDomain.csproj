@@ -251,6 +251,7 @@
     <Compile Include="References\RedisCache\IDCGuidRelations.cs" />
     <Compile Include="References\RedisCache\InvoicePaymentShipment.cs" />
     <Compile Include="References\RedisCache\PaymentShipmentInvoiceTypeEnum.cs" />
+    <Compile Include="References\RedisCache\RedisCacheExtensions.cs" />
     <Compile Include="References\RedisCache\RedisCacheReferences.cs" />
     <Compile Include="References\ResponsibleRightObjectTypeEnum.cs" />
     <Compile Include="RepositoryHelper\NomenklStoreRemainItem.cs" />

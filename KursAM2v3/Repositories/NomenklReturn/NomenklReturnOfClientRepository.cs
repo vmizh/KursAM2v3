@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using DevExpress.Xpf.Core.Native;
+using Data;
 using KursDomain;
 using KursDomain.Documents.NomenklReturn;
 using KursDomain.IDocuments.NomenklReturn;
@@ -16,14 +16,15 @@ namespace KursAM2.Repositories.NomenklReturn
             if (entity is null || entity.Id == Guid.Empty) return;
             using (var ctx = GlobalOptions.GetEntities())
             {
-                var old = ctx.NomenklReturnOfClientRow.FirstOrDefault(_ => _.Id == entity.Id);
+                var old = ctx.NomenklReturnOfClient.FirstOrDefault(_ => _.Id == entity.Id);
                 if (old != null)
                 {
-                    //old.Cost = 
+                    // ReSharper disable once RedundantAssignment
+                    old = App.Mapper.Map<NomenklReturnOfClient>(entity);
                 }
                 else
                 {
-                    
+                    ctx.NomenklReturnOfClient.Add(entity.Entity);
                 }
 
                 ctx.SaveChanges();
@@ -43,12 +44,23 @@ namespace KursAM2.Repositories.NomenklReturn
 
         public INomenklReturnOfClient Get(Guid id)
         {
-            throw new NotImplementedException();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var entity = ctx.NomenklReturnOfClient.Include(_ => _.NomenklReturnOfClientRow).FirstOrDefault(_ => _.Id == id);
+                return entity is null ? null : new NomenklReturnOfClientViewModel(entity);
+            }
         }
 
         public IEnumerable<INomenklReturnOfClient> GetAll()
         {
-            throw new NotImplementedException();
+            var ret = new List<INomenklReturnOfClient>();
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                var data = ctx.NomenklReturnOfClient.Include(_ => _.NomenklReturnOfClientRow).ToList();
+                ret.AddRange(data.Select(ent => new NomenklReturnOfClientViewModel(ent)));
+            }
+
+            return ret;
         }
 
         public IEnumerable<INomenklReturnOfClient> GetForPeriod(DateTime start, DateTime end)
@@ -77,6 +89,62 @@ namespace KursAM2.Repositories.NomenklReturn
                 }
             }
 
+            return ret;
+        }
+
+        public INomenklReturnOfClient CrateNewEmpty()
+        {
+            return new NomenklReturnOfClientViewModel
+            {
+                Id = Guid.NewGuid(),
+                DocDate = DateTime.Today,
+                Creator = GlobalOptions.UserInfo.NickName,
+                DocNum = -1
+            };
+        }
+
+        public INomenklReturnOfClient CrateNewRequisite(Guid id)
+        {
+            var old = Get(id);
+            var ret = new NomenklReturnOfClientViewModel(new NomenklReturnOfClient())
+            {
+                Id = Guid.NewGuid(),
+                DocDate = DateTime.Today,
+                Creator = GlobalOptions.UserInfo.NickName,
+                Note = old.Note,
+                KontragentDC = old.KontragentDC
+            };
+            return ret;
+
+        }
+
+        public INomenklReturnOfClient CrateNewCopy(Guid id)
+        {
+            var old = Get(id);
+            var ret = new NomenklReturnOfClientViewModel(new NomenklReturnOfClient())
+            {
+                Id = Guid.NewGuid(),
+                DocDate = DateTime.Today,
+                Creator = GlobalOptions.UserInfo.NickName,
+                Note = old.Note,
+                KontragentDC = old.KontragentDC,
+                InvoiceClientDC = old.InvoiceClientDC,
+            };
+            foreach (var row in old.Rows)
+            {
+                ret.Rows.Add(new NomenklReturnOfClientRowViewModel(new NomenklReturnOfClientRow()
+                {
+                    Id = new Guid(),
+                    DocId = ret.Id,
+                    Cost = row.Cost,
+                    InvoiceRowId = row.InvoiceRowId,
+                    NomenklDC = row.NomenklDC,
+                    Note = row.Note,
+                    Price = row.Price,
+                    Quantity = row.Quantity,
+                }, ret));
+                
+            }
             return ret;
         }
     }

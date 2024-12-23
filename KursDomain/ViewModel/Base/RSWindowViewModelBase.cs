@@ -848,7 +848,42 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
         get { return new Command(CreateLinkDocument, _ => CanCreateLinkDocument); }
     }
 
-    public virtual void CreateLinkDocument(object obj)
+    [Display(AutoGenerateField = false)]
+    public ICommand SetCustomizeFormDocumentCommand
+    {
+        get { return new Command(SetCustomizeFormDocument, _ => true); }
+    }
+
+    [Display(AutoGenerateField = false)]
+    public bool CanCustomize
+    {
+        set
+        {
+            if (value == myCanCustomize) return;
+            myCanCustomize = value;
+            RaisePropertyChanged();
+        }
+        get => myCanCustomize;
+    }
+
+    void SetCustomizeFormDocument(object obj)
+     {
+         CanCustomize = !CanCustomize;
+     }
+
+
+     [Display(AutoGenerateField = false)]
+     public ICommand SaveCustomizedFormDocumentCommand
+     {
+         get { return new Command(SaveCustomizedFormDocument, _ => true); }
+     }
+
+     private void SaveCustomizedFormDocument(object obj)
+     {
+         WindowManager.ShowFunctionNotReleased("Не реализована сохранение измененной разметки");
+     }
+
+     public virtual void CreateLinkDocument(object obj)
     {
         WindowManager.ShowFunctionNotReleased("Не реализована генерация документа");
     }
@@ -999,6 +1034,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
 
     private bool myIsCanSearch;
     private string myFooterText;
+    private bool myCanCustomize;
 
     [Display(AutoGenerateField = false)]
     public virtual bool IsCanSearch

@@ -23,6 +23,29 @@ public abstract class FormCommands : IFormCommands
         RedoCommand = new DelegateCommand(OnRedo, CanRedo);
         CreateLinkDocumentCommand = new DelegateCommand(OnCreateLinkDocument, CanCreateLinkDocument);
         AddSearchListCommand = new DelegateCommand(OnAddSearchList, CanAddSerachList);
+
+        SetCustomizeFormDocumentCommand =  new DelegateCommand(OnSetCustomizeFormDocument, CanSetCustomizeFormDocument);
+        SaveCustomizedFormDocumentCommand = new DelegateCommand(OnSaveCustomizedFormDocument, CanSaveCustomizedFormDocument);
+    }
+
+    private bool CanSaveCustomizedFormDocument()
+    {
+        return true;
+    }
+
+    private void OnSaveCustomizedFormDocument()
+    {
+        WindowManager.ShowFunctionNotReleased();
+    }
+
+    private bool CanSetCustomizeFormDocument()
+    {
+        return true;
+    }
+
+    private void OnSetCustomizeFormDocument()
+    {
+        WindowManager.ShowFunctionNotReleased();
     }
 
     private bool CanAddSerachList()
@@ -53,6 +76,8 @@ public abstract class FormCommands : IFormCommands
     public ICommand UndoCommand { get; }
     public ICommand AddSearchListCommand { get; }
     public ICommand CreateLinkDocumentCommand { get; }
+    public ICommand SetCustomizeFormDocumentCommand { get; }
+    public ICommand SaveCustomizedFormDocumentCommand { get; }
 
 
     public ICommand RedoCommand { get; }

@@ -47,6 +47,18 @@ public abstract class FormViewModelBase<T, I> : ViewModelBase, IForm, ILayout
 
         ShowHistoryCommand = new DelegateCommand(OnShowHistoryExecute);
         CreateLinkDocumentCommand = new DelegateCommand(OnCreateLinkDocumentExecute);
+
+        SetCustomizeFormDocumentCommand = new DelegateCommand(OnSetCustomizeFormDocumentExecute);
+        SaveCustomizedFormDocumentCommand = new DelegateCommand(OnSaveCustomizedFormDocumentExecute);
+    }
+
+    protected virtual void OnSaveCustomizedFormDocumentExecute()
+    {
+        
+    }
+
+    protected virtual void OnSetCustomizeFormDocumentExecute()
+    {
     }
 
     #endregion
@@ -323,6 +335,8 @@ public abstract class FormViewModelBase<T, I> : ViewModelBase, IForm, ILayout
     public ICommand UndoCommand { get; }
     public ICommand AddSearchListCommand { get; }
     public ICommand CreateLinkDocumentCommand { get; }
+    public ICommand SetCustomizeFormDocumentCommand { get; }
+    public ICommand SaveCustomizedFormDocumentCommand { get; }
 
     protected virtual bool CanUndo()
     {

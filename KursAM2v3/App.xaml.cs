@@ -6,11 +6,14 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using AutoMapper;
+using DevExpress.Entity.Model.Metadata;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Core.Serialization;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
 using Helper;
+using Mapper = AutoMapper.Mapper;
 
 namespace KursAM2
 {
@@ -19,9 +22,11 @@ namespace KursAM2
     /// </summary>
     public partial class App
     {
+        public static Mapper Mapper;
         public App()
         {
             var ci = new CultureInfo("ru-RU");
+            Mapper =  MapperConfig.InitializeAutomapper();
             Thread.CurrentThread.CurrentCulture = ci;
             Thread.CurrentThread.CurrentUICulture = ci;
             if (!Directory.Exists($"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}" +

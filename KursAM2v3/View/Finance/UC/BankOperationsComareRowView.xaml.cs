@@ -360,6 +360,10 @@ namespace KursAM2.View.Finance.UC
                     Consumption.IsReadOnly = false;
                     break;
             }
+
+            SFNameButtonItem.IsEnabled = (BankOperationType)TypeKontragent.EditValue == BankOperationType.Kontragent
+                ? true
+                : false;
         }
 
         private void SFName_OnDefaultButtonClick(object sender, RoutedEventArgs e)

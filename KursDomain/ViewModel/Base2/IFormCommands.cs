@@ -21,4 +21,14 @@ public interface IFormCommands
 
 
     ICommand CreateLinkDocumentCommand { get; }
+
+    /// <summary>
+    /// Задать/отменить возможность редактировать вид формы
+    /// </summary>
+    ICommand SetCustomizeFormDocumentCommand { get; }
+    /// <summary>
+    /// Сохранить исправленную разметку 
+    /// </summary>
+    ICommand SaveCustomizedFormDocumentCommand { get; }
+
 }

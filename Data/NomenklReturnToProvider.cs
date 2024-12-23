@@ -27,6 +27,7 @@ namespace Data
         public decimal KontregentDC { get; set; }
         public Nullable<decimal> InvoiceProviderDC { get; set; }
         public string Note { get; set; }
+        public string Creator { get; set; }
     
         public virtual SD_26 SD_26 { get; set; }
         public virtual SD_43 SD_43 { get; set; }

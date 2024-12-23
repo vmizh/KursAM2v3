@@ -42,4 +42,31 @@ public class DocHistoryRepository : KursGenericRepository<DocHistory, ALFAMEDIAE
 
         return ret;
     }
+    public Dictionary<Guid, Tuple<string, DateTime>> GetLastChanges(IEnumerable<Guid> dc_list)
+    {
+        var dcList = dc_list.ToList();
+        if (!dcList.Any()) return new Dictionary<Guid, Tuple<string, DateTime>>();
+
+        var ret = new Dictionary<Guid, Tuple<string, DateTime>>();
+
+        var pages = new List<List<Guid>>();
+        var cnt = dcList.Count() / pageSize;
+        for (var i = 0; i <= cnt; i++) pages.Add(dcList.Skip(i * pageSize).Take(pageSize).ToList());
+
+        foreach (var page in pages)
+        {
+            var data = Context.DocHistory.Where(_ => _.DocId != null
+                                                     && page.Contains(_.DocId.Value))
+                .ToList();
+            // ReSharper disable once PossibleInvalidOperationException
+            var dcs = new List<Guid>(data.Select(_ => _.DocId.Value).Distinct());
+            foreach (var id in dcs)
+            {
+                var r = data.Where(_ => _.DocId == id).OrderByDescending(_ => _.Date).First();
+                ret.Add(id, new Tuple<string, DateTime>(r.UserName, r.Date));
+            }
+        }
+
+        return ret;
+    }
 }

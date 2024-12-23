@@ -54,8 +54,16 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
             RaisePropertyChanged();
         }
     }
-    [Display(AutoGenerateField = false)]
-    public NomenklReturnOfClientRow Entity { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Сумма клиенту")]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal SummaClient => Price * Quantity;
+
+    [Display(AutoGenerateField = true, Name = "Сумма склад")]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal SummaWarehouse => Cost * Quantity;
+
+    [Display(AutoGenerateField = false)] public NomenklReturnOfClientRow Entity { get; set; }
 
     public NomenklReturnOfClientRow DefaultValue()
     {
@@ -93,7 +101,6 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
     }
 
 
-
     [Display(AutoGenerateField = false)]
     public Guid? InvoiceRowId
     {
@@ -108,45 +115,57 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
 
     [Display(AutoGenerateField = true, Name = "Кол-во")]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal Quantity {
+    public decimal Quantity
+    {
         get => Entity.Quantity;
         set
         {
             if (Entity.Quantity == value) return;
             Entity.Quantity = value;
+            UpdateParent();
             RaisePropertyChanged();
         }
     }
+
     [Display(AutoGenerateField = true, Name = "Цена клиенту")]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal Price {
+    public decimal Price
+    {
         get => Entity.Price;
         set
         {
             if (Entity.Price == value) return;
             Entity.Price = value;
+            UpdateParent();
             RaisePropertyChanged();
         }
     }
 
-    [Display(AutoGenerateField = true, Name = "Сумма клиенту")]
-    [DisplayFormat(DataFormatString = "n2")]
-    public decimal SummaClient => Price * Quantity;
-
 
     [Display(AutoGenerateField = true, Name = "Цена склада")]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal Cost {
+    public decimal Cost
+    {
         get => Entity.Cost;
         set
         {
             if (Entity.Cost == value) return;
             Entity.Cost = value;
+            UpdateParent();
             RaisePropertyChanged();
         }
     }
 
-    [Display(AutoGenerateField = true, Name = "Сумма склад")]
-    [DisplayFormat(DataFormatString = "n2")]
-    public decimal SummaWarehouse => Cost * Quantity;
+    private void UpdateParent()
+    {
+        switch (Parent)
+        {
+            case null:
+                return;
+            case NomenklReturnOfClientViewModel p:
+                p.RaisePropertyChanged(nameof(NomenklReturnOfClientViewModel.SummaWarehouse));
+                p.RaisePropertyChanged(nameof(NomenklReturnOfClientViewModel.SummaClient));
+                break;
+        }
+    }
 }

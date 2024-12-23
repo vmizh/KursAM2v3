@@ -391,6 +391,33 @@ public static class MenuGenerator
             });
         return ret;
     }
+
+    public static ObservableCollection<MenuButtonInfo> DocWithCustomizeFormDocumentLeftBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
+    {
+        var ret = BaseLeftBar(vm);
+        ret[0].SubMenu.Add(
+            new MenuButtonInfo
+            {
+                Alignment = Dock.Right,
+                HAlignment = HorizontalAlignment.Right,
+                Caption = "Форматирование/просмотр формы",
+                Image = Application.Current.Resources["CheckStadartDrawingImage"] as DrawingImage,
+                ToolTip = "Создать связанный приходно/расходный документ",
+                Command = vm.SetCustomizeFormDocumentCommand
+            });
+        ret[0].SubMenu.Add(
+            new MenuButtonInfo
+            {
+                Alignment = Dock.Right,
+                HAlignment = HorizontalAlignment.Right,
+                Caption = "Сохранить разметку",
+                Image = Application.Current.Resources["DocumentOptionsDrawingImage"] as DrawingImage,
+                ToolTip = "Сохранить новый формат разметки",
+                Command = vm.SaveCustomizedFormDocumentCommand
+            });
+        return ret;
+    }
     //ExportDrawingImage
 
     public static ObservableCollection<MenuButtonInfo> BaseLeftBar(IFormCommands vm,

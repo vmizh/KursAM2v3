@@ -17,7 +17,7 @@ public class NomenklReturnOfClientViewModel : RSViewModelBase, IEntity<NomenklRe
     public NomenklReturnOfClientViewModel()
     {
         Entity = DefaultValue();
-        Rows = new ObservableCollection<INomenklReturnOfClientRow>();
+        Rows = new ObservableCollection<NomenklReturnOfClientRowViewModel>();
     }
 
     public NomenklReturnOfClientViewModel(NomenklReturnOfClient entity)
@@ -27,7 +27,7 @@ public class NomenklReturnOfClientViewModel : RSViewModelBase, IEntity<NomenklRe
         {
             foreach (var row in Entity.NomenklReturnOfClientRow)
             {
-                Rows.Add(new NomenklReturnOfClientRowViewModel());
+                Rows.Add(new NomenklReturnOfClientRowViewModel(row,this));
             }
         }
     }
@@ -169,7 +169,17 @@ public class NomenklReturnOfClientViewModel : RSViewModelBase, IEntity<NomenklRe
         }
     }
 
+    [Display(AutoGenerateField = true, Name = "Создатель")]
+    [ReadOnly(true)]
+    public string Creator {  get => Entity.Creator;
+        set
+        {
+            if (Entity.Creator == value) return;
+            Entity.Creator = value;
+            RaisePropertyChanged();
+        } }
+
     [Display(AutoGenerateField = false)]
-    public ObservableCollection<INomenklReturnOfClientRow> Rows { get; set; } =
-        new ObservableCollection<INomenklReturnOfClientRow>();
+    public ObservableCollection<NomenklReturnOfClientRowViewModel> Rows { get; set; } =
+        new ObservableCollection<NomenklReturnOfClientRowViewModel>();
 }

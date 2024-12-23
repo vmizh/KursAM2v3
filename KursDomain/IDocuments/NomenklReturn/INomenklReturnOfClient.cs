@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using Data;
+using KursDomain.Documents.NomenklReturn;
 using KursDomain.References;
 
 namespace KursDomain.IDocuments.NomenklReturn;
@@ -17,8 +18,9 @@ public interface INomenklReturnOfClient
     public decimal SummaWarehouse { get; set; }
     public decimal SummaClient { get; set; }
     public string Note { get; set; }
+    public string Creator { set; get; }
 
-    public ObservableCollection<INomenklReturnOfClientRow> Rows { set; get; }
+    public ObservableCollection<NomenklReturnOfClientRowViewModel> Rows { set; get; }
 
     public NomenklReturnOfClient Entity { set; get; }
 }

@@ -488,6 +488,11 @@ public abstract class KursBaseControlViewModel : KursBaseViewModel, IKursBaseCon
     [Display(AutoGenerateField = false)]
     public ICommand CreateLinkDocumentCommand { get; }
 
+    [Display(AutoGenerateField = false)]
+    public ICommand SetCustomizeFormDocumentCommand { get; }
+    [Display(AutoGenerateField = false)]
+    public ICommand SaveCustomizedFormDocumentCommand { get; }
+
 
     public virtual void DocDelete(object form)
     {
