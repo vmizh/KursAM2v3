@@ -35,7 +35,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
             //DateEnd = DateTime.Today;
             //DateStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month - 1, 1);
-            StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month - 1, 1);
+            StartDate = new DateTime(DateTime.Today.Month == 1 ? DateTime.Today.Year-1 : DateTime.Today.Year, DateTime.Today.Month == 1 ? 12 : DateTime.Today.Month - 1, 1);
             EndDate= DateTime.Today;
 
         }

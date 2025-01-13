@@ -346,11 +346,15 @@ namespace KursAM2.View.Finance.UC
             SFNameButtonItem.IsEnabled = false;
             Kontragent.Text = null;
             dtx.CurrentBankOperations.Employee = null;
-            dtx.VVT_VAL_PRIHOD = 0;
-            dtx.VVT_VAL_RASHOD = 0;
+            if (dtx.CurrentBankOperations.AccuredId is null)
+            {
+                dtx.VVT_VAL_PRIHOD = 0;
+                dtx.VVT_VAL_RASHOD = 0;
+            }
 
             switch (t)
             {
+                
                 case BankOperationType.CashOut:
                 case BankOperationType.CashIn:
                     Incoming.IsReadOnly = true;

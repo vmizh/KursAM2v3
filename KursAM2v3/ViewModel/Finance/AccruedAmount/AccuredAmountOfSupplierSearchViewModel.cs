@@ -33,8 +33,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
             });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            EndDate = DateTime.Today; 
-            StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month - 1, 1);
+
+            StartDate = new DateTime(DateTime.Today.Month == 1 ? DateTime.Today.Year - 1 : DateTime.Today.Year,
+                DateTime.Today.Month == 1 ? 12 : DateTime.Today.Month - 1, 1);
+            EndDate = DateTime.Today;
         }
 
         #endregion

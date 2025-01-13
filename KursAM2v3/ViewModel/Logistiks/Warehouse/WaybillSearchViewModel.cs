@@ -92,7 +92,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
 
             //StartDate = DateTime.Today.AddDays(-30);
             //начальная дата поиска - 1-е число предыдущего месяца или 1-го января
-            StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month != 1 ? DateTime.Today.Month - 1 : 1, 1);
+            StartDate = new DateTime(DateTime.Today.Month == 1 ? DateTime.Today.Year - 1 : DateTime.Today.Year,
+                DateTime.Today.Month == 1 ? 12 : DateTime.Today.Month - 1, 1);
             EndDate = DateTime.Today;
         }
 

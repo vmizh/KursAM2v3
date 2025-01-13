@@ -45,7 +45,8 @@ namespace KursAM2.ViewModel.Finance
                 [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
             });
             RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-            StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month - 1, 1);
+            StartDate = new DateTime(DateTime.Today.Month == 1 ? DateTime.Today.Year - 1 : DateTime.Today.Year,
+                DateTime.Today.Month == 1 ? 12 : DateTime.Today.Month - 1, 1);
             EndDate = DateTime.Today;
             try
             {
