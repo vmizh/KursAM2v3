@@ -12,8 +12,8 @@ public interface INomenklReturnOfClient
     public int DocNum { get; set; }
     public string DocExtNum { get; set; }
     public DateTime DocDate { get; set; }
-    public decimal KontragentDC { get; set; }
-    public decimal? InvoiceClientDC { get; set; }
+    public Kontragent Kontragent { get; set; }
+    public Warehouse Warehouse { get; set; }
     public Currency Currency { get; }
     public decimal SummaWarehouse { get; set; }
     public decimal SummaClient { get; set; }

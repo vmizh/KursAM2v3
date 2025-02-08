@@ -403,7 +403,7 @@ namespace KursAM2.ViewModel.Management
 
                     foreach (
                         var op in
-                        bankOper.Where(_ => _.VVT_KONTRAGENT != null)
+                        bankOper.Where(_ => _.VVT_KONTRAGENT != null || _.EmployeeDC != null)
                             .Select(d => new MoneyPeriodRowViewModel
                             {
                                 DocCode = d.DOC_CODE,
@@ -415,8 +415,9 @@ namespace KursAM2.ViewModel.Management
                                 SummaPrihod = d.VVT_VAL_PRIHOD.Value,
                                 // ReSharper disable once PossibleInvalidOperationException
                                 SummaRashod = d.VVT_VAL_RASHOD.Value,
-                                Kontragent =
-                                    ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.VVT_KONTRAGENT)).Name,
+                                Kontragent = d.VVT_KONTRAGENT != null ?
+                                    ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.VVT_KONTRAGENT)).Name :
+                                    ((IName)GlobalOptions.ReferencesCache.GetEmployee(d.EmployeeDC)).Name,
                                 Note = "",
                                 SDRSchet = d.SD_303 != null
                                     ? new SDRSchet

@@ -3,62 +3,59 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Data;
+using KursAM2.ViewModel.Logistiks.NomenklReturn.Helper;
 using KursDomain;
 using KursDomain.Documents.NomenklReturn;
 using KursDomain.IDocuments.NomenklReturn;
+using KursDomain.References;
 
 namespace KursAM2.Repositories.NomenklReturn
 {
     public class NomenklReturnOfClientRepository : INomenklReturnOfClientRepository
     {
+        private readonly ALFAMEDIAEntities Context;
+        private DbContextTransaction transaction;
+
+        public NomenklReturnOfClientRepository(ALFAMEDIAEntities context)
+        {
+            Context = context;
+        }
+
         public void AddOrUpdate(INomenklReturnOfClient entity)
         {
             if (entity is null || entity.Id == Guid.Empty) return;
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var old = ctx.NomenklReturnOfClient.FirstOrDefault(_ => _.Id == entity.Id);
-                if (old != null)
-                {
-                    // ReSharper disable once RedundantAssignment
-                    old = App.Mapper.Map<NomenklReturnOfClient>(entity);
-                }
-                else
-                {
-                    ctx.NomenklReturnOfClient.Add(entity.Entity);
-                }
 
-                ctx.SaveChanges();
-            }
-            
+            var old = Context.NomenklReturnOfClient.FirstOrDefault(_ => _.Id == entity.Id);
+            if (old != null)
+                // ReSharper disable once RedundantAssignment
+                old = App.Mapper.Map<NomenklReturnOfClient>(entity);
+            else
+                Context.NomenklReturnOfClient.Add(entity.Entity);
+
+            Context.SaveChanges();
         }
 
         public void Delete(Guid id)
         {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var d = ctx.NomenklReturnOfClient.FirstOrDefault(_ => _.Id == id);
-                if (d is not null)
-                    ctx.NomenklReturnOfClient.Remove(d);
-            }
+            var d = Context.NomenklReturnOfClient.FirstOrDefault(_ => _.Id == id);
+            if (d is not null)
+                Context.NomenklReturnOfClient.Remove(d);
         }
 
         public INomenklReturnOfClient Get(Guid id)
         {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var entity = ctx.NomenklReturnOfClient.Include(_ => _.NomenklReturnOfClientRow).FirstOrDefault(_ => _.Id == id);
-                return entity is null ? null : new NomenklReturnOfClientViewModel(entity);
-            }
+            var entity = Context.NomenklReturnOfClient.Include(_ => _.NomenklReturnOfClientRow)
+                .FirstOrDefault(_ => _.Id == id);
+            return entity is null ? null : new NomenklReturnOfClientViewModel(entity);
         }
 
         public IEnumerable<INomenklReturnOfClient> GetAll()
         {
             var ret = new List<INomenklReturnOfClient>();
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var data = ctx.NomenklReturnOfClient.Include(_ => _.NomenklReturnOfClientRow).ToList();
-                ret.AddRange(data.Select(ent => new NomenklReturnOfClientViewModel(ent)));
-            }
+
+            var data = Context.NomenklReturnOfClient.Include(_ => _.NomenklReturnOfClientRow).ToList();
+            ret.AddRange(data.Select(ent => new NomenklReturnOfClientViewModel(ent)));
+
 
             return ret;
         }
@@ -66,28 +63,27 @@ namespace KursAM2.Repositories.NomenklReturn
         public IEnumerable<INomenklReturnOfClient> GetForPeriod(DateTime start, DateTime end)
         {
             var ret = new List<INomenklReturnOfClient>();
-            using (var ctx = GlobalOptions.GetEntities())
+
+            var data = Context.NomenklReturnOfClient.Include(_ => _.NomenklReturnOfClientRow)
+                .Where(_ => _.DocDate >= start && _.DocDate <= end);
+            foreach (var d in data)
             {
-                var data = ctx.NomenklReturnOfClient.Include(_ => _.NomenklReturnOfClientRow)
-                    .Where(_ => _.DocDate >= start && _.DocDate <= end);
-                foreach (var d in data)
+                var newItem = new NomenklReturnOfClientSearch
                 {
-                    var newItem = new NomenklReturnOfClientSearch
-                    {
-                        Id = d.Id,
-                        DocDate = d.DocDate,
-                        DocExtNum = d.DocExtNum,
-                        DocNum = d.DocNum,
-                        Entity = d,
-                        InvoiceClientDC = d.InvoiceClientDC,
-                        KontragentDC = d.KontragentDC,
-                        Note = d.Note,
-                        SummaClient = d.NomenklReturnOfClientRow.Sum(_ => _.Price * _.Quantity),
-                        SummaWarehouse = d.NomenklReturnOfClientRow.Sum(_ => _.Cost * _.Quantity)
-                    };
-                    ret.Add(newItem);
-                }
+                    Id = d.Id,
+                    DocDate = d.DocDate,
+                    DocExtNum = d.DocExtNum,
+                    DocNum = d.DocNum,
+                    Entity = d,
+                    Note = d.Note,
+                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent,
+                    Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(d.KontragentDC) as Warehouse,
+                    SummaClient = d.NomenklReturnOfClientRow.Sum(_ => _.Price * _.Quantity),
+                    SummaWarehouse = d.NomenklReturnOfClientRow.Sum(_ => _.Cost * _.Quantity)
+                };
+                ret.Add(newItem);
             }
+
 
             return ret;
         }
@@ -112,10 +108,10 @@ namespace KursAM2.Repositories.NomenklReturn
                 DocDate = DateTime.Today,
                 Creator = GlobalOptions.UserInfo.NickName,
                 Note = old.Note,
-                KontragentDC = old.KontragentDC
+                Kontragent = old.Kontragent,
+                Warehouse = old.Warehouse
             };
             return ret;
-
         }
 
         public INomenklReturnOfClient CrateNewCopy(Guid id)
@@ -127,12 +123,11 @@ namespace KursAM2.Repositories.NomenklReturn
                 DocDate = DateTime.Today,
                 Creator = GlobalOptions.UserInfo.NickName,
                 Note = old.Note,
-                KontragentDC = old.KontragentDC,
-                InvoiceClientDC = old.InvoiceClientDC,
+                Kontragent = old.Kontragent,
+                Warehouse = old.Warehouse
             };
             foreach (var row in old.Rows)
-            {
-                ret.Rows.Add(new NomenklReturnOfClientRowViewModel(new NomenklReturnOfClientRow()
+                ret.Rows.Add(new NomenklReturnOfClientRowViewModel(new NomenklReturnOfClientRow
                 {
                     Id = new Guid(),
                     DocId = ret.Id,
@@ -141,11 +136,89 @@ namespace KursAM2.Repositories.NomenklReturn
                     NomenklDC = row.NomenklDC,
                     Note = row.Note,
                     Price = row.Price,
-                    Quantity = row.Quantity,
+                    Quantity = row.Quantity
                 }, ret));
-                
-            }
+
             return ret;
+        }
+
+        public List<RashodNakladRow> GetRashodNakladRows(decimal kontrDC)
+        {
+            var data = Context.TD_24.Include(_ => _.SD_24)
+                .Include(_ => _.TD_84).Include(_ => _.TD_84.SD_84).Where(_ => _.SD_24.DD_KONTR_POL_DC == kontrDC)
+                .OrderBy(_ => _.SD_24.DD_DATE).ToList();
+
+            return data.Select(d => new RashodNakladRow
+                {
+                    DocCode = d.DOC_CODE,
+                    Code = d.CODE,
+                    Id = d.Id,
+                    WayBillDate = d.SD_24.DD_DATE,
+                    WayBillCreator = d.SD_24.CREATOR,
+                    WayBillNumber = $"{d.SD_24.DD_IN_NUM}" + (string.IsNullOrWhiteSpace(d.SD_24.DD_EXT_NUM)
+                        ? null
+                        : $"/{d.SD_24.DD_EXT_NUM}"),
+                    WaybillNote = $"{d.DDT_NOTE} {d.SD_24.DD_NOTES}",
+                    InvoiceDC = d.TD_84?.DOC_CODE,
+                    InvoiceCode = d.TD_84?.CODE,
+                    InvoiceRowId = d.TD_84?.Id,
+                    InvoiceCreator = d.TD_84?.SD_84.CREATOR,
+                    InvoiceDate = d.TD_84?.SD_84.SF_DATE,
+                    InvoiceNote = $"{d.TD_84?.SFT_TEXT} {d.TD_84?.SD_84.SF_NOTE}",
+                    InvoiceNumber = $"{d.TD_84?.SD_84.SF_IN_NUM}" + (string.IsNullOrWhiteSpace(d.TD_84?.SD_84.SF_OUT_NUM)
+                        ? null
+                        : $"/{d.TD_84.SD_84.SF_OUT_NUM}"),
+                    Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(d.DDT_NOMENKL_DC) as Nomenkl,
+                    Price = d.TD_84?.SFT_ED_CENA ?? 0,
+                    Quantity = d.DDT_KOL_RASHOD,
+                    NomenklDC = d.DDT_NOMENKL_DC
+                })
+                .ToList();
+        }
+
+        public decimal GetNomenklLastPrice(decimal nomDC, DateTime date)
+        {
+            var last = Context.NOM_PRICE.LastOrDefault(_ => _.DATE <= date);
+            return last?.PRICE_WO_NAKLAD ?? 0;
+        }
+
+        public IDictionary<decimal, decimal> GetNomenklLastPrices(List<decimal> nomDCs, DateTime date)
+        {
+            if (nomDCs == null || !nomDCs.Any()) return new Dictionary<decimal, decimal>();
+
+            var ret = new Dictionary<decimal, decimal>();
+            foreach (var dc in nomDCs)
+            {
+                var items = Context.NOM_PRICE.Where(_ => _.NOM_DC == dc && _.DATE <= date && _.PRICE_WO_NAKLAD > 0)
+                    .OrderBy(_ => _.DATE).ToList();
+                if (!items.Any())
+                {
+                    ret.Add(dc, 0);
+                    continue;
+                }
+
+                ret.Add(dc, items.Last().PRICE_WO_NAKLAD);
+            }
+
+            return ret;
+        }
+
+
+        public void BeginTransaction()
+        {
+            transaction = Context.Database.BeginTransaction();
+        }
+
+        public void CommitTransaction()
+        {
+            if(transaction is not null)
+                transaction.Commit();
+        }
+
+        public void RollbackTransaction()
+        {
+            if(transaction is not null)
+                transaction.Rollback();
         }
     }
 }

@@ -18,6 +18,7 @@ namespace Data
         public System.Guid DocId { get; set; }
         public decimal NomenklDC { get; set; }
         public Nullable<System.Guid> InvoiceRowId { get; set; }
+        public Nullable<System.Guid> RashodNakladId { get; set; }
         public decimal Quantity { get; set; }
         public decimal Price { get; set; }
         public decimal Cost { get; set; }

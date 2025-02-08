@@ -10,9 +10,7 @@ namespace KursDomain.Documents.NomenklReturn;
 
 public class NomenklReturnOfClientSearch : INomenklReturnOfClient
 {
-    [Display(AutoGenerateField = true, Name = "Контрагент")]
-    public Kontragent Kontragent => GlobalOptions.ReferencesCache.GetKontragent(KontragentDC) as Kontragent;
-
+   
     /// <summary>
     ///     Пользователь, последний изменивший документ
     /// </summary>
@@ -39,7 +37,12 @@ public class NomenklReturnOfClientSearch : INomenklReturnOfClient
     [ReadOnly(true)]
     public DateTime DocDate { get; set; }
 
-    [Display(AutoGenerateField = false)] public decimal KontragentDC { get; set; }
+    [Display(AutoGenerateField = true, Name = "Контрагент")]
+    public Kontragent Kontragent { get; set; }
+
+    [Display(AutoGenerateField = true, Name = "Склад")]
+    public References.Warehouse Warehouse { get; set; }
+
 
     [Display(AutoGenerateField = false)] public decimal? InvoiceClientDC { get; set; }
 

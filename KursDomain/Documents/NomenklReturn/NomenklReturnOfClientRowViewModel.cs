@@ -13,6 +13,8 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
 {
     private string myInvoiceText;
     private Nomenkl myNomenkl;
+    private string myWaybillText;
+    private decimal myCalcCost;
 
     public NomenklReturnOfClientRowViewModel()
     {
@@ -22,6 +24,7 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
     public NomenklReturnOfClientRowViewModel(NomenklReturnOfClientRow entity, NomenklReturnOfClientViewModel parent)
     {
         Parent = parent;
+        Entity = entity;
     }
 
     [Display(AutoGenerateField = true, Name = "Номенклатура")]
@@ -33,6 +36,7 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
         {
             if (myNomenkl == value) return;
             myNomenkl = value;
+            Entity.NomenklDC = myNomenkl?.DocCode ?? default;
             RaisePropertyChanged();
         }
     }
@@ -43,6 +47,7 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
     [Display(AutoGenerateField = true, Name = "Валюта")]
     public References.Currency Currency => Nomenkl?.Currency as References.Currency;
 
+    [Display(AutoGenerateField = true, Name = "С/фактура")]
     public string InvoiceText
 
     {
@@ -55,6 +60,19 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
         }
     }
 
+    [Display(AutoGenerateField = true, Name = "Расх.накл")]
+    public string WaybillText
+
+    {
+        get => myWaybillText;
+        set
+        {
+            if (myWaybillText == value) return;
+            myWaybillText = value;
+            RaisePropertyChanged();
+        }
+    }
+
     [Display(AutoGenerateField = true, Name = "Сумма клиенту")]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal SummaClient => Price * Quantity;
@@ -62,6 +80,20 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
     [Display(AutoGenerateField = true, Name = "Сумма склад")]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal SummaWarehouse => Cost * Quantity;
+
+    [Display(AutoGenerateField = true, Name = "Расч.себест.")]
+    [DisplayFormat(DataFormatString = "n2")]
+    [ReadOnly(true)]
+    public decimal CalcCost
+    {
+        get => myCalcCost;
+        set
+        {
+            if (myCalcCost == value) return;
+            myCalcCost = value;
+            RaisePropertyChanged();
+        }
+    }
 
     [Display(AutoGenerateField = false)] public NomenklReturnOfClientRow Entity { get; set; }
 

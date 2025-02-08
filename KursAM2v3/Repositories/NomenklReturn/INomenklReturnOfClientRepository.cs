@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using KursAM2.ViewModel.Logistiks.NomenklReturn.Helper;
 using KursDomain.IDocuments.NomenklReturn;
 
 namespace KursAM2.Repositories.NomenklReturn
@@ -15,5 +16,14 @@ namespace KursAM2.Repositories.NomenklReturn
         public INomenklReturnOfClient CrateNewEmpty();
         public INomenklReturnOfClient CrateNewRequisite(Guid id);
         public INomenklReturnOfClient CrateNewCopy(Guid id);
+
+        public List<RashodNakladRow> GetRashodNakladRows(decimal kontrDC);
+
+        public decimal GetNomenklLastPrice(decimal nomDC, DateTime date);
+        public IDictionary<decimal, decimal> GetNomenklLastPrices(List<decimal> nomDCs, DateTime date);
+
+        public void BeginTransaction();
+        public void CommitTransaction();
+        public void RollbackTransaction();
     }
 }

@@ -2155,7 +2155,7 @@ public class RedisCacheReferences : IReferencesCache
                 _.ITEM == "UPDATE_ON_STATY")?.ITEM_VALUE ?? "0");
             if (isUpdateInvoice == 1)
             {
-                foreach (var item in Context.SD_301.AsNoTracking().ToList())
+                foreach (var item in Context.SD_301.OrderBy(_ => _.ORDER_IMPOTANCE).AsNoTracking().ToList())
                 {
                     var newItem = new Currency();
                     newItem.LoadFromEntity(item);

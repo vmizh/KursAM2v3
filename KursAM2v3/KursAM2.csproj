@@ -263,6 +263,7 @@
     <Compile Include="Repositories\Refund\RefundFromClient\RefundFromClientRepository.cs" />
     <Compile Include="Repositories\SD_24Repository.cs" />
     <Compile Include="Repositories\SignatureRepository.cs" />
+    <Compile Include="Repositories\WarehousesRepository\IWaybillRepository.cs" />
     <Compile Include="Resource\ErrorContentConverter.cs" />
     <Compile Include="Resource\ErrorToBrushConverter.cs" />
     <Compile Include="ViewModel\Dogovora\DogovorOfSupplierWindowViewModel.cs" />
@@ -288,8 +289,10 @@
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenklTitleWIndowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\DialogSelectExistNomOnSkaldViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\NomenklRemainsOnSkladWithPrice.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklReturn\Helper\RashodNakladRow.cs" />
     <Compile Include="ViewModel\Logistiks\NomenklReturn\NomenklReturnOfClientSearchViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\NomenklReturn\NomenklReturnOfClientWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklReturn\NomenklReturnSelectWaybillRowsDialog.cs" />
     <Compile Include="ViewModel\Logistiks\TransferOut\TransferOutBalansRemainsDocument.cs" />
     <Compile Include="ViewModel\Logistiks\TransferOut\TransferOutBalansRemainsViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\TransferOut\TransferOutBalansSearchViewModel.cs" />
@@ -568,6 +571,9 @@
     </Compile>
     <Compile Include="View\Logistiks\NomenklReturn\NomenklReturnOfClientView.xaml.cs">
       <DependentUpon>NomenklReturnOfClientView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\NomenklReturn\NomenklReturnSelectWaybillRows.xaml.cs">
+      <DependentUpon>NomenklReturnSelectWaybillRows.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\SkladOstatkiView.xaml.cs">
       <DependentUpon>SkladOstatkiView.xaml</DependentUpon>
@@ -1451,6 +1457,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Logistiks\NomenklReturn\NomenklReturnOfClientView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\NomenklReturn\NomenklReturnSelectWaybillRows.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

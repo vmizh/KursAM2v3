@@ -12,37 +12,66 @@ namespace KursDomain.Documents.NomenklReturn;
 
 public class NomenklReturnOfClientViewModel : RSViewModelBase, IEntity<NomenklReturnOfClient>, INomenklReturnOfClient
 {
-    private string myInvoiceText;
+    private Kontragent myKontragent;
+    private References.Warehouse myWarehouse;
+
+    #region Methods
+
+    public void LoadReferences()
+    {
+        if (Entity?.KontragentDC is not null)
+            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(Entity.KontragentDC) as Kontragent;
+        if(Entity?.WarehouseDC is not null)
+            Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(Entity.WarehouseDC) as References.Warehouse;
+        if (Entity?.NomenklReturnOfClientRow is not null && Entity.NomenklReturnOfClientRow.Count > 0)
+            foreach (var row in Entity.NomenklReturnOfClientRow)
+                Rows.Add(new NomenklReturnOfClientRowViewModel(row, this));
+    }
+
+    #endregion
+
+    #region Constructors
 
     public NomenklReturnOfClientViewModel()
     {
         Entity = DefaultValue();
-        Rows = new ObservableCollection<NomenklReturnOfClientRowViewModel>();
     }
 
     public NomenklReturnOfClientViewModel(NomenklReturnOfClient entity)
     {
         Entity = entity ?? DefaultValue();
-        if (Entity.NomenklReturnOfClientRow is not null && Entity.NomenklReturnOfClientRow.Count > 0)
+        LoadReferences();
+    }
+
+    #endregion
+
+    #region Properties
+
+    [Display(AutoGenerateField = true, Name = "Контрагент")]
+    public Kontragent Kontragent
+    {
+        get => myKontragent;
+        set
         {
-            foreach (var row in Entity.NomenklReturnOfClientRow)
-            {
-                Rows.Add(new NomenklReturnOfClientRowViewModel(row,this));
-            }
+            if (myKontragent == value) return;
+            myKontragent = value;
+            if (myKontragent is not null)
+                Entity.KontragentDC = Kontragent.DocCode;
+            RaisePropertyChanged();
+            RaisePropertyChanged(nameof(Currency));
         }
     }
 
-    [Display(AutoGenerateField = true, Name = "Контрагент")]
-    public Kontragent Kontragent => GlobalOptions.ReferencesCache.GetKontragent(Entity.KontragentDC) as Kontragent;
-
-    [Display(AutoGenerateField = true, Name = "Счет клиента")]
-    public string InvoiceText
+    [Display(AutoGenerateField = true, Name = "Склад")]
+    public References.Warehouse Warehouse
     {
-        get => myInvoiceText;
+        get => myWarehouse;
         set
         {
-            if (myInvoiceText == value) return;
-            myInvoiceText = value;
+            if (myWarehouse == value) return;
+            myWarehouse = value;
+            if (myWarehouse is not null)
+                Entity.WarehouseDC = myWarehouse.DocCode;
             RaisePropertyChanged();
         }
     }
@@ -54,7 +83,7 @@ public class NomenklReturnOfClientViewModel : RSViewModelBase, IEntity<NomenklRe
         return new NomenklReturnOfClient
         {
             Id = Guid.NewGuid(),
-            DocDate = DateTime.Today,
+            DocDate = DateTime.Today
         };
     }
 
@@ -108,31 +137,6 @@ public class NomenklReturnOfClientViewModel : RSViewModelBase, IEntity<NomenklRe
         }
     }
 
-    [Display(AutoGenerateField = false)]
-    public decimal KontragentDC
-    {
-        get => Entity.KontragentDC;
-        set
-        {
-            if (Entity.KontragentDC == value) return;
-            Entity.KontragentDC = value;
-            RaisePropertyChanged();
-            RaisePropertyChanged(nameof(Kontragent));
-            RaisePropertyChanged(nameof(Currency));
-        }
-    }
-
-    [Display(AutoGenerateField = false)]
-    public decimal? InvoiceClientDC
-    {
-        get => Entity.InvoiceClientDC;
-        set
-        {
-            if (Entity.InvoiceClientDC == value) return;
-            Entity.InvoiceClientDC = value;
-            RaisePropertyChanged();
-        }
-    }
 
     [Display(AutoGenerateField = true, Name = "Валюта")]
     public References.Currency Currency => Kontragent?.Currency as References.Currency;
@@ -156,8 +160,6 @@ public class NomenklReturnOfClientViewModel : RSViewModelBase, IEntity<NomenklRe
     }
 
     [Display(AutoGenerateField = true, Name = "Примечание")]
-    [ReadOnly(true)]
-    [DisplayFormat(DataFormatString = "n2")]
     public override string Note
     {
         get => Entity.Note;
@@ -171,15 +173,20 @@ public class NomenklReturnOfClientViewModel : RSViewModelBase, IEntity<NomenklRe
 
     [Display(AutoGenerateField = true, Name = "Создатель")]
     [ReadOnly(true)]
-    public string Creator {  get => Entity.Creator;
+    public string Creator
+    {
+        get => Entity.Creator;
         set
         {
             if (Entity.Creator == value) return;
             Entity.Creator = value;
             RaisePropertyChanged();
-        } }
+        }
+    }
 
     [Display(AutoGenerateField = false)]
     public ObservableCollection<NomenklReturnOfClientRowViewModel> Rows { get; set; } =
         new ObservableCollection<NomenklReturnOfClientRowViewModel>();
+
+    #endregion
 }

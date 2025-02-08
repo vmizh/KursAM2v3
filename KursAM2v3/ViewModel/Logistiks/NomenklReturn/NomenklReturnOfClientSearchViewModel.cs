@@ -5,9 +5,8 @@ using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using Core.Helper;
 using Core.ViewModel.Base;
-using DevExpress.Mvvm.DataAnnotations;
+using Data;
 using Helper;
 using KursAM2.Managers;
 using KursAM2.Repositories.NomenklReturn;
@@ -24,9 +23,10 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 {
     public sealed class NomenklReturnOfClientSearchViewModel : RSWindowSearchViewModelBase
     {
+        private readonly ALFAMEDIAEntities myContext = GlobalOptions.GetEntities();
         public NomenklReturnOfClientSearchViewModel()
         {
-            myRepository = new NomenklReturnOfClientRepository();
+            myRepository = new NomenklReturnOfClientRepository(myContext);
             redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
             mySubscriber = redis.GetSubscriber();
 
@@ -42,9 +42,11 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         #region Commands
 
+        
+
         public override void DocNewEmpty(object form)
         {
-            var frm = new NomenklReturnOfClientView()
+            var frm = new NomenklReturnOfClientView
             {
                 Owner = Application.Current.MainWindow
             };
@@ -60,7 +62,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                 DocumentType.NomenklReturnOfClient, CurrentDocument.Id);
         }
 
-        public override void RefreshData()
+        public override void RefreshData(object data)
         {
             var frm = Form as StandartSearchView;
             var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
