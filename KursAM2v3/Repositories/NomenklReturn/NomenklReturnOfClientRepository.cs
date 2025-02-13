@@ -21,10 +21,20 @@ namespace KursAM2.Repositories.NomenklReturn
             Context = context;
         }
 
-        public void AddOrUpdate(INomenklReturnOfClient entity)
+        public void AddOrUpdate(INomenklReturnOfClient entity, List<Guid> deletedIds)
         {
             if (entity is null || entity.Id == Guid.Empty) return;
-
+            if (deletedIds != null && deletedIds.Any())
+            {
+                foreach (var dId in deletedIds)
+                {
+                    var oldRow = Context.NomenklReturnOfClientRow.FirstOrDefault(_ => _.Id == dId);
+                    if (oldRow != null)
+                    {
+                        Context.NomenklReturnOfClientRow.Remove(oldRow);
+                    }
+                }
+            }
             var old = Context.NomenklReturnOfClient.FirstOrDefault(_ => _.Id == entity.Id);
             if (old != null)
                 // ReSharper disable once RedundantAssignment
@@ -64,7 +74,7 @@ namespace KursAM2.Repositories.NomenklReturn
         {
             var ret = new List<INomenklReturnOfClient>();
 
-            var data = Context.NomenklReturnOfClient.Include(_ => _.NomenklReturnOfClientRow)
+            var data = Context.NomenklReturnOfClient.AsNoTracking().Include(_ => _.NomenklReturnOfClientRow)
                 .Where(_ => _.DocDate >= start && _.DocDate <= end);
             foreach (var d in data)
             {
@@ -219,6 +229,36 @@ namespace KursAM2.Repositories.NomenklReturn
         {
             if(transaction is not null)
                 transaction.Rollback();
+        }
+
+        public int GetNewNumber()
+        {
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                return ctx.NomenklReturnOfClient.Any() ? ctx.NomenklReturnOfClient.Max(_ => _.DocNum) + 1 : 1;
+            }
+        }
+
+        public void UndoChanges()
+        {
+            var changedEntries = Context.ChangeTracker.Entries()
+                .Where(x => x.State != EntityState.Unchanged).ToList();
+            foreach (var entry in changedEntries)
+            {
+                switch(entry.State)
+                {
+                    case EntityState.Modified:
+                        entry.CurrentValues.SetValues(entry.OriginalValues);
+                        entry.State = EntityState.Unchanged;
+                        break;
+                    case EntityState.Added:
+                        entry.State = EntityState.Detached;
+                        break;
+                    case EntityState.Deleted:
+                        entry.State = EntityState.Unchanged;
+                        break;
+                }
+            }
         }
     }
 }

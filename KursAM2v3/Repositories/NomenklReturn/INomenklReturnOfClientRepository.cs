@@ -7,7 +7,7 @@ namespace KursAM2.Repositories.NomenklReturn
 {
     public interface INomenklReturnOfClientRepository
     {
-        public void AddOrUpdate(INomenklReturnOfClient entity);
+        public void AddOrUpdate(INomenklReturnOfClient entity, List<Guid> deletedIds);
         public void Delete(Guid id);
         public INomenklReturnOfClient Get(Guid id);
         public IEnumerable<INomenklReturnOfClient> GetAll();
@@ -25,5 +25,9 @@ namespace KursAM2.Repositories.NomenklReturn
         public void BeginTransaction();
         public void CommitTransaction();
         public void RollbackTransaction();
+        public int GetNewNumber();
+
+        public void UndoChanges();
+    
     }
 }

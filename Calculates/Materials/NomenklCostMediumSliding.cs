@@ -467,6 +467,42 @@ namespace Calculates.Materials
                     ret.Operations.Add(newspis);
                 }
 
+                var returnNomenkl = context.NomenklReturnOfClientRow.Include(_ => _.NomenklReturnOfClient)
+                    .Where(_ => _.NomenklDC == nomDC);
+                foreach (var rRow in returnNomenkl)
+                {
+                    currentRowNumber++;
+                    var newRet = new NomenklCalcCostOperation
+                    {
+                        RowNumber = currentRowNumber,
+                        Note = rRow.Note,
+                        CalcPrice = rRow.Cost,
+                        CalcPriceNaklad = rRow.Cost,
+                        DocDate = rRow.NomenklReturnOfClient.DocDate,
+                        KontragentIn = null,
+                        KontragentOut = GlobalOptions.ReferencesCache.GetKontragent(rRow.NomenklReturnOfClient.KontragentDC) as Kontragent,
+                        OperationName = "Возврат товара от клиента",
+                        OperCode = 1005,
+                        QuantityIn = rRow.Quantity,
+                        QuantityOut = 0,
+                        DocPrice = 0,
+                        Naklad = 0,
+                        SkladIn = GlobalOptions.ReferencesCache.GetWarehouse(rRow.NomenklReturnOfClient.WarehouseDC) as Warehouse,
+                        SkladOut = null,
+                        SummaIn = rRow.Cost*rRow.Quantity,
+                        SummaInWithNaklad = rRow.Cost*rRow.Quantity,
+                        SummaOut = 0,
+                        SummaOutWithNaklad = 0,
+                        QuantityNakopit = 0,
+                        TovarDocDC = -1,
+                        NomenklDC = nomDC,
+                        Id = rRow.DocId,
+                        TovarDocument = $"Возврат товара №{rRow.NomenklReturnOfClient.DocNum}" + (string.IsNullOrWhiteSpace(rRow.NomenklReturnOfClient.DocExtNum) ? string.Empty : $"/{rRow.NomenklReturnOfClient.DocExtNum}")
+                        + $" от {rRow.NomenklReturnOfClient.DocDate.ToShortDateString()}"
+                    };
+                    ret.Operations.Add(newRet);
+                }
+
                 if (isCalOnly)
                 {
                     var calc = Calc(ret.Operations);

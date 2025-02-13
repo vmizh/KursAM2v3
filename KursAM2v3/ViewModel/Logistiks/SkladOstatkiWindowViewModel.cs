@@ -462,6 +462,10 @@ namespace KursAM2.ViewModel.Logistiks
                     // ReSharper disable once PossibleInvalidOperationException
                     DocumentsOpenManager.Open(DocumentType.InvoiceProvider, (decimal)CurrentOperation.FinDocumentDC);
                     break;
+                case 1005:
+                    DocumentsOpenManager.Open(
+                        DocumentType.NomenklReturnOfClient, CurrentOperation.Id);
+                    break;
             }
         }
 

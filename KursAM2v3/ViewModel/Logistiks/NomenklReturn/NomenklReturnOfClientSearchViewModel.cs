@@ -42,7 +42,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         #region Commands
 
-        
+        public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
         public override void DocNewEmpty(object form)
         {

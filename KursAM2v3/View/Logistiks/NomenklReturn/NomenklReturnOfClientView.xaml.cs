@@ -92,6 +92,8 @@ namespace KursAM2.View.Logistiks.NomenklReturn
             switch (e.Column.Name)
             {
                 case "State":
+                    e.Column.Header = "Статус";
+                    e.Column.ReadOnly = true;
                     e.Column.Visible = false;
                     break;
             }

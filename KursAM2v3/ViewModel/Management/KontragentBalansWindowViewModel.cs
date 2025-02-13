@@ -700,6 +700,19 @@ namespace KursAM2.ViewModel.Management
                 DocumentsOpenManager.Open(CurrentDocument.DocTypeCode, CurrentDocument.DocRowCode);
                 return;
             }
+            if (CurrentDocument.DocTypeCode == DocumentType.NomenklReturnOfClient)
+            {
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    var s = CurrentDocument.DocNum.Split('/');
+                    var num = Convert.ToInt32(s[0]);
+                    var retDoc = ctx.NomenklReturnOfClient.FirstOrDefault(_ => _.DocDate == CurrentDocument.DocDate
+                        && _.DocNum == num);
+                    if(retDoc is not null)
+                        DocumentsOpenManager.Open(CurrentDocument.DocTypeCode, retDoc.Id);
+                }
+                return;
+            }
 
             if (CurrentDocument.DocTypeCode == DocumentType.AccruedAmountForClient ||
                 CurrentDocument.DocTypeCode == DocumentType.AccruedAmountOfSupplier)

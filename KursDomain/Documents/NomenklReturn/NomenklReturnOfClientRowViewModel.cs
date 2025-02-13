@@ -25,6 +25,24 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
     {
         Parent = parent;
         Entity = entity;
+        LoadReferences();
+    }
+
+    public void LoadReferences()
+    {
+        Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) as Nomenkl;
+    }
+
+    [Display(AutoGenerateField = false)]
+    public override Guid Id
+    {
+        get => Entity.Id;
+        set
+        {
+            if (Entity.Id == value) return;
+            Entity.Id = value;
+            RaisePropertyChanged();
+        }
     }
 
     [Display(AutoGenerateField = true, Name = "Номенклатура")]
@@ -156,6 +174,8 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
             Entity.Quantity = value;
             UpdateParent();
             RaisePropertyChanged();
+            RaisePropertyChanged(nameof(SummaClient));
+            RaisePropertyChanged(nameof(SummaWarehouse));
         }
     }
 
@@ -170,6 +190,7 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
             Entity.Price = value;
             UpdateParent();
             RaisePropertyChanged();
+            RaisePropertyChanged(nameof(SummaClient));
         }
     }
 
@@ -185,6 +206,7 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
             Entity.Cost = value;
             UpdateParent();
             RaisePropertyChanged();
+            RaisePropertyChanged(nameof(SummaWarehouse));
         }
     }
 

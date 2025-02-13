@@ -50,11 +50,9 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
             else
             {
                 Document = myRepository.Get(id.Value) as NomenklReturnOfClientViewModel;
-                // ReSharper disable once PossibleNullReferenceException
-                Document.State = RowStatus.NotEdited;
+                LoadRefernces();
+                setUnchangedStatus();
             }
-
-            LoadRefernces();
         }
 
         #endregion
@@ -63,6 +61,29 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         public void LoadRefernces()
         {
+            var prices = myRepository.GetNomenklLastPrices(Document.Rows.Select(_ => _.NomenklDC).ToList(),
+                Document.DocDate);
+            foreach (var row in Document.Rows)
+            {
+                row.CalcCost = prices.FirstOrDefault(_ => _.Key == row.NomenklDC).Value;
+                if (row.Entity.RashodNakladId != null)
+                {
+                    var s = myWaybillRepository.GetInfoByRowId(row.Entity.RashodNakladId.Value); 
+                    row.WaybillText = s.IndexOf('№') > 0 ? s.Remove(0, s.IndexOf('№')) : s;
+                }
+                if (row.InvoiceRowId is not null)
+                {
+                    var s1 = myInvoiceClientRepository.GetInfoByRowId(row.InvoiceRowId.Value);
+                    row.InvoiceText = s1.IndexOf('№') > 0 ? s1.Remove(0, s1.IndexOf('№')) : s1;
+                }   
+            }
+        }
+
+        private void setUnchangedStatus()
+        {
+            foreach(var r in Document.Rows)
+                r.myState = RowStatus.NotEdited;
+            Document.State = RowStatus.NotEdited;
         }
 
         #endregion
@@ -91,10 +112,12 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         #region Properties
 
-        public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited;
+        public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited; 
 
         public override string WindowName => "Возврат товара от клиента";
         public override string LayoutName => "NomenklReturnOfClientWindow";
+
+        public readonly List<NomenklReturnOfClientRowViewModel> DeletedRows = new List<NomenklReturnOfClientRowViewModel>();
 
         public NomenklReturnOfClientViewModel Document
         {
@@ -293,7 +316,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
             var prices = myRepository.GetNomenklLastPrices(ctx.SelectedWaybillRows.Select(_ => _.NomenklDC).ToList(),
-                DateTime.Today);
+                Document.DocDate);
             foreach (var item in ctx.SelectedWaybillRows)
             {
                 var newRow = new NomenklReturnOfClientRowViewModel(new NomenklReturnOfClientRow
@@ -330,23 +353,51 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
         }
 
         private void DeleteRow(object obj)
-        {
-
+        {  
+            if(CurrentRow.State != RowStatus.NewRow)
+                DeletedRows.Add(CurrentRow);
+            Document.Rows.Remove(CurrentRow);
+            //Document.Entity.NomenklReturnOfClientRow.Remove(CurrentRow.Entity);
+            Document.State = RowStatus.Edited;
         }
 
         public override void SaveData(object data)
         {
             try
             {
+                if (State == RowStatus.NewRow || Document.DocNum < 0)
+                {
+                    var n = myRepository.GetNewNumber();
+                    Document.DocNum = n <= 0 ? 1 : n;
+                }
+
                 myRepository.BeginTransaction();
-                myRepository.AddOrUpdate(Document);
+                myRepository.AddOrUpdate(Document, DeletedRows.Select(_ => _.Id).ToList());
                 myRepository.CommitTransaction();
+                DeletedRows.Clear();
+                setUnchangedStatus();
             }
             catch (Exception ex)
             {
                 myRepository.RollbackTransaction();
                 WindowManager.ShowError(ex);
             }
+        }
+
+        public override void RefreshData(object obj)
+        {
+            foreach (var dRow in DeletedRows)
+            {
+                Document.Rows.Add(dRow);
+            }
+            myRepository.UndoChanges();
+            Document.RaisePropertyAllChanged();
+            foreach (var row in Document.Rows)
+            {
+                row.RaisePropertyAllChanged();
+            }
+            DeletedRows.Clear();
+            setUnchangedStatus();
         }
 
         #endregion

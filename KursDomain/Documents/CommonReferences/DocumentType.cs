@@ -149,11 +149,11 @@ public enum DocumentType
     [Display(Name = "Перевод за баланс")]
     TransferOutBalans = 1006,
 
-        [Display(Name = "Возврат товара от клиента")]
-    NomenklReturnOfClient = 101,
+    [Display(Name = "Возврат товара от клиента")]
+    NomenklReturnOfClient = 1005,
 
     [Display(Name = "Возвра товара поставщику")]
-    NomenklReturnToProvider = 102
+    NomenklReturnToProvider = 1006
 
 
 
