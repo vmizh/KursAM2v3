@@ -5,8 +5,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Core.ViewModel.Base;
 using Data;
+using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.NomenklReturn;
 using KursDomain.References;
+using Newtonsoft.Json;
 
 namespace KursDomain.Documents.NomenklReturn;
 
@@ -21,11 +23,28 @@ public class NomenklReturnOfClientViewModel : RSViewModelBase, IEntity<NomenklRe
     {
         if (Entity?.KontragentDC is not null)
             Kontragent = GlobalOptions.ReferencesCache.GetKontragent(Entity.KontragentDC) as Kontragent;
-        if(Entity?.WarehouseDC is not null)
+        if (Entity?.WarehouseDC is not null)
             Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(Entity.WarehouseDC) as References.Warehouse;
         if (Entity?.NomenklReturnOfClientRow is not null && Entity.NomenklReturnOfClientRow.Count > 0)
             foreach (var row in Entity.NomenklReturnOfClientRow)
                 Rows.Add(new NomenklReturnOfClientRowViewModel(row, this));
+    }
+
+    public override object ToJson()
+    {
+        var res = new
+        {
+            DocCode,
+            Номер = DocNum + "/" + DocExtNum,
+            Дата = DocDate.ToShortDateString(),
+            Контрагент = Kontragent.Name,
+            Склад = Warehouse.Name,
+            СуммаСклад = SummaWarehouse,
+            СуммаКлиент = SummaClient,
+            Примечание = Note,
+            Позиции = Rows.Select(_ => _.ToJson())
+        };
+        return JsonConvert.SerializeObject(res);
     }
 
     #endregion
@@ -183,6 +202,16 @@ public class NomenklReturnOfClientViewModel : RSViewModelBase, IEntity<NomenklRe
             RaisePropertyChanged();
         }
     }
+
+    public override string Description
+    {
+        get
+        {
+            var extNum = string.IsNullOrWhiteSpace(DocExtNum) ? string.Empty : $"/{DocExtNum}";
+            return $"Возврат товара от клиента №{DocNum}{extNum} от {DocDate.ToShortDateString()} Контр-т: {Kontragent} Склад: {Warehouse} на сумму {SummaClient:n2}/{SummaWarehouse:n2} {Kontragent?.Currency}";
+        }
+    }
+
 
     [Display(AutoGenerateField = false)]
     public ObservableCollection<NomenklReturnOfClientRowViewModel> Rows { get; set; } =

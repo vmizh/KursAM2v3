@@ -150,10 +150,10 @@ public enum DocumentType
     TransferOutBalans = 1006,
 
     [Display(Name = "Возврат товара от клиента")]
-    NomenklReturnOfClient = 1005,
+    NomenklReturnOfClient = 1007,
 
     [Display(Name = "Возвра товара поставщику")]
-    NomenklReturnToProvider = 1006
+    NomenklReturnToProvider = 1008
 
 
 

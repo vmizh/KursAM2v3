@@ -50,6 +50,7 @@ namespace KursAM2.Repositories.NomenklReturn
             var d = Context.NomenklReturnOfClient.FirstOrDefault(_ => _.Id == id);
             if (d is not null)
                 Context.NomenklReturnOfClient.Remove(d);
+            Context.SaveChanges();
         }
 
         public INomenklReturnOfClient Get(Guid id)
@@ -57,6 +58,28 @@ namespace KursAM2.Repositories.NomenklReturn
             var entity = Context.NomenklReturnOfClient.Include(_ => _.NomenklReturnOfClientRow)
                 .FirstOrDefault(_ => _.Id == id);
             return entity is null ? null : new NomenklReturnOfClientViewModel(entity);
+        }
+
+        public NomenklReturnOfClientSearch GetSeacrh(Guid id)
+        {
+            var d = Context.NomenklReturnOfClient.Include(_ => _.NomenklReturnOfClientRow)
+                .FirstOrDefault(_ => _.Id == id);
+            if (d is null) return null;
+            var ret = new NomenklReturnOfClientSearch
+            {
+                Id = d.Id,
+                DocDate = d.DocDate,
+                DocExtNum = d.DocExtNum,
+                DocNum = d.DocNum,
+                Entity = d,
+                Note = d.Note,
+                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent,
+                Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(d.WarehouseDC) as Warehouse,
+                SummaClient = d.NomenklReturnOfClientRow.Sum(_ => _.Price * _.Quantity),
+                SummaWarehouse = d.NomenklReturnOfClientRow.Sum(_ => _.Cost * _.Quantity),
+                Creator = d.Creator
+            };
+            return ret;
         }
 
         public IEnumerable<INomenklReturnOfClient> GetAll()
@@ -87,9 +110,10 @@ namespace KursAM2.Repositories.NomenklReturn
                     Entity = d,
                     Note = d.Note,
                     Kontragent = GlobalOptions.ReferencesCache.GetKontragent(d.KontragentDC) as Kontragent,
-                    Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(d.KontragentDC) as Warehouse,
+                    Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(d.WarehouseDC) as Warehouse,
                     SummaClient = d.NomenklReturnOfClientRow.Sum(_ => _.Price * _.Quantity),
-                    SummaWarehouse = d.NomenklReturnOfClientRow.Sum(_ => _.Cost * _.Quantity)
+                    SummaWarehouse = d.NomenklReturnOfClientRow.Sum(_ => _.Cost * _.Quantity),
+                    Creator = d.Creator
                 };
                 ret.Add(newItem);
             }

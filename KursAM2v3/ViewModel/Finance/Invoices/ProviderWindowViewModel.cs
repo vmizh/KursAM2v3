@@ -259,6 +259,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             UnitOfWork.Context.Entry(Document.Entity).State = EntityState.Detached;
             Document.Id = newId;
             Document.DocCode = -1;
+            Document.Note = null;
             Document.SF_POSTAV_NUM = null;
             Document.DocDate = DateTime.Today;
             Document.SF_REGISTR_DATE = DateTime.Today;
@@ -284,6 +285,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     row.Id = Guid.NewGuid();
                     row.DocId = newId;
                     row.Code = newCode;
+                    row.Note = null;
                     row.myState = RowStatus.NewRow;
                     row.CurrencyConvertRows.Clear();
                     newCode++;

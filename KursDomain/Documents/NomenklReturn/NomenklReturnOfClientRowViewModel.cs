@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using Core.ViewModel.Base;
 using Data;
+using KursDomain.ICommon;
 using KursDomain.IDocuments.NomenklReturn;
 using KursDomain.References;
 
@@ -31,6 +32,22 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
     public void LoadReferences()
     {
         Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) as Nomenkl;
+    }
+
+    public override object ToJson()
+    {
+        return new
+        {
+            Id,
+            Номенклатурный_номер = NomenklNumber,
+            Номенклатура = Nomenkl.Name,
+            Количество = Quantity.ToString("n2"),
+            Единица_измерения = ((IName)Nomenkl.Unit).Name,
+            СуммаКлиент = SummaClient,
+            СуммаСклад = SummaWarehouse,
+            Примечание = Note
+           
+        };
     }
 
     [Display(AutoGenerateField = false)]

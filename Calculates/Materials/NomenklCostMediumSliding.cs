@@ -482,7 +482,7 @@ namespace Calculates.Materials
                         KontragentIn = null,
                         KontragentOut = GlobalOptions.ReferencesCache.GetKontragent(rRow.NomenklReturnOfClient.KontragentDC) as Kontragent,
                         OperationName = "Возврат товара от клиента",
-                        OperCode = 1005,
+                        OperCode = 1007,
                         QuantityIn = rRow.Quantity,
                         QuantityOut = 0,
                         DocPrice = 0,

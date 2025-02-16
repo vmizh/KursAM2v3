@@ -8,22 +8,29 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Xml;
+using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.LayoutControl;
+using Helper;
 using KursAM2.Dialogs;
+using KursAM2.Managers;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.Repositories.NomenklReturn;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.Repositories.WarehousesRepository;
 using KursAM2.View.Logistiks.NomenklReturn;
+using KursAM2.ViewModel.Management.Calculations;
 using KursDomain;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklReturn;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace KursAM2.ViewModel.Logistiks.NomenklReturn
@@ -35,7 +42,28 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
         public NomenklReturnOfClientWindowViewModel(Guid? id)
         {
             myRepository = new NomenklReturnOfClientRepository(myContext);
-            redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+           
+            try
+            { 
+                redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+                mySubscriber = redis.GetSubscriber();
+                if (mySubscriber.IsConnected())
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.NomenklReturnOfClient, RedisChannel.PatternMode.Auto),
+                        (channel, message) =>
+                        {
+                            if (KursNotyficationService != null)
+                            {
+                                Console.WriteLine($@"Redis - {message}");
+                                Form.Dispatcher.Invoke(() => ShowNotify(message));
+                            }
+                        });
+            }
+            catch
+            {
+                Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
+            }
+
             mySubscriber = redis.GetSubscriber();
             LeftMenuBar = GlobalOptions.UserInfo.IsAdmin
                 ? MenuGenerator.DocWithCustomizeFormDocumentLeftBar(this)
@@ -59,6 +87,19 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         #region Methods
 
+        private void ShowNotify(string notify)
+        {
+            if (string.IsNullOrWhiteSpace(notify)) return;
+            var msg = JsonConvert.DeserializeObject<RedisMessage>(notify);
+            if (msg == null || msg.UserId == GlobalOptions.UserInfo.KursId) return;
+            if (msg.DocCode == Document.DocCode)
+            {
+                NotifyInfo = msg.Message;
+                var notification = KursNotyficationService.CreateCustomNotification(this);
+                notification.ShowAsync();
+            }
+        }
+
         public void LoadRefernces()
         {
             var prices = myRepository.GetNomenklLastPrices(Document.Rows.Select(_ => _.NomenklDC).ToList(),
@@ -68,22 +109,24 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                 row.CalcCost = prices.FirstOrDefault(_ => _.Key == row.NomenklDC).Value;
                 if (row.Entity.RashodNakladId != null)
                 {
-                    var s = myWaybillRepository.GetInfoByRowId(row.Entity.RashodNakladId.Value); 
+                    var s = myWaybillRepository.GetInfoByRowId(row.Entity.RashodNakladId.Value);
                     row.WaybillText = s.IndexOf('№') > 0 ? s.Remove(0, s.IndexOf('№')) : s;
                 }
+
                 if (row.InvoiceRowId is not null)
                 {
                     var s1 = myInvoiceClientRepository.GetInfoByRowId(row.InvoiceRowId.Value);
                     row.InvoiceText = s1.IndexOf('№') > 0 ? s1.Remove(0, s1.IndexOf('№')) : s1;
-                }   
+                }
             }
         }
 
         private void setUnchangedStatus()
         {
-            foreach(var r in Document.Rows)
+            foreach (var r in Document.Rows)
                 r.myState = RowStatus.NotEdited;
-            Document.State = RowStatus.NotEdited;
+            Document.myState = RowStatus.NotEdited;
+            Document.RaisePropertyChanged("State");
         }
 
         #endregion
@@ -112,12 +155,15 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         #region Properties
 
-        public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited; 
+        public string NotifyInfo { get; set; }
+
+        public override bool IsCanSaveData => Document != null && Document.State != RowStatus.NotEdited;
 
         public override string WindowName => "Возврат товара от клиента";
         public override string LayoutName => "NomenklReturnOfClientWindow";
 
-        public readonly List<NomenklReturnOfClientRowViewModel> DeletedRows = new List<NomenklReturnOfClientRowViewModel>();
+        public readonly List<NomenklReturnOfClientRowViewModel> DeletedRows =
+            new List<NomenklReturnOfClientRowViewModel>();
 
         public NomenklReturnOfClientViewModel Document
         {
@@ -152,6 +198,80 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
         #endregion
 
         #region Command
+
+        public override void DocDelete(object form)
+        {
+            var res = MessageBox.Show("Вы уверены, что хотите удалить данный документ?", "Запрос",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+            switch (res)
+            {
+                case MessageBoxResult.Yes:
+                    var dc = Document.DocCode;
+                    var docdate = Document.DocDate;
+                    if (Document.State == RowStatus.NewRow)
+                    {
+                        Form.Close();
+                        return;
+                    }
+
+                    try
+                    {
+                        myRepository.BeginTransaction();
+                        myRepository.Delete(Document.Id);
+                        myRepository.CommitTransaction();
+                        if (mySubscriber != null && mySubscriber.IsConnected())
+                        {
+                            var message = new RedisMessage
+                            {
+                                DocumentType = DocumentType.NomenklReturnOfClient,
+                                DocCode = Document.DocCode,
+                                DocDate = Document.DocDate,
+                                IsDocument = true,
+                                OperationType = RedisMessageDocumentOperationTypeEnum.Delete,
+                                Message =
+                                    $"Пользователь '{GlobalOptions.UserInfo.Name}' удалил возврат товара от клиента {Document.Description}"
+                            };
+                            message.ExternalValues.Add("KontragentDC", Document.Kontragent.DocCode);
+                            message.ExternalValues.Add("WarehouseDC", Document.Warehouse.DocCode);
+                            var jsonSerializerSettings = new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All
+                            };
+                            var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                            if (Document.State != RowStatus.NewRow)
+                                mySubscriber.Publish(
+                                    new RedisChannel(RedisMessageChannels.NomenklReturnOfClient,
+                                        RedisChannel.PatternMode.Auto),
+                                    json);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        myRepository.RollbackTransaction();
+                        WindowManager.ShowError(ex);
+                    }
+
+                    RecalcKontragentBalans.CalcBalans(dc, docdate);
+                    Form?.Close();
+                    break;
+                case MessageBoxResult.No:
+                    break;
+            }
+        }
+
+        public override void CloseWindow(object form)
+        {
+            if (CanCustomize)
+            {
+                var res = MessageBox.Show("Документ в статусе настройки шапки, сохранить текущий вид?", "Запрос",
+                    MessageBoxButton.YesNoCancel,
+                    MessageBoxImage.Question);
+                if (res == MessageBoxResult.Yes) SaveCustomizedFormDocument(null);
+            }
+
+            base.CloseWindow(form);
+        }
 
         public ICommand KontragentSelectCommad
         {
@@ -353,8 +473,8 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
         }
 
         private void DeleteRow(object obj)
-        {  
-            if(CurrentRow.State != RowStatus.NewRow)
+        {
+            if (CurrentRow.State != RowStatus.NewRow)
                 DeletedRows.Add(CurrentRow);
             Document.Rows.Remove(CurrentRow);
             //Document.Entity.NomenklReturnOfClientRow.Remove(CurrentRow.Entity);
@@ -375,6 +495,36 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                 myRepository.AddOrUpdate(Document, DeletedRows.Select(_ => _.Id).ToList());
                 myRepository.CommitTransaction();
                 DeletedRows.Clear();
+                DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.NomenklReturnOfClient), Document.Id,
+                    null, null, (string)Document.ToJson());
+                LastDocumentManager.SaveLastOpenInfo(DocumentType.NomenklReturnOfClient, Document.Id, null,
+                    Document.Creator, GlobalOptions.UserInfo.NickName, Document.Description);
+                if (mySubscriber != null && mySubscriber.IsConnected())
+                {
+                    var str = Document.State == RowStatus.NewRow ? "создал" : "сохранил";
+                    var message = new RedisMessage
+                    {
+                        DocumentType = DocumentType.NomenklReturnOfClient,
+                        Id = Document.Id,
+                        DocDate = Document.DocDate,
+                        IsDocument = true,
+                        OperationType = Document.myState == RowStatus.NewRow
+                            ? RedisMessageDocumentOperationTypeEnum.Create
+                            : RedisMessageDocumentOperationTypeEnum.Update,
+                        Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} ордер {Document.Description}"
+                    };
+                    message.ExternalValues.Add("KontragentDC", Document.Kontragent.DocCode);
+                    message.ExternalValues.Add("WarehouseDC", Document.Warehouse.DocCode);
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                    mySubscriber.Publish(
+                        new RedisChannel(RedisMessageChannels.NomenklReturnOfClient, RedisChannel.PatternMode.Auto),
+                        json);
+                }
+
                 setUnchangedStatus();
             }
             catch (Exception ex)
@@ -386,16 +536,10 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         public override void RefreshData(object obj)
         {
-            foreach (var dRow in DeletedRows)
-            {
-                Document.Rows.Add(dRow);
-            }
+            foreach (var dRow in DeletedRows) Document.Rows.Add(dRow);
             myRepository.UndoChanges();
             Document.RaisePropertyAllChanged();
-            foreach (var row in Document.Rows)
-            {
-                row.RaisePropertyAllChanged();
-            }
+            foreach (var row in Document.Rows) row.RaisePropertyAllChanged();
             DeletedRows.Clear();
             setUnchangedStatus();
         }

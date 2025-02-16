@@ -20,6 +20,12 @@ namespace KursAM2.View.Logistiks.NomenklReturn
         private void LayoutItems_OnAutoGeneratingItem(object sender, DataLayoutControlAutoGeneratingItemEventArgs e)
         {
             var dtx = DataContext as NomenklReturnOfClientWindowViewModel;
+            if (e.Item.Content is BaseEdit ed)
+            {
+                ed.EditValuePostDelay = 0;
+                ed.EditValuePostMode = PostMode.Immediate;
+            }
+
             switch (e.PropertyName)
             {
                 case "Kontragent":

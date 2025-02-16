@@ -390,6 +390,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             UnitOfWork.Context.Entry(Document.Entity).State = EntityState.Detached;
             Document.DocCode = -1;
             Document.DocDate = DateTime.Today;
+            Document.Note = null;
             Document.REGISTER_DATE = DateTime.Today;
             Document.CREATOR = GlobalOptions.UserInfo.Name;
             Document.InnerNumber = -1;
@@ -411,6 +412,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     item.Id = Guid.NewGuid();
                     item.DocId = newId;
                     item.DocCode = newCode;
+                    item.Note = null;
                     item.Shipped = 0;
                     item.State = RowStatus.NewRow;
                     newCode++;

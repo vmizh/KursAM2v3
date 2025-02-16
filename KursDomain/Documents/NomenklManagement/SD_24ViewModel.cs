@@ -67,7 +67,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
     /// <summary>
     /// Дата последнего изменения
     /// </summary>
-    [Display(AutoGenerateField = true, Name = "Дата посл.изм.", Order = 21)]
+    [Display(AutoGenerateField = true, Name = "Дата посл.изм.", Order = 22)]
     public DateTime LastChangerDate { set; get; }
 
     public string DocTypeName => Entity.SD_201?.D_NAME;

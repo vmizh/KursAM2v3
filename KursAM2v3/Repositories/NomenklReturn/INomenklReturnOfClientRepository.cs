@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using Data;
 using KursAM2.ViewModel.Logistiks.NomenklReturn.Helper;
+using KursDomain.Documents.NomenklReturn;
 using KursDomain.IDocuments.NomenklReturn;
 
 namespace KursAM2.Repositories.NomenklReturn
@@ -10,6 +12,7 @@ namespace KursAM2.Repositories.NomenklReturn
         public void AddOrUpdate(INomenklReturnOfClient entity, List<Guid> deletedIds);
         public void Delete(Guid id);
         public INomenklReturnOfClient Get(Guid id);
+        public NomenklReturnOfClientSearch GetSeacrh(Guid id);
         public IEnumerable<INomenklReturnOfClient> GetAll();
         public IEnumerable<INomenklReturnOfClient> GetForPeriod(DateTime start, DateTime end);
 

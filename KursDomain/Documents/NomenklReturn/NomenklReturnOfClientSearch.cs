@@ -10,6 +10,18 @@ namespace KursDomain.Documents.NomenklReturn;
 
 public class NomenklReturnOfClientSearch : INomenklReturnOfClient
 {
+    #region Methods
+
+    public void LoadReferences(NomenklReturnOfClient entity)
+    {
+        if (entity.KontragentDC != 0)
+            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(entity.KontragentDC) as Kontragent;
+        if(entity.WarehouseDC != 0)
+            Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(entity.WarehouseDC) as References.Warehouse;
+        Creator = entity.Creator;
+    }
+
+    #endregion
    
     /// <summary>
     ///     Пользователь, последний изменивший документ
