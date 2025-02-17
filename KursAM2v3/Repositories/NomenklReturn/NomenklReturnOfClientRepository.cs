@@ -47,9 +47,15 @@ namespace KursAM2.Repositories.NomenklReturn
 
         public void Delete(Guid id)
         {
-            var d = Context.NomenklReturnOfClient.FirstOrDefault(_ => _.Id == id);
+            var d = Context.NomenklReturnOfClient.Include(_ => _.NomenklReturnOfClientRow)
+                .FirstOrDefault(_ => _.Id == id);
             if (d is not null)
+            {
+
+                Context.NomenklReturnOfClientRow.RemoveRange(d.NomenklReturnOfClientRow);
                 Context.NomenklReturnOfClient.Remove(d);
+            }
+
             Context.SaveChanges();
         }
 

@@ -207,7 +207,6 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
             switch (res)
             {
                 case MessageBoxResult.Yes:
-                    var dc = Document.DocCode;
                     var docdate = Document.DocDate;
                     if (Document.State == RowStatus.NewRow)
                     {
@@ -225,7 +224,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                             var message = new RedisMessage
                             {
                                 DocumentType = DocumentType.NomenklReturnOfClient,
-                                DocCode = Document.DocCode,
+                                Id = Document.Id,
                                 DocDate = Document.DocDate,
                                 IsDocument = true,
                                 OperationType = RedisMessageDocumentOperationTypeEnum.Delete,
@@ -252,7 +251,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                         WindowManager.ShowError(ex);
                     }
 
-                    RecalcKontragentBalans.CalcBalans(dc, docdate);
+                    RecalcKontragentBalans.CalcBalans(Document.Kontragent.DocCode, docdate);
                     Form?.Close();
                     break;
                 case MessageBoxResult.No:

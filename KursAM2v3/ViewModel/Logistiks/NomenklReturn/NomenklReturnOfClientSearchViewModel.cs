@@ -103,6 +103,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
                 var old = Documents.FirstOrDefault(_ => _.Id == msg.Id);
                 if (old != null)
+                {
                     switch (msg.OperationType)
                     {
                         case RedisMessageDocumentOperationTypeEnum.Update:
@@ -115,6 +116,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                             Documents.Remove(old);
                             break;
                     }
+                }
             }
         }
 
