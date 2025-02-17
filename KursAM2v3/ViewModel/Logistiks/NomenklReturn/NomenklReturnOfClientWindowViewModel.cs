@@ -438,6 +438,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                 Document.DocDate);
             foreach (var item in ctx.SelectedWaybillRows)
             {
+                if (Document.Rows.Any(_ => _.InvoiceRowId == item.InvoiceRowId)) continue;
                 var newRow = new NomenklReturnOfClientRowViewModel(new NomenklReturnOfClientRow
                 {
                     Id = Guid.NewGuid(),

@@ -159,6 +159,7 @@ namespace KursAM2.ViewModel.Finance
                 bs = CurrentBankAccount.DocCode;
             BankOperationsCollection.Clear();
             BankAccountCollection.Clear();
+            BankAccountCollectionAll.Clear();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var cashAcc = ctx.Database.SqlQuery<AccessRight>(
@@ -179,7 +180,13 @@ namespace KursAM2.ViewModel.Finance
                     }
 
                 foreach (var t in temp.OrderByDescending(_ => _.LastYearOperationsCount).ThenBy(_ => _.Name))
-                    BankAccountCollection.Add(t);
+                    BankAccountCollectionAll.Add(t);
+            }
+
+            foreach (var b in BankAccountCollectionAll)
+            {
+                if(IsAll || !b.IsDeleted)
+                    BankAccountCollection.Add(b);
             }
 
             RaisePropertyChanged(nameof(BankAccountCollection));
@@ -357,8 +364,28 @@ namespace KursAM2.ViewModel.Finance
 
         #region Properties
 
+        public bool IsAll
+        {
+            set
+            {
+                myIsAll = value;
+                BankAccountCollection.Clear();
+                BankOperationsCollection.Clear();
+                BankPeriodOperationsCollection.Clear();
+                foreach (var b in BankAccountCollectionAll)
+                {
+                    if(IsAll || !b.IsDeleted)
+                        BankAccountCollection.Add(b);
+                }
+            }
+            get => myIsAll;
+        }
+
         public List<ReminderDatePeriod> Periods { set; get; } =
             new List<ReminderDatePeriod>();
+
+        public ObservableCollection<BankAccount> BankAccountCollectionAll { set; get; } =
+            new ObservableCollection<BankAccount>();
 
         public ObservableCollection<BankAccount> BankAccountCollection { set; get; } =
             new ObservableCollection<BankAccount>();
@@ -446,6 +473,7 @@ namespace KursAM2.ViewModel.Finance
         }
 
         private Currency myCurrency;
+        private bool myIsAll = false;
 
         public Currency Currency
         {

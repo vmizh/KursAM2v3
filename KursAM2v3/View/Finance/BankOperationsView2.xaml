@@ -3,7 +3,6 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
-    
     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
     xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
@@ -57,6 +56,7 @@
                               IsEnabled="False"
                               IsReadOnly="True"
                               Margin="5 0 0 0" />
+                <CheckBox Content="Показать все" IsChecked="{Binding IsAll, UpdateSourceTrigger=PropertyChanged}"/>
             </StackPanel>
             <dxlc:LayoutItem Label="Поиск"
                              ToolTip="Строка поиска по полям документов"

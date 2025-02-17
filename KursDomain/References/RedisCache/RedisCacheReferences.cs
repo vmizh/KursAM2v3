@@ -2447,7 +2447,8 @@ public class RedisCacheReferences : IReferencesCache
                         KontragentDC = entity.BA_BANK_AS_KONTRAGENT_DC,
                         CentrResponsibilityDC = entity.BA_CENTR_OTV_DC,
                         CurrencyDC = entity.CurrencyDC,
-                        BankDC = entity.BA_BANKDC
+                        BankDC = entity.BA_BANKDC,
+                        IsDeleted = entity.IsDeleted ?? false
                     })
                     .ToDictionary<BankAccount, decimal, IBankAccount>(newItem => newItem.DocCode, newItem => newItem);
                 foreach (var k in BankAccounts.Values.Cast<BankAccount>()) k.LoadFromCache();

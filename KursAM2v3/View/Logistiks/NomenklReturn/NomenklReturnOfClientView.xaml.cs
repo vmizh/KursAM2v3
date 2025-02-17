@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using DevExpress.Xpf.Editors;
+using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
 using KursAM2.ViewModel.Logistiks.NomenklReturn;
@@ -63,6 +64,12 @@ namespace KursAM2.View.Logistiks.NomenklReturn
                 case "Currency":
                 case "State":
                     ((BaseEdit)e.Item.Content).IsReadOnly = true;
+                    if (e.Item.Content is ComboBoxEdit ed1)
+                    {
+                        ed1.AllowDefaultButton = false;
+                        ed1.Focusable = false;
+                    }
+
                     break;
                 case "Note":
                     var oldNoteContent = e.Item.Content as BaseEdit;

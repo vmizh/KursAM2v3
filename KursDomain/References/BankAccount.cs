@@ -154,6 +154,7 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
         Currency = refCache?.GetCurrency(entity.CurrencyDC);
         Bank = refCache?.GetBank(entity.BA_BANKDC);
         UpdateDate = entity.UpdateDate ?? DateTime.Now;
+        IsDeleted = entity.IsDeleted ?? false;
     }
 
     public override int GetHashCode()
