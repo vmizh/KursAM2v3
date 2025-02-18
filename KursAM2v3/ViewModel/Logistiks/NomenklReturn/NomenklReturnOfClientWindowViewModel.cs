@@ -64,7 +64,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                 Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
             }
 
-            mySubscriber = redis.GetSubscriber();
+            mySubscriber = redis?.GetSubscriber();
             LeftMenuBar = GlobalOptions.UserInfo.IsAdmin
                 ? MenuGenerator.DocWithCustomizeFormDocumentLeftBar(this)
                 : MenuGenerator.DocWithRowsLeftBar(this);
@@ -431,7 +431,13 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         private void AddNomenkl(object obj)
         {
-            var ctx = new NomenklReturnSelectWaybillRowsDialog(Document.Kontragent);
+            List<Guid> existsRows = new List<Guid>();
+            foreach (var row in Document.Rows)
+            {
+                if(row.Entity.RashodNakladId is not null)
+                    existsRows.Add(row.Entity.RashodNakladId.Value);
+            }
+            var ctx = new NomenklReturnSelectWaybillRowsDialog(Document.Kontragent, existsRows);
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Возврат товара от клиента. Выбор номенклатур.", ctx) == MessageResult.Cancel) return;
             var prices = myRepository.GetNomenklLastPrices(ctx.SelectedWaybillRows.Select(_ => _.NomenklDC).ToList(),

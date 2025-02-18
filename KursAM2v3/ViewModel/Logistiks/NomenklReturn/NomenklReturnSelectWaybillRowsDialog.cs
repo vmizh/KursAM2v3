@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -15,9 +17,10 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 {
     public class NomenklReturnSelectWaybillRowsDialog : RSWindowViewModelBase
     {
-        public NomenklReturnSelectWaybillRowsDialog(Kontragent kontragent)
+        public NomenklReturnSelectWaybillRowsDialog(Kontragent kontragent,  List<Guid> existsPrihRows = null)
         {
             myKontragent = kontragent;
+            myExistsPrihRows = existsPrihRows;
             IsDialog = true;
             ActualSelectedWaybillRows = new ObservableCollection<RashodNakladRow>();
             ActualSelectedWaybillRows2 = new ObservableCollection<RashodNakladRow>();
@@ -32,7 +35,11 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
         {
             WaybillRows.Clear();
             SelectedWaybillRows.Clear();
-            foreach (var d in myDataRepository.GetRashodNakladRows(myKontragent.DocCode)) WaybillRows.Add(d);
+            foreach (var d in myDataRepository.GetRashodNakladRows(myKontragent.DocCode)
+                         .Where(d => !myExistsPrihRows.Contains(d.Id)))
+            {
+                WaybillRows.Add(d);
+            }
         }
 
         #endregion
@@ -42,6 +49,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
         private readonly INomenklReturnOfClientRepository myDataRepository;
         private RashodNakladRow myCurrentWaybillRow;
         private readonly Kontragent myKontragent;
+        private readonly List<Guid> myExistsPrihRows;
 
         #endregion
 

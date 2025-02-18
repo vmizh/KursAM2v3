@@ -14,6 +14,8 @@ namespace KursAM2.View.Logistiks.NomenklReturn
 
         private void Grid_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
+            e.Column.Name = e.Column.FieldName;
+            e.Column.ReadOnly = true;
         }
     }
 }
