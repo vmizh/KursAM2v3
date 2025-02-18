@@ -433,7 +433,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
         {
             var ctx = new NomenklReturnSelectWaybillRowsDialog(Document.Kontragent);
             var service = this.GetService<IDialogService>("DialogServiceUI");
-            if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
+            if (service.ShowDialog(MessageButton.OKCancel, "Возврат товара от клиента. Выбор номенклатур.", ctx) == MessageResult.Cancel) return;
             var prices = myRepository.GetNomenklLastPrices(ctx.SelectedWaybillRows.Select(_ => _.NomenklDC).ToList(),
                 Document.DocDate);
             foreach (var item in ctx.SelectedWaybillRows)
