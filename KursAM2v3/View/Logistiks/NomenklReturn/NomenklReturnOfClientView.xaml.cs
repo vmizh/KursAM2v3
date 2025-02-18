@@ -67,7 +67,7 @@ namespace KursAM2.View.Logistiks.NomenklReturn
                     if (e.Item.Content is ComboBoxEdit ed1)
                     {
                         ed1.AllowDefaultButton = false;
-                        ed1.Focusable = false;
+                        ed1.IsEnabled = false;
                     }
 
                     break;
