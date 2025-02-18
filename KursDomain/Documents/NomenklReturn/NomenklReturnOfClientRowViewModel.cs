@@ -16,6 +16,7 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
     private Nomenkl myNomenkl;
     private string myWaybillText;
     private decimal myCalcCost;
+    public decimal MaxQuantity;
 
     public NomenklReturnOfClientRowViewModel()
     {
@@ -83,6 +84,7 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
     public References.Currency Currency => Nomenkl?.Currency as References.Currency;
 
     [Display(AutoGenerateField = true, Name = "С/фактура")]
+    [ReadOnly(true)]
     public string InvoiceText
 
     {
@@ -96,6 +98,7 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
     }
 
     [Display(AutoGenerateField = true, Name = "Расх.накл")]
+    [ReadOnly(true)]
     public string WaybillText
 
     {
@@ -188,7 +191,7 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
         set
         {
             if (Entity.Quantity == value) return;
-            Entity.Quantity = value;
+            Entity.Quantity = value > MaxQuantity || value < 0 ? Entity.Quantity : value;
             UpdateParent();
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(SummaClient));

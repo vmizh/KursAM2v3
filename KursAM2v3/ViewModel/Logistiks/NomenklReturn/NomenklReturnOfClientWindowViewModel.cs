@@ -50,6 +50,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                 if (mySubscriber.IsConnected())
                     mySubscriber.Subscribe(
                         new RedisChannel(RedisMessageChannels.NomenklReturnOfClient, RedisChannel.PatternMode.Auto),
+                        // ReSharper disable once UnusedParameter.Local
                         (channel, message) =>
                         {
                             if (KursNotyficationService != null)
@@ -78,6 +79,14 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
             else
             {
                 Document = myRepository.Get(id.Value) as NomenklReturnOfClientViewModel;
+                if (Document is not null)
+                {
+                    foreach (var r in Document.Rows)
+                    {
+                        r.MaxQuantity = r.Quantity;
+                    }
+                }
+
                 LoadRefernces();
                 setUnchangedStatus();
             }
@@ -193,6 +202,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         public string this[string columnName] => throw new NotImplementedException();
 
+        // ReSharper disable once UnassignedGetOnlyAutoProperty
         public string Error { get; }
 
         #endregion
@@ -452,12 +462,14 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                     Quantity = item.Quantity,
                     DocId = Document.Id,
                     InvoiceRowId = item.InvoiceRowId,
-                    RashodNakladId = item.Id
+                    RashodNakladId = item.Id,
+                    
                 }, Document)
                 {
                     State = RowStatus.NewRow,
                     Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(item.NomenklDC) as Nomenkl,
-                    CalcCost = prices.FirstOrDefault(_ => _.Key == item.NomenklDC).Value
+                    CalcCost = prices.FirstOrDefault(_ => _.Key == item.NomenklDC).Value,
+                    MaxQuantity = item.Quantity
                 };
                 Document.Entity.NomenklReturnOfClientRow.Add(newRow.Entity);
                 newRow.Cost = newRow.CalcCost;

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Windows;
 using DevExpress.Xpf.Editors;
-using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
 using KursAM2.ViewModel.Logistiks.NomenklReturn;
