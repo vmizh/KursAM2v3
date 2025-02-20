@@ -40,7 +40,7 @@ namespace Helper
 
     public class LayoutManager
     {
-        public static readonly TimeSpan maxTimeLivingLayout = new TimeSpan(0,0,15,0);
+        public static readonly TimeSpan maxTimeLivingLayout = new TimeSpan(0, 0, 15, 0);
         public const int Version = 1;
         private readonly KursSystemEntities context;
         public readonly string ControlName;
@@ -52,7 +52,7 @@ namespace Helper
 
         private readonly RedisManagerPool redisManager =
             new RedisManagerPool(ConfigurationManager.AppSettings["redis.connection"]);
-        
+
         public LayoutManager(KursSystemEntities systemDBContext, ThemedWindow form, string formName)
         {
             context = systemDBContext;
@@ -102,7 +102,7 @@ namespace Helper
             var key = $"{CurrentUser.UserInfo.Name}:{FormName}";
             using (var tran = context.Database.BeginTransaction())
             {
-                
+
                 var l = context.FormLayout
                     .Include(_ => _.Users)
                     .Include(_ => _.KursMenuItem)
@@ -173,7 +173,7 @@ namespace Helper
                 }
             }
         }
-        
+
         public bool IsLayoutExists()
         {
             if (CurrentUser.UserInfo == null) return false;
@@ -218,8 +218,9 @@ namespace Helper
                         }
 
                         layout = l.Layout;
-                        redisClient.SetValue(key,l.Layout,maxTimeLivingLayout);
+                        redisClient.SetValue(key, l.Layout, maxTimeLivingLayout);
                     }
+
                     layoutService.Deserialize(layout);
                 }
             }
@@ -231,17 +232,27 @@ namespace Helper
 
         public void ResetLayout()
         {
-            if (window != null)
+            var key = $"{CurrentUser.UserInfo.Name}:{FormName}";
+            using (var redisClient = redisManager.GetClient())
             {
-                window.WindowStartupLocation = StartWinState.FormStartLocation;
-                window.WindowState = StartWinState.FormState;
-                window.Height = StartWinState.FormHeight;
-                window.Width = StartWinState.FormWidth;
-                window.Left = StartWinState.FormLeft < 0 ? 0 : StartWinState.FormLeft;
-                window.Top = StartWinState.FormTop < 0 ? 0 : StartWinState.FormTop;
-            }
+                redisClient.Db = 0;
+                if (redisClient.ContainsKey(key))
+                {
+                    redisClient.Remove(key);
+                }
 
-            layoutService.Deserialize(StartLayout);
+                if (window != null)
+                {
+                    window.WindowStartupLocation = StartWinState.FormStartLocation;
+                    window.WindowState = StartWinState.FormState;
+                    window.Height = StartWinState.FormHeight;
+                    window.Width = StartWinState.FormWidth;
+                    window.Left = StartWinState.FormLeft < 0 ? 0 : StartWinState.FormLeft;
+                    window.Top = StartWinState.FormTop < 0 ? 0 : StartWinState.FormTop;
+                }
+
+                layoutService.Deserialize(StartLayout);
+            }
         }
     }
 }
