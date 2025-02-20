@@ -2173,6 +2173,8 @@
         <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnToProviderRow_NomenklDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnOfClient_WarhouseDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnToProvider_WarehouseDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_AccruedAmountForClient_CentrResponsibleDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_AccruedAmountOfSupplier_CentrResponsibleDC" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

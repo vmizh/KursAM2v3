@@ -43,6 +43,8 @@ namespace Data
             this.SD_27 = new HashSet<SD_27>();
             this.SD_270 = new HashSet<SD_270>();
             this.VD_40 = new HashSet<VD_40>();
+            this.AccruedAmountForClient = new HashSet<AccruedAmountForClient>();
+            this.AccruedAmountOfSupplier = new HashSet<AccruedAmountOfSupplier>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -105,5 +107,9 @@ namespace Data
         public virtual ICollection<SD_270> SD_270 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<VD_40> VD_40 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccruedAmountForClient> AccruedAmountForClient { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<AccruedAmountOfSupplier> AccruedAmountOfSupplier { get; set; }
     }
 }

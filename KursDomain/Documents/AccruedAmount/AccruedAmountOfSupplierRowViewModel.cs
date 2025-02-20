@@ -186,20 +186,12 @@ public class AccruedAmountOfSupplierRowViewModel : RSViewModelBase, IDataErrorIn
             Entity.DocId = parent.Id;
         }
 
-        //if (Entity.CashDC != null)
-        //    CashDoc = new CashOut(Entity.SD_34);
+        if (Entity.NomenklDC != 0)
+            Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(Entity.NomenklDC) as Nomenkl;
+       
         if (Entity.SHPZ_DC != null)
             SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SHPZ_DC.Value) as SDRSchet;
-        //if (Entity.BankCode != null)
-        //{
-        //    var td101 = GlobalOptions.GetEntities().TD_101
-        //        .Include(_ => _.SD_101).FirstOrDefault(_ => _.CODE == Entity.BankCode.Value);
-        //    if (td101 != null)
-        //        BankDoc = new BankOperationsViewModel(td101)
-        //        {
-        //            Parent = new SD_101ViewModel(td101.SD_101)
-        //        };
-        //}
+      
     }
 
     private AccuredAmountOfSupplierRow DefaultValue()

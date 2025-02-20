@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -127,6 +128,9 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         public override string LayoutName => "AccruedAmountOfSupplierWindowViewModel";
         public override string WindowName => Document.ToString();
 
+        public List<CentrResponsibility> COList => GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
+            .Cast<CentrResponsibility>().OrderBy(_ => _.Name).ToList();
+
         public ObservableCollection<AccruedAmountOfSupplierRowViewModel> SelectedRows { set; get; } =
             new ObservableCollection<AccruedAmountOfSupplierRowViewModel>();
 
@@ -154,6 +158,8 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
                 RaisePropertyChanged();
             }
         }
+
+
 
         public AccruedAmountOfSupplierViewModel Document
         {

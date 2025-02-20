@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
@@ -52,11 +53,12 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             {
                 Document = new AccruedAmountForClientViewModel(doc)
                 {
-                    State = RowStatus.NotEdited
+                    myState = RowStatus.NotEdited
                 };
+
                 if (Document != null)
                     WindowName = Document.ToString();
-                Document.Rows.ForEach(_ => _.State = RowStatus.NotEdited);
+                Document.Rows.ForEach(_ => _.myState = RowStatus.NotEdited);
                 Document.myState = RowStatus.NotEdited;
             }
         }
@@ -122,6 +124,9 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         public override string LayoutName => "AccruedAmountForClientWindowViewModel";
         public override string WindowName => Document.ToString();
+
+        public List<CentrResponsibility> COList => GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
+            .Cast<CentrResponsibility>().OrderBy(_ => _.Name).ToList();
 
         public ObservableCollection<AccruedAmountForClientRowViewModel> SelectedRows { set; get; } =
             new ObservableCollection<AccruedAmountForClientRowViewModel>();
