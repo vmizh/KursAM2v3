@@ -125,6 +125,8 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
         #region Commands
 
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
+        public override bool IsDocNewCopyAllow => CurrentDocument is not null;
+        public override bool IsDocNewCopyRequisiteAllow => CurrentDocument is not null;
 
         public override void DocNewEmpty(object form)
         {
