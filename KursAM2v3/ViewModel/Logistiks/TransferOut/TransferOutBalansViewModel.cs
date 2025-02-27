@@ -370,6 +370,7 @@ namespace KursAM2.ViewModel.Logistiks.TransferOut
                         _transferOutBalansRepository.AddRow(newItem);
                         var newRow = new TransferOutBalansRowsWrapper(newItem, _EventAggregator, _MessageDialogService)
                         {
+                            Nomenkl = item.Nomenkl,
                             MaxCount = item.Remain,
                             CostPrice = item.Price
                         };
