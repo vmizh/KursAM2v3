@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Core.ViewModel.Base;
 using Data;
-using KursDomain.Documents.Invoices;
 using KursDomain.IDocuments.NomenklReturn;
 using KursDomain.References;
 using Newtonsoft.Json;
@@ -144,7 +143,6 @@ public class NomenklReturnOfClientViewModel : RSViewModelBase, IEntity<NomenklRe
     }
 
     [Display(AutoGenerateField = true, Name = "Дата")]
-    [ReadOnly(true)]
     public DateTime DocDate
     {
         get => Entity.DocDate;
@@ -208,7 +206,8 @@ public class NomenklReturnOfClientViewModel : RSViewModelBase, IEntity<NomenklRe
         get
         {
             var extNum = string.IsNullOrWhiteSpace(DocExtNum) ? string.Empty : $"/{DocExtNum}";
-            return $"Возврат товара от клиента №{DocNum}{extNum} от {DocDate.ToShortDateString()} Контр-т: {Kontragent} Склад: {Warehouse} на сумму {SummaClient:n2}/{SummaWarehouse:n2} {Kontragent?.Currency}";
+            return
+                $"Возврат товара от клиента №{DocNum}{extNum} от {DocDate.ToShortDateString()} Контр-т: {Kontragent} Склад: {Warehouse} на сумму {SummaClient:n2}/{SummaWarehouse:n2} {Kontragent?.Currency}";
         }
     }
 
