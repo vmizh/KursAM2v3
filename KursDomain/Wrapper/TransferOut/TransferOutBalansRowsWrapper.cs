@@ -102,7 +102,7 @@ public class TransferOutBalansRowsWrapper : BaseWrapper<TransferOutBalansRows>,
         get => myNomenkl; // GlobalOptions.ReferencesCache.GetNomenkl(Model.NomenklDC) as References.Nomenkl;
         set
         {
-            if (Model.NomenklDC == (value?.DocCode ?? 0)) return;
+            if (myNomenkl  == value) return;
             myNomenkl = value;
             SetValue(value?.DocCode ?? 0, nameof(TransferOutBalansRows.NomenklDC));
         }
