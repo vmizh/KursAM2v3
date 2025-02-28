@@ -28,6 +28,10 @@ namespace KursAM2.View.Logistiks.NomenklReturn
 
             switch (e.PropertyName)
             {
+                case "DocDate":
+                    if (e.Item.Content is BaseEdit be)
+                        be.IsReadOnly = false;
+                    break;
                 case "Kontragent":
                     var oldContent = e.Item.Content as BaseEdit;
                     var newContent = new ButtonEdit
