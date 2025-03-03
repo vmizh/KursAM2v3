@@ -39,6 +39,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         //InvoiceProviderDialogs Dialogs { set; get; }
         void Delete(SD_26 entity);
+        string GetInfoByRowId(Guid newRowInvoiceRowId);
     }
 
     public class InvoiceProviderRepository : GenericKursDBRepository<InvoiceProvider>, IInvoiceProviderRepository
@@ -341,6 +342,24 @@ namespace KursAM2.Repositories.InvoicesRepositories
         {
             Context.SD_26.Remove(entity);
             DeleteTD26CurrencyConvert();
+        }
+
+
+        public string GetInfoByRowId(Guid rowid)
+        {
+            var id = Context.TD_26.FirstOrDefault(_ => _.Id == rowid)?.DocId;
+            return id is null ? string.Empty : GetInfoById(id.Value);
+        }
+
+        public string GetInfoById(Guid id)
+        {
+            var data = Context.SD_26.SingleOrDefault(_ => _.Id == id);
+            if (data is null) return string.Empty;
+            var snum = string.IsNullOrWhiteSpace(data.SF_POSTAV_NUM)
+                ? data.SF_IN_NUM.ToString()
+                : $"{data.SF_IN_NUM}/{data.SF_POSTAV_NUM}";
+            return
+                $"С/фактура поставщика:{GlobalOptions.ReferencesCache.GetKontragent(data.SF_POST_DC)} №{snum} от {data.SF_POSTAV_DATE.ToShortDateString()}";
         }
     }
 }

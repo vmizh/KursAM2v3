@@ -96,6 +96,12 @@ namespace KursAM2.ViewModel.Finance.controls
             RaisePropertyChanged(nameof(IsNotCurrencyChange));
         }
 
+        public bool StartLoad
+        {
+            get => myDataUserControl.StartLoad;
+            set => myDataUserControl.StartLoad = value;
+        }
+
         public ObservableCollection<SDRSchet> SHPZList { set; get; } =
             new ObservableCollection<SDRSchet>(GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>());
 

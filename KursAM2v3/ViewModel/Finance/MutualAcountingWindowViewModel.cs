@@ -18,6 +18,7 @@ using KursAM2.Managers;
 using KursAM2.Managers.Base;
 using KursAM2.Managers.Invoices;
 using KursAM2.Repositories.RedisRepository;
+using KursAM2.View.DialogUserControl;
 using KursAM2.View.Finance;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
@@ -803,7 +804,7 @@ namespace KursAM2.ViewModel.Finance
                     vzdefault =
                         GlobalOptions.ReferencesCache.GetNomenklProductType(Convert.ToDecimal(vzdefDC.ITEM_VALUE)) as
                             NomenklProductType;
-                var k = StandartDialogs.SelectKontragent(Document.IsOld ? null : Document.DebitorCurrency);
+                var k = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions(){Currency = Document.IsOld ? null : Document.DebitorCurrency});
                 if (k == null) return;
                 var m =  DebitorCollection.Any() ?  DebitorCollection.Max(_ => _.Code) + 1 : 0;
                 var m2 =  CreditorCollection.Any() ?  CreditorCollection.Max(_ => _.Code) + 1 : 0;
@@ -842,7 +843,8 @@ namespace KursAM2.ViewModel.Finance
 
         public void AddNewCreditor(object obj)
         {
-            var k = StandartDialogs.SelectKontragent(Document.IsOld ? null : Document.CreditorCurrency);
+            var k = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions()
+                { Currency = Document.IsOld ? null : Document.CreditorCurrency });
             if (k == null) return;
             NomenklProductType vzdefault = null;
             var vzdefDC = GlobalOptions.SystemProfile.Profile.FirstOrDefault(_ =>
@@ -938,7 +940,7 @@ namespace KursAM2.ViewModel.Finance
         private void ChangeDebitorKontragent(object obj)
         {
             var k = obj as Kontragent ??
-                    StandartDialogs.SelectKontragent(Document.IsOld ? null : Document.DebitorCurrency);
+                    StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions() { Currency = Document.IsOld ? null : Document.DebitorCurrency });
             if (k == null) return;
             CurrentDebitor.Kontragent = GlobalOptions.ReferencesCache.GetKontragent(k.DocCode) as Kontragent;
             CurrentDebitor.VZT_KONTR_CRS_RATE = 1;
@@ -984,7 +986,7 @@ namespace KursAM2.ViewModel.Finance
         private void ChangeCreditorKontragent(object obj)
         {
             var k = obj as Kontragent ??
-                    StandartDialogs.SelectKontragent(Document.IsOld ? null : Document.CreditorCurrency);
+                    StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions() { Currency = Document.IsOld ? null : Document.CreditorCurrency });
             if (k == null) return;
             CurrentCreditor.Kontragent = k;
             CurrentCreditor.VZT_KONTR_CRS_RATE = 1;

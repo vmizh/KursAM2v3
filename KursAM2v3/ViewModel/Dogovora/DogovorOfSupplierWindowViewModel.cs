@@ -17,6 +17,7 @@ using Helper;
 using KursAM2.Auxiliary;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.View.DialogUserControl;
 using KursAM2.View.Dogovors;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management.Calculations;
@@ -523,7 +524,10 @@ namespace KursAM2.ViewModel.Dogovora
 
         private void KontragentSelect(object obj)
         {
-            var kontr = StandartDialogs.SelectKontragent(null, true);
+            var kontr = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions()
+            {
+                IsBalans = true
+            });
             if (kontr == null) return;
             Document.Kontragent = kontr;
         }

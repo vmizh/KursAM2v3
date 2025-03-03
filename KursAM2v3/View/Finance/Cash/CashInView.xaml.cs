@@ -9,6 +9,7 @@ using DevExpress.Xpf.LayoutControl;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.View.DialogUserControl;
 using KursAM2.ViewModel.Finance.Cash;
 using KursDomain;
 using KursDomain.Documents.Cash;
@@ -380,7 +381,10 @@ namespace KursAM2.View.Finance.Cash
                 switch (ctx.Document.KontragentType)
                 {
                     case CashKontragentType.Kontragent:
-                        var kontr = StandartDialogs.SelectKontragent(ctx.Document.Currency);
+                        var kontr = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions()
+                        {
+                            Currency = ctx.Document.Currency
+                        });
                         if (kontr == null) return;
                         ctx.Document.Currency = kontr.Currency as Currency;
                         ctx.Document.TABELNUMBER = null;
@@ -442,7 +446,10 @@ namespace KursAM2.View.Finance.Cash
                     switch (ctx.Document.KontragentType)
                     {
                         case CashKontragentType.Kontragent:
-                            var kontr = StandartDialogs.SelectKontragent(ctx.Document.Currency);
+                            var kontr = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions()
+                            {
+                                Currency = ctx.Document.Currency
+                            });
                             if (kontr == null) return;
                             ctx.Document.Currency = kontr.Currency as Currency;
                             ctx.Document.KONTRAGENT_DC = kontr.DocCode;

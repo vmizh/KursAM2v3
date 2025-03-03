@@ -46,10 +46,10 @@ namespace KursAM2.Dialogs
         /// </param>
         /// <returns></returns>
         // ReSharper disable once InvalidXmlDocComment
-        public static Kontragent SelectKontragent(Currency crs = null, bool? isBalans = null)
+        public static Kontragent SelectKontragent(KontragentSelectDialogOptions options = null)
         {
             //MainReferences.CheckUpdateKontragentAndLoad();
-            var ctx = new KontragentSelectDialog(crs, false, isBalans);
+            var ctx = new KontragentSelectDialog(options);
             var dlg = new SelectDialogView
             {
                 IsUsedViewLayout = false,
@@ -60,11 +60,7 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.CurrentKontragent;
         }
 
-        //public static SelectStockHolder()
-        //{
-
-        //}
-
+       
         public static List<CashOrder> SelectCashOrders(BankAccount bankAcc, SelectCashOrdersDelegate selectMethod)
         {
             var ret = new List<CashOrder>();
@@ -175,6 +171,7 @@ namespace KursAM2.Dialogs
             ctx.Form = dlg;
             ctx.SetBrushForPrihodRashod();
             dlg.ShowDialog();
+            ctx.StartLoad = false;
             return !ctx.DialogResult ? null : ctx.CurrentBankOperations;
         }
 
