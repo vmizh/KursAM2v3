@@ -27,6 +27,7 @@ using KursAM2.Managers.Invoices;
 using KursAM2.ReportManagers.SFClientAndWayBill;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.Repositories.RedisRepository;
+using KursAM2.View.DialogUserControl;
 using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Helper;
@@ -854,7 +855,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 return;
             }
 
-            var kontr = StandartDialogs.SelectKontragent(Document.Currency);
+            var kontr = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions() { Currency = Document.Currency });
             if (kontr == null) return;
             if (Document.Rows.Any(_ =>
                     !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != ((IDocCode)kontr.Currency).DocCode))
@@ -966,7 +967,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             if (Document == null)
                 return;
-            var kontr = StandartDialogs.SelectKontragent(Document.Currency);
+            var kontr = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions() { Currency = Document.Currency });
             if (kontr == null) return;
             if (Document.Rows.Any(_ =>
                     !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != ((IDocCode)kontr.Currency).DocCode))
@@ -998,7 +999,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         {
             if (Document == null)
                 return;
-            var kontr = StandartDialogs.SelectKontragent(Document.Currency);
+            var kontr = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions() { Currency = Document.Currency });
             if (kontr == null) return;
             if (Document.Rows.Any(_ =>
                     !_.IsUsluga && ((IDocCode)_.Nomenkl.Currency).DocCode != ((IDocCode)kontr.Currency).DocCode))
@@ -1201,6 +1202,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 {
                     old.DDT_SFACT_DC = null;
                     old.DDT_SFACT_ROW_CODE = null;
+                }
+
+                foreach (var r in Document.Rows)
+                {
+                    if (string.IsNullOrEmpty(r.Note))
+                        r.Note = " ";
                 }
 
                 UnitOfWork.Save();

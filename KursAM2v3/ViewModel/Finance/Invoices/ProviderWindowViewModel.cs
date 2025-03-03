@@ -850,7 +850,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 return;
             }
 
-            var kontr = StandartDialogs.SelectKontragent(Document.Currency);
+            var kontr = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions() { Currency = Document.Currency });
             if (kontr == null) return;
             Document.Kontragent = kontr;
             Document.Currency = kontr.Currency as Currency;
