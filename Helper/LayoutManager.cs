@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Configuration;
 using System.Data.Entity;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Windows;
-using System.Windows.Input;
 using System.Xml;
 using Data;
 using DevExpress.Mvvm;
@@ -40,18 +38,19 @@ namespace Helper
 
     public class LayoutManager
     {
-        public static readonly TimeSpan maxTimeLivingLayout = new TimeSpan(0, 0, 15, 0);
         public const int Version = 1;
+        public static readonly TimeSpan maxTimeLivingLayout = new TimeSpan(0, 0, 15, 0);
         private readonly KursSystemEntities context;
         public readonly string ControlName;
         public readonly string FormName;
 
         private readonly ILayoutSerializationService layoutService;
-        private readonly MemoryStream StartLayoutStream = new MemoryStream();
-        private readonly Window window;
 
         private readonly RedisManagerPool redisManager =
             new RedisManagerPool(ConfigurationManager.AppSettings["redis.connection"]);
+
+        private readonly MemoryStream StartLayoutStream = new MemoryStream();
+        private readonly Window window;
 
         public LayoutManager(KursSystemEntities systemDBContext, ThemedWindow form, string formName)
         {
@@ -102,7 +101,6 @@ namespace Helper
             var key = $"{CurrentUser.UserInfo.Name}:{FormName}";
             using (var tran = context.Database.BeginTransaction())
             {
-
                 var l = context.FormLayout
                     .Include(_ => _.Users)
                     .Include(_ => _.KursMenuItem)
@@ -196,7 +194,6 @@ namespace Helper
                     if (redisClient.ContainsKey(key))
                     {
                         layout = redisClient.GetValue(key);
-
                     }
                     else
                     {
@@ -236,10 +233,7 @@ namespace Helper
             using (var redisClient = redisManager.GetClient())
             {
                 redisClient.Db = 0;
-                if (redisClient.ContainsKey(key))
-                {
-                    redisClient.Remove(key);
-                }
+                if (redisClient.ContainsKey(key)) redisClient.Remove(key);
 
                 if (window != null)
                 {
