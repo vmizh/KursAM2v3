@@ -11,6 +11,7 @@ using DevExpress.Xpf.Editors;
 using DevExpress.XtraSpreadsheet.Import.OpenXml;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.View.DialogUserControl;
 using KursAM2.ViewModel.Finance.controls;
 using KursDomain;
 using KursDomain.Documents.Bank;
@@ -29,18 +30,22 @@ namespace KursAM2.View.Finance.UC
     {
         private readonly WindowManager winMan = new WindowManager();
         private decimal maxSumma = decimal.MaxValue;
+        public bool StartLoad { set; get; } = true;
 
         public BankOperationsComareRowView()
         {
             InitializeComponent();
 
             DataContextChanged += BankOperationsView_DataContextChanged;
+            
         }
 
         private void BankOperationsView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             if (DataContext is AddBankOperionUC dtx)
+            {
                 dtx.SetBrushForPrihodRashod();
+            }
         }
 
         private void Payment_OnDefaultButtonClick(object sender, RoutedEventArgs e)
@@ -65,7 +70,7 @@ namespace KursAM2.View.Finance.UC
                     return;
                 }
 
-                var k = StandartDialogs.SelectKontragent(dtx.Currency);
+                var k = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions(){ Currency = dtx.Currency});
                 if (k == null) return;
                 dtx.Payment = k;
                 Payment.Text = k.Name;
@@ -96,7 +101,7 @@ namespace KursAM2.View.Finance.UC
                     return;
                 }
 
-                var k = StandartDialogs.SelectKontragent(dtc.Currency);
+                var k = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions(){Currency= dtc.Currency});
                 if (k == null) return;
                 dtc.Payment = k;
                 Payment.Text = k.Name;
@@ -188,7 +193,7 @@ namespace KursAM2.View.Finance.UC
                         var emp = StandartDialogs.SelectEmployee();
                         break;
                     case BankOperationType.Kontragent:
-                        var k = StandartDialogs.SelectKontragent(dtx.Currency);
+                        var k = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions() { Currency = dtx.Currency });
                         if (k == null) return;
                         if (dtx.Payment == null)
                         {
@@ -267,7 +272,7 @@ namespace KursAM2.View.Finance.UC
                         dtc.CurrentBankOperations.Employee = emp;
                         break;
                     case BankOperationType.Kontragent:
-                        var k = StandartDialogs.SelectKontragent(dtc.Currency);
+                        var k = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions() { Currency = dtc.Currency });
                         if (k == null) return;
                         if (dtc.BankOperationType == BankOperationType.Kontragent)
                         {
@@ -337,19 +342,24 @@ namespace KursAM2.View.Finance.UC
 
         private void BaseEdit_OnEditValueChanged(object sender, EditValueChangedEventArgs e)
         {
-            var dtx = DataContext as AddBankOperionUC;
-            if (dtx == null) return;
             var t = (BankOperationType)TypeKontragent.EditValue;
-            dtx.SFName = null;
-            dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC = null;
-            dtx.Payment = null;
-            SFNameButtonItem.IsEnabled = false;
-            Kontragent.Text = null;
-            dtx.CurrentBankOperations.Employee = null;
-            if (dtx.CurrentBankOperations.AccuredId is null)
+            if (!StartLoad)
             {
-                dtx.VVT_VAL_PRIHOD = 0;
-                dtx.VVT_VAL_RASHOD = 0;
+                var dtx = DataContext as AddBankOperionUC;
+                if (dtx == null) return;
+                dtx.SFName = null;
+                dtx.CurrentBankOperations.VVT_SFACT_CLIENT_DC = null;
+                dtx.Payment = null;
+                SFNameButtonItem.IsEnabled = false;
+                Kontragent.Text = null;
+                dtx.CurrentBankOperations.Employee = null;
+                if (dtx.CurrentBankOperations.AccuredId is null)
+                {
+                    dtx.VVT_VAL_PRIHOD = 0;
+                    dtx.VVT_VAL_RASHOD = 0;
+                }
+
+                dtx.VVT_DOC_NUM = null;
             }
 
             switch (t)
@@ -383,7 +393,7 @@ namespace KursAM2.View.Finance.UC
                     Consumption.IsReadOnly = false;
                     break;
             }
-             dtx.VVT_DOC_NUM = null;
+           
       }
 
         private void SFName_OnDefaultButtonClick(object sender, RoutedEventArgs e)

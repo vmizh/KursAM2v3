@@ -437,7 +437,7 @@ namespace KursAM2.Managers
             switch (docType)
             {
                 case DocumentType.NomenklTransfer:
-                    OpenNomenklReturnOfClient(id);
+                    OpenNomenklTransfer(id);
                     break;
                 case DocumentType.NomenklReturnOfClient:
                     OpenNomenklReturnOfClient(id);
