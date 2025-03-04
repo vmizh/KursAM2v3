@@ -83,6 +83,7 @@ namespace KursAM2.View.Personal
                 var form = new PayRollVedomost { Owner = Application.Current.MainWindow, DataContext = pr };
                 pr.Form= form;
                 form.Show();
+                pr.RefreshData(null);
             }
             catch (Exception ex)
             {

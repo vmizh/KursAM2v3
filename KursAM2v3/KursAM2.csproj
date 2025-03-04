@@ -263,7 +263,9 @@
     <Compile Include="Repositories\Refund\RefundFromClient\RefundFromClientRepository.cs" />
     <Compile Include="Repositories\SD_24Repository.cs" />
     <Compile Include="Repositories\SignatureRepository.cs" />
+    <Compile Include="Repositories\WarehousesRepository\IPrihodOrderRepository.cs" />
     <Compile Include="Repositories\WarehousesRepository\IWaybillRepository.cs" />
+    <Compile Include="Repositories\WarehousesRepository\WaybillRepository.cs" />
     <Compile Include="Resource\ErrorContentConverter.cs" />
     <Compile Include="Resource\ErrorToBrushConverter.cs" />
     <Compile Include="ViewModel\Dogovora\DogovorOfSupplierWindowViewModel.cs" />
