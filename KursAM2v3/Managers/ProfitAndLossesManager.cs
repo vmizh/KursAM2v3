@@ -19,8 +19,6 @@ using KursDomain.ICommon;
 using KursDomain.Managers;
 using KursDomain.References;
 using KursDomain.References.RedisCache;
-using BankAccount = FinanceAnalitic.BankAccount;
-using NomenklMain = KursDomain.References.NomenklMain;
 
 namespace KursAM2.Managers
 {
@@ -172,106 +170,6 @@ namespace KursAM2.Managers
                     Extend.Add(newOp);
                     ExtendNach.Add(newOp);
                 }
-            }
-        }
-
-        private void updateNomenklCache(List<decimal> nomDCs)
-        {
-            if (GlobalOptions.ReferencesCache is not RedisCacheReferences) return;
-            var cache = (RedisCacheReferences)GlobalOptions.ReferencesCache;
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var mains = new Dictionary<Guid, NomenklMain>();
-                var noms = new Dictionary<decimal, KursDomain.References.Nomenkl>();
-
-                var mainIDs = new List<Guid>();
-                var nomsDCs = new List<decimal>();
-                var allNoms = ctx.SD_83.Select(_ => new { DocCode = _.DOC_CODE, MainId = _.MainId });
-                foreach (var item in allNoms)
-                {
-                    if (!cache.NomenklMains.ContainsKey(item.MainId.Value))
-                    {
-                        mainIDs.Add(item.MainId.Value);
-                    }
-
-                    if (!cache.Nomenkls.ContainsKey(item.DocCode))
-                    {
-                        nomsDCs.Add(item.DocCode);
-                    }
-                }
-
-                foreach (var entity in ctx.NomenklMain.AsNoTracking().ToList())
-                {
-                    if (mainIDs.Contains(entity.Id))
-                    {
-                        var item = new NomenklMain
-                        {
-                            Id = entity.Id,
-                            Name = entity.Name,
-                            Notes = entity.Note,
-                            NomenklNumber = entity.NomenklNumber,
-                            FullName = entity.FullName,
-                            IsUsluga = entity.IsUsluga,
-                            IsProguct = entity.IsComplex,
-                            IsNakladExpense = entity.IsNakladExpense,
-                            IsOnlyState = entity.IsOnlyState ?? false,
-                            IsCurrencyTransfer = entity.IsCurrencyTransfer ?? false,
-                            IsRentabelnost = entity.IsRentabelnost ?? false,
-                            UnitDC = entity.UnitDC,
-                            CategoryDC = entity.CategoryDC,
-                            NomenklTypeDC = entity.TypeDC,
-                            ProductTypeDC = entity.ProductDC
-                        };
-                        //item.LoadFromEntity(entity,this);
-                        mains.Add(item.Id, item);
-                    }
-                }
-
-                cache.UpdateListGuid(mains.Values);
-
-                foreach (var entity in ctx.SD_83.Include(_ => _.NomenklMain).AsNoTracking())
-                {
-                    if (nomsDCs.Contains(entity.DOC_CODE))
-                    {
-                        var item = new KursDomain.References.Nomenkl
-                        {
-                            DocCode = entity.DOC_CODE,
-                            Id = entity.Id,
-                            Name = entity.NOM_NAME,
-                            FullName =
-                                entity.NOM_FULL_NAME,
-                            Notes = entity.NOM_NOTES,
-                            IsUsluga =
-                                entity.NOM_0MATER_1USLUGA == 1,
-                            IsProguct = entity.NOM_1PROD_0MATER == 1,
-                            IsNakladExpense =
-                                entity.NOM_1NAKLRASH_0NO == 1,
-                            DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT,
-                            IsDeleted =
-                                entity.NOM_DELETED == 1,
-                            IsUslugaInRentabelnost =
-                                entity.IsUslugaInRent ?? false,
-                            UpdateDate =
-                                entity.UpdateDate ?? DateTime.MinValue,
-                            MainId =
-                                entity.MainId ?? Guid.Empty,
-                            IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
-                            NomenklNumber =
-                                entity.NOM_NOMENKL,
-                            NomenklTypeDC =
-                                entity.NomenklMain.TypeDC,
-                            ProductTypeDC = entity.NomenklMain.ProductDC,
-                            UnitDC = entity.NOM_ED_IZM_DC,
-                            CurrencyDC = entity.NOM_SALE_CRS_DC,
-                            GroupDC = entity.NOM_CATEG_DC
-                        };
-                        noms.Add(item.DocCode, item);
-                    }
-
-                    cache.UpdateList(noms.Values);
-                }
-
-                
             }
         }
 
@@ -1175,7 +1073,7 @@ namespace KursAM2.Managers
                         Kontragent = null,
                         DocTypeCode = DocumentType.TransferOutBalans,
                         Currency = nom.Currency as Currency,
-                        CurrencyName = (nom?.Currency as Currency)?.Name,
+                        CurrencyName = (nom.Currency as Currency)?.Name,
                         DocNum = d.TransferOutBalans.DocNum.ToString(),
                         Price = d.Price
                     };
@@ -1293,6 +1191,7 @@ namespace KursAM2.Managers
                           && sd34.NCODE == 100
                     select new
                     {
+                        DocCode = sd34.DOC_CODE,
                         Date = sd34.DATE_ORD,
                         SotrCrsDC = sd2.crs_dc,
                         TabelNumber = sd2.TABELNUMBER,
@@ -1309,7 +1208,7 @@ namespace KursAM2.Managers
                         GroupId = Guid.Parse("{B96B2906-C5AA-4566-B77F-F3E4B912E72E}"),
                         Name = emps.Single(_ => _.TABELNUMBER == d.TabelNumber).NAME,
                         Date = d.Date ?? DateTime.MinValue,
-                        DocTypeCode = (DocumentType)903,
+                        DocTypeCode = (DocumentType)34,
                         SDRSchet = d.SDRSchetDC != null
                             ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
                             : null,
@@ -1328,6 +1227,7 @@ namespace KursAM2.Managers
                                 && td101.SD_101.VV_START_DATE >= DateStart && td101.SD_101.VV_START_DATE <= DateEnd
                         select new
                         {
+                            Code = td101.CODE,
                             Date = td101.SD_101.VV_START_DATE,
                             SotrCrsDC = sd2.crs_dc,
                             TabelNumber = sd2.TABELNUMBER,
@@ -1343,7 +1243,7 @@ namespace KursAM2.Managers
                         GroupId = Guid.Parse("{B96B2906-C5AA-4566-B77F-F3E4B912E72E}"),
                         Name = emps.Single(_ => _.TABELNUMBER == d.TabelNumber).NAME,
                         Date = d.Date,
-                        DocTypeCode = (DocumentType)903,
+                        DocTypeCode = (DocumentType)101,
                         SDRSchet = d.SDRSchetDC != null
                             ? GlobalOptions.ReferencesCache.GetSDRSchet(d.SDRSchetDC.Value) as SDRSchet
                             : null,
@@ -1433,6 +1333,7 @@ namespace KursAM2.Managers
                         OperCrsDC = empRows.CRS_DC,
                         IsShablon = empNachHead.IS_TEMPLATE,
                         Id = empRows.EMP_PR_DOC.ID
+
                     }).ToList();
                 var emps = ent.SD_2.ToList();
                 foreach (var d in dataNach)

@@ -1514,6 +1514,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     var r = new InvoiceClientRowViewModel
                     {
                         DocCode = Document.DocCode,
+                        Nomenkl = item,
                         Code = newCode,
                         NDSPercent = nds,
                         Quantity = 1,

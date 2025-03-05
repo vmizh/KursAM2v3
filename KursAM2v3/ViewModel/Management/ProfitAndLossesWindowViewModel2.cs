@@ -252,11 +252,14 @@ namespace KursAM2.ViewModel.Management
             }
         }
 
+        private bool IsFactBalans;
+
         public ProfitAndLossesMainRowViewModel BalansFact
         {
             get => myBalansFact;
             set
             {
+                IsFactBalans = true;
                 // ReSharper disable once PossibleUnintendedReferenceComparison
                 if (myBalansFact == value) return;
                 myBalansFact = value;
@@ -295,6 +298,7 @@ namespace KursAM2.ViewModel.Management
             get => myBalansCalc;
             set
             {
+                IsFactBalans = false;
                 // ReSharper disable once PossibleUnintendedReferenceComparison
                 if (myBalansCalc == value) return;
                 myBalansCalc = value;
@@ -563,74 +567,6 @@ namespace KursAM2.ViewModel.Management
             };
         }
 
-        //private void ResetCurrencyDetailColumns()
-        //{
-        //    if (Form is ProfitAndLosses frm)
-        //        foreach (var column in frm.GridControlExtend.Columns)
-        //        {
-        //            GridControlBand b;
-        //            switch (column.FieldName)
-        //            {
-        //                case "ProfitEUR":
-        //                    b =
-        //                        frm.GridControlExtend.Bands.FirstOrDefault(
-        //                            _ => _.Columns.Any(c => c.FieldName == "ProfitEUR"));
-        //                    if (b != null)
-        //                        b.Visible = ExtendActual.Sum(_ => _.ProfitEUR) != 0 ||
-        //                                    ExtendActual.Sum(_ => _.LossEUR) != 0;
-        //                    break;
-        //                case "ProfitUSD":
-        //                    b =
-        //                        frm.GridControlExtend.Bands.FirstOrDefault(
-        //                            _ => _.Columns.Any(c => c.FieldName == "ProfitUSD"));
-        //                    if (b != null)
-        //                        b.Visible = ExtendActual.Sum(_ => _.ProfitUSD) != 0 ||
-        //                                    ExtendActual.Sum(_ => _.LossUSD) != 0;
-        //                    break;
-        //                case "ProfitCNY":
-        //                    b =
-        //                        frm.GridControlExtend.Bands.FirstOrDefault(
-        //                            _ => _.Columns.Any(c => c.FieldName == "ProfitCNY"));
-        //                    if (b != null)
-        //                        b.Visible = ExtendActual.Sum(_ => _.ProfitCNY) != 0 ||
-        //                                    ExtendActual.Sum(_ => _.LossCNY) != 0;
-        //                    break;
-        //                case "ProfitRUB":
-        //                    b =
-        //                        frm.GridControlExtend.Bands.FirstOrDefault(
-        //                            _ => _.Columns.Any(c => c.FieldName == "ProfitRUB"));
-        //                    if (b != null)
-        //                        b.Visible = ExtendActual.Sum(_ => _.ProfitRUB) != 0 ||
-        //                                    ExtendActual.Sum(_ => _.LossRUB) != 0;
-        //                    break;
-        //                case "ProfitGBP":
-        //                    b =
-        //                        frm.GridControlExtend.Bands.FirstOrDefault(
-        //                            _ => _.Columns.Any(c => c.FieldName == "ProfitGBP"));
-        //                    if (b != null)
-        //                        b.Visible = ExtendActual.Sum(_ => _.ProfitGBP) != 0 ||
-        //                                    ExtendActual.Sum(_ => _.LossGBP) != 0;
-        //                    break;
-        //                case "ProfitCHF":
-        //                    b =
-        //                        frm.GridControlExtend.Bands.FirstOrDefault(
-        //                            _ => _.Columns.Any(c => c.FieldName == "ProfitCHF"));
-        //                    if (b != null)
-        //                        b.Visible = ExtendActual.Sum(_ => _.ProfitCHF) != 0 ||
-        //                                    ExtendActual.Sum(_ => _.LossCHF) != 0;
-        //                    break;
-        //                case "ProfitSEK":
-        //                    b =
-        //                        frm.GridControlExtend.Bands.FirstOrDefault(
-        //                            _ => _.Columns.Any(c => c.FieldName == "ProfitSEK"));
-        //                    if (b != null)
-        //                        b.Visible = ExtendActual.Sum(_ => _.ProfitSEK) != 0 ||
-        //                                    ExtendActual.Sum(_ => _.LossSEK) != 0;
-        //                    break;
-        //            }
-        //        }
-        //}
-
         public void UpdateExtend2(Guid id)
         {
             ExtendActual.Clear();
@@ -866,16 +802,37 @@ namespace KursAM2.ViewModel.Management
             }
             else
             {
-                foreach (var d in Manager.Extend.Where(d => d.GroupId == id))
-                    ExtendActual.Add(d);
+
+
                 if (id == Guid.Parse("{334973B4-1652-4473-9DED-FD4B31B31FC1}") ||
                     id == Guid.Parse("{D89B1E18-074E-4A7D-A0EE-9537DC1585D8}") ||
                     id == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}") ||
-                    id == Guid.Parse("{E47EF726-3BEA-4B18-9773-E564D624FDF6}")
+                    id == Guid.Parse("{E47EF726-3BEA-4B18-9773-E564D624FDF6}") ||
+                    id == Guid.Parse("{B96B2906-C5AA-4566-B77F-F3E4B912E72E}")
                    )
-                    foreach (var id2 in Main.Where(_ => _.ParentId == id).Select(_ => _.Id))
-                    foreach (var d in Manager.Extend.Where(d => d.GroupId == id2))
+                    if (id == Guid.Parse("{B96B2906-C5AA-4566-B77F-F3E4B912E72E}"))
+                    {
+                        if (IsFactBalans)
+                            foreach (var d in Manager.Extend.Where(d => d.GroupId == id))
+                                ExtendActual.Add(d);
+                        else 
+                            foreach (var d in Manager.ExtendNach.Where(d => d.GroupId == id))
+                                ExtendActual.Add(d);
+
+                    }
+                    else
+                    {
+                        foreach (var id2 in Main.Where(_ => _.ParentId == id).Select(_ => _.Id))
+                        {
+                            foreach (var d in Manager.ExtendNach.Where(d => d.GroupId == id2))
+                                ExtendActual.Add(d);
+                        }
+                    }
+                else
+                {
+                    foreach (var d in Manager.Extend.Where(d => d.GroupId == id))
                         ExtendActual.Add(d);
+                }
             }
 
             //ResetCurrencyDetailColumns();

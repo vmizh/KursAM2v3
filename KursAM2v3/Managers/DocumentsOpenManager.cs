@@ -280,6 +280,7 @@ namespace KursAM2.Managers
             var form = new PayRollVedomost();
             form.Show();
             form.DataContext = ctx;
+            ctx.RefreshData(null);
             return ctx;
         }
 
@@ -646,6 +647,7 @@ namespace KursAM2.Managers
             };
             ctx.Form = form;
             ctx.CreateMenu();
+            ctx.RefreshData(null);
             form.Show();
             form.DataContext = ctx;
             return ctx;
