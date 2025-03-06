@@ -2513,7 +2513,7 @@ namespace KursAM2.Managers
                         AktZachetResult = 0,
                         CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC).Currency).Name,
                         DocNum = $"{d.DocInNum}/{d.DocExtNum}",
-                        StringId = d.Id.ToString()
+                        StringId = d.Id.ToString(),
                     };
 
                     //CalcType = TypeProfitAndLossCalc.IsProfit
@@ -2530,13 +2530,14 @@ namespace KursAM2.Managers
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier,
-                        Name = "Прямые затраты",
+                        Name = ((IName)GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC)).Name,
                         Note =
                             string.Format(
                                 $"Дата {d.AccruedAmountOfSupplier.DocDate.ToShortDateString()} №{d.AccruedAmountOfSupplier.DocInNum}/{d.AccruedAmountOfSupplier.DocExtNum} {d.Note}"),
                         DocCode = 0,
                         Quantity = 1,
                         Price = d.Summa,
+                        Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl,
                         Kontragent =
                             ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.AccruedAmountOfSupplier.KontrDC))
                             .Name,
