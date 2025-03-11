@@ -2571,6 +2571,8 @@ public class RedisCacheReferences : IReferencesCache
                 GetClientCategoriesAll();
                 GetKontragentCategoriesAll();
                 GetCentrResponsibilitiesAll();
+                GetSDRStateAll();
+                GetSDRSchetAll();
                 Task.Run(() =>
                 {
                     GetEmployees();
@@ -2592,8 +2594,6 @@ public class RedisCacheReferences : IReferencesCache
                     GetProductTypeAll();
                     GetProjectsAll();
                     GetRegionsAll();
-                    GetSDRStateAll();
-                    GetSDRSchetAll();
                     GetWarehousesAll();
                     GetDeliveryConditionAll();
 
