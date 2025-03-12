@@ -18,6 +18,8 @@ namespace KursAM2.View.Management
     public partial class ProfitAndLosses2
     {
         private bool isActualData;
+        public Guid FormId { set; get; } = Guid.Empty;
+        readonly INavigator navigator = new FrameProfitNavigator();
 
         public ProfitAndLosses2()
         {
@@ -51,12 +53,10 @@ namespace KursAM2.View.Management
 
         public void NavigateTo(Type view)
         {
-            if (DataContext is ProfitAndLossesWindowViewModel2 dtx)
-                if (dtx.ExtendActual.Count > 0)
-                    if (navigationProfitFrame.Content is ILayout v)
-                        v.LayoutManager.Save();
-
-            INavigator navigator = new FrameProfitNavigator();
+            if (DataContext is not ProfitAndLossesWindowViewModel2 dtx || dtx.FormId != FormId) return;
+            if (dtx.ExtendActual.Count > 0)
+                if (navigationProfitFrame.Content is ILayout v)
+                    v.LayoutManager.Save();
             navigator.Navigate(view);
         }
 

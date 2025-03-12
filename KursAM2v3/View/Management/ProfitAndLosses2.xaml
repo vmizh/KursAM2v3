@@ -12,6 +12,7 @@
                  xmlns:behaviors="clr-namespace:KursAM2.View.Behaviors"
                  xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui"
                  xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
+                 xmlns:navigation="http://schemas.devexpress.com/winfx/2008/xaml/windowsui/navigation"
                  mc:Ignorable="d"
                  Title="{Binding WindowName}" Height="450" Width="800">
     <dx:ThemedWindow.HeaderItems>
@@ -178,7 +179,7 @@
                                        Navigated="Profit_NavigationFrame_OnNavigated"
                                        >
                     <dxmvvm:Interaction.Behaviors>
-                        <behaviors:FrameProfitNavigation />
+                        <navigation:FrameNavigationService />
                     </dxmvvm:Interaction.Behaviors>
                 </dxwui:NavigationFrame>
             </dxlc:LayoutGroup>

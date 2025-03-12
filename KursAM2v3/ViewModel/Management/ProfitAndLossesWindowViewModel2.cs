@@ -12,7 +12,9 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
+using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
 using FinanceAnalitic;
 using Helper;
@@ -44,6 +46,7 @@ namespace KursAM2.ViewModel.Management
         private readonly List<Guid?> myTempIdList = new List<Guid?>();
         private readonly List<Guid?> myTempIdList2 = new List<Guid?>();
 
+        public Guid FormId { set; get; } = Guid.NewGuid();
 
         private bool _IsDataLoaded;
         private ProfitAndLossesMainRowViewModel myBalansCalc;
@@ -55,6 +58,8 @@ namespace KursAM2.ViewModel.Management
         private Currency myRecalcCurrency;
         private DateTime myStartDate;
         private int myTabSelected;
+
+        private INavigationService myNavigationService => this.GetService<INavigationService>();
 
         public ProfitAndLossesWindowViewModel2()
         {
@@ -101,6 +106,7 @@ namespace KursAM2.ViewModel.Management
                 DataContext = ctxpb2
             };
             ctxpb2.Form = form;
+            form.FormId = ctxpb2.FormId;
             ctxpb2.RaisePropertyAllChanged();
             form.Show();
 
@@ -270,19 +276,23 @@ namespace KursAM2.ViewModel.Management
                     {
                         case "459937df-085f-4825-9ae9-810b054d0276":
                         case "30e9bd73-9bda-4d75-b897-332f9210b9b1":
-                            frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
+                            myNavigationService.Navigate("ProfitAndLossExtendVzaimozchetUI",null,this);
+                            //frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
                             break;
                         case "b6f2540a-9593-42e3-b34f-8c0983bc39a2":
                         case "35ebabec-eac3-4c3c-8383-6326c5d64c8c":
-                            frm?.NavigateTo(typeof(CurrencyConvertView));
+                            myNavigationService.Navigate("CurrencyConvertView",null,this);
+                            //frm?.NavigateTo(typeof(CurrencyConvertView));
                             UpdateCurrencyConvert(StartDate, EndDate);
                             break;
                         case "35c9783e-e19f-452b-8479-d6f022444552":
-                            frm?.NavigateTo(typeof(CurrencyConvertView));
+                            myNavigationService.Navigate("CurrencyConvertView",null,this);
+                            //frm?.NavigateTo(typeof(CurrencyConvertView));
                             UpdateBalansOper(StartDate, EndDate);
                             break;
                         default:
-                            frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
+                            myNavigationService.Navigate("ProfitAndLossExtendBaseUI",null,this);
+                            //frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
                             break;
                     }
 
@@ -309,30 +319,29 @@ namespace KursAM2.ViewModel.Management
                     {
                         case "459937df-085f-4825-9ae9-810b054d0276":
                         case "30e9bd73-9bda-4d75-b897-332f9210b9b1":
-                            frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
+                            myNavigationService.Navigate("ProfitAndLossExtendVzaimozchetUI",null,this);
+                            //frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
                             break;
                         case "b6f2540a-9593-42e3-b34f-8c0983bc39a2":
                         case "35ebabec-eac3-4c3c-8383-6326c5d64c8c":
-                            frm?.NavigateTo(typeof(CurrencyConvertView));
+                            myNavigationService.Navigate("CurrencyConvertView",null,this);
+                            //frm?.NavigateTo(typeof(CurrencyConvertView));
                             UpdateCurrencyConvert(StartDate, EndDate);
                             break;
                         case "35c9783e-e19f-452b-8479-d6f022444552":
-                            frm?.NavigateTo(typeof(CurrencyConvertView));
+                            myNavigationService.Navigate("CurrencyConvertView",null,this);
+                            //frm?.NavigateTo(typeof(CurrencyConvertView));
                             UpdateBalansOper(StartDate, EndDate);
                             break;
                         // case "4cea8d09-030e-49e8-b6f7-eb83d5e0d6ea":
                         //     frm?.NavigateTo(typeof(AccruedOfSupplierUI));
                         //     break;
                         default:
-                            frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
+                            myNavigationService.Navigate("ProfitAndLossExtendBaseUI",null,this);
+                            //frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
                             break;
                     }
-                    //if (myBalansCalc.Id == Guid.Parse("{459937df-085f-4825-9ae9-810b054d0276}")
-                    //    || myBalansCalc.Id == Guid.Parse("{30e9bd73-9bda-4d75-b897-332f9210b9b1}"))
-
-                    //else
-
-
+                   
                     UpdateExtend(myBalansCalc.Id);
                 }
 
