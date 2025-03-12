@@ -295,7 +295,6 @@ namespace KursAM2.ViewModel.Management
                             //frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
                             break;
                     }
-
                     UpdateExtend(myBalansFact.Id);
                 }
 

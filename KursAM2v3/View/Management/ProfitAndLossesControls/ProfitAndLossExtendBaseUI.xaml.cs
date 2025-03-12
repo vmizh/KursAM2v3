@@ -67,8 +67,23 @@ namespace KursAM2.View.Management.ProfitAndLossesControls
                 .Where(col => col.FieldName == "AktZachetResult").ToList();
             foreach (var col in cols)
             {
-               col.Visible = false;
+                col.Visible = false;
             }
+
+            foreach (var col in GridControlExtend.Columns)
+            {
+                if (col.FieldName != "KontragentName" && col.FieldName != "DirectPaySumma") continue;
+                if (dtx.BalansCalc?.Id ==  ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier
+                    || dtx.BalansFact?.Id == ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier )
+                {
+                    col.Visible = true;
+                }
+                else
+                {
+                    col.Visible = false;
+                }
+            }
+
         }
     }
 }

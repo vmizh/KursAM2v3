@@ -2527,6 +2527,11 @@ namespace KursAM2.Managers
 
                 foreach (var d in outBalansSupplier)
                 {
+                    decimal paySum = 0;
+                    if (d.SD_34 is not null && d.SD_34.Count > 1)
+                        paySum = (decimal)d.SD_34.First().CRS_SUMMA;
+                    if(d.TD_101 is not null && d.TD_101.Count > 0)
+                        paySum = (decimal)d.TD_101.First().VVT_KONTR_CRS_SUMMA;
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier,
@@ -2537,6 +2542,8 @@ namespace KursAM2.Managers
                         DocCode = 0,
                         Quantity = 1,
                         Price = d.Summa,
+                        KontragentName = ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.AccruedAmountOfSupplier.KontrDC)).Name,
+                        DirectPaySumma = paySum,
                         Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl,
                         Kontragent =
                             ((IName)GlobalOptions.ReferencesCache.GetKontragent(d.AccruedAmountOfSupplier.KontrDC))
