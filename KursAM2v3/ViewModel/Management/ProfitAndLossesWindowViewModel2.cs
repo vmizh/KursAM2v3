@@ -269,7 +269,6 @@ namespace KursAM2.ViewModel.Management
                 // ReSharper disable once PossibleUnintendedReferenceComparison
                 if (myBalansFact == value) return;
                 myBalansFact = value;
-                var frm = Form as ProfitAndLosses2;
                 if (myBalansFact != null)
                 {
                     switch (myBalansFact.Id.ToString())
@@ -277,22 +276,18 @@ namespace KursAM2.ViewModel.Management
                         case "459937df-085f-4825-9ae9-810b054d0276":
                         case "30e9bd73-9bda-4d75-b897-332f9210b9b1":
                             myNavigationService.Navigate("ProfitAndLossExtendVzaimozchetUI",null,this);
-                            //frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
                             break;
                         case "b6f2540a-9593-42e3-b34f-8c0983bc39a2":
                         case "35ebabec-eac3-4c3c-8383-6326c5d64c8c":
                             myNavigationService.Navigate("CurrencyConvertView",null,this);
-                            //frm?.NavigateTo(typeof(CurrencyConvertView));
                             UpdateCurrencyConvert(StartDate, EndDate);
                             break;
                         case "35c9783e-e19f-452b-8479-d6f022444552":
                             myNavigationService.Navigate("CurrencyConvertView",null,this);
-                            //frm?.NavigateTo(typeof(CurrencyConvertView));
                             UpdateBalansOper(StartDate, EndDate);
                             break;
                         default:
                             myNavigationService.Navigate("ProfitAndLossExtendBaseUI",null,this);
-                            //frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
                             break;
                     }
                     UpdateExtend(myBalansFact.Id);
@@ -311,7 +306,6 @@ namespace KursAM2.ViewModel.Management
                 // ReSharper disable once PossibleUnintendedReferenceComparison
                 if (myBalansCalc == value) return;
                 myBalansCalc = value;
-                var frm = Form as ProfitAndLosses2;
                 if (myBalansCalc != null)
                 {
                     switch (myBalansCalc.Id.ToString())
@@ -319,25 +313,18 @@ namespace KursAM2.ViewModel.Management
                         case "459937df-085f-4825-9ae9-810b054d0276":
                         case "30e9bd73-9bda-4d75-b897-332f9210b9b1":
                             myNavigationService.Navigate("ProfitAndLossExtendVzaimozchetUI",null,this);
-                            //frm?.NavigateTo(typeof(ProfitAndLossExtendVzaimozchetUI));
                             break;
                         case "b6f2540a-9593-42e3-b34f-8c0983bc39a2":
                         case "35ebabec-eac3-4c3c-8383-6326c5d64c8c":
                             myNavigationService.Navigate("CurrencyConvertView",null,this);
-                            //frm?.NavigateTo(typeof(CurrencyConvertView));
                             UpdateCurrencyConvert(StartDate, EndDate);
                             break;
                         case "35c9783e-e19f-452b-8479-d6f022444552":
                             myNavigationService.Navigate("CurrencyConvertView",null,this);
-                            //frm?.NavigateTo(typeof(CurrencyConvertView));
                             UpdateBalansOper(StartDate, EndDate);
                             break;
-                        // case "4cea8d09-030e-49e8-b6f7-eb83d5e0d6ea":
-                        //     frm?.NavigateTo(typeof(AccruedOfSupplierUI));
-                        //     break;
                         default:
                             myNavigationService.Navigate("ProfitAndLossExtendBaseUI",null,this);
-                            //frm?.NavigateTo(typeof(ProfitAndLossExtendBaseUI));
                             break;
                     }
                    

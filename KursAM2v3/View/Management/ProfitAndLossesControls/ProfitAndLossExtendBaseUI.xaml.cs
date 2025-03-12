@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
+using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management;
 using KursDomain;
 using LayoutManager;
@@ -21,7 +20,7 @@ namespace KursAM2.View.Management.ProfitAndLossesControls
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),
                 "KursAM2.View.Management.ProfitAndLossesControls.ProfitAndLossExtendBaseUI",
                 GridControlExtend);
-            //Loaded += BalansCompareFinanseUI_Loaded;
+            Loaded += BalansCompareFinanseUI_Loaded;
             //Unloaded += BalansCompareFinanseUI_Unloaded;
         }
 
@@ -65,25 +64,24 @@ namespace KursAM2.View.Management.ProfitAndLossesControls
                 LayoutManager.Load(true);
             var cols = GridControlExtend.Columns
                 .Where(col => col.FieldName == "AktZachetResult").ToList();
-            foreach (var col in cols)
-            {
-                col.Visible = false;
-            }
+            foreach (var col in cols) col.Visible = false;
 
             foreach (var col in GridControlExtend.Columns)
             {
                 if (col.FieldName != "KontragentName" && col.FieldName != "DirectPaySumma") continue;
-                if (dtx.BalansCalc?.Id ==  ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier
-                    || dtx.BalansFact?.Id == ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier )
-                {
+                if (dtx.BalansCalc?.Id == ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier
+                    || dtx.BalansFact?.Id == ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier)
                     col.Visible = true;
-                }
                 else
-                {
                     col.Visible = false;
-                }
             }
+        }
 
+
+        private void GridLayoutHelper_Trigger(object sender, MyEventArgs e)
+        {
+            LayoutManager.Save();
+            ;
         }
     }
 }

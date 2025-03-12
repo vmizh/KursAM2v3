@@ -176,7 +176,6 @@
             <dxlc:LayoutGroup Header="LayoutGroup" dxlc:LayoutControl.AllowVerticalSizing="True">
                 <dxwui:NavigationFrame Source="EmptyUI" Name="navigationProfitFrame"
                                        AnimationType="SlideHorizontal" NavigationCacheMode="Required"
-                                       Navigated="Profit_NavigationFrame_OnNavigated"
                                        >
                     <dxmvvm:Interaction.Behaviors>
                         <navigation:FrameNavigationService />

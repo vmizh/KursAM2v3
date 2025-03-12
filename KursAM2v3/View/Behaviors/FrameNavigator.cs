@@ -20,21 +20,21 @@ namespace KursAM2.View.Behaviors
         }
     }
 
-    public class FrameProfitNavigator : INavigator
-    {
-        public void Navigate(Type source)
-        {
-            FrameProfitNavigation.Navigate(source.Name);
-        }
+//    public class FrameProfitNavigator : INavigator
+//    {
+//        public void Navigate(Type source)
+//        {
+//            FrameProfitNavigation.Navigate(source.Name);
+//        }
 
-        public void Navigate(Type source, object param)
-        {
-            FrameProfitNavigation.Navigate(source.Name, param);
-        }
+//        public void Navigate(Type source, object param)
+//        {
+//            FrameProfitNavigation.Navigate(source.Name, param);
+//        }
 
-        public void NavigateToInstance(object source)
-        {
-            FrameProfitNavigation.Navigate(source);
-        }
-    }
+//        public void NavigateToInstance(object source)
+//        {
+//            FrameProfitNavigation.Navigate(source);
+//        }
+//    }
 }

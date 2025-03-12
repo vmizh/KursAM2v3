@@ -6,6 +6,8 @@
              xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
              xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             xmlns:helper="clr-namespace:KursAM2.View.Helper"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -19,6 +21,9 @@
                     ItemsSource="{Binding ExtendActual, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                     CurrentItem="{Binding CurrentExtend, UpdateSourceTrigger=PropertyChanged}"
                     CurrentColumn="{Binding CurrentColumn, Mode=OneWay}">
+            <dxmvvm:Interaction.Behaviors>
+                <helper:GridLayoutHelper LayoutChanged="GridLayoutHelper_Trigger" />
+            </dxmvvm:Interaction.Behaviors>
             <dxg:GridControl.View>
                 <dxg:TableView x:Name="gridExtend"
                                Style="{StaticResource TableView.Standart}"
