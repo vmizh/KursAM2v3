@@ -4,17 +4,15 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
-using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
-using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
 using FinanceAnalitic;
 using Helper;
@@ -22,7 +20,6 @@ using KursAM2.Managers;
 using KursAM2.View.Base;
 using KursAM2.View.Finance;
 using KursAM2.View.Management;
-using KursAM2.View.Management.ProfitAndLossesControls;
 using KursAM2.ViewModel.Finance;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Logistiks.TransferOut;
@@ -37,6 +34,8 @@ using KursDomain.Repository.NomenklRepository;
 using KursDomain.Repository.StorageLocationsRepositury;
 using KursDomain.Repository.TransferOut;
 using static System.Math;
+using Application = System.Windows.Application;
+using HorizontalAlignment = System.Windows.HorizontalAlignment;
 
 namespace KursAM2.ViewModel.Management
 {
@@ -46,25 +45,26 @@ namespace KursAM2.ViewModel.Management
         private readonly List<Guid?> myTempIdList = new List<Guid?>();
         private readonly List<Guid?> myTempIdList2 = new List<Guid?>();
 
-        public Guid FormId { set; get; } = Guid.NewGuid();
-
         private bool _IsDataLoaded;
+
+        private bool IsFactBalans;
         private ProfitAndLossesMainRowViewModel myBalansCalc;
         private ProfitAndLossesMainRowViewModel myBalansFact;
         private CurrencyConvertRow myCurrentCrsConvert;
         private CrossCurrencyRate myCurrentCurrencyRate;
         private ProfitAndLossesExtendRowViewModel myCurrentExtend;
         private DateTime myEndDate;
+        private Visibility myGridControlBaseExtendVisible = Visibility.Hidden;
+        private Visibility myGridControlCurrencyConvertVisible = Visibility.Hidden;
+        private Visibility myGridControlVzaimozachetVisible = Visibility.Hidden;
         private Currency myRecalcCurrency;
         private DateTime myStartDate;
         private int myTabSelected;
 
-        private INavigationService myNavigationService => this.GetService<INavigationService>();
-
         public ProfitAndLossesWindowViewModel2()
         {
             WindowName = "Прибыли и убытки";
-            LayoutName = "ProfitAndLossesWindowViewModel2";
+            LayoutName = "ProfitAndLossView";
             ExtendActual = new ObservableCollection<ProfitAndLossesExtendRowViewModel>();
             LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
             {
@@ -77,8 +77,7 @@ namespace KursAM2.ViewModel.Management
             CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR) as Currency);
             CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP) as Currency);
             CurrenciesForRecalc.Add(GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY) as Currency);
-            StartDate = new DateTime(DateTime.Today.Year,DateTime.Today.Month,1);
-            //StartDate = DateTime.Today;
+            StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             EndDate = DateTime.Today;
             var crsrate = new CrossCurrencyRate();
             crsrate.SetRates(DateTime.Today);
@@ -97,19 +96,38 @@ namespace KursAM2.ViewModel.Management
             };
         }
 
-        public override void AddSearchList(object obj)
-        {
-            var ctxpb2 = new ProfitAndLossesWindowViewModel2();
-            var form = new ProfitAndLosses2
-            {
-                Owner = Application.Current.MainWindow,
-                DataContext = ctxpb2
-            };
-            ctxpb2.Form = form;
-            form.FormId = ctxpb2.FormId;
-            ctxpb2.RaisePropertyAllChanged();
-            form.Show();
 
+        public Visibility GridControlVzaimozachetVisible
+        {
+            set
+            {
+                if (value == myGridControlVzaimozachetVisible) return;
+                myGridControlVzaimozachetVisible = value;
+                RaisePropertyChanged();
+            }
+            get => myGridControlVzaimozachetVisible;
+        }
+
+        public Visibility GridControlCurrencyConvertVisible
+        {
+            set
+            {
+                if (value == myGridControlCurrencyConvertVisible) return;
+                myGridControlCurrencyConvertVisible = value;
+                RaisePropertyChanged();
+            }
+            get => myGridControlCurrencyConvertVisible;
+        }
+
+        public Visibility GridControlBaseExtendVisible
+        {
+            set
+            {
+                if (value == myGridControlBaseExtendVisible) return;
+                myGridControlBaseExtendVisible = value;
+                RaisePropertyChanged();
+            }
+            get => myGridControlBaseExtendVisible;
         }
 
 
@@ -258,8 +276,6 @@ namespace KursAM2.ViewModel.Management
             }
         }
 
-        private bool IsFactBalans;
-
         public ProfitAndLossesMainRowViewModel BalansFact
         {
             get => myBalansFact;
@@ -275,21 +291,23 @@ namespace KursAM2.ViewModel.Management
                     {
                         case "459937df-085f-4825-9ae9-810b054d0276":
                         case "30e9bd73-9bda-4d75-b897-332f9210b9b1":
-                            myNavigationService.Navigate("ProfitAndLossExtendVzaimozchetUI",null,this);
+                            setControldVisible(isVzaimozachetVisible: true);
                             break;
                         case "b6f2540a-9593-42e3-b34f-8c0983bc39a2":
                         case "35ebabec-eac3-4c3c-8383-6326c5d64c8c":
-                            myNavigationService.Navigate("CurrencyConvertView",null,this);
+                            setControldVisible(isCurrencyConvertVisible: true);
                             UpdateCurrencyConvert(StartDate, EndDate);
                             break;
                         case "35c9783e-e19f-452b-8479-d6f022444552":
-                            myNavigationService.Navigate("CurrencyConvertView",null,this);
+                            setControldVisible(isCurrencyConvertVisible: true);
                             UpdateBalansOper(StartDate, EndDate);
                             break;
                         default:
-                            myNavigationService.Navigate("ProfitAndLossExtendBaseUI",null,this);
+                            setColumnVisible(Form as ProfitAndLoss);
+                            setControldVisible(true);
                             break;
                     }
+
                     UpdateExtend(myBalansFact.Id);
                 }
 
@@ -312,27 +330,51 @@ namespace KursAM2.ViewModel.Management
                     {
                         case "459937df-085f-4825-9ae9-810b054d0276":
                         case "30e9bd73-9bda-4d75-b897-332f9210b9b1":
-                            myNavigationService.Navigate("ProfitAndLossExtendVzaimozchetUI",null,this);
+                            setControldVisible(isVzaimozachetVisible: true);
                             break;
                         case "b6f2540a-9593-42e3-b34f-8c0983bc39a2":
                         case "35ebabec-eac3-4c3c-8383-6326c5d64c8c":
-                            myNavigationService.Navigate("CurrencyConvertView",null,this);
+                            setControldVisible(isCurrencyConvertVisible: true);
                             UpdateCurrencyConvert(StartDate, EndDate);
                             break;
                         case "35c9783e-e19f-452b-8479-d6f022444552":
-                            myNavigationService.Navigate("CurrencyConvertView",null,this);
+                            setControldVisible(isCurrencyConvertVisible: true);
                             UpdateBalansOper(StartDate, EndDate);
                             break;
                         default:
-                            myNavigationService.Navigate("ProfitAndLossExtendBaseUI",null,this);
+                            setColumnVisible(Form as ProfitAndLoss);
+                            setControldVisible(true);
                             break;
                     }
-                   
+
                     UpdateExtend(myBalansCalc.Id);
                 }
 
                 // ReSharper disable once PossibleNullReferenceException1965569UpdateExtend2(myBalansCalc.Id);
                 RaisePropertyChanged();
+            }
+        }
+
+        private void setColumnVisible(ProfitAndLoss frm)
+        {
+            foreach (var col in frm.GridControlBaseExtend.Columns)
+            {
+                if (BalansCalc?.Id == ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier
+                    || BalansFact?.Id == ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier)
+                {
+                    if (col.FieldName == "KontragentName" || col.FieldName == "DirectPaySumma")
+                    {
+                        col.Visible = true;
+                    }
+                }
+                else
+                {
+                    if (col.FieldName == "KontragentName" || col.FieldName == "DirectPaySumma")
+                    {
+                        col.Visible = false;
+                    }
+                }
+
             }
         }
 
@@ -347,7 +389,7 @@ namespace KursAM2.ViewModel.Management
             {
                 if (Equals(myRecalcCurrency, value)) return;
                 myRecalcCurrency = value;
-                if (Form is ProfitAndLosses2 frm)
+                if (Form is ProfitAndLoss frm)
                 {
                     var b = frm.treeListMain.Bands.FirstOrDefault(
                         _ => _.Columns.Any(c => c.FieldName == "RecalcResult"));
@@ -375,6 +417,27 @@ namespace KursAM2.ViewModel.Management
         public ICommand ActConvertOpenCommand
         {
             get { return new Command(ActConvertOpen, _ => CurrentCrsConvert != null); }
+        }
+
+        private void setControldVisible(bool isBaseVisible = false, bool isVzaimozachetVisible = false,
+            bool isCurrencyConvertVisible = false)
+        {
+            GridControlVzaimozachetVisible = isVzaimozachetVisible ? Visibility.Visible : Visibility.Hidden;
+            GridControlBaseExtendVisible = isBaseVisible ? Visibility.Visible : Visibility.Hidden;
+            GridControlCurrencyConvertVisible = isCurrencyConvertVisible ? Visibility.Visible : Visibility.Hidden;
+        }
+
+        public override void AddSearchList(object obj)
+        {
+            var ctxpb2 = new ProfitAndLossesWindowViewModel2();
+            var form = new ProfitAndLoss
+            {
+                Owner = Application.Current.MainWindow,
+                DataContext = ctxpb2
+            };
+            ctxpb2.Form = form;
+            ctxpb2.RaisePropertyAllChanged();
+            form.Show();
         }
 
         private void UpdateBalansOper(DateTime dateStart, DateTime dateEnd)
@@ -797,8 +860,6 @@ namespace KursAM2.ViewModel.Management
             }
             else
             {
-
-
                 if (id == Guid.Parse("{334973B4-1652-4473-9DED-FD4B31B31FC1}") ||
                     id == Guid.Parse("{D89B1E18-074E-4A7D-A0EE-9537DC1585D8}") ||
                     id == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}") ||
@@ -810,24 +871,19 @@ namespace KursAM2.ViewModel.Management
                         if (IsFactBalans)
                             foreach (var d in Manager.Extend.Where(d => d.GroupId == id))
                                 ExtendActual.Add(d);
-                        else 
+                        else
                             foreach (var d in Manager.ExtendNach.Where(d => d.GroupId == id))
                                 ExtendActual.Add(d);
-
                     }
                     else
                     {
                         foreach (var id2 in Main.Where(_ => _.ParentId == id).Select(_ => _.Id))
-                        {
-                            foreach (var d in Manager.ExtendNach.Where(d => d.GroupId == id2))
-                                ExtendActual.Add(d);
-                        }
+                        foreach (var d in Manager.ExtendNach.Where(d => d.GroupId == id2))
+                            ExtendActual.Add(d);
                     }
                 else
-                {
                     foreach (var d in Manager.Extend.Where(d => d.GroupId == id))
                         ExtendActual.Add(d);
-                }
             }
 
             //ResetCurrencyDetailColumns();
@@ -888,7 +944,7 @@ namespace KursAM2.ViewModel.Management
                 case DocumentType.TransferOutBalans:
                     var ctx = GlobalOptions.GetEntities();
                     var doc = new TransferOutBalansViewModel(new TransferOutBalansRepository(ctx),
-                        new StorageLocationsRepository(ctx), new NomenklRepository(ctx), new DocHistoryRepository(ctx)); 
+                        new StorageLocationsRepository(ctx), new NomenklRepository(ctx), new DocHistoryRepository(ctx));
                     doc.Show();
                     doc.Initialize(CurrentExtend.Id);
                     break;
@@ -1405,7 +1461,7 @@ namespace KursAM2.ViewModel.Management
 
         public override void RefreshData(object obj)
         {
-            if (Form is ProfitAndLosses2 frm)
+            if (Form is ProfitAndLoss frm)
             {
                 var b = frm.treeListMain.Bands.FirstOrDefault(
                     _ => _.Columns.Any(c => c.FieldName == "RecalcResult"));
@@ -1541,7 +1597,7 @@ namespace KursAM2.ViewModel.Management
 
         private void ResetCurrencyColumns()
         {
-            var frm = (ProfitAndLosses2)Form;
+            var frm = (ProfitAndLoss)Form;
             foreach (var col in frm.treeListMain.Columns)
             {
                 TreeListControlBand b, b1;
@@ -1814,15 +1870,16 @@ namespace KursAM2.ViewModel.Management
             MetadataBuilder<AccruedDocument> builder)
         {
             SetNotAutoGenerated(builder);
-           
+
             builder.Property(_ => _.DocName).LocatedAt(0).AutoGenerated().DisplayName("Документ").ReadOnly();
             builder.Property(_ => _.DocNum).LocatedAt(1).AutoGenerated().DisplayName("№").ReadOnly();
             builder.Property(_ => _.DocDate).LocatedAt(2).AutoGenerated().DisplayName("Дата").ReadOnly();
             builder.Property(_ => _.Kontragent).LocatedAt(2).AutoGenerated().DisplayName("Контрагент").ReadOnly();
-            builder.Property(_ => _.Summa).LocatedAt(2).AutoGenerated().DisplayName("Сумма").ReadOnly().DisplayFormatString("n2");
+            builder.Property(_ => _.Summa).LocatedAt(2).AutoGenerated().DisplayName("Сумма").ReadOnly()
+                .DisplayFormatString("n2");
             builder.Property(_ => _.Currency).LocatedAt(2).AutoGenerated().DisplayName("Валюта").ReadOnly();
             builder.Property(_ => _.Note).LocatedAt(2).AutoGenerated().DisplayName("Примечание").ReadOnly();
-            
+
             builder.Property(_ => _.ProfitRUB).AutoGenerated().DisplayName("Доход").DisplayFormatString("n2")
                 .ReadOnly();
             builder.Property(_ => _.LossRUB).AutoGenerated().DisplayName("Расход").DisplayFormatString("n2").ReadOnly();
@@ -1924,7 +1981,7 @@ namespace KursAM2.ViewModel.Management
         public Kontragent Kontragent { set; get; }
         public decimal Summa { set; get; }
         public string Note { set; get; }
-        
+
         public decimal ProfitRUB { get; set; }
         public decimal LossRUB { get; set; }
         public decimal ResultRUB { get; set; }

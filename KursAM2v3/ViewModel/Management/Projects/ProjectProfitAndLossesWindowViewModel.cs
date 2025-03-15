@@ -297,62 +297,62 @@ namespace KursAM2.ViewModel.Management
 
         private void ResetCurrencyDetailColumns()
         {
-            if (Form is ProfitAndLosses frm)
-                foreach (var column in frm.GridControlExtend.Columns)
-                {
-                    GridControlBand b;
-                    switch (column.FieldName)
-                    {
-                        case "ProfitEUR":
-                            b =
-                                frm.GridControlExtend.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "ProfitEUR"));
-                            if (b != null)
-                                b.Visible = ExtendActual.Sum(_ => _.ProfitEUR) != 0 ||
-                                            ExtendActual.Sum(_ => _.LossEUR) != 0;
-                            break;
-                        case "LossUSD":
-                            b =
-                                frm.GridControlExtend.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "LossUSD"));
-                            if (b != null)
-                                b.Visible = ExtendActual.Sum(_ => _.ProfitUSD) != 0 ||
-                                            ExtendActual.Sum(_ => _.LossUSD) != 0;
-                            break;
-                        case "ProfitRUB":
-                            b =
-                                frm.GridControlExtend.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "ProfitRUB"));
-                            if (b != null)
-                                b.Visible = ExtendActual.Sum(_ => _.ProfitRUB) != 0 ||
-                                            ExtendActual.Sum(_ => _.LossRUB) != 0;
-                            break;
-                        case "ProfitGBP":
-                            b =
-                                frm.GridControlExtend.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "ProfitGBP"));
-                            if (b != null)
-                                b.Visible = ExtendActual.Sum(_ => _.ProfitGBP) != 0 ||
-                                            ExtendActual.Sum(_ => _.LossGBP) != 0;
-                            break;
-                        case "ProfitCHF":
-                            b =
-                                frm.GridControlExtend.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "ProfitCHF"));
-                            if (b != null)
-                                b.Visible = ExtendActual.Sum(_ => _.ProfitCHF) != 0 ||
-                                            ExtendActual.Sum(_ => _.LossCHF) != 0;
-                            break;
-                        case "ProfitSEK":
-                            b =
-                                frm.GridControlExtend.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "ProfitSEK"));
-                            if (b != null)
-                                b.Visible = ExtendActual.Sum(_ => _.ProfitSEK) != 0 ||
-                                            ExtendActual.Sum(_ => _.LossSEK) != 0;
-                            break;
-                    }
-                }
+            //if (Form is ProfitAndLoss frm)
+            //    foreach (var column in frm.GridControlExtend.Columns)
+            //    {
+            //        GridControlBand b;
+            //        switch (column.FieldName)
+            //        {
+            //            case "ProfitEUR":
+            //                b =
+            //                    frm.GridControlExtend.Bands.FirstOrDefault(
+            //                        _ => _.Columns.Any(c => c.FieldName == "ProfitEUR"));
+            //                if (b != null)
+            //                    b.Visible = ExtendActual.Sum(_ => _.ProfitEUR) != 0 ||
+            //                                ExtendActual.Sum(_ => _.LossEUR) != 0;
+            //                break;
+            //            case "LossUSD":
+            //                b =
+            //                    frm.GridControlExtend.Bands.FirstOrDefault(
+            //                        _ => _.Columns.Any(c => c.FieldName == "LossUSD"));
+            //                if (b != null)
+            //                    b.Visible = ExtendActual.Sum(_ => _.ProfitUSD) != 0 ||
+            //                                ExtendActual.Sum(_ => _.LossUSD) != 0;
+            //                break;
+            //            case "ProfitRUB":
+            //                b =
+            //                    frm.GridControlExtend.Bands.FirstOrDefault(
+            //                        _ => _.Columns.Any(c => c.FieldName == "ProfitRUB"));
+            //                if (b != null)
+            //                    b.Visible = ExtendActual.Sum(_ => _.ProfitRUB) != 0 ||
+            //                                ExtendActual.Sum(_ => _.LossRUB) != 0;
+            //                break;
+            //            case "ProfitGBP":
+            //                b =
+            //                    frm.GridControlExtend.Bands.FirstOrDefault(
+            //                        _ => _.Columns.Any(c => c.FieldName == "ProfitGBP"));
+            //                if (b != null)
+            //                    b.Visible = ExtendActual.Sum(_ => _.ProfitGBP) != 0 ||
+            //                                ExtendActual.Sum(_ => _.LossGBP) != 0;
+            //                break;
+            //            case "ProfitCHF":
+            //                b =
+            //                    frm.GridControlExtend.Bands.FirstOrDefault(
+            //                        _ => _.Columns.Any(c => c.FieldName == "ProfitCHF"));
+            //                if (b != null)
+            //                    b.Visible = ExtendActual.Sum(_ => _.ProfitCHF) != 0 ||
+            //                                ExtendActual.Sum(_ => _.LossCHF) != 0;
+            //                break;
+            //            case "ProfitSEK":
+            //                b =
+            //                    frm.GridControlExtend.Bands.FirstOrDefault(
+            //                        _ => _.Columns.Any(c => c.FieldName == "ProfitSEK"));
+            //                if (b != null)
+            //                    b.Visible = ExtendActual.Sum(_ => _.ProfitSEK) != 0 ||
+            //                                ExtendActual.Sum(_ => _.LossSEK) != 0;
+            //                break;
+            //        }
+            //    }
         }
 
         public void UpdateExtend2(Guid id)
@@ -969,7 +969,7 @@ namespace KursAM2.ViewModel.Management
         {
             if (manager.Project == null)
             {
-                var frm = (ProfitAndLosses)Form;
+                var frm = (ProfitAndLoss)Form;
                 foreach (var col in frm.treeListMain.Columns)
                 {
                     TreeListControlBand b, b1;
@@ -1067,62 +1067,62 @@ namespace KursAM2.ViewModel.Management
 
             if (manager.Project != null)
             {
-                var frm = (ProjectProfitAndLossView)Form;
-                foreach (var col in frm.treeListMain.Columns)
-                {
-                    TreeListControlBand b1;
-                    switch (col.FieldName)
-                    {
-                        case "ProfitEUR":
-                            b1 =
-                                frm.treeListMain.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "ProfitEUR"));
-                            if (b1 != null)
-                                b1.Visible = MainNach.Sum(_ => _.ProfitEUR) != 0 ||
-                                             MainNach.Sum(_ => _.LossEUR) != 0;
-                            break;
-                        case "ProfitRUB":
-                            b1 =
-                                frm.treeListMain.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "ProfitRUB"));
-                            if (b1 != null)
-                                b1.Visible = MainNach.Sum(_ => _.ProfitRUB) != 0 ||
-                                             MainNach.Sum(_ => _.LossRUB) != 0;
-                            break;
-                        case "LossUSD":
-                            b1 =
-                                frm.treeListMain.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "LossUSD"));
-                            if (b1 != null)
-                                b1.Visible = MainNach.Sum(_ => _.ProfitUSD) != 0 ||
-                                             MainNach.Sum(_ => _.LossUSD) != 0;
-                            break;
-                        case "ProfitGBP":
-                            b1 =
-                                frm.treeListMain.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "ProfitGBP"));
-                            if (b1 != null)
-                                b1.Visible = MainNach.Sum(_ => _.ProfitGBP) != 0 ||
-                                             MainNach.Sum(_ => _.LossGBP) != 0;
-                            break;
-                        case "ProfitCHF":
-                            b1 =
-                                frm.treeListMain.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "ProfitCHF"));
-                            if (b1 != null)
-                                b1.Visible = MainNach.Sum(_ => _.ProfitCHF) != 0 ||
-                                             MainNach.Sum(_ => _.LossCHF) != 0;
-                            break;
-                        case "ProfitSEK":
-                            b1 =
-                                frm.treeListMain.Bands.FirstOrDefault(
-                                    _ => _.Columns.Any(c => c.FieldName == "ProfitSEK"));
-                            if (b1 != null)
-                                b1.Visible = MainNach.Sum(_ => _.ProfitSEK) != 0 ||
-                                             MainNach.Sum(_ => _.LossSEK) != 0;
-                            break;
-                    }
-                }
+                //var frm = (ProjectProfitAndLossView)Form;
+                //foreach (var col in frm.treeListMain.Columns)
+                //{
+                //    TreeListControlBand b1;
+                //    switch (col.FieldName)
+                //    {
+                //        case "ProfitEUR":
+                //            b1 =
+                //                frm.treeListMain.Bands.FirstOrDefault(
+                //                    _ => _.Columns.Any(c => c.FieldName == "ProfitEUR"));
+                //            if (b1 != null)
+                //                b1.Visible = MainNach.Sum(_ => _.ProfitEUR) != 0 ||
+                //                             MainNach.Sum(_ => _.LossEUR) != 0;
+                //            break;
+                //        case "ProfitRUB":
+                //            b1 =
+                //                frm.treeListMain.Bands.FirstOrDefault(
+                //                    _ => _.Columns.Any(c => c.FieldName == "ProfitRUB"));
+                //            if (b1 != null)
+                //                b1.Visible = MainNach.Sum(_ => _.ProfitRUB) != 0 ||
+                //                             MainNach.Sum(_ => _.LossRUB) != 0;
+                //            break;
+                //        case "LossUSD":
+                //            b1 =
+                //                frm.treeListMain.Bands.FirstOrDefault(
+                //                    _ => _.Columns.Any(c => c.FieldName == "LossUSD"));
+                //            if (b1 != null)
+                //                b1.Visible = MainNach.Sum(_ => _.ProfitUSD) != 0 ||
+                //                             MainNach.Sum(_ => _.LossUSD) != 0;
+                //            break;
+                //        case "ProfitGBP":
+                //            b1 =
+                //                frm.treeListMain.Bands.FirstOrDefault(
+                //                    _ => _.Columns.Any(c => c.FieldName == "ProfitGBP"));
+                //            if (b1 != null)
+                //                b1.Visible = MainNach.Sum(_ => _.ProfitGBP) != 0 ||
+                //                             MainNach.Sum(_ => _.LossGBP) != 0;
+                //            break;
+                //        case "ProfitCHF":
+                //            b1 =
+                //                frm.treeListMain.Bands.FirstOrDefault(
+                //                    _ => _.Columns.Any(c => c.FieldName == "ProfitCHF"));
+                //            if (b1 != null)
+                //                b1.Visible = MainNach.Sum(_ => _.ProfitCHF) != 0 ||
+                //                             MainNach.Sum(_ => _.LossCHF) != 0;
+                //            break;
+                //        case "ProfitSEK":
+                //            b1 =
+                //                frm.treeListMain.Bands.FirstOrDefault(
+                //                    _ => _.Columns.Any(c => c.FieldName == "ProfitSEK"));
+                //            if (b1 != null)
+                //                b1.Visible = MainNach.Sum(_ => _.ProfitSEK) != 0 ||
+                //                             MainNach.Sum(_ => _.LossSEK) != 0;
+                //            break;
+                //    }
+                //}
             }
         }
 

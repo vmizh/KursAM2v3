@@ -238,6 +238,17 @@ namespace KursAM2.View
                         form.Show();
                         break;
 
+                    case "Возвра товара поставщику":
+                        var retProvider = new NomenklReturnToProviderSearchViewModel();
+                        form = new StandartSearchView
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = retProvider
+                        };
+                        retProvider.Form = form;
+                        form.Show();
+                        break;
+
                     case "Перевод за баланс":
                         var transOut = new TransferOutBalansSearchViewModel();
                         transOut.Show();
@@ -502,7 +513,7 @@ namespace KursAM2.View
                         break;
                     case "Прибыли и убытки 2":
                         var ctxpb2 = new ProfitAndLossesWindowViewModel2();
-                        form = new ProfitAndLosses2
+                        form = new ProfitAndLoss
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = ctxpb2
@@ -916,16 +927,16 @@ namespace KursAM2.View
                         ctxProjectPrihod.Form = form;
                         form.Show();
                         break;
-                    case "Прибыли и убытки по проектам":
-                        var ctxProjectProfitAndLoss = new ProjectProfitAndLossesWindowViewModel();
-                        form = new ProjectProfitAndLossView
-                        {
-                            Owner = Application.Current.MainWindow,
-                            DataContext = ctxProjectProfitAndLoss
-                        };
-                        ctxProjectProfitAndLoss.Form = form;
-                        form.Show();
-                        break;
+                    //case "Прибыли и убытки по проектам":
+                    //    var ctxProjectProfitAndLoss = new ProjectProfitAndLossesWindowViewModel();
+                    //    form = new ProjectProfitAndLossView
+                    //    {
+                    //        Owner = Application.Current.MainWindow,
+                    //        DataContext = ctxProjectProfitAndLoss
+                    //    };
+                    //    ctxProjectProfitAndLoss.Form = form;
+                    //    form.Show();
+                    //    break;
                     case "Кассовая книга":
                         var ctxCash = new CashBookWindowViewModel();
                         form = new CashBookView

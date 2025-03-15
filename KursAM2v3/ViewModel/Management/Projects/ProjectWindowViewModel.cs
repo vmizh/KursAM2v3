@@ -491,16 +491,16 @@ namespace KursAM2.ViewModel.Management.Projects
 
         private void ProjectsProjectProfitAndLoss(object obj)
         {
-            var ctx2 = new ProjectProfitAndLossesWindowViewModel();
-            if (CurrentProject != null)
-                ctx2.CurrentProject = CurrentProject;
-            var form = new ProjectProfitAndLossView
-            {
-                Owner = Application.Current.MainWindow,
-                DataContext = ctx2
-            };
-            ctx2.Form = form;
-            form.Show();
+            //var ctx2 = new ProjectProfitAndLossesWindowViewModel();
+            //if (CurrentProject != null)
+            //    ctx2.CurrentProject = CurrentProject;
+            //var form = new ProjectProfitAndLossView
+            //{
+            //    Owner = Application.Current.MainWindow,
+            //    DataContext = ctx2
+            //};
+            //ctx2.Form = form;
+            //form.Show();
         }
 
         private void loadDocList()
