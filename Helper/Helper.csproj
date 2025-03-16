@@ -88,7 +88,6 @@
     <Compile Include="Extensions\WPFElement.cs" />
     <Compile Include="PagingUtils.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
-    <Compile Include="GridLayoutHelper.cs" />
     <Compile Include="CustomDXGridLocalizer.cs" />
     <Compile Include="DateHelper.cs" />
     <Compile Include="DevExpressHelper.cs" />

@@ -6,7 +6,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using Core.Helper;
 using Core.ViewModel.Base;
@@ -287,6 +286,7 @@ namespace KursAM2.ViewModel.Management
                 myBalansFact = value;
                 if (myBalansFact != null)
                 {
+                    setColumnVisible(Form as ProfitAndLoss);
                     switch (myBalansFact.Id.ToString())
                     {
                         case "459937df-085f-4825-9ae9-810b054d0276":
@@ -303,7 +303,6 @@ namespace KursAM2.ViewModel.Management
                             UpdateBalansOper(StartDate, EndDate);
                             break;
                         default:
-                            setColumnVisible(Form as ProfitAndLoss);
                             setControldVisible(true);
                             break;
                     }
@@ -326,6 +325,7 @@ namespace KursAM2.ViewModel.Management
                 myBalansCalc = value;
                 if (myBalansCalc != null)
                 {
+                    setColumnVisible(Form as ProfitAndLoss);
                     switch (myBalansCalc.Id.ToString())
                     {
                         case "459937df-085f-4825-9ae9-810b054d0276":
@@ -342,7 +342,6 @@ namespace KursAM2.ViewModel.Management
                             UpdateBalansOper(StartDate, EndDate);
                             break;
                         default:
-                            setColumnVisible(Form as ProfitAndLoss);
                             setControldVisible(true);
                             break;
                     }
@@ -359,6 +358,9 @@ namespace KursAM2.ViewModel.Management
         {
             foreach (var col in frm.GridControlBaseExtend.Columns)
             {
+
+                
+
                 if (BalansCalc?.Id == ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier
                     || BalansFact?.Id == ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier)
                 {
@@ -369,12 +371,28 @@ namespace KursAM2.ViewModel.Management
                 }
                 else
                 {
-                    if (col.FieldName == "KontragentName" || col.FieldName == "DirectPaySumma")
+                    if (BalansFact?.Id == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}") ||
+                        BalansFact?.ParentId == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}") ||
+                        BalansCalc?.Id == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}") ||
+                        BalansCalc?.ParentId == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}") ||
+                        BalansFact?.Id == Guid.Parse("{E47EF726-3BEA-4B18-9773-E564D624FDF6}") ||
+                        BalansFact?.ParentId == Guid.Parse("{E47EF726-3BEA-4B18-9773-E564D624FDF6}") ||
+                        BalansCalc?.Id == Guid.Parse("{E47EF726-3BEA-4B18-9773-E564D624FDF6}") ||
+                        BalansCalc?.ParentId == Guid.Parse("{E47EF726-3BEA-4B18-9773-E564D624FDF6}"))
                     {
-                        col.Visible = false;
+                        if (col.FieldName == "KontragentName")
+                        {
+                            col.Visible = true;
+                        }
+                    }
+                    else
+                    {
+                        if (col.FieldName == "KontragentName" || col.FieldName == "DirectPaySumma")
+                        {
+                            col.Visible = false;
+                        }
                     }
                 }
-
             }
         }
 
@@ -957,6 +975,7 @@ namespace KursAM2.ViewModel.Management
         public class NakladTemp
         {
             public decimal DocCode { set; get; }
+            public string DocNum { set; get; }
             public int Code { set; get; }
             public Guid Id { set; get; }
             public DateTime Date { set; get; }

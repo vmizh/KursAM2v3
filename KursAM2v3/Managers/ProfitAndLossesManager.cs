@@ -1567,6 +1567,7 @@ namespace KursAM2.Managers
                         DocCode = sd84.DOC_CODE,
                         Id = Guid.NewGuid(),
                         Date = sd84.SF_DATE,
+                        DocNum = sd84.SF_IN_NUM.ToString(),
                         NomenklDC = sd83.DOC_CODE,
                         Name = sd83.NOM_NAME,
                         // ReSharper disable once MergeConditionalExpression
@@ -1604,6 +1605,7 @@ namespace KursAM2.Managers
                         Code = td26.CODE,
                         Id = Guid.NewGuid(),
                         Date = sd26.SF_POSTAV_DATE,
+                        DocNum = sd26.SF_IN_NUM.ToString(),
                         NomenklDC = sd83.DOC_CODE,
                         Name = sd83.NOM_NAME,
                         // ReSharper disable once MergeConditionalExpression
@@ -1671,12 +1673,13 @@ namespace KursAM2.Managers
                         {
                             GroupId = dictCOIns[d.COName],
                             Name = nom.Name,
+                            DocNum = d.DocNum,
                             Note = "Ном.№ - " + nom.NomenklNumber,
                             DocCode = d.DocCode,
                             Quantity = d.Quantity,
                             Price = d.Summa ?? 0m / d.Quantity,
                             Date = d.Date,
-                            Kontragent = d.Kontragent,
+                            KontragentName = d.Kontragent,
                             DocTypeCode = DocumentType.InvoiceClient,
                             // ReSharper disable once PossibleInvalidOperationException
                             SDRSchet = sdrSchet,
@@ -1703,12 +1706,14 @@ namespace KursAM2.Managers
                         {
                             GroupId = dictCOOuts[d.COName],
                             Name = nom.Name,
+                            DocNum = d.DocNum,
                             Note = "Ном.№ - " + nom.NomenklNumber,
                             DocCode = d.DocCode,
                             Quantity = d.Quantity,
                             Price = (d.Summa ?? 0) / d.Quantity,
                             Date = d.Date,
-                            Kontragent = d.Kontragent,
+                            CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.KontrCrsDC)).Name,
+                            KontragentName = d.Kontragent,
                             DocTypeCode = DocumentType.InvoiceProvider,
                             // ReSharper disable once PossibleInvalidOperationException
                             SDRSchet = sdrSchet,
@@ -1740,7 +1745,8 @@ namespace KursAM2.Managers
                             Quantity = d.Quantity,
                             Price = d.Summa ?? 0m / d.Quantity,
                             Date = d.Date,
-                            Kontragent = d.Kontragent,
+                            KontragentName = d.Kontragent,
+                            CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.KontrCrsDC)).Name,
                             DocTypeCode = DocumentType.InvoiceClient,
                             SDRSchet = sdrSchet,
                             SDRState = GetSdrState(sdrSchet)
@@ -1769,7 +1775,7 @@ namespace KursAM2.Managers
                             Quantity = d.Quantity,
                             Price = (d.Summa ?? 0) / d.Quantity,
                             Date = d.Date,
-                            Kontragent = d.Kontragent,
+                            KontragentName = d.Kontragent,
                             DocTypeCode = DocumentType.InvoiceProvider,
                             SDRSchet = sdrSchet,
                             SDRState = GetSdrState(sdrSchet)
@@ -2646,7 +2652,7 @@ namespace KursAM2.Managers
                             DocCode = d.DocCode,
                             Quantity = 1,
                             Price = d.Price,
-                            Kontragent = ((IName)kontr).Name,
+                            KontragentName = ((IName)kontr).Name,
                             KontragentBase = kontr as Kontragent,
                             Date = d.DateRow,
                             DocTypeCode =
@@ -2694,7 +2700,7 @@ namespace KursAM2.Managers
                                 DocCode = d.DocCode,
                                 Quantity = 1,
                                 Price = 0,
-                                Kontragent = null,
+                                KontragentName = null,
                                 KontragentBase = null,
                                 Date = d.DateRow,
                                 DocTypeCode = DocumentType.MutualAccounting,
@@ -2732,7 +2738,7 @@ namespace KursAM2.Managers
                                 DocCode = d.DocCode,
                                 Quantity = 1,
                                 Price = 0, //(decimal) (d.IsProfit ? d.Summa * kontrRate : -d.Summa * kontrRate),
-                                Kontragent = null,
+                                KontragentName = null,
                                 KontragentBase = null,
                                 Date = d.DateRow,
                                 DocTypeCode = DocumentType.MutualAccounting,
@@ -2771,7 +2777,7 @@ namespace KursAM2.Managers
                             DocCode = d.DocCode,
                             Quantity = 1,
                             Price = (decimal)(d.IsProfit ? d.Summa * kontrRate : -d.Summa * kontrRate),
-                            Kontragent = ((IName)kontr).Name,
+                            KontragentName = ((IName)kontr).Name,
                             KontragentBase = kontr as Kontragent,
                             Date = d.DateRow,
                             DocTypeCode =
