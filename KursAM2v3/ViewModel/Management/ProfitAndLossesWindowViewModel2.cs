@@ -294,22 +294,26 @@ namespace KursAM2.ViewModel.Management
                         case "459937df-085f-4825-9ae9-810b054d0276":
                         case "30e9bd73-9bda-4d75-b897-332f9210b9b1":
                             setControldVisible(isVzaimozachetVisible: true);
+                            UpdateExtend(myBalansFact.Id);
+                            setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlVzaimozachetExtend);
                             break;
                         case "b6f2540a-9593-42e3-b34f-8c0983bc39a2":
                         case "35ebabec-eac3-4c3c-8383-6326c5d64c8c":
                             setControldVisible(isCurrencyConvertVisible: true);
                             UpdateCurrencyConvert(StartDate, EndDate);
+                            setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlCurrencyConvert, true);
                             break;
                         case "35c9783e-e19f-452b-8479-d6f022444552":
                             setControldVisible(isCurrencyConvertVisible: true);
                             UpdateBalansOper(StartDate, EndDate);
+                            setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlCurrencyConvert, true);
                             break;
                         default:
-                            setControldVisible(true);
+                            setControldVisible(true); 
+                            UpdateExtend(myBalansFact.Id);
+                            setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlBaseExtend);
                             break;
                     }
-
-                    UpdateExtend(myBalansFact.Id);
                 }
 
                 RaisePropertyChanged();
@@ -325,7 +329,6 @@ namespace KursAM2.ViewModel.Management
                 // ReSharper disable once PossibleUnintendedReferenceComparison
                 if (myBalansCalc == value) return;
                 myBalansCalc = value; 
-                UpdateExtend(myBalansCalc.Id);
                 if (myBalansCalc != null)
                 {
                     setColumnVisible(Form as ProfitAndLoss);
@@ -334,21 +337,23 @@ namespace KursAM2.ViewModel.Management
                         case "459937df-085f-4825-9ae9-810b054d0276":
                         case "30e9bd73-9bda-4d75-b897-332f9210b9b1":
                             setControldVisible(isVzaimozachetVisible: true);
+                            UpdateExtend(myBalansCalc.Id);
                             setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlVzaimozachetExtend);
                             break;
                         case "b6f2540a-9593-42e3-b34f-8c0983bc39a2":
                         case "35ebabec-eac3-4c3c-8383-6326c5d64c8c":
                             setControldVisible(isCurrencyConvertVisible: true);
                             UpdateCurrencyConvert(StartDate, EndDate);
-                            setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlCurrencyConvert);
+                            setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlCurrencyConvert, true);
                             break;
                         case "35c9783e-e19f-452b-8479-d6f022444552":
                             setControldVisible(isCurrencyConvertVisible: true);
                             UpdateBalansOper(StartDate, EndDate);
-                            setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlCurrencyConvert);
+                            setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlCurrencyConvert, true);
                             break;
                         default:
                             setControldVisible(true);
+                            UpdateExtend(myBalansCalc.Id);
                             setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlBaseExtend);
                             break;
                     }
@@ -361,7 +366,7 @@ namespace KursAM2.ViewModel.Management
             }
         }
 
-        private void setCurrencyColumnVisible(GridControl grid)
+        private void setCurrencyColumnVisible(GridControl grid, bool isCurrency = false)
         {
             foreach (var col in grid.Columns)
             {
@@ -374,9 +379,17 @@ namespace KursAM2.ViewModel.Management
                                 _ => _.Columns.Any(c => c.FieldName == "ProfitEUR"));
                        
                         if (b != null)
-                            b.Visible = ExtendActual.Sum(_ => _.ProfitEUR) != 0 ||
-                                        ExtendActual.Sum(_ => _.LossEUR) != 0;
-                       
+                            if (!isCurrency)
+                            {
+                                b.Visible = ExtendActual.Sum(_ => _.ProfitEUR) != 0 ||
+                                            ExtendActual.Sum(_ => _.LossEUR) != 0;
+                            }
+                            else
+                            {
+                                b.Visible = CurrencyConvertRows.Sum(_ => _.ProfitEUR) != 0 ||
+                                            CurrencyConvertRows.Sum(_ => _.LossEUR) != 0;
+                            }
+
                         break;
                     case "ProfitRUB":
                         b =
@@ -384,8 +397,12 @@ namespace KursAM2.ViewModel.Management
                                 _ => _.Columns.Any(c => c.FieldName == "ProfitRUB"));
                         
                         if (b != null)
-                            b.Visible = ExtendActual.Sum(_ => _.ProfitRUB) != 0 ||
+                            if (!isCurrency)
+                                b.Visible = ExtendActual.Sum(_ => _.ProfitRUB) != 0 ||
                                         ExtendActual.Sum(_ => _.LossRUB) != 0;
+                            else 
+                                b.Visible = CurrencyConvertRows.Sum(_ => _.ProfitRUB) != 0 ||
+                                            CurrencyConvertRows.Sum(_ => _.LossRUB) != 0;
                        
                         break;
                     case "LossUSD":
@@ -394,40 +411,61 @@ namespace KursAM2.ViewModel.Management
                                 _ => _.Columns.Any(c => c.FieldName == "LossUSD"));
                         
                         if (b != null)
-                            b.Visible = ExtendActual.Sum(_ => _.ProfitUSD) != 0 ||
+                            if (!isCurrency)
+                                b.Visible = ExtendActual.Sum(_ => _.ProfitUSD) != 0 ||
                                         ExtendActual.Sum(_ => _.LossUSD) != 0;
+                            else
+                                b.Visible = CurrencyConvertRows.Sum(_ => _.ProfitUSD) != 0 ||
+                                            CurrencyConvertRows.Sum(_ => _.LossUSD) != 0;
+
                         break;
                     case "ProfitGBP":
                         b =
                             grid.Bands.FirstOrDefault(
                                 _ => _.Columns.Any(c => c.FieldName == "ProfitGBP"));
                         if (b != null)
-                            b.Visible = ExtendActual.Sum(_ => _.ProfitGBP) != 0 ||
+                            if (!isCurrency)
+                                b.Visible = ExtendActual.Sum(_ => _.ProfitGBP) != 0 ||
                                         ExtendActual.Sum(_ => _.LossGBP) != 0;
+                            else
+                                b.Visible = CurrencyConvertRows.Sum(_ => _.ProfitGBP) != 0 ||
+                                            CurrencyConvertRows.Sum(_ => _.LossGBP) != 0;
                         break;
                     case "ProfitCHF":
                         b =
                             grid.Bands.FirstOrDefault(
                                 _ => _.Columns.Any(c => c.FieldName == "ProfitCHF"));
                         if (b != null)
-                            b.Visible = ExtendActual.Sum(_ => _.ProfitCHF) != 0 ||
+                            if (!isCurrency)
+                                b.Visible = ExtendActual.Sum(_ => _.ProfitCHF) != 0 ||
                                         ExtendActual.Sum(_ => _.LossCHF) != 0;
+                            else
+                                b.Visible = CurrencyConvertRows.Sum(_ => _.ProfitCHF) != 0 ||
+                                            CurrencyConvertRows.Sum(_ => _.LossCHF) != 0;
                         break;
                     case "ProfitSEK":
                         b =
                             grid.Bands.FirstOrDefault(
                                 _ => _.Columns.Any(c => c.FieldName == "ProfitSEK"));
                         if (b != null)
-                            b.Visible = ExtendActual.Sum(_ => _.ProfitSEK) != 0 ||
+                            if (!isCurrency)
+                                b.Visible = ExtendActual.Sum(_ => _.ProfitSEK) != 0 ||
                                         ExtendActual.Sum(_ => _.LossSEK) != 0;
+                            else 
+                                b.Visible = CurrencyConvertRows.Sum(_ => _.ProfitSEK) != 0 ||
+                                            CurrencyConvertRows.Sum(_ => _.LossSEK) != 0;
                         break;
                     case "ProfitCNY":
                         b =
                             grid.Bands.FirstOrDefault(
                                 _ => _.Columns.Any(c => c.FieldName == "ProfitCNY"));
                         if (b != null)
-                            b.Visible = ExtendActual.Sum(_ => _.ProfitCNY) != 0 ||
+                            if (!isCurrency)
+                                b.Visible = ExtendActual.Sum(_ => _.ProfitCNY) != 0 ||
                                         ExtendActual.Sum(_ => _.LossCNY) != 0;
+                            else
+                                b.Visible = CurrencyConvertRows.Sum(_ => _.ProfitCNY) != 0 ||
+                                            CurrencyConvertRows.Sum(_ => _.LossCNY) != 0;
                         break;
                 }
             }
