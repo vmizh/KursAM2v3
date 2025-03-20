@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,6 +12,7 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Data;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Xpf.Grid;
 using FinanceAnalitic;
@@ -322,7 +324,8 @@ namespace KursAM2.ViewModel.Management
                 IsFactBalans = false;
                 // ReSharper disable once PossibleUnintendedReferenceComparison
                 if (myBalansCalc == value) return;
-                myBalansCalc = value;
+                myBalansCalc = value; 
+                UpdateExtend(myBalansCalc.Id);
                 if (myBalansCalc != null)
                 {
                     setColumnVisible(Form as ProfitAndLoss);
@@ -331,26 +334,102 @@ namespace KursAM2.ViewModel.Management
                         case "459937df-085f-4825-9ae9-810b054d0276":
                         case "30e9bd73-9bda-4d75-b897-332f9210b9b1":
                             setControldVisible(isVzaimozachetVisible: true);
+                            setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlVzaimozachetExtend);
                             break;
                         case "b6f2540a-9593-42e3-b34f-8c0983bc39a2":
                         case "35ebabec-eac3-4c3c-8383-6326c5d64c8c":
                             setControldVisible(isCurrencyConvertVisible: true);
                             UpdateCurrencyConvert(StartDate, EndDate);
+                            setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlCurrencyConvert);
                             break;
                         case "35c9783e-e19f-452b-8479-d6f022444552":
                             setControldVisible(isCurrencyConvertVisible: true);
                             UpdateBalansOper(StartDate, EndDate);
+                            setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlCurrencyConvert);
                             break;
                         default:
                             setControldVisible(true);
+                            setCurrencyColumnVisible(((ProfitAndLoss)Form).GridControlBaseExtend);
                             break;
                     }
 
-                    UpdateExtend(myBalansCalc.Id);
+                    
                 }
 
                 // ReSharper disable once PossibleNullReferenceException1965569UpdateExtend2(myBalansCalc.Id);
                 RaisePropertyChanged();
+            }
+        }
+
+        private void setCurrencyColumnVisible(GridControl grid)
+        {
+            foreach (var col in grid.Columns)
+            {
+                GridControlBand b;
+                switch (col.FieldName)
+                {
+                    case "ProfitEUR":
+                        b =
+                            grid.Bands.FirstOrDefault(
+                                _ => _.Columns.Any(c => c.FieldName == "ProfitEUR"));
+                       
+                        if (b != null)
+                            b.Visible = ExtendActual.Sum(_ => _.ProfitEUR) != 0 ||
+                                        ExtendActual.Sum(_ => _.LossEUR) != 0;
+                       
+                        break;
+                    case "ProfitRUB":
+                        b =
+                            grid.Bands.FirstOrDefault(
+                                _ => _.Columns.Any(c => c.FieldName == "ProfitRUB"));
+                        
+                        if (b != null)
+                            b.Visible = ExtendActual.Sum(_ => _.ProfitRUB) != 0 ||
+                                        ExtendActual.Sum(_ => _.LossRUB) != 0;
+                       
+                        break;
+                    case "LossUSD":
+                        b =
+                            grid.Bands.FirstOrDefault(
+                                _ => _.Columns.Any(c => c.FieldName == "LossUSD"));
+                        
+                        if (b != null)
+                            b.Visible = ExtendActual.Sum(_ => _.ProfitUSD) != 0 ||
+                                        ExtendActual.Sum(_ => _.LossUSD) != 0;
+                        break;
+                    case "ProfitGBP":
+                        b =
+                            grid.Bands.FirstOrDefault(
+                                _ => _.Columns.Any(c => c.FieldName == "ProfitGBP"));
+                        if (b != null)
+                            b.Visible = ExtendActual.Sum(_ => _.ProfitGBP) != 0 ||
+                                        ExtendActual.Sum(_ => _.LossGBP) != 0;
+                        break;
+                    case "ProfitCHF":
+                        b =
+                            grid.Bands.FirstOrDefault(
+                                _ => _.Columns.Any(c => c.FieldName == "ProfitCHF"));
+                        if (b != null)
+                            b.Visible = ExtendActual.Sum(_ => _.ProfitCHF) != 0 ||
+                                        ExtendActual.Sum(_ => _.LossCHF) != 0;
+                        break;
+                    case "ProfitSEK":
+                        b =
+                            grid.Bands.FirstOrDefault(
+                                _ => _.Columns.Any(c => c.FieldName == "ProfitSEK"));
+                        if (b != null)
+                            b.Visible = ExtendActual.Sum(_ => _.ProfitSEK) != 0 ||
+                                        ExtendActual.Sum(_ => _.LossSEK) != 0;
+                        break;
+                    case "ProfitCNY":
+                        b =
+                            grid.Bands.FirstOrDefault(
+                                _ => _.Columns.Any(c => c.FieldName == "ProfitCNY"));
+                        if (b != null)
+                            b.Visible = ExtendActual.Sum(_ => _.ProfitCNY) != 0 ||
+                                        ExtendActual.Sum(_ => _.LossCNY) != 0;
+                        break;
+                }
             }
         }
 
@@ -368,9 +447,15 @@ namespace KursAM2.ViewModel.Management
                     {
                         col.Visible = true;
                     }
+
+                    if (col.FieldName == "DocTypeName")
+                        col.Visible = false;
                 }
                 else
                 {
+                    if (col.FieldName == "DocTypeName")
+                        col.Visible = true;
+
                     if (BalansFact?.Id == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}") ||
                         BalansFact?.ParentId == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}") ||
                         BalansCalc?.Id == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}") ||
@@ -969,6 +1054,76 @@ namespace KursAM2.ViewModel.Management
                 default:
                     DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, CurrentExtend.DocCode);
                     break;
+            }
+        }
+
+        public ObservableCollection<ProfitAndLossCommonRow> CommonResult { set; get; } 
+            = new ObservableCollection<ProfitAndLossCommonRow>();
+
+        private void generateCommon()
+        {
+            CommonResult.Clear();
+            foreach (var item in ProfitAndLossCommonRow.GetBaseStructure().OrderBy(_ => _.Order))
+            {
+                CommonResult.Add(item);
+                SetOneCommonRow(item,Main);
+            }
+        }
+
+        public override void UpdateVisualObjects()
+        {
+            if (Form is not ProfitAndLoss frm) return;
+            var listHeaders = new List<string>(["Доход", "Расход", "Результат"]);
+            frm.treeListCommon.TotalSummary.Clear();
+            foreach (var col in frm.treeListCommon.Columns)
+            {
+                if (listHeaders.Contains((string)col.Header))
+                {
+                    frm.treeListCommon.TotalSummary.Add(new TreeListSummaryItem()
+                    {
+                        FieldName = col.FieldName,
+                        DisplayFormat = "n2",
+                        SummaryType = SummaryItemType.Sum,
+                        ShowInColumn = col.Name
+                    });
+                }
+            }
+        }
+
+        private void SetOneCommonRow(ProfitAndLossCommonRow row,
+            ObservableCollection<ProfitAndLossesMainRowViewModel> data)
+        {
+            foreach (var mainRow in data)
+            {
+                if (mainRow.Id != row.ProfitId && mainRow.Id != row.LossId) continue;
+                row.ProfitRUB += mainRow.ProfitRUB;
+                row.LossRUB += mainRow.LossRUB;
+                row.ResultRUB += mainRow.ResultRUB;
+
+                row.ProfitUSD += mainRow.ProfitUSD;
+                row.LossUSD += mainRow.LossUSD;
+                row.ResultUSD += mainRow.ResultUSD;
+
+
+                row.ProfitEUR += mainRow.ProfitEUR;
+                row.LossEUR += mainRow.LossEUR;
+                row.ResultEUR += mainRow.ResultEUR;
+
+                row.ProfitCNY += mainRow.ProfitCNY;
+                row.LossCNY += mainRow.LossCNY;
+                row.ResultCNY += mainRow.ResultCNY;
+
+                row.ProfitGBP += mainRow.ProfitGBP;
+                row.LossGBP += mainRow.LossGBP;
+                row.ResultGBP += mainRow.ResultGBP;
+
+                row.ProfitSEK += mainRow.ProfitSEK;
+                row.LossSEK += mainRow.LossSEK;
+                row.ResultSEK += mainRow.ResultSEK;
+
+                row.ProfitCHF += mainRow.ProfitCHF;
+                row.LossCHF += mainRow.LossCHF;
+                row.ResultCHF += mainRow.ResultCHF;
             }
         }
 
@@ -1611,6 +1766,7 @@ namespace KursAM2.ViewModel.Management
             }
 
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
+            generateCommon();
             IsDataLoaded = true;
         }
 

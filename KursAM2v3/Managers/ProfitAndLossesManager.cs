@@ -1680,6 +1680,7 @@ namespace KursAM2.Managers
                             Price = d.Summa ?? 0m / d.Quantity,
                             Date = d.Date,
                             KontragentName = d.Kontragent,
+                            CurrencyName =((IName) GlobalOptions.ReferencesCache.GetCurrency(d.KontrCrsDC)).Name,
                             DocTypeCode = DocumentType.InvoiceClient,
                             // ReSharper disable once PossibleInvalidOperationException
                             SDRSchet = sdrSchet,
@@ -1776,6 +1777,7 @@ namespace KursAM2.Managers
                             Price = (d.Summa ?? 0) / d.Quantity,
                             Date = d.Date,
                             KontragentName = d.Kontragent,
+                            CurrencyName = ((IName)GlobalOptions.ReferencesCache.GetCurrency(d.KontrCrsDC)).Name,
                             DocTypeCode = DocumentType.InvoiceProvider,
                             SDRSchet = sdrSchet,
                             SDRState = GetSdrState(sdrSchet)
@@ -2496,6 +2498,8 @@ namespace KursAM2.Managers
                     .Where(_ => _.DocDate >= DateStart && _.DocDate <= DateEnd).ToList();
                 var outBalansSupplier = ctx.AccuredAmountOfSupplierRow
                     .Include(_ => _.AccruedAmountOfSupplier)
+                    .Include(accuredAmountOfSupplierRow => accuredAmountOfSupplierRow.SD_34)
+                    .Include(accuredAmountOfSupplierRow => accuredAmountOfSupplierRow.TD_101)
                     .Where(_ => _.AccruedAmountOfSupplier.DocDate >= DateStart &&
                                 _.AccruedAmountOfSupplier.DocDate <= DateEnd).ToList();
 
@@ -2534,10 +2538,12 @@ namespace KursAM2.Managers
                 foreach (var d in outBalansSupplier)
                 {
                     decimal paySum = 0;
-                    if (d.SD_34 is not null && d.SD_34.Count > 1)
+                    if (d.SD_34 is not null && d.SD_34.Count > 0)
                         paySum = (decimal)d.SD_34.First().CRS_SUMMA;
-                    if(d.TD_101 is not null && d.TD_101.Count > 0)
-                        paySum = (decimal)d.TD_101.First().VVT_KONTR_CRS_SUMMA;
+                    if (d.TD_101 is not null && d.TD_101.Count > 0)
+                            paySum = (decimal)d.TD_101.First().VVT_KONTR_CRS_SUMMA;
+                    
+
                     var newOp1 = new ProfitAndLossesExtendRowViewModel
                     {
                         GroupId = ProfitAndLossesMainRowViewModel.OutBalansAccrualAmmountSupplier,
@@ -2579,19 +2585,6 @@ namespace KursAM2.Managers
                     ExtendNach.Add(newOp1);
                 }
             }
-        }
-
-        // ReSharper disable once UnusedMember.Local
-        private decimal CalcItogoSumma(List<TD_110> rows)
-        {
-            decimal sumLeft = 0, sumRight = 0;
-            foreach (var l in rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0))
-                if (GlobalOptions.ReferencesCache.GetKontragent(l.VZT_KONTR_DC).IsBalans)
-                    sumLeft += Math.Abs(l.VZT_KONTR_CRS_SUMMA ?? 0m);
-            foreach (var l in rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1))
-                if (GlobalOptions.ReferencesCache.GetKontragent(l.VZT_KONTR_DC).IsBalans)
-                    sumRight += l.VZT_KONTR_CRS_SUMMA ?? 0m;
-            return sumRight - sumLeft;
         }
 
         public void CalcFinance()
@@ -2640,6 +2633,7 @@ namespace KursAM2.Managers
                         foreach (var l in data.Where(_ => _.DocCode == d.DocCode && _.IsProfit))
                             if (GlobalOptions.ReferencesCache.GetKontragent(l.KontrDC).IsBalans)
                                 sumRight += (decimal)l.Summa;
+                        if(sumRight - sumLeft == 0) continue;
                         var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC);
                         var newOp = new ProfitAndLossesExtendRowViewModel
                         {
@@ -2762,7 +2756,7 @@ namespace KursAM2.Managers
                 else
                     foreach (var d in data.Where(_ => ProjectDocDC.Contains(_.DocCode)))
                     {
-                        if (!d.IsBalans) continue;
+                        if (!d.IsBalans || d.Result == 0) continue;
                         var kontrRate = GetRate(MyRates, (decimal)d.KontrCrsDC,
                             GlobalOptions.SystemProfile.MainCurrency.DocCode, d.Date);
                         var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.KontrDC);

@@ -1,6 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
+using DevExpress.Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using Helper;
