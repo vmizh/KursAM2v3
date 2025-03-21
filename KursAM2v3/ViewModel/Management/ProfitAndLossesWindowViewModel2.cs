@@ -1104,14 +1104,123 @@ namespace KursAM2.ViewModel.Management
             foreach (var item in ProfitAndLossCommonRow.GetBaseStructure().OrderBy(_ => _.Order))
             {
                 CommonResult.Add(item);
-                SetOneCommonRow(item,Main);
+                SetOneCommonRow(item, Main);
+            }
+
+            // расшифровка товаров
+            var stores = Main.Where(_ => _.ParentId == ProfitAndLossesMainRowViewModel.NomenklDohod
+                                         || _.ParentId == ProfitAndLossesMainRowViewModel.NomenklRashod).ToList();
+            var storesCommon = new List<ProfitAndLossCommonRow>();
+
+            var services = Main.Where(_ => _.ParentId == Guid.Parse("{2FA1DD9F-6842-4209-B0CC-DDEF3B920496}")
+                                         || _.ParentId == Guid.Parse("{E47EF726-3BEA-4B18-9773-E564D624FDF6}")).ToList();
+            var servicesCommon = new List<ProfitAndLossCommonRow>();
+
+            foreach (var mainRow in stores.OrderBy(_ => _.Name))
+            {
+                var row = storesCommon.FirstOrDefault(_ => _.Name == mainRow.Name);
+                if (row == null)
+                {
+                    var newItem = new ProfitAndLossCommonRow
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = mainRow.Name
+                    };
+                    newItem.ParentId = newItem.Nomenkls;
+                    storesCommon.Add(newItem);
+                    row = newItem;
+                }
+
+                row.ProfitRUB += mainRow.ProfitRUB;
+                row.LossRUB += mainRow.LossRUB;
+                row.ResultRUB += mainRow.ResultRUB;
+
+                row.ProfitUSD += mainRow.ProfitUSD;
+                row.LossUSD += mainRow.LossUSD;
+                row.ResultUSD += mainRow.ResultUSD;
+
+
+                row.ProfitEUR += mainRow.ProfitEUR;
+                row.LossEUR += mainRow.LossEUR;
+                row.ResultEUR += mainRow.ResultEUR;
+
+                row.ProfitCNY += mainRow.ProfitCNY;
+                row.LossCNY += mainRow.LossCNY;
+                row.ResultCNY += mainRow.ResultCNY;
+
+                row.ProfitGBP += mainRow.ProfitGBP;
+                row.LossGBP += mainRow.LossGBP;
+                row.ResultGBP += mainRow.ResultGBP;
+
+                row.ProfitSEK += mainRow.ProfitSEK;
+                row.LossSEK += mainRow.LossSEK;
+                row.ResultSEK += mainRow.ResultSEK;
+
+                row.ProfitCHF += mainRow.ProfitCHF;
+                row.LossCHF += mainRow.LossCHF;
+                row.ResultCHF += mainRow.ResultCHF;
+            }
+
+            foreach (var mainRow in services.OrderBy(_ => _.Name))
+            {
+                var row = servicesCommon.FirstOrDefault(_ => _.Name == mainRow.Name);
+                if (row == null)
+                {
+                    var newItem = new ProfitAndLossCommonRow
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = mainRow.Name
+                    };
+                    newItem.ParentId = newItem.Services;
+                    servicesCommon.Add(newItem);
+                    row = newItem;
+                }
+
+                row.ProfitRUB += mainRow.ProfitRUB;
+                row.LossRUB += mainRow.LossRUB;
+                row.ResultRUB += mainRow.ResultRUB;
+
+                row.ProfitUSD += mainRow.ProfitUSD;
+                row.LossUSD += mainRow.LossUSD;
+                row.ResultUSD += mainRow.ResultUSD;
+
+
+                row.ProfitEUR += mainRow.ProfitEUR;
+                row.LossEUR += mainRow.LossEUR;
+                row.ResultEUR += mainRow.ResultEUR;
+
+                row.ProfitCNY += mainRow.ProfitCNY;
+                row.LossCNY += mainRow.LossCNY;
+                row.ResultCNY += mainRow.ResultCNY;
+
+                row.ProfitGBP += mainRow.ProfitGBP;
+                row.LossGBP += mainRow.LossGBP;
+                row.ResultGBP += mainRow.ResultGBP;
+
+                row.ProfitSEK += mainRow.ProfitSEK;
+                row.LossSEK += mainRow.LossSEK;
+                row.ResultSEK += mainRow.ResultSEK;
+
+                row.ProfitCHF += mainRow.ProfitCHF;
+                row.LossCHF += mainRow.LossCHF;
+                row.ResultCHF += mainRow.ResultCHF;
+            }
+
+            foreach (var s in storesCommon.Where(_ => !_.IsEmpty()))
+            {
+                CommonResult.Add(s);
+            }
+            foreach (var s in servicesCommon.Where(_ => !_.IsEmpty()))
+            {
+                CommonResult.Add(s);
             }
         }
 
         public override void UpdateVisualObjects()
         {
             if (Form is not ProfitAndLoss frm) return;
-            var listHeaders = new List<string>( new[] {"Доход", "Расход", "Результат"});
+            // ReSharper disable once UseCollectionExpression
+            var listHeaders = new List<string>(new []{"Доход", "Расход", "Результат"});
             frm.treeListCommon.TotalSummary.Clear();
             foreach (var col in frm.treeListCommon.Columns)
             {
@@ -1126,6 +1235,49 @@ namespace KursAM2.ViewModel.Management
                     });
                 }
             }
+            frm.GridControlBaseExtend.TotalSummary.Clear();
+            foreach (var col in frm.GridControlBaseExtend.Columns)
+            {
+                if (listHeaders.Contains((string)col.Header))
+                {
+                    frm.GridControlBaseExtend.TotalSummary.Add(new()
+                    {
+                        FieldName = col.FieldName,
+                        DisplayFormat = "n2",
+                        SummaryType = SummaryItemType.Sum,
+                        ShowInColumn = col.Name
+                    });
+                }
+            }
+            frm.GridControlCurrencyConvert.TotalSummary.Clear();
+            foreach (var col in frm.GridControlCurrencyConvert.Columns)
+            {
+                if (listHeaders.Contains((string)col.Header))
+                {
+                    frm.GridControlCurrencyConvert.TotalSummary.Add(new()
+                    {
+                        FieldName = col.FieldName,
+                        DisplayFormat = "n2",
+                        SummaryType = SummaryItemType.Sum,
+                        ShowInColumn = col.Name
+                    });
+                }
+            }
+            frm.GridControlVzaimozachetExtend.TotalSummary.Clear();
+            foreach (var col in frm.GridControlVzaimozachetExtend.Columns)
+            {
+                if (listHeaders.Contains((string)col.Header))
+                {
+                    frm.GridControlVzaimozachetExtend.TotalSummary.Add(new()
+                    {
+                        FieldName = col.FieldName,
+                        DisplayFormat = "n2",
+                        SummaryType = SummaryItemType.Sum,
+                        ShowInColumn = col.Name
+                    });
+                }
+            }
+
         }
 
         private void SetOneCommonRow(ProfitAndLossCommonRow row,

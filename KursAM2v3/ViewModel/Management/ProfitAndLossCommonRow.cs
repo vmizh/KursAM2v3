@@ -543,6 +543,14 @@ namespace KursAM2.ViewModel.Management
             return res;
         }
 
+        public bool IsEmpty()
+        {
+            return ProfitCHF == 0 && ProfitCNY == 0 && ProfitEUR == 0 && ProfitGBP == 0 && ProfitSEK == 0 &&
+                   ProfitUSD == 0 && ProfitRUB == 0
+                   && LossCHF == 0 && LossCNY == 0 && LossEUR == 0 && LossGBP == 0 && LossSEK == 0 && LossUSD == 0 &&
+                   LossRUB == 0;
+        }
+
         public class DataAnnotationProfitAndLossCommonRow : DataAnnotationForFluentApiBase,
             IMetadataProvider<ProfitAndLossCommonRow>
         {
