@@ -368,6 +368,7 @@
     <Compile Include="ViewModel\Logistiks\Warehouse\OrderInWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorClientViewModel.cs" />
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorProviderViewModel.cs" />
+    <Compile Include="ViewModel\Management\ProfitAndLossCommonRow.cs" />
     <Compile Include="ViewModel\Management\VzaimozachetRow.cs" />
     <Compile Include="ViewModel\MenuSearchWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\AccruedAmountTypeWindowViewModel.cs" />
@@ -616,6 +617,9 @@
     </Compile>
     <Compile Include="View\Management\KontragentBalansView.xaml.cs">
       <DependentUpon>KontragentBalansView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Management\ProfitAndLoss.xaml.cs">
+      <DependentUpon>ProfitAndLoss.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Management\ProfitAndLossesControls\CurrencyConvertView.xaml.cs">
       <DependentUpon>CurrencyConvertView.xaml</DependentUpon>
@@ -1031,15 +1035,8 @@
     <Compile Include="View\Finance\MutualAccountingInfo.xaml.cs">
       <DependentUpon>MutualAccountingInfo.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Management\ProfitAndLosses.xaml.cs" />
     <Compile Include="View\Logistiks\PurchaseInvoicesOverheadsView.xaml.cs">
       <DependentUpon>PurchaseInvoicesOverheadsView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Management\ProfitAndLosses2.xaml.cs">
-      <DependentUpon>ProfitAndLosses2.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Management\ProjectProfitAndLossView.xaml.cs">
-      <DependentUpon>ProjectProfitAndLossView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Management\ProjectProviderPrihodView.xaml.cs">
       <DependentUpon>ProjectProviderPrihodView.xaml</DependentUpon>
@@ -1514,6 +1511,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="View\Management\ProfitAndLoss.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="View\Management\ProfitAndLossesControls\CurrencyConvertView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1910,19 +1911,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\Management\ProfitAndLosses.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="View\Logistiks\PurchaseInvoicesOverheadsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Management\ProfitAndLosses2.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Management\ProjectProfitAndLossView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

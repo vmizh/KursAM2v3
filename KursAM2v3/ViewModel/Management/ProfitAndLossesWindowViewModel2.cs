@@ -1111,7 +1111,7 @@ namespace KursAM2.ViewModel.Management
         public override void UpdateVisualObjects()
         {
             if (Form is not ProfitAndLoss frm) return;
-            var listHeaders = new List<string>(["Доход", "Расход", "Результат"]);
+            var listHeaders = new List<string>( new[] {"Доход", "Расход", "Результат"});
             frm.treeListCommon.TotalSummary.Clear();
             foreach (var col in frm.treeListCommon.Columns)
             {
