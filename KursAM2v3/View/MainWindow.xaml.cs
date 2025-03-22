@@ -239,14 +239,14 @@ namespace KursAM2.View
                         break;
 
                     case "Возвра товара поставщику":
-                        var retProvider = new NomenklReturnToProviderSearchViewModel();
-                        form = new StandartSearchView
-                        {
-                            Owner = Application.Current.MainWindow,
-                            DataContext = retProvider
-                        };
-                        retProvider.Form = form;
-                        form.Show();
+                        // var retProvider = new NomenklReturnToProviderSearchViewModel();
+                        // form = new StandartSearchView
+                        // {
+                        //     Owner = Application.Current.MainWindow,
+                        //     DataContext = retProvider
+                        // };
+                        // retProvider.Form = form;
+                        // form.Show();
                         break;
 
                     case "Перевод за баланс":
