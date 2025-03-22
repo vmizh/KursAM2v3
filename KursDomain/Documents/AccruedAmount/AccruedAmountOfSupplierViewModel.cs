@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Linq;
 using Core;
 using Core.Helper;
@@ -247,7 +248,7 @@ public class AccruedAmountOfSupplierViewModel : RSViewModelBase, IDataErrorInfo
                             Note = d.NAME_ORD + " " + d.NOTES_ORD
                         });
                 if (r.Entity.TD_101 != null && r.Entity.TD_101.Count > 0)
-                    foreach (var d in context.TD_101.Where(_ => _.AccuredId == r.Id).ToList())
+                    foreach (var d in context.TD_101.Where(_ => _.AccuredId == r.Id).Include(td101 => td101.SD_101).ToList())
                         r.CashDocs.Add(new AccruedAmountOfSupplierCashDocViewModel
                         {
                             Creator = null,

@@ -113,8 +113,9 @@ namespace KursAM2.ViewModel.Finance
         {
             if (CurrentBankAccount != null)
             {
-                var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode, new BankOperationsViewModel(),
-                    GlobalOptions.ReferencesCache.GetBankAccount(CurrentBankAccount.DocCode) as BankAccount);
+                var acc = GlobalOptions.ReferencesCache.GetBankAccount(CurrentBankAccount.DocCode) as BankAccount;
+                var k = StandartDialogs.AddNewBankOperation(CurrentBankAccount.DocCode, new BankOperationsViewModel() {Currency = acc?.Currency as Currency},
+                    acc);
                 if (k != null)
                 {
                     k.State = RowStatus.NewRow;

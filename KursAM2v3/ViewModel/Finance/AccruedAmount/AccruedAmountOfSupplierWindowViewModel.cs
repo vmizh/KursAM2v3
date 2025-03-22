@@ -246,7 +246,41 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             var kontr = StandartDialogs.SelectKontragent();
             if (kontr == null) return;
             Document.Kontragent = kontr;
+            updateKontragent();
             RaisePropertyChanged(nameof(WindowName));
+        }
+
+        private void updateKontragent()
+        {
+            if (Document.Rows.Count == 0 || Document.Rows.All(_ => _.CashDocs.Count == 0)) return;
+            using (var ctx = GlobalOptions.GetEntities())
+            {
+                foreach (var row in Document.Rows)
+                {
+                    if (row.CashDocs is not null && row.CashDocs.Count > 0)
+                    {
+                        foreach (var ch in row.CashDocs)
+                        {
+                            switch (ch.DocumentType)
+                            {
+                                case "Расходный кассовый ордер":
+                                    var cash = ctx.SD_34.FirstOrDefault(_ => _.DOC_CODE == ch.DocCode);
+                                    if (cash is not null)
+                                    {
+                                        cash.KONTRAGENT_DC = Document.Kontragent.DocCode;
+                                    }
+                                    break;
+                                case "Банковская транзакция":
+                                    var bank = ctx.TD_101.FirstOrDefault(_ => _.CODE == ch.Code);
+                                    if (bank is not null)
+                                        bank.VVT_KONTRAGENT = Document.Kontragent.DocCode;
+                                    break;
+                            }
+                        }
+                    }
+                }
+                ctx.SaveChanges();
+            }
         }
 
         [Display(AutoGenerateField = false)]

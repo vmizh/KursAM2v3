@@ -149,9 +149,13 @@ public class BankAccount : IBankAccount, IDocCode, IName, IEquatable<BankAccount
         StartSumma = entity.StartSumma;
         DateNonZero = entity.DateNonZero;
         DocCode = entity.DOC_CODE;
+        KontragentDC = entity.BA_BANK_AS_KONTRAGENT_DC;
         Kontragent = refCache?.GetKontragent(entity.BA_BANK_AS_KONTRAGENT_DC);
+        CentrResponsibilityDC = entity.BA_CENTR_OTV_DC;
         CentrResponsibility = refCache?.GetCentrResponsibility(entity.BA_CENTR_OTV_DC);
+        CurrencyDC = entity.CurrencyDC;
         Currency = refCache?.GetCurrency(entity.CurrencyDC);
+        BankDC = entity.BA_BANKDC;
         Bank = refCache?.GetBank(entity.BA_BANKDC);
         UpdateDate = entity.UpdateDate ?? DateTime.Now;
         IsDeleted = entity.IsDeleted ?? false;
