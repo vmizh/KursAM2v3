@@ -736,9 +736,10 @@ namespace KursAM2.ViewModel.Logistiks
 
                 var returnNomenkl = ctx.NomenklReturnOfClientRow.Include(_ => _.NomenklReturnOfClient)
                     .Where(_ => _.NomenklDC == CurrentNomenklMoveItem.Nomenkl.DocCode
-                    && _.NomenklReturnOfClient.DocDate >= StartDate && _.NomenklReturnOfClient.DocDate <= EndDate);
+                    && _.NomenklReturnOfClient.DocDate >= StartDate && _.NomenklReturnOfClient.DocDate <= EndDate).ToList();
                 foreach (var doc in returnNomenkl)
                 {
+                    
                     DocumentList.Add(new NomPriceDocumentViewModel
                     {
                         DocCode = 0,
@@ -759,6 +760,36 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaIn = doc.Quantity*doc.Price,
                         SummaOut = 0,
                         SummaDelta = doc.Quantity*doc.Price
+                    });
+                }
+
+                var returnProviderNomenkl = ctx.NomenklReturnToProviderRow.Include(_ => _.NomenklReturnToProvider)
+                    .Where(_ => _.NomenklDC == CurrentNomenklMoveItem.Nomenkl.DocCode
+                                && _.NomenklReturnToProvider.DocDate >= StartDate && _.NomenklReturnToProvider.DocDate <= EndDate);
+                foreach (var doc in returnProviderNomenkl)
+                {
+                    var prc = nomenklManager.GetNomenklPrice(doc.NomenklDC, doc.NomenklReturnToProvider.DocDate)
+                        .Price;
+                    DocumentList.Add(new NomPriceDocumentViewModel
+                    {
+                        DocCode = 0,
+                        Id = doc.DocId,
+                        DocumentName = "Возврат товара поставщику",
+                        DocumentNum = doc.NomenklReturnToProvider.DocNum.ToString(),
+                        DocumentDate = doc.NomenklReturnToProvider.DocDate,
+                        QuantityIn = 0,
+                        QuantityOut = doc.Quantity,
+                        QuantityDelta = -doc.Quantity,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        From = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(doc.NomenklReturnToProvider.WarehouseDC))
+                            .Name,
+                        // ReSharper disable once AssignNullToNotNullAttribute
+                        // ReSharper disable once PossibleInvalidOperationException
+                        To = "Контрагент",
+                        SummaIn = 0,
+                        SummaOut = doc.Quantity*prc,
+                        SummaDelta = -doc.Quantity*prc
                     });
                 }
             }

@@ -443,9 +443,24 @@ namespace KursAM2.Managers
                 case DocumentType.NomenklReturnOfClient:
                     OpenNomenklReturnOfClient(id);
                     break;
+                case DocumentType.NomenklReturnToProvider:
+                    OpenNomenklReturnToProvider(id);
+                    break;
                 default:
                     return;
             }
+        }
+
+        private static NomenklReturnToProviderWindowViewModel OpenNomenklReturnToProvider(Guid id)
+        {
+            var frm = new NomenklReturnToProviderView()
+            {
+                Owner = Application.Current.MainWindow
+            };
+            var ctx = new NomenklReturnToProviderWindowViewModel(id) { Form = frm };
+            frm.DataContext = ctx;
+            frm.Show();
+            return ctx;
         }
 
         private static NomenklReturnOfClientWindowViewModel OpenNomenklReturnOfClient(Guid id)

@@ -169,7 +169,7 @@ namespace KursAM2.Repositories.NomenklReturn
             foreach (var row in old.Rows)
                 ret.Rows.Add(new NomenklReturnOfClientRowViewModel(new NomenklReturnOfClientRow
                 {
-                    Id = new Guid(),
+                    Id = Guid.NewGuid(),
                     DocId = ret.Id,
                     Cost = row.Cost,
                     InvoiceRowId = row.InvoiceRowId,

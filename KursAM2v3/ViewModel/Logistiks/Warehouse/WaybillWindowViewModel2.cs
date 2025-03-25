@@ -310,6 +310,29 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             var WinManager = new WindowManager();
             var isOldExist = false;
             var isCreateNum = true;
+            if (Document.WarehouseOut is null || Document.Client is null)
+            {
+                var res = WinManager.ShowWinUIMessageBox("Документ нельзя сохранить! Не выбран склад или контрагент.", "Предупреждение",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var kontrList = new HashSet<Kontragent>();
+            foreach (var row in Document.Rows)
+            {
+                var d = UnitOfWork.Context.TD_84.Include(_ => _.SD_84).FirstOrDefault(_ =>
+                    _.DOC_CODE == row.DDT_SFACT_DC && _.CODE == row.DDT_SFACT_ROW_CODE);
+                kontrList.Add((Kontragent)GlobalOptions.ReferencesCache.GetKontragent(d.SD_84.SF_CLIENT_DC));
+            }
+
+            if (kontrList.Count > 1 || kontrList.First().DocCode != Document.Client.DocCode)
+            {
+                var res = WinManager.ShowWinUIMessageBox(
+                    "Документ нельзя сохранить! Не согласованы контрагенты в накладной и с/ф.",
+                    "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             using (var ctx = GlobalOptions.GetEntities())
             {
                 isOldExist = ctx.SD_24.Any(_ => _.DOC_CODE == Document.DocCode);
@@ -376,6 +399,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                     if (m < 0)
                     {
                         var nom = GlobalOptions.ReferencesCache.GetNomenkl(n) as Nomenkl;
+                        // ReSharper disable once PossibleNullReferenceException
                         WindowManager.ShowMessage($"По товару {nom.NomenklNumber} {nom.Name} " +
                                                   // ReSharper disable once PossibleInvalidOperationException
                                                   $"склад {Document.WarehouseOut} в кол-ве {q.First().OstatokQuantity:0.0}.",

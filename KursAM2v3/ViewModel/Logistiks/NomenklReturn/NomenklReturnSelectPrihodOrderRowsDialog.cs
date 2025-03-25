@@ -10,85 +10,98 @@ using KursAM2.Repositories.NomenklReturn;
 using KursAM2.View.Logistiks.NomenklReturn;
 using KursAM2.ViewModel.Logistiks.NomenklReturn.Helper;
 using KursDomain;
+using KursDomain.Managers;
 using KursDomain.Menu;
 using KursDomain.References;
 
 namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 {
-    public class NomenklReturnSelectWaybillRowsDialog : RSWindowViewModelBase
+    public class NomenklReturnSelectPrihodOrderRowsDialog : RSWindowViewModelBase
     {
-        public NomenklReturnSelectWaybillRowsDialog(Kontragent kontragent, List<Guid> existsPrihRows = null)
+        public NomenklReturnSelectPrihodOrderRowsDialog(Kontragent kontragent, KursDomain.References.Warehouse warehouse,
+            List<Guid> existsPrihRows = null)
         {
             myKontragent = kontragent;
             myExistsPrihRows = existsPrihRows;
+            myWarehouse = warehouse;
             IsDialog = true;
-            myDataRepository = new NomenklReturnOfClientRepository(GlobalOptions.GetEntities());
+            myDataRepository = new NomenklReturnToProviderRepository(GlobalOptions.GetEntities());
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RefreshData();
         }
-
-        #region Fields
-
-        private readonly INomenklReturnOfClientRepository myDataRepository;
-        private RashodNakladRow myCurrentMainRow;
-        private readonly Kontragent myKontragent;
-        private readonly List<Guid> myExistsPrihRows;
-
-        #endregion
-
-        #region Properties
-
-        public UserControl CustomDataUserControl { set; get; } = new NomenklReturnSelectWaybillRows();
-        public override string LayoutName => "NomenklReturnSelectWaybillRows";
-
-        public RashodNakladRow CurrentMainRow
-        {
-            get => myCurrentMainRow;
-            set
-            {
-                if (Equals(value, myCurrentMainRow)) return;
-                myCurrentMainRow = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public RashodNakladRow CurrentSelectedRow
-        {
-            get => myCurrentMainRow;
-            set
-            {
-                if (Equals(value, myCurrentMainRow)) return;
-                myCurrentMainRow = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public ObservableCollection<RashodNakladRow> MainRows { set; get; } =
-            new ObservableCollection<RashodNakladRow>();
-
-        // ReSharper disable once CollectionNeverUpdated.Global
-        public ObservableCollection<RashodNakladRow> ActualMainRows { set; get; } =
-            new ObservableCollection<RashodNakladRow>();
-
-        public ObservableCollection<RashodNakladRow> SelectedRows { set; get; } =
-            new ObservableCollection<RashodNakladRow>();
-
-        // ReSharper disable once CollectionNeverUpdated.Global
-        public ObservableCollection<RashodNakladRow> ActualSelectedRows { set; get; } =
-            new ObservableCollection<RashodNakladRow>();
-
-        #endregion
 
         #region Commands
 
         public sealed override void RefreshData()
         {
             MainRows.Clear();
-            SelectedRows.Clear();
-            foreach (var d in myDataRepository.GetRashodNakladRows(myKontragent.DocCode)
+            var ost = nomenklManager.GetNomenklStoreQuantity(myWarehouse.DocCode,DateTime.Today, DateTime.Today);
+            var t = myDataRepository.GetPrihodOrderdRows(myKontragent.DocCode);
+            foreach (var d in myDataRepository.GetPrihodOrderdRows(myKontragent.DocCode)
                          .Where(d => !myExistsPrihRows.Contains(d.Id)))
-                MainRows.Add(d);
+            {
+                if(ost.Exists(_ => _.NomDC == d.NomenklDC && _.OstatokQuantity > 0))
+                    MainRows.Add(d);
+            }
         }
+
+        #endregion
+
+        #region Fields
+
+        private readonly INomenklReturnToProviderRepository myDataRepository;
+        private PrhodOrderRow myCurrentMainRow;
+        private readonly Kontragent myKontragent;
+        private readonly KursDomain.References.Warehouse myWarehouse;
+        private readonly List<Guid> myExistsPrihRows;
+        private object myCurrentSelectedRow;
+        private NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+
+        #endregion
+
+        #region Properties
+
+        public UserControl CustomDataUserControl { set; get; } = new NomenklReturnSelectWaybillRows();
+        public override string LayoutName => "NomenklReturnSelectPrihodOrderRows";
+
+        public PrhodOrderRow CurrentMainRow
+        {
+            get => myCurrentMainRow;
+            set
+            {
+                if (Equals(value, myCurrentMainRow)) return;
+                myCurrentMainRow = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public PrhodOrderRow CurrentSelectedRow
+        {
+            get => myCurrentMainRow;
+            set
+            {
+                if (Equals(value, myCurrentSelectedRow)) return;
+                myCurrentSelectedRow = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ObservableCollection<PrhodOrderRow> MainRows { set; get; } =
+            new ObservableCollection<PrhodOrderRow>();
+
+        public ObservableCollection<PrhodOrderRow> ActualMainRows { set; get; } =
+            new ObservableCollection<PrhodOrderRow>();
+
+        public ObservableCollection<PrhodOrderRow> SelectedRows { set; get; } =
+            new ObservableCollection<PrhodOrderRow>();
+
+
+        public ObservableCollection<PrhodOrderRow> ActualSelectedRows { set; get; } =
+            new ObservableCollection<PrhodOrderRow>();
+
+        #endregion
+
+        #region Commands
 
         public override void UpdateVisualObjects()
         {
@@ -101,7 +114,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         public ICommand AddSelectedRowCommand
         {
-            get { return new Command(AddSelectedRow, _ => CurrentMainRow is not null); }
+            get { return new Command(AddSelectedRow, _ => ActualMainRows.Count > 0); }
         }
 
         private void AddSelectedRow(object obj)
@@ -115,7 +128,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         public ICommand DeleteSelectedRowCommand
         {
-            get { return new Command(DeleteSelected, _ => CurrentSelectedRow is not null); }
+            get { return new Command(DeleteSelected, _ => ActualSelectedRows.Count > 0); }
         }
 
         private void DeleteSelected(object obj)

@@ -113,9 +113,6 @@
     <Reference Include="MaterialDesignThemes.Wpf, Version=4.9.0.0, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignThemes.4.9.0\lib\net462\MaterialDesignThemes.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.6.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Expression.Drawing, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Expression.Drawing.3.0.0\lib\net45\Microsoft.Expression.Drawing.dll</HintPath>
@@ -291,10 +288,14 @@
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\AktSpisaniyaNomenklTitleWIndowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\DialogSelectExistNomOnSkaldViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\AktSpisaniya\NomenklRemainsOnSkladWithPrice.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklReturn\Helper\PrhodOrderRow.cs" />
     <Compile Include="ViewModel\Logistiks\NomenklReturn\Helper\RashodNakladRow.cs" />
     <Compile Include="ViewModel\Logistiks\NomenklReturn\NomenklReturnOfClientSearchViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\NomenklReturn\NomenklReturnOfClientWindowViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklReturn\NomenklReturnToProviderSearchViewModel.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklReturn\NomenklReturnSelectPrihodOrderRowsDialog.cs" />
     <Compile Include="ViewModel\Logistiks\NomenklReturn\NomenklReturnSelectWaybillRowsDialog.cs" />
+    <Compile Include="ViewModel\Logistiks\NomenklReturn\NomenklReturnToProviderWindowViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\TransferOut\TransferOutBalansRemainsDocument.cs" />
     <Compile Include="ViewModel\Logistiks\TransferOut\TransferOutBalansRemainsViewModel.cs" />
     <Compile Include="ViewModel\Logistiks\TransferOut\TransferOutBalansSearchViewModel.cs" />
@@ -577,6 +578,9 @@
     </Compile>
     <Compile Include="View\Logistiks\NomenklReturn\NomenklReturnSelectWaybillRows.xaml.cs">
       <DependentUpon>NomenklReturnSelectWaybillRows.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Logistiks\NomenklReturn\NomenklReturnToProviderView.xaml.cs">
+      <DependentUpon>NomenklReturnToProviderView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\SkladOstatkiView.xaml.cs">
       <DependentUpon>SkladOstatkiView.xaml</DependentUpon>
@@ -1462,6 +1466,10 @@
     <Page Include="View\Logistiks\NomenklReturn\NomenklReturnSelectWaybillRows.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Logistiks\NomenklReturn\NomenklReturnToProviderView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="View\Logistiks\SkladOstatkiView.xaml">
       <SubType>Designer</SubType>

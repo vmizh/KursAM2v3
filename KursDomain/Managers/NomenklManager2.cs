@@ -146,7 +146,7 @@ namespace KursDomain.Managers
         }
 
         public List<NomenklQuantityInfo> GetNomenklStoreQuantity(decimal skladDC, DateTime dateStart,
-            DateTime dateEnd)
+            DateTime dateEnd, bool isZeroInclude = false)
         {
             try
             {
@@ -154,7 +154,7 @@ namespace KursDomain.Managers
                           $"'{CustomFormat.DateToString(dateStart)}','{CustomFormat.DateToString(dateEnd)}'";
                 var ret = Context.Database.SqlQuery<NomenklQuantityInfo>(sql)
                     .ToList();
-                return ret;
+                return isZeroInclude ? ret : ret.Where(_ => _.OstatokQuantity > 0).ToList();
             }
             catch (Exception ex)
             {

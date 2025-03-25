@@ -8,11 +8,14 @@ using Data;
 using Helper;
 using KursDomain.References;
 using System.Data.Entity;
+using System.Diagnostics;
 using KursDomain.References.RedisCache;
 using KursDomain.Repository.Base;
 using ServiceStack.Redis;
 
 namespace KursDomain.Repository.NomenklRepository;
+
+[DebuggerDisplay("{NomDC} - {NomNomenkl} Приход: {Prihod} Расход: {Rashod}")]
 public class NomenklMoveInfo
 {
     public decimal NomDC { set; get; }
@@ -26,6 +29,7 @@ public class NomenklMoveInfo
     public decimal RashodNaklSumma { set; get; }
 }
 
+[DebuggerDisplay("{NomDC} - {NomNomenkl} Остаток: {OstatokQuantity} Приход: {Prihod} Расход: {Rashod}")]
 public class NomenklQuantityInfo
 {
     public decimal NomDC { set; get; }
@@ -45,6 +49,7 @@ public class NomenklQuantityInfo
 
 }
 
+[DebuggerDisplay("{NomDC} - {NomNomenkl} Остаток: {OstatokQuantity} Приход: {Prihod} Расход: {Rashod}")]
 public class NomenklQuantityInfoExt : NomenklQuantityInfo
 {
     public NomenklQuantityInfoExt(NomenklQuantityInfo item)
@@ -119,9 +124,9 @@ public class NomenklRepository : KursGenericRepository<SD_83, ALFAMEDIAEntities,
                      where old == null
                      select r)
             {
-                Context.Database.ExecuteSqlCommand($"INSERT INTO dbo.NOMENKL_RECALC(NOM_DC, OPER_DATE) " +
-                                                   $"VALUES ({CustomFormat.DecimalToSqlDecimal(r.NOM_DC)}," +
-                                                   $"'{CustomFormat.DateToString(r.OPER_DATE)}');");
+                await Context.Database.ExecuteSqlCommandAsync($"INSERT INTO dbo.NOMENKL_RECALC(NOM_DC, OPER_DATE) " +
+                                                              $"VALUES ({CustomFormat.DecimalToSqlDecimal(r.NOM_DC)}," +
+                                                              $"'{CustomFormat.DateToString(r.OPER_DATE)}');");
             }
 
             await SaveAsync();

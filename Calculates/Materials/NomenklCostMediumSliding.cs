@@ -497,8 +497,52 @@ namespace Calculates.Materials
                         TovarDocDC = -1,
                         NomenklDC = nomDC,
                         Id = rRow.DocId,
-                        TovarDocument = $"Возврат товара №{rRow.NomenklReturnOfClient.DocNum}" + (string.IsNullOrWhiteSpace(rRow.NomenklReturnOfClient.DocExtNum) ? string.Empty : $"/{rRow.NomenklReturnOfClient.DocExtNum}")
+                        TovarDocument = $"Возврат товара от клиента №{rRow.NomenklReturnOfClient.DocNum}" + (string.IsNullOrWhiteSpace(rRow.NomenklReturnOfClient.DocExtNum) ? string.Empty : $"/{rRow.NomenklReturnOfClient.DocExtNum}")
                         + $" от {rRow.NomenklReturnOfClient.DocDate.ToShortDateString()}"
+                    };
+                    ret.Operations.Add(newRet);
+                }
+
+                var returnProviderNomenkl = context.NomenklReturnToProviderRow.Include(_ => _.NomenklReturnToProvider)
+                    .Where(_ => _.NomenklDC == nomDC).ToList();
+                foreach (var rRow in returnProviderNomenkl)
+                {
+                    currentRowNumber++;
+                    var prc = GetNomPrice(context, rRow.NomenklDC, rRow.NomenklReturnToProvider.DocDate);
+                    var newRet = new NomenklCalcCostOperation
+                    {
+                        RowNumber = currentRowNumber,
+                        Note = rRow.Note,
+                        CalcPrice = prc.Item1,
+                        CalcPriceNaklad = prc.Item2,
+                        DocDate = rRow.NomenklReturnToProvider.DocDate,
+                        KontragentIn =
+                            GlobalOptions.ReferencesCache.GetKontragent(rRow.NomenklReturnToProvider.KontregentDC) as
+                                Kontragent,
+                        KontragentOut = null,
+                        OperationName = "Возврат товара поставщику",
+                        OperCode = 1008,
+                        QuantityIn = 0,
+                        QuantityOut = rRow.Quantity,
+                        DocPrice = 0,
+                        Naklad = 0,
+                        SkladIn = null,
+                        SkladOut =
+                            GlobalOptions.ReferencesCache.GetWarehouse(rRow.NomenklReturnToProvider.WarehouseDC) as
+                                Warehouse,
+                        SummaIn = 0,
+                        SummaInWithNaklad = 0,
+                        SummaOut = 0,
+                        SummaOutWithNaklad = 0,
+                        QuantityNakopit = 0,
+                        TovarDocDC = -1,
+                        NomenklDC = nomDC,
+                        Id = rRow.DocId,
+                        TovarDocument = $"Возврат товара поставщику №{rRow.NomenklReturnToProvider.DocNum}" +
+                                        (string.IsNullOrWhiteSpace(rRow.NomenklReturnToProvider.DocExtNum)
+                                            ? string.Empty
+                                            : $"/{rRow.NomenklReturnToProvider.DocExtNum}")
+                                        + $" от {rRow.NomenklReturnToProvider.DocDate.ToShortDateString()}"
                     };
                     ret.Operations.Add(newRet);
                 }

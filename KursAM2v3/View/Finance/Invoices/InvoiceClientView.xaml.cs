@@ -187,7 +187,7 @@ namespace KursAM2.View.Finance.Invoices
                     e.Column.ReadOnly = ctx.Document.Diler == null;
                 }
         }
-
+        
         private void GridLayoutHelper_Trigger(object sender, MyEventArgs e)
         {
             var maxWidith = new GridColumnWidth(800);

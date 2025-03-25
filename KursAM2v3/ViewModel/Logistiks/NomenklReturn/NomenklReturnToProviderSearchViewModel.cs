@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using Core.ViewModel.Base;
+﻿using Core.ViewModel.Base;
 using Data;
 using Helper;
 using KursAM2.Managers;
@@ -13,24 +6,31 @@ using KursAM2.Repositories.NomenklReturn;
 using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks.NomenklReturn;
-using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.NomenklReturn;
 using KursDomain.Menu;
 using KursDomain.Repository.DocHistoryRepository;
+using KursDomain;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Configuration;
+using System.Threading.Tasks;
+using System;
+using System.Linq;
+using System.Windows;
 
 namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 {
-    public sealed class NomenklReturnOfClientSearchViewModel : RSWindowSearchViewModelBase
+    
+    public sealed class NomenklReturnToProviderSearchViewModel : RSWindowSearchViewModelBase
     {
         private readonly ALFAMEDIAEntities myContext = GlobalOptions.GetEntities();
 
-        public NomenklReturnOfClientSearchViewModel()
+        public NomenklReturnToProviderSearchViewModel()
         {
-            
-            myRepository = new NomenklReturnOfClientRepository(myContext);
+            myRepository = new NomenklReturnToProviderRepository(myContext);
             redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
             mySubscriber = redis.GetSubscriber();
             try
@@ -39,7 +39,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                 mySubscriber = redis.GetSubscriber();
                 if (mySubscriber.IsConnected())
                     mySubscriber.Subscribe(
-                        new RedisChannel(RedisMessageChannels.NomenklReturnOfClient, RedisChannel.PatternMode.Auto),
+                        new RedisChannel(RedisMessageChannels.NomenklReturnToProvider, RedisChannel.PatternMode.Auto),
                         (_, message) =>
                         {
                             Console.WriteLine($@"Redis - {message}");
@@ -51,7 +51,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                 Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
             }
 
-            WindowName = "Возврат товаров от клиентов";
+            WindowName = "Возврат товаров поставщикам";
             LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
             {
                 [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
@@ -60,6 +60,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
             EndDate = DateTime.Today;
             StartDate = DateHelper.GetFirstDate();
         }
+
 
         #region Methods
 
@@ -129,11 +130,11 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         public override void DocNewEmpty(object form)
         {
-            var frm = new NomenklReturnOfClientView
+            var frm = new NomenklReturnToProviderView
             {
                 Owner = Application.Current.MainWindow
             };
-            var ctx = new NomenklReturnOfClientWindowViewModel(null) { Form = frm };
+            var ctx = new NomenklReturnToProviderWindowViewModel(null) { Form = frm };
             frm.DataContext = ctx;
             frm.Show();
         }
@@ -142,7 +143,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
         {
             if (CurrentDocument == null) return;
             DocumentsOpenManager.Open(
-                DocumentType.NomenklReturnOfClient, CurrentDocument.Id);
+                DocumentType.NomenklReturnToProvider, CurrentDocument.Id);
         }
 
         public override void RefreshData(object data)
@@ -154,14 +155,14 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
             {
                 frm?.Dispatcher.Invoke(() =>
                 {
-                    if (frm.DataContext is NomenklReturnOfClientSearchViewModel dtx) dtx.IsCanRefresh = false;
+                    if (frm.DataContext is NomenklReturnToProviderSearchViewModel dtx) dtx.IsCanRefresh = false;
                     frm.loadingIndicator.Visibility = Visibility.Visible;
                 });
                 var result = myRepository.GetForPeriod(StartDate, EndDate).ToList();
                 if (result.Count > 0)
                 {
                     var lasts = lastDocumentRopository.GetLastChanges(result.Select(_ => _.Id).Distinct());
-                    foreach (var r in result.Cast<NomenklReturnOfClientSearch>())
+                    foreach (var r in result.Cast<NomenklReturnToProviderSearch>())
                         if (lasts.ContainsKey(r.Id))
                         {
                             var last = lasts[r.Id];
@@ -178,9 +179,9 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                 frm?.Dispatcher.Invoke(() =>
                 {
                     frm.loadingIndicator.Visibility = Visibility.Hidden;
-                    foreach (var d in result.Cast<NomenklReturnOfClientSearch>())
+                    foreach (var d in result.Cast<NomenklReturnToProviderSearch>())
                         Documents.Add(d);
-                    if (frm.DataContext is NomenklReturnOfClientSearchViewModel dtx) dtx.IsCanRefresh = true;
+                    if (frm.DataContext is NomenklReturnToProviderSearchViewModel dtx) dtx.IsCanRefresh = true;
                 });
             });
             frm?.gridDocuments.RefreshData();
@@ -190,25 +191,24 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         #region Fields
 
-        private readonly INomenklReturnOfClientRepository myRepository;
+        private readonly INomenklReturnToProviderRepository myRepository;
         private readonly ISubscriber mySubscriber;
         private readonly ConnectionMultiplexer redis;
-        private NomenklReturnOfClientSearch myCurrentDocument;
+        private NomenklReturnToProviderSearch myCurrentDocument;
 
         #endregion
 
         #region Properties
 
+        public override string LayoutName => "NomenklReturnToProviderSearch";
 
-        public override string LayoutName => "NomenklReturnOfClientSearch";
+        public ObservableCollection<NomenklReturnToProviderSearch> Documents { set; get; } =
+            new ObservableCollection<NomenklReturnToProviderSearch>();
 
-        public ObservableCollection<NomenklReturnOfClientSearch> Documents { set; get; } =
-            new ObservableCollection<NomenklReturnOfClientSearch>();
+        public ObservableCollection<NomenklReturnToProviderSearch> SelectedDocs { set; get; } =
+            new ObservableCollection<NomenklReturnToProviderSearch>();
 
-        public ObservableCollection<NomenklReturnOfClientSearch> SelectedDocs { set; get; } =
-            new ObservableCollection<NomenklReturnOfClientSearch>();
-
-        public NomenklReturnOfClientSearch CurrentDocument
+        public NomenklReturnToProviderSearch CurrentDocument
         {
             get => myCurrentDocument;
             set

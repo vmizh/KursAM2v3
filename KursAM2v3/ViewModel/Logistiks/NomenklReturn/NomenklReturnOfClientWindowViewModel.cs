@@ -22,6 +22,7 @@ using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.Repositories.NomenklReturn;
 using KursAM2.Repositories.RedisRepository;
 using KursAM2.Repositories.WarehousesRepository;
+using KursAM2.View.DialogUserControl;
 using KursAM2.View.Logistiks.NomenklReturn;
 using KursAM2.ViewModel.Management.Calculations;
 using KursDomain;
@@ -289,7 +290,11 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         private void KontragentSelect(object obj)
         {
-            var kontr = StandartDialogs.SelectKontragent();
+            var kontr = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions()
+            {
+                Currency = Document.Currency,
+                IsClientOnly = true
+            });
             if (kontr == null) return;
             Document.Kontragent = kontr;
         }
@@ -343,9 +348,14 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                 using (var ctx = GlobalOptions.KursSystem())
                 {
                     foreach (var o in LogicalTreeHelper.GetChildren(frm.DocumentHead))
+                    {
                         if (o is LayoutGroup item)
+                        {
                             if (item.Header is not null && ((string)item.Header).ToLower() == "group")
                                 item.View = LayoutGroupView.Group;
+                        }
+                    }
+
 
                     string layoutXML;
                     var stream = new MemoryStream();
@@ -450,9 +460,9 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
             var ctx = new NomenklReturnSelectWaybillRowsDialog(Document.Kontragent, existsRows);
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Возврат товара от клиента. Выбор номенклатур.", ctx) == MessageResult.Cancel) return;
-            var prices = myRepository.GetNomenklLastPrices(ctx.SelectedWaybillRows.Select(_ => _.NomenklDC).ToList(),
+            var prices = myRepository.GetNomenklLastPrices(ctx.SelectedRows.Select(_ => _.NomenklDC).ToList(),
                 Document.DocDate);
-            foreach (var item in ctx.SelectedWaybillRows)
+            foreach (var item in ctx.SelectedRows)
             {
                 if (Document.Rows.Any(_ => _.InvoiceRowId == item.InvoiceRowId)) continue;
                 var newRow = new NomenklReturnOfClientRowViewModel(new NomenklReturnOfClientRow
@@ -564,4 +574,6 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         #endregion
     }
+
+   
 }

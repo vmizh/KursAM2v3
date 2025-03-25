@@ -18,6 +18,7 @@ public static class RedisMessageChannels
     public const string MutualAccounting = "MutualAccounting";
 
     public const string NomenklReturnOfClient = "NomenklReturnOfClient";
+    public const string NomenklReturnToProvider = "NomenklReturnToProvider";
 
     public const string BankReference = "Cache:Bank";
     public const string RegionReference = "Cache:Region";

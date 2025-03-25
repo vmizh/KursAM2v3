@@ -29,12 +29,11 @@
                     Name="gridWaybillRows"
                     dx:DXSerializer.SerializationID="gridWaybillRows"
                     Style="{StaticResource GridControl.Base}"
-                    ItemsSource="{Binding WaybillRows, UpdateSourceTrigger=PropertyChanged}"
-                    CurrentItem="{Binding CurrentWaybillRow, UpdateSourceTrigger=PropertyChanged}"
-                    SelectedItem="{Binding CurrentWaybillRow, UpdateSourceTrigger=PropertyChanged}"
-                    SelectedItems="{Binding ActualSelectedWaybillRows,  NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                    ItemsSource="{Binding MainRows, UpdateSourceTrigger=PropertyChanged}"
+                    CurrentItem="{Binding CurrentMainRow, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItem="{Binding CurrentMainRow, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItems="{Binding ActualMainRows,  NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                     AutoGeneratingColumn="Grid_OnAutoGeneratingColumn"
-                   
                     >
                     <dxg:GridControl.View>
                         <dxg:TableView
@@ -75,10 +74,10 @@ AncestorType={x:Type ContextMenu}}}">
                     Name="gridSelectedWaybillRowControl"
                     dx:DXSerializer.SerializationID="gridSelectedWaybillRowControl"
                     Style="{StaticResource GridControl.Base}"
-                    ItemsSource="{Binding SelectedWaybillRows, UpdateSourceTrigger=PropertyChanged}"
-                    CurrentItem="{Binding CurrentSelectedWaybillRow, UpdateSourceTrigger=PropertyChanged}"
-                    SelectedItem="{Binding CurrentSelectedWaybillRow, UpdateSourceTrigger=PropertyChanged}"
-                    SelectedItems="{Binding ActualSelectedWaybillRows2, UpdateSourceTrigger=PropertyChanged}"
+                    ItemsSource="{Binding SelectedRows, UpdateSourceTrigger=PropertyChanged}"
+                    CurrentItem="{Binding CurrentSelectedRow, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItem="{Binding CurrentSelectedRow, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItems="{Binding ActualSelectedRows, UpdateSourceTrigger=PropertyChanged}"
                     AutoGeneratingColumn="Grid_OnAutoGeneratingColumn">
                     <dxg:GridControl.View>
                         <dxg:TableView

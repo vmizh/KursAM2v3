@@ -1,29 +1,29 @@
-﻿using System;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using Core.ViewModel.Base;
+﻿using Core.ViewModel.Base;
 using Data;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.NomenklReturn;
 using KursDomain.References;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
+using System;
 
 namespace KursDomain.Documents.NomenklReturn;
 
-public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity<NomenklReturnOfClientRow>,
-    INomenklReturnOfClientRow
+public sealed class NomenklReturnToProviderRowViewModel : RSViewModelBase, IEntity<NomenklReturnToProviderRow>,
+    INomenklReturnToProviderRow
 {
     private string myInvoiceText;
     private Nomenkl myNomenkl;
-    private string myWaybillText;
+    private string myPrihodOrderText;
     private decimal myCalcCost;
     public decimal MaxQuantity;
 
-    public NomenklReturnOfClientRowViewModel()
+    public NomenklReturnToProviderRowViewModel()
     {
         Entity = DefaultValue();
     }
 
-    public NomenklReturnOfClientRowViewModel(NomenklReturnOfClientRow entity, NomenklReturnOfClientViewModel parent)
+    public NomenklReturnToProviderRowViewModel(NomenklReturnToProviderRow entity, NomenklReturnToProviderViewModel parent)
     {
         Parent = parent;
         Entity = entity;
@@ -97,16 +97,16 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
         }
     }
 
-    [Display(AutoGenerateField = true, Name = "Расх.накл")]
+    [Display(AutoGenerateField = true, Name = "Прих. ордер")]
     [ReadOnly(true)]
-    public string WaybillText
+    public string PrihodOrderText
 
     {
-        get => myWaybillText;
+        get => myPrihodOrderText;
         set
         {
-            if (myWaybillText == value) return;
-            myWaybillText = value;
+            if (myPrihodOrderText == value) return;
+            myPrihodOrderText = value;
             RaisePropertyChanged();
         }
     }
@@ -117,7 +117,7 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
 
     [Display(AutoGenerateField = true, Name = "Сумма склад")]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal SummaWarehouse => Cost * Quantity;
+    public decimal SummaWarehouse => (Cost ?? 0) * Quantity;
 
     [Display(AutoGenerateField = true, Name = "Расч.себест.")]
     [DisplayFormat(DataFormatString = "n2")]
@@ -133,11 +133,11 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
         }
     }
 
-    [Display(AutoGenerateField = false)] public NomenklReturnOfClientRow Entity { get; set; }
+    [Display(AutoGenerateField = false)] public NomenklReturnToProviderRow Entity { get; set; }
 
-    public NomenklReturnOfClientRow DefaultValue()
+    public NomenklReturnToProviderRow DefaultValue()
     {
-        return new NomenklReturnOfClientRow
+        return new NomenklReturnToProviderRow
         {
             Id = Guid.NewGuid(),
             DocId = ((NomenklReturnOfClientViewModel)Parent)?.Id ?? Guid.Empty
@@ -183,6 +183,18 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
         }
     }
 
+    [Display(AutoGenerateField = false)]
+    public Guid? PrihodOrderId
+    {
+        get => Entity.PrihOrderId;
+        set
+        {
+            if (Entity.PrihOrderId == value) return;
+            Entity.PrihOrderId = value;
+            RaisePropertyChanged();
+        }
+    }
+
     [Display(AutoGenerateField = true, Name = "Кол-во")]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal Quantity
@@ -217,7 +229,7 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
 
     [Display(AutoGenerateField = true, Name = "Цена склада")]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal Cost
+    public decimal? Cost
     {
         get => Entity.Cost;
         set
@@ -243,5 +255,3 @@ public sealed class NomenklReturnOfClientRowViewModel : RSViewModelBase, IEntity
         }
     }
 }
-
-

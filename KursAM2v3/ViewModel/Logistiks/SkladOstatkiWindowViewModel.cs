@@ -234,12 +234,6 @@ namespace KursAM2.ViewModel.Logistiks
                 {
                     RefreshData(null);
                 }
-                //else
-                //{
-                //    NomenklOperationsForSklad.Clear();
-                //    RaisePropertyChanged(nameof(NomenklOperationsForSklad));
-                //}
-
                 RaisePropertyChanged();
             }
         }
@@ -465,6 +459,10 @@ namespace KursAM2.ViewModel.Logistiks
                 case 1007:
                     DocumentsOpenManager.Open(
                         DocumentType.NomenklReturnOfClient, CurrentOperation.Id);
+                    break;
+                case 1008:
+                    DocumentsOpenManager.Open(
+                        DocumentType.NomenklReturnToProvider, CurrentOperation.Id);
                     break;
             }
         }
