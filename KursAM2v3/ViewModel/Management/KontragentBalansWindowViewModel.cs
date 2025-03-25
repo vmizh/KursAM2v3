@@ -293,7 +293,15 @@ namespace KursAM2.ViewModel.Management
             foreach (
                 var item in
                 Operations.Where(_ => _.DocDate >= CurrentPeriod.DateStart && _.DocDate <= CurrentPeriod.DateEnd))
+            {
+                if (item.DocName.Contains("начало"))
+                {
+                    item.Nakopit = item.CrsKontrOut - item.CrsKontrIn;
+                }
+
                 Documents.Add(item);
+            }
+
             if (Documents.Count > 0)
             {
                 var lasts = lastDocumentRopository.GetLastChanges(Documents.Select(_ => _.DocCode).Distinct());
