@@ -68,6 +68,20 @@ Converter={StaticResource ImageSourceToIconConverter}, Mode=OneWay}"
                                 </MenuItem.Icon>
                             </MenuItem>
                             <Separator />
+                            <MenuItem Header="Открыть счет-фактуру" Command="{Binding OpenSFCommand}">
+                                <MenuItem.Icon>
+                                    <Image
+                                        Source="{StaticResource DocOpenDrawingImage}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+                            <MenuItem Header="Открыть ордер" Command="{Binding OpenOrderCommand}">
+                                <MenuItem.Icon>
+                                    <Image
+                                        Source="{StaticResource DocumentOptionsDrawingImage}" />
+                                </MenuItem.Icon>
+                            </MenuItem>
+
+                            <Separator />
                             <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                       CommandParameter="{Binding Path=PlacementTarget, 
     RelativeSource={RelativeSource Mode=FindAncestor,

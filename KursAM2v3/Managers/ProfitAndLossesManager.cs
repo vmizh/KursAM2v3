@@ -177,7 +177,6 @@ namespace KursAM2.Managers
         {
             using (var ent = GlobalOptions.GetEntities())
             {
-                //var cos = ent.SD_40.ToList();
                 string sql = null;
                 switch (GlobalOptions.SystemProfile.NomenklCalcType)
                 {

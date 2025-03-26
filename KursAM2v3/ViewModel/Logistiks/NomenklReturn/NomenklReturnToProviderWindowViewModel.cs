@@ -213,6 +213,41 @@ public class NomenklReturnToProviderWindowViewModel : RSWindowViewModelBase, IDa
 
     #region Command
 
+    public ICommand OpenSFCommand
+    {
+        get { return new Command(OpenSF, _ => CurrentRow != null && CurrentRow.InvoiceRowId is not null); }
+    }
+
+    private void OpenSF(object obj)
+    {
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            var dc = ctx.TD_26.FirstOrDefault(_ => _.Id == CurrentRow.InvoiceRowId);
+            if (dc != null)
+            {
+                DocumentsOpenManager.Open(DocumentType.InvoiceProvider, dc.DOC_CODE);
+            }
+        }
+    }
+
+    public ICommand OpenOrderCommand
+    {
+        get { return new Command(OpenOrder, _ => CurrentRow != null && CurrentRow.PrihodOrderId is not null); }
+    }
+
+    private void OpenOrder(object obj)
+    {
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            var dc = ctx.TD_24.FirstOrDefault(_ => _.Id == CurrentRow.PrihodOrderId);
+            if (dc != null)
+            {
+                DocumentsOpenManager.Open(DocumentType.StoreOrderIn, dc.DOC_CODE);
+            }
+        }
+    }
+
+
     public override void DocNewCopyRequisite(object form)
     {
         var frm = new NomenklReturnToProviderView
@@ -362,6 +397,16 @@ public class NomenklReturnToProviderWindowViewModel : RSWindowViewModelBase, IDa
             using (var reader = XmlReader.Create(stream))
             {
                 frm.DocumentHead.ReadFromXML(reader);
+            }
+        }
+
+        foreach (var col in frm.gridRows.Columns)
+        {
+            switch (col.FieldName)
+            {
+                case nameof(NomenklReturnToProviderRowViewModel.Cost):
+                    col.ReadOnly = true;
+                    break;
             }
         }
     }
