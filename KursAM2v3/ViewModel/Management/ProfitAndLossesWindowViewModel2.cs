@@ -1885,6 +1885,7 @@ namespace KursAM2.ViewModel.Management
                 Manager.CalcDilers();
                 Manager.CalcUslugiDilers();
                 Manager.CalcVozvrat();
+                Manager.CalcNomenklReturn();
                 Manager.CalcSpisanie();
                 Manager.CalcTovarTransfer();
                 Manager.CalcUslugi();
