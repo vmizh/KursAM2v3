@@ -70,6 +70,7 @@ namespace Data
         public Nullable<int> PLAT_VED_ROW_CODE { get; set; }
         public Nullable<System.Guid> AccuredId { get; set; }
         public Nullable<System.Guid> StockHolderId { get; set; }
+        public Nullable<System.Guid> ProjectId { get; set; }
     
         public virtual AccuredAmountOfSupplierRow AccuredAmountOfSupplierRow { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -96,5 +97,6 @@ namespace Data
         public virtual ICollection<TD_101> TD_101 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UD_281> UD_281 { get; set; }
+        public virtual Projects Projects { get; set; }
     }
 }

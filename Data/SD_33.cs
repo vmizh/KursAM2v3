@@ -70,6 +70,7 @@ namespace Data
         public Nullable<int> SFACT_FLAG { get; set; }
         public byte[] TSTAMP { get; set; }
         public Nullable<System.Guid> StockHolderId { get; set; }
+        public Nullable<System.Guid> ProjectId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
@@ -99,5 +100,6 @@ namespace Data
         public virtual ICollection<UD_259> UD_259 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UD_281> UD_281 { get; set; }
+        public virtual Projects Projects { get; set; }
     }
 }
