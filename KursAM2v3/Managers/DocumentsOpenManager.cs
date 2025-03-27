@@ -29,6 +29,7 @@ using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Logistiks;
 using KursAM2.ViewModel.Logistiks.AktSpisaniya;
+using KursAM2.ViewModel.Logistiks.NomenklRetur;
 using KursAM2.ViewModel.Logistiks.NomenklReturn;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursAM2.ViewModel.Personal;
