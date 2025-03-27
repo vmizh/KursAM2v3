@@ -36,9 +36,8 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
         {
             MainRows.Clear();
             var ost = nomenklManager.GetNomenklStoreQuantity(myWarehouse.DocCode,DateTime.Today, DateTime.Today);
-            var t = myDataRepository.GetPrihodOrderdRows(myKontragent.DocCode);
             foreach (var d in myDataRepository.GetPrihodOrderdRows(myKontragent.DocCode)
-                         .Where(d => !myExistsPrihRows.Contains(d.Id)))
+                         .Where(d => !myExistsPrihRows.Contains(d.Id) && d.Nomenkl.CurrencyDC == myKontragent.CurrencyDC))
             {
                 if(ost.Exists(_ => _.NomDC == d.NomenklDC && _.OstatokQuantity > 0))
                     MainRows.Add(d);

@@ -78,6 +78,8 @@ namespace KursAM2.Managers
                 case DocumentType.StockHolderAccrual:
                 case DocumentType.Naklad:
                 case DocumentType.InventoryList:
+                case DocumentType.NomenklReturnOfClient:
+                case DocumentType.NomenklReturnToProvider:
                     return true;
                 default:
                     return false;
@@ -216,6 +218,14 @@ namespace KursAM2.Managers
                     break;
                 case DocumentType.InventoryList:
                     var invList = OpenInventoryList(dc);
+                    break;
+                case DocumentType.NomenklReturnOfClient:
+                    if(id is not null)
+                        OpenNomenklReturnOfClient(id.Value);
+                    break;
+                case DocumentType.NomenklReturnToProvider:
+                    if(id is not null)
+                        OpenNomenklReturnToProvider(id.Value);
                     break;
                 
                 default:

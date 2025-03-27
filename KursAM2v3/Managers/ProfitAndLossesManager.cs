@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Core.ViewModel.Base;
 using Data;
+using DevExpress.Mvvm.Native;
 using FinanceAnalitic;
 using Helper;
 using KursAM2.View.Base;
@@ -177,7 +178,6 @@ namespace KursAM2.Managers
         {
             using (var ent = GlobalOptions.GetEntities())
             {
-                //var cos = ent.SD_40.ToList();
                 string sql = null;
                 switch (GlobalOptions.SystemProfile.NomenklCalcType)
                 {
@@ -637,6 +637,105 @@ namespace KursAM2.Managers
                     MainNach.Add(newPrih);
                 }
             }
+        }
+
+        public void CalcNomenklReturn()
+        {
+            using (var ent = GlobalOptions.GetEntities())
+            {
+                var returnClient = ent.NomenklReturnOfClientRow
+                    .Include(_ => _.NomenklReturnOfClient)
+                    .Where(_ => _.NomenklReturnOfClient.DocDate >= DateStart &&
+                                _.NomenklReturnOfClient.DocDate <= DateEnd);
+                foreach (var d in returnClient)
+                {
+                    var kontr = GlobalOptions.ReferencesCache.GetKontragent(d.NomenklReturnOfClient.KontragentDC) as Kontragent;
+                    var nom =
+                        GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl;
+                    var newOp = new ProfitAndLossesExtendRowViewModel
+                    {
+                        GroupId = Guid.Parse("{C5C36299-FDEF-4251-B525-3DF10C0E8CB9}"),
+                        // ReSharper disable PossibleNullReferenceException
+                        Name = nom.Name,
+                        DocCode = nom.DocCode,
+                        Quantity = d.Quantity,
+                        Kontragent = kontr.Name,
+                        // ReSharper restore PossibleNullReferenceException
+                        Date = d.NomenklReturnOfClient.DocDate,
+                        Note = $"ном № - {nom.NomenklNumber}",
+                        Nomenkl = nom,
+                        DocTypeCode = DocumentType.NomenklReturnOfClient
+                    };
+                    SetCurrenciesValue(newOp, ((IDocCode)nom.Currency).DocCode, 0, d.Price*d.Quantity);
+
+                    Extend.Add(newOp);
+                    ExtendNach.Add(newOp);
+                    var newOp1 = new ProfitAndLossesExtendRowViewModel
+                    {
+                        GroupId = Guid.Parse("{04A7B6BB-7B3C-49F1-8E10-F1AE5F5582E4}"),
+                        Name = nom.Name,
+                        DocCode = nom.DocCode,
+                        Quantity = d.Quantity,
+                        Kontragent = kontr.Name,
+                        Date = d.NomenklReturnOfClient.DocDate,
+                        Note = $"ном № - {nom.NomenklNumber}",
+                        Nomenkl = nom,
+                        DocTypeCode = DocumentType.NomenklReturnOfClient
+                    };
+                    var p = nomenklManager.GetNomenklPrice(nom.DocCode, d.NomenklReturnOfClient.DocDate);
+                    SetCurrenciesValue(newOp1, ((IDocCode)nom.Currency).DocCode, p.Price * d.Quantity, 0);
+
+                    Extend.Add(newOp1);
+                    ExtendNach.Add(newOp1);
+                }
+
+                var returnProvider = ent.NomenklReturnToProviderRow.Include(_ => _.NomenklReturnToProvider)
+                    .Where(_ => _.NomenklReturnToProvider.DocDate >= DateStart &&
+                                _.NomenklReturnToProvider.DocDate <= DateEnd);
+                foreach (var d in returnProvider)
+                {
+                    var kontr =
+                        GlobalOptions.ReferencesCache.GetKontragent(d.NomenklReturnToProvider.KontregentDC) as Kontragent;
+                    var nom =
+                        GlobalOptions.ReferencesCache.GetNomenkl(d.NomenklDC) as KursDomain.References.Nomenkl;
+                    var newOp2 = new ProfitAndLossesExtendRowViewModel
+                    {
+                        GroupId = Guid.Parse("{04A7B6BB-7B3C-49F1-8E10-F1AE5F5582E4}"),
+                        // ReSharper disable PossibleNullReferenceException
+                        Name = nom.Name,
+                        DocCode = nom.DocCode,
+                        Quantity = d.Quantity,
+                        Kontragent = kontr.Name,
+                        // ReSharper restore PossibleNullReferenceException
+                        Date = d.NomenklReturnToProvider.DocDate,
+                        Note = $"ном № - {nom.NomenklNumber}",
+                        Nomenkl = nom,
+                        DocTypeCode = DocumentType.NomenklReturnToProvider
+                    };
+                    SetCurrenciesValue(newOp2, ((IDocCode)nom.Currency).DocCode,d.Price * d.Quantity, 0 );
+
+                    Extend.Add(newOp2);
+                    ExtendNach.Add(newOp2);
+                    var newOp3 = new ProfitAndLossesExtendRowViewModel
+                    {
+                        GroupId = Guid.Parse("{C5C36299-FDEF-4251-B525-3DF10C0E8CB9}"),
+                        Name = nom.Name,
+                        DocCode = nom.DocCode,
+                        Quantity = d.Quantity,
+                        Kontragent = kontr.Name,
+                        Date = d.NomenklReturnToProvider.DocDate,
+                        Note = $"ном № - {nom.NomenklNumber}",
+                        Nomenkl = nom,
+                        DocTypeCode = DocumentType.NomenklReturnToProvider
+                    };
+                    var p = nomenklManager.GetNomenklPrice(nom.DocCode, d.NomenklReturnToProvider.DocDate);
+                    SetCurrenciesValue(newOp3, ((IDocCode)nom.Currency).DocCode,  0,p.Price * d.Quantity);
+                    
+                    Extend.Add(newOp3);
+                    ExtendNach.Add(newOp3);
+                }
+            }
+
         }
 
         public void CalcStartKontragentBalans()

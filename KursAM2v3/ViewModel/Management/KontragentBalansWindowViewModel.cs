@@ -723,7 +723,9 @@ namespace KursAM2.ViewModel.Management
             }
 
             if (CurrentDocument.DocTypeCode == DocumentType.AccruedAmountForClient ||
-                CurrentDocument.DocTypeCode == DocumentType.AccruedAmountOfSupplier)
+                CurrentDocument.DocTypeCode == DocumentType.AccruedAmountOfSupplier
+                || CurrentDocument.DocTypeCode == DocumentType.NomenklReturnToProvider
+                || CurrentDocument.DocTypeCode == DocumentType.NomenklReturnOfClient)
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
@@ -741,6 +743,23 @@ namespace KursAM2.ViewModel.Management
                     if (CurrentDocument.DocTypeCode == DocumentType.AccruedAmountOfSupplier)
                     {
                         var doc = ctx.AccruedAmountOfSupplier.FirstOrDefault(_ => _.DocInNum == num);
+                        if (doc != null)
+                            DocumentsOpenManager.Open(CurrentDocument.DocTypeCode, 0, doc.Id);
+                        else
+                            WinManager.ShowWinUIMessageBox("Документ не найден.", "Сообщение");
+                    }
+
+                    if (CurrentDocument.DocTypeCode == DocumentType.NomenklReturnToProvider)
+                    {
+                        var doc = ctx.NomenklReturnToProvider.FirstOrDefault(_ => _.DocNum == num);
+                        if (doc != null)
+                            DocumentsOpenManager.Open(CurrentDocument.DocTypeCode, 0, doc.Id);
+                        else
+                            WinManager.ShowWinUIMessageBox("Документ не найден.", "Сообщение");
+                    }
+                    if (CurrentDocument.DocTypeCode == DocumentType.NomenklReturnOfClient)
+                    {
+                        var doc = ctx.NomenklReturnOfClient.FirstOrDefault(_ => _.DocNum == num);
                         if (doc != null)
                             DocumentsOpenManager.Open(CurrentDocument.DocTypeCode, 0, doc.Id);
                         else

@@ -215,16 +215,51 @@ namespace KursAM2.ViewModel.Logistiks.NomenklRetur
 
         #region Command
 
-        public override void DocNewCopyRequisite(object form)
+    public ICommand OpenSFCommand
+    {
+        get { return new Command(OpenSF, _ => CurrentRow != null && CurrentRow.InvoiceRowId is not null); }
+    }
+
+    private void OpenSF(object obj)
+    {
+        using (var ctx = GlobalOptions.GetEntities())
         {
-            var frm = new NomenklReturnToProviderView
+            var dc = ctx.TD_26.FirstOrDefault(_ => _.Id == CurrentRow.InvoiceRowId);
+            if (dc != null)
             {
-                Owner = Application.Current.MainWindow
-            };
-            var ctx = new NomenklReturnToProviderWindowViewModel(Document.Id, true) { Form = frm };
-            frm.DataContext = ctx;
-            frm.Show();
+                DocumentsOpenManager.Open(DocumentType.InvoiceProvider, dc.DOC_CODE);
+            }
         }
+    }
+
+    public ICommand OpenOrderCommand
+    {
+        get { return new Command(OpenOrder, _ => CurrentRow != null && CurrentRow.PrihodOrderId is not null); }
+    }
+
+    private void OpenOrder(object obj)
+    {
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            var dc = ctx.TD_24.FirstOrDefault(_ => _.Id == CurrentRow.PrihodOrderId);
+            if (dc != null)
+            {
+                DocumentsOpenManager.Open(DocumentType.StoreOrderIn, dc.DOC_CODE);
+            }
+        }
+    }
+
+
+    public override void DocNewCopyRequisite(object form)
+    {
+        var frm = new NomenklReturnToProviderView
+        {
+            Owner = Application.Current.MainWindow
+        };
+        var ctx = new NomenklReturnToProviderWindowViewModel(Document.Id,true) { Form = frm };
+        frm.DataContext = ctx;
+        frm.Show();
+    }
 
         public override void DocNewEmpty(object form)
         {
@@ -348,25 +383,35 @@ namespace KursAM2.ViewModel.Logistiks.NomenklRetur
         {
         }
 
-        public override void UpdateVisualObjects()
+    public override void UpdateVisualObjects()
+    {
+        base.UpdateVisualObjects();
+        if (Form is not NomenklReturnToProviderView frm) return;
+        using (var ctx = GlobalOptions.KursSystem())
         {
-            base.UpdateVisualObjects();
-            if (Form is not NomenklReturnToProviderView frm) return;
-            using (var ctx = GlobalOptions.KursSystem())
+            var layoutHead = ctx.FormLayout.FirstOrDefault(_ => _.Id == HeadViewLayoutId);
+            if (layoutHead is null) return;
+            var stream = new MemoryStream();
+            var writer = new StreamWriter(stream);
+            writer.Write(layoutHead.Layout);
+            writer.Flush();
+            stream.Position = 0;
+            using (var reader = XmlReader.Create(stream))
             {
-                var layoutHead = ctx.FormLayout.FirstOrDefault(_ => _.Id == HeadViewLayoutId);
-                if (layoutHead is null) return;
-                var stream = new MemoryStream();
-                var writer = new StreamWriter(stream);
-                writer.Write(layoutHead.Layout);
-                writer.Flush();
-                stream.Position = 0;
-                using (var reader = XmlReader.Create(stream))
-                {
-                    frm.DocumentHead.ReadFromXML(reader);
-                }
+                frm.DocumentHead.ReadFromXML(reader);
             }
         }
+
+        foreach (var col in frm.gridRows.Columns)
+        {
+            switch (col.FieldName)
+            {
+                case nameof(NomenklReturnToProviderRowViewModel.Cost):
+                    col.ReadOnly = true;
+                    break;
+            }
+        }
+    }
 
         protected override void SaveCustomizedFormDocument(object obj)
         {
