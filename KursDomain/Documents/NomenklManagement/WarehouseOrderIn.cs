@@ -35,6 +35,8 @@ public class WarehouseOrderIn : SD_24ViewModel
                 rtemp.Add(new WarehouseOrderInRow(item) { Parent = this });
         if (Entity.DD_SKLAD_POL_DC is not null)
             WarehouseIn = GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC.Value) as References.Warehouse;
+        if (Entity.DD_SKLAD_OTPR_DC is not null)
+            WarehouseOut = GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_OTPR_DC.Value) as References.Warehouse;
         if (Entity.DD_KONTR_OTPR_DC is not null)
             KontragentSender = GlobalOptions.ReferencesCache.GetKontragent(Entity.DD_KONTR_OTPR_DC.Value) as Kontragent;
         Rows = new ObservableCollection<WarehouseOrderInRow>(rtemp);
