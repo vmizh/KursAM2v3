@@ -38,6 +38,13 @@ public sealed class WarehouseOrderOut : SD_24ViewModel, ILastChanged
         CREATOR = GlobalOptions.UserInfo.NickName;
     }
 
+    public override void Initialize()
+    {
+        if (Entity.DD_SKLAD_OTPR_DC != null)
+            WarehouseOut = GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_OTPR_DC) as References.Warehouse;
+        if (Entity.DD_SKLAD_POL_DC != null)
+            WarehouseIn = GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC) as References.Warehouse;
+    }
 
     public WarehouseOrderOut(SD_24 entity) : base(entity)
     {

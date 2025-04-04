@@ -291,7 +291,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             newItem.LastChanger = newItem.CREATOR;
                             newItem.LastChangerDate = newItem.LastChangerDate;
                         }
-
+                        newItem.Initialize();
                         Documents.Add(newItem);
                     }
 
