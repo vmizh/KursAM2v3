@@ -623,7 +623,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                             : RedisMessageDocumentOperationTypeEnum.Update,
                         Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} ордер {Document.Description}"
                     };
-                    message.ExternalValues.Add("KontragentDC", Document.KontragentSender.DocCode);
+                    message.ExternalValues.Add("KontragentDC", Document.KontragentSender?.DocCode);
+                    message.ExternalValues.Add("WarehouseDC",Document.WarehouseOut?.DocCode);
                     var jsonSerializerSettings = new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.All
