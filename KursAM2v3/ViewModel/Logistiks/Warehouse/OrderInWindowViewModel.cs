@@ -43,7 +43,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
     {
         public readonly GenericKursDBRepository<SD_24> GenericOrderInRepository;
         private readonly ISubscriber mySubscriber;
-
+       
         private readonly WarehouseManager orderManager;
         private readonly ConnectionMultiplexer redis;
 
@@ -894,7 +894,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                                 Message =
                                     $"Пользователь '{GlobalOptions.UserInfo.Name}' удалил ордер {Document.Description}"
                             };
-                            message.ExternalValues.Add("KontragentDC", Document.KontragentSender.DocCode);
+                            message.ExternalValues.Add("KontragentDC", Document.KontragentSender?.DocCode);
+                            message.ExternalValues.Add("WarehouseDC",Document.WarehouseOut?.DocCode);
                             var jsonSerializerSettings = new JsonSerializerSettings
                             {
                                 TypeNameHandling = TypeNameHandling.All
@@ -992,13 +993,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get { return new Command(DateChanged, _ => true); }
         }
 
+        private DateTime myDateRecover = DateTime.Now;
+
         private void DateChanged(object obj)
         {
             if (Document.WarehouseSenderType == WarehouseSenderType.Kontragent
                 || Document.Rows.Count == 0) return;
             if (obj is EditValueChangedEventArgs args && args.NewValue != null && args.OldValue != null)
                 if (Document.Rows.Where(_ => _.LinkOrder != null)
-                    .Any(_ => _.LinkOrder.SD_24.DD_DATE >= (DateTime)args.NewValue))
+                    .Any(_ => _.LinkOrder.SD_24.DD_DATE > (DateTime)args.NewValue))
                 {
                     args.Handled = false;
                     Document.Date = (DateTime)args.OldValue;
