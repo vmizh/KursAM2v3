@@ -1270,7 +1270,8 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 q.Add(dc);
             }
-            var quanData = nomenklManager.GetNomenklStoreQuantity(CurrentSklad.DocCode, StartDate, EndDate).Where(_ => q.Contains(_.NomDC));
+            var quanData = nomenklManager.GetNomenklStoreQuantity(CurrentSklad.DocCode, StartDate, EndDate,true)
+                .Where(_ => q.Contains(_.NomDC));
             var listTemp = new List<NomenklMoveOnSkladViewModel>();
             foreach (var n in quanData)
             {
@@ -1566,7 +1567,7 @@ namespace KursAM2.ViewModel.Logistiks
                         q.Add(dc);
                     }
                     skladsInfo[(decimal)sklDC] =
-                        nomenklManager.GetNomenklStoreQuantity((decimal)sklDC, StartDate, EndDate).Where(_ => q.Contains(_.NomDC)).ToList();
+                        nomenklManager.GetNomenklStoreQuantity((decimal)sklDC, StartDate, EndDate,true).Where(_ => q.Contains(_.NomDC)).ToList();
                 }
 
                 foreach (var n in skladsInfo.Values.SelectMany(ninfo => ninfo))
@@ -1702,21 +1703,6 @@ namespace KursAM2.ViewModel.Logistiks
             }
 
             RaisePropertyChanged(nameof(Sklads));
-        }
-
-        private async Task RefreshDataAsync()
-        {
-            DocumentList.Clear();
-            NomenklMoveList.Clear();
-            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
-            IsCanRefresh = false;
-            // await Task.Run(() => RunPrgressBar());
-            IsDataLoaded = Visibility.Collapsed;
-            //ShowProgress = true;
-            //if (CurrentSklad == null)
-            //    await Task.Run(() => LoadForAllSklads4());
-            //else
-            //    await Task.Run(() => LoadForCurrentSklad4());
         }
 
         public override void RefreshData(object obj)
