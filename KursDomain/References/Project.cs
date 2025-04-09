@@ -42,7 +42,7 @@ public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparab
     public bool IsClosed { get; set; }
     public DateTime DateStart { get; set; }
     public DateTime? DateEnd { get; set; }
-    public decimal? EmployeeDC { set; get; }
+    public decimal? ManagerDC { set; get; }
     [JsonIgnore]
     public IEmployee Employee { get; set; }
     public Guid? ParentId { get; set; }
@@ -88,8 +88,8 @@ public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparab
     public void LoadFromCache()
     {
         if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
-        if (EmployeeDC is not null)
-            Employee = cache.GetEmployee(EmployeeDC.Value);
+        if (ManagerDC is not null)
+            Employee = cache.GetEmployee(ManagerDC.Value);
     }
     [Display(AutoGenerateField = false, Name = "Посл.обновление")]
     public DateTime UpdateDate { get; set; }
@@ -223,195 +223,7 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
 
     public bool Check()
     {
-        return !string.IsNullOrWhiteSpace(Name) && Id != Guid.Empty && DateStart != DateTime.MinValue;
-    }
-
-    public List<Projects> LoadList()
-    {
-        var list = new List<Projects>();
-        try
-        {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                list.AddRange(LoadCondition.IsShort
-                    ? ctx.Projects.ToList()
-                    : ctx.Projects.Include(_ => _.ProjectsDocs).ToList());
-                return list;
-            }
-        }
-        catch (Exception ex)
-        {
-            //WindowManager.ShowError(ex);
-        }
-
-        return null;
-    }
-
-    public virtual Projects Load(decimal dc)
-    {
-        throw new NotImplementedException();
-    }
-
-    public virtual Projects Load(Guid id)
-    {
-        Projects prj = null;
-        try
-        {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                if (LoadCondition.IsShort)
-                    prj = ctx.Projects
-                        .FirstOrDefault(_ => _.Id == id);
-                else
-                    prj = ctx.Projects
-                        .Include(_ => _.ProjectsDocs)
-                        .FirstOrDefault(_ => _.Id == id);
-                if (prj != null) UpdateFrom(prj);
-                return prj;
-            }
-        }
-        catch (Exception)
-        {
-            //WindowManager.ShowError(ex);
-        }
-
-        return prj;
-    }
-
-    public virtual void Save(ProjectViewModel doc)
-    {
-        try
-        {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                switch (State)
-                {
-                    case RowStatus.NewRow:
-                        ctx.Projects.Add(new Projects
-                        {
-                            Id = Guid.NewGuid(),
-                            ParentId = doc.ParentId,
-                            Name = doc.Name,
-                            Note = doc.Note,
-                            DateEnd = doc.DateEnd,
-                            DateStart = doc.DateStart,
-                            IsClosed = doc.IsClosed,
-                            IsDeleted = doc.IsDeleted,
-                            ManagerDC = doc.ManagerDC
-                        });
-                        ctx.SaveChanges();
-                        break;
-                    case RowStatus.Edited:
-                        var entity = ctx.Projects.FirstOrDefault(_ => _.Id == Id);
-                        if (entity != null)
-                        {
-                            entity.ParentId = doc.ParentId;
-                            entity.Name = doc.Name;
-                            entity.Note = doc.Note;
-                            entity.DateEnd = doc.DateEnd;
-                            entity.DateStart = doc.DateStart;
-                            entity.IsClosed = doc.IsClosed;
-                            entity.IsDeleted = doc.IsDeleted;
-                            entity.ManagerDC = doc.ManagerDC;
-                        }
-
-                        ctx.SaveChanges();
-                        break;
-                }
-            }
-
-            State = RowStatus.NotEdited;
-        }
-        catch (Exception)
-        {
-            //WindowManager.ShowError(ex);
-        }
-    }
-
-    public virtual void Save(Projects doc)
-    {
-        try
-        {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                switch (State)
-                {
-                    case RowStatus.NewRow:
-                        var newPrj = new Projects
-                        {
-                            Id = Guid.NewGuid(),
-                            ParentId = doc.ParentId,
-                            Name = doc.Name,
-                            Note = doc.Note,
-                            DateEnd = doc.DateEnd,
-                            DateStart = doc.DateStart,
-                            IsClosed = doc.IsClosed,
-                            IsDeleted = doc.IsDeleted,
-                            ManagerDC = doc.ManagerDC
-                        };
-                        ctx.Projects.Add(newPrj);
-                        ctx.SaveChanges();
-                        break;
-                    case RowStatus.Edited:
-                        var entity = ctx.Projects.FirstOrDefault(_ => _.Id == Id);
-                        if (entity != null)
-                        {
-                            entity.ParentId = doc.ParentId;
-                            entity.Name = doc.Name;
-                            entity.Note = doc.Note;
-                            entity.DateEnd = doc.DateEnd;
-                            entity.DateStart = doc.DateStart;
-                            entity.IsClosed = doc.IsClosed;
-                            entity.IsDeleted = doc.IsDeleted;
-                            entity.ManagerDC = doc.ManagerDC;
-                        }
-
-                        ctx.SaveChanges();
-                        // ReSharper disable once PossibleNullReferenceException
-                        break;
-                }
-            }
-
-            State = RowStatus.NotEdited;
-        }
-        catch (Exception)
-        {
-            //WindowManager.ShowError(ex);
-        }
-    }
-
-    public void Save()
-    {
-        Save(Entity);
-    }
-
-    public void Delete()
-    {
-        Delete(Id);
-    }
-
-    public void Delete(Guid id)
-    {
-        try
-        {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var prj = ctx.Projects
-                    .FirstOrDefault(_ => _.Id == id);
-                if (prj == null) return;
-                ctx.Projects.Remove(prj);
-                ctx.SaveChanges();
-            }
-        }
-        catch (Exception)
-        {
-            //WindowManager.ShowError(ex);
-        }
-    }
-
-    public void Delete(decimal dc)
-    {
-        throw new NotImplementedException();
+        return !string.IsNullOrWhiteSpace(Name) && Id != Guid.Empty && DateStart != DateTime.MinValue && DateStart >= (DateEnd ?? DateTime.MinValue);
     }
 
     public void UpdateFrom(Projects ent)

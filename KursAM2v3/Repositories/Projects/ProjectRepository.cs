@@ -71,6 +71,6 @@ public class ProjectRepository(ALFAMEDIAEntities context) : IProjectRepository
 
     public IEnumerable<ProjectGroups> LoadGroups()
     {
-        return context.ProjectGroups.ToList();
+        return context.ProjectGroups.Include(_ => _.ProjectGroupLink).ToList();
     }
 }

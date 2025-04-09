@@ -5,237 +5,223 @@ using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
+using Data;
+using DevExpress.Data;
+using DevExpress.Xpf.Grid;
 using KursAM2.Dialogs;
+using KursAM2.Repositories.Projects;
 using KursAM2.View.KursReferences;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 
-namespace KursAM2.ViewModel.Reference
+namespace KursAM2.ViewModel.Reference;
+
+public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
 {
-    public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
+    #region Fields
+
+    private ProjectViewModel myCurrentProject;
+    private readonly IProjectRepository myPojectRepository = new ProjectRepository(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+    private ProjectGroupViewModel myCurrentGroupProject;
+
+    #endregion
+
+    #region Constructors
+
+    public ProjectReferenceWindowViewModel()
     {
-        private ProjectViewModel myCurrentProject;
-
-        public ProjectReferenceWindowViewModel()
-        {
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this);
-            RightMenuBar = MenuGenerator.ReferenceRightBar(this);
-            // ReSharper disable once VirtualMemberCallInConstructor
-            RefreshData(null);
-        }
-
-        public ProjectReferenceWindowViewModel(Window win) : this()
-        {
-            Form = win;
-        }
-
-        public ObservableCollection<ProjectViewModel> ProjectCollection { set; get; } =
-            new ObservableCollection<ProjectViewModel>();
-
-        public ObservableCollection<ProjectViewModel> DeletedProjectCollection { set; get; } =
-            new ObservableCollection<ProjectViewModel>();
-
-        public ObservableCollection<Employee> PersonaCollection { set; get; } = new ObservableCollection<Employee>();
-
-        public ProjectViewModel CurrentProject
-        {
-            get => myCurrentProject;
-            set
-            {
-                if (Equals(myCurrentProject, value)) return;
-                myCurrentProject = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        public override bool IsCanSaveData => IsCanSave();
-
-        public override void RefreshData(object obj)
-        {
-            try
-            {
-                using (var ctx = GlobalOptions.GetEntities())
-                {
-                    ProjectCollection.Clear();
-                    foreach (var p in ctx.Projects.ToList())
-                        ProjectCollection.Add(new ProjectViewModel(p) {State = RowStatus.NotEdited});
-                    if (ProjectCollection.Count == 0)
-                    {
-                        var newRow = new ProjectViewModel
-                        {
-                            Id = Guid.NewGuid(),
-                            Name = "Новый проект",
-                            DateStart = DateTime.Today,
-                            DateEnd = null,
-                            IsClosed = false,
-                            IsDeleted = false,
-                            State = RowStatus.NotEdited
-                        };
-                        ProjectCollection.Add(newRow);
-                        CurrentProject = newRow;
-                    }
-                }
-
-                RaisePropertyChanged(nameof(ProjectCollection));
-            }
-            catch (Exception ex)
-            {
-                WindowManager.ShowError(ex);
-            }
-        }
-
-        public override void SaveData(object data)
-        {
-            try
-            {
-                foreach (var p in DeletedProjectCollection)
-                    p.Delete();
-                foreach (var p in ProjectCollection.Where(_ => _.State != RowStatus.NotEdited))
-                    p.Save(p);
-                DeletedProjectCollection.Clear();
-                foreach (var p in ProjectCollection.Where(_ => _.State != RowStatus.NotEdited))
-                    p.myState = RowStatus.NotEdited;
-            }
-            catch (Exception ex)
-            {
-                WindowManager.ShowError(ex);
-            }
-        }
-
-        private new bool IsCanSave()
-        {
-            if (ProjectCollection.Any(_ => _.State != RowStatus.NotEdited) ||
-                DeletedProjectCollection.Count > 0)
-                return ProjectCollection.All(p => p.Check());
-            return false;
-        }
-
-        public void SetResponsible()
-        {
-            var f = StandartDialogs.SelectEmployee();
-            if (f != null)
-                CurrentProject.Responsible = f;
-        }
-
-        #region Commands
-
-        public ICommand MoveToTopProjectCommand
-        {
-            get { return new Command(MoveToTopProject, _ => CurrentProject?.ParentId != null); }
-        }
-
-        private void MoveToTopProject(object obj)
-        {
-            CurrentProject.ParentId = null;
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var tx = ctx.Database.BeginTransaction();
-                try
-                {
-                    var prj = ctx.Projects.FirstOrDefault(_ => _.Id == CurrentProject.Id);
-                    {
-                        if (prj != null) prj.ParentId = null;
-                    }
-                    ctx.SaveChanges();
-                    tx.Commit();
-                }
-                catch (Exception ex)
-                {
-                    tx.Rollback();
-                    WindowManager.ShowError(ex);
-                }
-            }
-        }
-
-        public ICommand AddNewProjectCommand
-        {
-            get { return new Command(AddNewProject, _ => CurrentProject != null); }
-        }
-
-        private void AddNewProject(object obj)
-        {
-            var newRow = new ProjectViewModel
-            {
-                State = RowStatus.NewRow,
-                Id = Guid.NewGuid(),
-                ParentId = CurrentProject.ParentId,
-                DateStart = DateTime.Today
-            };
-            ProjectCollection.Add(newRow);
-            CurrentProject = newRow;
-        }
-
-        private bool IsCanAddProject()
-        {
-            var pitem = ProjectCollection.FirstOrDefault(_ => _.Id == CurrentProject?.ParentId);
-            if (pitem == null) return true;
-            var pitem2 = ProjectCollection.FirstOrDefault(_ => _.ParentId == pitem.Id);
-            if (pitem2 == null)
-                return true;
-            var pitem3 = ProjectCollection.FirstOrDefault(_ => _.Id == pitem2.ParentId);
-            if (pitem3 == null) return true;
-            var pitem4 = ProjectCollection.FirstOrDefault(_ => _.Id == pitem3.ParentId);
-            if (pitem4 != null) return false;
-            //var pitem3 = ProjectCollection.FirstOrDefault(_ => _.Id == pitem2.ParentId);
-            return false;
-        }
-
-        public ICommand AddNewChildProjectCommand
-        {
-            get { return new Command(AddNewChildProject, _ => IsCanAddProject() && CurrentProject != null); }
-        }
-
-        private void AddNewChildProject(object obj)
-        {
-            var newRow = new ProjectViewModel
-            {
-                State = RowStatus.NewRow,
-                Id = Guid.NewGuid(),
-                ParentId = CurrentProject.Id,
-                DateStart = DateTime.Today
-            };
-            ProjectCollection.Add(newRow);
-            if (Form is ProjectReferenceView win)
-                win.treeListView.FocusedNode.IsExpanded = true;
-            CurrentProject = newRow;
-        }
-
-        public ICommand DeleteProjectCommand
-        {
-            get
-            {
-                return new Command(DeleteProject,
-                    _ => CurrentProject != null && ProjectCollection.All(p => p.ParentId != CurrentProject.Id));
-            }
-        }
-
-        private void DeleteProject(object obj)
-        {
-            var WinManager = new WindowManager();
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var docs = ctx.ProjectsDocs.Where(_ => _.ProjectId == CurrentProject.Id);
-                if (docs.Any())
-                {
-                    WinManager.ShowWinUIMessageBox("По проекту есть привязанные документы. Удалить проект нельзя.",
-                        "Предупреждение"
-                        , MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.None,
-                        MessageBoxOptions.None);
-                    return;
-                }
-            }
-
-            if (CurrentProject.State != RowStatus.NewRow)
-                DeletedProjectCollection.Add(CurrentProject);
-            ProjectCollection.Remove(CurrentProject);
-        }
-
-        //    <MenuItem Header = "Добавить проект на текущем уровне" Command="{Binding AddNewProject}" />
-        //<MenuItem Header = "Добавить подпроект" Command="{Binding AddNewChildProject}" />
-        //<MenuItem Header = "Удалить проект" Command="{Binding DeleteProject}" />
-
-        #endregion
+        LeftMenuBar = MenuGenerator.BaseLeftBar(this);
+        RightMenuBar = MenuGenerator.ReferenceRightBar(this);
+        // ReSharper disable once VirtualMemberCallInConstructor
+        RefreshData(null);
     }
+
+    public ProjectReferenceWindowViewModel(Window win) : this()
+    {
+        Form = win;
+    }
+
+    #endregion
+
+    #region Properties
+
+    public override string LayoutName => "ProjectReferenceWindowViewModel";
+    public override string WindowName => "Справочник проектов";
+
+    public ObservableCollection<ProjectViewModel> Projects { set; get; } =
+        new ObservableCollection<ProjectViewModel>();
+
+    public ObservableCollection<ProjectViewModel> SelectedProjects { set; get; } =
+        new ObservableCollection<ProjectViewModel>();
+
+    public ObservableCollection<ProjectViewModel> DeletedProjects { set; get; } =
+        new ObservableCollection<ProjectViewModel>();
+
+    public ObservableCollection<ProjectGroupViewModel> GroupProjects { set; get; } =
+        new ObservableCollection<ProjectGroupViewModel>();
+
+    public ObservableCollection<ProjectGroupViewModel> SelectedGroupProjects { set; get; } =
+        new ObservableCollection<ProjectGroupViewModel>();
+
+    public ObservableCollection<ProjectGroupViewModel> DeletedGroupProjects { set; get; } =
+        new ObservableCollection<ProjectGroupViewModel>();
+
+    public ProjectViewModel CurrentProject
+    {
+        get => myCurrentProject;
+        set
+        {
+            if (Equals(myCurrentProject, value)) return;
+            myCurrentProject = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public ProjectGroupViewModel CurrentGroupProject
+    {
+        get => myCurrentGroupProject;
+        set
+        {
+            if (Equals(myCurrentGroupProject, value)) return;
+            myCurrentGroupProject = value;
+            RaisePropertyChanged();
+        }
+    }
+
+
+    public override bool IsCanSaveData => IsCanSave();
+
+    #endregion
+
+
+    #region Methods
+
+    private new bool IsCanSave()
+    {
+        if (Projects.Any(_ => _.State != RowStatus.NotEdited) ||
+            DeletedProjects.Count > 0)
+            return Projects.All(p => p.Check());
+        return false;
+    }
+
+    public void SetResponsible()
+    {
+        var f = StandartDialogs.SelectEmployee();
+        if (f != null)
+            CurrentProject.Responsible = f;
+    }
+
+    #endregion
+
+
+    #region Commands
+
+    public override void RefreshData(object obj)
+    {
+        Projects.Clear();
+        DeletedProjects.Clear();
+        GroupProjects.Clear();
+        DeletedGroupProjects.Clear();
+        try
+        {
+            foreach (var prj in myPojectRepository.LoadReference())
+            {
+                Projects.Add(new ProjectViewModel(prj));
+            }
+        }
+        catch (Exception ex)
+        {
+            WindowManager.ShowError(ex);
+        }
+    }
+
+    public override void SaveData(object data)
+    {
+        try
+        {
+        }
+        catch (Exception ex)
+        {
+            WindowManager.ShowError(ex);
+        }
+    }
+
+    public ICommand DeleteManagerCommand
+    {
+        get { return new Command(ManagerSetToNull, _ => CurrentProject != null && CurrentProject.Responsible is not null); }
+    }
+
+    private void ManagerSetToNull(object obj)
+    {
+        CurrentProject.Responsible = null;
+        if (Form is ProjectReferenceView frm)
+        {
+            frm.tableViewProjects.CloseEditor();
+        }
+    }
+
+    public ICommand AddNewProjectCommand
+    {
+        get { return new Command(AddNewProject, _ => CurrentProject != null); }
+    }
+
+    private void AddNewProject(object obj)
+    {
+        var newRow = new ProjectViewModel
+        {
+            State = RowStatus.NewRow,
+            Id = Guid.NewGuid(),
+            ParentId = CurrentProject.ParentId,
+            DateStart = DateTime.Today
+        };
+        Projects.Add(newRow);
+        CurrentProject = newRow;
+    }
+
+    public ICommand DeleteProjectCommand
+    {
+        get
+        {
+            return new Command(DeleteProject,
+                _ => CurrentProject != null);
+        }
+    }
+
+    private void DeleteProject(object obj)
+    {
+        var WinManager = new WindowManager();
+        if (CurrentProject.State != RowStatus.NewRow)
+            DeletedProjects.Add(CurrentProject);
+        Projects.Remove(CurrentProject);
+    }
+
+    public override void UpdateVisualObjects()
+    {
+        base.UpdateVisualObjects();
+        if (Form is ProjectReferenceView frm)
+        {
+            frm.gridGroupProjects.TotalSummary.Clear();
+            foreach (var col in frm.gridProjects.Columns)
+            {
+                switch (col.FieldName)
+                {
+                    case "Name":
+                        frm.gridProjects.TotalSummary.Add(new GridSummaryItem()
+                        {
+                            FieldName = col.FieldName,
+                            SummaryType = SummaryItemType.Count,
+                            //Alignment = GridSummaryItemAlignment.Right,
+                            DisplayFormat = "{0:n0}",
+                            ShowInColumn = col.FieldName
+                        });
+                        break;
+                }
+            }
+        }
+
+    }
+
+    #endregion
 }
