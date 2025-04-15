@@ -330,6 +330,12 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
                 RaisePropertyChanged(nameof(CreditorSumma));
                 RaisePropertyChanged(nameof(DebitorSumma));
                 RaisePropertyChanged(nameof(BalansSumma));
+                if (Form is DebitorCreditorView frm)
+                {
+                    frm.CreditorGrid.RefreshData();
+                    frm.DebitorGrid.RefreshData();
+                    frm.DebitorCreditorGrid.RefreshData();
+                }
             }
             catch (Exception ex)
             {
@@ -449,6 +455,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
                             UchetStart = -Math.Round(d.rdr1 * rate1, 2),
                             Kontragent = kontrInfo.Name,
                             CurrencyName = kontrInfo.BalansCurrency.Name,
+                            ResponsibleName = kontrInfo.OtvetstLico?.Name,
                             IsBalans = d.rdr5 == 1
                         }).ToList();
                 }

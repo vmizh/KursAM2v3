@@ -888,7 +888,7 @@ namespace KursAM2.Managers.Invoices
                     else
                     {
                         if (isAccepted)
-                            data = (from sd26 in ctx.SD_26
+                            data = ctx.SD_26
                                     .Include(_ => _.TD_26)
                                     .Include("TD_26.TD_24")
                                     .Include(_ => _.ProviderInvoicePay)
@@ -902,43 +902,38 @@ namespace KursAM2.Managers.Invoices
                                     .Include(_ => _.SD_77)
                                     .Include(_ => _.SD_189)
                                     .Include(_ => _.SD_40)
+                                    .Include("TD_26.SD_83")
+                                    .Include("TD_26.SD_175")
+                                    .Include("TD_26.SD_43")
                                     .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd
-                                                                              && _.SF_ACCEPTED == 1)
-                                join td26 in ctx.TD_26
-                                        .Include(_ => _.SD_83)
-                                        .Include(_ => _.SD_175)
-                                        .Include(_ => _.SD_43)
-                                    on sd26.DOC_CODE equals td26.DOC_CODE
-                                // ReSharper disable once SpecifyACultureInStringConversionExplicitly
-                                where sd26.SF_CRS_SUMMA.ToString().Contains(searchText)
-                                      || sd26.SF_CRS_RATE.ToString()
+                                                                              && _.SF_ACCEPTED == 1 && (_.SF_CRS_SUMMA.ToString().Contains(searchText)
+                                      || _.SF_CRS_RATE.ToString()
                                           .Contains(searchText)
-                                      || sd26.SF_NOTES.Contains(searchText)
-                                      || sd26.SF_IN_NUM.ToString().Contains(searchText)
-                                      || sd26.SF_POSTAV_NUM.Contains(searchText)
+                                      || _.SF_NOTES.Contains(searchText)
+                                      || _.SF_IN_NUM.ToString().Contains(searchText)
+                                      || _.SF_POSTAV_NUM.Contains(searchText)
                                       // ReSharper disable once SpecifyACultureInStringConversionExplicitly
-                                      || sd26.SF_POSTAV_DATE.ToString()
+                                      || _.SF_POSTAV_DATE.ToString()
                                           .Contains(searchText)
-                                      || sd26.SF_OPRIHOD_DATE.ToString()
+                                      || _.SF_OPRIHOD_DATE.ToString()
                                           .Contains(searchText)
-                                      || sd26.CREATOR.Contains(searchText)
-                                      || sd26.SD_43.NAME.Contains(searchText)
-                                      || sd26.SD_179.PT_NAME.Contains(searchText)
-                                      || sd26.SD_77.TV_NAME.Contains(searchText)
-                                      || sd26.SD_189.OOT_NAME.Contains(searchText)
-                                      || td26.SFT_TEXT.Contains(searchText)
-                                      || td26.SFT_ED_CENA.ToString().Contains(searchText)
-                                      || td26.SFT_KOL.ToString().Contains(searchText)
-                                      || td26.SFT_STRANA_PROIS.Contains(searchText)
-                                      || td26.SFT_N_GRUZ_DECLAR.Contains(searchText)
-                                      || td26.SD_83.NOM_NOMENKL.Contains(searchText)
-                                      || td26.SD_83.NOM_NAME.Contains(searchText)
-                                      || td26.SD_83.NOM_NOTES.Contains(searchText)
-                                      || td26.SD_175.ED_IZM_NAME.Contains(searchText)
-                                      || td26.SD_43.NAME.Contains(searchText)
-                                select sd26).ToList();
+                                      || _.CREATOR.Contains(searchText)
+                                      || _.SD_43.NAME.Contains(searchText)
+                                      || _.SD_179.PT_NAME.Contains(searchText)
+                                      || _.SD_77.TV_NAME.Contains(searchText)
+                                      || _.SD_189.OOT_NAME.Contains(searchText)
+                                      || _.TD_26.Any(t => t.SFT_TEXT.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SFT_ED_CENA.ToString().Contains(searchText))
+                                      || _.TD_26.Any(t => t.SFT_KOL.ToString().Contains(searchText))
+                                      || _.TD_26.Any(t => t.SFT_STRANA_PROIS.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SFT_N_GRUZ_DECLAR.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SD_83.NOM_NOMENKL.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SD_83.NOM_NAME.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SD_83.NOM_NOTES.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SD_175.ED_IZM_NAME.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SD_43.NAME.Contains(searchText)))).ToList();
                         else
-                            data = (from sd26 in ctx.SD_26
+                            data = ctx.SD_26
                                     .Include(_ => _.TD_26)
                                     .Include("TD_26.TD_24")
                                     .Include(_ => _.ProviderInvoicePay)
@@ -952,40 +947,35 @@ namespace KursAM2.Managers.Invoices
                                     .Include(_ => _.SD_77)
                                     .Include(_ => _.SD_189)
                                     .Include(_ => _.SD_40)
-                                    .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd)
-                                join td26 in ctx.TD_26
-                                        .Include(_ => _.SD_83)
-                                        .Include(_ => _.SD_175)
-                                        .Include(_ => _.SD_43)
-                                    on sd26.DOC_CODE equals td26.DOC_CODE
-                                // ReSharper disable once SpecifyACultureInStringConversionExplicitly
-                                where sd26.SF_CRS_SUMMA.ToString().Contains(searchText)
-                                      || sd26.SF_CRS_RATE.ToString()
+                                    .Include("TD_26.SD_83")
+                                    .Include("TD_26.SD_175")
+                                    .Include("TD_26.SD_43")
+                                    .Where(_ => _.SF_POSTAV_DATE >= dateStart && _.SF_POSTAV_DATE <= dateEnd && _.SF_CRS_SUMMA.ToString().Contains(searchText)
+                                      || _.SF_CRS_RATE.ToString()
                                           .Contains(searchText)
-                                      || sd26.SF_NOTES.Contains(searchText)
-                                      || sd26.SF_IN_NUM.ToString().Contains(searchText)
-                                      || sd26.SF_POSTAV_NUM.Contains(searchText)
+                                      || _.SF_NOTES.Contains(searchText)
+                                      || _.SF_IN_NUM.ToString().Contains(searchText)
+                                      || _.SF_POSTAV_NUM.Contains(searchText)
                                       // ReSharper disable once SpecifyACultureInStringConversionExplicitly
-                                      || sd26.SF_POSTAV_DATE.ToString()
+                                      || _.SF_POSTAV_DATE.ToString()
                                           .Contains(searchText)
-                                      || sd26.SF_OPRIHOD_DATE.ToString()
+                                      || _.SF_OPRIHOD_DATE.ToString()
                                           .Contains(searchText)
-                                      || sd26.CREATOR.Contains(searchText)
-                                      || sd26.SD_43.NAME.Contains(searchText)
-                                      || sd26.SD_179.PT_NAME.Contains(searchText)
-                                      || sd26.SD_77.TV_NAME.Contains(searchText)
-                                      || sd26.SD_189.OOT_NAME.Contains(searchText)
-                                      || td26.SFT_TEXT.Contains(searchText)
-                                      || td26.SFT_ED_CENA.ToString().Contains(searchText)
-                                      || td26.SFT_KOL.ToString().Contains(searchText)
-                                      || td26.SFT_STRANA_PROIS.Contains(searchText)
-                                      || td26.SFT_N_GRUZ_DECLAR.Contains(searchText)
-                                      || td26.SD_83.NOM_NOMENKL.Contains(searchText)
-                                      || td26.SD_83.NOM_NAME.Contains(searchText)
-                                      || td26.SD_83.NOM_NOTES.Contains(searchText)
-                                      || td26.SD_175.ED_IZM_NAME.Contains(searchText)
-                                      || td26.SD_43.NAME.Contains(searchText)
-                                select sd26).ToList();
+                                      || _.CREATOR.Contains(searchText)
+                                      || _.SD_43.NAME.Contains(searchText)
+                                      || _.SD_179.PT_NAME.Contains(searchText)
+                                      || _.SD_77.TV_NAME.Contains(searchText)
+                                      || _.SD_189.OOT_NAME.Contains(searchText)
+                                      || _.TD_26.Any(t => t.SFT_TEXT.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SFT_ED_CENA.ToString().Contains(searchText))
+                                      || _.TD_26.Any(t => t.SFT_KOL.ToString().Contains(searchText))
+                                      || _.TD_26.Any(t => t.SFT_STRANA_PROIS.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SFT_N_GRUZ_DECLAR.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SD_83.NOM_NOMENKL.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SD_83.NOM_NAME.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SD_83.NOM_NOTES.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SD_175.ED_IZM_NAME.Contains(searchText))
+                                      || _.TD_26.Any(t => t.SD_43.NAME.Contains(searchText))).ToList();
                     }
 
                     var sql =
@@ -1003,13 +993,13 @@ namespace KursAM2.Managers.Invoices
                             var psums = pays.Where(_ => _.DocCode == d.DOC_CODE).Sum(_ => _.PaySumma);
                             if (psums < d.SF_CRS_SUMMA)
                             {
-                                var newDoc = new InvoiceProvider(d);
+                                var newDoc = InvoiceProvider.GetInvoiceWithHeaderOnly(d);
                                 ret.Add(newDoc);
                             }
                         }
                         else
                         {
-                            var newDoc = new InvoiceProvider(d);
+                            var newDoc = InvoiceProvider.GetInvoiceWithHeaderOnly(d);
                             ret.Add(newDoc);
                         }
                 }
@@ -1177,36 +1167,7 @@ namespace KursAM2.Managers.Invoices
             public List<decimal> ExcludeSFDocCodes { get; set; }
             public Waybill Waybill { get; set; }
 
-            //    public  IQueryable<SD_84> GetWhere()
-            //    {
-            //        var conditionList = new List<Expression<Func<InvoiceClientSearchCondition, bool>>>();
-            //        IQueryable<SD_84> query = context.Set<SD_84>().Include(_ => _.TD_84)
-            //            .Include(_ => _.SD_431)
-            //            .Include(_ => _.SD_432)
-            //            .Include(_ => _.TD_84)
-            //            .Include(_ => _.TD_101)
-            //            .Include("TD_84.SD_175")
-            //            .Include("TD_84.SD_83")
-            //            .Include("TD_84.SD_83.SD_175")
-            //            .Include(_ => _.SD_24)
-            //            .Include("SD_24.TD_24")
-            //            .Include(_ => _.SD_179)
-            //            .Include(_ => _.SD_77)
-            //            .Include(_ => _.SD_189)
-            //            .Include("TD_84.TD_24")
-            //            .Include("TD_84.TD_24.SD_24")
-            //            .Include("TD_84.TD_24.SD_24.SD_201")
-            //            .Include("TD_84.SD_303");
-            //        //Expression<Func<InvoiceClientSearchCondition, bool>> ret;
-            //        if (KontragentDC != null)
-            //        {
-            //            Expression<Func<InvoiceClientSearchCondition, bool>> c1 = p => p.KontragentDC == KontragentDC;
-            //            conditionList.Add(c1);
-            //        }
-            //        if(IsPaymentUse != null)
-
-            //        return query;
-            //    }
+            
         }
 
         public static List<IInvoiceProvider> GetInvoicesProvider(DateTime dateStart, DateTime dateEnd,

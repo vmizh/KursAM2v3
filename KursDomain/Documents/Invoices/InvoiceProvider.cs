@@ -156,6 +156,17 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         Rows.CollectionChanged += (o, args) => State = RowStatus.NotEdited;
     }
 
+
+    public static InvoiceProvider GetInvoiceWithHeaderOnly(SD_26 entity)
+    {
+        var ret = new InvoiceProvider
+        {
+            Entity = entity
+        };
+        ret.LoadReferences(true);
+        return ret;
+    }
+
     #endregion
 
     #region Properties
@@ -909,6 +920,17 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         }
     }
 
+    public bool? IsExcludeFromPays
+    {
+        get => Entity.IsExcludeFromPays ?? false;
+        set
+        {
+            if (Entity.IsExcludeFromPays == value) return;
+            Entity.IsExcludeFromPays = value ?? false;
+            RaisePropertyChanged();
+        }
+    }
+
     public string LastChanger { get; set; }
 
     public decimal? SF_PEREVOZCHIK_DC
@@ -1113,7 +1135,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     #region Methods
 
-    public void LoadReferences()
+    public void LoadReferences(bool isHeaderOnly = false)
     {
         if (Entity.SF_CENTR_OTV_DC is not null)
         {
@@ -1137,7 +1159,10 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         if (Entity.TD_26 != null && Entity.TD_26.Count > 0)
             foreach (var t in Entity.TD_26)
             {
-                var newRow = new InvoiceProviderRow(t)
+                var newRow = isHeaderOnly ? new InvoiceProviderRow( )
+                {
+                    Entity = t
+                } : new InvoiceProviderRow(t)
                 {
                     Parent = this
                 };
@@ -1147,27 +1172,30 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
                                  t.TD_24.Sum(_ => _.DDT_KOL_PRIHOD);
             }
 
-        LoadPayments();
+        if (!isHeaderOnly)
+        {
+            LoadPayments();
 
-        SummaFact = 0;
-        if (Entity.SD_24 != null)
-            SummaFact += (from q in Entity.TD_26
-                from d in q.TD_24
-                select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
-        if (Facts == null)
-            Facts = new ObservableCollection<WarehouseOrderInRow>();
-        else
-            Facts.Clear();
-        if (Entity.TD_26 != null && Entity.TD_26.Count > 0)
-            foreach (var r in Entity.TD_26)
-                if (r.TD_24 != null && r.TD_24.Count > 0)
-                    foreach (var r2 in r.TD_24)
-                    {
-                        var newItem = new WarehouseOrderInRow(r2, isLoadAll);
-                        if (r2.SD_24 != null) newItem.Parent = new WarehouseOrderIn(r2.SD_24);
+            SummaFact = 0;
+            if (Entity.SD_24 != null)
+                SummaFact += (from q in Entity.TD_26
+                    from d in q.TD_24
+                    select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
+            if (Facts == null)
+                Facts = new ObservableCollection<WarehouseOrderInRow>();
+            else
+                Facts.Clear();
+            if (Entity.TD_26 != null && Entity.TD_26.Count > 0)
+                foreach (var r in Entity.TD_26)
+                    if (r.TD_24 != null && r.TD_24.Count > 0)
+                        foreach (var r2 in r.TD_24)
+                        {
+                            var newItem = new WarehouseOrderInRow(r2, isLoadAll);
+                            if (r2.SD_24 != null) newItem.Parent = new WarehouseOrderIn(r2.SD_24);
 
-                        Facts.Add(newItem);
-                    }
+                            Facts.Add(newItem);
+                        }
+        }
 
         RaisePropertyChanged(nameof(Summa));
     }

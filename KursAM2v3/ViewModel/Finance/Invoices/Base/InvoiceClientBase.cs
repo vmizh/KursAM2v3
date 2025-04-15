@@ -106,6 +106,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public bool IsNDSIncludeInPrice { get; set; }
         public decimal PaySumma { get; set; }
         public Employee PersonaResponsible { get; set; }
+        public bool? IsExcludeFromPays { get; set; }
         public string LastChanger { get; set; }
         public DateTime LastChangerDate { get; set; }
         public ObservableCollection<IInvoiceClientRow> Rows { get; set; }
@@ -262,6 +263,9 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public decimal PaySumma { get; set; }
         [Display(AutoGenerateField = true, Name = "Ответственный", Order = 20)]
         public Employee PersonaResponsible { get; set; }
+
+        [Display(AutoGenerateField = true, Name = "Искл. из поиска", Order = 20, Description = "Исключить из диалогов поиска для оплаты")]
+        public bool? IsExcludeFromPays { get; set; }
 
         public string LastChanger { get; set; }
         public DateTime LastChangerDate { get; set; }
