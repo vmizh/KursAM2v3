@@ -102,6 +102,7 @@ namespace Data
         public System.Guid Id { get; set; }
         public Nullable<decimal> PersonalResponsibleDC { get; set; }
         public Nullable<System.Guid> DogovorClientId { get; set; }
+        public Nullable<bool> IsExcludeFromPays { get; set; }
     
         public virtual DogovorClient DogovorClient { get; set; }
         public virtual GROZO_REQUISITE GROZO_REQUISITE { get; set; }

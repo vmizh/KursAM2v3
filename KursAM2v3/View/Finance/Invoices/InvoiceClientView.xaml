@@ -104,6 +104,9 @@
                             <Label Content=" Акцептован: " />
                             <dxe:CheckEdit EditValue="{Binding Document.IsAccepted}"
                                            DockPanel.Dock="Left" />
+                            <Label Content=" Искл.из поиска: " />
+                            <dxe:CheckEdit EditValue="{Binding Document.IsExcludeFromPays}"
+                                           DockPanel.Dock="Left" />
                         </DockPanel>
                     </dxlc:LayoutItem>
                     <dxlc:LayoutItem Label="Поставщик:" HorizontalAlignment="Left">

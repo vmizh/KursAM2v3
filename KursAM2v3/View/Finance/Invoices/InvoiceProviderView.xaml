@@ -112,6 +112,9 @@
                                     EditValue="{Binding Document.IsNDSInPrice,
                                     UpdateSourceTrigger=PropertyChanged}"
                                     EditValueChanged="CheckEdit_EditValueChanged" />
+                                <Label Content=" Искл.из поиска: " />
+                                <dxe:CheckEdit EditValue="{Binding Document.IsExcludeFromPays}"
+                                               DockPanel.Dock="Left" />
                             </DockPanel>
                         </dxlc:LayoutItem>
                         <dxlc:LayoutGroup Orientation="Horizontal">

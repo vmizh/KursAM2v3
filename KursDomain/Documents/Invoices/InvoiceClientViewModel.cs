@@ -14,12 +14,10 @@ using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 using KursDomain.Repository;
-using KursDomain.Repository.NomenklRepository;
 using Newtonsoft.Json;
 using NomenklProductType = KursDomain.References.NomenklProductType;
 
@@ -33,8 +31,25 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
 {
     private readonly UnitOfWork<ALFAMEDIAEntities> context;
     private readonly bool isLoadPayment;
+
+    private Kontragent myClient;
+
+    private CentrResponsibility myCO;
+
+    private References.Currency myCurrency;
     private SD_84 myEntity;
+
+    private PayForm myFormRaschet;
+
+    private PayCondition myPayCondition;
+
+    private References.Employee myPersonaResponsible;
+
+
+    private Kontragent myReceiver;
     private decimal mySumma;
+
+    private NomenklProductType myVzaimoraschetType;
 
     public InvoiceClientViewModel()
     {
@@ -892,9 +907,6 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         get { return Rows.Sum(_ => _.Quantity * _.SFT_NACENKA_DILERA ?? 0); }
     }
 
-
-    private Kontragent myReceiver;
-
     public Kontragent Receiver
     {
         //SF_RECEIVER_KONTR_DC
@@ -902,18 +914,16 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         set
         {
             //if (GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_RECEIVER_KONTR_DC) == value) return;
-            if(myReceiver == value) return;
+            if (myReceiver == value) return;
             myReceiver = value;
             Entity.SF_RECEIVER_KONTR_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
 
-    private Kontragent myClient;
-
     public Kontragent Client
     {
-        get => myClient;// GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_CLIENT_DC) as Kontragent;
+        get => myClient; // GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_CLIENT_DC) as Kontragent;
         set
         {
             //if (GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_CLIENT_DC) == value) return;
@@ -925,8 +935,6 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         }
     }
 
-    private References.Employee myPersonaResponsible;
-
     /// <summary>
     ///     Ответственный
     /// </summary>
@@ -936,7 +944,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         set
         {
             //if (GlobalOptions.ReferencesCache.GetEmployee(Entity.PersonalResponsibleDC) == value) return;
-            if(myPersonaResponsible == value) return;
+            if (myPersonaResponsible == value) return;
             myPersonaResponsible = value;
             Entity.PersonalResponsibleDC = value?.DocCode;
             RaisePropertyChanged();
@@ -944,9 +952,18 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         }
     }
 
-    public string LastChanger { get; set; }
+    public bool? IsExcludeFromPays
+    {
+        get => Entity.IsExcludeFromPays ?? false;
+        set
+        {
+            if (Entity.IsExcludeFromPays == value) return;
+            Entity.IsExcludeFromPays = value ?? false;
+            RaisePropertyChanged();
+        }
+    }
 
-    private CentrResponsibility myCO;
+    public string LastChanger { get; set; }
 
     public CentrResponsibility CO
     {
@@ -954,14 +971,12 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         set
         {
             //if (GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) == value) return;
-            if(myCO == value) return;
+            if (myCO == value) return;
             myCO = value;
             Entity.SF_CENTR_OTV_DC = value?.DocCode;
             RaisePropertyChanged();
         }
     }
-
-    private NomenklProductType myVzaimoraschetType;
 
     public NomenklProductType VzaimoraschetType
     {
@@ -976,8 +991,6 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         }
     }
 
-    private PayForm myFormRaschet;
-
     public PayForm FormRaschet
     {
         get => myFormRaschet; // GlobalOptions.ReferencesCache.GetPayForm(Entity.SF_FORM_RASCH_DC) as PayForm;
@@ -991,14 +1004,13 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         }
     }
 
-    private PayCondition myPayCondition;
     public PayCondition PayCondition
     {
         get => myPayCondition; //GlobalOptions.ReferencesCache.GetPayCondition(Entity.SF_PAY_COND_DC) as PayCondition;
         set
         {
             //if (GlobalOptions.ReferencesCache.GetPayCondition(Entity.SF_PAY_COND_DC) == value) return;
-            if(myPayCondition == value) return;
+            if (myPayCondition == value) return;
             myPayCondition = value;
             if (value != null)
                 Entity.SF_PAY_COND_DC = value.DocCode;
@@ -1017,8 +1029,6 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                 select nom.Summa * r.DDT_KOL_RASHOD / nom.Quantity).Sum();
         }
     }
-
-    private References.Currency myCurrency;
 
     public References.Currency Currency
     {
@@ -1160,7 +1170,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
 
     public void LoadReferences()
     {
-        Stopwatch sw = new Stopwatch();
+        var sw = new Stopwatch();
         sw.Start();
         Currency = GlobalOptions.ReferencesCache.GetCurrency(Entity.SF_CRS_DC) as References.Currency;
         Client = GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_CLIENT_DC) as Kontragent;
@@ -1181,7 +1191,6 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         sw1.Start();
         //Rows = new ObservableCollection<IInvoiceClientRow>();
         if (Entity.TD_84 != null && Entity.TD_84.Count > 0)
-        {
             //var noms = GlobalOptions.ReferencesCache.GetNomenkls(Entity.TD_84.Select(_ => _.SFT_NEMENKL_DC)).Cast<Nomenkl>().ToList();
             foreach (var t in Entity.TD_84)
             {
@@ -1189,11 +1198,13 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                 {
                     Parent = this,
                     //Nomenkl =  GlobalOptions.ReferencesCache.GetNomenkl(t.SFT_NEMENKL_DC) as Nomenkl,
-                    SDRSchet = t.SFT_SHPZ_DC is null ? null : GlobalOptions.ReferencesCache.GetSDRSchet(t.SFT_SHPZ_DC.Value) as SDRSchet
+                    SDRSchet = t.SFT_SHPZ_DC is null
+                        ? null
+                        : GlobalOptions.ReferencesCache.GetSDRSchet(t.SFT_SHPZ_DC.Value) as SDRSchet
                 };
                 Rows.Add(newRow);
             }
-        }
+
         sw1.Stop();
         var sw2 = new Stopwatch();
         sw2.Start();
@@ -1259,7 +1270,8 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                         Code = c.CODE,
                         DocumentType = DocumentType.Bank,
                         FromDC = c.SD_101.VV_ACC_DC,
-                        FromName = $"{GlobalOptions.ReferencesCache.GetBank(c.SD_101.SD_114.BA_BANKDC).NickName} {c.SD_101.SD_114.BA_RASH_ACC}",
+                        FromName =
+                            $"{GlobalOptions.ReferencesCache.GetBank(c.SD_101.SD_114.BA_BANKDC).NickName} {c.SD_101.SD_114.BA_RASH_ACC}",
                         DocumentName =
                             // ReSharper disable once PossibleInvalidOperationException
                             $"{c.SD_101.VV_START_DATE.ToShortDateString()} на {(decimal)c.VVT_VAL_PRIHOD} {GlobalOptions.ReferencesCache.GetBankAccount(c.SD_101.VV_ACC_DC)}",

@@ -2421,10 +2421,15 @@ public class RedisCacheReferences : IReferencesCache
                             Id = entity.Id,
                             CurrencyDC = entity.VALUTA_DC,
                             GroupDC = entity.EG_ID,
-                            ResponsibleEmployeeDC = entity.SD_2.DOC_CODE
+                            ResponsibleEmployeeTN = entity.OTVETSTV_LICO
+                            //ResponsibleEmployeeDC = entity.SD_2.DOC_CODE
                         })
                     .ToDictionary<Kontragent, decimal, IKontragent>(newItem => newItem.DocCode, newItem => newItem);
-                foreach (var k in Kontragents.Values.Cast<Kontragent>()) k.LoadFromCache();
+
+                foreach (var k in Kontragents.Values.Cast<Kontragent>())
+                {
+                    k.ResponsibleEmployeeDC = ((IDocCode)GetEmployee(k.ResponsibleEmployeeTN))?.DocCode;
+                }
 
                 DropAll<Kontragent>();
                 UpdateList2(Kontragents.Values.Cast<Kontragent>().ToList(), now);

@@ -121,7 +121,11 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
     [Display(AutoGenerateField = true, Name = "EMail")]
     public string EMail { get; set; }
 
+    [Display(AutoGenerateField = false, Name = "Ответственный код")]
     public decimal? ResponsibleEmployeeDC { get; set; }
+
+    [Display(AutoGenerateField = false, Name = "Ответственный таб.№")]
+    public int? ResponsibleEmployeeTN { get; set; }
 
     [Display(AutoGenerateField = true, Name = "Ответственный")]
     [JsonIgnore]
@@ -179,8 +183,11 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
         IsDeleted = entity.DELETED == 1;
         Id = entity.Id;
         ResponsibleEmployee = refCache.GetEmployee(entity.OTVETSTV_LICO);
+        ResponsibleEmployeeDC = ((IDocCode)ResponsibleEmployee)?.DocCode;
         Currency = refCache.GetCurrency(entity.VALUTA_DC);
+        CurrencyDC = ((IDocCode)Currency)?.DocCode;
         Group = refCache.GetKontragentGroup(entity.EG_ID);
+        GroupDC = ((IDocCode)Group)?.DocCode;
         UpdateDate = entity.UpdateDate ?? DateTime.Now;
     }
 

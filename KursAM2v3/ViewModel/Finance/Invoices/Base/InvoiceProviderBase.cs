@@ -281,6 +281,8 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             }
         }
 
+        public bool? IsExcludeFromPays { get; set; }
+
         public ObservableCollection<IInvoiceProviderRow> Rows { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 

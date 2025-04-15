@@ -74,6 +74,9 @@ public interface IInvoiceProvider : IDocCode, IDocGuid, ILastChanged
     [Display(AutoGenerateField = true, Name = "Получатель", Order = 9)]
     Kontragent KontrReceiver { set; get; }
 
+    [Display(AutoGenerateField = true, Name = "Искл. из поиска", Order = 20, Description = "Исключить из диалогов поиска для оплаты")]
+    public bool? IsExcludeFromPays { set; get; }
+
     /// <summary>
     /// Пользователь, последний изменивший документ
     /// </summary>

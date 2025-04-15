@@ -159,6 +159,17 @@ namespace KursAM2.ViewModel.Management
             get => myPeriodName;
         }
 
+        public string ResponsibleName
+        {
+            set
+            {
+                if (value == myResponsibleName) return;
+                myResponsibleName = value;
+                RaisePropertyChanged();
+            }
+            get => myResponsibleName;
+        }
+
         public KontragentPeriod CurrentPeriod
         {
             get => myCurrentPeriod;
@@ -217,7 +228,12 @@ namespace KursAM2.ViewModel.Management
                 {
                     KontragentManager.UpdateSelectCount(myKontragent.DocCode);
                     LoadOperations(myKontragent.DocCode);
+                    ResponsibleName = ((IName)Kontragent.ResponsibleEmployee)?.Name;
                     RaisePropertyChanged(nameof(Kontragents));
+                }
+                else
+                {
+                    ResponsibleName = null;
                 }
 
                 RaisePropertyChanged();
@@ -815,6 +831,7 @@ namespace KursAM2.ViewModel.Management
 
         private string myPeriodModeName = "Показать по всем периодам";
         private string myPeriodName;
+        private string myResponsibleName;
 
         public string PeriodModeName
         {
