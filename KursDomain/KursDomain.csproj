@@ -482,6 +482,9 @@
     <Compile Include="Repository\TransferOut\TransferOutBalansRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="Repository\WarehouseRepository\WarehouseRepository.cs" />
+    <Compile Include="Result\BoolResult.cs" />
+    <Compile Include="Result\IBoolResult.cs" />
+    <Compile Include="Result\IResult.cs" />
     <Compile Include="Services\CreateNewDocumentServices\BaseCreateService.cs" />
     <Compile Include="Services\CreateNewDocumentServices\ICreateNewDocument.cs" />
     <Compile Include="Services\CreateNewDocumentServices\SD24CreateService.cs" />

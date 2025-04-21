@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
-using System.Data.Entity;
 using System.Diagnostics;
-using System.Linq;
-using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
@@ -17,14 +14,27 @@ using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
-[DebuggerDisplay("{Id} {Name,nq} {ParentId,nq}")]
+[DebuggerDisplay("{Id} {Name,nq}")]
 public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparable, ICache
 {
+    public decimal? ManagerDC { set; get; }
+
+    public void LoadFromCache()
+    {
+        if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
+        if (ManagerDC is not null)
+            Employee = cache.GetEmployee(ManagerDC.Value);
+    }
+
+    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
+    public DateTime UpdateDate { get; set; }
+
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
-        return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
+        return c == null ? 0 : string.Compare(Name, c.Name, StringComparison.Ordinal);
     }
+
     public Guid Id { get; set; }
 
     public bool Equals(Project other)
@@ -36,15 +46,16 @@ public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparab
 
     public string Name { get; set; }
     public string Notes { get; set; }
-    [JsonIgnore]
-    public string Description => $"Проект: {Name}";
+
+    [JsonIgnore] public string Description => $"Проект: {Name}";
+
     public bool IsDeleted { get; set; }
     public bool IsClosed { get; set; }
     public DateTime DateStart { get; set; }
     public DateTime? DateEnd { get; set; }
-    public decimal? ManagerDC { set; get; }
-    [JsonIgnore]
-    public IEmployee Employee { get; set; }
+
+    [JsonIgnore] public IEmployee Employee { get; set; }
+
     public Guid? ParentId { get; set; }
 
     public override string ToString()
@@ -77,22 +88,13 @@ public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparab
         if (ReferenceEquals(null, obj)) return false;
         if (ReferenceEquals(this, obj)) return true;
         if (obj.GetType() != GetType()) return false;
-        return Equals((Project) obj);
+        return Equals((Project)obj);
     }
 
     public override int GetHashCode()
     {
         return Id.GetHashCode();
     }
-
-    public void LoadFromCache()
-    {
-        if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
-        if (ManagerDC is not null)
-            Employee = cache.GetEmployee(ManagerDC.Value);
-    }
-    [Display(AutoGenerateField = false, Name = "Посл.обновление")]
-    public DateTime UpdateDate { get; set; }
 }
 
 [MetadataType(typeof(DataAnnotationsProjectsViewModel))]
@@ -125,13 +127,38 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
         get => Entity.Id;
     }
 
+    public override string Name
+    {
+        set
+        {
+            if (Entity.Name == value) return;
+            Entity.Name = value;
+            RaisePropertyChanged();
+        }
+        get => Entity.Name;
+    }
+
+    public override string Note
+    {
+        set
+        {
+            if (Entity.Note == value) return;
+            Entity.Note = value;
+            RaisePropertyChanged();
+        }
+        get => Entity.Note;
+    }
+
     public DateTime DateStart
     {
         get => Entity.DateStart;
         set
         {
             if (Entity.DateStart == value) return;
-            Entity.DateStart = value;
+            if (DateEnd is not null && value > DateEnd)
+                Entity.DateStart = DateEnd.Value;
+            else
+                Entity.DateStart = value;
             RaisePropertyChanged();
         }
     }
@@ -142,7 +169,10 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
         set
         {
             if (Entity.DateEnd == value) return;
-            Entity.DateEnd = value;
+            if (value < DateStart)
+                Entity.DateEnd = DateStart;
+            else
+                Entity.DateEnd = value;
             RaisePropertyChanged();
         }
     }
@@ -223,7 +253,15 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
 
     public bool Check()
     {
-        return !string.IsNullOrWhiteSpace(Name) && Id != Guid.Empty && DateStart != DateTime.MinValue && DateStart >= (DateEnd ?? DateTime.MinValue);
+        //TODO Убрать перед коммитом 
+        if ((!string.IsNullOrWhiteSpace(Name) && Id != Guid.Empty && DateStart != DateTime.MinValue &&
+             DateStart <= (DateEnd ?? DateTime.MaxValue)) == false)
+        {
+            var i = 1;
+        }
+
+        return !string.IsNullOrWhiteSpace(Name) && Id != Guid.Empty && DateStart != DateTime.MinValue &&
+               DateStart <= (DateEnd ?? DateTime.MaxValue);
     }
 
     public void UpdateFrom(Projects ent)
@@ -270,6 +308,7 @@ public class DataAnnotationsProjectsViewModel : DataAnnotationForFluentApiBase, 
         builder.Property(_ => _.IsClosed).AutoGenerated().DisplayName("Закрыт");
         builder.Property(_ => _.IsDeleted).AutoGenerated().DisplayName("Удален");
         builder.Property(_ => _.Responsible).AutoGenerated().DisplayName("Ответственный");
+        builder.Property(_ => _.Note).AutoGenerated().DisplayName("Примечание");
         builder.Group("Проект")
             .ContainsProperty(_ => _.Name)
             .ContainsProperty(_ => _.DateEnd)

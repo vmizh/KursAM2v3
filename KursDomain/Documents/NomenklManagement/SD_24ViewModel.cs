@@ -7,6 +7,7 @@ using KursDomain.Documents.Invoices;
 using KursDomain.Documents.Periods;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
+using KursDomain.IReferences;
 using KursDomain.References;
 
 namespace KursDomain.Documents.NomenklManagement;
@@ -153,6 +154,18 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
             Entity.DD_POLUCH_NAME = ((IName)GlobalOptions.ReferencesCache.GetWarehouse(Entity.DD_SKLAD_POL_DC))?.Name ?? string.Empty;
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Receiver));
+        }
+    }
+
+    public Project Project
+    {
+        get => myProject;
+        set
+        {
+            if (myProject == value) return;
+            myProject = value;
+            Entity.ProjectId= value?.Id;
+            RaisePropertyChanged();
         }
     }
 
@@ -1013,6 +1026,7 @@ public class SD_24ViewModel : RSViewModelBase, IEntity<SD_24>
     private InvoiceClientViewModel _myInvoiceClient;
     private InvoiceProvider myInvoiceProvider;
     private Period myPeriod;
+    private Project myProject;
 
     #endregion
 

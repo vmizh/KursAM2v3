@@ -380,6 +380,7 @@
     <Compile Include="ViewModel\Reference\AccruedAmountTypeWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\BankReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\CurrencyReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Dialogs\ProjectSelectDialog.cs" />
     <Compile Include="ViewModel\Reference\Dialogs\SelectKursMainMenuItemViewModel.cs" />
     <Compile Include="ViewModel\Reference\FormPayReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\Kontragent\KontragentCategoryRefWindowViewModel.cs" />
@@ -422,6 +423,9 @@
     </Compile>
     <Compile Include="View\Base\TableAddDeleteUserControl.xaml.cs">
       <DependentUpon>TableAddDeleteUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Base\TableBaseUC.xaml.cs">
+      <DependentUpon>TableBaseUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Base\TableUserControl.xaml.cs">
       <DependentUpon>TableUserControl.xaml</DependentUpon>
@@ -1269,6 +1273,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Base\TableAddDeleteUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Base\TableBaseUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

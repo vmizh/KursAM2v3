@@ -1,8 +1,9 @@
 ﻿using System.Collections.ObjectModel;
+using KursDomain.References;
 
 namespace KursDomain.IReferences;
 
 public interface IProjectGroup
 {
-    ObservableCollection<IProject> Projects { get; set; }
+    ObservableCollection<ProjectViewModel> Projects { get; set; }
 }

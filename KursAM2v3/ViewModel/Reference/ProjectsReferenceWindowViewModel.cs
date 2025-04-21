@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
@@ -7,10 +8,13 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Data;
+using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
 using KursAM2.Dialogs;
 using KursAM2.Repositories.Projects;
 using KursAM2.View.KursReferences;
+using KursAM2.ViewModel.Reference.Dialogs;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
@@ -25,6 +29,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
     private ProjectViewModel myCurrentProject;
     private readonly IProjectRepository myPojectRepository = new ProjectRepository(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
     private ProjectGroupViewModel myCurrentGroupProject;
+    private ProjectViewModel myCurrentLinkGroupProject;
 
     #endregion
 
@@ -68,6 +73,11 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
     public ObservableCollection<ProjectGroupViewModel> DeletedGroupProjects { set; get; } =
         new ObservableCollection<ProjectGroupViewModel>();
 
+    public ObservableCollection<ProjectViewModel> LinkGroupProjects { set; get; } =
+        new ObservableCollection<ProjectViewModel>();
+
+    public List<Guid> GroupProjLinkDeleted { get; } = new List<Guid>();
+
     public ProjectViewModel CurrentProject
     {
         get => myCurrentProject;
@@ -86,6 +96,23 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
         {
             if (Equals(myCurrentGroupProject, value)) return;
             myCurrentGroupProject = value;
+            LinkGroupProjects.Clear();
+            if(myCurrentGroupProject is not null)
+                foreach (var prj in myCurrentGroupProject.Projects)
+                {
+                   LinkGroupProjects.Add(prj);
+                }
+            RaisePropertyChanged();
+        }
+    }
+
+    public ProjectViewModel CurrentLinkGroupProject
+    {
+        get => myCurrentLinkGroupProject;
+        set
+        {
+            if (Equals(myCurrentLinkGroupProject, value)) return;
+            myCurrentLinkGroupProject = value;
             RaisePropertyChanged();
         }
     }
@@ -94,15 +121,16 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
     public override bool IsCanSaveData => IsCanSave();
 
     #endregion
-
-
+    
     #region Methods
 
     private new bool IsCanSave()
     {
         if (Projects.Any(_ => _.State != RowStatus.NotEdited) ||
-            DeletedProjects.Count > 0)
+            GroupProjects.Any(_ => _.State != RowStatus.NotEdited) ||
+            DeletedProjects.Count > 0 || DeletedGroupProjects.Count > 0)
             return Projects.All(p => p.Check());
+        
         return false;
     }
 
@@ -115,7 +143,6 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
 
     #endregion
 
-
     #region Commands
 
     public override void RefreshData(object obj)
@@ -124,11 +151,16 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
         DeletedProjects.Clear();
         GroupProjects.Clear();
         DeletedGroupProjects.Clear();
+        GroupProjLinkDeleted.Clear();
         try
         {
             foreach (var prj in myPojectRepository.LoadReference())
             {
-                Projects.Add(new ProjectViewModel(prj));
+                Projects.Add(new ProjectViewModel(prj){myState = RowStatus.NotEdited });
+            }
+            foreach (var grp in myPojectRepository.LoadGroups())
+            {
+                GroupProjects.Add(new ProjectGroupViewModel(grp) {myState = RowStatus.NotEdited });
             }
         }
         catch (Exception ex)
@@ -141,9 +173,34 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
     {
         try
         {
+            myPojectRepository.BeginTransaction();
+            var resultProj = myPojectRepository.SaveReference(Projects.Where(_ => _.State != RowStatus.NotEdited).Select(_ => _.Entity).ToList(),
+                DeletedProjects.Any() ? DeletedProjects.Select(_ => _.Id).ToList() : null);
+            var resultGroup = myPojectRepository.SaveGroups(GroupProjects.Where(_ => _.State != RowStatus.NotEdited).Select(_ => _.Entity).ToList(),
+                DeletedGroupProjects.Any() ? DeletedGroupProjects.Select(_ => _.Id).ToList() : null, GroupProjLinkDeleted);
+            
+            if (!resultProj.Result || !resultGroup.Result)
+            {
+                WindowManager.ShowMessage($"{resultProj.ErrorText}\n{resultGroup.ErrorText}","Ошибка сохранения",MessageBoxImage.Error);
+                return;
+            }
+            myPojectRepository.SaveChanges();
+            myPojectRepository.CommitTransaction(); 
+            foreach (var p in Projects)
+            {
+                p.myState = RowStatus.NotEdited;
+            }
+            foreach (var g in GroupProjects)
+            {
+                g.myState = RowStatus.NotEdited;
+            }
+            DeletedProjects.Clear();
+            DeletedGroupProjects.Clear();
+            GroupProjLinkDeleted.Clear();
         }
         catch (Exception ex)
         {
+            myPojectRepository.RollbackTransaction();
             WindowManager.ShowError(ex);
         }
     }
@@ -162,7 +219,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
         }
     }
 
-    public ICommand AddNewProjectCommand
+    public ICommand AddProjectCommand
     {
         get { return new Command(AddNewProject, _ => CurrentProject != null); }
     }
@@ -173,7 +230,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
         {
             State = RowStatus.NewRow,
             Id = Guid.NewGuid(),
-            ParentId = CurrentProject.ParentId,
+            ParentId = null,
             DateStart = DateTime.Today
         };
         Projects.Add(newRow);
@@ -196,6 +253,78 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
             DeletedProjects.Add(CurrentProject);
         Projects.Remove(CurrentProject);
     }
+
+    public ICommand AddGroupProjectCommand
+    {
+        get { return new Command(AddGroupProject, _ => true); }
+    }
+
+    private void AddGroupProject(object obj)
+    {
+        GroupProjects.Add(new ProjectGroupViewModel
+        {
+            Id = Guid.NewGuid(),
+            Name = "Новая группа",
+            State = RowStatus.NewRow
+        });
+    }
+
+    public ICommand DeleteGroupProjectCommand
+    {
+        get { return new Command(DeleteGroupProject, _ => CurrentGroupProject is not null); }
+    }
+
+    private void DeleteGroupProject(object obj)
+    {
+        if(CurrentGroupProject.State != RowStatus.NewRow)
+            DeletedGroupProjects.Add(CurrentGroupProject);
+        GroupProjects.Remove(CurrentGroupProject);
+    }
+
+    public ICommand AddLinkGroupProjectCommand
+    {
+        get { return new Command(AddLinkGroupProject, _ => CurrentGroupProject is not null); }
+    }
+
+    private void AddLinkGroupProject(object obj)
+    {
+        var ctx = new ProjectSelectDialog(CurrentGroupProject.Projects.Select(_ => _.Id).ToList());
+        var service = this.GetService<IDialogService>("DialogServiceUI");
+        if (service.ShowDialog(MessageButton.OKCancel, "Выбор проектов.", ctx) == MessageResult.Cancel) return;
+        foreach (var prj in ctx.SelectedRows)
+        {
+            LinkGroupProjects.Add(prj);
+            CurrentGroupProject.Projects.Add(prj);
+            CurrentGroupProject.Entity.ProjectGroupLink.Add(new ProjectGroupLink()
+            {
+                Id = Guid.NewGuid(),
+                GroupId = CurrentGroupProject.Id,
+                ProjectId = prj.Id
+            });
+        }
+        if(CurrentGroupProject.myState != RowStatus.NewRow)
+            CurrentGroupProject.myState = RowStatus.Edited;
+    }
+
+    public ICommand DeleteLinkGroupProjectCommand
+    {
+        get { return new Command(DeleteLinkGroupProject, _ => CurrentLinkGroupProject is not null); }
+    }
+
+    private void DeleteLinkGroupProject(object obj)
+    {
+        LinkGroupProjects.Remove(CurrentLinkGroupProject);
+        var link = CurrentGroupProject.Entity.ProjectGroupLink.FirstOrDefault(_ =>
+            _.ProjectId == CurrentLinkGroupProject.Id);
+        if (link is not null)
+        {
+            CurrentGroupProject.Entity.ProjectGroupLink.Remove(link);
+            if(CurrentGroupProject.myState != RowStatus.NewRow)
+                CurrentGroupProject.myState = RowStatus.Edited;
+            GroupProjLinkDeleted.Add(link.Id);
+        }
+    }
+
 
     public override void UpdateVisualObjects()
     {

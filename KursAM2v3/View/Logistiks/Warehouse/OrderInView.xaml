@@ -3,7 +3,6 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                 
                  xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
                  xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
                  xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
@@ -131,6 +130,34 @@
                                           ItemsSource="{Binding WarehouseList}"
                                           EditValue="{Binding Document.WarehouseIn, ValidatesOnDataErrors=True,
                              UpdateSourceTrigger=PropertyChanged}" RenderTransformOrigin="0.5,0.5" Width="408" >
+                             <dxe:ComboBoxEdit.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="0.5"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </dxe:ComboBoxEdit.RenderTransform>
+                        </dxe:ComboBoxEdit>
+                    </StackPanel>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Проект: " />
+                        <dxe:ComboBoxEdit Style="{StaticResource ComboBoxEditWithError}"
+                                          DockPanel.Dock="Left"
+                                          MinWidth="300"
+                                          IsTextEditable="False"
+                                          Margin="63 0"
+                                          ItemsSource="{Binding ProjectList}"
+                                          EditValue="{Binding Document.Project, ValidatesOnDataErrors=True,
+             UpdateSourceTrigger=PropertyChanged}" RenderTransformOrigin="0.5,0.5" Width="408" >
+                            <dxe:ComboBoxEdit.Buttons>
+                                <dxe:ButtonInfo Name="ProjectCancelButton"  
+                                                GlyphKind="Cancel"  
+                                                ToolTip="Удалить связь с проектом"  
+                                                Command="{Binding ProjectCancelCommand}"/>  
+                            </dxe:ComboBoxEdit.Buttons>
                             <dxe:ComboBoxEdit.RenderTransform>
                                 <TransformGroup>
                                     <ScaleTransform/>

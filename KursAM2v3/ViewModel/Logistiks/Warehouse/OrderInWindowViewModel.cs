@@ -198,6 +198,9 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             WarehouseList { set; get; } = GlobalOptions.ReferencesCache.GetWarehousesAll()
             .Cast<KursDomain.References.Warehouse>().OrderBy(_ => _.Name).ToList();
 
+        public List<Project> ProjectList { set; get; } =
+            GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>().OrderBy(_ => _.Name).ToList();
+
         public WarehouseOrderIn Document
         {
             set
@@ -226,12 +229,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         public bool IsCanChangedWarehouseType => Document?.Sender == null;
 
         public override string WindowName =>
-            $"Приходный складской ордер №{Document?.DD_IN_NUM}/{Document?.DD_EXT_NUM} от {Document?.Date.ToShortDateString()}";
-
-        #endregion
-
-        #region Command
-
+            $"Приходный складской ордер №{Document?.DD_IN_NUM}/{Document?.DD_EXT_NUM} от {Document?.Date.ToShortDateString()}"; 
         public string Sender => Document.KontragentSender?.Name ?? Document.WarehouseOut?.Name;
 
         public string Schet
@@ -244,6 +242,21 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
                 RaisePropertyChanged();
             }
         }
+
+        #endregion
+
+        #region Command
+
+        public ICommand ProjectCancelCommand
+        {
+            get { return new Command(ProjectCancel, _ => Document.Project is not null); }
+        }
+
+        private void ProjectCancel(object obj)
+        {
+            Document.Project = null;
+        }
+
 
         public ICommand KontragentTypeChangedCommand
         {
