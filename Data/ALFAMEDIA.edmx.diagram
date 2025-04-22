@@ -2175,6 +2175,18 @@
         <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnToProvider_WarehouseDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_AccruedAmountForClient_CentrResponsibleDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_AccruedAmountOfSupplier_CentrResponsibleDC" />
+        <EntityTypeShape EntityType="ALFAMEDIA.ProjectGroupLink" Width="1.5" PointX="49.625" PointY="327.25" />
+        <EntityTypeShape EntityType="ALFAMEDIA.ProjectGroups" Width="1.5" PointX="47.375" PointY="7" />
+        <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnOfClient_ProjectId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_NomenklReturnToProvider_ProjectId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectGroupLink_GroupId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectGroupLink_ProjectId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_SD_24_ProjectId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_SD_33_ProjectId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_SD_34_ProjectId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_TD_101_ProjectId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_AccruedAmountForClient_ProjectId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_AccruedAmountOfSupplier_ProjectId" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

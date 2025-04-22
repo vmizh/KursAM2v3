@@ -101,6 +101,7 @@
                             NotifyOnValidationError=True,  ValidatesOnDataErrors=True}"  />
                     </StackPanel>
                 </dxlc:LayoutItem>
+               
                <StackPanel Orientation="Horizontal" MaxHeight="60">
                     <Label Content="Примечания: " VerticalAlignment="Top" />
                     <dxe:TextEdit MinHeight="40"

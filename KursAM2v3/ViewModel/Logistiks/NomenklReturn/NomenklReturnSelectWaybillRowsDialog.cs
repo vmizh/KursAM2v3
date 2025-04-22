@@ -92,7 +92,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         public override void UpdateVisualObjects()
         {
-            if (myDataRepository is NomenklReturnSelectWaybillRows frm)
+            if (CustomDataUserControl is NomenklReturnSelectWaybillRows frm)
             {
                 frm.gridWaybillRows.SelectionMode = MultiSelectMode.Row;
                 frm.tableViewWaybillRow.NavigationStyle = GridViewNavigationStyle.Cell;

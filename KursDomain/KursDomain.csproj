@@ -241,6 +241,7 @@
     <Compile Include="IDocuments\NomenklReturn\INomenklReturnOfClient.cs" />
     <Compile Include="IDocuments\NomenklReturn\INomenklReturnOfClientRow.cs" />
     <Compile Include="IDocuments\NomenklReturn\INomenklReturnToProvider.cs" />
+    <Compile Include="IReferences\IProjectGroup.cs" />
     <Compile Include="Managers\DocumentsOpenManager.cs" />
     <Compile Include="Managers\NomenklManager2.cs" />
     <Compile Include="Menu\MenuGeneratorItemVisibleEnum.cs" />
@@ -251,6 +252,7 @@
     <Compile Include="RedisRepositories\RedisDataCacheSets.cs" />
     <Compile Include="RedisRepositories\RedisMessage.cs" />
     <Compile Include="RedisRepositories\RedisMessageChannels.cs" />
+    <Compile Include="References\ProjectGroup.cs" />
     <Compile Include="References\RedisCache\IDCGuidRelations.cs" />
     <Compile Include="References\RedisCache\InvoicePaymentShipment.cs" />
     <Compile Include="References\RedisCache\PaymentShipmentInvoiceTypeEnum.cs" />
@@ -480,6 +482,9 @@
     <Compile Include="Repository\TransferOut\TransferOutBalansRepository.cs" />
     <Compile Include="Repository\UnitOfWork.cs" />
     <Compile Include="Repository\WarehouseRepository\WarehouseRepository.cs" />
+    <Compile Include="Result\BoolResult.cs" />
+    <Compile Include="Result\IBoolResult.cs" />
+    <Compile Include="Result\IResult.cs" />
     <Compile Include="Services\CreateNewDocumentServices\BaseCreateService.cs" />
     <Compile Include="Services\CreateNewDocumentServices\ICreateNewDocument.cs" />
     <Compile Include="Services\CreateNewDocumentServices\SD24CreateService.cs" />

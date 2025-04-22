@@ -28,6 +28,7 @@ public sealed class CashInViewModel : RSViewModelBase, IEntity<SD_33>
     private SD_33 myEntity;
     private bool myIsKontrSelectEnable;
     private CashKontragentType myKontragentType;
+    private Project myProject;
     private string myRashodOrderFromName;
     private SDRSchet mySDRSchet;
     private string mySFactName;
@@ -79,6 +80,7 @@ public sealed class CashInViewModel : RSViewModelBase, IEntity<SD_33>
         }
     }
 
+    
     public override string Note
     {
         get => Entity.NOTES_ORD;
@@ -115,7 +117,7 @@ public sealed class CashInViewModel : RSViewModelBase, IEntity<SD_33>
                 {
                     Entity.SUMM_ORD = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
                                                  (100 + (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
-                    RaisePropertyChanged(nameof(SUMM_ORD));
+                    RaisePropertyChanged();
                 }
                 else
                 {
@@ -150,7 +152,7 @@ public sealed class CashInViewModel : RSViewModelBase, IEntity<SD_33>
                 {
                     Entity.CRS_SUMMA = Math.Round((Entity.SUMM_ORD ?? 0) * 100 /
                                                   (100 - (decimal)(KONTR_CRS_SUM_CORRECT_PERCENT ?? 0)), 2);
-                    RaisePropertyChanged(nameof(CRS_SUMMA));
+                    RaisePropertyChanged();
                 }
             }
 
@@ -378,6 +380,22 @@ public sealed class CashInViewModel : RSViewModelBase, IEntity<SD_33>
             Entity.SHPZ_DC = mySDRSchet.DocCode;
             RaisePropertyChanged();
         }
+    }
+
+    [Display(AutoGenerateField = true)]
+    public Project Project
+    {
+        set
+        {
+            if (Equals(value, myProject)) return;
+            myProject = value;
+            if (myProject?.Id is null || myProject.Id == Guid.Empty)
+                Entity.ProjectId = null;
+            else
+                Entity.ProjectId = myProject.Id;
+            RaisePropertyChanged();
+        }
+        get => myProject;
     }
 
     public decimal? RASH_ORDER_FROM_DC
@@ -1005,6 +1023,7 @@ public sealed class CashInViewModel : RSViewModelBase, IEntity<SD_33>
         Currency = GlobalOptions.ReferencesCache.GetCurrency(Entity.CRS_DC) as References.Currency;
         if (SFACT_DC != null) SFactName = SFact(SFACT_DC.Value);
         SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SHPZ_DC) as SDRSchet;
+        Project = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.ProjectId) as Project;
         BankAccount = GlobalOptions.ReferencesCache.GetBankAccount(BANK_RASCH_SCHET_DC) as BankAccount;
         if (RASH_ORDER_FROM_DC != null) RashodOrderFromName = RashodOrderFrom(RASH_ORDER_FROM_DC.Value);
         if (Entity.StockHolders != null)
@@ -1012,6 +1031,9 @@ public sealed class CashInViewModel : RSViewModelBase, IEntity<SD_33>
             StockHolder = new StockHolderViewModel(Entity.StockHolders);
             myKontragentType = CashKontragentType.StockHolder;
         }
+
+        if (Entity.ProjectId is not null)
+            Project = GlobalOptions.ReferencesCache.GetProject(Entity.ProjectId) as Project;
 
         RaisePropertyChanged(nameof(IsKontrSelectEnable));
         RaisePropertyChanged(nameof(KontragentType));
@@ -1335,6 +1357,8 @@ public static class SD_33LayoutData_FluentAPI
             .DisplayName("Обратный расчет");
         builder.Property(x => x.PercentForKontragent)
             .DisplayName("%").DisplayFormatString("n2");
+        builder.Property(x => x.Project)
+            .DisplayName("Проект");
             // @formatter:off
             builder.DataFormLayout()
                 .Group("Касса", Orientation.Horizontal)
@@ -1359,10 +1383,11 @@ public static class SD_33LayoutData_FluentAPI
                     .EndGroup()
                     .GroupBox("Дополнения", Orientation.Vertical)
                         .ContainsProperty(_ => _.SDRSchet)
-                        .ContainsProperty(_ => _.NAME_ORD)
+                        .ContainsProperty(_ => _.Project)
                         .ContainsProperty(_ => _.OSN_ORD)
                         .ContainsProperty(_ => _.NOTES_ORD)
-                        .ContainsProperty(_ => _.AccuredInfo)
+                        .ContainsProperty(_ => _.AccuredInfo) 
+                        .ContainsProperty(_ => _.NAME_ORD)
                     .EndGroup()
                 .EndGroup();
         // @formatter:on

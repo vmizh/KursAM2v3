@@ -96,6 +96,7 @@ namespace Data
         public Nullable<System.Guid> GRUZO_INFO_ID { get; set; }
         public System.Guid Id { get; set; }
         public Nullable<decimal> DD_CRS_DC { get; set; }
+        public Nullable<System.Guid> ProjectId { get; set; }
     
         public virtual GROZO_REQUISITE GROZO_REQUISITE { get; set; }
         public virtual SD_112 SD_112 { get; set; }
@@ -139,5 +140,6 @@ namespace Data
         public virtual SD_27 SD_271 { get; set; }
         public virtual SD_27 SD_272 { get; set; }
         public virtual SD_27 SD_273 { get; set; }
+        public virtual Projects Projects { get; set; }
     }
 }

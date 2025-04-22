@@ -123,6 +123,9 @@
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.39\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
+    <Reference Include="MoreLinq, Version=4.4.0.0, Culture=neutral, PublicKeyToken=384d532d7e88985d, processorArchitecture=MSIL">
+      <HintPath>..\packages\morelinq.4.4.0\lib\netstandard2.0\MoreLinq.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -256,6 +259,8 @@
     <Compile Include="Repositories\NomenklReturn\INomenklReturnToProviderRepository.cs" />
     <Compile Include="Repositories\NomenklReturn\NomenklReturnOfClientRepository.cs" />
     <Compile Include="Repositories\NomenklReturn\NomenklReturnToProviderRepository.cs" />
+    <Compile Include="Repositories\Projects\IProjectRepository.cs" />
+    <Compile Include="Repositories\Projects\ProjectRepository.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\IRefundFromClientRepository.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\RefundFromClientRepository.cs" />
     <Compile Include="Repositories\SD_24Repository.cs" />
@@ -375,6 +380,7 @@
     <Compile Include="ViewModel\Reference\AccruedAmountTypeWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\BankReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\CurrencyReferenceWindowViewModel.cs" />
+    <Compile Include="ViewModel\Reference\Dialogs\ProjectSelectDialog.cs" />
     <Compile Include="ViewModel\Reference\Dialogs\SelectKursMainMenuItemViewModel.cs" />
     <Compile Include="ViewModel\Reference\FormPayReferenceWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\Kontragent\KontragentCategoryRefWindowViewModel.cs" />
@@ -417,6 +423,9 @@
     </Compile>
     <Compile Include="View\Base\TableAddDeleteUserControl.xaml.cs">
       <DependentUpon>TableAddDeleteUserControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Base\TableBaseUC.xaml.cs">
+      <DependentUpon>TableBaseUC.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Base\TableUserControl.xaml.cs">
       <DependentUpon>TableUserControl.xaml</DependentUpon>
@@ -1264,6 +1273,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Base\TableAddDeleteUserControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Base\TableBaseUC.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

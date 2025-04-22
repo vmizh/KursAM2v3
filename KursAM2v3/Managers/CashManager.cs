@@ -156,7 +156,8 @@ namespace KursAM2.Managers
                 V_TOM_CHISLE = ent.V_TOM_CHISLE,
                 KONTR_FROM_DC = ent.KONTR_FROM_DC,
                 SFACT_FLAG = ent.SFACT_FLAG,
-                StockHolderId = ent.StockHolder?.Id
+                StockHolderId = ent.StockHolder?.Id,
+                ProjectId = ent.Project?.Id == Guid.Empty ? null : ent.Project?.Id
             };
             return ret;
         }
@@ -184,6 +185,7 @@ namespace KursAM2.Managers
                         .Include(_ => _.AccuredAmountForClientRow)
                         .Include(_ => _.AccuredAmountForClientRow.Select(x => x.AccruedAmountForClient))
                         .Include(_ => _.StockHolders)
+                        .Include(_ => _.Projects)
                         .AsNoTracking()
                         .FirstOrDefault(_ => _.DOC_CODE == dc);
                     var doc = new CashInViewModel(data)
@@ -1052,8 +1054,9 @@ namespace KursAM2.Managers
                 PLAT_VED_DC = ent.PLAT_VED_DC,
                 PLAT_VED_ROW_CODE = ent.PLAT_VED_ROW_CODE,
                 AccuredId = ent.AccuredId,
-                StockHolderId = ent.StockHolder?.Id
-            };
+                StockHolderId = ent.StockHolder?.Id,
+                ProjectId = ent.Project?.Id == Guid.Empty ? null : ent.Project?.Id
+            }; 
             return ret;
         }
 
@@ -1300,7 +1303,8 @@ namespace KursAM2.Managers
                             Note = d.NOTES_ORD,
                             IsSalary = d.NCODE == 100,
                             OsnOrd = d.OSN_ORD,
-                            NameOrd = d.NAME_ORD
+                            NameOrd = d.NAME_ORD,
+                            Project = GlobalOptions.ReferencesCache.GetProject(d.ProjectId) as Project
                         };
                         if (d.KONTRAGENT_DC != null)
                         {
@@ -1401,7 +1405,8 @@ namespace KursAM2.Managers
                             Note = d.NOTES_ORD,
                             IsSalary = d.NCODE == 100,
                             OsnOrd = d.OSN_ORD,
-                            NameOrd = d.NAME_ORD
+                            NameOrd = d.NAME_ORD,
+                            Project = GlobalOptions.ReferencesCache.GetProject(d.ProjectId) as Project
                         };
                         if (d.KONTRAGENT_DC != null)
                         {

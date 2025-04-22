@@ -28,10 +28,12 @@ namespace Data
         public string Creator { get; set; }
         public string Note { get; set; }
         public Nullable<decimal> CentrResponsibleDC { get; set; }
+        public Nullable<System.Guid> ProjectId { get; set; }
     
         public virtual SD_43 SD_43 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccuredAmountForClientRow> AccuredAmountForClientRow { get; set; }
         public virtual SD_40 SD_40 { get; set; }
+        public virtual Projects Projects { get; set; }
     }
 }

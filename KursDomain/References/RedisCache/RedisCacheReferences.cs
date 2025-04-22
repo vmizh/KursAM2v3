@@ -1933,7 +1933,7 @@ public class RedisCacheReferences : IReferencesCache
             redisClient.Db = GlobalOptions.RedisDBId ?? 0;
             if (!cacheKeysDict.ContainsKey(cacheName))
                 LoadCacheKeys(cacheName);
-            if (!((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec))
+            if (!((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec) && cacheKeysDict[cacheName].CachKeys.Count == Projects.Count)
                 return Projects.Values.ToList();
             var redis = redisClient.As<Project>();
             Projects.Clear();
@@ -2178,6 +2178,8 @@ public class RedisCacheReferences : IReferencesCache
                 DropAllGuid<Country>();
                 UpdateListGuid(Countries.Values.Cast<Country>(), now);
                 GetCountriesAll();
+
+                
 
                 foreach (var item in Context.SD_23.AsNoTracking().ToList())
                 {

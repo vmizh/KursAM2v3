@@ -24,7 +24,7 @@ namespace KursAM2.View.Finance.Cash
     ///     Interaction logic for CashInView.xaml
     /// </summary>
     // ReSharper disable once InheritdocConsiderUsage
-    public partial class CashInView : ILayout
+    public partial class CashInView
     {
         public ButtonEdit KontrSelectButton, AccuredInfoButton;
         public DataLayoutItem NCodeItem;
@@ -35,7 +35,7 @@ namespace KursAM2.View.Finance.Cash
         {
             InitializeComponent();
             
-            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, layoutItems);
+            //LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), GetType().Name, this, layoutItems);
             //Loaded += CashInView_Loaded;
             //Unloaded += CashInView_Unloaded;
             MinWidth = 1000;
@@ -203,6 +203,18 @@ namespace KursAM2.View.Finance.Cash
                 case nameof(doc.SDRSchet):
                     ViewFluentHelper.SetComboBoxEdit(e.Item, doc.SDRSchet, "SDRSchet",
                         GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList().OrderBy(_ => _.Name));
+                    e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
+                    break;
+                case nameof(doc.Project):
+                    var list = GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>().ToList();
+                    list.Add(new Project()
+                    {
+                        Id = Guid.Empty,
+                        Name = " Не указан"
+                    });
+                    ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Project, "Project",
+                        list.OrderBy(_ => _.Name),
+                        displayMember:"Name",displayValue:"Id");
                     e.Item.HorizontalContentAlignment = HorizontalAlignment.Left;
                     break;
                 case nameof(doc.SUMM_ORD):
