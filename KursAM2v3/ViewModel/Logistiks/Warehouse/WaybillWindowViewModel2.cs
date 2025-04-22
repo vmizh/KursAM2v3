@@ -198,7 +198,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             }
             get => _document;
         }
-
+        public List<Project> ProjectList { set; get; } =
+            GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>().OrderBy(_ => _.Name).ToList();
         public ReportManager ReportManager
         {
             get => _reportManager;
@@ -292,7 +293,15 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (Document.State != RowStatus.NewRow)
                 DocumentHistoryManager.LoadHistory(DocumentType.Waybill, null, Document.DocCode, null);
         }
+        public ICommand ProjectCancelCommand
+        {
+            get { return new Command(ProjectCancel, _ => Document.Project is not null); }
+        }
 
+        private void ProjectCancel(object obj)
+        {
+            Document.Project = null;
+        }
         public ICommand KontragentSelectCommand
         {
             get { return new Command(KontragentSelect, _ => Document.InvoiceClientViewModel == null); }

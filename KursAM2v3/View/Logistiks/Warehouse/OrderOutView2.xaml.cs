@@ -57,12 +57,28 @@ namespace KursAM2.View.Logistiks.Warehouse
             switch (e.Column.Name)
             {
                 case "SHPZ":
+                    //e.Column.EditSettings = new ComboBoxEditSettings
+                    //{
+                    //    ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>()
+                    //        .OrderBy(_ => _.Name).ToList(),
+                    //    DisplayMember = "Name",
+                    //    AutoComplete = true,
+                    //};
+
                     e.Column.EditSettings = new ComboBoxEditSettings
                     {
+                        AllowDefaultButton = false,
                         ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>()
                             .OrderBy(_ => _.Name).ToList(),
                         DisplayMember = "Name",
-                        AutoComplete = true
+                        AutoComplete = true,
+                        Buttons = { new ButtonInfo()
+                        {
+                            GlyphKind = GlyphKind.Down
+                        }, {  new ButtonInfo()
+                        {
+                            GlyphKind = GlyphKind.Cancel
+                        } } }
                     };
                     break;
             }

@@ -33,6 +33,7 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
     private SDRSchet mySDRSchet;
     private string mySPostName;
     private StockHolderViewModel myStockHolder;
+    private Project myProject;
 
     public CashOut()
     {
@@ -377,6 +378,21 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
             SHPZ_DC = mySDRSchet?.DocCode;
             RaisePropertyChanged();
         }
+    }
+
+    public Project Project
+    {
+        set
+        {
+            if (Equals(value, myProject)) return;
+            myProject = value;
+            if (myProject?.Id is null || myProject.Id == Guid.Empty)
+                Entity.ProjectId = null;
+            else
+                Entity.ProjectId = myProject.Id;
+            RaisePropertyChanged();
+        }
+        get => myProject;
     }
 
     public CashBox CashTo
@@ -969,6 +985,8 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
             RaisePropertyChanged("KontragentType");
         }
 
+        Project = GlobalOptions.ReferencesCache.GetProject(Entity.ProjectId) as Project;
+
         IsKontrSelectEnable = myKontragentType != CashKontragentType.NotChoice;
     }
 
@@ -1104,6 +1122,7 @@ public class CashOut : RSViewModelBase, IEntity<SD_34>
         ent.SD_3013 = SD_3013;
         ent.SD_303 = SD_303;
         ent.SD_43 = SD_43;
+        ent.ProjectId = Project?.Id;
     }
 
     public override string ToString()
@@ -1257,6 +1276,7 @@ public static class SD_34LayoutData_FluentAPI
         builder.Property(x => x.Currency)
             .DisplayName("Валюта");
         builder.Property(x => x.SDRSchet).DisplayName("Счет доходов/расходов");
+        builder.Property(x => x.Project).DisplayName("Проект");
         builder.Property(x => x.Cash)
             .DisplayName("Касса");
         builder.Property(x => x.KontragentType)
@@ -1319,6 +1339,7 @@ public static class SD_34LayoutData_FluentAPI
             .ContainsProperty(_ => _.NOTES_ORD)
             .EndGroup()
             .ContainsProperty(_ => _.SDRSchet)
+            .ContainsProperty(_ => _.Project)
             .ContainsProperty(_ => _.AccuredInfo)
             .ContainsProperty(_ => _.NCODE)
             .EndGroup();

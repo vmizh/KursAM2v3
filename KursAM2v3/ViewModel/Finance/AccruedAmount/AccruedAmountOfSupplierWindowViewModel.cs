@@ -125,6 +125,10 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         #region Properties
 
+        public List<Project> ProjectList { set; get; } =
+            GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>().OrderBy(_ => _.Name).ToList();
+
+
         public override string LayoutName => "AccruedAmountOfSupplierWindowViewModel";
         public override string WindowName => Document.ToString();
 
@@ -180,6 +184,17 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         #endregion
 
         #region Commands
+
+        [Display(AutoGenerateField = false)]
+        public ICommand ProjectCancelCommand
+        {
+            get { return new Command(ProjectCancel, _ => Document.Project is not null); }
+        }
+
+        private void ProjectCancel(object obj)
+        {
+            Document.Project = null;
+        }
 
         public override void ShowHistory(object data)
         {

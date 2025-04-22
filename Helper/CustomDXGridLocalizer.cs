@@ -26,7 +26,7 @@ namespace Helper
             AddString(GridControlStringId.MenuGroupPanelClearGrouping, "Очистить группировку");
             AddString(GridControlStringId.DefaultTotalSummaryFormatStringInSameColumn_Avg, "n2");
             AddString(GridControlStringId.DefaultTotalSummaryFormatStringInSameColumn_Sum, "n2");
-            AddString(GridControlStringId.DefaultTotalSummaryFormatStringInSameColumn_Count, "n0");
+            AddString(GridControlStringId.DefaultTotalSummaryFormatStringInSameColumn_Count,"{0:n0}");
             AddString(GridControlStringId.MenuFooterAverage, "Среднее");
             AddString(GridControlStringId.MenuFooterCount, "Кол-во");
             AddString(GridControlStringId.MenuFooterCustom, "Вручную");

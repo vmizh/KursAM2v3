@@ -75,7 +75,7 @@
                     <StackPanel Orientation="Horizontal">
                         <Label Content="Контрагент: " />
                         <dxe:ButtonEdit DockPanel.Dock="Left"
-                                        Margin="23,0,0,0"
+                                        Margin="70,0,0,0"
                                         Style="{StaticResource ButtonEditWithError}"
                                         EditValue="{Binding Document.Kontragent, 
                                     UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
@@ -100,6 +100,7 @@
                     <StackPanel Orientation="Horizontal" DockPanel.Dock="Bottom">
                         <Label Content="Центр ответственности:" />
                         <dxe:ComboBoxEdit
+                            Margin="7 0"
                             Style="{StaticResource ComboBoxEditWithError}"
                             MinWidth="260"
                             DockPanel.Dock="Left"
@@ -109,12 +110,41 @@
                             NotifyOnValidationError=True,  ValidatesOnDataErrors=True}"  />
                     </StackPanel>
                 </dxlc:LayoutItem>
+                <dxlc:LayoutItem>
+                    <StackPanel Orientation="Horizontal">
+                        <Label Content="Проект: " />
+                        <dxe:ComboBoxEdit Style="{StaticResource ComboBoxEditWithError}"
+                                          DockPanel.Dock="Left"
+                                          MinWidth="300"
+                                          IsTextEditable="False"
+                                          Margin="92 0"
+                                          ItemsSource="{Binding ProjectList}"
+                                          EditValue="{Binding Document.Project, ValidatesOnDataErrors=True,
+             UpdateSourceTrigger=PropertyChanged}" RenderTransformOrigin="0.5,0.5" Width="408" >
+                            <dxe:ComboBoxEdit.Buttons>
+                                <dxe:ButtonInfo Name="ProjectCancelButton"  
+                                                GlyphKind="Cancel"  
+                                                ToolTip="Удалить связь с проектом"  
+                                                Command="{Binding ProjectCancelCommand}"/>  
+                            </dxe:ComboBoxEdit.Buttons>
+                            <dxe:ComboBoxEdit.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform/>
+                                    <SkewTransform/>
+                                    <RotateTransform Angle="0.5"/>
+                                    <TranslateTransform/>
+                                </TransformGroup>
+                            </dxe:ComboBoxEdit.RenderTransform>
+                        </dxe:ComboBoxEdit>
+                    </StackPanel>
+
+                </dxlc:LayoutItem>
                 <StackPanel Orientation="Horizontal" MaxHeight="60">
                     <Label Content="Примечания: " VerticalAlignment="Top" />
                     <dxe:TextEdit MinHeight="40"
                                   MaxHeight="60"
                                   MinWidth="500"
-                                  Margin="16 0"
+                                  Margin="62 0"
                                   VerticalContentAlignment="Top"
                                   EditValue="{Binding Document.Note, UpdateSourceTrigger=PropertyChanged}" />
                 </StackPanel>
