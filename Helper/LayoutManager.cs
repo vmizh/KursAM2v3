@@ -233,7 +233,7 @@ namespace Helper
             using (var redisClient = redisManager.GetClient())
             {
                 redisClient.Db = 0;
-                if (redisClient.ContainsKey(key)) redisClient.Remove(key);
+                redisClient.Remove(key);
 
                 if (window != null)
                 {

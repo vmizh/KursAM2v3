@@ -2185,6 +2185,8 @@
         <AssociationConnector Association="ALFAMEDIA.FK_SD_33_ProjectId" />
         <AssociationConnector Association="ALFAMEDIA.FK_SD_34_ProjectId" />
         <AssociationConnector Association="ALFAMEDIA.FK_TD_101_ProjectId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_AccruedAmountForClient_ProjectId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_AccruedAmountOfSupplier_ProjectId" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>
