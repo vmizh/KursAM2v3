@@ -42,6 +42,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private readonly ISubscriber mySubscriber;
         private readonly ConnectionMultiplexer redis;
 
+        public override bool IsDocNewCopyAllow => CurrentDocument is not null;
+        public override bool IsDocNewCopyRequisiteAllow => CurrentDocument is not null;
+        public override bool IsDocumentOpenAllow => CurrentDocument != null;
+
+
+
+
 
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));

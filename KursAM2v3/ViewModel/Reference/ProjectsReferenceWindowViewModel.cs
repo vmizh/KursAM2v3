@@ -221,7 +221,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
 
     public ICommand AddProjectCommand
     {
-        get { return new Command(AddNewProject, _ => CurrentProject != null); }
+        get { return new Command(AddNewProject, _ => true); }
     }
 
     private void AddNewProject(object obj)

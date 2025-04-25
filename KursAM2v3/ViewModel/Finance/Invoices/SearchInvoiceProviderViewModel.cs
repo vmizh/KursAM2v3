@@ -42,6 +42,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private readonly ISubscriber mySubscriber;
         private readonly ConnectionMultiplexer redis;
 
+        public override bool IsDocNewCopyAllow => CurrentDocument is not null;
+        public override bool IsDocNewCopyRequisiteAllow => CurrentDocument is not null;
+        public override bool IsDocumentOpenAllow => CurrentDocument != null;
+
+
         // ReSharper disable once NotAccessedField.Local
         public IInvoiceProviderRepository InvoiceProviderRepository;
 

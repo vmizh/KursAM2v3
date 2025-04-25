@@ -48,6 +48,8 @@ namespace KursAM2.ViewModel.Finance
         private CrossCurrencyRate myCurrentCurrencyRate;
 
 
+
+
         public MutualAcountingWindowViewModel()
         {
             // ReSharper disable once VirtualMemberCallInConstructor
@@ -81,6 +83,7 @@ namespace KursAM2.ViewModel.Finance
         public MutualAcountingWindowViewModel(decimal dc) : this()
         {
             RefreshData(dc);
+            CalcItogoSumma();
         }
 
         public new string WindowName => Document != null && Document.State != RowStatus.NewRow ? Document.Description :
@@ -557,6 +560,7 @@ namespace KursAM2.ViewModel.Finance
                 
                 Document.myState = RowStatus.NotEdited;
                 RaisePropertyChanged(nameof(IsCanSaveData));
+                CalcItogoSumma();
             }
             catch (Exception ex)
             {
