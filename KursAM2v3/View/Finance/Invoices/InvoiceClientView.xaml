@@ -344,9 +344,11 @@
                                            ShowAutoFilterRow="True">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Вставить связь" Command="{Binding AddStoreLinkCommand}" />
+                                         <!--
+                                       <MenuItem Header="Вставить связь" Command="{Binding AddStoreLinkCommand}" />
                                         <MenuItem Header="Удалить связь" Command="{Binding DeleteStoreLinkCommand}" />
                                         <Separator />
+                                        -->
                                         <MenuItem Header="Открыть документ"
                                                   Command="{Binding OpenStoreLinkDocumentCommand}" />
                                         <Separator />
