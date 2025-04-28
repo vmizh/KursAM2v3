@@ -185,7 +185,7 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
         ResponsibleEmployee = refCache.GetEmployee(entity.OTVETSTV_LICO);
         ResponsibleEmployeeDC = ((IDocCode)ResponsibleEmployee)?.DocCode;
         Currency = refCache.GetCurrency(entity.VALUTA_DC);
-        CurrencyDC = ((IDocCode)Currency)?.DocCode;
+        CurrencyDC = entity.VALUTA_DC;
         Group = refCache.GetKontragentGroup(entity.EG_ID);
         GroupDC = ((IDocCode)Group)?.DocCode;
         UpdateDate = entity.UpdateDate ?? DateTime.Now;

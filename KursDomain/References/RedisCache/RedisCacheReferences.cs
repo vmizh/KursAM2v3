@@ -2410,29 +2410,27 @@ public class RedisCacheReferences : IReferencesCache
                 DropAll<Bank>();
                 UpdateList(Banks.Values.Cast<Bank>(), now);
                 GetBanksAll();
-
-                Kontragents = (from entity in Context.SD_43.Include(_ => _.SD_2)
-                        select new Kontragent
-                        {
-                            DocCode = entity.DOC_CODE,
-                            StartBalans = entity.START_BALANS ?? new DateTime(2000, 1, 1),
-                            Name = entity.NAME,
-                            Notes = entity.NOTES,
-                            IsBalans = entity.FLAG_BALANS == 1,
-                            IsDeleted = entity.DELETED == 1,
-                            Id = entity.Id,
-                            CurrencyDC = entity.VALUTA_DC,
-                            GroupDC = entity.EG_ID,
-                            ResponsibleEmployeeTN = entity.OTVETSTV_LICO
-                            //ResponsibleEmployeeDC = entity.SD_2.DOC_CODE
-                        })
-                    .ToDictionary<Kontragent, decimal, IKontragent>(newItem => newItem.DocCode, newItem => newItem);
-
-                foreach (var k in Kontragents.Values.Cast<Kontragent>())
+                Kontragents.Clear();
+                foreach (var entity in Context.SD_43.Include(_ => _.SD_2))
                 {
-                    k.ResponsibleEmployeeDC = ((IDocCode)GetEmployee(k.ResponsibleEmployeeTN))?.DocCode;
+                    var  newItem = new Kontragent()
+                    {
+                        DocCode = entity.DOC_CODE,
+                        StartBalans = entity.START_BALANS ?? new DateTime(2000, 1, 1),
+                        Name = entity.NAME,
+                        Notes = entity.NOTES,
+                        IsBalans = entity.FLAG_BALANS == 1,
+                        IsDeleted = entity.DELETED == 1,
+                        Id = entity.Id,
+                        CurrencyDC = entity.VALUTA_DC,
+                        GroupDC = entity.EG_ID,
+                        ResponsibleEmployeeTN = entity.OTVETSTV_LICO
+                    };
+                    newItem.LoadFromEntity(entity, this);
+                    newItem.ResponsibleEmployeeDC = ((IDocCode)GetEmployee(newItem.ResponsibleEmployeeTN))?.DocCode;
+                    Kontragents.Add(newItem.DocCode, newItem);
+                    
                 }
-
                 DropAll<Kontragent>();
                 UpdateList2(Kontragents.Values.Cast<Kontragent>().ToList(), now);
 
