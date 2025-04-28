@@ -37,6 +37,9 @@ namespace KursAM2.ViewModel.Finance
         private SD_110ViewModel myCurrentDocument;
         private bool myIsConvert;
 
+        public override bool IsDocNewCopyAllow => CurrentDocument is not null;
+        public override bool IsDocNewCopyRequisiteAllow => CurrentDocument is not null;
+
 
         public MutualAccountingWindowSearchViewModel()
         {

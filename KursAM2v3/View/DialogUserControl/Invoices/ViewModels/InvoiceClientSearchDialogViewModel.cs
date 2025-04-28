@@ -44,6 +44,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         private bool _IsAllowMultipleSchet;
 
 
+
         #endregion
 
         #region Constructors
