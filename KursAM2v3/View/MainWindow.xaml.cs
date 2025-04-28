@@ -835,7 +835,7 @@ namespace KursAM2.View
                         {
                             Owner = Application.Current.MainWindow
                         };
-                        var mutCtx2 = new MutualAccountingWindowSearchViewModel
+                        var mutCtx2 = new MutualAccountingWindowSearchViewModel()
                         {
                             WindowName = "Поиск актов взаимозачета",
                             Form = form
@@ -848,11 +848,12 @@ namespace KursAM2.View
                         {
                             Owner = Application.Current.MainWindow
                         };
-                        form.DataContext = new MutualAccountingWindowSearchViewModel(true)
+                        var mutCtx3 = new MutualAccountingConvertWindowSearchViewModel()
                         {
                             WindowName = "Поиск актов конвертации",
                             Form = form
                         };
+                        form.DataContext = mutCtx3;
                         form.Show();
                         break;
                     case "Проекты":
