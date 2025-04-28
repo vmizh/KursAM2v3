@@ -1023,7 +1023,7 @@ public sealed class CashInViewModel : RSViewModelBase, IEntity<SD_33>
         Currency = GlobalOptions.ReferencesCache.GetCurrency(Entity.CRS_DC) as References.Currency;
         if (SFACT_DC != null) SFactName = SFact(SFACT_DC.Value);
         SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SHPZ_DC) as SDRSchet;
-        Project = GlobalOptions.ReferencesCache.GetSDRSchet(Entity.ProjectId) as Project;
+        Project = GlobalOptions.ReferencesCache.GetProject(Entity.ProjectId) as Project;
         BankAccount = GlobalOptions.ReferencesCache.GetBankAccount(BANK_RASCH_SCHET_DC) as BankAccount;
         if (RASH_ORDER_FROM_DC != null) RashodOrderFromName = RashodOrderFrom(RASH_ORDER_FROM_DC.Value);
         if (Entity.StockHolders != null)
