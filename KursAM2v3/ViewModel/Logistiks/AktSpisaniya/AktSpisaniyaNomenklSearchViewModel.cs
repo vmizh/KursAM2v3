@@ -132,7 +132,7 @@ namespace KursAM2.ViewModel.Logistiks.AktSpisaniya
         public override bool IsDocNewCopyAllow => false;
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
 
-        public override void DocumentOpen(object form)
+        protected override void DocumentOpen(object form)
         {
             DocumentsOpenManager.Open(DocumentType.AktSpisaniya, 0, CurrentDocument.Id);
         }

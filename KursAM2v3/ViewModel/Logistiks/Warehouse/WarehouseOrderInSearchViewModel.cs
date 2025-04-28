@@ -251,7 +251,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             //GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
         }
 
-        public override void DocumentOpen(object form)
+        protected override void DocumentOpen(object form)
         {
             if (CurrentDocument == null) return;
 

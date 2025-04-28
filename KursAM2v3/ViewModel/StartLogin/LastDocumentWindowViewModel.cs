@@ -128,7 +128,7 @@ namespace KursAM2.ViewModel.StartLogin
         //    return false;
         //}
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             if (CurrentLastDocument.Entity.DocDC == null && CurrentLastDocument.Entity.DocId == null) return;
             if (CurrentLastDocument.Entity.DocDC != null || CurrentLastDocument.Entity.DocId != null)

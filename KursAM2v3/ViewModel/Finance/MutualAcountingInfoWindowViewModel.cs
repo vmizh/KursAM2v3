@@ -181,7 +181,7 @@ namespace KursAM2.ViewModel.Finance
 
         #region Commands
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
         }
 

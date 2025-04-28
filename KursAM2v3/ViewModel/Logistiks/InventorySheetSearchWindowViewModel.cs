@@ -133,7 +133,7 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             var form = new InventorySheetView2
             {

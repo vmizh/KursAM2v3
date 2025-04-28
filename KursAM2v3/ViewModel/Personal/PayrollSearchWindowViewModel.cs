@@ -175,7 +175,7 @@ namespace KursAM2.ViewModel.Personal
             }
         }
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             PayRollVedomostSearch row;
             row = IsTemplate ? CurrentTemplate : CurrentVedomost;

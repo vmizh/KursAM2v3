@@ -16,6 +16,7 @@ public static class RedisMessageChannels
     public const string CashOut = "CashOut";
     public const string Bank = "BankTransaction";
     public const string MutualAccounting = "MutualAccounting";
+    public const string MutualAccountingConvert = "MutualAccountingConvert";
 
     public const string NomenklReturnOfClient = "NomenklReturnOfClient";
     public const string NomenklReturnToProvider = "NomenklReturnToProvider";

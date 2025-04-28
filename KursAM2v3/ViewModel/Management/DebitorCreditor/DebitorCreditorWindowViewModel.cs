@@ -506,7 +506,7 @@ namespace KursAM2.ViewModel.Management.DebitorCreditor
             }
         }
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             var WinManager = new WindowManager();
             using (var ctx = GlobalOptions.GetEntities())

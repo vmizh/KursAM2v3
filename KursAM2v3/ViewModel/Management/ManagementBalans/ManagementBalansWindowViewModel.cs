@@ -967,7 +967,7 @@ namespace KursAM2.ViewModel.Management.ManagementBalans
             RaisePropertyChanged(nameof(BalansStructure));
         }
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             if (CurrentExtendItem == null) return;
             switch (CurrentExtendItem.DocumentType)

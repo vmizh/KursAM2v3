@@ -298,7 +298,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             });
         }
 
-        public override void DocumentOpen(object form)
+        protected override void DocumentOpen(object form)
         {
             DocumentsOpenManager.Open(DocumentType.Waybill, CurrentDocument.DocCode);
         }

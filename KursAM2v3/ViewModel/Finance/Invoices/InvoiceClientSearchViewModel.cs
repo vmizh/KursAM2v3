@@ -535,7 +535,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             RaisePropertyChanged(nameof(Documents));
         }
 
-        public override void DocumentOpen(object form)
+        protected override void DocumentOpen(object form)
         {
             if (CurrentDocument == null) return;
             DocumentsOpenManager.Open(DocumentType.InvoiceClient, CurrentDocument.DocCode);

@@ -48,7 +48,7 @@ namespace KursAM2.ViewModel.StartLogin
             }
         }
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             // ReSharper disable once PossibleInvalidOperationException
             DocumentsOpenManager.Open((DocumentType)CurrentLastDocument.Entity.DocType,

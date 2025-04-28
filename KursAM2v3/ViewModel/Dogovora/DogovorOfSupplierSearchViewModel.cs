@@ -106,7 +106,7 @@ namespace KursAM2.ViewModel.Dogovora
 
         #region Commands
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             DocumentsOpenManager.Open(DocumentType.DogovorOfSupplier, 0, CurrentDocument.Id, this);
         }

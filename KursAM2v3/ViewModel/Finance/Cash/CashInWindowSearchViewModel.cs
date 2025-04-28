@@ -201,7 +201,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             }
         }
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             DocumentsOpenManager.Open(DocumentType.CashIn, CurrentDocument.DocCode);
         }

@@ -716,7 +716,7 @@ namespace KursAM2.ViewModel.Management
         public override bool IsDocumentOpenAllow => CurrentDocument != null &&
                                                     DocumentsOpenManager.IsDocumentOpen(CurrentDocument.DocTypeCode);
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             var WinManager = new WindowManager();
             if (CurrentDocument.DocTypeCode == DocumentType.Bank)

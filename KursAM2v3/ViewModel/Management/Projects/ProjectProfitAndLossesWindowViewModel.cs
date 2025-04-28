@@ -436,7 +436,7 @@ namespace KursAM2.ViewModel.Management
             RaisePropertyChanged(nameof(ExtendActual));
         }
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             DocumentsOpenManager.Open(CurrentExtend.DocTypeCode, CurrentExtend.DocCode);
         }

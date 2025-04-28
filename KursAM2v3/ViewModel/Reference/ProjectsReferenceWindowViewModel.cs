@@ -11,6 +11,7 @@ using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
+using DevExpress.XtraCharts.Native;
 using KursAM2.Dialogs;
 using KursAM2.Repositories.Projects;
 using KursAM2.View.KursReferences;

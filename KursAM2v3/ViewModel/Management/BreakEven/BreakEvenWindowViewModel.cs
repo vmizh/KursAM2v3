@@ -1153,7 +1153,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
             get { return new Command(DocumentOpen, _ => CurrentDocument != null); }
         }
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             DocumentsOpenManager.Open(DocumentType.InvoiceClient, CurrentDocument.DocCode);
         }

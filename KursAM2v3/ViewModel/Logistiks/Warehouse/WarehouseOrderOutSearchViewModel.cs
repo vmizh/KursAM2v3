@@ -319,7 +319,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
         }
 
-        public override void DocumentOpen(object form)
+        protected override void DocumentOpen(object form)
         {
             if (CurrentDocument == null) return;
             var ctx = new OrderOutWindowViewModel2(CurrentDocument.DocCode, GlobalOptions.ReferencesCache,

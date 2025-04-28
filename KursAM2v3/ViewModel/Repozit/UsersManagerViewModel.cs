@@ -260,7 +260,7 @@ namespace KursAM2.ViewModel.Repozit
             form.ShowDialog();
         }
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             var ctx = IsAdminUser
                 ? new UserOptionsWindowViewModel(TypeChangeUser.AdminUpdateUser, UserListCurrentItem.Name)

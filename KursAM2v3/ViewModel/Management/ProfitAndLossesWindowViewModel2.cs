@@ -1057,7 +1057,7 @@ namespace KursAM2.ViewModel.Management
                         : DocumentType.CurrencyConvertAccounting, CurrentCrsConvert.DocCode);
         }
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             switch (CurrentExtend.DocTypeCode)
             {

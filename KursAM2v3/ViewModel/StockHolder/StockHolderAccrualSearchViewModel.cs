@@ -41,7 +41,7 @@ namespace KursAM2.ViewModel.StockHolder
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument != null;
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             if (CurrentDocument == null) return;
             bool isDocExists;

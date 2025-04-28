@@ -40,7 +40,7 @@ namespace KursAM2.ViewModel.Finance
 
         public override bool IsDocumentOpenAllow => CurrentBankAccount != null && CurrentBankOperations != null;
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             if (CurrentBankOperations.IsCurrencyChange)
             {

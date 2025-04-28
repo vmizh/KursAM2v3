@@ -33,7 +33,7 @@ namespace KursAM2.ViewModel.StockHolder
 
         public override bool IsDocumentOpenAllow => CurrentMoneyDoc != null;
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             switch (CurrentMoneyDoc.DocumentName)
             {

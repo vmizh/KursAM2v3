@@ -665,7 +665,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
 
     [Display(AutoGenerateField = false)] public virtual bool IsDocumentOpenAllow { get; set; }
 
-    public virtual void DocumentOpen(object obj)
+    protected virtual void DocumentOpen(object obj)
     {
         //WindowManager.ShowFunctionNotReleased();
     }

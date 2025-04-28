@@ -562,7 +562,7 @@ namespace KursAM2.ViewModel.Management
             RaisePropertyChanged(nameof(Rashod));
         }
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             if (CurrentItem.DocumentType == DocumentType.Bank)
             {

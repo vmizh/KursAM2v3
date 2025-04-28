@@ -428,7 +428,7 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         public override bool IsDocNewCopyAllow => CurrentKontragent != null;
         public override bool IsDocDeleteAllow => CurrentKontragent != null;
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             var form = new KontragentCardView { Owner = Application.Current.MainWindow };
             var ctx = new KontragentCardWindowViewModel(CurrentKontragent.DocCode) { Form = form };

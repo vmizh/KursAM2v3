@@ -557,7 +557,7 @@ namespace KursAM2.ViewModel.Finance
                 }
 
                 UpdateDebitorCreditorCollections(null);
-                
+                CalcItogoSumma();
                 Document.myState = RowStatus.NotEdited;
                 RaisePropertyChanged(nameof(IsCanSaveData));
                 CalcItogoSumma();

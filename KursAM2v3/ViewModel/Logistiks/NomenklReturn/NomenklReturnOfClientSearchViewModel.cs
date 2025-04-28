@@ -138,7 +138,7 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
             frm.Show();
         }
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             if (CurrentDocument == null) return;
             DocumentsOpenManager.Open(
