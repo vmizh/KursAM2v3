@@ -28,7 +28,7 @@ namespace KursAM2.View.Helper
 
         public override bool IsDocumentOpenAllow => CurrentItem != null;
 
-        public override void DocumentOpen(object obj)
+        protected override void DocumentOpen(object obj)
         {
             DocumentHistoryManager.ShowDocument(CurrentItem.DocData);
         }

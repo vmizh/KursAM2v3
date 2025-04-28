@@ -10,14 +10,10 @@ namespace KursAM2.View.Base
     /// </summary>
     public partial class StandartSearchView 
     {
-        static StandartSearchView()
-        {
-            GridControlLocalizer.Active = new CustomDXGridLocalizer();
-        }
-
         public StandartSearchView()
         {
             InitializeComponent();
+            
         }
 
 
