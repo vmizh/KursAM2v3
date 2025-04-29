@@ -87,6 +87,12 @@
                                     ValidatesOnDataErrors=True,
                                     UpdateSourceTrigger=PropertyChanged}"
                                     IsTextEditable="False">
+                                    <dxe:ButtonEdit.Buttons>
+                                        <dxe:ButtonInfo 
+                                            GlyphKind="Cancel"
+                                            Command="{Binding ClearKontagentCommand}"
+                                            />
+                                    </dxe:ButtonEdit.Buttons>
                                     <dxmvvm:Interaction.Behaviors>
                                         <dxmvvm:EventToCommand EventName="DefaultButtonClick"
                                                                Command="{Binding KontragentSelectCommand}" />

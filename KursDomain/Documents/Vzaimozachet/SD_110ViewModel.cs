@@ -110,7 +110,7 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
         get
         {
             var ds = $"Дебиторы: {DebitorSumma:n2} {DebitorCurrency} (";
-            var debList = Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Select(_ => _.Kontragent).Distinct()
+            var debList = Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Select(_ => _.Kontragent).Distinct()
                 .ToList();
             ds = debList.Aggregate(ds, (current, cred) => current + $" {cred},");
             ds = ds.Remove(ds.Length - 1);

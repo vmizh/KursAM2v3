@@ -1205,14 +1205,10 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                 Rows.Add(newRow);
             }
 
-        sw1.Stop();
-        var sw2 = new Stopwatch();
-        sw2.Start();
         Summa = Rows.Sum(_ => _.Summa);
         LoadPayments();
         PaySumma = PaymentDocs.Sum(_ => _.Summa);
         LoadShipments();
-        sw2.Stop();
     }
 
     public void LoadShipments()
@@ -1279,10 +1275,11 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                         Currency = GlobalOptions.ReferencesCache.GetCurrency(c.VVT_CRS_DC) as References.Currency,
                         Note = c.VVT_DOC_NUM
                     });
-                foreach (var c in ctx.TD_110.Include(_ => _.SD_110)
+                foreach (var c in ctx.TD_110.Include(_ => _.SD_110).Include(_ => _.SD_110.SD_111)
                              .Where(_ => _.VZT_SFACT_DC == DocCode)
                              .ToList())
-                    PaymentDocs.Add(new InvoicePaymentDocument
+                {
+                    var newItem = new InvoicePaymentDocument
                     {
                         DocCode = c.DOC_CODE,
                         Code = c.CODE,
@@ -1296,7 +1293,25 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
                             GlobalOptions.ReferencesCache.GetCurrency(c.SD_110.CurrencyFromDC) as
                                 References.Currency,
                         Note = c.VZT_DOC_NOTES
-                    });
+                    };
+                    if (c.SD_110.SD_111.IsCurrencyConvert)
+                    {
+                        var vz = ctx.SD_110.Include(_ => _.TD_110).FirstOrDefault(_ => _.DOC_CODE == DocCode);
+                        if (vz is not null)
+                        {
+                            var sumCreditor = vz.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA) ??
+                                              0;
+                            var sumDebitor = vz.TD_110.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA) ?? 0;
+                            if (vz.CurrencyToDC == GlobalOptions.SystemProfile.NationalCurrency.DocCode)
+                                newItem.Rate = sumDebitor == 0 ? 0 : sumCreditor / sumDebitor;
+                            else if (vz.CurrencyFromDC == GlobalOptions.SystemProfile.NationalCurrency.DocCode)
+                                newItem.Rate = sumCreditor == 0 ? 0 : sumDebitor / sumCreditor;
+                            else
+                                newItem.Rate =sumDebitor == 0 ? 0 : sumCreditor / sumDebitor;
+                        }
+                    }
+                    PaymentDocs.Add(newItem);
+                }
             }
             else
             {

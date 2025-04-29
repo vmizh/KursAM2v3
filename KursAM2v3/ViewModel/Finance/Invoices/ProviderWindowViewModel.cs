@@ -752,9 +752,20 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (service.ShowDialog(MessageButton.YesNo, "Запрос", this) == MessageResult.Yes) Document.Contract = null;
         }
 
-        protected override void OnWindowLoaded(object obj)
+        public ICommand ClearKontagentCommand
         {
-            base.OnWindowLoaded(obj);
+            get
+            {
+                return new Command(ClearKontagent,
+                    _ => Document.Kontragent is not null && Document.Facts.Count == 0 &&
+                         Document.PaymentDocs.Count == 0);
+            }
+        }
+
+        private void ClearKontagent(object obj)
+        {
+            Document.Kontragent = null;
+            RaisePropertyChanged(nameof(IsCurrencyEnabled));
         }
 
         public ICommand DogovorSelectCommand

@@ -304,7 +304,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         set
         {
             if (Equals(GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_POST_DC), value)) return;
-            Entity.SF_POST_DC = value.DocCode;
+            Entity.SF_POST_DC = value?.DocCode ?? 0;
             RaisePropertyChanged();
         }
     }
