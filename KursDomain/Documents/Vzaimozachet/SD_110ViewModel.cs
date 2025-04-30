@@ -82,7 +82,7 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
         get
         {
             Entity.VZ_RIGHT_UCH_CRS_SUM =
-                Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0;
+                Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0;
             if (DebitorCurrency != CreditorCurrency)
                 Entity.VZ_PRIBIL_UCH_CRS_SUM = 0;
             else
@@ -96,7 +96,7 @@ public sealed class SD_110ViewModel : RSViewModelBase, IEntityDocument<SD_110, T
         get
         {
             Entity.VZ_LEFT_UCH_CRS_SUM =
-                Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0;
+                Rows?.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_CRS_SUMMA ?? 0) ?? 0;
             if (DebitorCurrency != CreditorCurrency)
                 Entity.VZ_PRIBIL_UCH_CRS_SUM = 0;
             else
