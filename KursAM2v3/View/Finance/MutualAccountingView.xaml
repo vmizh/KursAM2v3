@@ -88,7 +88,7 @@
                     AllowDefaultButton="False"
                     IsReadOnly="True"
                     Width="120"
-                    EditValue="{Binding Document.VZ_LEFT_UCH_CRS_SUM}"
+                    EditValue="{Binding Document.VZ_RIGHT_UCH_CRS_SUM}"
                     VerticalAlignment="Center" />
                 <dxe:ComboBoxEdit Width="60"
                                   Name="debitorCrscomboBoxEdit"
@@ -111,7 +111,7 @@
                     AllowDefaultButton="False"
                     IsReadOnly="True"
                     Width="120"
-                    EditValue="{Binding Document.VZ_RIGHT_UCH_CRS_SUM, Mode=OneWay}"
+                    EditValue="{Binding Document.VZ_LEFT_UCH_CRS_SUM, Mode=OneWay}"
                     VerticalAlignment="Center" />
                 <dxe:ComboBoxEdit Width="60"
                                   VerticalAlignment="Center"
