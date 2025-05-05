@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Linq;
-using System.Net;
 using System.Windows;
 using System.Windows.Input;
 using Core.EntityViewModel.CommonReferences;
@@ -13,7 +12,6 @@ using Core.ViewModel.Base;
 using Core.WindowsManager;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
-using DevExpress.XtraRichEdit.Model;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -558,7 +556,6 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
             }
 
             UpdateDebitorCreditorCollections(null);
-            CalcItogoSumma();
             Document.myState = RowStatus.NotEdited;
             RaisePropertyChanged(nameof(IsCanSaveData));
             CalcItogoSumma();
@@ -625,25 +622,18 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
         RaisePropertyChanged(nameof(Document));
         var res = Manager.Save(Document);
         if (IsCurrencyConvert)
-        {
             using (var ctx = GlobalOptions.GetEntities())
             {
                 foreach (var cred in CreditorCollection)
-                {
                     if (cred.SFProvider is not null)
                     {
                         var pay = ctx.ProviderInvoicePay.FirstOrDefault(_ =>
                             _.VZDC == Document.DocCode && _.VZCode == cred.Code);
-                        if (pay != null)
-                        {
-                            pay.Rate = CurrencyConvertRate;
-                        }
+                        if (pay != null) pay.Rate = CurrencyConvertRate;
                     }
-                }
 
                 ctx.SaveChanges();
             }
-        }
 
         DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.MutualAccounting), null,
             Document.DocCode, null, (string)Document.ToJson());
@@ -661,7 +651,9 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
             Document.DeletedRows.Clear();
         }
 
-        LastDocumentManager.SaveLastOpenInfo(DocumentType.MutualAccounting, null, Document.DocCode,
+        LastDocumentManager.SaveLastOpenInfo(
+            IsCurrencyConvert ? DocumentType.CurrencyConvertAccounting : DocumentType.MutualAccounting, null,
+            Document.DocCode,
             Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
         if (mySubscriber != null && mySubscriber.IsConnected())
         {
