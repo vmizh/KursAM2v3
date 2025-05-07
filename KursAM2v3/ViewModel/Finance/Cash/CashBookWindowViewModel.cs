@@ -60,7 +60,7 @@ namespace KursAM2.ViewModel.Finance.Cash
         public CashBookWindowViewModel(decimal cashDC) : this()
         {
             CurrentCash = GlobalOptions.ReferencesCache.GetCashBox(cashDC) as CashBox;
-            WindowName = WindowName + " " + CurrentCash.Name;
+            WindowName = WindowName + " " + CurrentCash?.Name;
         }
 
         #endregion

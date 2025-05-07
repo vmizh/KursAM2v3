@@ -88,6 +88,10 @@
     <Compile Include="Repositories\Base\IBaseRepository.cs" />
     <Compile Include="Repositories\CashRepositories\CashBook\CashBookRepository.cs" />
     <Compile Include="Repositories\CashRepositories\CashBook\ICashBookRepository.cs" />
+    <Compile Include="Repositories\CashRepositories\CashIn\CashInRepository.cs" />
+    <Compile Include="Repositories\CashRepositories\CashIn\ICashInRepository.cs" />
+    <Compile Include="Repositories\CashRepositories\CashOut\CashOutRepository.cs" />
+    <Compile Include="Repositories\CashRepositories\CashOut\ICashOutRepository.cs" />
     <Compile Include="ViewModels\MainWindowPermissionsViewModel.cs" />
     <Compile Include="ViewModels\RoleCreationWindowViewModel1.cs" />
     <Compile Include="ViewModels\UserCreationWindowViewModel.cs" />

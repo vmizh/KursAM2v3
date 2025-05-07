@@ -20,6 +20,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursRepositories.Repositories.CashRepositories.CashIn;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
@@ -76,6 +77,8 @@ namespace KursAM2.ViewModel.Finance.Cash
         private readonly ConnectionMultiplexer redis;
         private readonly ISubscriber mySubscriber;
 
+        readonly ICashInRepository myRepository;
+
         #endregion
 
         #region Constructors
@@ -87,6 +90,7 @@ namespace KursAM2.ViewModel.Finance.Cash
             IsDocDeleteAllow = true;
             IsCanSaveData = false;
             WindowName = $"Приходный кассовый ордер от {Document?.Kontragent} в {Document?.Cash?.Name}";
+            myRepository = new CashInRepository();
             try
             {
                 redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
@@ -228,9 +232,11 @@ namespace KursAM2.ViewModel.Finance.Cash
                 using (var context = GlobalOptions.GetEntities())
                 {
                     CashManager.InsertDocument(CashDocumentType.CashIn, Document);
-                    context.Database.ExecuteSqlCommand(
-                        $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SFACT_DC ?? 0)}");
-                    if ((BookView?.DataContext is CashBookWindowViewModel ctx))
+                    if (Document.SFACT_DC is not null && Document.SFACT_DC > 0)
+                        myRepository.UpdateSFClient(Document.SFACT_DC.Value);
+                    //context.Database.ExecuteSqlCommand(
+                    //    $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SFACT_DC ?? 0)}");
+                    if (BookView?.DataContext is CashBookWindowViewModel ctx)
                         ctx.RefreshActual(Document);
                 }
             }
@@ -238,14 +244,17 @@ namespace KursAM2.ViewModel.Finance.Cash
             if (Document.State == RowStatus.Edited)
             {
                 CashManager.UpdateDocument(CashDocumentType.CashIn, Document, oldDate);
-                using (var context = GlobalOptions.GetEntities())
-                {
-                    context.Database.ExecuteSqlCommand(
-                        $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SFACT_DC ?? 0)}");
-                    if (BookView?.DataContext is CashBookWindowViewModel ctx)
-                        ctx.RefreshActual(Document);
-                }
+                if (Document.SFACT_DC is not null && Document.SFACT_DC > 0)
+                    myRepository.UpdateSFClient(Document.SFACT_DC.Value);
+                if (BookView?.DataContext is CashBookWindowViewModel ctx)
+                    ctx.RefreshActual(Document);
+                //using (var context = GlobalOptions.GetEntities())
+                //{
+                //    context.Database.ExecuteSqlCommand(
+                //        $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SFACT_DC ?? 0)}");
+                //}
             }
+
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.CashIn), null,
                 Document.DocCode, null, (string)Document.ToJson());
 
@@ -302,11 +311,13 @@ namespace KursAM2.ViewModel.Finance.Cash
                 case MessageBoxResult.Yes:
                     var ctx = BookView?.DataContext as CashBookWindowViewModel;
                     CashManager.DeleteDocument(CashDocumentType.CashIn, Document);
-                    using (var context = GlobalOptions.GetEntities())
-                    {
-                        context.Database.ExecuteSqlCommand(
-                            $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SFACT_DC ?? 0)}");
-                    }
+                    if (Document.SFACT_DC is not null && Document.SFACT_DC > 0)
+                        myRepository.UpdateSFClient(Document.SFACT_DC.Value);
+                    //using (var context = GlobalOptions.GetEntities())
+                    //{
+                    //    context.Database.ExecuteSqlCommand(
+                    //        $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.SFACT_DC ?? 0)}");
+                    //}
 
                     if (Document.KONTRAGENT_DC != null)
                         RecalcKontragentBalans.CalcBalans((decimal)Document.KONTRAGENT_DC,
