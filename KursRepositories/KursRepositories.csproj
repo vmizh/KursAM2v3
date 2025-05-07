@@ -85,6 +85,9 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Repositories\Base\IBaseRepository.cs" />
+    <Compile Include="Repositories\CashRepositories\CashBook\CashBookRepository.cs" />
+    <Compile Include="Repositories\CashRepositories\CashBook\ICashBookRepository.cs" />
     <Compile Include="ViewModels\MainWindowPermissionsViewModel.cs" />
     <Compile Include="ViewModels\RoleCreationWindowViewModel1.cs" />
     <Compile Include="ViewModels\UserCreationWindowViewModel.cs" />
@@ -166,6 +169,7 @@
     <Resource Include="Images\CreateRole.png" />
     <Resource Include="Images\USers.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

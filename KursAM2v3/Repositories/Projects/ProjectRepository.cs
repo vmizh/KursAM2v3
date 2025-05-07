@@ -1,23 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using Data;
+using KursAM2.Repositories.RedisRepository;
+using KursDomain;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.Result;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace KursAM2.Repositories.Projects;
 
-public class ProjectRepository(ALFAMEDIAEntities context) : IProjectRepository
+public class ProjectRepository : IProjectRepository
 {
     private DbContextTransaction myTransaction = null;
+    private readonly ConnectionMultiplexer redis;
+    private readonly ISubscriber mySubscriber;
+    private ALFAMEDIAEntities myContext;
+
+
+    public ProjectRepository(ALFAMEDIAEntities context)
+    {
+        myContext = context;
+        redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+        mySubscriber = redis.GetSubscriber();
+    }
+
     public IBoolResult SaveReference(IEnumerable<Data.Projects> data, IEnumerable<Guid> deleteIds = null)
     {
-
-
-        if (deleteIds is not null && deleteIds.Any())
-            foreach (var id in deleteIds)
+        var delList = deleteIds is null ? new List<Guid>() : deleteIds.ToList();
+        if (deleteIds is not null && delList.Any())
+            foreach (var id in delList)
             {
-                var old = context.Projects
+                var old = myContext.Projects
                     .Include(_ => _.NomenklReturnToProvider)
                     .Include(_ => _.NomenklReturnOfClient)
                     .Include(_ => _.ProjectGroupLink)
@@ -31,7 +48,7 @@ public class ProjectRepository(ALFAMEDIAEntities context) : IProjectRepository
                     old.ProjectGroupLink.Count == 0
                     && old.NomenklReturnToProvider.Count == 0 && old.NomenklReturnOfClient.Count == 0)
                 { 
-                   context.Projects.Remove(old);
+                    myContext.Projects.Remove(old);
                 }
                 else
                 {
@@ -45,24 +62,23 @@ public class ProjectRepository(ALFAMEDIAEntities context) : IProjectRepository
 
         foreach (var p in data)
         {
-            if (context.Projects.Any(_ => _.Id == p.Id))
+            if (myContext.Projects.Any(_ => _.Id == p.Id))
             {
-                context.Projects.Attach(p);
-                context.Entry(p).State = EntityState.Modified;
+                myContext.Projects.Attach(p);
+                myContext.Entry(p).State = EntityState.Modified;
             }
             else
             {
-                context.Projects.Add(p);
+                myContext.Projects.Add(p);
             }
         }
-
-        //context.SaveChanges();
+        
         return new BoolResult { Result = true };
     }
 
     public IEnumerable<Data.Projects> LoadReference()
     {
-        return context.Projects.ToList();
+        return myContext.Projects.ToList();
     }
 
     
@@ -71,24 +87,24 @@ public class ProjectRepository(ALFAMEDIAEntities context) : IProjectRepository
         if (deleteGrpIds is not null && deleteGrpIds.Any())
             foreach (var id in deleteGrpIds)
             {
-                var old = context.ProjectGroups.Include(_ => _.ProjectGroupLink).FirstOrDefault(_ => _.Id == id);
+                var old = myContext.ProjectGroups.Include(_ => _.ProjectGroupLink).FirstOrDefault(_ => _.Id == id);
                 if (old?.ProjectGroupLink != null)
-                    context.ProjectGroupLink.RemoveRange(old.ProjectGroupLink);
-                if (old != null) context.ProjectGroups.Remove(old);
+                    myContext.ProjectGroupLink.RemoveRange(old.ProjectGroupLink);
+                if (old != null) myContext.ProjectGroups.Remove(old);
             }
 
         if (deleteLinkIds is not null && deleteLinkIds.Any())
             foreach (var id in deleteLinkIds)
             {
-                var old = context.ProjectGroupLink.FirstOrDefault(_ => _.Id == id);
+                var old = myContext.ProjectGroupLink.FirstOrDefault(_ => _.Id == id);
                 if (old == null) continue;
-                context.ProjectGroupLink.Remove(old);
+                myContext.ProjectGroupLink.Remove(old);
             }
 
         foreach (var p in data)
-            if (!context.ProjectGroups.Any(_ => _.Id == p.Id))
+            if (!myContext.ProjectGroups.Any(_ => _.Id == p.Id))
             {
-                context.ProjectGroups.Add(p);
+                myContext.ProjectGroups.Add(p);
             }
             //else
             //{
@@ -103,12 +119,12 @@ public class ProjectRepository(ALFAMEDIAEntities context) : IProjectRepository
 
     public IEnumerable<ProjectGroups> LoadGroups()
     {
-        return context.ProjectGroups.Include(_ => _.ProjectGroupLink).ToList();
+        return myContext.ProjectGroups.Include(_ => _.ProjectGroupLink).ToList();
     }
 
     public void BeginTransaction()
     {
-        myTransaction = context.Database.BeginTransaction();
+        myTransaction = myContext.Database.BeginTransaction();
     }
 
     public void CommitTransaction()
@@ -123,9 +139,30 @@ public class ProjectRepository(ALFAMEDIAEntities context) : IProjectRepository
             myTransaction.Rollback();
     }
 
+    public void UpdateCache()
+    {
+        if (mySubscriber != null && mySubscriber.IsConnected())
+        {
+            
+            var message = new RedisMessage
+            {
+                DocumentType = DocumentType.InvoiceProvider,
+                IsDocument = false,
+                Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник проектов"
+            };
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+            var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+            mySubscriber.Publish(
+                new RedisChannel(RedisMessageChannels.ProjectReference, RedisChannel.PatternMode.Auto), json);
+        }
+    }
+
     public void SaveChanges()
     {
-        if(context.ChangeTracker.HasChanges())
-            context.SaveChanges();
+        if(myContext.ChangeTracker.HasChanges())
+            myContext.SaveChanges();
     }
 }

@@ -94,6 +94,8 @@ namespace KursAM2.ViewModel.Period
             }
         }
 
+        public decimal ProfitCNY { get; set; }
+
         /// <summary>
         ///     Швейцарский франк
         /// </summary>
@@ -121,6 +123,8 @@ namespace KursAM2.ViewModel.Period
                 RaisePropertyChanged();
             }
         }
+
+        public decimal LossCNY { get; set; }
 
         /// <summary>
         ///     Швейцарский франк
@@ -235,6 +239,8 @@ namespace KursAM2.ViewModel.Period
             get => myResultUSD;
         }
 
+        public decimal ResultCNY { get; }
+
         public decimal ProfitEUR
         {
             set
@@ -289,6 +295,8 @@ namespace KursAM2.ViewModel.Period
             }
             get => myDilerUSD;
         }
+
+        public decimal DilerCNY { get; set; }
 
         public decimal DilerEUR
         {

@@ -14,6 +14,12 @@ namespace Data
     
     public partial class AccuredAmountForClientRow
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public AccuredAmountForClientRow()
+        {
+            this.ProjectDocuments = new HashSet<ProjectDocuments>();
+        }
+    
         public System.Guid Id { get; set; }
         public System.Guid DocId { get; set; }
         public decimal Summa { get; set; }
@@ -28,5 +34,7 @@ namespace Data
         public virtual TD_101 TD_101 { get; set; }
         public virtual SD_33 SD_33 { get; set; }
         public virtual SD_83 SD_83 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectDocuments> ProjectDocuments { get; set; }
     }
 }

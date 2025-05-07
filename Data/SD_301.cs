@@ -27,7 +27,6 @@ namespace Data
             this.EMP_PR_ROWS = new HashSet<EMP_PR_ROWS>();
             this.KONTR_BALANS_OPER_ARC = new HashSet<KONTR_BALANS_OPER_ARC>();
             this.NOM_CRS_PRICE = new HashSet<NOM_CRS_PRICE>();
-            this.ProjectsDocs = new HashSet<ProjectsDocs>();
             this.SCHET_FACT_KONTR_OUT = new HashSet<SCHET_FACT_KONTR_OUT>();
             this.SD_110 = new HashSet<SD_110>();
             this.SD_1101 = new HashSet<SD_110>();
@@ -155,8 +154,6 @@ namespace Data
         public virtual ICollection<KONTR_BALANS_OPER_ARC> KONTR_BALANS_OPER_ARC { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<NOM_CRS_PRICE> NOM_CRS_PRICE { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProjectsDocs> ProjectsDocs { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SCHET_FACT_KONTR_OUT> SCHET_FACT_KONTR_OUT { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

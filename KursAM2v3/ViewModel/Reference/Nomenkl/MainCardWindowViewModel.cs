@@ -101,7 +101,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         }
 
         public bool IsMultyCurrency =>
-            NomenklMain?.NomenklCollection.Count == 1 || NomenklMain?.State == RowStatus.NewRow;
+            NomenklMain?.NomenklCollection.Count > 1 || NomenklMain?.State == RowStatus.NewRow;
 
         public NomenklMainViewModel NomenklMain
         {

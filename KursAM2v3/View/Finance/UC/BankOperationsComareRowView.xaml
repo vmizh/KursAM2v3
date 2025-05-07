@@ -7,21 +7,19 @@
              xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
              xmlns:bank1="clr-namespace:KursDomain.Documents.Bank;assembly=KursDomain"
              mc:Ignorable="d"
-             d:DesignHeight="250" d:DesignWidth="500"
-             >
+             d:DesignHeight="350" d:DesignWidth="500">
     <UserControl.Resources>
         <!-- ReSharper disable once Xaml.RedundantResource -->
         <ControlTemplate x:Key="SummaTemplate" TargetType="dxe:PopupCalcEdit">
-            <Border x:Name="TextBoreder" >
-            </Border>
+            <Border x:Name="TextBoreder" />
             <ControlTemplate.Triggers>
                 <Trigger Property="IsEnabled" Value="true">
-                    <Setter TargetName="TextBoreder" Property="BorderBrush" Value="Blue"/>
-                    <Setter TargetName="TextBoreder" Property="BorderThickness" Value="2"/>
+                    <Setter TargetName="TextBoreder" Property="BorderBrush" Value="Blue" />
+                    <Setter TargetName="TextBoreder" Property="BorderThickness" Value="2" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="false">
-                    <Setter TargetName="TextBoreder" Property="BorderBrush" Value="Gainsboro"/>
-                    <Setter TargetName="TextBoreder" Property="BorderThickness" Value="1"/>
+                    <Setter TargetName="TextBoreder" Property="BorderBrush" Value="Gainsboro" />
+                    <Setter TargetName="TextBoreder" Property="BorderThickness" Value="1" />
                 </Trigger>
             </ControlTemplate.Triggers>
         </ControlTemplate>
@@ -30,18 +28,18 @@
             <Style.Triggers>
                 <Trigger Property="IsEnabled" Value="True">
                     <Setter Property="BorderBrush" Value="Blue" />
-                    <Setter Property="BorderThickness" Value="4"/>
+                    <Setter Property="BorderThickness" Value="4" />
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
                     <Setter Property="BorderBrush" Value="Gainsboro" />
-                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="BorderThickness" Value="0" />
                 </Trigger>
-                
+
             </Style.Triggers>
         </Style>
     </UserControl.Resources>
     <DockPanel>
-        <Label DockPanel.Dock="Top" Content="{Binding BankName}" Height= "25"
+        <Label DockPanel.Dock="Top" Content="{Binding BankName}" Height="25"
                Foreground="Blue" FontSize="16" Margin="10,0" />
         <dxlc:LayoutControl Orientation="Horizontal" VerticalAlignment="Stretch" MinHeight="275" Margin="0,40,0,-25">
             <dxlc:LayoutGroup Orientation="Vertical" Margin="0 0 15 0">
@@ -52,20 +50,20 @@
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Валюта">
                     <dxe:TextEdit HorizontalAlignment="Stretch"
-                              Height="25"
-                              EditValue="{Binding Currency, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                              Margin="0 0 0 5" 
-                              IsEnabled="False" />
+                                  Height="25"
+                                  EditValue="{Binding Currency, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                  Margin="0 0 0 5"
+                                  IsEnabled="False" />
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Тип контрагента">
                     <dxe:ComboBoxEdit HorizontalAlignment="Stretch"
-                              ItemsSource="{dxe:EnumItemsSource EnumType=bank1:BankOperationType}"
-                              Height="25"
-                              EditValue="{Binding BankOperationType, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                              Margin="0 0 0 5" 
-                              EditValueChanged="BaseEdit_OnEditValueChanged"
-                              IsEnabled="{Binding IsChangeTypeEnable}"
-                                      Name="TypeKontragent"/>
+                                      ItemsSource="{dxe:EnumItemsSource EnumType=bank1:BankOperationType}"
+                                      Height="25"
+                                      EditValue="{Binding BankOperationType, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                      Margin="0 0 0 5"
+                                      EditValueChanged="BaseEdit_OnEditValueChanged"
+                                      IsEnabled="{Binding IsChangeTypeEnable}"
+                                      Name="TypeKontragent" />
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Контрагент">
                     <dxe:ButtonEdit HorizontalAlignment="Stretch"
@@ -87,9 +85,33 @@
                                     Margin="0 0 0 5"
                                     DefaultButtonClick="Payment_OnDefaultButtonClick">
                         <dxe:ButtonEdit.Buttons>
-                            <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Cancel" Click="PaymentCancel_OnClick"/>
+                            <dxe:ButtonInfo ButtonKind="Simple" GlyphKind="Cancel" Click="PaymentCancel_OnClick" />
                         </dxe:ButtonEdit.Buttons>
                     </dxe:ButtonEdit>
+                </dxlc:LayoutItem>
+                <dxlc:LayoutItem Label="Проект: ">
+                        <dxe:ComboBoxEdit  HorizontalAlignment="Stretch"
+                                           Height="25"
+                                           IsTextEditable="False"
+                                           ItemsSource="{Binding ProjectList}"
+                                           SelectedItem="{Binding Project, ValidatesOnDataErrors=True,
+UpdateSourceTrigger=PropertyChanged}"
+                                           RenderTransformOrigin="0.5,0.5">
+                            <dxe:ComboBoxEdit.Buttons>
+                                <dxe:ButtonInfo Name="ProjectCancelButton"
+                                                GlyphKind="Cancel"
+                                                ToolTip="Удалить связь с проектом"
+                                                Command="{Binding ProjectCancelCommand}" />
+                            </dxe:ComboBoxEdit.Buttons>
+                            <dxe:ComboBoxEdit.RenderTransform>
+                                <TransformGroup>
+                                    <ScaleTransform />
+                                    <SkewTransform />
+                                    <RotateTransform Angle="0.5" />
+                                    <TranslateTransform />
+                                </TransformGroup>
+                            </dxe:ComboBoxEdit.RenderTransform>
+                        </dxe:ComboBoxEdit>
                 </dxlc:LayoutItem>
 
             </dxlc:LayoutGroup>
@@ -100,15 +122,14 @@
                         BorderBrush="Orange"
                         BorderThickness="1"
                         x:Name="borderIncoming">
-                    <dxe:PopupCalcEdit x:Name="Incoming"
-                                       Height="25"
-                                       Margin="0 0 0 5"
-                                       DisplayFormatString="n2"
-                                       EditValueChanged="Incoming_OnEditValueChanged"
-                                       ShowBorder="False"
-                                       Value="{Binding VVT_VAL_PRIHOD, Mode=TwoWay}" 
-                                       IsEnabled="{Binding IsPrihodSummaEnabled, UpdateSourceTrigger=PropertyChanged}">
-                    </dxe:PopupCalcEdit>
+                        <dxe:PopupCalcEdit x:Name="Incoming"
+                                           Height="25"
+                                           Margin="0 0 0 5"
+                                           DisplayFormatString="n2"
+                                           EditValueChanged="Incoming_OnEditValueChanged"
+                                           ShowBorder="False"
+                                           Value="{Binding VVT_VAL_PRIHOD, Mode=TwoWay}"
+                                           IsEnabled="{Binding IsPrihodSummaEnabled, UpdateSourceTrigger=PropertyChanged}" />
                     </Border>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Расход">
@@ -124,17 +145,16 @@
                             Value="{Binding VVT_VAL_RASHOD, Mode=TwoWay}"
                             IsEnabled="{Binding IsRashodSummaEnabled,  UpdateSourceTrigger=PropertyChanged}"
                             ShowBorder="False"
-                            Margin="0 0 0 5">
-                        </dxe:PopupCalcEdit>
-                        </Border>
+                            Margin="0 0 0 5" />
+                    </Border>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Счет доходов/расходов">
-                     <dxe:ComboBoxEdit HorizontalAlignment="Stretch"
-                              ItemsSource="{Binding SHPZList}"
-                              IsEnabled="{Binding IsSDREnable}"
-                              Height="25"
-                              SelectedItem="{Binding SHPZ, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
-                              Margin="0 0 0 5" />
+                    <dxe:ComboBoxEdit HorizontalAlignment="Stretch"
+                                      ItemsSource="{Binding SHPZList}"
+                                      IsEnabled="{Binding IsSDREnable}"
+                                      Height="25"
+                                      SelectedItem="{Binding SHPZ, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                                      Margin="0 0 0 5" />
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Счет фактура">
                     <dxe:ButtonEdit x:Name="SFNameButtonItem"
@@ -145,38 +165,36 @@
                                     EditValue="{Binding SFName, NotifyOnSourceUpdated=True,  NotifyOnTargetUpdated=True}"
                                     IsTextEditable="False"
                                     Margin="0 0 0 5"
-                                    DefaultButtonClick="SFName_OnDefaultButtonClick"
-                                    >
+                                    DefaultButtonClick="SFName_OnDefaultButtonClick">
                         <dxe:ButtonEdit.Buttons>
                             <dxe:ButtonInfo GlyphKind="Cancel"
-                                            Click="PaymentCancel_OnClick"
-                                            />
+                                            Click="PaymentCancel_OnClick" />
                         </dxe:ButtonEdit.Buttons>
                     </dxe:ButtonEdit>
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Прямые затраты">
                     <dxe:ButtonEdit EditValue="{Binding AccuredInfo, Mode=TwoWay}"
-                                  AcceptsReturn="True"
-                                  TextWrapping="Wrap"
-                                  IsReadOnly="True"
-                                  Margin="0 0 0 5" 
-                                  AllowDefaultButton="{Binding IsCanOpenAccured, UpdateSourceTrigger=PropertyChanged}"
-                                  DefaultButtonClick="AccuredEdit_OnDefaultButtonClick"/>
+                                    AcceptsReturn="True"
+                                    TextWrapping="Wrap"
+                                    IsReadOnly="True"
+                                    Margin="0 0 0 5"
+                                    AllowDefaultButton="{Binding IsCanOpenAccured, UpdateSourceTrigger=PropertyChanged}"
+                                    DefaultButtonClick="AccuredEdit_OnDefaultButtonClick" />
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Курс(справочно)">
-                    <dxe:PopupCalcEdit EditValue="{Binding CurrentBankOperations.CurrencyRateForReference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                    IsReadOnly="{Binding CurrentBankOperations.IsCurrencyRateNotCanSet, UpdateSourceTrigger=PropertyChanged}"
-                                    Margin="0 0 0 5" 
-                                    />
+                    <dxe:PopupCalcEdit
+                        EditValue="{Binding CurrentBankOperations.CurrencyRateForReference, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        IsReadOnly="{Binding CurrentBankOperations.IsCurrencyRateNotCanSet, UpdateSourceTrigger=PropertyChanged}"
+                        Margin="0 0 0 5" />
                 </dxlc:LayoutItem>
                 <dxlc:LayoutItem Label="Примечание" LabelVerticalAlignment="Top">
                     <dxe:TextEdit EditValue="{Binding VVT_DOC_NUM, Mode=TwoWay}"
                                   VerticalContentAlignment="Top"
-                                    AcceptsReturn="True"
-                                    TextWrapping="Wrap"
-                                    Height="55"
+                                  AcceptsReturn="True"
+                                  TextWrapping="Wrap"
+                                  Height="55"
                                   IsEnabled="{Binding IsNoteEnable}"
-                             Margin="0 0 0 5" />
+                                  Margin="0 0 0 5" />
                 </dxlc:LayoutItem>
             </dxlc:LayoutGroup>
         </dxlc:LayoutControl>

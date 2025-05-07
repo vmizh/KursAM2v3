@@ -21,7 +21,6 @@ namespace Data
             this.ProjectProviderPrihod = new HashSet<ProjectProviderPrihod>();
             this.ProjectProviderUslugi = new HashSet<ProjectProviderUslugi>();
             this.Projects1 = new HashSet<Projects>();
-            this.ProjectsDocs = new HashSet<ProjectsDocs>();
             this.NomenklReturnOfClient = new HashSet<NomenklReturnOfClient>();
             this.NomenklReturnToProvider = new HashSet<NomenklReturnToProvider>();
             this.ProjectGroupLink = new HashSet<ProjectGroupLink>();
@@ -31,6 +30,7 @@ namespace Data
             this.TD_101 = new HashSet<TD_101>();
             this.AccruedAmountForClient = new HashSet<AccruedAmountForClient>();
             this.AccruedAmountOfSupplier = new HashSet<AccruedAmountOfSupplier>();
+            this.ProjectDocuments = new HashSet<ProjectDocuments>();
         }
     
         public System.Guid Id { get; set; }
@@ -54,8 +54,6 @@ namespace Data
         public virtual ICollection<Projects> Projects1 { get; set; }
         public virtual Projects Projects2 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProjectsDocs> ProjectsDocs { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<NomenklReturnOfClient> NomenklReturnOfClient { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<NomenklReturnToProvider> NomenklReturnToProvider { get; set; }
@@ -73,5 +71,7 @@ namespace Data
         public virtual ICollection<AccruedAmountForClient> AccruedAmountForClient { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccruedAmountOfSupplier> AccruedAmountOfSupplier { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectDocuments> ProjectDocuments { get; set; }
     }
 }

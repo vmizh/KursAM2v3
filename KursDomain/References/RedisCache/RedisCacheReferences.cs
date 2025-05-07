@@ -5,6 +5,7 @@ using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.WindowsManager;
@@ -1944,9 +1945,12 @@ public class RedisCacheReferences : IReferencesCache
                     pipe.QueueCommand(r => r.GetValue(key.Key),
                         x =>
                         {
-                            x.LoadFromCache();
-                            if (Projects.ContainsKey(x.Id)) Projects[x.Id] = x;
-                            else Projects.Add(x.Id, x);
+                            if (x is not null)
+                            {
+                                x.LoadFromCache();
+                                if (Projects.ContainsKey(x.Id)) Projects[x.Id] = x;
+                                else Projects.Add(x.Id, x);
+                            }
                         });
 
                 pipe.Flush();
@@ -2817,74 +2821,6 @@ public class RedisCacheReferences : IReferencesCache
                 isNomenklCacheLoad = false;
         }
     }
-    //private void LoadCacheKeys(string name)
-    //{
-    //    if (!cacheKeysDict.ContainsKey(name))
-    //        cacheKeysDict.Add(name, new CacheKeys());
-    //    using (var redisClient = redisManager.GetClient())
-    //    {
-    //        redisClient.Db = GlobalOptions.RedisDBId ?? 0;
-    //        var keys = redisClient.GetKeysByPattern($"Cache:{name}:*").ToList();
-    //        cacheKeysDict[name].CachKeys.Clear();
-    //        foreach (var key in keys)
-    //            switch (name)
-    //            {
-    //                case "Kontragent":
-    //                case "Nomenkl":
-    //                    if (cacheKeysDict[name].CachKeys.Count > 0 && cacheKeysDict[name].CachKeys.Any(_ =>
-    //                            (_?.DocCode ?? 0) == Convert.ToDecimal(key.Split('@')[0].Split(':')[2])))
-    //                        continue;
-    //                    cacheKeysDict[name].CachKeys.AddCacheKey(new CachKey
-    //                    {
-    //                        DocCode = Convert.ToDecimal(key.Split('@')[0].Split(':')[2]),
-    //                        Id = Guid.Parse(key.Split('@')[0].Split(':')[3]),
-    //                        LastUpdate = Convert.ToDateTime(key.Split('@')[1]),
-    //                        Key = key
-    //                    });
-    //                    break;
-    //                case "Employee":
-    //                    if (cacheKeysDict[name].CachKeys.Count > 0 && cacheKeysDict[name].CachKeys.Any(_ =>
-    //                            (_?.DocCode ?? 0)  == Convert.ToDecimal(key.Split('@')[0].Split(':')[2])))
-    //                        continue;
-    //                    cacheKeysDict[name].CachKeys.AddCacheKey(new CachKey
-    //                    {
-    //                        DocCode = Convert.ToDecimal(key.Split('@')[0].Split(':')[2]),
-    //                        TabelNumber = Convert.ToInt32(key.Split('@')[0].Split(':')[3]),
-    //                        LastUpdate = Convert.ToDateTime(key.Split('@')[1]),
-    //                        Key = key
-    //                    });
-    //                    break;
-    //                case "NomenklMain":
-    //                case "Country":
-    //                case "Project":
-    //                    if (cacheKeysDict[name].CachKeys.Count > 0 && cacheKeysDict[name].CachKeys.Any(_ =>
-    //                            (_?.Id ?? Guid.Empty)  == Guid.Parse(key.Split('@')[0].Split(':')[2])))
-    //                        continue;
-    //                    cacheKeysDict[name].CachKeys.AddCacheKey(new CachKey
-    //                    {
-    //                        Id = Guid.Parse(key.Split('@')[0].Split(':')[2]),
-    //                        LastUpdate = Convert.ToDateTime(key.Split('@')[1]),
-    //                        Key = key
-    //                    });
-    //                    break;
-    //                default:
-    //                    if (cacheKeysDict[name].CachKeys.Count > 0 && cacheKeysDict[name].CachKeys.Any(_ =>
-    //                            _.DocCode == Convert.ToDecimal(key.Split('@')[0].Split(':')[2])))
-    //                        continue;
-    //                    cacheKeysDict[name].CachKeys.AddCacheKey(new CachKey
-    //                    {
-    //                        DocCode = Convert.ToDecimal(key.Split('@')[0].Split(':')[2]),
-    //                        LastUpdate = Convert.ToDateTime(key.Split('@')[1]),
-    //                        Key = key
-    //                    });
-    //                    break;
-    //            }
-
-    //        cacheKeysDict[name].LoadMoment = DateTime.Now;
-    //        if (name == "Nomenkl")
-    //            isNomenklCacheLoad = false;
-    //    }
-    //}
 
     private void UpdateReferences(string channel, string msg)
     {
@@ -3239,8 +3175,22 @@ public class RedisCacheReferences : IReferencesCache
                 else PayForms.Add(message.DocCode.Value, pf_item);
                 break;
             case RedisMessageChannels.ProjectReference:
-                if (message.Id is null) return;
-                GetProject(message.Id);
+                Projects.Clear();
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    var ddddd = ctx.Projects.AsNoTracking().ToList();
+                    foreach (var itemPrj in ctx.Projects.AsNoTracking().ToList())
+                    {
+                        var newItem = new Project();
+                        newItem.LoadFromEntity(itemPrj, this);
+                        if (!Projects.ContainsKey(newItem.Id))
+                            Projects.Add(newItem.Id, newItem);
+                    }
+
+                    DropAllGuid<Project>();
+                    UpdateListGuid(Projects.Values.Cast<Project>(), DateTime.Now);
+                    GetProjectsAll();
+                }
                 break;
             case RedisMessageChannels.ProductTypeReference:
                 if (message.DocCode is null) return;

@@ -181,7 +181,6 @@ public interface IKursContext
     public DbSet<ProjectProviderPrihod> ProjectProviderPrihod { get; set; }
     public DbSet<ProjectProviderUslugi> ProjectProviderUslugi { get; set; }
     public DbSet<Projects> Projects { get; set; }
-    public DbSet<ProjectsDocs> ProjectsDocs { get; set; }
     public DbSet<ProviderInvoicePay> ProviderInvoicePay { get; set; }
     public DbSet<REMAINS> REMAINS { get; set; }
     public DbSet<RequirementForShipping> RequirementForShipping { get; set; }
@@ -707,7 +706,6 @@ public interface IKursContext
     public DbSet<NomenklMoveForCalcCosts> NomenklMoveForCalcCosts { get; set; }
     public DbSet<NomenklMoveStore> NomenklMoveStore { get; set; }
     public DbSet<NomenklMoveWithPrice> NomenklMoveWithPrice { get; set; }
-    public DbSet<ProjectsDocuments> ProjectsDocuments { get; set; }
     public DbSet<ProjectsInfo> ProjectsInfo { get; set; }
     public DbSet<SD_2_CORR> SD_2_CORR { get; set; }
     public DbSet<SHOP_NOMENKL_MOVE_VIEW> SHOP_NOMENKL_MOVE_VIEW { get; set; }

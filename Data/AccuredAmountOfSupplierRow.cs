@@ -21,6 +21,7 @@ namespace Data
             this.TD_101 = new HashSet<TD_101>();
             this.DistributeNakladInfo = new HashSet<DistributeNakladInfo>();
             this.DistributeNakladInvoices = new HashSet<DistributeNakladInvoices>();
+            this.ProjectDocuments = new HashSet<ProjectDocuments>();
         }
     
         public System.Guid Id { get; set; }
@@ -41,5 +42,7 @@ namespace Data
         public virtual ICollection<DistributeNakladInfo> DistributeNakladInfo { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<DistributeNakladInvoices> DistributeNakladInvoices { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectDocuments> ProjectDocuments { get; set; }
     }
 }

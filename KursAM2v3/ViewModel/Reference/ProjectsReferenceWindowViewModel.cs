@@ -11,7 +11,6 @@ using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
-using DevExpress.XtraCharts.Native;
 using KursAM2.Dialogs;
 using KursAM2.Repositories.Projects;
 using KursAM2.View.KursReferences;
@@ -28,7 +27,10 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
     #region Fields
 
     private ProjectViewModel myCurrentProject;
-    private readonly IProjectRepository myPojectRepository = new ProjectRepository(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+
+    private readonly IProjectRepository myPojectRepository =
+        new ProjectRepository(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+
     private ProjectGroupViewModel myCurrentGroupProject;
     private ProjectViewModel myCurrentLinkGroupProject;
 
@@ -53,7 +55,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
 
     #region Properties
 
-    public override string LayoutName => "ProjectReferenceWindowViewModel";
+    public override string LayoutName => "ProjectReferenceWindowViewModel2";
     public override string WindowName => "Справочник проектов";
 
     public ObservableCollection<ProjectViewModel> Projects { set; get; } =
@@ -98,11 +100,9 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
             if (Equals(myCurrentGroupProject, value)) return;
             myCurrentGroupProject = value;
             LinkGroupProjects.Clear();
-            if(myCurrentGroupProject is not null)
+            if (myCurrentGroupProject is not null)
                 foreach (var prj in myCurrentGroupProject.Projects)
-                {
-                   LinkGroupProjects.Add(prj);
-                }
+                    LinkGroupProjects.Add(prj);
             RaisePropertyChanged();
         }
     }
@@ -122,7 +122,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
     public override bool IsCanSaveData => IsCanSave();
 
     #endregion
-    
+
     #region Methods
 
     private new bool IsCanSave()
@@ -131,7 +131,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
             GroupProjects.Any(_ => _.State != RowStatus.NotEdited) ||
             DeletedProjects.Count > 0 || DeletedGroupProjects.Count > 0)
             return Projects.All(p => p.Check());
-        
+
         return false;
     }
 
@@ -146,6 +146,24 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
 
     #region Commands
 
+    public ICommand AddSubProjectCommand
+    {
+        get { return new Command(AddSubProject, _ => CurrentProject is not null); }
+    }
+
+    private void AddSubProject(object obj)
+    {
+        var newRow = new ProjectViewModel
+        {
+            State = RowStatus.NewRow,
+            Id = Guid.NewGuid(),
+            ParentId = CurrentProject.Id,
+            DateStart = DateTime.Today
+        };
+        Projects.Add(newRow);
+        CurrentProject = newRow;
+    }
+
     public override void RefreshData(object obj)
     {
         Projects.Clear();
@@ -156,13 +174,9 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
         try
         {
             foreach (var prj in myPojectRepository.LoadReference())
-            {
-                Projects.Add(new ProjectViewModel(prj){myState = RowStatus.NotEdited });
-            }
+                Projects.Add(new ProjectViewModel(prj) { myState = RowStatus.NotEdited });
             foreach (var grp in myPojectRepository.LoadGroups())
-            {
-                GroupProjects.Add(new ProjectGroupViewModel(grp) {myState = RowStatus.NotEdited });
-            }
+                GroupProjects.Add(new ProjectGroupViewModel(grp) { myState = RowStatus.NotEdited });
         }
         catch (Exception ex)
         {
@@ -175,26 +189,26 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
         try
         {
             myPojectRepository.BeginTransaction();
-            var resultProj = myPojectRepository.SaveReference(Projects.Where(_ => _.State != RowStatus.NotEdited).Select(_ => _.Entity).ToList(),
+            var resultProj = myPojectRepository.SaveReference(
+                Projects.Where(_ => _.State != RowStatus.NotEdited).Select(_ => _.Entity).ToList(),
                 DeletedProjects.Any() ? DeletedProjects.Select(_ => _.Id).ToList() : null);
-            var resultGroup = myPojectRepository.SaveGroups(GroupProjects.Where(_ => _.State != RowStatus.NotEdited).Select(_ => _.Entity).ToList(),
-                DeletedGroupProjects.Any() ? DeletedGroupProjects.Select(_ => _.Id).ToList() : null, GroupProjLinkDeleted);
-            
+            var resultGroup = myPojectRepository.SaveGroups(
+                GroupProjects.Where(_ => _.State != RowStatus.NotEdited).Select(_ => _.Entity).ToList(),
+                DeletedGroupProjects.Any() ? DeletedGroupProjects.Select(_ => _.Id).ToList() : null,
+                GroupProjLinkDeleted);
+
             if (!resultProj.Result || !resultGroup.Result)
             {
-                WindowManager.ShowMessage($"{resultProj.ErrorText}\n{resultGroup.ErrorText}","Ошибка сохранения",MessageBoxImage.Error);
+                WindowManager.ShowMessage($"{resultProj.ErrorText}\n{resultGroup.ErrorText}", "Ошибка сохранения",
+                    MessageBoxImage.Error);
                 return;
             }
+
             myPojectRepository.SaveChanges();
-            myPojectRepository.CommitTransaction(); 
-            foreach (var p in Projects)
-            {
-                p.myState = RowStatus.NotEdited;
-            }
-            foreach (var g in GroupProjects)
-            {
-                g.myState = RowStatus.NotEdited;
-            }
+            myPojectRepository.CommitTransaction();
+            myPojectRepository.UpdateCache();
+            foreach (var p in Projects) p.myState = RowStatus.NotEdited;
+            foreach (var g in GroupProjects) g.myState = RowStatus.NotEdited;
             DeletedProjects.Clear();
             DeletedGroupProjects.Clear();
             GroupProjLinkDeleted.Clear();
@@ -208,21 +222,21 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
 
     public ICommand DeleteManagerCommand
     {
-        get { return new Command(ManagerSetToNull, _ => CurrentProject != null && CurrentProject.Responsible is not null); }
+        get
+        {
+            return new Command(ManagerSetToNull, _ => CurrentProject != null && CurrentProject.Responsible is not null);
+        }
     }
 
     private void ManagerSetToNull(object obj)
     {
         CurrentProject.Responsible = null;
-        if (Form is ProjectReferenceView frm)
-        {
-            frm.tableViewProjects.CloseEditor();
-        }
+        if (Form is ProjectReferenceView frm) frm.tableViewProjects.CloseEditor();
     }
 
     public ICommand AddProjectCommand
     {
-        get { return new Command(AddNewProject, _ => true); }
+        get { return new Command(AddNewProject, _ => CurrentProject == null || CurrentProject.ParentId == null); }
     }
 
     private void AddNewProject(object obj)
@@ -243,7 +257,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
         get
         {
             return new Command(DeleteProject,
-                _ => CurrentProject != null);
+                _ => CurrentProject != null && Projects.All(x => x.ParentId != CurrentProject.Id));
         }
     }
 
@@ -277,7 +291,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
 
     private void DeleteGroupProject(object obj)
     {
-        if(CurrentGroupProject.State != RowStatus.NewRow)
+        if (CurrentGroupProject.State != RowStatus.NewRow)
             DeletedGroupProjects.Add(CurrentGroupProject);
         GroupProjects.Remove(CurrentGroupProject);
     }
@@ -296,14 +310,15 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
         {
             LinkGroupProjects.Add(prj);
             CurrentGroupProject.Projects.Add(prj);
-            CurrentGroupProject.Entity.ProjectGroupLink.Add(new ProjectGroupLink()
+            CurrentGroupProject.Entity.ProjectGroupLink.Add(new ProjectGroupLink
             {
                 Id = Guid.NewGuid(),
                 GroupId = CurrentGroupProject.Id,
                 ProjectId = prj.Id
             });
         }
-        if(CurrentGroupProject.myState != RowStatus.NewRow)
+
+        if (CurrentGroupProject.myState != RowStatus.NewRow)
             CurrentGroupProject.myState = RowStatus.Edited;
     }
 
@@ -320,7 +335,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
         if (link is not null)
         {
             CurrentGroupProject.Entity.ProjectGroupLink.Remove(link);
-            if(CurrentGroupProject.myState != RowStatus.NewRow)
+            if (CurrentGroupProject.myState != RowStatus.NewRow)
                 CurrentGroupProject.myState = RowStatus.Edited;
             GroupProjLinkDeleted.Add(link.Id);
         }
@@ -332,13 +347,12 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
         base.UpdateVisualObjects();
         if (Form is ProjectReferenceView frm)
         {
-            frm.gridGroupProjects.TotalSummary.Clear();
+            frm.gridProjects.TotalSummary.Clear();
             foreach (var col in frm.gridProjects.Columns)
-            {
                 switch (col.FieldName)
                 {
                     case "Name":
-                        frm.gridProjects.TotalSummary.Add(new GridSummaryItem()
+                        frm.gridProjects.TotalSummary.Add(new TreeListSummaryItem
                         {
                             FieldName = col.FieldName,
                             SummaryType = SummaryItemType.Count,
@@ -348,9 +362,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
                         });
                         break;
                 }
-            }
         }
-
     }
 
     #endregion

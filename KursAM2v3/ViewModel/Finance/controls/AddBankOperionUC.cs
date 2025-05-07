@@ -33,6 +33,7 @@ namespace KursAM2.ViewModel.Finance.controls
         private bool myIsNotCurrencyChange;
         private bool myIsSDREnable;
         private bool myIsNoteEnable;
+        private Project myProject;
 
 
         public AddBankOperionUC()
@@ -90,7 +91,8 @@ namespace KursAM2.ViewModel.Finance.controls
                     AccuredId = row.AccuredId,
                     AccuredInfo = row.AccuredInfo,
                     CurrencyRateForReference = row.CurrencyRateForReference,
-                    Employee = row.Employee
+                    Employee = row.Employee,
+                    Project = row.Project
                 };
             }
             RaisePropertyChanged(nameof(IsNotCurrencyChange));
@@ -132,6 +134,9 @@ namespace KursAM2.ViewModel.Finance.controls
                                                   || IsNotCurrencyChange;
 
         public string KontragentName => CurrentBankOperations?.KontragentName;
+
+        public List<Project> ProjectList { set; get; } =
+            GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>().OrderBy(_ => _.Name).ToList();
 
         public bool IsCanOpenAccured => CurrentBankOperations.AccuredId != null;
 
@@ -403,6 +408,27 @@ namespace KursAM2.ViewModel.Finance.controls
                 RaisePropertyChanged();
             }
             get => CurrentBankOperations.Date;
+        }
+
+        public Project Project
+        {
+            set
+            {
+                if (Equals(value, CurrentBankOperations.Project)) return;
+                CurrentBankOperations.Project = value;
+                RaisePropertyChanged();
+            }
+            get => myProject;
+        }
+
+        public ICommand ProjectCancelCommand
+        {
+            get { return new Command(ProjectCancel, _ => Project is not null); }
+        }
+
+        private void ProjectCancel(object obj)
+        {
+            Project = null;
         }
 
         // ReSharper disable once IdentifierTypo

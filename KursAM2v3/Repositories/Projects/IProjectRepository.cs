@@ -16,6 +16,10 @@ public interface IProjectRepository
     void CommitTransaction();
     void RollbackTransaction();
 
+    void UpdateCache();
+
     void SaveChanges();
+
+
 
 }
