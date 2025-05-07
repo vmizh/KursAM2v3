@@ -13,12 +13,12 @@ using KursDomain.References;
 
 namespace KursAM2.ViewModel.Management.Projects
 {
-    public class ProjectSelectReferenceWindowViewModel : RSWindowViewModelBase
+    public class ProjectSelectReferenceWindowViewModelOld : RSWindowViewModelBase
     {
         private Project myCurrentProject;
         private ProjectReferenceSelectDialogUI myDataUserControl;
 
-        public ProjectSelectReferenceWindowViewModel()
+        public ProjectSelectReferenceWindowViewModelOld()
         {
             myDataUserControl = new ProjectReferenceSelectDialogUI();
             // ReSharper disable once VirtualMemberCallInConstructor
@@ -83,15 +83,15 @@ namespace KursAM2.ViewModel.Management.Projects
 
         private void OpenProjectReference(object obj)
         {
-            var form = new ProjectsView
-            {
-                Owner = Application.Current.MainWindow
-            };
-            form.DataContext = new ProjectWindowViewModel
-            {
-                Form = form
-            };
-            form.Show();
+            //var form = new ProjectsView
+            //{
+            //    Owner = Application.Current.MainWindow
+            //};
+            //form.DataContext = new ProjectWindowViewModelOld
+            //{
+            //    Form = form
+            //};
+            //form.Show();
         }
 
         #endregion

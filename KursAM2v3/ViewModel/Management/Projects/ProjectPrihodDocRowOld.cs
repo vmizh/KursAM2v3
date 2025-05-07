@@ -6,7 +6,7 @@ using KursDomain.References;
 
 namespace KursAM2.ViewModel.Management.Projects
 {
-    public class ProjectPrihodDistributeRow : ProjectPrihodDocRow
+    public class ProjectPrihodDistributeRowOldOld : ProjectPrihodDocRowOld
     {
         private decimal myDistributeSumma;
         public Project myProject;
@@ -68,7 +68,7 @@ namespace KursAM2.ViewModel.Management.Projects
         }
     }
 
-    public class ProjectPrihodDocRow : RSViewModelBase
+    public class ProjectPrihodDocRowOld : RSViewModelBase
     {
         private decimal myAccountDC;
         private string myCreator;

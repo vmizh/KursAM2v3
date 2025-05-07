@@ -16,10 +16,10 @@ using KursDomain.References;
 
 namespace KursAM2.ViewModel.Management.Projects
 {
-    public class ProjectProviderPrihodWindowViewModel : RSWindowViewModelBase
+    public class ProjectProviderPrihodWindowViewModelOld : RSWindowViewModelBase
     {
-        private ProjectPrihodDistributeRow myCurrentDistRow;
-        private ProjectPrihodDocRow myCurrentRowDocument;
+        private ProjectPrihodDistributeRowOldOld myCurrentDistRowOldOld;
+        private ProjectPrihodDocRowOld myCurrentRowOldDocument;
         private Project myDefaultProject;
         private DateTime myEndDate;
         private bool myIsAll;
@@ -30,7 +30,7 @@ namespace KursAM2.ViewModel.Management.Projects
         private DateTime myStartDate;
         private WindowManager winManager = new WindowManager();
 
-        public ProjectProviderPrihodWindowViewModel()
+        public ProjectProviderPrihodWindowViewModelOld()
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
@@ -41,7 +41,7 @@ namespace KursAM2.ViewModel.Management.Projects
             ProjectList = new List<Project>(GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>().ToList());
         }
 
-        public ProjectProviderPrihodWindowViewModel(Window form)
+        public ProjectProviderPrihodWindowViewModelOld(Window form)
         {
             Form = form;
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
@@ -50,27 +50,27 @@ namespace KursAM2.ViewModel.Management.Projects
             StartDate = EndDate.AddDays(-30);
         }
 
-        public ObservableCollection<ProjectPrihodDocRow> RowDocuments { set; get; } =
-            new ObservableCollection<ProjectPrihodDocRow>();
+        public ObservableCollection<ProjectPrihodDocRowOld> RowDocuments { set; get; } =
+            new ObservableCollection<ProjectPrihodDocRowOld>();
 
-        public ObservableCollection<ProjectPrihodDistributeRow> DistributeRows { set; get; } =
-            new ObservableCollection<ProjectPrihodDistributeRow>();
+        public ObservableCollection<ProjectPrihodDistributeRowOldOld> DistributeRows { set; get; } =
+            new ObservableCollection<ProjectPrihodDistributeRowOldOld>();
 
-        public ObservableCollection<ProjectPrihodDistributeRow> SelectedDistRows { set; get; } =
-            new ObservableCollection<ProjectPrihodDistributeRow>();
+        public ObservableCollection<ProjectPrihodDistributeRowOldOld> SelectedDistRows { set; get; } =
+            new ObservableCollection<ProjectPrihodDistributeRowOldOld>();
 
-        public ObservableCollection<ProjectPrihodDistributeRow> DeletedDistributeRows { set; get; } =
-            new ObservableCollection<ProjectPrihodDistributeRow>();
+        public ObservableCollection<ProjectPrihodDistributeRowOldOld> DeletedDistributeRows { set; get; } =
+            new ObservableCollection<ProjectPrihodDistributeRowOldOld>();
 
-        public ProjectPrihodDistributeRow CurrentDistRow
+        public ProjectPrihodDistributeRowOldOld CurrentDistRowOldOld
         {
-            get => myCurrentDistRow;
+            get => myCurrentDistRowOldOld;
             set
             {
-                if (Equals(myCurrentDistRow, value)) return;
-                myCurrentDistRow = value;
-                IsUsluga = !myCurrentDistRow?.IsUsluga ?? false;
-                IsNotUsluga = myCurrentDistRow?.IsUsluga ?? false;
+                if (Equals(myCurrentDistRowOldOld, value)) return;
+                myCurrentDistRowOldOld = value;
+                IsUsluga = !myCurrentDistRowOldOld?.IsUsluga ?? false;
+                IsNotUsluga = myCurrentDistRowOldOld?.IsUsluga ?? false;
                 RaisePropertyChanged();
             }
         }
@@ -136,9 +136,9 @@ namespace KursAM2.ViewModel.Management.Projects
             }
         }
 
-        public ProjectPrihodDocRow CurrentRowDocument
+        public ProjectPrihodDocRowOld CurrentRowOldDocument
         {
-            get => myCurrentRowDocument;
+            get => myCurrentRowOldDocument;
             set
             {
                 if (IsCanSaveData)
@@ -160,35 +160,35 @@ namespace KursAM2.ViewModel.Management.Projects
                     }
                 }
 
-                if (Equals(myCurrentRowDocument, value)) return;
-                myCurrentRowDocument = value;
-                if (myCurrentRowDocument == null) return;
-                if (!CurrentRowDocument.IsUsluga)
+                if (Equals(myCurrentRowOldDocument, value)) return;
+                myCurrentRowOldDocument = value;
+                if (myCurrentRowOldDocument == null) return;
+                if (!CurrentRowOldDocument.IsUsluga)
                 {
                     DistributeRows.Clear();
                     using (var ctx = GlobalOptions.GetEntities())
                     {
-                        foreach (var d in ctx.ProjectProviderPrihod.Where(_ => _.RowId == myCurrentRowDocument.Id)
+                        foreach (var d in ctx.ProjectProviderPrihod.Where(_ => _.RowId == myCurrentRowOldDocument.Id)
                                      .ToList())
                         {
                             var prj = GlobalOptions.ReferencesCache.GetProject(d.ProjectId) as Project;
-                            DistributeRows.Add(new ProjectPrihodDistributeRow
+                            DistributeRows.Add(new ProjectPrihodDistributeRowOldOld
                             {
                                 Id = d.Id,
                                 RowId = d.RowId,
-                                Price = CurrentRowDocument.Price,
+                                Price = CurrentRowOldDocument.Price,
                                 Quantity = d.Quantity,
-                                Date = CurrentRowDocument.Date,
-                                Nomenkl = myCurrentRowDocument.Nomenkl,
-                                NomenklNumber = myCurrentRowDocument.NomenklNumber,
-                                Kontragent = myCurrentRowDocument.Kontragent,
-                                NumNaklad = myCurrentRowDocument.NumNaklad,
-                                NumAccount = myCurrentRowDocument.NumAccount,
+                                Date = CurrentRowOldDocument.Date,
+                                Nomenkl = myCurrentRowOldDocument.Nomenkl,
+                                NomenklNumber = myCurrentRowOldDocument.NomenklNumber,
+                                Kontragent = myCurrentRowOldDocument.Kontragent,
+                                NumNaklad = myCurrentRowOldDocument.NumNaklad,
+                                NumAccount = myCurrentRowOldDocument.NumAccount,
                                 Project = prj,
                                 State = RowStatus.NotEdited,
                                 Note = d.Note,
                                 IsUsluga = false,
-                                Summa = myCurrentRowDocument.Summa
+                                Summa = myCurrentRowOldDocument.Summa
                             });
                         }
                     }
@@ -198,21 +198,21 @@ namespace KursAM2.ViewModel.Management.Projects
                     DistributeRows.Clear();
                     using (var ctx = GlobalOptions.GetEntities())
                     {
-                        foreach (var d in ctx.ProjectProviderUslugi.Where(_ => _.RowId == myCurrentRowDocument.Id)
+                        foreach (var d in ctx.ProjectProviderUslugi.Where(_ => _.RowId == myCurrentRowOldDocument.Id)
                                      .ToList())
                         {
                             var prj = GlobalOptions.ReferencesCache.GetProject(d.ProjectId) as Project;
-                            DistributeRows.Add(new ProjectPrihodDistributeRow
+                            DistributeRows.Add(new ProjectPrihodDistributeRowOldOld
                             {
                                 Id = d.Id,
                                 RowId = d.RowId,
                                 Summa = d.Summa,
-                                Date = CurrentRowDocument.Date,
-                                Nomenkl = myCurrentRowDocument.Nomenkl,
-                                NomenklNumber = myCurrentRowDocument.NomenklNumber,
-                                Kontragent = myCurrentRowDocument.Kontragent,
-                                NumNaklad = myCurrentRowDocument.NumNaklad,
-                                NumAccount = myCurrentRowDocument.NumAccount,
+                                Date = CurrentRowOldDocument.Date,
+                                Nomenkl = myCurrentRowOldDocument.Nomenkl,
+                                NomenklNumber = myCurrentRowOldDocument.NomenklNumber,
+                                Kontragent = myCurrentRowOldDocument.Kontragent,
+                                NumNaklad = myCurrentRowOldDocument.NumNaklad,
+                                NumAccount = myCurrentRowOldDocument.NumAccount,
                                 Project = prj,
                                 State = RowStatus.NotEdited,
                                 Note = d.Note,
@@ -249,8 +249,8 @@ namespace KursAM2.ViewModel.Management.Projects
             }
         }
 
-        public ObservableCollection<ProjectPrihodDocRow> SelectedItems { set; get; } =
-            new ObservableCollection<ProjectPrihodDocRow>();
+        public ObservableCollection<ProjectPrihodDocRowOld> SelectedItems { set; get; } =
+            new ObservableCollection<ProjectPrihodDocRowOld>();
 
         public DateTime EndDate
         {
@@ -381,7 +381,7 @@ namespace KursAM2.ViewModel.Management.Projects
                           && td24.DDT_NOMENKL_DC == sd83.DOC_CODE
                           && sd83.NOM_ED_IZM_DC == sd175.DOC_CODE
                     //&& prj.RowId == td24.Id
-                    select new ProjectPrihodDocRow
+                    select new ProjectPrihodDocRowOld
                     {
                         Id = td24.Id,
                         AccountDC = sd26.DOC_CODE,
@@ -409,7 +409,7 @@ namespace KursAM2.ViewModel.Management.Projects
                           && sd83.DOC_CODE == td26.SFT_NEMENKL_DC && sd83.NOM_0MATER_1USLUGA == 1
                           && sd26.SF_POSTAV_DATE >= StartDate && sd26.SF_POSTAV_DATE <= EndDate
                           && sd175.DOC_CODE == sd83.NOM_ED_IZM_DC
-                    select new ProjectPrihodDocRow
+                    select new ProjectPrihodDocRowOld
                     {
                         Id = td26.Id,
                         AccountDC = sd26.DOC_CODE,
@@ -458,7 +458,7 @@ namespace KursAM2.ViewModel.Management.Projects
             get
             {
                 return new Command(AddDistributeRowLink,
-                    _ => CurrentRowDocument != null);
+                    _ => CurrentRowOldDocument != null);
             }
         }
 
@@ -468,7 +468,7 @@ namespace KursAM2.ViewModel.Management.Projects
             foreach (var s in SelectedItems)
             {
                 if (s.Summa <= s.DistributeSumma) continue;
-                DistributeRows.Add(new ProjectPrihodDistributeRow
+                DistributeRows.Add(new ProjectPrihodDistributeRowOldOld
                 {
                     Id = Guid.NewGuid(),
                     RowId = s.Id,
@@ -492,30 +492,30 @@ namespace KursAM2.ViewModel.Management.Projects
 
         public ICommand DistributeRowChanged
         {
-            get { return new Command(DistributeRow, _ => CurrentDistRow != null); }
+            get { return new Command(DistributeRow, _ => CurrentDistRowOldOld != null); }
         }
 
         private void DistributeRow(object obj)
         {
-            if (CurrentDistRow.State == RowStatus.NotEdited)
-                CurrentDistRow.State = RowStatus.Edited;
+            if (CurrentDistRowOldOld.State == RowStatus.NotEdited)
+                CurrentDistRowOldOld.State = RowStatus.Edited;
             if (!(obj is CellValueChangedEventArgs arg)) return;
             if (arg.Column.FieldName != "Quantity" && arg.Column.FieldName != "Summa") return;
             if ((decimal)arg.Value <= 0)
             {
-                CurrentDistRow.Quantity = (decimal)arg.OldValue;
+                CurrentDistRowOldOld.Quantity = (decimal)arg.OldValue;
                 return;
             }
 
-            var curdoc = RowDocuments.FirstOrDefault(_ => _.Id == CurrentDistRow.RowId);
+            var curdoc = RowDocuments.FirstOrDefault(_ => _.Id == CurrentDistRowOldOld.RowId);
             if (curdoc == null) return;
             if (!curdoc.IsUsluga)
             {
                 var c = curdoc.DistributeQuantity + ((decimal)arg.Value - (decimal)arg.OldValue);
                 if (c > curdoc.Quantity)
                 {
-                    CurrentDistRow.Quantity = (decimal)arg.OldValue;
-                    CurrentDistRow.Summa = CurrentDistRow.Quantity * CurrentDistRow.Price;
+                    CurrentDistRowOldOld.Quantity = (decimal)arg.OldValue;
+                    CurrentDistRowOldOld.Summa = CurrentDistRowOldOld.Quantity * CurrentDistRowOldOld.Price;
                 }
                 else
                 {
@@ -524,12 +524,12 @@ namespace KursAM2.ViewModel.Management.Projects
             }
             else
             {
-                var c = DistributeRows.Where(_ => _.RowId == CurrentRowDocument.Id).Sum(s => s.Summa);
+                var c = DistributeRows.Where(_ => _.RowId == CurrentRowOldDocument.Id).Sum(s => s.Summa);
                 if (curdoc.Summa - c < 0)
-                    CurrentDistRow.Summa = (decimal)arg.OldValue;
+                    CurrentDistRowOldOld.Summa = (decimal)arg.OldValue;
                 else
                     curdoc.DistributeSumma =
-                        DistributeRows.Where(_ => _.RowId == CurrentRowDocument.Id).Sum(s => s.Summa);
+                        DistributeRows.Where(_ => _.RowId == CurrentRowOldDocument.Id).Sum(s => s.Summa);
             }
 
             RaisePropertyChanged(nameof(RowDocuments));
@@ -537,7 +537,7 @@ namespace KursAM2.ViewModel.Management.Projects
 
         public ICommand RemoveProjectLinkCommand
         {
-            get { return new Command(RemoveProjectLink, _ => SelectedDistRows.Count > 0 || CurrentDistRow != null); }
+            get { return new Command(RemoveProjectLink, _ => SelectedDistRows.Count > 0 || CurrentDistRowOldOld != null); }
         }
 
         private void RemoveProjectLink(object obj)
@@ -546,7 +546,7 @@ namespace KursAM2.ViewModel.Management.Projects
             if (SelectedDistRows.Count > 0)
                 foreach (var s in SelectedDistRows)
                     listId.Add(s.Id);
-            if (listId.All(_ => _ != CurrentDistRow.Id)) listId.Add(CurrentDistRow.Id);
+            if (listId.All(_ => _ != CurrentDistRowOldOld.Id)) listId.Add(CurrentDistRowOldOld.Id);
             foreach (var id in listId)
             {
                 var v = DistributeRows.FirstOrDefault(_ => _.Id == id);

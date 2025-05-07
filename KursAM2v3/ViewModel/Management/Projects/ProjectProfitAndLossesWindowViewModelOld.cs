@@ -26,7 +26,7 @@ using static System.Math;
 namespace KursAM2.ViewModel.Management
 {
     [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Global")]
-    public class ProjectProfitAndLossesWindowViewModel : RSWindowViewModelBase
+    public class ProjectProfitAndLossesWindowViewModelOld : RSWindowViewModelBase
     {
         private readonly List<Guid?> myTempIdList = new List<Guid?>();
         private readonly List<Guid?> myTempIdList2 = new List<Guid?>();
@@ -34,7 +34,7 @@ namespace KursAM2.ViewModel.Management
         private ProfitAndLossesMainRowViewModel myBalansFact;
         private CrossCurrencyRate myCurrentCurrencyRate;
         private ProfitAndLossesExtendRowViewModel myCurrentExtend;
-        private ProjectResultInfo myCurrentProject;
+        private ProjectResultInfoOld myCurrentProject;
         private DateTime myEndDate;
         private Currency myRecalcCurrency;
         private DateTime myStartDate;
@@ -45,7 +45,7 @@ namespace KursAM2.ViewModel.Management
 
         private string myWindowName;
 
-        public ProjectProfitAndLossesWindowViewModel()
+        public ProjectProfitAndLossesWindowViewModelOld()
         {
             manager = new ProfitAndLossesManager(this)
             {
@@ -145,7 +145,7 @@ namespace KursAM2.ViewModel.Management
             }
         }
 
-        public ProjectResultInfo CurrentProject
+        public ProjectResultInfoOld CurrentProject
         {
             get { return myCurrentProject; }
             set
@@ -884,15 +884,15 @@ namespace KursAM2.ViewModel.Management
                 manager.ProjectDocDC.Clear();
                 if (CurrentProject != null)
                 {
-                    using (var ctx = GlobalOptions.GetEntities())
-                    {
-                        var pdc = ctx.ProjectsDocs.Include(_ => _.Projects)
-                            .Where(_ => _.ProjectId == CurrentProject.Id).Select(_ => _.DocDC).ToList();
-                        foreach (var dc in pdc)
-                        {
-                            manager.ProjectDocDC.Add(dc);
-                        }
-                    }
+                    //using (var ctx = GlobalOptions.GetEntities())
+                    //{
+                    //    var pdc = ctx.ProjectsDocs.Include(_ => _.Projects)
+                    //        .Where(_ => _.ProjectId == CurrentProject.Id).Select(_ => _.DocDC).ToList();
+                    //    foreach (var dc in pdc)
+                    //    {
+                    //        manager.ProjectDocDC.Add(dc);
+                    //    }
+                    //}
                 }
 
                 manager.MyRates =
