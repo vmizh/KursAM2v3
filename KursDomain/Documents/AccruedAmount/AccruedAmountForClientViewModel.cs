@@ -70,7 +70,7 @@ public class AccruedAmountForClientViewModel : RSViewModelBase, IDataErrorInfo
 
     public override string ToString()
     {
-        return $"Прямой расход для клиентов №{DocInNum}/{DocExtNum} " +
+        return $"Прямая услуга для клиентов №{DocInNum}/{DocExtNum} " +
                $"от {DocDate.ToShortDateString()} Контрагент: {Kontragent} на сумму {Summa} " +
                $"{Currency}";
     }
