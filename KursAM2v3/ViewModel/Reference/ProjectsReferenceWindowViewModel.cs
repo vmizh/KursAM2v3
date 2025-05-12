@@ -12,13 +12,14 @@ using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Grid;
 using KursAM2.Dialogs;
-using KursAM2.Repositories.Projects;
 using KursAM2.View.KursReferences;
 using KursAM2.ViewModel.Reference.Dialogs;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursRepositories.Repositories.Base;
+using KursRepositories.Repositories.Projects;
 
 namespace KursAM2.ViewModel.Reference;
 
@@ -188,7 +189,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
     {
         try
         {
-            myPojectRepository.BeginTransaction();
+            ((IBaseRepository)myPojectRepository).BeginTransaction();
             var resultProj = myPojectRepository.SaveReference(
                 Projects.Where(_ => _.State != RowStatus.NotEdited).Select(_ => _.Entity).ToList(),
                 DeletedProjects.Any() ? DeletedProjects.Select(_ => _.Id).ToList() : null);
@@ -204,8 +205,8 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
                 return;
             }
 
-            myPojectRepository.SaveChanges();
-            myPojectRepository.CommitTransaction();
+            ((IBaseRepository)myPojectRepository).SaveChanges();
+            ((IBaseRepository)myPojectRepository).CommitTransaction();
             myPojectRepository.UpdateCache();
             foreach (var p in Projects) p.myState = RowStatus.NotEdited;
             foreach (var g in GroupProjects) g.myState = RowStatus.NotEdited;
@@ -215,7 +216,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
         }
         catch (Exception ex)
         {
-            myPojectRepository.RollbackTransaction();
+            ((IBaseRepository)myPojectRepository).RollbackTransaction();
             WindowManager.ShowError(ex);
         }
     }

@@ -131,6 +131,17 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
         get => Entity.Id;
     }
 
+    public override Guid? ParentId
+    {
+        set
+        {
+            if (Entity.ParentId == value) return;
+            Entity.ParentId = value;
+            RaisePropertyChanged();
+        }
+        get => Entity.ParentId;
+    }
+
     public override string Name
     {
         set
