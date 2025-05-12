@@ -253,15 +253,7 @@ namespace KursAM2.Dialogs
             return !ctx.DialogResult ? null : ctx.CurrentItem;
         }
 
-        public static Project SelectProject()
-        {
-            var ctx = new ProjectSelectReferenceWindowViewModel();
-            var dlg = new SelectDialogView {DataContext = ctx};
-            ctx.Form = dlg;
-            dlg.ShowDialog();
-            return !ctx.DialogResult ? null : ctx.CurrentProject;
-        }
-
+        
         public static BankAccount SelectBankAccount(Currency crs)
         {
             var ctx = new BankAccountSelectedDialog(crs);

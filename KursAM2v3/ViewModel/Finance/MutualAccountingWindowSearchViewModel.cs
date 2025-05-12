@@ -11,7 +11,6 @@ using DevExpress.Data;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
-using KursAM2.Managers.Base;
 using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.Finance;
@@ -21,6 +20,7 @@ using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.Repository.DocHistoryRepository;
+using KursRepositories.Repositories.MutualAccounting;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using Application = System.Windows.Application;
@@ -29,7 +29,8 @@ namespace KursAM2.ViewModel.Finance;
 
 public sealed class MutualAccountingWindowSearchViewModel : RSWindowSearchViewModelBase
 {
-    private readonly MutualAccountingManager manager = new MutualAccountingManager();
+    //private readonly MutualAccountingManager manager = new MutualAccountingManager();
+    private readonly IMutualAccountingRepository myMutAccRepository;
     private readonly ISubscriber mySubscriber;
 
     private readonly ConnectionMultiplexer redis;
@@ -38,6 +39,7 @@ public sealed class MutualAccountingWindowSearchViewModel : RSWindowSearchViewMo
 
     public MutualAccountingWindowSearchViewModel()
     {
+        myMutAccRepository = new MutualAccountingRepository(GlobalOptions.GetEntities());
         IsConvert = false;
         LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
         {
@@ -281,53 +283,12 @@ public sealed class MutualAccountingWindowSearchViewModel : RSWindowSearchViewMo
         Documents.Clear();
         try
         {
-            using (var ctx = GlobalOptions.GetEntities())
+            foreach (var d in myMutAccRepository.GetForDates(StartDate, EndDate, IsConvert))
             {
-                if (IsConvert)
-                {
-                    var data = ctx.SD_110
-                        .Include(_ => _.TD_110)
-                        .Include(_ => _.SD_111)
-                        .Include("TD_110.SD_26")
-                        .Include("TD_110.SD_301")
-                        .Include("TD_110.SD_3011")
-                        .Include("TD_110.SD_303")
-                        .Include("TD_110.SD_43")
-                        .Include("TD_110.SD_77")
-                        .Include("TD_110.SD_84")
-                        .Where(_ => _.VZ_DATE >= StartDate && _.VZ_DATE <= EndDate && _.SD_111.IsCurrencyConvert)
-                        .AsNoTracking()
-                        .ToList();
-                    foreach (var d in data)
-                    {
-                        var newDoc = new SD_110ViewModel(d) { IsOld = false };
-                        Documents.Add(newDoc);
-                    }
-                }
-                else
-                {
-                    var data = ctx.SD_110
-                        .Include(_ => _.TD_110)
-                        .Include(_ => _.SD_111)
-                        .Include("TD_110.SD_26")
-                        .Include("TD_110.SD_301")
-                        .Include("TD_110.SD_3011")
-                        .Include("TD_110.SD_303")
-                        .Include("TD_110.SD_43")
-                        .Include("TD_110.SD_77")
-                        .Include("TD_110.SD_84")
-                        .Where(_ => _.VZ_DATE >= StartDate && _.VZ_DATE <= EndDate && !_.SD_111.IsCurrencyConvert)
-                        .AsNoTracking()
-                        .ToList();
-                    foreach (var d in data)
-                    {
-                        var newDoc = new SD_110ViewModel(d);
-                        newDoc.IsOld = manager.CheckDocumentForOld(newDoc.DocCode);
-                        Documents.Add(newDoc);
-                    }
-                }
+                var newDoc = new SD_110ViewModel(d);
+                newDoc.IsOld = myMutAccRepository.CheckDocumentForOld(newDoc.DocCode);
+                Documents.Add(newDoc);
             }
-
             var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
             if (Documents.Count > 0)
             {
@@ -418,7 +379,7 @@ public sealed class MutualAccountingWindowSearchViewModel : RSWindowSearchViewMo
             Form = frm
         };
         ctx.CreateMenu();
-        ctx.Document = ctx.Manager.New();
+        ctx.Document = myMutAccRepository.New();
         frm.Show();
         frm.DataContext = ctx;
     }
@@ -491,9 +452,10 @@ public sealed class MutualAccountingWindowSearchViewModel : RSWindowSearchViewMo
 
 public sealed class MutualAccountingConvertWindowSearchViewModel : RSWindowSearchViewModelBase
 {
-    private readonly MutualAccountingManager manager = new MutualAccountingManager();
-    private readonly ISubscriber mySubscriber;
+    private readonly IMutualAccountingRepository myMutAccRepository;
 
+    //private readonly MutualAccountingManager manager = new MutualAccountingManager();
+    private readonly ISubscriber mySubscriber;
     private readonly ConnectionMultiplexer redis;
     private SD_110ViewModel myCurrentDocument;
     private bool myIsConvert;
@@ -501,6 +463,7 @@ public sealed class MutualAccountingConvertWindowSearchViewModel : RSWindowSearc
 
     public MutualAccountingConvertWindowSearchViewModel()
     {
+        myMutAccRepository = new MutualAccountingRepository(GlobalOptions.GetEntities());
         IsConvert = true;
         LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
         {
@@ -529,40 +492,6 @@ public sealed class MutualAccountingConvertWindowSearchViewModel : RSWindowSearc
             Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
         }
     }
-
-    //public MutualAccountingWindowSearchViewModel(bool isConvert) : this()
-    //{
-    //    //LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
-    //    //{
-    //    //    [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
-    //    //});
-    //    //RightMenuBar = MenuGenerator.StandartSearchRightBar(this);
-    //    ////StartDate = DateTime.Today.AddDays(-100);
-    //    //StartDate = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-    //    //EndDate = DateTime.Today;
-    //    IsConvert = isConvert;
-    //    try
-    //    {
-    //        redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
-    //        mySubscriber = redis.GetSubscriber();
-
-    //        if (mySubscriber.IsConnected())
-    //            mySubscriber.Subscribe(
-    //                new RedisChannel(RedisMessageChannels.MutualAccounting, RedisChannel.PatternMode.Auto),
-    //                (_, message) =>
-    //                {
-    //                    if (KursNotyficationService != null)
-    //                    {
-    //                        Console.WriteLine($@"Redis - {message}");
-    //                        Form.Dispatcher.Invoke(() => UpdateList(message));
-    //                    }
-    //                });
-    //    }
-    //    catch
-    //    {
-    //        Console.WriteLine($@"Redis {ConfigurationManager.AppSettings["redis.connection"]} не обнаружен");
-    //    }
-    //}
 
     public override bool IsDocNewCopyAllow => CurrentDocument is not null;
     public override bool IsDocNewCopyRequisiteAllow => CurrentDocument is not null;
@@ -656,49 +585,35 @@ public sealed class MutualAccountingConvertWindowSearchViewModel : RSWindowSearc
         var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
 
 
-        var dc = new List<decimal>(new[] { msg.DocCode.Value });
-        using (var ctx = GlobalOptions.GetEntities())
+        var dc = new List<decimal>([msg.DocCode.Value]);
+        if (msg.DocCode is null) return;
+        var d = myMutAccRepository.Get(msg.DocCode.Value);
+        if (d is null) return;
+        var data = new SD_110ViewModel(d);
+        var last = lastDocumentRopository.GetLastChanges(dc);
+        if (last.Count > 0)
         {
-            var d = ctx.SD_110
-                .Include(_ => _.TD_110)
-                .Include(_ => _.SD_111)
-                .Include("TD_110.SD_26")
-                .Include("TD_110.SD_301")
-                .Include("TD_110.SD_3011")
-                .Include("TD_110.SD_303")
-                .Include("TD_110.SD_43")
-                .Include("TD_110.SD_77")
-                .Include("TD_110.SD_84")
-                .AsNoTracking()
-                .FirstOrDefault(_ => _.DOC_CODE == msg.DocCode);
-
-            if (d is null) return;
-            var data = new SD_110ViewModel(d);
-            var last = lastDocumentRopository.GetLastChanges(dc);
-            if (last.Count > 0)
-            {
-                data.LastChanger = last.First().Value.Item1;
-                data.LastChangerDate = last.First().Value.Item2;
-            }
-            else
-            {
-                data.LastChanger = data.CREATOR;
-                data.LastChangerDate = data.VZ_DATE;
-            }
-
-            var old = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
-            if (old != null)
-                switch (msg.OperationType)
-                {
-                    case RedisMessageDocumentOperationTypeEnum.Update:
-                        var idx = Documents.IndexOf(old);
-                        Documents[idx] = data;
-                        break;
-                    case RedisMessageDocumentOperationTypeEnum.Create:
-                        Documents.Add(data);
-                        break;
-                }
+            data.LastChanger = last.First().Value.Item1;
+            data.LastChangerDate = last.First().Value.Item2;
         }
+        else
+        {
+            data.LastChanger = data.CREATOR;
+            data.LastChangerDate = data.VZ_DATE;
+        }
+
+        var old = Documents.FirstOrDefault(_ => _.DocCode == msg.DocCode);
+        if (old != null)
+            switch (msg.OperationType)
+            {
+                case RedisMessageDocumentOperationTypeEnum.Update:
+                    var idx = Documents.IndexOf(old);
+                    Documents[idx] = data;
+                    break;
+                case RedisMessageDocumentOperationTypeEnum.Create:
+                    Documents.Add(data);
+                    break;
+            }
     }
 
     public override void AddSearchList(object obj)
@@ -745,53 +660,12 @@ public sealed class MutualAccountingConvertWindowSearchViewModel : RSWindowSearc
         Documents.Clear();
         try
         {
-            using (var ctx = GlobalOptions.GetEntities())
+            foreach (var d in myMutAccRepository.GetForDates(StartDate, EndDate, IsConvert))
             {
-                if (IsConvert)
-                {
-                    var data = ctx.SD_110
-                        .Include(_ => _.TD_110)
-                        .Include(_ => _.SD_111)
-                        .Include("TD_110.SD_26")
-                        .Include("TD_110.SD_301")
-                        .Include("TD_110.SD_3011")
-                        .Include("TD_110.SD_303")
-                        .Include("TD_110.SD_43")
-                        .Include("TD_110.SD_77")
-                        .Include("TD_110.SD_84")
-                        .Where(_ => _.VZ_DATE >= StartDate && _.VZ_DATE <= EndDate && _.SD_111.IsCurrencyConvert)
-                        .AsNoTracking()
-                        .ToList();
-                    foreach (var d in data)
-                    {
-                        var newDoc = new SD_110ViewModel(d) { IsOld = false };
-                        Documents.Add(newDoc);
-                    }
-                }
-                else
-                {
-                    var data = ctx.SD_110
-                        .Include(_ => _.TD_110)
-                        .Include(_ => _.SD_111)
-                        .Include("TD_110.SD_26")
-                        .Include("TD_110.SD_301")
-                        .Include("TD_110.SD_3011")
-                        .Include("TD_110.SD_303")
-                        .Include("TD_110.SD_43")
-                        .Include("TD_110.SD_77")
-                        .Include("TD_110.SD_84")
-                        .Where(_ => _.VZ_DATE >= StartDate && _.VZ_DATE <= EndDate && !_.SD_111.IsCurrencyConvert)
-                        .AsNoTracking()
-                        .ToList();
-                    foreach (var d in data)
-                    {
-                        var newDoc = new SD_110ViewModel(d);
-                        newDoc.IsOld = manager.CheckDocumentForOld(newDoc.DocCode);
-                        Documents.Add(newDoc);
-                    }
-                }
+                var newDoc = new SD_110ViewModel(d);
+                newDoc.IsOld = myMutAccRepository.CheckDocumentForOld(newDoc.DocCode);
+                Documents.Add(newDoc);
             }
-
             var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
             if (Documents.Count > 0)
             {
@@ -830,35 +704,12 @@ public sealed class MutualAccountingConvertWindowSearchViewModel : RSWindowSearc
         Documents.Clear();
         try
         {
-            using (var ctx = GlobalOptions.GetEntities())
+            foreach (var d in myMutAccRepository.GetForDates(StartDate, EndDate).Where(_ =>
+                         _.VZ_NOTES?.ToUpper().Contains(SearchText.ToUpper()) ??
+                         _.VZ_NUM.ToString().Contains(SearchText)))
             {
-                var data = ctx.SD_110
-                    .Include(_ => _.TD_110)
-                    .Include(_ => _.SD_111)
-                    .Include("TD_110.SD_26")
-                    .Include("TD_110.SD_301")
-                    .Include("TD_110.SD_3011")
-                    .Include("TD_110.SD_303")
-                    .Include("TD_110.SD_43")
-                    .Include("TD_110.SD_77")
-                    .Include("TD_110.SD_84")
-                    .Where(_ => _.VZ_DATE >= StartDate && _.VZ_DATE <= EndDate)
-                    .ToList();
-                foreach (var d in data.Where(_ => _.VZ_NOTES?.ToUpper().Contains(SearchText.ToUpper()) ??
-                                                  _.VZ_NUM.ToString().Contains(SearchText)))
-                {
-                    var newDoc = new SD_110ViewModel(d);
-                    Documents.Add(newDoc);
-                }
-
-                foreach (var d in data)
-                foreach (var t in d.TD_110)
-                {
-                    if (!t.SD_43.NAME.ToUpper().Contains(SearchText.ToUpper()) ||
-                        Documents.Any(_ => _.DocCode == d.DOC_CODE)) continue;
-                    var newDoc = new SD_110ViewModel(d);
-                    Documents.Add(newDoc);
-                }
+                var newDoc = new SD_110ViewModel(d);
+                Documents.Add(newDoc);
             }
         }
         catch (Exception ex)
@@ -882,7 +733,7 @@ public sealed class MutualAccountingConvertWindowSearchViewModel : RSWindowSearc
             Form = frm
         };
         ctx.CreateMenu();
-        ctx.Document = ctx.Manager.New();
+        ctx.Document = myMutAccRepository.New();
         frm.Show();
         frm.DataContext = ctx;
     }

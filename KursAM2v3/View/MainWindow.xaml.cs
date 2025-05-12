@@ -29,6 +29,7 @@ using KursAM2.View.Logistiks;
 using KursAM2.View.Management;
 using KursAM2.View.Period;
 using KursAM2.View.Personal;
+using KursAM2.View.Projects;
 using KursAM2.View.Reconciliation;
 using KursAM2.View.Repozit;
 using KursAM2.View.Shop;
@@ -857,15 +858,14 @@ namespace KursAM2.View
                         form.Show();
                         break;
                     case "Проекты":
-                        var pctx = new ProjectWindowViewModel();
-                        form = new ProjectsView
+                        var pctx = new ProjectManagerWindowViewModel();
+                        form = new ProjectManager
                         {
                             Owner = Application.Current.MainWindow,
                             DataContext = pctx
                         };
                         pctx.Form = form;
                         form.Show();
-                        pctx.RefreshData(null);
                         break;
                     case "Справочник касс и банковских счетов":
                         var rcbctx = new BankAndCashReferenceViewModel();
@@ -918,18 +918,18 @@ namespace KursAM2.View
                         form2.Show();
                         break;
 
-                    case "Распределение приходов":
-                        var ctxProjectPrihod = new ProjectProviderPrihodWindowViewModel();
-                        form = new ProjectProviderPrihodView
-                        {
-                            Owner = Application.Current.MainWindow,
-                            DataContext = ctxProjectPrihod
-                        };
-                        ctxProjectPrihod.Form = form;
-                        form.Show();
-                        break;
+                    //case "Распределение приходов":
+                    //    var ctxProjectPrihod = new ProjectProviderPrihodWindowViewModelOld();
+                    //    form = new ProjectProviderPrihodView
+                    //    {
+                    //        Owner = Application.Current.MainWindow,
+                    //        DataContext = ctxProjectPrihod
+                    //    };
+                    //    ctxProjectPrihod.Form = form;
+                    //    form.Show();
+                    //    break;
                     //case "Прибыли и убытки по проектам":
-                    //    var ctxProjectProfitAndLoss = new ProjectProfitAndLossesWindowViewModel();
+                    //    var ctxProjectProfitAndLoss = new ProjectProfitAndLossesWindowViewModelOld();
                     //    form = new ProjectProfitAndLossView
                     //    {
                     //        Owner = Application.Current.MainWindow,

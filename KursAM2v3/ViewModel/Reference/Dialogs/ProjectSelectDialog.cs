@@ -5,11 +5,11 @@ using System.Linq;
 using System.Windows.Controls;
 using Core.ViewModel.Base;
 using DevExpress.Xpf.Grid;
-using KursAM2.Repositories.Projects;
 using KursAM2.View.Base;
 using KursDomain;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursRepositories.Repositories.Projects;
 
 namespace KursAM2.ViewModel.Reference.Dialogs;
 

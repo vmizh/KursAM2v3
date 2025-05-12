@@ -23,6 +23,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursRepositories.Repositories.CashRepositories.CashBook;
 
 namespace KursAM2.ViewModel.Finance.Cash
 {
@@ -36,6 +37,8 @@ namespace KursAM2.ViewModel.Finance.Cash
         private bool myIsPeriodEnabled;
         private ObservableCollection<DatePeriod> myPeriods;
 
+        private readonly ICashBookRepository myBookRepository;
+
         #endregion
 
         #region Constructors
@@ -48,6 +51,7 @@ namespace KursAM2.ViewModel.Finance.Cash
                 [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
             });
             RightMenuBar = SetMenuBar();
+            myBookRepository = new CashBookRepository();
             Periods = new ObservableCollection<DatePeriod>();
             IsPeriodEnabled = true;
             LayoutName = "CashBookWindow";
@@ -413,50 +417,51 @@ namespace KursAM2.ViewModel.Finance.Cash
         {
             var updData = StandartDialogs.SetCashRemains(CurrentCash);
             if (updData == null) return;
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                using (var transaction = ctx.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        foreach (var d in updData)
-                        {
-                            if (d.Currency == null) continue;
-                            var old = ctx.TD_22.FirstOrDefault(_ =>
-                                _.DOC_CODE == d.DOC_CODE && _.CRS_DC == d.Currency.DocCode);
-                            if (old == null)
-                            {
-                                var newCode = ctx.TD_22.Any(_ => _.DOC_CODE == d.DOC_CODE)
-                                    ? (int)ctx.TD_22.Max(_ => _.CODE) + 1
-                                    : 1;
-                                var newItem = new TD_22
-                                {
-                                    DOC_CODE = CurrentCash.DocCode,
-                                    CODE = newCode,
-                                    CRS_DC = d.CRS_DC,
-                                    DATE_START = d.DATE_START,
-                                    SUMMA_START = d.SUMMA_START
-                                };
-                                ctx.TD_22.Add(newItem);
-                            }
-                            else
-                            {
-                                old.DATE_START = d.DATE_START;
-                                old.SUMMA_START = d.SUMMA_START;
-                            }
+            myBookRepository.SetRemains(CurrentCash.DocCode, updData);
+            //using (var ctx = GlobalOptions.GetEntities())
+            //{
+            //    using (var transaction = ctx.Database.BeginTransaction())
+            //    {
+            //        try
+            //        {
+            //            foreach (var d in updData)
+            //            {
+            //                if (d.Currency == null) continue;
+            //                var old = ctx.TD_22.FirstOrDefault(_ =>
+            //                    _.DOC_CODE == d.DOC_CODE && _.CRS_DC == d.Currency.DocCode);
+            //                if (old == null)
+            //                {
+            //                    var newCode = ctx.TD_22.Any(_ => _.DOC_CODE == d.DOC_CODE)
+            //                        ? (int)ctx.TD_22.Max(_ => _.CODE) + 1
+            //                        : 1;
+            //                    var newItem = new TD_22
+            //                    {
+            //                        DOC_CODE = CurrentCash.DocCode,
+            //                        CODE = newCode,
+            //                        CRS_DC = d.CRS_DC,
+            //                        DATE_START = d.DATE_START,
+            //                        SUMMA_START = d.SUMMA_START
+            //                    };
+            //                    ctx.TD_22.Add(newItem);
+            //                }
+            //                else
+            //                {
+            //                    old.DATE_START = d.DATE_START;
+            //                    old.SUMMA_START = d.SUMMA_START;
+            //                }
 
-                            ctx.SaveChanges();
-                            transaction.Commit();
-                            return;
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        transaction.Rollback();
-                        WindowManager.ShowError(ex);
-                    }
-                }
-            }
+            //                ctx.SaveChanges();
+            //                transaction.Commit();
+            //                return;
+            //            }
+            //        }
+            //        catch (Exception ex)
+            //        {
+            //            transaction.Rollback();
+            //            WindowManager.ShowError(ex);
+            //        }
+            //    }
+            //}
         }
 
         public ICommand CashInNewCommand
@@ -498,30 +503,35 @@ namespace KursAM2.ViewModel.Finance.Cash
             Documents.Clear();
             try
             {
-                using (var ctx = GlobalOptions.GetEntities())
-                {
-                    var dates = new List<DateTime>();
-                    var d1 = ctx.TD_22.Where(_ => _.DOC_CODE == CurrentCash.DocCode).Select(_ => _.DATE_START);
-                    var dIn = ctx.SD_33.Where(_ => _.CA_DC == CurrentCash.DocCode).Select(_ => _.DATE_ORD).Distinct();
-                    var dOut = ctx.SD_34.Where(_ => _.CA_DC == CurrentCash.DocCode).Select(_ => _.DATE_ORD).Distinct();
-                    var dCrs = ctx.SD_251.Where(_ => _.CH_CASH_DC == CurrentCash.DocCode).Select(_ => _.CH_DATE)
-                        .Distinct();
-                    foreach (var i in d1) dates.Add(i);
-                    foreach (var i in dIn)
-                        if (dates.All(_ => _ != i))
-                            // ReSharper disable once PossibleInvalidOperationException
-                            dates.Add((DateTime)i);
-                    foreach (var i in dOut)
-                        if (dates.All(_ => _ != i))
-                            // ReSharper disable once PossibleInvalidOperationException
-                            dates.Add((DateTime)i);
-                    foreach (var i in dCrs)
-                        if (dates.All(_ => _ != i))
-                            dates.Add(i);
-                    Periods = new ObservableCollection<DatePeriod>(
-                        DatePeriod.GenerateIerarhy(dates, PeriodIerarhy.YearMonthDay)
-                            .OrderByDescending(_ => _.DateStart));
-                }
+
+                Periods = new ObservableCollection<DatePeriod>(
+                    DatePeriod.GenerateIerarhy(myBookRepository.GetOperationDates(CurrentCash.DocCode),
+                            PeriodIerarhy.YearMonthDay)
+                        .OrderByDescending(_ => _.DateStart));
+                //using (var ctx = GlobalOptions.GetEntities())
+                //{
+                //    var dates = new List<DateTime>();
+                //    var d1 = ctx.TD_22.Where(_ => _.DOC_CODE == CurrentCash.DocCode).Select(_ => _.DATE_START);
+                //    var dIn = ctx.SD_33.Where(_ => _.CA_DC == CurrentCash.DocCode).Select(_ => _.DATE_ORD).Distinct();
+                //    var dOut = ctx.SD_34.Where(_ => _.CA_DC == CurrentCash.DocCode).Select(_ => _.DATE_ORD).Distinct();
+                //    var dCrs = ctx.SD_251.Where(_ => _.CH_CASH_DC == CurrentCash.DocCode).Select(_ => _.CH_DATE)
+                //        .Distinct();
+                //    foreach (var i in d1) dates.Add(i);
+                //    foreach (var i in dIn)
+                //        if (dates.All(_ => _ != i))
+                //            // ReSharper disable once PossibleInvalidOperationException
+                //            dates.Add((DateTime)i);
+                //    foreach (var i in dOut)
+                //        if (dates.All(_ => _ != i))
+                //            // ReSharper disable once PossibleInvalidOperationException
+                //            dates.Add((DateTime)i);
+                //    foreach (var i in dCrs)
+                //        if (dates.All(_ => _ != i))
+                //            dates.Add(i);
+                //    Periods = new ObservableCollection<DatePeriod>(
+                //        DatePeriod.GenerateIerarhy(dates, PeriodIerarhy.YearMonthDay)
+                //            .OrderByDescending(_ => _.DateStart));
+                //}
             }
             catch (Exception ex)
             {

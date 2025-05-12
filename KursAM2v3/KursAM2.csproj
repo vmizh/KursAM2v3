@@ -227,9 +227,6 @@
     <Compile Include="Managers\Nomenkl\NomenklProductTypeManager.cs" />
     <Compile Include="Managers\Nomenkl\UnitManager.cs" />
     <Compile Include="Managers\PeriodGroupsRefenceManager.cs" />
-    <Compile Include="Managers\ProfitAndLossesManager.cs" />
-    <Compile Include="Managers\ProjectManager.cs" />
-    <Compile Include="Managers\ProjectsManager.cs" />
     <Compile Include="Managers\Invoices\InvoicesManager.cs" />
     <Compile Include="Managers\VersionManager.cs" />
     <Compile Include="Managers\Invoices\InvoiceSupplierManager.cs" />
@@ -262,8 +259,6 @@
     <Compile Include="Repositories\NomenklReturn\INomenklReturnToProviderRepository.cs" />
     <Compile Include="Repositories\NomenklReturn\NomenklReturnOfClientRepository.cs" />
     <Compile Include="Repositories\NomenklReturn\NomenklReturnToProviderRepository.cs" />
-    <Compile Include="Repositories\Projects\IProjectRepository.cs" />
-    <Compile Include="Repositories\Projects\ProjectRepository.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\IRefundFromClientRepository.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\RefundFromClientRepository.cs" />
     <Compile Include="Repositories\SD_24Repository.cs" />
@@ -378,6 +373,7 @@
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorClientViewModel.cs" />
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorProviderViewModel.cs" />
     <Compile Include="ViewModel\Management\ProfitAndLossCommonRow.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectManagerWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\VzaimozachetRow.cs" />
     <Compile Include="ViewModel\MenuSearchWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\AccruedAmountTypeWindowViewModel.cs" />
@@ -648,13 +644,6 @@
     </Compile>
     <Compile Include="ViewModel\Management\ProfitAndLossesWindowViewModel2.cs" />
     <Compile Include="ViewModel\Management\KontragentBalansRowViewModel.cs" />
-    <Compile Include="ViewModel\Management\Projects\ProjectPrihodDocRow.cs" />
-    <Compile Include="ViewModel\Management\Projects\ProjectProviderPrihodWindowViewModel.cs" />
-    <Compile Include="ViewModel\Management\Projects\ProjectProfitAndLossesWindowViewModel.cs" />
-    <Compile Include="ViewModel\Management\Projects\ProjectResultInfo.cs" />
-    <Compile Include="ViewModel\Management\Projects\ProjectSelectReferenceWindowViewModel.cs" />
-    <Compile Include="ViewModel\Management\Projects\ProjectDocumentViewModel.cs" />
-    <Compile Include="ViewModel\Management\Projects\ProjectWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\ManagementBalans\ManagementBalanceExtendRowViewModel.cs" />
     <Compile Include="ViewModel\Management\ManagementBalans\ManagementBalansCompareWindowViewModel.cs" />
     <Compile Include="ViewModel\Period\DataAnnotationsMultiCurrenciesDataPeriod.cs" />
@@ -1054,12 +1043,7 @@
     <Compile Include="View\Logistiks\PurchaseInvoicesOverheadsView.xaml.cs">
       <DependentUpon>PurchaseInvoicesOverheadsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Management\ProjectProviderPrihodView.xaml.cs">
-      <DependentUpon>ProjectProviderPrihodView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Management\ProjectsView.xaml.cs">
-      <DependentUpon>ProjectsView.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="View\Management\ProfitAndLossesManager.cs" />
     <Compile Include="View\Management\ShopRentabelnost.xaml.cs" />
     <Compile Include="View\KursReferences\KontragentReferenceView.xaml.cs">
       <DependentUpon>KontragentReferenceView.xaml</DependentUpon>
@@ -1078,6 +1062,9 @@
     </Compile>
     <Compile Include="View\Personal\PersonaAddUserRightsUC.xaml.cs">
       <DependentUpon>PersonaAddUserRightsUC.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Projects\ProjectManager.xaml.cs">
+      <DependentUpon>ProjectManager.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Repozit\PasswordVerificationView.xaml.cs">
       <DependentUpon>PasswordVerificationView.xaml</DependentUpon>
@@ -1939,14 +1926,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\Management\ProjectProviderPrihodView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Management\ProjectsView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\Management\ShopRentabelnost.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1972,6 +1951,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Personal\PersonaAddUserRightsUC.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Projects\ProjectManager.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -2630,6 +2613,10 @@
     <ProjectReference Include="..\KursDomain\KursDomain.csproj">
       <Project>{2892b43c-a8f8-4939-9f88-eab3b8f7108b}</Project>
       <Name>KursDomain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KursRepositories\KursRepositories.csproj">
+      <Project>{B61CB1C4-0C5D-4897-B7D4-250D3DB76D0C}</Project>
+      <Name>KursRepositories</Name>
     </ProjectReference>
     <ProjectReference Include="..\LayoutManager\LayoutManager.csproj">
       <Project>{0ac84fa1-a12e-414a-8d3e-ede48e795908}</Project>

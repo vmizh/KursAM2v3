@@ -23,6 +23,7 @@ namespace Data
             this.SD_33 = new HashSet<SD_33>();
             this.TD_101 = new HashSet<TD_101>();
             this.UD_281 = new HashSet<UD_281>();
+            this.ProjectDocuments = new HashSet<ProjectDocuments>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -98,5 +99,7 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<UD_281> UD_281 { get; set; }
         public virtual Projects Projects { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectDocuments> ProjectDocuments { get; set; }
     }
 }

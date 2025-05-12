@@ -180,7 +180,6 @@
         <EntityTypeShape EntityType="ALFAMEDIA.ProjectProviderPrihod" Width="1.5" PointX="9" PointY="643.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.ProjectProviderUslugi" Width="1.5" PointX="9" PointY="646.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.Projects" Width="1.5" PointX="6.75" PointY="644" IsExpanded="true" />
-        <EntityTypeShape EntityType="ALFAMEDIA.ProjectsDocs" Width="1.5" PointX="9" PointY="660.375" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.ProviderInvoicePay" Width="1.5" PointX="35.5" PointY="654.875" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.REMAINS" Width="1.5" PointX="28.75" PointY="1.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.RequirementForShipping" Width="1.5" PointX="22.5" PointY="713.125" IsExpanded="true" />
@@ -705,7 +704,6 @@
         <EntityTypeShape EntityType="ALFAMEDIA.NomenklMoveForCalcCosts" Width="1.5" PointX="35.75" PointY="21.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.NomenklMoveStore" Width="1.5" PointX="35.75" PointY="26.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.NomenklMoveWithPrice" Width="1.5" PointX="35.75" PointY="31.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="ALFAMEDIA.ProjectsDocuments" Width="1.5" PointX="35.75" PointY="36.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.ProjectsInfo" Width="1.5" PointX="36.75" PointY="1.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.SD_2_CORR" Width="1.5" PointX="36.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ALFAMEDIA.SHOP_NOMENKL_MOVE_VIEW" Width="1.5" PointX="4.75" PointY="37.75" IsExpanded="true" />
@@ -964,8 +962,6 @@
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectProviderPrihod_ProjectId" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectProviderUslugi_ProjectId" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIA.FK_Projects_ParentId" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIA.FK_ProjectsDocs_ProjectId" ManuallyRouted="false" />
-        <AssociationConnector Association="ALFAMEDIA.FK_ProjectsDocs_FactCrsDC" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProviderInvoicePay" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProviderInvoicePay_BankCode" ManuallyRouted="false" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProviderInvoicePay_CashDC" ManuallyRouted="false" />
@@ -2187,6 +2183,15 @@
         <AssociationConnector Association="ALFAMEDIA.FK_TD_101_ProjectId" />
         <AssociationConnector Association="ALFAMEDIA.FK_AccruedAmountForClient_ProjectId" />
         <AssociationConnector Association="ALFAMEDIA.FK_AccruedAmountOfSupplier_ProjectId" />
+        <EntityTypeShape EntityType="ALFAMEDIA.ProjectDocuments" Width="1.5" PointX="56" PointY="684.375" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_AccruedClientRowId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_AccruedSupplierRowId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_BankCode" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_CashInDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_CashOutDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_ProjectId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_WarehouseOrderInDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_WaybillDC" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

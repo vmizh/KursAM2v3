@@ -8,18 +8,21 @@ namespace Core
         decimal ProfitRUB { set; get; }
         decimal ProfitSEK { set; get; }
         decimal ProfitUSD { set; get; }
+        decimal ProfitCNY { set; get; }
         decimal LossCHF { set; get; }
         decimal LossEUR { set; get; }
         decimal LossGBP { set; get; }
         decimal LossRUB { set; get; }
         decimal LossSEK { set; get; }
         decimal LossUSD { set; get; }
+        decimal LossCNY { set; get; }
         decimal ResultCHF { get; }
         decimal ResultEUR { get; }
         decimal ResultGBP { get; }
         decimal ResultRUB { get; }
         decimal ResultSEK { get; }
         decimal ResultUSD { get; }
+        decimal ResultCNY { get; }
     }
 
     public interface IMultyWithDilerCurrency : IMultyCurrency
@@ -30,5 +33,6 @@ namespace Core
         decimal DilerRUB { get; set; }
         decimal DilerSEK { get; set; }
         decimal DilerUSD { get; set; }
+        decimal DilerCNY { get; set; }
     }
 }

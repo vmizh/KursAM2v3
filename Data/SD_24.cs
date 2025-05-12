@@ -27,6 +27,8 @@ namespace Data
             this.TD_236 = new HashSet<TD_236>();
             this.TD_24_2 = new HashSet<TD_24_2>();
             this.TD_24 = new HashSet<TD_24>();
+            this.ProjectDocuments = new HashSet<ProjectDocuments>();
+            this.ProjectDocuments1 = new HashSet<ProjectDocuments>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -141,5 +143,9 @@ namespace Data
         public virtual SD_27 SD_272 { get; set; }
         public virtual SD_27 SD_273 { get; set; }
         public virtual Projects Projects { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectDocuments> ProjectDocuments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectDocuments> ProjectDocuments1 { get; set; }
     }
 }

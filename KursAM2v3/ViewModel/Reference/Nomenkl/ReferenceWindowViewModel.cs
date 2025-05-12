@@ -286,36 +286,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 }
             }
 
-            //CalcCommonSum();
         }
-
-
-        //private void CalcCommonSum()
-        //{
-        //    var parents = CategoryCollection.Select(_ => _.ParentDC).Distinct().ToList();
-        //    var lasts = new List<NomenklGroupViewModel>();
-        //    foreach (var n in CategoryCollection)
-        //        if (parents.All(_ => _ != n.DocCode))
-        //            lasts.Add(n);
-        //    foreach (var node in lasts)
-        //    {
-        //        node.NomenklCount =
-        //            GlobalOptions.ReferencesCache.GetNomenklsAll()
-        //                .Count(_ => ((IDocCode)_.Group).DocCode == node.DocCode);
-        //        var prevn = node;
-        //        var n = CategoryCollection.FirstOrDefault(_ => _.DocCode == node.ParentDC);
-        //        if (n == null) continue;
-        //        while (n != null)
-        //        {
-        //            var c = GlobalOptions.ReferencesCache.GetNomenklsAll()
-        //                .Count(_ => ((IDocCode)_.Group).DocCode == n.DocCode);
-        //            n.NomenklCount = n.NomenklCount + prevn.NomenklCount + c;
-        //            prevn = n;
-        //            n = CategoryCollection.FirstOrDefault(_ => _.DocCode == n.ParentDC);
-        //        }
-        //    }
-        //}
-
+        
         private void SaveNomenkl(NomenklViewModel nom)
         {
             decimal newDC = 0;

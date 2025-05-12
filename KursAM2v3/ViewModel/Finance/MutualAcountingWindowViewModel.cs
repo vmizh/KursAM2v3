@@ -28,6 +28,7 @@ using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursRepositories.Repositories.MutualAccounting;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using static KursAM2.ViewModel.Finance.MutualAccountingDebitorCreditors;
@@ -36,7 +37,8 @@ namespace KursAM2.ViewModel.Finance;
 
 public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
 {
-    public readonly MutualAccountingManager Manager = new MutualAccountingManager();
+    //public readonly MutualAccountingManager Manager = new MutualAccountingManager();
+    private readonly IMutualAccountingRepository myMutAccRepository;
     private readonly ISubscriber mySubscriber;
 
     private readonly ConnectionMultiplexer redis;
@@ -49,6 +51,7 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
 
     public MutualAcountingWindowViewModel()
     {
+        myMutAccRepository = new MutualAccountingRepository(GlobalOptions.GetEntities());
         // ReSharper disable once VirtualMemberCallInConstructor
         IsDocNewCopyAllow = true;
         IsDocNewCopyRequisiteAllow = true;
@@ -515,7 +518,7 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
 
             if (Document?.DocCode > 0)
             {
-                Document = Manager.Load(Document.DocCode);
+                Document = myMutAccRepository.Load(Document.DocCode);
                 IsCurrencyConvert = Document.Entity.SD_111.IsCurrencyConvert;
                 RaisePropertyChanged(nameof(Document));
             }
@@ -523,7 +526,7 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
             {
                 if (obj == null) return;
                 var dc = (decimal)obj;
-                Document = Manager.Load(dc);
+                Document = myMutAccRepository.Load(dc);
                 IsCurrencyConvert = Document.Entity.SD_111.IsCurrencyConvert;
                 if (Document == null)
                 {
@@ -533,7 +536,7 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
                     return;
                 }
 
-                Document.IsOld = Manager.CheckDocumentForOld(Document.DocCode);
+                Document.IsOld = myMutAccRepository.CheckDocumentForOld(Document.DocCode);
                 RaisePropertyChanged(nameof(Document));
             }
 
@@ -575,7 +578,7 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
         switch (res)
         {
             case MessageBoxResult.Yes:
-                Manager.Delete(Document);
+                myMutAccRepository.Delete(Document);
                 if (mySubscriber != null && mySubscriber.IsConnected())
                 {
                     var message = new RedisMessage
@@ -620,7 +623,7 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
         if (IsCurrencyConvert && Document.CreditorCurrency == null)
             Document.CreditorCurrency = Document.DebitorCurrency;
         RaisePropertyChanged(nameof(Document));
-        var res = Manager.Save(Document);
+        var res = myMutAccRepository.Save(Document);
         if (IsCurrencyConvert)
             using (var ctx = GlobalOptions.GetEntities())
             {
@@ -905,7 +908,7 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
         CalcItogoSumma();
     }
 
-    public override string SaveInfo => Manager.CheckedInfo;
+    public override string SaveInfo => myMutAccRepository.CheckedInfo;
 
     public override void DocNewEmpty(object form)
     {
@@ -916,7 +919,7 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
             Form = frm
         };
         ctx.CreateMenu();
-        ctx.Document = ctx.Manager.New();
+        ctx.Document = myMutAccRepository.New();
         if (IsCurrencyConvert)
             frm.typeVzaimozachetComboBoxEdit.SelectedIndex = 0;
         frm.Show();
@@ -932,7 +935,7 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
             Form = frm
         };
         ctx.CreateMenu();
-        ctx.Document = ctx.Manager.NewFullCopy(Document);
+        ctx.Document = myMutAccRepository.NewFullCopy(Document);
         ctx.UpdateVisualData();
         frm.Show();
         frm.DataContext = ctx;
@@ -947,7 +950,7 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
             Form = frm
         };
         ctx.CreateMenu();
-        ctx.Document = ctx.Manager.NewRequisity(Document);
+        ctx.Document = myMutAccRepository.NewRequisity(Document);
         if (IsCurrencyConvert)
             frm.typeVzaimozachetComboBoxEdit.SelectedIndex = 0;
         frm.Show();

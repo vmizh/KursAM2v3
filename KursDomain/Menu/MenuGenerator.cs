@@ -886,6 +886,29 @@ public static class MenuGenerator
             }
         };
     }
+    public static ObservableCollection<MenuButtonInfo> RefreshExitOnlyRightBar(IFormCommands vm,
+        Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)
+    {
+        return new ObservableCollection<MenuButtonInfo>
+        {
+            new MenuButtonInfo
+            {
+                Alignment = Dock.Right,
+                HAlignment = HorizontalAlignment.Right,
+                Content = Application.Current.Resources["menuRefresh"] as ControlTemplate,
+                ToolTip = "Обновить данные",
+                Command = vm.RefreshDataCommand
+            },
+            new MenuButtonInfo
+            {
+                Alignment = Dock.Right,
+                HAlignment = HorizontalAlignment.Right,
+                Content = Application.Current.Resources["menuExit"] as ControlTemplate,
+                ToolTip = "Закрыть форму",
+                Command = vm.CloseWindowCommand
+            }
+        };
+    }
 
     public static ObservableCollection<MenuButtonInfo> CardRightBar(IFormCommands vm,
         Dictionary<MenuGeneratorItemVisibleEnum, bool> menuVisibleSettings = null)

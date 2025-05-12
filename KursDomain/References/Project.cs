@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Core.Helper;
@@ -17,6 +15,7 @@ namespace KursDomain.References;
 [DebuggerDisplay("{Id} {Name,nq}")]
 public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparable, ICache
 {
+    [Display(AutoGenerateField = false)]
     public decimal? ManagerDC { set; get; }
 
     public void LoadFromCache()
@@ -34,7 +33,7 @@ public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparab
         var c = obj as Unit;
         return c == null ? 0 : string.Compare(Name, c.Name, StringComparison.Ordinal);
     }
-
+    [Display(AutoGenerateField = false)]
     public Guid Id { get; set; }
 
     public bool Equals(Project other)
@@ -44,12 +43,17 @@ public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparab
         return Id.Equals(other.Id);
     }
 
+    [Display(AutoGenerateField = true,Name = "Наименование")]
     public string Name { get; set; }
+    [Display(AutoGenerateField = true,Name = "Примечание")]
     public string Notes { get; set; }
 
+    [Display(AutoGenerateField = false,Name = "Описание")]
     [JsonIgnore] public string Description => $"Проект: {Name}";
 
+    [Display(AutoGenerateField = true,Name = "Удален")]
     public bool IsDeleted { get; set; }
+    [Display(AutoGenerateField = true,Name = "Закрыт")]
     public bool IsClosed { get; set; }
     public DateTime DateStart { get; set; }
     public DateTime? DateEnd { get; set; }
@@ -127,6 +131,17 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
         get => Entity.Id;
     }
 
+    public override Guid? ParentId
+    {
+        set
+        {
+            if (Entity.ParentId == value) return;
+            Entity.ParentId = value;
+            RaisePropertyChanged();
+        }
+        get => Entity.ParentId;
+    }
+
     public override string Name
     {
         set
@@ -188,7 +203,7 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
         }
     }
 
-    public ObservableCollection<ProjectsDocs> ProjectsDocs { get; set; }
+    //public ObservableCollection<ProjectsDocs> ProjectsDocs { get; set; }
 
     /// <summary>
     ///     Ответственный
@@ -246,8 +261,7 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
     {
         return new Projects
         {
-            Id = Guid.NewGuid(),
-            ProjectsDocs = new List<ProjectsDocs>()
+            Id = Guid.NewGuid()
         };
     }
 
@@ -276,8 +290,6 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
         DateEnd = ent.DateEnd;
         ManagerDC = ent.ManagerDC;
         Responsible = GlobalOptions.ReferencesCache.GetEmployee(ManagerDC) as Employee;
-        if (ent.ProjectsDocs != null)
-            ProjectsDocs = new ObservableCollection<ProjectsDocs>(ent.ProjectsDocs);
     }
 
     public void UpdateTo(Projects ent)
@@ -291,7 +303,6 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
         ent.DateStart = DateStart;
         ent.DateEnd = DateEnd;
         ent.ManagerDC = ManagerDC;
-        ent.ProjectsDocs = ProjectsDocs;
     }
 }
 

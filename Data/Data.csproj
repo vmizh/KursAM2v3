@@ -807,6 +807,9 @@
     <Compile Include="ProjectCurrencyNomenkl.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="ProjectDocuments.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="ProjectGroupLink.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
@@ -820,12 +823,6 @@
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="Projects.cs">
-      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ProjectsDocs.cs">
-      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ProjectsDocuments.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
     <Compile Include="ProjectsInfo.cs">

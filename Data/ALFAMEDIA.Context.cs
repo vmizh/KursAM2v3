@@ -202,7 +202,6 @@ namespace Data
         public virtual DbSet<ProjectProviderPrihod> ProjectProviderPrihod { get; set; }
         public virtual DbSet<ProjectProviderUslugi> ProjectProviderUslugi { get; set; }
         public virtual DbSet<Projects> Projects { get; set; }
-        public virtual DbSet<ProjectsDocs> ProjectsDocs { get; set; }
         public virtual DbSet<ProviderInvoicePay> ProviderInvoicePay { get; set; }
         public virtual DbSet<REMAINS> REMAINS { get; set; }
         public virtual DbSet<RequirementForShipping> RequirementForShipping { get; set; }
@@ -727,7 +726,6 @@ namespace Data
         public virtual DbSet<NomenklMoveForCalcCosts> NomenklMoveForCalcCosts { get; set; }
         public virtual DbSet<NomenklMoveStore> NomenklMoveStore { get; set; }
         public virtual DbSet<NomenklMoveWithPrice> NomenklMoveWithPrice { get; set; }
-        public virtual DbSet<ProjectsDocuments> ProjectsDocuments { get; set; }
         public virtual DbSet<ProjectsInfo> ProjectsInfo { get; set; }
         public virtual DbSet<SD_2_CORR> SD_2_CORR { get; set; }
         public virtual DbSet<SHOP_NOMENKL_MOVE_VIEW> SHOP_NOMENKL_MOVE_VIEW { get; set; }

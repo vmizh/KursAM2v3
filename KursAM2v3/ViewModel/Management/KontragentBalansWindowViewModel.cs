@@ -477,22 +477,22 @@ namespace KursAM2.ViewModel.Management
 
                     LastBalansSumma = Math.Round(sum, 2);
                     LastOperationDate = Operations.Count > 0 ? Operations.Max(_ => _.DocDate) : DateTime.MinValue;
-                    var prjcts = ent.ProjectsDocs.Include(_ => _.Projects).ToList();
-                    foreach (var o in Operations)
-                        switch (o.DocName)
-                        {
-                            case "Акт в/з ":
-                            case "Акт конвертации ":
-                                var prj1 = prjcts.FirstOrDefault(_ => _.DocDC == o.DocDC && _.DocRowId == o.DocRowCode);
-                                if (prj1 != null)
-                                    o.Project = GlobalOptions.ReferencesCache.GetProject(prj1.Projects.Id) as Project;
-                                break;
-                            default:
-                                var prj = prjcts.FirstOrDefault(_ => _.DocDC == o.DocDC);
-                                if (prj != null)
-                                    o.Project = GlobalOptions.ReferencesCache.GetProject(prj.Projects.Id) as Project;
-                                break;
-                        }
+                    //var prjcts = ent.ProjectsDocs.Include(_ => _.Projects).ToList();
+                    //foreach (var o in Operations)
+                    //    switch (o.DocName)
+                    //    {
+                    //        case "Акт в/з ":
+                    //        case "Акт конвертации ":
+                    //            var prj1 = prjcts.FirstOrDefault(_ => _.DocDC == o.DocDC && _.DocRowId == o.DocRowCode);
+                    //            if (prj1 != null)
+                    //                o.Project = GlobalOptions.ReferencesCache.GetProject(prj1.Projects.Id) as Project;
+                    //            break;
+                    //        default:
+                    //            var prj = prjcts.FirstOrDefault(_ => _.DocDC == o.DocDC);
+                    //            if (prj != null)
+                    //                o.Project = GlobalOptions.ReferencesCache.GetProject(prj.Projects.Id) as Project;
+                    //            break;
+                    //    }
                 }
 
                 return Operations;
@@ -534,150 +534,150 @@ namespace KursAM2.ViewModel.Management
 
         private void DocumentLinkToProject(object obj)
         {
-            try
-            {
-                using (var ctx = GlobalOptions.GetEntities())
-                {
-                    var prj = StandartDialogs.SelectProject();
-                    if (prj == null) return;
-                    foreach (var d in SelectedDocs)
-                    {
-                        switch (d.DocName)
-                        {
-                            case "Акт конвертации ":
-                                ctx.ProjectsDocs.Add(new ProjectsDocs
-                                {
-                                    Id = Guid.NewGuid(),
-                                    ProjectId = prj.Id,
-                                    DocDC = d.DocDC,
-                                    DocTypeName = "Акт конвертации",
-                                    DocInfo = d.DocName,
-                                    DocRowId = d.DocRowCode
-                                });
-                                d.Project = prj;
-                                break;
-                            case "Акт в/з ":
-                                ctx.ProjectsDocs.Add(new ProjectsDocs
-                                {
-                                    Id = Guid.NewGuid(),
-                                    ProjectId = prj.Id,
-                                    DocDC = d.DocDC,
-                                    DocTypeName = "Акт взаимозачета",
-                                    DocInfo = d.DocName,
-                                    DocRowId = d.DocRowCode
-                                });
-                                d.Project = prj;
-                                break;
-                            case "Банковская выписка":
-                                ctx.ProjectsDocs.Add(new ProjectsDocs
-                                {
-                                    Id = Guid.NewGuid(),
-                                    ProjectId = prj.Id,
-                                    DocDC = d.DocDC,
-                                    DocTypeName = "Банковская выписка",
-                                    DocInfo = d.DocName,
-                                    DocRowId = d.DocRowCode
-                                });
-                                d.Project = prj;
-                                break;
-                        }
+            //try
+            //{
+            //    using (var ctx = GlobalOptions.GetEntities())
+            //    {
+            //        var prj = StandartDialogs.SelectProject();
+            //        if (prj == null) return;
+            //        foreach (var d in SelectedDocs)
+            //        {
+            //            switch (d.DocName)
+            //            {
+            //                case "Акт конвертации ":
+            //                    ctx.ProjectsDocs.Add(new ProjectsDocs
+            //                    {
+            //                        Id = Guid.NewGuid(),
+            //                        ProjectId = prj.Id,
+            //                        DocDC = d.DocDC,
+            //                        DocTypeName = "Акт конвертации",
+            //                        DocInfo = d.DocName,
+            //                        DocRowId = d.DocRowCode
+            //                    });
+            //                    d.Project = prj;
+            //                    break;
+            //                case "Акт в/з ":
+            //                    ctx.ProjectsDocs.Add(new ProjectsDocs
+            //                    {
+            //                        Id = Guid.NewGuid(),
+            //                        ProjectId = prj.Id,
+            //                        DocDC = d.DocDC,
+            //                        DocTypeName = "Акт взаимозачета",
+            //                        DocInfo = d.DocName,
+            //                        DocRowId = d.DocRowCode
+            //                    });
+            //                    d.Project = prj;
+            //                    break;
+            //                case "Банковская выписка":
+            //                    ctx.ProjectsDocs.Add(new ProjectsDocs
+            //                    {
+            //                        Id = Guid.NewGuid(),
+            //                        ProjectId = prj.Id,
+            //                        DocDC = d.DocDC,
+            //                        DocTypeName = "Банковская выписка",
+            //                        DocInfo = d.DocName,
+            //                        DocRowId = d.DocRowCode
+            //                    });
+            //                    d.Project = prj;
+            //                    break;
+            //            }
 
-                        if (d.DocName.Contains("С/Ф") &&
-                            !d.DocName.ToUpper().Contains("УСЛУГИ")
-                            && d.DocName.ToUpper().Contains("КЛИЕНТУ"))
-                        {
-                            ctx.ProjectsDocs.Add(new ProjectsDocs
-                            {
-                                Id = Guid.NewGuid(),
-                                ProjectId = prj.Id,
-                                DocDC = d.DocDC,
-                                DocTypeName = "Отгрузка товара",
-                                DocInfo = d.DocName
-                            });
-                            d.Project = prj;
-                        }
+            //            if (d.DocName.Contains("С/Ф") &&
+            //                !d.DocName.ToUpper().Contains("УСЛУГИ")
+            //                && d.DocName.ToUpper().Contains("КЛИЕНТУ"))
+            //            {
+            //                ctx.ProjectsDocs.Add(new ProjectsDocs
+            //                {
+            //                    Id = Guid.NewGuid(),
+            //                    ProjectId = prj.Id,
+            //                    DocDC = d.DocDC,
+            //                    DocTypeName = "Отгрузка товара",
+            //                    DocInfo = d.DocName
+            //                });
+            //                d.Project = prj;
+            //            }
 
-                        if (d.DocName.ToUpper().Contains("С/Ф") &&
-                            d.DocName.ToUpper().Contains("ПОСТАВЩИКА")
-                            && !d.DocName.ToUpper().Contains("УСЛУГИ"))
-                        {
-                            ctx.ProjectsDocs.Add(new ProjectsDocs
-                            {
-                                Id = Guid.NewGuid(),
-                                ProjectId = prj.Id,
-                                DocDC = d.DocDC,
-                                DocTypeName = "Услуги поставщиков",
-                                DocInfo = d.DocName
-                            });
-                            d.Project = prj;
-                        }
+            //            if (d.DocName.ToUpper().Contains("С/Ф") &&
+            //                d.DocName.ToUpper().Contains("ПОСТАВЩИКА")
+            //                && !d.DocName.ToUpper().Contains("УСЛУГИ"))
+            //            {
+            //                ctx.ProjectsDocs.Add(new ProjectsDocs
+            //                {
+            //                    Id = Guid.NewGuid(),
+            //                    ProjectId = prj.Id,
+            //                    DocDC = d.DocDC,
+            //                    DocTypeName = "Услуги поставщиков",
+            //                    DocInfo = d.DocName
+            //                });
+            //                d.Project = prj;
+            //            }
 
-                        if (d.DocName.ToUpper().Contains("С/Ф") &&
-                            d.DocName.ToUpper().Contains("ПОСТАВЩИКА")
-                            && d.DocName.ToUpper().Contains("ТМЦ"))
-                        {
-                            ctx.ProjectsDocs.Add(new ProjectsDocs
-                            {
-                                Id = Guid.NewGuid(),
-                                ProjectId = prj.Id,
-                                DocDC = d.DocDC,
-                                DocTypeName = "Приход товара",
-                                DocInfo = d.DocName
-                            });
-                            d.Project = prj;
-                        }
+            //            if (d.DocName.ToUpper().Contains("С/Ф") &&
+            //                d.DocName.ToUpper().Contains("ПОСТАВЩИКА")
+            //                && d.DocName.ToUpper().Contains("ТМЦ"))
+            //            {
+            //                ctx.ProjectsDocs.Add(new ProjectsDocs
+            //                {
+            //                    Id = Guid.NewGuid(),
+            //                    ProjectId = prj.Id,
+            //                    DocDC = d.DocDC,
+            //                    DocTypeName = "Приход товара",
+            //                    DocInfo = d.DocName
+            //                });
+            //                d.Project = prj;
+            //            }
 
-                        if (d.DocName.ToUpper().Contains("УСЛУГИ")
-                            && d.DocName.ToUpper().Contains("КЛИЕНТУ"))
-                        {
-                            ctx.ProjectsDocs.Add(new ProjectsDocs
-                            {
-                                Id = Guid.NewGuid(),
-                                ProjectId = prj.Id,
-                                DocDC = d.DocDC,
-                                DocTypeName = "Услуги клиенту",
-                                DocInfo = d.DocName,
-                                DocRowId = d.DocRowCode
-                            });
-                            d.Project = prj;
-                        }
+            //            if (d.DocName.ToUpper().Contains("УСЛУГИ")
+            //                && d.DocName.ToUpper().Contains("КЛИЕНТУ"))
+            //            {
+            //                ctx.ProjectsDocs.Add(new ProjectsDocs
+            //                {
+            //                    Id = Guid.NewGuid(),
+            //                    ProjectId = prj.Id,
+            //                    DocDC = d.DocDC,
+            //                    DocTypeName = "Услуги клиенту",
+            //                    DocInfo = d.DocName,
+            //                    DocRowId = d.DocRowCode
+            //                });
+            //                d.Project = prj;
+            //            }
 
-                        if (d.DocName.ToUpper().Contains("ПРИХОДНЫЙ")
-                            && d.DocName.ToUpper().Contains("ОРДЕР"))
-                        {
-                            ctx.ProjectsDocs.Add(new ProjectsDocs
-                            {
-                                Id = Guid.NewGuid(),
-                                ProjectId = prj.Id,
-                                DocDC = CurrentDocument.DocDC,
-                                DocTypeName = "Кассовые документы",
-                                DocInfo = CurrentDocument.DocName
-                            });
-                            d.Project = prj;
-                        }
+            //            if (d.DocName.ToUpper().Contains("ПРИХОДНЫЙ")
+            //                && d.DocName.ToUpper().Contains("ОРДЕР"))
+            //            {
+            //                ctx.ProjectsDocs.Add(new ProjectsDocs
+            //                {
+            //                    Id = Guid.NewGuid(),
+            //                    ProjectId = prj.Id,
+            //                    DocDC = CurrentDocument.DocDC,
+            //                    DocTypeName = "Кассовые документы",
+            //                    DocInfo = CurrentDocument.DocName
+            //                });
+            //                d.Project = prj;
+            //            }
 
-                        if (d.DocName.ToUpper().Contains("РАСХОДНЫЙ")
-                            && d.DocName.ToUpper().Contains("ОРДЕР"))
-                        {
-                            ctx.ProjectsDocs.Add(new ProjectsDocs
-                            {
-                                Id = Guid.NewGuid(),
-                                ProjectId = prj.Id,
-                                DocDC = d.DocDC,
-                                DocTypeName = "Кассовые документы",
-                                DocInfo = d.DocName
-                            });
-                            d.Project = prj;
-                        }
-                    }
+            //            if (d.DocName.ToUpper().Contains("РАСХОДНЫЙ")
+            //                && d.DocName.ToUpper().Contains("ОРДЕР"))
+            //            {
+            //                ctx.ProjectsDocs.Add(new ProjectsDocs
+            //                {
+            //                    Id = Guid.NewGuid(),
+            //                    ProjectId = prj.Id,
+            //                    DocDC = d.DocDC,
+            //                    DocTypeName = "Кассовые документы",
+            //                    DocInfo = d.DocName
+            //                });
+            //                d.Project = prj;
+            //            }
+            //        }
 
-                    ctx.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                WindowManager.ShowError(ex);
-            }
+            //        ctx.SaveChanges();
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    WindowManager.ShowError(ex);
+            //}
         }
 
         public ICommand DocumentUnLinkProjectCommand
@@ -691,15 +691,15 @@ namespace KursAM2.ViewModel.Management
             {
                 using (var ctx = GlobalOptions.GetEntities())
                 {
-                    foreach (var d in SelectedDocs.Where(_ => _.Project != null))
-                    {
-                        var p = ctx.ProjectsDocs.FirstOrDefault(_ =>
-                            _.ProjectId == d.Project.Id && _.DocDC == d.DocDC);
-                        if (p != null) ctx.ProjectsDocs.Remove(p);
-                        d.Project = null;
-                    }
+                    //foreach (var d in SelectedDocs.Where(_ => _.Project != null))
+                    //{
+                    //    var p = ctx.ProjectsDocs.FirstOrDefault(_ =>
+                    //        _.ProjectId == d.Project.Id && _.DocDC == d.DocDC);
+                    //    if (p != null) ctx.ProjectsDocs.Remove(p);
+                    //    d.Project = null;
+                    //}
 
-                    ctx.SaveChanges();
+                    //ctx.SaveChanges();
                 }
             }
             catch (Exception ex)
