@@ -259,8 +259,6 @@
     <Compile Include="Repositories\NomenklReturn\INomenklReturnToProviderRepository.cs" />
     <Compile Include="Repositories\NomenklReturn\NomenklReturnOfClientRepository.cs" />
     <Compile Include="Repositories\NomenklReturn\NomenklReturnToProviderRepository.cs" />
-    <Compile Include="Repositories\Projects\IProjectRepository.cs" />
-    <Compile Include="Repositories\Projects\ProjectRepository.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\IRefundFromClientRepository.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\RefundFromClientRepository.cs" />
     <Compile Include="Repositories\SD_24Repository.cs" />
@@ -375,6 +373,7 @@
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorClientViewModel.cs" />
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorProviderViewModel.cs" />
     <Compile Include="ViewModel\Management\ProfitAndLossCommonRow.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectDocumentInfo.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectManagerWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\VzaimozachetRow.cs" />
     <Compile Include="ViewModel\MenuSearchWindowViewModel.cs" />

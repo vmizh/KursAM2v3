@@ -126,7 +126,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         #region Properties
 
-        public override string WindowName => "Реестр прямых расходов для клиентов";
+        public override string WindowName => "Реестр прямых услуг для клиентов";
 
         public override string LayoutName => "AccuredAmountForClientSearchViewModel";
 

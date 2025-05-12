@@ -18,8 +18,9 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
     {
         #region Constructors
 
-        public SelectCashBankDialogViewModel(bool isCash, Currency crs)
+        public SelectCashBankDialogViewModel(bool isCash, Currency crs, bool isProvider = true)
         {
+            IsProvider = isProvider;
             IsCash = isCash;
             currency = crs;
             RightMenuBar = MenuGenerator.DialogStandartBar(this);
@@ -56,10 +57,12 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
         private CashBankItem myCurrentObject;
         private readonly bool IsCash;
         private readonly Currency currency;
-
+        
         #endregion
 
         #region Properties
+
+        public bool IsProvider { set; get; }
 
         public new MessageResult DialogResult = MessageResult.No;
 
@@ -76,7 +79,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             set
             {
                 if (myCurrentObject == value) return;
-                if (value?.Summa <= 0) return;
+                if (IsProvider && value?.Summa <= 0) return;
                 myCurrentObject = value;
                 RaisePropertyChanged();
             }

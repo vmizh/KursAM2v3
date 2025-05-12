@@ -57,7 +57,7 @@
                                         <MenuItem Header="Открыть справочник проектов"
                                                   Command="{Binding ProjectsReferenceOpenCommand}">
                                             <MenuItem.Icon>
-                                                <materialDesign:PackIcon Kind="BookOpen" Height="24" Width="24" />
+                                                <materialDesign:PackIcon Kind="BookOpen" Foreground="Blue" />
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
@@ -65,7 +65,7 @@
         RelativeSource={RelativeSource Mode=FindAncestor,
                          AncestorType={x:Type ContextMenu}}}">
                                             <MenuItem.Icon>
-                                                <materialDesign:PackIcon Kind="Export" Height="24" Width="24" />
+                                                <materialDesign:PackIcon Kind="Export" Foreground="Brown"  />
                                             </MenuItem.Icon>
                                         </MenuItem>
                                     </ContextMenu>
@@ -105,20 +105,20 @@
                                         <MenuItem Header="Добавить связь с документом"
                                                   Command="{Binding AddDocumentCommand}">
                                             <MenuItem.Icon>
-                                                <materialDesign:PackIcon Kind="AddCircle" Height="24" Width="24" />
+                                                <materialDesign:PackIcon Kind="AddCircle" Foreground="Green" />
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <MenuItem Header="Удалить связь с документом"
                                                   Command="{Binding DeleteDocumentCommand}">
                                             <MenuItem.Icon>
-                                                <materialDesign:PackIcon Kind="DeleteCircle" Height="24" Width="24" />
+                                                <materialDesign:PackIcon Kind="DeleteCircle" Foreground="Red" />
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <Separator />
                                         <MenuItem Header="Открыть документ"
                                                   Command="{Binding DocumentOpenCommand}">
                                             <MenuItem.Icon>
-                                                <materialDesign:PackIcon Kind="PresentOpen" Height="24" Width="24" />
+                                                <materialDesign:PackIcon Kind="PresentOpen" Foreground="Blue" />
                                             </MenuItem.Icon>
                                         </MenuItem>
                                         <Separator />
@@ -127,7 +127,7 @@
         RelativeSource={RelativeSource Mode=FindAncestor,
                          AncestorType={x:Type ContextMenu}}}">
                                             <MenuItem.Icon>
-                                                <materialDesign:PackIcon Kind="Export" Height="24" Width="24" />
+                                                <materialDesign:PackIcon Kind="Export" Foreground="Brown" />
                                             </MenuItem.Icon>
                                         </MenuItem>
                                     </ContextMenu>
@@ -157,32 +157,12 @@
                                            ShowAutoFilterRow="True">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Добавить связь с документом"
-                                                  Command="{Binding AddDocumentCommand}">
-                                            <MenuItem.Icon>
-                                                <materialDesign:PackIcon Kind="AddCircle" Height="24" Width="24" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Header="Удалить связь с документом"
-                                                  Command="{Binding DeleteDocumentCommand}">
-                                            <MenuItem.Icon>
-                                                <materialDesign:PackIcon Kind="DeleteCircle" Height="24" Width="24" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <Separator />
-                                        <MenuItem Header="Открыть документ"
-                                                  Command="{Binding DocumentOpenCommand}">
-                                            <MenuItem.Icon>
-                                                <materialDesign:PackIcon Kind="PresentOpen" Height="24" Width="24" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <Separator />
                                         <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                                   CommandParameter="{Binding Path=PlacementTarget, 
 RelativeSource={RelativeSource Mode=FindAncestor,
                  AncestorType={x:Type ContextMenu}}}">
                                             <MenuItem.Icon>
-                                                <materialDesign:PackIcon Kind="Export" Height="24" Width="24" />
+                                                <materialDesign:PackIcon Kind="Export" Foreground="Brown" />
                                             </MenuItem.Icon>
                                         </MenuItem>
                                     </ContextMenu>

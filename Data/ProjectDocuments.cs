@@ -16,7 +16,7 @@ namespace Data
     {
         public System.Guid Id { get; set; }
         public System.Guid ProjectId { get; set; }
-        public string DocTypeName { get; set; }
+        public int DocType { get; set; }
         public string DocInfo { get; set; }
         public string Note { get; set; }
         public Nullable<int> BankCode { get; set; }

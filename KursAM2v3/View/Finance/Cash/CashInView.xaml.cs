@@ -375,7 +375,7 @@ namespace KursAM2.View.Finance.Cash
         {
             var ctx = DataContext as CashInWindowViewModel;
             var doc = ctx?.Document;
-            if (doc == null)
+            if (doc?.AcrruedAmountRow is null)
                 return;
             DocumentsOpenManager.Open(
                 DocumentType.AccruedAmountForClient, 0, doc.AcrruedAmountRow.DocId, this);
