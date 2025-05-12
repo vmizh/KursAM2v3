@@ -204,7 +204,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
 
         private void AddCashDoc(object obj)
         {
-            var ctx = new SelectCashBankDialogViewModel(true, Document.Currency);
+            var ctx = new SelectCashBankDialogViewModel(true, Document.Currency,false);
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Запрос", ctx) == MessageResult.Cancel) return;
             if (ctx.CurrentObject == null) return;

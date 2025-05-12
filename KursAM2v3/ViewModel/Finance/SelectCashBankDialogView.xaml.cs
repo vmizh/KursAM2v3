@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Finance.AccruedAmount;
@@ -31,10 +32,11 @@ namespace KursAM2.ViewModel.Finance
 
         private void TableView_OnFocusedRowChanging(object sender, CanceledEventArgs e)
         {
+            var d = gridControl.GetRow(e.NewRowHandle) as SelectCashBankDialogViewModel;
             var c = gridControl.GetRow(e.NewRowHandle) as SelectCashBankDialogViewModel.CashBankItem;
             if (c == null)
                 return;
-            if (c.Summa <= 5)
+            if (d?.IsProvider == true && c.Summa <= 5)
                 e.Cancel = true;
         }
     }

@@ -1,9 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using KursAM2.View.KursReferences;
+using KursAM2.ViewModel.Reference;
 using KursDomain;
 using KursDomain.Menu;
 using KursDomain.References;
@@ -45,6 +49,48 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         {
             WindowManager.ShowError(ex);
         }
+    }
+
+    public ICommand AddDocumentCommand
+    {
+        get { return new Command(AddDocument, _ => true); }
+    }
+
+    private void AddDocument(object obj)
+    {
+        
+    }
+
+    public ICommand DeleteDocumentCommand
+    {
+        get { return new Command(DeleteDocument, _ => true); }
+    }
+
+    private void DeleteDocument(object obj)
+    {
+       
+    }
+
+    protected override void DocumentOpen(object obj)
+    {
+        
+    }
+
+    public ICommand ProjectsReferenceOpenCommand
+    {
+        get { return new Command(ProjectsReferenceOpen, _ => true); }
+    }
+
+    private void ProjectsReferenceOpen(object obj)
+    {
+        var prjCtx = new ProjectReferenceWindowViewModel();
+        var form = new ProjectReferenceView
+        {
+            Owner = Application.Current.MainWindow,
+            DataContext = prjCtx
+        };
+        prjCtx.Form = form;
+        form.Show();
     }
 
     #endregion
