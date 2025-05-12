@@ -79,7 +79,7 @@ namespace KursAM2.ViewModel.Finance.AccruedAmount
             set
             {
                 if (myCurrentObject == value) return;
-                if (value?.Summa <= 0) return;
+                if (IsProvider && value?.Summa <= 0) return;
                 myCurrentObject = value;
                 RaisePropertyChanged();
             }
