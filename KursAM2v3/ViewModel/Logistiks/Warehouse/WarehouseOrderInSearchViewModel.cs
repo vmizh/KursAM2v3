@@ -64,7 +64,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
         {
             set
             {
-                if (Equals(myCurrentDocument, value)) return;
+                if (Equals(myCurrentDocument?.Id, value?.Id)) return;
                 myCurrentDocument = value;
                 RaisePropertyChanged();
             }

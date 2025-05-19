@@ -957,7 +957,8 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 WindowName = "Выбор номенклатуры",
                 LayoutName = "InvoiceProviderSearchMulti",
                 myCurrency = Currency,
-                IsLoadNotDistributeCurrencyConvert = true
+                IsLoadNotDistributeCurrencyConvert = true,
+                
             };
             dtx.RefreshData(null);
             var dialog = new SelectInvoiceMultipleDialogView

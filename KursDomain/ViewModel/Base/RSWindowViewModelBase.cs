@@ -276,6 +276,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     /// </summary>
     public virtual void UpdateVisualObjects()
     {
+        if (Form is null) return;
         var grids = Form.FindVisualChildren<GridControl>().ToList();
         var trees = Form.FindVisualChildren<TreeListControl>().ToList();
         if (grids.Count > 0)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Core.Helper;
 using Data;
@@ -9,6 +10,7 @@ using JetBrains.Annotations;
 
 namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
 {
+    [DebuggerDisplay("{DocCode} №{InNum}/{PostavNum} {Post} {Date}")]
     [MetadataType(typeof(DataAnnotationsInvoiceProviderHead))]
     public class InvoiceProviderHead : InvoicePostQuery, INotifyPropertyChanged
     {

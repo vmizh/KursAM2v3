@@ -61,6 +61,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
             this.loadType = loadType;
             IsAllowPositionSelected = isAllowPosition;
             IsAllowMultipleSchet = isAllowMultipleSchet;
+            IsDialog = true;
         }
 
         #endregion
