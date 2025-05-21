@@ -55,9 +55,12 @@ public class Project : IProject, IDocGuid, IName, IEquatable<Project>, IComparab
     public bool IsDeleted { get; set; }
     [Display(AutoGenerateField = true,Name = "Закрыт")]
     public bool IsClosed { get; set; }
+    [Display(AutoGenerateField = true,Name = "Начало")]
     public DateTime DateStart { get; set; }
+    [Display(AutoGenerateField = true,Name = "Окончание")]
     public DateTime? DateEnd { get; set; }
 
+    [Display(AutoGenerateField = true,Name = "Ответственный")]
     [JsonIgnore] public IEmployee Employee { get; set; }
 
     public Guid? ParentId { get; set; }

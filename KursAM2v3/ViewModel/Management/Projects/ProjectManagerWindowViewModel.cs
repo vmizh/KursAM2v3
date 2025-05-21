@@ -1,14 +1,25 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
+using DevExpress.Data;
+using DevExpress.Mvvm;
+using DevExpress.Mvvm.POCO;
+using DevExpress.Xpf.Grid;
+using KursAM2.Managers;
 using KursAM2.View.KursReferences;
+using KursAM2.View.Projects;
 using KursAM2.ViewModel.Reference;
 using KursDomain;
+using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Projects;
+using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursRepositories.Repositories.Projects;
@@ -22,7 +33,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     public ProjectManagerWindowViewModel()
     {
         LeftMenuBar = MenuGenerator.BaseLeftBar(this);
-        RightMenuBar = MenuGenerator.RefreshExitOnlyRightBar(this);
+        RightMenuBar = MenuGenerator.ReferenceRightBar(this);
 
         myContext = GlobalOptions.GetEntities();
         myProjectRepository = new ProjectRepository(myContext);
@@ -32,6 +43,35 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     #endregion
 
     #region Commands
+
+    public override void UpdateVisualObjects()
+    {
+        base.UpdateVisualObjects();
+        if (Form is not ProjectManager frm) return;
+        var sumNames = new List<string>();
+        foreach (var s in frm.gridDocuments.TotalSummary)
+        {
+            sumNames.Add(s.FieldName);
+        }
+
+        if (!sumNames.Contains("DocumentType"))
+        {
+            frm.gridDocuments.TotalSummary.Add(new GridSummaryItem
+            {
+                FieldName = "DocumentType",
+                ShowInColumn = "DocumentType",
+                SummaryType = SummaryItemType.Count
+            });
+        }
+    }
+
+    public override void SaveData(object data)
+    {
+        foreach (var doc in Documents.Where(_ => _.State == RowStatus.Edited))
+        {
+            myProjectRepository.UpdateDocumentInfo(doc.Id, doc.Note);
+        }
+    }
 
     public override void RefreshData(object obj)
     {
@@ -53,27 +93,80 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
     public ICommand AddDocumentCommand
     {
-        get { return new Command(AddDocument, _ => true); }
+        get { return new Command(AddDocument, _ => CurrentProject is not null); }
     }
 
     private void AddDocument(object obj)
     {
-        
+        var ctx = new ProjectDocSelectDialog(CurrentProject, new ProjectRepository(GlobalOptions.GetEntities()));
+        var service = this.GetService<IDialogService>("DialogServiceUI");
+        if (service.ShowDialog(MessageButton.OKCancel, $"Выбор документов для проекта: {CurrentProject.Name}.", ctx) ==
+            MessageResult.Cancel) return;
+        if (ctx.SelectedRows.Count == 0) return;
+        Documents.Clear();
+        foreach (var item in (ctx.SelectedRows))
+        {
+            if (Documents.Any(_ => _.BankCode == item.BankCode && _.CashInDC == item.CashInDC &&
+                                   _.CashOutDC == item.CashOutDC
+                                   && _.WarehouseOrderInDC == item.WarehouseOrderInDC && _.WaybillDC == item.WaybillDC
+                                   && _.AccruedClientRowId == item.AccruedClientRowId &&
+                                   _.AccruedSupplierRowId == item.AccruedSupplierRowId
+                                   && _.UslugaClientRowId == item.UslugaClientRowId 
+                                   && _.UslugaProviderRowId == item.UslugaProviderRowId))
+                continue;
+            myProjectRepository.AddDocumentInfo(item);
+        }
+
+        foreach (var prj in myProjectRepository.LoadProjectDocuments(CurrentProject.Id))
+        {
+            
+            prj.myState = RowStatus.NotEdited;
+            prj.SetCurrency();
+            Documents.Add(prj);
+        }
+        SetCrsColumnsVisible();
     }
 
     public ICommand DeleteDocumentCommand
     {
-        get { return new Command(DeleteDocument, _ => true); }
+        get { return new Command(DeleteDocument, _ => CurrentDocument is not null); }
     }
 
     private void DeleteDocument(object obj)
     {
-       
+       myProjectRepository.DeleteDocumentInfo(CurrentDocument.Id);
     }
 
+    public override bool IsDocumentOpenAllow => CurrentDocument is not null;
+
+    [SuppressMessage("ReSharper", "PossibleInvalidOperationException")]
     protected override void DocumentOpen(object obj)
     {
-        
+        switch (CurrentDocument.DocumentType)
+        {
+            case DocumentType.CashIn:
+                DocumentsOpenManager.Open(DocumentType.CashIn, CurrentDocument.CashInDC.Value);
+                break;
+            case DocumentType.CashOut:
+                DocumentsOpenManager.Open(DocumentType.CashOut, CurrentDocument.CashOutDC.Value);
+                break;
+            case DocumentType.Bank:
+                DocumentsOpenManager.Open(DocumentType.Bank,(int)CurrentDocument.BankCode);
+                break;
+
+            case DocumentType.InvoiceClient:
+                if (CurrentDocument.UslugaClientRowId is null) return;
+                var dc = myProjectRepository.GetInvoiceClientDC(CurrentDocument.UslugaClientRowId.Value);
+                if(dc is not null)
+                    DocumentsOpenManager.Open(DocumentType.InvoiceClient,dc.Value);
+                break;
+            case DocumentType.InvoiceProvider:
+                if (CurrentDocument.UslugaProviderRowId is null) return;
+                var dc2 = myProjectRepository.GetInvoiceProviderDC(CurrentDocument.UslugaProviderRowId.Value);
+                if(dc2 is not null)
+                    DocumentsOpenManager.Open(DocumentType.InvoiceProvider,dc2.Value);
+                break;
+        }
     }
 
     public ICommand ProjectsReferenceOpenCommand
@@ -97,33 +190,54 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
     #region Fields
 
+    readonly List<string> myCrsNames = ["RUB", "EUR", "USD", "CHF", "CNY", "SEK", "GBP"];
+
     private readonly IProjectRepository myProjectRepository;
     private readonly ALFAMEDIAEntities myContext;
 
     private Project myCurrentProject;
     private bool myIsAllProject;
+    private ProjectDocumentInfo myCurrentDocument;
 
     #endregion
 
     #region Properties
 
+    public override bool IsCanSaveData => Documents.Any(_ => _.State != RowStatus.NotEdited);
     public override string WindowName => "Управление проектами";
     public override string LayoutName => "ProjectManagerWindowViewModel";
 
-    public ObservableCollection<Project> Projects { set; get; } = new ObservableCollection<Project>();
+    public ObservableCollection<Project> Projects { set; get; } = [];
 
+    public ObservableCollection<ProjectDocumentInfo> Documents { set; get; } =
+        [];
+    public ObservableCollection<ProjectDocumentInfo> SelectedDocuments { set; get; } =
+        [];
+
+    public ProjectDocumentInfo CurrentDocument
+    {
+        get => myCurrentDocument;
+        set
+        {
+            if (Equals(value?.Id, myCurrentDocument?.Id)) return;
+            myCurrentDocument = value;
+            RaisePropertyChanged();
+        }
+    }
 
     public Project CurrentProject
     {
         set
         {
-            if (Equals(value, myCurrentProject)) return;
+            if (Equals(value?.Id, myCurrentProject?.Id)) return;
             myCurrentProject = value;
+            LoadDocuments(myCurrentProject?.Id);
+            SetCrsColumnsVisible();
             RaisePropertyChanged();
         }
         get => myCurrentProject;
     }
-
+    
     public bool IsAllProject
     {
         set
@@ -133,6 +247,53 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             RaisePropertyChanged();
         }
         get => myIsAllProject;
+    }
+
+    #endregion
+
+    #region Methods
+
+    private void LoadDocuments(Guid? currentProjectId)
+    {
+        Documents.Clear();
+        if (currentProjectId is null) return;
+        foreach (var prj in myProjectRepository.LoadProjectDocuments(currentProjectId.Value))
+        {
+            prj.myState = RowStatus.NotEdited;
+            prj.SetCurrency();
+            Documents.Add(prj);
+        }
+        SetCrsColumnsVisible();
+    }
+
+    private void SetCrsBandNotVisible(GridControl grid)
+    {
+        foreach (var b in grid.Bands)
+        {
+            if (myCrsNames.Any(_ => _ == (string)b.Header))
+            {
+                b.Visible = false;
+            }
+        }
+    }
+
+    private void SetCrsColumnsVisible()
+    {
+        if (Form is not ProjectManager frm) return;
+        SetCrsBandNotVisible(frm.gridDocuments);
+        var crsList = Documents.Where(_m => _m.Currency is not null).Select(_ => _.Currency).Distinct().ToList();
+        foreach (var col in frm.gridDocuments.Columns)
+        {
+            if (crsList.Count == 0) break;
+            foreach (var b in from crs in crsList
+                     from b in frm.gridDocuments.Bands
+                     where (string)b.Header == crs.Name
+                     select b)
+            {
+                b.Visible = true;
+            }
+        }
+
     }
 
     #endregion

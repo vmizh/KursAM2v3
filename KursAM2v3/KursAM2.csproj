@@ -139,7 +139,7 @@
       <HintPath>..\packages\Prism.Core.8.1.97\lib\net47\Prism.dll</HintPath>
     </Reference>
     <Reference Include="StackExchange.Redis, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c219ff1ca8c2ce46, processorArchitecture=MSIL">
-      <HintPath>..\packages\StackExchange.Redis.2.8.22\lib\net472\StackExchange.Redis.dll</HintPath>
+      <HintPath>..\packages\StackExchange.Redis.2.8.37\lib\net472\StackExchange.Redis.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.CodeDom, Version=7.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -373,7 +373,7 @@
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorClientViewModel.cs" />
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorProviderViewModel.cs" />
     <Compile Include="ViewModel\Management\ProfitAndLossCommonRow.cs" />
-    <Compile Include="ViewModel\Management\Projects\ProjectDocumentInfo.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectDocSelectDialog.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectManagerWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\VzaimozachetRow.cs" />
     <Compile Include="ViewModel\MenuSearchWindowViewModel.cs" />
@@ -590,6 +590,9 @@
     </Compile>
     <Compile Include="View\Logistiks\NomenklReturn\NomenklReturnToProviderView.xaml.cs">
       <DependentUpon>NomenklReturnToProviderView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Projects\ProjectDocSelectDialogView.xaml.cs">
+      <DependentUpon>ProjectDocSelectDialogView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Logistiks\SkladOstatkiView.xaml.cs">
       <DependentUpon>SkladOstatkiView.xaml</DependentUpon>
@@ -1474,6 +1477,10 @@
     <Page Include="View\Logistiks\NomenklReturn\NomenklReturnToProviderView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Projects\ProjectDocSelectDialogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Logistiks\SkladOstatkiView.xaml">
       <SubType>Designer</SubType>

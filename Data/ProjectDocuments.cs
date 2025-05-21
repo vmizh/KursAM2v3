@@ -26,6 +26,8 @@ namespace Data
         public Nullable<decimal> WaybillDC { get; set; }
         public Nullable<System.Guid> AccruedClientRowId { get; set; }
         public Nullable<System.Guid> AccruedSupplierRowId { get; set; }
+        public Nullable<System.Guid> UslugaClientRowId { get; set; }
+        public Nullable<System.Guid> UslugaProviderRowId { get; set; }
     
         public virtual AccuredAmountForClientRow AccuredAmountForClientRow { get; set; }
         public virtual AccuredAmountOfSupplierRow AccuredAmountOfSupplierRow { get; set; }

@@ -1,0 +1,171 @@
+﻿<UserControl x:Class="KursAM2.View.Projects.ProjectDocSelectDialogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
+             xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+             xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
+             xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
+             xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="800">
+    <DockPanel Style="{StaticResource DXServices}">
+        <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+            <TextBlock Text="{Binding DatabaseName}"
+                       Margin="0 -32 30 32"
+                       Foreground="{Binding DatabaseColor}"
+                       FontFamily="Seqoe UI Light" FontSize="15" FontStyle="Italic" FontWeight="Bold"
+                       VerticalAlignment="Center" HorizontalAlignment="Right" />
+        </StackPanel>
+        <control:WindowMenu Height="60" DockPanel.Dock="Top" />
+        <StackPanel DockPanel.Dock="Top"
+                    Orientation="Horizontal">
+            <Label Content="Период с: " Margin="0 0 5 0" />
+            <dxe:DateEdit EditValue="{Binding DateStart}" Width="100" />
+            <Label Content="по: " Margin="5 0 5 0" />
+            <dxe:DateEdit EditValue="{Binding DateEnd}" Width="100" />
+        </StackPanel>
+        <dxlc:LayoutControl Orientation="Horizontal" MinWidth="200">
+            <dxlc:LayoutGroup dxlc:LayoutControl.AllowHorizontalSizing="True">
+                <DockPanel LastChildFill="False" HorizontalAlignment="Left" VerticalAlignment="Top"
+                           Margin="0 45 5 0">
+                    <dxe:CheckEdit DockPanel.Dock="Top"
+                                   Content="Банковская транзакция"
+                                   EditValue="{Binding IsBank, UpdateSourceTrigger=PropertyChanged}"
+                                   Foreground="Green" />
+                    <dxe:CheckEdit DockPanel.Dock="Top"
+                                   Content="Приходный кассовый ордер"
+                                   EditValue="{Binding IsCashOrderIn, UpdateSourceTrigger=PropertyChanged}"
+                                   Foreground="Green" />
+                    <dxe:CheckEdit DockPanel.Dock="Top"
+                                   Content="Расходный кассовый ордер"
+                                   EditValue="{Binding IsCashOrderOut, UpdateSourceTrigger=PropertyChanged}"
+                                   Margin="0 0 0 8"
+                                   Foreground="Green" />
+                    <dxe:CheckEdit DockPanel.Dock="Top"
+                                   Content="Приходный складской ордер"
+                                   EditValue="{Binding IsWarehouseIn, UpdateSourceTrigger=PropertyChanged}"
+                                   Foreground="Blue" />
+                    <dxe:CheckEdit DockPanel.Dock="Top"
+                                   Content="Расходная накладная"
+                                   EditValue="{Binding IsWaybill, UpdateSourceTrigger=PropertyChanged}"
+                                   Margin="0 0 0 8"
+                                   Foreground="Blue" />
+                    <dxe:CheckEdit DockPanel.Dock="Top"
+                                   Content="Услуги клиентам"
+                                   EditValue="{Binding IsUslugaClient, UpdateSourceTrigger=PropertyChanged}"
+                                   Foreground="DarkOrange" />
+                    <dxe:CheckEdit DockPanel.Dock="Top"
+                                   Content="Услуги поставщиков"
+                                   EditValue="{Binding IsUslugaProvider, UpdateSourceTrigger=PropertyChanged}"
+                                   Foreground="DarkOrange" 
+                                   Margin="0 0 0 8"/>
+                    <dxe:CheckEdit DockPanel.Dock="Top"
+                                   Content="Прямой расход поставщикам"
+                                   EditValue="{Binding IsDirectProvider, UpdateSourceTrigger=PropertyChanged}"
+                                   Foreground="Brown" />
+                    <dxe:CheckEdit DockPanel.Dock="Top"
+                                   Content="Прямой расход для клиентов"
+                                   EditValue="{Binding IsDirectClient, UpdateSourceTrigger=PropertyChanged}"
+                                   Foreground="Brown" />
+                </DockPanel>
+            </dxlc:LayoutGroup>
+            <dxlc:LayoutGroup dxlc:LayoutControl.AllowHorizontalSizing="True"
+                              Orientation="Vertical">
+                <dxlc:LayoutGroup dxlc:LayoutControl.AllowVerticalSizing="True">
+                    <dxg:GridControl Name="gridRows"
+                                     Style="{StaticResource GridControl.Search}"
+                                     dx:DXSerializer.SerializationID="gridRows"
+                                     Margin="0,10,0,0"
+                                     ItemsSource="{Binding Rows,  UpdateSourceTrigger=PropertyChanged}"
+                                     CurrentItem="{Binding CurrentRow, UpdateSourceTrigger=PropertyChanged}"
+                                     SelectedItem="{Binding CurrentRow, UpdateSourceTrigger=PropertyChanged}"
+                                     SelectedItems="{Binding SelectedMainRows, UpdateSourceTrigger=PropertyChanged}"
+                                     AutoGeneratingColumn="GridRows_OnAutoGeneratingColumn"
+                                     AutoGeneratedColumns="GridRows_OnAutoGeneratedColumns"
+                                     CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
+                                     SelectionMode="Row">
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowTotalSummary="True"
+                                           Name="tableViewRows"
+                                           ShowAutoFilterRow="True"
+                                           NavigationStyle="Cell">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Добавить в выбранные" Command="{Binding AddRowCommand}">
+                                            <MenuItem.Icon>
+                                                <materialDesign:PackIcon Kind="SelectPlace" Foreground="Green" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <Separator />
+                                        <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                                  CommandParameter="{Binding Path=PlacementTarget, 
+RelativeSource={RelativeSource Mode=FindAncestor,
+                 AncestorType={x:Type ContextMenu}}}">
+                                            <MenuItem.Icon>
+                                                <materialDesign:PackIcon Kind="Export" Foreground="Brown" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand EventName="MouseDoubleClick"
+                                                           Command="{Binding AddRowCommand}" />
+                                    <dxmvvm:KeyToCommand EventName="KeyDown" KeyGesture="Enter" Command="{Binding AddRowCommand}" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+                <dxlc:LayoutGroup dxlc:LayoutControl.AllowVerticalSizing="True">
+                    <dxg:GridControl Name="gridSelectedRows"
+                                     Style="{StaticResource GridControl.Base}"
+                                     dx:DXSerializer.SerializationID="gridSelectedRows"
+                                     Margin="0,10,0,0"
+                                     ItemsSource="{Binding SelectedRows,  UpdateSourceTrigger=PropertyChanged}"
+                                     CurrentItem="{Binding CurrentSelectedRow, UpdateSourceTrigger=PropertyChanged}"
+                                     SelectedItem="{Binding CurrentSelectedRow, UpdateSourceTrigger=PropertyChanged}"
+                                     SelectedItems="{Binding SelectedActualRows, UpdateSourceTrigger=PropertyChanged}"
+                                     AutoGeneratingColumn="GridRows_OnAutoGeneratingColumn"
+                                     AutoGeneratedColumns="GridRows_OnAutoGeneratedColumns"
+                                     CurrentColumn="{Binding CurrentColumn, Mode=TwoWay}"
+                                     >
+                        <dxg:GridControl.View>
+                            <dxg:TableView ShowTotalSummary="True"
+                                           Name="tableViewSelectedRows"
+                                           ShowAutoFilterRow="True"
+                                           EnableImmediatePosting="True">
+                                <dxg:TableView.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="Удалить из выбранных" Command="{Binding DeleteRowCommand}">
+                                            <MenuItem.Icon>
+                                                <materialDesign:PackIcon Kind="SelectOff" Foreground="Red" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <Separator />
+                                        <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
+                                                  CommandParameter="{Binding Path=PlacementTarget, 
+RelativeSource={RelativeSource Mode=FindAncestor,
+                 AncestorType={x:Type ContextMenu}}}">
+                                            <MenuItem.Icon>
+                                                <materialDesign:PackIcon Kind="Export" Foreground="Brown" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </dxg:TableView.ContextMenu>
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand EventName="MouseDoubleClick"
+                                                           Command="{Binding DeleteRowCommand}" />
+                                    <dxmvvm:KeyToCommand KeyGesture="Enter" Command="{Binding DeleteRowCommand}" />
+                                </dxmvvm:Interaction.Behaviors>
+                            </dxg:TableView>
+                        </dxg:GridControl.View>
+                    </dxg:GridControl>
+                </dxlc:LayoutGroup>
+            </dxlc:LayoutGroup>
+        </dxlc:LayoutControl>
+    </DockPanel>
+</UserControl>
