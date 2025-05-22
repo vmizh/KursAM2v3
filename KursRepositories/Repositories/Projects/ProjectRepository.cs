@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Entity;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Data;
+﻿using Data;
 using Helper;
 using KursAM2.Repositories.RedisRepository;
 using KursDomain;
@@ -16,6 +10,12 @@ using KursDomain.Result;
 using KursRepositories.Repositories.Base;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace KursRepositories.Repositories.Projects
 {
@@ -124,14 +124,13 @@ namespace KursRepositories.Repositories.Projects
         public void UpdateDocumentInfo(Guid id, string note)
         {
             Context.Database.ExecuteSqlCommand(
-                $"UPDATE ProjectDocuments SET Note = '{note}' WHERE Id = '{CustomFormat.GuidToSqlString(id)}'",
-                null);
+                $"UPDATE ProjectDocuments SET Note = '{note}' WHERE Id = '{CustomFormat.GuidToSqlString(id)}'");
         }
 
         public void DeleteDocumentInfo(Guid id)
         {
             Context.Database.ExecuteSqlCommand(
-                $"DELETE FROM ProjectDocuments WHERE Id = '{CustomFormat.GuidToSqlString(id)}'", null);
+                $"DELETE FROM ProjectDocuments WHERE Id = '{CustomFormat.GuidToSqlString(id)}'");
         }
 
         public string GetDocDescription(DocumentType docType, ProjectDocumentInfoBase doc)
@@ -144,9 +143,11 @@ namespace KursRepositories.Repositories.Projects
                            + (doc.SummaIn > 0 ? $"{doc.SummaIn:n2}" : $"{doc.SummaOut:n2}")
                            + $" {doc.Currency}";
                 case DocumentType.AccruedAmountForClient:
-                    break;
+                    return $"Прямые затраты клиенту  №{doc.InnerNumber}/{doc.ExtNumber} от {doc.DocDate} " +
+                           $"для {doc.Kontragent} {doc.NomenklName} на {doc.SummaIn} {doc.Currency}";
                 case DocumentType.AccruedAmountOfSupplier:
-                    break;
+                    return $"Прямые затраты поставщика  №{doc.InnerNumber}/{doc.ExtNumber} от {doc.DocDate} " +
+                           $"для {doc.Kontragent} {doc.NomenklName} на {doc.SummaOut} {doc.Currency}";
                 case DocumentType.CashIn:
                     return $"Приходный кассовый ордер ({doc.CashBox}) №{doc.InnerNumber} " +
                            $"от {doc.DocDate} {doc.Kontragent} на {doc.SummaIn:n2} {doc.Currency}";
@@ -168,7 +169,7 @@ namespace KursRepositories.Repositories.Projects
                     return
                         $"Сф поставщика №{doc.InnerNumber}/{doc.ExtNumber} от {doc.DocDate} " +
                         $"для {doc.Kontragent} услуга {doc.NomenklName} на {doc.SummaOut} {doc.Currency}";
-            }
+                 }
 
             return null;
         }
@@ -192,6 +193,15 @@ namespace KursRepositories.Repositories.Projects
         {
             return Context.AccuredAmountOfSupplierRow.FirstOrDefault(_ => _.Id == rowId)?.DocId;
         }
+
+        public List<TD_24> GetNomenklRows(decimal dc)
+        {
+            return Context.TD_24.Include(_ => _.TD_26)
+                .Include(_ => _.TD_84)
+                .Where(_ => _.DOC_CODE == dc).ToList();
+        }
+
+       
 
         public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Data.Projects project)
         {
@@ -235,6 +245,7 @@ namespace KursRepositories.Repositories.Projects
                             newItem.InnerNumber = chIn.NUM_ORD;
                             newItem.Note = chIn.NOTES_ORD;
                             newItem.DocInfo = GetDocDescription(DocumentType.CashIn, newItem);
+                            newItem.Creator = chIn.CREATOR;
                         }
                     }
 
@@ -246,13 +257,17 @@ namespace KursRepositories.Repositories.Projects
                             newItem.CashBox = GlobalOptions.ReferencesCache.GetCashBox(chOut.CA_DC) as CashBox;
                             newItem.Currency =
                                 GlobalOptions.ReferencesCache.GetCurrency(chOut.CRS_DC) as Currency;
-                            newItem.Kontragent =
-                                GlobalOptions.ReferencesCache.GetKontragent(chOut.KONTRAGENT_DC) as Kontragent;
+                            newItem.Kontragent = chOut.KONTRAGENT_DC is not null ?
+                                GlobalOptions.ReferencesCache.GetKontragent(chOut.KONTRAGENT_DC) as Kontragent : null;
+                            newItem.Employee = chOut.TABELNUMBER is not null
+                                ? GlobalOptions.ReferencesCache.GetEmployee(chOut.TABELNUMBER) as Employee
+                                : null;
                             newItem.SummaIn = (decimal)chOut.CRS_SUMMA;
                             newItem.DocDate = (DateTime)chOut.DATE_ORD;
                             newItem.InnerNumber = chOut.NUM_ORD;
                             newItem.Note = chOut.NOTES_ORD;
                             newItem.DocInfo = GetDocDescription(DocumentType.CashOut, newItem);
+                            newItem.Creator = chOut.CREATOR;
                         }
                     }
 
@@ -275,71 +290,116 @@ namespace KursRepositories.Repositories.Projects
                             newItem.ExtNumber = ord.DD_EXT_NUM;
                             newItem.DocInfo = GetDocDescription(DocumentType.StoreOrderIn, newItem);
                             newItem.Note = ord.DD_NOTES;
+                            newItem.Creator = ord.CREATOR;
                         }
                     }
 
                     if (p.WaybillDC is not null)
                     {
-                        var ord = Context.SD_24.Include(sd24 => sd24.TD_24.Select(td24 => td24.TD_84))
+                        var row = Context.SD_24.Include(sd24 => sd24.TD_24.Select(td24 => td24.TD_84))
                             .FirstOrDefault(_ => _.DOC_CODE == p.WaybillDC);
-                        if (ord != null)
+                        if (row != null)
                         {
                             newItem.Warehouse =
-                                GlobalOptions.ReferencesCache.GetWarehouse(ord.DD_SKLAD_OTPR_DC) as Warehouse;
+                                GlobalOptions.ReferencesCache.GetWarehouse(row.DD_SKLAD_OTPR_DC) as Warehouse;
                             newItem.Kontragent =
-                                GlobalOptions.ReferencesCache.GetKontragent(ord.DD_KONTR_POL_DC) as Kontragent;
+                                GlobalOptions.ReferencesCache.GetKontragent(row.DD_KONTR_POL_DC) as Kontragent;
                             newItem.Currency =
                                 newItem.Kontragent?.Currency as Currency;
-                            newItem.SummaIn = ord.TD_24.Sum(_ =>
+                            newItem.SummaIn = row.TD_24.Sum(_ =>
                                 _.DDT_KOL_RASHOD * (_.TD_84.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) /
                                 (decimal)_.TD_84.SFT_KOL);
-                            newItem.SummaDiler = ord.TD_24.Sum(_ =>
+                            newItem.SummaDiler = row.TD_24.Sum(_ =>
                                 _.DDT_KOL_RASHOD * (_.TD_84.SFT_NACENKA_DILERA ?? 0) / (decimal)_.TD_84.SFT_KOL);
-                            newItem.DocDate = ord.DD_DATE;
-                            newItem.InnerNumber = ord.DD_IN_NUM;
-                            newItem.ExtNumber = ord.DD_EXT_NUM;
-                            newItem.Note = ord.DD_NOTES;
+                            newItem.DocDate = row.DD_DATE;
+                            newItem.InnerNumber = row.DD_IN_NUM;
+                            newItem.ExtNumber = row.DD_EXT_NUM;
+                            newItem.Note = row.DD_NOTES;
+                            newItem.Creator = row.CREATOR;
                         }
                     }
 
                     if (p.UslugaProviderRowId is not null)
                     {
-                        var ord = Context.TD_26.Include(_ => _.SD_26).FirstOrDefault(_ => _.Id == p.UslugaProviderRowId);
-                        if (ord != null)
+                        var row = Context.TD_26.Include(_ => _.SD_26).FirstOrDefault(_ => _.Id == p.UslugaProviderRowId);
+                        if (row != null)
                         {
                             newItem.Kontragent =
-                                GlobalOptions.ReferencesCache.GetKontragent(ord.SD_26.SF_POST_DC) as Kontragent;
+                                GlobalOptions.ReferencesCache.GetKontragent(row.SD_26.SF_POST_DC) as Kontragent;
                             newItem.Currency =
                                 newItem.Kontragent?.Currency as Currency;
-                            newItem.SummaIn = (decimal)ord.SFT_SUMMA_K_OPLATE_KONTR_CRS;
-                            newItem.DocDate = ord.SD_26.SF_POSTAV_DATE;
-                            newItem.InnerNumber = ord.SD_26.SF_IN_NUM;
-                            newItem.ExtNumber = ord.SD_26.SF_POSTAV_NUM;
-                            newItem.Note = ord.SD_26.SF_NOTES;
-                            newItem.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(ord.SFT_NEMENKL_DC) as Nomenkl;
+                            newItem.SummaIn = (decimal)row.SFT_SUMMA_K_OPLATE_KONTR_CRS;
+                            newItem.DocDate = row.SD_26.SF_POSTAV_DATE;
+                            newItem.InnerNumber = row.SD_26.SF_IN_NUM;
+                            newItem.ExtNumber = row.SD_26.SF_POSTAV_NUM;
+                            newItem.Note = row.SD_26.SF_NOTES;
+                            newItem.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.SFT_NEMENKL_DC) as Nomenkl;
                             newItem.DocInfo = GetDocDescription(DocumentType.InvoiceProvider, newItem);
+                            newItem.Creator = row.SD_26.CREATOR;
 
                         }
                     }
+                    
                     if (p.UslugaClientRowId is not null)
                     {
-                        var ord = Context.TD_84.Include(_ => _.SD_84).FirstOrDefault(_ => _.Id == p.UslugaClientRowId);
-                        if (ord != null)
+                        var row = Context.TD_84.Include(_ => _.SD_84).FirstOrDefault(_ => _.Id == p.UslugaClientRowId);
+                        if (row != null)
                         {
                             newItem.Kontragent =
-                                GlobalOptions.ReferencesCache.GetKontragent(ord.SD_84.SF_CLIENT_DC) as Kontragent;
+                                GlobalOptions.ReferencesCache.GetKontragent(row.SD_84.SF_CLIENT_DC) as Kontragent;
                             newItem.Currency =
                                 newItem.Kontragent?.Currency as Currency;
-                            newItem.SummaIn = (decimal)ord.SFT_SUMMA_K_OPLATE_KONTR_CRS;
-                            newItem.DocDate = ord.SD_84.SF_DATE;
-                            newItem.InnerNumber = ord.SD_84.SF_IN_NUM;
-                            newItem.ExtNumber = ord.SD_84.SF_OUT_NUM;
-                            newItem.Note = ord.SD_84.SF_NOTE;
-                            newItem.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(ord.SFT_NEMENKL_DC) as Nomenkl;
+                            newItem.SummaIn = (decimal)row.SFT_SUMMA_K_OPLATE_KONTR_CRS;
+                            newItem.DocDate = row.SD_84.SF_DATE;
+                            newItem.InnerNumber = row.SD_84.SF_IN_NUM;
+                            newItem.ExtNumber = row.SD_84.SF_OUT_NUM;
+                            newItem.Note = row.SD_84.SF_NOTE;
+                            newItem.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.SFT_NEMENKL_DC) as Nomenkl;
                             newItem.DocInfo = GetDocDescription(DocumentType.InvoiceClient, newItem);
+                            newItem.Creator = row.SD_84.CREATOR;
                         }
                     }
 
+                    if (p.AccruedClientRowId is not null)
+                    {
+                        var row = Context.AccuredAmountForClientRow.Include(_ => _.AccruedAmountForClient)
+                            .FirstOrDefault(_ => _.Id == p.AccruedClientRowId);
+                        if (row != null)
+                        {
+                            newItem.Kontragent =
+                                GlobalOptions.ReferencesCache.GetKontragent(row.AccruedAmountForClient.KontrDC) as Kontragent;
+                            newItem.Currency =
+                                newItem.Kontragent?.Currency as Currency;
+                            newItem.SummaIn = row.Summa;
+                            newItem.DocDate = row.AccruedAmountForClient.DocDate;
+                            newItem.InnerNumber = row.AccruedAmountForClient.DocInNum;
+                            newItem.ExtNumber = row.AccruedAmountForClient.DocExtNum;
+                            newItem.Note = row.AccruedAmountForClient.Note;
+                            newItem.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.NomenklDC) as Nomenkl;
+                            newItem.DocInfo = GetDocDescription(DocumentType.AccruedAmountForClient, newItem);
+                            newItem.Creator = row.AccruedAmountForClient.Creator;
+                        }
+                    } 
+                    if (p.AccruedSupplierRowId is not null)
+                    {
+                        var row = Context.AccuredAmountOfSupplierRow.Include(_ => _.AccruedAmountOfSupplier)
+                            .FirstOrDefault(_ => _.Id == p.AccruedSupplierRowId);
+                        if (row != null)
+                        {
+                            newItem.Kontragent =
+                                GlobalOptions.ReferencesCache.GetKontragent(row.AccruedAmountOfSupplier.KontrDC) as Kontragent;
+                            newItem.Currency =
+                                newItem.Kontragent?.Currency as Currency;
+                            newItem.SummaIn = row.Summa;
+                            newItem.DocDate = row.AccruedAmountOfSupplier.DocDate;
+                            newItem.InnerNumber = row.AccruedAmountOfSupplier.DocInNum;
+                            newItem.ExtNumber = row.AccruedAmountOfSupplier.DocExtNum;
+                            newItem.Note = row.AccruedAmountOfSupplier.Note;
+                            newItem.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.NomenklDC) as Nomenkl;
+                            newItem.DocInfo = GetDocDescription(DocumentType.AccruedAmountForClient, newItem);
+                            newItem.Creator = row.AccruedAmountOfSupplier.Creator;
+                        }
+                    } 
                     ret.Add(newItem);
                 }
 

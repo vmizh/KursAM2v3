@@ -286,6 +286,8 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
                 grid.TotalSummary.Clear();
                 foreach (var col in grid.Columns)
                 {
+                    if (col.FieldName == "State")
+                        col.Visible = false;
                     col.AutoFilterCondition = AutoFilterCondition.Contains;
                     col.ColumnFilterMode = ColumnFilterMode.DisplayText;
                     col.SortMode = ColumnSortMode.DisplayText;
@@ -371,6 +373,8 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
             foreach (var t in trees)
             foreach (var col in t.Columns)
             {
+                if (col.FieldName == "State")
+                    col.Visible = false;
                 col.AutoFilterCondition = AutoFilterCondition.Contains;
                 col.ColumnFilterMode = ColumnFilterMode.Value;
                 col.SortMode = ColumnSortMode.Value;

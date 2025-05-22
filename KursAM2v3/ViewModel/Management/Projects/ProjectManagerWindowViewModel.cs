@@ -46,9 +46,27 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
     public override void UpdateVisualObjects()
     {
+        var colNameNotVisible = new List<string>([nameof(ProjectDocumentInfo.DocInfo)]);
         base.UpdateVisualObjects();
         if (Form is not ProjectManager frm) return;
         var sumNames = new List<string>();
+        foreach (var col in frm.gridDocuments.Columns)
+        {
+            switch (col.FieldName)
+            {
+                case nameof(ProjectDocumentInfo.ProjectNote):
+                    col.ReadOnly = false;
+                    break;
+                default:
+                    col.ReadOnly = true;
+                    break;
+
+            }
+            if (colNameNotVisible.Contains(col.FieldName))
+            {
+                col.Visible = false;
+            }
+        }
         foreach (var s in frm.gridDocuments.TotalSummary)
         {
             sumNames.Add(s.FieldName);
@@ -63,13 +81,20 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 SummaryType = SummaryItemType.Count
             });
         }
+
+        foreach (var col in frm.gridInfoRows.Columns)
+        {
+            col.ReadOnly = true;
+        }
     }
 
     public override void SaveData(object data)
     {
         foreach (var doc in Documents.Where(_ => _.State == RowStatus.Edited))
         {
-            myProjectRepository.UpdateDocumentInfo(doc.Id, doc.Note);
+            if (string.IsNullOrWhiteSpace(doc.ProjectNote)) continue;
+            myProjectRepository.UpdateDocumentInfo(doc.Id, doc.ProjectNote);
+            doc.myState = RowStatus.NotEdited;
         }
     }
 
@@ -134,7 +159,16 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
     private void DeleteDocument(object obj)
     {
-       myProjectRepository.DeleteDocumentInfo(CurrentDocument.Id);
+        try
+        {
+            myProjectRepository.DeleteDocumentInfo(CurrentDocument.Id);
+            Documents.Remove(CurrentDocument);
+        }
+        catch (Exception ex)
+        {
+            WindowManager.ShowError(ex);
+        }
+      
     }
 
     public override bool IsDocumentOpenAllow => CurrentDocument is not null;
@@ -198,10 +232,35 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     private Project myCurrentProject;
     private bool myIsAllProject;
     private ProjectDocumentInfo myCurrentDocument;
+    private ProjectNomenklInfo myCurrentNomenklRow;
+    private Visibility myIsNotInfoVisibility = Visibility.Visible;
+    private Visibility myGridInfoVisibility = Visibility.Hidden;
 
     #endregion
 
     #region Properties
+
+    public Visibility IsNotInfoVisibility
+    {
+        get => myIsNotInfoVisibility;
+        set
+        {
+            if (value == myIsNotInfoVisibility) return;
+            myIsNotInfoVisibility = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public Visibility GridInfoVisibility
+    {
+        get => myGridInfoVisibility;
+        set
+        {
+            if (value == myGridInfoVisibility) return;
+            myGridInfoVisibility = value;
+            RaisePropertyChanged();
+        }
+    }
 
     public override bool IsCanSaveData => Documents.Any(_ => _.State != RowStatus.NotEdited);
     public override string WindowName => "Управление проектами";
@@ -209,10 +268,23 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
     public ObservableCollection<Project> Projects { set; get; } = [];
 
+    public ObservableCollection<ProjectNomenklInfo> NomenklRows { set; get; } = [];
+
     public ObservableCollection<ProjectDocumentInfo> Documents { set; get; } =
         [];
     public ObservableCollection<ProjectDocumentInfo> SelectedDocuments { set; get; } =
         [];
+
+    public ProjectNomenklInfo CurrentNomenklRow
+    {
+        get => myCurrentNomenklRow;
+        set
+        {
+            if (Equals(value, myCurrentNomenklRow)) return;
+            myCurrentNomenklRow = value;
+            RaisePropertyChanged();
+        }
+    }
 
     public ProjectDocumentInfo CurrentDocument
     {
@@ -221,10 +293,22 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         {
             if (Equals(value?.Id, myCurrentDocument?.Id)) return;
             myCurrentDocument = value;
+            if (myCurrentDocument is not null &&
+                (myCurrentDocument.WaybillDC ?? myCurrentDocument.WarehouseOrderInDC) is not null)
+            {
+                LoadNomenklInfo(myCurrentDocument.DocumentType,
+                    (decimal)(myCurrentDocument.WaybillDC ?? myCurrentDocument.WarehouseOrderInDC));
+            }
+            else
+            {
+                IsNotInfoVisibility = Visibility.Visible;
+                GridInfoVisibility = Visibility.Hidden;
+            }
+
             RaisePropertyChanged();
         }
     }
-
+    
     public Project CurrentProject
     {
         set
@@ -252,6 +336,59 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     #endregion
 
     #region Methods
+
+    private void LoadNomenklInfo(DocumentType docType, decimal dc)
+    {
+        NomenklRows.Clear();
+        switch (docType)
+        {
+            case DocumentType.StoreOrderIn:
+                GridInfoVisibility = Visibility.Visible;
+                IsNotInfoVisibility = Visibility.Hidden;
+                foreach (var newItem in from row in myProjectRepository.GetNomenklRows(dc)
+                         let nom = GlobalOptions.ReferencesCache.GetNomenkl(row.DDT_NOMENKL_DC) as Nomenkl
+                         select new ProjectNomenklInfo
+                         {
+                             Note = row.DDT_NOTE,
+                             Summa = row.DDT_KOL_PRIHOD * (decimal)row.TD_26.SFT_SUMMA_K_OPLATE_KONTR_CRS /
+                                     row.TD_26.SFT_KOL,
+                             NomenklName = nom.Name,
+                             NomenklNumber = nom.NomenklNumber,
+                             Quantity = row.DDT_KOL_PRIHOD,
+                             Unit = ((IName)nom.Unit).Name,
+                             UnitPrice = (decimal)row.TD_26.SFT_ED_CENA
+                         })
+                {
+                    NomenklRows.Add(newItem);
+                }
+
+                break;
+            case DocumentType.Waybill:
+                GridInfoVisibility = Visibility.Visible;
+                IsNotInfoVisibility = Visibility.Hidden;
+                foreach (var newItem in from row in myProjectRepository.GetNomenklRows(dc)
+                         let nom = GlobalOptions.ReferencesCache.GetNomenkl(row.DDT_NOMENKL_DC) as Nomenkl
+                         select new ProjectNomenklInfo
+                         {
+                             Note = row.DDT_NOTE,
+                             Summa = row.DDT_KOL_RASHOD * (decimal)row.TD_84.SFT_SUMMA_K_OPLATE_KONTR_CRS /
+                                     (decimal)row.TD_84.SFT_KOL,
+                             NomenklName = nom.Name,
+                             NomenklNumber = nom.NomenklNumber,
+                             Quantity = row.DDT_KOL_RASHOD,
+                             Unit = ((IName)nom.Unit).Name,
+                             UnitPrice = (decimal)row.TD_84.SFT_ED_CENA
+                         })
+                {
+                    NomenklRows.Add(newItem);
+                }
+                break;
+            default:
+                IsNotInfoVisibility = Visibility.Visible;
+                GridInfoVisibility = Visibility.Hidden;
+                break;
+        }
+    }
 
     private void LoadDocuments(Guid? currentProjectId)
     {

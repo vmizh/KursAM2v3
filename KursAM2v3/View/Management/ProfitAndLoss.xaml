@@ -173,11 +173,9 @@
                     <dxlc:LayoutGroup Name="layoutGroupBasement" Header="LayoutGroup"
                                       dxlc:LayoutControl.AllowVerticalSizing="True">
                         <Grid>
-
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="*" />
                             </Grid.RowDefinitions>
-
                             <dxg:GridControl Grid.Row="0" Grid.ZIndex="1"
                                              Visibility="{Binding GridControlVzaimozachetVisible}"
                                              Name="GridControlVzaimozachetExtend"
@@ -230,25 +228,7 @@
                                         </dxg:TableView.ContextMenu>
                                     </dxg:TableView>
                                 </dxg:GridControl.View>
-                                <!--<dxg:GridControl.DetailDescriptor>
-                <dxg:DataControlDetailDescriptor ItemsSourcePath="VzaimozachetInfo">
-                    <dxg:GridControl
-                        Name="GridControlInfo"
-                        Style="{StaticResource GridControl.Base}"
-                        dx:DXSerializer.SerializationID="gridInfo"
-                        SelectionMode="Row">
-                        <dxg:GridControl.View>
-                            <dxg:TableView x:Name="gridZachetInfo"
-                                           UseIndicatorForSelection="True"
-                                           AllowPerPixelScrolling="True"
-                                           ShowTotalSummary="False"
-                                           ShowGroupPanel="False" />
-                        </dxg:GridControl.View>
-                    </dxg:GridControl>
-                </dxg:DataControlDetailDescriptor>
-            </dxg:GridControl.DetailDescriptor>-->
                             </dxg:GridControl>
-
                             <dxg:GridControl Grid.Row="0" Grid.ZIndex="2"
                                              Name="GridControlCurrencyConvert"
                                              Visibility="{Binding GridControlCurrencyConvertVisible}"
@@ -290,7 +270,6 @@
                                     </dxg:TableView>
                                 </dxg:GridControl.View>
                             </dxg:GridControl>
-
                             <dxg:GridControl
                                 Name="GridControlBaseExtend" Grid.Row="0" Grid.ZIndex="3"
                                 Visibility="{Binding GridControlBaseExtendVisible}"
@@ -368,8 +347,7 @@
                                               KeyFieldName="Id"
                                               ParentFieldName="ParentId"
                                               AllowSorting="False"
-                                              NavigationStyle="Row"
-                                              >
+                                              NavigationStyle="Row">
                                 <dxg:TreeListView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"

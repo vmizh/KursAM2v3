@@ -282,6 +282,61 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
             }
         }
 
+        if (IsDirectClient)
+        {
+            foreach (var doc in myProjectRepository.GetAccruedAmountForClients(myProject.Id, DateStart, DateEnd).ToList())
+            {
+                var kontr = GlobalOptions.ReferencesCache.GetKontragent(doc.AccruedAmountForClient.KontrDC) as Kontragent;
+                if(kontr is null) continue;
+                var crs = kontr.Currency as Currency;
+                var newItem = new ProjectDocumentInfo
+                {
+                    ProjectId = myProject.Id,
+                    AccruedClientRowId = doc.Id,
+                    Currency = crs,
+                    DocumentType = DocumentType.AccruedAmountForClient,
+                    DocDate = doc.AccruedAmountForClient.DocDate,
+                    InnerNumber = doc.AccruedAmountForClient.DocInNum,
+                    ExtNumber =doc.AccruedAmountForClient.DocExtNum,
+                    SummaIn = doc.Summa,
+                    Kontragent = kontr,
+                    Creator = doc.AccruedAmountForClient.Creator,
+                    Note = doc.AccruedAmountForClient.Note,
+                    Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(doc.NomenklDC) as Nomenkl
+                };
+                newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.AccruedAmountForClient, newItem);
+                Rows.Add(newItem);
+            }
+        }
+
+        if (IsDirectProvider)
+        {
+            foreach (var doc in myProjectRepository.GetAccruedAmountOfSuppliers(myProject.Id, DateStart, DateEnd).ToList())
+            {
+                var kontr = GlobalOptions.ReferencesCache.GetKontragent(doc.AccruedAmountOfSupplier.KontrDC) as Kontragent;
+                if(kontr is null) continue;
+                var crs = kontr.Currency as Currency;
+                var newItem = new ProjectDocumentInfo
+                {
+                    ProjectId = myProject.Id,
+                    AccruedSupplierRowId = doc.Id,
+                    Currency = crs,
+                    DocumentType = DocumentType.AccruedAmountOfSupplier,
+                    DocDate = doc.AccruedAmountOfSupplier.DocDate,
+                    InnerNumber = doc.AccruedAmountOfSupplier.DocInNum,
+                    ExtNumber =doc.AccruedAmountOfSupplier.DocExtNum,
+                    SummaOut = doc.Summa,
+                    Kontragent = kontr,
+                    Creator = doc.AccruedAmountOfSupplier.Creator,
+                    Note = doc.AccruedAmountOfSupplier.Note,
+                    Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(doc.NomenklDC) as Nomenkl
+                };
+                newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.AccruedAmountOfSupplier, newItem);
+                Rows.Add(newItem);
+            }
+        }
+        
+
         foreach (var r in Rows)
         {
             r.DocInfo = myProjectRepository.GetDocDescription(r.DocumentType, r);

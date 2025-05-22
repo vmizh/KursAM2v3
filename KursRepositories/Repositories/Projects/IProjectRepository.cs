@@ -45,5 +45,7 @@ namespace KursRepositories.Repositories.Projects
 
         Guid? GetAccruedAmountForClientsId(Guid rowId);
         Guid? GetAccruedAmountProviderId(Guid rowId);
+
+        List<TD_24> GetNomenklRows(decimal dc);
     }
 }

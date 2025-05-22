@@ -2,6 +2,21 @@ using System.ComponentModel.DataAnnotations;
 
 namespace KursDomain.Documents.CommonReferences;
 
+/// <summary>
+/// Тип бизнес объекта, касса, банковский счет ...
+/// </summary>
+public enum BusinessFacilityType
+{
+    [Display(Name = " ")] None = 0,
+    [Display(Name = "Касса")] CashBox = 1,
+    [Display(Name = "Банк")] Bank = 2,
+    [Display(Name = "Склад")] Warehouse = 3,
+    [Display(Name = "Контрагент")] Kontragent = 4,
+    [Display(Name = "Сотрудник")] Employee = 5,
+    [Display(Name = "Акционер")] StockHolder = 6,
+
+}
+
 public enum DocumentType
 {
     /// <summary>

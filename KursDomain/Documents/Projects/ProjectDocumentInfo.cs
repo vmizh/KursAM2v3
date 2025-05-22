@@ -1,11 +1,11 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using Core;
 using Core.ViewModel.Base;
 using Data;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.References;
-using KursDomain.RepositoryHelper;
 
 namespace KursDomain.Documents.Projects;
 
@@ -182,6 +182,9 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Касса", Order = 13)]
     public CashBox CashBox { set; get; }
 
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Сотрудника", Order = 14)]
+    public References.Employee Employee { set; get; }
+
     [Display(AutoGenerateField = false)]
     public Nomenkl Nomenkl { set; get; }
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Номенклатура", Order = 20)]
@@ -200,7 +203,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
     [DisplayFormat(DataFormatString = "n2")]
     public decimal SummaDiler { set; get; }
 
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Описание", Order = 14)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Описание", Order = 15)]
     public string DocInfo
     {
         set
@@ -211,7 +214,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => Entity.DocInfo;
     }
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Примечание (проект)", Order = 15)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Примечание (проект)", Order = 16)]
     public string ProjectNote
     {
         set
@@ -222,7 +225,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => Entity.Note;
     }
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Примечание (док-т)", Order = 16)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Примечание (док-т)", Order = 17)]
     public new string Note
     {
         set
@@ -245,6 +248,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
     }
 }
 
+[DebuggerDisplay("{DocumentType} {InnerNumber}/{ExtNumber} {DocDate} ")]
 public class ProjectDocumentInfo : ProjectDocumentInfoBase, IMultyWithDilerCurrency
 {
     #region Constructors
@@ -390,3 +394,5 @@ public class ProjectDocumentInfo : ProjectDocumentInfoBase, IMultyWithDilerCurre
     
     #endregion
 }
+
+
