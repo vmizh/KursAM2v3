@@ -94,6 +94,18 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => Entity.WarehouseOrderInDC;
     }
+
+    [Display(AutoGenerateField = false)]
+    public Guid? CurrencyConvertId
+    {
+        set
+        {
+            if (Equals(Entity.CurrencyConvertId, value)) return;
+            Entity.CurrencyConvertId = value;
+            RaisePropertyChanged();
+        }
+        get => Entity.CurrencyConvertId;
+    }
     [Display(AutoGenerateField = false)]
     public decimal? WaybillDC
     {
@@ -189,6 +201,9 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
     public Nomenkl Nomenkl { set; get; }
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Номенклатура", Order = 20)]
     public string NomenklName => Nomenkl is null ? null : $"{Nomenkl.NomenklNumber,-20} {Nomenkl.Name}";
+
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Вид продукции", Order = 20)]
+    public string ProductTypeName { set; get; }
 
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Валюта", Order = 9)]
     public References.Currency Currency { set; get; }

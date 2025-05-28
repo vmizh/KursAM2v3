@@ -60,32 +60,22 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 default:
                     col.ReadOnly = true;
                     break;
+            }
 
-            }
-            if (colNameNotVisible.Contains(col.FieldName))
-            {
-                col.Visible = false;
-            }
+            if (colNameNotVisible.Contains(col.FieldName)) col.Visible = false;
         }
-        foreach (var s in frm.gridDocuments.TotalSummary)
-        {
-            sumNames.Add(s.FieldName);
-        }
+
+        foreach (var s in frm.gridDocuments.TotalSummary) sumNames.Add(s.FieldName);
 
         if (!sumNames.Contains("DocumentType"))
-        {
             frm.gridDocuments.TotalSummary.Add(new GridSummaryItem
             {
                 FieldName = "DocumentType",
                 ShowInColumn = "DocumentType",
                 SummaryType = SummaryItemType.Count
             });
-        }
 
-        foreach (var col in frm.gridInfoRows.Columns)
-        {
-            col.ReadOnly = true;
-        }
+        foreach (var col in frm.gridInfoRows.Columns) col.ReadOnly = true;
     }
 
     public override void SaveData(object data)
@@ -129,26 +119,27 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             MessageResult.Cancel) return;
         if (ctx.SelectedRows.Count == 0) return;
         Documents.Clear();
-        foreach (var item in (ctx.SelectedRows))
+        foreach (var item in ctx.SelectedRows)
         {
             if (Documents.Any(_ => _.BankCode == item.BankCode && _.CashInDC == item.CashInDC &&
                                    _.CashOutDC == item.CashOutDC
                                    && _.WarehouseOrderInDC == item.WarehouseOrderInDC && _.WaybillDC == item.WaybillDC
                                    && _.AccruedClientRowId == item.AccruedClientRowId &&
                                    _.AccruedSupplierRowId == item.AccruedSupplierRowId
-                                   && _.UslugaClientRowId == item.UslugaClientRowId 
-                                   && _.UslugaProviderRowId == item.UslugaProviderRowId))
+                                   && _.UslugaClientRowId == item.UslugaClientRowId
+                                   && _.UslugaProviderRowId == item.UslugaProviderRowId
+                                   && _.CurrencyConvertId == item.CurrencyConvertId))
                 continue;
             myProjectRepository.AddDocumentInfo(item);
         }
 
         foreach (var prj in myProjectRepository.LoadProjectDocuments(CurrentProject.Id))
         {
-            
             prj.myState = RowStatus.NotEdited;
             prj.SetCurrency();
             Documents.Add(prj);
         }
+
         SetCrsColumnsVisible();
     }
 
@@ -168,7 +159,6 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         {
             WindowManager.ShowError(ex);
         }
-      
     }
 
     public override bool IsDocumentOpenAllow => CurrentDocument is not null;
@@ -185,20 +175,30 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 DocumentsOpenManager.Open(DocumentType.CashOut, CurrentDocument.CashOutDC.Value);
                 break;
             case DocumentType.Bank:
-                DocumentsOpenManager.Open(DocumentType.Bank,(int)CurrentDocument.BankCode);
+                DocumentsOpenManager.Open(DocumentType.Bank, (int)CurrentDocument.BankCode);
                 break;
-
             case DocumentType.InvoiceClient:
                 if (CurrentDocument.UslugaClientRowId is null) return;
                 var dc = myProjectRepository.GetInvoiceClientDC(CurrentDocument.UslugaClientRowId.Value);
-                if(dc is not null)
-                    DocumentsOpenManager.Open(DocumentType.InvoiceClient,dc.Value);
+                if (dc is not null)
+                    DocumentsOpenManager.Open(DocumentType.InvoiceClient, dc.Value);
                 break;
             case DocumentType.InvoiceProvider:
-                if (CurrentDocument.UslugaProviderRowId is null) return;
-                var dc2 = myProjectRepository.GetInvoiceProviderDC(CurrentDocument.UslugaProviderRowId.Value);
-                if(dc2 is not null)
-                    DocumentsOpenManager.Open(DocumentType.InvoiceProvider,dc2.Value);
+                if (CurrentDocument.UslugaProviderRowId is not null)
+                {
+                    var dc2 = myProjectRepository.GetInvoiceProviderDC(CurrentDocument.UslugaProviderRowId.Value,
+                        false);
+                    if (dc2 is not null)
+                        DocumentsOpenManager.Open(DocumentType.InvoiceProvider, dc2.Value);
+                }
+
+                if (CurrentDocument.CurrencyConvertId is not null)
+                {
+                    var dc2 = myProjectRepository.GetInvoiceProviderDC(CurrentDocument.CurrencyConvertId.Value, true);
+                    if (dc2 is not null)
+                        DocumentsOpenManager.Open(DocumentType.InvoiceProvider, dc2.Value);
+                }
+
                 break;
         }
     }
@@ -224,7 +224,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
     #region Fields
 
-    readonly List<string> myCrsNames = ["RUB", "EUR", "USD", "CHF", "CNY", "SEK", "GBP"];
+    private readonly List<string> myCrsNames = ["RUB", "EUR", "USD", "CHF", "CNY", "SEK", "GBP"];
 
     private readonly IProjectRepository myProjectRepository;
     private readonly ALFAMEDIAEntities myContext;
@@ -272,6 +272,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
     public ObservableCollection<ProjectDocumentInfo> Documents { set; get; } =
         [];
+
     public ObservableCollection<ProjectDocumentInfo> SelectedDocuments { set; get; } =
         [];
 
@@ -297,6 +298,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 (myCurrentDocument.WaybillDC ?? myCurrentDocument.WarehouseOrderInDC) is not null)
             {
                 LoadNomenklInfo(myCurrentDocument.DocumentType,
+                    // ReSharper disable once PossibleInvalidOperationException
                     (decimal)(myCurrentDocument.WaybillDC ?? myCurrentDocument.WarehouseOrderInDC));
             }
             else
@@ -308,7 +310,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             RaisePropertyChanged();
         }
     }
-    
+
     public Project CurrentProject
     {
         set
@@ -321,7 +323,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         }
         get => myCurrentProject;
     }
-    
+
     public bool IsAllProject
     {
         set
@@ -358,9 +360,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                              Unit = ((IName)nom.Unit).Name,
                              UnitPrice = (decimal)row.TD_26.SFT_ED_CENA
                          })
-                {
                     NomenklRows.Add(newItem);
-                }
 
                 break;
             case DocumentType.Waybill:
@@ -379,9 +379,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                              Unit = ((IName)nom.Unit).Name,
                              UnitPrice = (decimal)row.TD_84.SFT_ED_CENA
                          })
-                {
                     NomenklRows.Add(newItem);
-                }
                 break;
             default:
                 IsNotInfoVisibility = Visibility.Visible;
@@ -400,18 +398,15 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             prj.SetCurrency();
             Documents.Add(prj);
         }
+
         SetCrsColumnsVisible();
     }
 
     private void SetCrsBandNotVisible(GridControl grid)
     {
         foreach (var b in grid.Bands)
-        {
             if (myCrsNames.Any(_ => _ == (string)b.Header))
-            {
                 b.Visible = false;
-            }
-        }
     }
 
     private void SetCrsColumnsVisible()
@@ -426,11 +421,8 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                      from b in frm.gridDocuments.Bands
                      where (string)b.Header == crs.Name
                      select b)
-            {
                 b.Visible = true;
-            }
         }
-
     }
 
     #endregion

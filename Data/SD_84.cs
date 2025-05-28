@@ -103,6 +103,7 @@ namespace Data
         public Nullable<decimal> PersonalResponsibleDC { get; set; }
         public Nullable<System.Guid> DogovorClientId { get; set; }
         public Nullable<bool> IsExcludeFromPays { get; set; }
+        public Nullable<System.Guid> ProjectId { get; set; }
     
         public virtual DogovorClient DogovorClient { get; set; }
         public virtual GROZO_REQUISITE GROZO_REQUISITE { get; set; }
@@ -149,5 +150,6 @@ namespace Data
         public virtual ICollection<VD_84> VD_84 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ClientServiceAct> ClientServiceAct { get; set; }
+        public virtual Projects Projects { get; set; }
     }
 }

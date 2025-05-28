@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
-using Core.ViewModel.Base;
+﻿using Core.ViewModel.Base;
+using Core.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Xpf.Core.ConditionalFormatting;
@@ -26,9 +19,22 @@ using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
 using KursDomain.Repository;
 using KursDomain.Repository.DocHistoryRepository;
+using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Configuration;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using KursAM2.View.Projects;
+using KursAM2.ViewModel.Management.Projects;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -316,6 +322,48 @@ namespace KursAM2.ViewModel.Finance.Invoices
             };
             ctx.Form = frm;
             frm.Show();
+        }
+
+        public override void UpdateVisualObjects()
+        {
+            base.UpdateVisualObjects();
+            if (Form is StandartSearchView frm)
+            {
+                var menu = frm.gridDocumentsTableView.ContextMenu;
+                if (menu != null)
+                {
+                    menu.Items.Insert(3, new MenuItem()
+                    {
+                        Header = "Связать с проектами", 
+                        Command = LinkProjectsCommand,
+                        Icon = new PackIcon { Kind = PackIconKind.ExternalLink }
+                    });
+                }
+            }
+        }
+        
+        public ICommand LinkProjectsCommand
+        {
+            get { return new Command(LinkProjects, _ => CurrentDocument is not null 
+                                                        && InvoiceProviderRepository.IsInvoiceHasCurrencyConvert(CurrentDocument.DocCode)); }
+        }
+
+        private void LinkProjects(object obj)
+        {
+            var dlg = new SelectProjectDialogView();
+            var ctx = new ProjectSelectDialogWindowViewModel(DocumentType.InvoiceProvider, CurrentDocument.DocCode,
+                $"№{CurrentDocument.SF_IN_NUM}/{CurrentDocument.SF_POSTAV_NUM} от {CurrentDocument.DocDate.ToShortDateString()} " +
+                $"{CurrentDocument.Kontragent}.",true)
+            {
+                Form = dlg
+            };
+            dlg.DataContext = ctx;
+            dlg.ShowDialog();
+            if (!ctx.DialogResult) return;
+            InvoiceProviderRepository.UpdateProjectsInfo(CurrentDocument.DocCode,
+                ctx.Projects.Where(_ => _.IsSelected).Select(_ => _.Id),
+                $"Валютная конвертация СФ №{CurrentDocument.SF_IN_NUM}/{CurrentDocument.SF_POSTAV_NUM} от {CurrentDocument.DocDate.ToShortDateString()}" +
+                $" {CurrentDocument.Kontragent} {CurrentDocument.Summa:n2} {CurrentDocument.Currency}");
         }
 
         protected override void OnWindowLoaded(object obj)

@@ -2192,6 +2192,9 @@
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_ProjectId" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_WarehouseOrderInDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_WaybillDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_CurrencyConvertId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_SD_26_Projects" />
+        <AssociationConnector Association="ALFAMEDIA.FK_SD_84_Projects" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

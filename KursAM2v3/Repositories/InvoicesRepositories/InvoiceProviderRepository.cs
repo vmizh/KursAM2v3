@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Data;
+using Helper;
 using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain;
 using KursDomain.Documents.Invoices;
@@ -40,6 +41,9 @@ namespace KursAM2.Repositories.InvoicesRepositories
         //InvoiceProviderDialogs Dialogs { set; get; }
         void Delete(SD_26 entity);
         string GetInfoByRowId(Guid newRowInvoiceRowId);
+        void UpdateProjectsInfo(decimal dc, IEnumerable<Guid> projectIds, string desc);
+
+        bool IsInvoiceHasCurrencyConvert(decimal dc);
     }
 
     public class InvoiceProviderRepository : GenericKursDBRepository<InvoiceProvider>, IInvoiceProviderRepository
@@ -349,6 +353,60 @@ namespace KursAM2.Repositories.InvoicesRepositories
         {
             var id = Context.TD_26.FirstOrDefault(_ => _.Id == rowid)?.DocId;
             return id is null ? string.Empty : GetInfoById(id.Value);
+        }
+
+        public void UpdateProjectsInfo(decimal dc, IEnumerable<Guid> projectIds, string desc)
+        {
+            var convs = Context.TD_26_CurrencyConvert.Include(_ => _.TD_26)
+                .AsNoTracking()
+                .Where(_ => _.TD_26.DOC_CODE == dc).ToList();
+            foreach (var conv in convs)
+            {
+                var olds = Context.Database.SqlQuery<Guid>($@"Select ProjectId 
+                            FROM ProjectDocuments WHERE CurrencyConvertId = '{CustomFormat.GuidToSqlString(conv.Id)}'").ToList();
+                foreach (var id in projectIds)
+                {
+                    if (olds.Any(_ => _ == id))
+                        olds.Remove(id);
+                }
+
+                foreach (var sql in olds.Select(pId =>
+                             $@"DELETE FROM ProjectDocuments WHERE ProjectId = '{CustomFormat.GuidToSqlString(pId)}' 
+                                AND CurrencyConvertId = '{CustomFormat.GuidToSqlString(conv.Id)}'"))
+                {
+                    Context.Database.ExecuteSqlCommand(sql);
+                }
+
+                foreach (var sqlIns in from projId in projectIds.ToList()
+                         let old = Context.Projects.Include(_ => _.ProjectDocuments)
+                             .Where(_ => _.Id == projId && _.ProjectDocuments.Any(_ => _.CurrencyConvertId == conv.Id))
+                         where !old.Any()
+                         select $@"INSERT INTO dbo.ProjectDocuments
+                                    (
+                                      Id,ProjectId,DocType,DocInfo,Note,BankCode,CashInDC
+                                     ,CashOutDC,WarehouseOrderInDC,WaybillDC
+                                     ,AccruedClientRowId,AccruedSupplierRowId,UslugaClientRowId,UslugaProviderRowId
+                                     ,CurrencyConvertId
+                                    )
+                                    VALUES
+                                    (
+                                      newid()
+                                     ,'{CustomFormat.GuidToSqlString(projId)}' 
+                                     ,26 
+                                     ,'{desc}' 
+                                     ,'' 
+                                     ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+                                     ,'{CustomFormat.GuidToSqlString(conv.Id)}'
+                                    );")
+                {
+                    Context.Database.ExecuteSqlCommand(sqlIns);
+                }
+            }
+        }
+
+        public bool IsInvoiceHasCurrencyConvert(decimal dc)
+        {
+            return Context.TD_26_CurrencyConvert.Any(_ => _.DOC_CODE == dc);
         }
 
         public string GetInfoById(Guid id)

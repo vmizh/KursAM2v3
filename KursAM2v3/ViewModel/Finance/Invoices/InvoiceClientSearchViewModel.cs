@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Configuration;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using Core.ViewModel.Base;
+﻿using Core.ViewModel.Base;
 using Core.WindowsManager;
 using Data;
 using DevExpress.Xpf.Core.ConditionalFormatting;
@@ -21,7 +11,9 @@ using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.Invoices;
+using KursAM2.View.Projects;
 using KursAM2.ViewModel.Finance.Invoices.Base;
+using KursAM2.ViewModel.Management.Projects;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Invoices;
@@ -29,9 +21,21 @@ using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
 using KursDomain.Repository;
 using KursDomain.Repository.DocHistoryRepository;
+using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using StackExchange.Redis;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Configuration;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -45,11 +49,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override bool IsDocNewCopyAllow => CurrentDocument is not null;
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument is not null;
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
-
-
-
-
-
+        
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
@@ -284,6 +284,24 @@ namespace KursAM2.ViewModel.Finance.Invoices
             StartDate = DateHelper.GetFirstDate();
         }
 
+        public override void UpdateVisualObjects()
+        {
+            base.UpdateVisualObjects();
+            if (Form is StandartSearchView frm)
+            {
+                var menu = frm.gridDocumentsTableView.ContextMenu;
+                if (menu != null)
+                {
+                    menu.Items.Insert(3, new MenuItem()
+                    {
+                        Header = "Связать с проектами", 
+                        Command = LinkProjectsCommand,
+                        Icon = new PackIcon { Kind = PackIconKind.ExternalLink }
+                    });
+                }
+            }
+        }
+
         private void UpdateMutualPayments(RedisValue message)
         {
             if (string.IsNullOrWhiteSpace(message)) return;
@@ -393,7 +411,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
 
-            var dc = new List<decimal>(new[] { msg.DocCode.Value });
+            var dc = new List<decimal>([msg.DocCode.Value]);
             var data = InvoiceClientRepository.GetByDocCodes(dc);
             var last = lastDocumentRopository.GetLastChanges(dc);
             if (data.Count <= 0) return;
@@ -427,6 +445,30 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Commands
 
+        public ICommand LinkProjectsCommand
+        {
+            get { return new Command(LinkProjects, _ => CurrentDocument is not null); }
+        }
+
+        private void LinkProjects(object obj)
+        {
+            var dlg = new SelectProjectDialogView();
+            var ctx = new ProjectSelectDialogWindowViewModel(DocumentType.InvoiceClient, CurrentDocument.DocCode,
+                $"№{CurrentDocument.InnerNumber}/{CurrentDocument.OuterNumber} от {CurrentDocument.DocDate.ToShortDateString()} " +
+                $"{CurrentDocument.Client}.",false)
+            {
+                Form = dlg
+            };
+            dlg.DataContext = ctx;
+            dlg.ShowDialog();
+            if (!ctx.DialogResult) return;
+            //InvoiceClientRepository.UpdateProjectsInfo(CurrentDocument.DocCode,
+            //    ctx.Projects.Where(_ => _.IsSelected).Select(_ => _.Id),
+            //    $"Валютная конвертация СФ №{CurrentDocument.InnerNumber}/{CurrentDocument.OuterNumber} от {CurrentDocument.DocDate.ToShortDateString()}" +
+            //    $" {CurrentDocument.Client} {CurrentDocument.Summa:n2} {CurrentDocument.Currency}");
+
+        }
+
         public override void Search(object obj)
         {
             GetSearchDocument(obj);
@@ -444,35 +486,23 @@ namespace KursAM2.ViewModel.Finance.Invoices
             try
             {
                 Documents.Clear();
-                using (var ctx = GlobalOptions.GetEntities())
+                foreach (var item in InvoiceClientRepository.GetSearch(StartDate, EndDate))
                 {
-                    var query = ctx
-                        .SD_84
-                        .Include(_ => _.SD_43)
-                        .Include(_ => _.SD_431)
-                        .Include(_ => _.SD_432)
-                        .Include(_ => _.SD_301)
-                        .Include(_ => _.TD_84)
-                        .Include("TD_84.SD_83")
-                        .Include("TD_84.TD_24")
-                        .Where(_ => _.SF_DATE >= StartDate && _.SF_DATE <= EndDate);
-                    foreach (var item in query.ToList())
-                    {
-                        var newItem = new InvoiceClientViewModel(item);
-                        string d;
-                        d = newItem.Diler != null ? newItem.Diler.Name : "";
-                        if (newItem.InnerNumber.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
-                            newItem.OuterNumber.ToUpper().Contains(SearchText.ToUpper()) ||
-                            newItem.SF_CLIENT_NAME.ToUpper().Contains(SearchText.ToUpper()) ||
-                            newItem.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
-                            newItem.SF_DILER_SUMMA.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
-                            newItem.CO.Name.ToUpper().Contains(SearchText.ToUpper()) ||
-                            // ReSharper disable once SpecifyACultureInStringConversionExplicitly
-                            newItem.Summa.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
-                            d.ToUpper().Contains(SearchText.ToUpper()))
-                            Documents.Add(newItem);
-                    }
+                    var newItem = new InvoiceClientViewModel(item);
+                    string d;
+                    d = newItem.Diler != null ? newItem.Diler.Name : "";
+                    if (newItem.InnerNumber.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
+                        newItem.OuterNumber.ToUpper().Contains(SearchText.ToUpper()) ||
+                        newItem.SF_CLIENT_NAME.ToUpper().Contains(SearchText.ToUpper()) ||
+                        newItem.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
+                        newItem.SF_DILER_SUMMA.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
+                        newItem.CO.Name.ToUpper().Contains(SearchText.ToUpper()) ||
+                        // ReSharper disable once SpecifyACultureInStringConversionExplicitly
+                        newItem.Summa.ToString().ToUpper().Contains(SearchText.ToUpper()) ||
+                        d.ToUpper().Contains(SearchText.ToUpper()))
+                        Documents.Add(newItem);
                 }
+
             }
             catch (Exception e)
             {
