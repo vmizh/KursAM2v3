@@ -60,6 +60,9 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="KursDomain">
+      <HintPath>..\DXApplication1\KursRepozit\bin\Debug\KursDomain.dll</HintPath>
+    </Reference>
     <Reference Include="MaterialDesignColors, Version=2.1.4.0, Culture=neutral, PublicKeyToken=df2a72020bd7962a, processorArchitecture=MSIL">
       <HintPath>..\packages\MaterialDesignColors.2.1.4\lib\net462\MaterialDesignColors.dll</HintPath>
     </Reference>
@@ -565,16 +568,6 @@
     <Compile Include="View\WarehouseRemainsView.xaml.cs">
       <DependentUpon>WarehouseRemainsView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowsManager\ErrorMessageBase.cs" />
-    <Compile Include="WindowsManager\IWindowManager.cs" />
-    <Compile Include="WindowsManager\KursDialog.xaml.cs">
-      <DependentUpon>KursDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WindowsManager\KursDialogViewModel.cs" />
-    <Compile Include="WindowsManager\StandartErrorManager.cs" />
-    <Compile Include="WindowsManager\ThemedWindowLayoutManager.cs" />
-    <Compile Include="WindowsManager\WindowLayoutManager.cs" />
-    <Compile Include="WindowsManager\WindowManager.cs" />
     <Compile Include="Wrapper\Base\BaseWrapper.cs" />
     <Compile Include="Wrapper\Base\ICalculateValues.cs" />
     <Compile Include="Wrapper\Base\IUpdateReferences.cs" />
@@ -652,10 +645,6 @@
     <Page Include="View\WarehouseRemainsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="WindowsManager\KursDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

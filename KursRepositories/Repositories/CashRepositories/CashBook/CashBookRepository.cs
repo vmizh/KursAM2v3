@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Core.WindowsManager;
@@ -53,6 +54,11 @@ namespace KursRepositories.Repositories.CashRepositories.CashBook
                     WindowManager.ShowError(ex);
                 }
             }
+        }
+
+        public void SetRemains(decimal cashDC, IEnumerable remains)
+        {
+            throw new NotImplementedException();
         }
 
         public IEnumerable<DateTime> GetOperationDates(decimal cashDC)

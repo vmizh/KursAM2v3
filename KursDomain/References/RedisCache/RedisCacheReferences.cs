@@ -5,7 +5,6 @@ using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
 using System.Threading;
 using System.Threading.Tasks;
 using Core.WindowsManager;
@@ -94,6 +93,7 @@ public class RedisCacheReferences : IReferencesCache
     }
 
     public bool IsChangeTrackingOn { get; set; }
+
     // ReSharper disable once UnassignedGetOnlyAutoProperty
     public DbContext DBContext { get; }
 
@@ -1008,7 +1008,6 @@ public class RedisCacheReferences : IReferencesCache
 
     public IEnumerable<INomenkl> GetNomenkl(IEnumerable<decimal> dcList)
     {
-        
         var cacheName = "Nomenkl";
         var list = dcList.ToList();
         UpdateNomenkl(list);
@@ -1576,7 +1575,7 @@ public class RedisCacheReferences : IReferencesCache
             }
         }
 
-        Currencies.AddOrUpdate(dc,itemNew);
+        Currencies.AddOrUpdate(dc, itemNew);
         return Currencies[dc];
     }
 
@@ -1934,7 +1933,8 @@ public class RedisCacheReferences : IReferencesCache
             redisClient.Db = GlobalOptions.RedisDBId ?? 0;
             if (!cacheKeysDict.ContainsKey(cacheName))
                 LoadCacheKeys(cacheName);
-            if (!((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec) && cacheKeysDict[cacheName].CachKeys.Count == Projects.Count)
+            if (!((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec) &&
+                cacheKeysDict[cacheName].CachKeys.Count == Projects.Count)
                 return Projects.Values.ToList();
             var redis = redisClient.As<Project>();
             Projects.Clear();
@@ -2183,7 +2183,6 @@ public class RedisCacheReferences : IReferencesCache
                 UpdateListGuid(Countries.Values.Cast<Country>(), now);
                 GetCountriesAll();
 
-                
 
                 foreach (var item in Context.SD_23.AsNoTracking().ToList())
                 {
@@ -2417,7 +2416,7 @@ public class RedisCacheReferences : IReferencesCache
                 Kontragents.Clear();
                 foreach (var entity in Context.SD_43.Include(_ => _.SD_2))
                 {
-                    var  newItem = new Kontragent()
+                    var newItem = new Kontragent
                     {
                         DocCode = entity.DOC_CODE,
                         StartBalans = entity.START_BALANS ?? new DateTime(2000, 1, 1),
@@ -2433,8 +2432,8 @@ public class RedisCacheReferences : IReferencesCache
                     newItem.LoadFromEntity(entity, this);
                     newItem.ResponsibleEmployeeDC = ((IDocCode)GetEmployee(newItem.ResponsibleEmployeeTN))?.DocCode;
                     Kontragents.Add(newItem.DocCode, newItem);
-                    
                 }
+
                 DropAll<Kontragent>();
                 UpdateList2(Kontragents.Values.Cast<Kontragent>().ToList(), now);
 
@@ -3191,6 +3190,7 @@ public class RedisCacheReferences : IReferencesCache
                     UpdateListGuid(Projects.Values.Cast<Project>(), DateTime.Now);
                     GetProjectsAll();
                 }
+
                 break;
             case RedisMessageChannels.ProductTypeReference:
                 if (message.DocCode is null) return;
@@ -3337,7 +3337,6 @@ public class RedisCacheReferences : IReferencesCache
             default:
                 Console.WriteLine($"{channel} - не обработан");
                 break;
-
         }
     }
 
