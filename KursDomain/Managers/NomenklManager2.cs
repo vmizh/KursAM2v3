@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Core.WindowsManager;
 using Data;
 using Helper;
-using KursDomain;
 using KursDomain.Annotations;
 using KursDomain.Documents.Currency;
 using KursDomain.Repository.NomenklRepository;
+using KursDomain.WindowsManager.WindowsManager;
 
 namespace KursDomain.Managers
 {

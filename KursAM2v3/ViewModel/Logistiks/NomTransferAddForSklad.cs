@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using Calculates.Materials;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using KursAM2.View.Logistiks;
 using KursDomain;
 using KursDomain.References;

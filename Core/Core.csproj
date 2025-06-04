@@ -133,16 +133,6 @@
     <Compile Include="Errors.cs" />
     <Compile Include="DataSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WindowsManager\ErrorMessageBase.cs" />
-    <Compile Include="WindowsManager\IWindowManager.cs" />
-    <Compile Include="WindowsManager\KursDialog.xaml.cs">
-      <DependentUpon>KursDialog.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WindowsManager\KursDialogViewModel.cs" />
-    <Compile Include="WindowsManager\StandartErrorManager.cs" />
-    <Compile Include="WindowsManager\ThemedWindowLayoutManager.cs" />
-    <Compile Include="WindowsManager\WindowLayoutManager.cs" />
-    <Compile Include="WindowsManager\WindowManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Data\Data.csproj">
@@ -169,12 +159,6 @@
     </None>
     <None Include="packages.config" />
     <None Include="Properties\DataSources\Core.EntityViewModel.WarehouseOrderIn.datasource" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="WindowsManager\KursDialog.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

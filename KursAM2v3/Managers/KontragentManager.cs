@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using KursDomain;
 using KursDomain.ICommon;

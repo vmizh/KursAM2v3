@@ -7,6 +7,7 @@ using Helper;
 using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain;
 using KursDomain.Documents.Invoices;
+using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Repository;
 
@@ -67,6 +68,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
             throw new NotImplementedException();
         }
 
+        
         public InvoiceClientViewModel GetRequisiteCopy(InvoiceClientViewModel doc)
         {
             throw new NotImplementedException();
@@ -74,7 +76,38 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         public InvoiceClientViewModel GetFullCopy(decimal dc)
         {
-            throw new NotImplementedException();
+            var doc = Context.SD_84.Include(_ => _.TD_84).AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == dc);
+            if (doc == null) return null;
+            var newId = Guid.NewGuid();
+            var ret = new InvoiceClientViewModel(doc)
+            {
+                DocCode = -1,
+                DocDate = DateTime.Today,
+                Note = null,
+                REGISTER_DATE = DateTime.Today,
+                CREATOR = GlobalOptions.UserInfo.Name,
+                InnerNumber = -1,
+                OuterNumber = null,
+                IsAccepted = false,
+                myState = RowStatus.NewRow,
+                Id = newId
+            };
+            foreach (var row in ret.Rows)
+            {
+                var newCode = 1;
+                foreach (var item in ret.Rows.Cast<InvoiceClientRowViewModel>())
+                {
+                    item.DocCode = -1;
+                    item.Id = Guid.NewGuid();
+                    item.DocId = newId;
+                    item.Code = newCode;
+                    item.Note = " ";
+                    item.Shipped = 0;
+                    item.State = RowStatus.NewRow;
+                    newCode++;
+                }
+            }
+            return ret;
         }
 
         public InvoiceClientViewModel GetRequisiteCopy(decimal dc)

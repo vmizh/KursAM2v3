@@ -7,9 +7,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core.ViewModel.Base;
-using static Core.WindowsManager.WindowManager;
 
-namespace KursDomain.WindowsManager;
+namespace KursDomain.WindowsManager.WindowsManager;
 
 public class KursDialogViewModel : INotifyPropertyChanged
 {
@@ -17,8 +16,9 @@ public class KursDialogViewModel : INotifyPropertyChanged
 
     // public Brush TitleTextColor { get; set; }
 
-    public KursDialogViewModel(string text, string titleText, Brush titleTextColor, KursDialogResult result,
-        Dictionary<KursDialogResult, string> buttonNames)
+    public KursDialogViewModel(string text, string titleText, Brush titleTextColor,
+        WindowManager.KursDialogResult result,
+        Dictionary<WindowManager.KursDialogResult, string> buttonNames)
     {
         bNames = buttonNames;
         TitleText = titleText;
@@ -27,59 +27,59 @@ public class KursDialogViewModel : INotifyPropertyChanged
 
         dialog = new KursDialog();
 
-        if ((result & KursDialogResult.Yes) == KursDialogResult.Yes)
+        if ((result & WindowManager.KursDialogResult.Yes) == WindowManager.KursDialogResult.Yes)
             Buttons.Add(new Button
             {
-                Content = buttonNames[KursDialogResult.Yes],
+                Content = buttonNames[WindowManager.KursDialogResult.Yes],
                 Command = ButtonClickCommand,
-                CommandParameter = KursDialogResult.Yes,
+                CommandParameter = WindowManager.KursDialogResult.Yes,
                 Width = buttonWidth,
                 Margin = buttonMargin
             });
-        if ((result & KursDialogResult.No) == KursDialogResult.No)
+        if ((result & WindowManager.KursDialogResult.No) == WindowManager.KursDialogResult.No)
             Buttons.Add(new Button
             {
-                Content = buttonNames[KursDialogResult.No],
+                Content = buttonNames[WindowManager.KursDialogResult.No],
                 Command = ButtonClickCommand,
-                CommandParameter = KursDialogResult.No,
-                Width = buttonWidth,
-                Margin = buttonMargin
-            });
-
-        if ((result & KursDialogResult.Save) == KursDialogResult.Save)
-            Buttons.Add(new Button
-            {
-                Content = buttonNames[KursDialogResult.Save],
-                Command = ButtonClickCommand,
-                CommandParameter = KursDialogResult.Save,
-                Width = buttonWidth,
-                Margin = buttonMargin
-            });
-        if ((result & KursDialogResult.NotSave) == KursDialogResult.NotSave)
-            Buttons.Add(new Button
-            {
-                Content = buttonNames[KursDialogResult.NotSave],
-                Command = ButtonClickCommand,
-                CommandParameter = KursDialogResult.NotSave,
-                Width = buttonWidth,
-                Margin = buttonMargin
-            });
-        if ((result & KursDialogResult.Cancel) == KursDialogResult.Cancel)
-            Buttons.Add(new Button
-            {
-                Content = buttonNames[KursDialogResult.Cancel],
-                Command = ButtonClickCommand,
-                CommandParameter = KursDialogResult.Cancel,
+                CommandParameter = WindowManager.KursDialogResult.No,
                 Width = buttonWidth,
                 Margin = buttonMargin
             });
 
-        if ((result & KursDialogResult.Confirm) == KursDialogResult.Confirm)
+        if ((result & WindowManager.KursDialogResult.Save) == WindowManager.KursDialogResult.Save)
             Buttons.Add(new Button
             {
-                Content = buttonNames[KursDialogResult.Confirm],
+                Content = buttonNames[WindowManager.KursDialogResult.Save],
                 Command = ButtonClickCommand,
-                CommandParameter = KursDialogResult.Confirm,
+                CommandParameter = WindowManager.KursDialogResult.Save,
+                Width = buttonWidth,
+                Margin = buttonMargin
+            });
+        if ((result & WindowManager.KursDialogResult.NotSave) == WindowManager.KursDialogResult.NotSave)
+            Buttons.Add(new Button
+            {
+                Content = buttonNames[WindowManager.KursDialogResult.NotSave],
+                Command = ButtonClickCommand,
+                CommandParameter = WindowManager.KursDialogResult.NotSave,
+                Width = buttonWidth,
+                Margin = buttonMargin
+            });
+        if ((result & WindowManager.KursDialogResult.Cancel) == WindowManager.KursDialogResult.Cancel)
+            Buttons.Add(new Button
+            {
+                Content = buttonNames[WindowManager.KursDialogResult.Cancel],
+                Command = ButtonClickCommand,
+                CommandParameter = WindowManager.KursDialogResult.Cancel,
+                Width = buttonWidth,
+                Margin = buttonMargin
+            });
+
+        if ((result & WindowManager.KursDialogResult.Confirm) == WindowManager.KursDialogResult.Confirm)
+            Buttons.Add(new Button
+            {
+                Content = buttonNames[WindowManager.KursDialogResult.Confirm],
+                Command = ButtonClickCommand,
+                CommandParameter = WindowManager.KursDialogResult.Confirm,
                 Width = buttonWidth + 60,
                 Margin = buttonMargin
             });
@@ -139,7 +139,7 @@ public class KursDialogViewModel : INotifyPropertyChanged
 
     #region Fields
 
-    private Dictionary<KursDialogResult, string> bNames;
+    private Dictionary<WindowManager.KursDialogResult, string> bNames;
     private readonly KursDialog dialog;
     private string text;
     private const double buttonWidth = 120;
@@ -166,7 +166,7 @@ public class KursDialogViewModel : INotifyPropertyChanged
     public string TitleText { set; get; }
 
 
-    public KursDialogResult DialogResult;
+    public WindowManager.KursDialogResult DialogResult;
 
     #endregion
 
@@ -183,14 +183,14 @@ public class KursDialogViewModel : INotifyPropertyChanged
             switch (p)
             {
                 case "Enter":
-                    DialogResult = KursDialogResult.Yes;
+                    DialogResult = WindowManager.KursDialogResult.Yes;
                     break;
                 case "Cancel":
-                    DialogResult = KursDialogResult.No;
+                    DialogResult = WindowManager.KursDialogResult.No;
                     break;
             }
         else
-            DialogResult = (KursDialogResult)obj;
+            DialogResult = (WindowManager.KursDialogResult)obj;
 
         dialog?.Close();
     }

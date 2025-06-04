@@ -6,7 +6,7 @@ using System.Transactions;
 using System.Windows;
 using Core;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using DevExpress.Mvvm.Native;
 using KursAM2.View.Finance;
 using KursDomain;

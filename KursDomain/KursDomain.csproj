@@ -568,6 +568,16 @@
     <Compile Include="View\WarehouseRemainsView.xaml.cs">
       <DependentUpon>WarehouseRemainsView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="WindowsManager\ErrorMessageBase.cs" />
+    <Compile Include="WindowsManager\IWindowManager.cs" />
+    <Compile Include="WindowsManager\KursDialog.xaml.cs">
+      <DependentUpon>KursDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsManager\KursDialogViewModel.cs" />
+    <Compile Include="WindowsManager\StandartErrorManager.cs" />
+    <Compile Include="WindowsManager\ThemedWindowLayoutManager.cs" />
+    <Compile Include="WindowsManager\WindowLayoutManager.cs" />
+    <Compile Include="WindowsManager\WindowManager.cs" />
     <Compile Include="Wrapper\Base\BaseWrapper.cs" />
     <Compile Include="Wrapper\Base\ICalculateValues.cs" />
     <Compile Include="Wrapper\Base\IUpdateReferences.cs" />
@@ -643,6 +653,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\WarehouseRemainsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WindowsManager\KursDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

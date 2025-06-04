@@ -1,5 +1,5 @@
 ﻿using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Xpf.Core.ConditionalFormatting;
@@ -27,6 +27,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -299,8 +300,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocNewCopy(object form)
         {
             if (CurrentDocument == null) return;
-            var ctx = new ProviderWindowViewModel(CurrentDocument.DocCode);
-            ctx.SetAsNewCopy(true);
+            var ctx = new ProviderWindowViewModel();
+            ctx.Document = ctx.InvoiceProviderRepository.GetFullCopy(CurrentDocument.DocCode);
+            ctx.UnitOfWork.Context.SD_26.Add(ctx.Document.Entity);
+            foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
+            {
+                if (ent.Entity is SD_26 or TD_26) continue;
+                ent.State = EntityState.Unchanged;
+            }
             var frm = new InvoiceProviderView
             {
                 Owner = Application.Current.MainWindow,
@@ -313,8 +320,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocNewCopyRequisite(object form)
         {
             if (CurrentDocument == null) return;
-            var ctx = new ProviderWindowViewModel(CurrentDocument.DocCode);
-            ctx.SetAsNewCopy(false);
+            if (CurrentDocument == null) return;
+            var ctx = new ProviderWindowViewModel();
+            ctx.Document = ctx.InvoiceProviderRepository.GetRequisiteCopy(CurrentDocument.DocCode);
+            ctx.UnitOfWork.Context.SD_26.Add(ctx.Document.Entity);
+            foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
+            {
+                if (ent.Entity is SD_26 or TD_26) continue;
+                ent.State = EntityState.Unchanged;
+            }
             var frm = new InvoiceProviderView
             {
                 Owner = Application.Current.MainWindow,

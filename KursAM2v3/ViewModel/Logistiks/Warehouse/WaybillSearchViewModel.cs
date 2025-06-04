@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using KursAM2.Managers;
 using KursAM2.Repositories;

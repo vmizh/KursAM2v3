@@ -9,7 +9,7 @@ using System.Windows.Input;
 using Core.EntityViewModel.CommonReferences;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;
 using Helper;

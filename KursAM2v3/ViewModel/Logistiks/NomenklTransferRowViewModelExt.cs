@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using JetBrains.Annotations;
 using KursDomain;

@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Data;
 using DevExpress.Mvvm;
@@ -1944,8 +1944,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocNewCopy(object form)
         {
             if (Document == null) return;
-            var ctx = new ProviderWindowViewModel(Document.DocCode);
-            ctx.SetAsNewCopy(true);
+            var ctx = new ProviderWindowViewModel();
+            ctx.Document = ctx.InvoiceProviderRepository.GetFullCopy(Document.DocCode);
+            ctx.UnitOfWork.Context.SD_26.Add(ctx.Document.Entity);
+            foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
+            {
+                if (ent.Entity is SD_26 or TD_26) continue;
+                ent.State = EntityState.Unchanged;
+            }
             var frm = new InvoiceProviderView
             {
                 Owner = Application.Current.MainWindow,
@@ -1958,8 +1964,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocNewCopyRequisite(object form)
         {
             if (Document == null) return;
-            var ctx = new ProviderWindowViewModel(Document.DocCode);
-            ctx.SetAsNewCopy(false);
+            if (Document == null) return;
+            var ctx = new ProviderWindowViewModel();
+            ctx.Document = ctx.InvoiceProviderRepository.GetRequisiteCopy(Document.DocCode);
+            ctx.UnitOfWork.Context.SD_26.Add(ctx.Document.Entity);
+            foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
+            {
+                if (ent.Entity is SD_26 or TD_26) continue;
+                ent.State = EntityState.Unchanged;
+            }
             var frm = new InvoiceProviderView
             {
                 Owner = Application.Current.MainWindow,

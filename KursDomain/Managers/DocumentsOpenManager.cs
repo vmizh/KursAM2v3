@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using Helper;
 using KursDomain;

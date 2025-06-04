@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using Core;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using KursDomain.Repository;
 using KursAM2.View.Finance.UC;

@@ -7,7 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.XtraEditors.DXErrorProvider;
 using KursAM2.View.Base;

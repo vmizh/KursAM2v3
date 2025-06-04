@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Media;
 using System.Xml;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using KursAM2.View;
 
 //using MessageBox = System.Windows.MessageBox;

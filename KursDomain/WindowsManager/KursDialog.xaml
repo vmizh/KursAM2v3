@@ -1,9 +1,8 @@
 ﻿<dx:ThemedWindow
-    x:Class="KursDomain.WindowsManager.KursDialog"
+    x:Class="KursDomain.WindowsManager.WindowsManager.KursDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     dx:ThemeManager.ThemeName="Win11Light"
     Title="" Height="200" Width="480"
     WindowStartupLocation="CenterScreen"
@@ -60,7 +59,7 @@
                      FontWeight="Bold"
                      VerticalContentAlignment="Bottom"
                      Background="White"
-                     Padding="25,0,0,0" 
+                     Padding="25,0,0,0"
                      Foreground="{Binding  TitleTextColor}" />
 
             <TextBox HorizontalContentAlignment="Left"
@@ -75,22 +74,22 @@
                      TextAlignment="Left"
                      BorderThickness="0"
                      Background="White"
-                     FontSize="14"/>
+                     FontSize="14" />
 
             <StackPanel Grid.Row="2" Grid.Column="0"
-                        Background="#F3F3F3F3" Margin="0,0,0,0" Focusable="False" >
+                        Background="#F3F3F3F3" Margin="0,0,0,0" Focusable="False">
                 <WrapPanel
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Focusable="False"
-                    Margin ="27">
+                    Margin="27">
                     <ItemsControl
                         IsTabStop="False"
                         ItemsSource="{Binding Path=Buttons,NotifyOnSourceUpdated=True}"
                         MinHeight="30">
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Focusable="False"  />
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Focusable="False" />
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
                         <!--

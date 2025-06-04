@@ -1,5 +1,5 @@
 ﻿using System.Windows.Input;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Prism.Commands;
 
 namespace KursDomain.ViewModel.Base2;

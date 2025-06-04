@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using Core;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using KursDomain;
 using KursDomain.Documents.Vzaimozachet;
 using KursDomain.ICommon;

@@ -1,5 +1,5 @@
 ﻿using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
@@ -583,11 +583,22 @@ namespace KursAM2.ViewModel.Finance.Invoices
             frm.Show();
         }
 
-        public override void DocNewCopy(object obj)
+        public override void DocNewCopyRequisite(object obj)
         {
             if (CurrentDocument == null) return;
-            var ctx = new ClientWindowViewModel(CurrentDocument.DocCode);
-            ctx.SetAsNewCopy(true);
+            var ctx = new ClientWindowViewModel
+            {
+                IsLoadPay = false,
+            };
+            ctx.Document = ctx.InvoiceClientRepository.GetFullCopy(CurrentDocument.DocCode);
+            ctx.Document.Rows.Clear();
+            ctx.Document.Entity.TD_84.Clear();
+            ctx.UnitOfWork.Context.SD_84.Add(ctx.Document.Entity);
+            foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
+            {
+                if (ent.Entity is SD_84 or TD_84) continue;
+                ent.State = EntityState.Unchanged;
+            }
             var frm = new InvoiceClientView
             {
                 Owner = Application.Current.MainWindow,
@@ -597,11 +608,20 @@ namespace KursAM2.ViewModel.Finance.Invoices
             frm.Show();
         }
 
-        public override void DocNewCopyRequisite(object obj)
+        public override void DocNewCopy(object obj)
         {
             if (CurrentDocument == null) return;
-            var ctx = new ClientWindowViewModel(CurrentDocument.DocCode);
-            ctx.SetAsNewCopy(false);
+            var ctx = new ClientWindowViewModel
+            {
+                IsLoadPay = false,
+            };
+            ctx.Document = ctx.InvoiceClientRepository.GetFullCopy(CurrentDocument.DocCode);
+            ctx.UnitOfWork.Context.SD_84.Add(ctx.Document.Entity);
+            foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
+            {
+                if (ent.Entity is SD_84 or TD_84) continue;
+                ent.State = EntityState.Unchanged;
+            }
             var frm = new InvoiceClientView
             {
                 Owner = Application.Current.MainWindow,
@@ -613,17 +633,6 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #endregion
 
-        //protected override void UnboundColumnData(object obj)
-        //{
-        //    if (obj is not UnboundColumnRowArgs args) return;
-        //    if (!args.IsGetData) return; 
-        //    var item = (IInvoiceClient)args.Item;
-        //    switch (args.FieldName)
-        //    {
-        //        case "ExtColumnDecimal": 
-        //            args.Value = item. item;
-        //            break;
-        //    }
-        //}
+       
     }
 }

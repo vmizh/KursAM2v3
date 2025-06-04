@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media;
 using Core;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;

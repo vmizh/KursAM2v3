@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Windows;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.DataAnnotations;
 using KursAM2.View.Base;

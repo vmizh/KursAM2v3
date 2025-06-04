@@ -2,7 +2,7 @@
 using System.Windows.Input;
 using DevExpress.Xpf.Core;
 
-namespace KursDomain.WindowsManager;
+namespace KursDomain.WindowsManager.WindowsManager;
 
 /// <summary>
 ///     Interaction logic for KursDialog.xaml

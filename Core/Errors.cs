@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text;
 using System.Windows;
-using Core.WindowsManager;
 using DevExpress.Xpf.Core;
+using KursDomain.WindowsManager.WindowsManager;
 
 namespace Core
 {

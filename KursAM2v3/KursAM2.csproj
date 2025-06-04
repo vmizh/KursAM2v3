@@ -1217,6 +1217,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="dll\" />
     <Folder Include="Properties\DataSources\" />
     <Folder Include="Startup\" />
     <Folder Include="Tests\" />

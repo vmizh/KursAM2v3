@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using DevExpress.Spreadsheet;
 using DevExpress.Xpf.Printing;
 using DevExpress.Xpf.Spreadsheet;
@@ -23,7 +23,7 @@ namespace Reports.Base
 
         public virtual void ShowSpreadsheet()
         {
-            var file = $"{Environment.CurrentDirectory}\\Reports\\{XlsFileName}.xlsx";
+            var file = $@"{Environment.CurrentDirectory}\Reports\{XlsFileName}.xlsx";
             var view = new ExportView
             {
                 Owner = Application.Current.MainWindow

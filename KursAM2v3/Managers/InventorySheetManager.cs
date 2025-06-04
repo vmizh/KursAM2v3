@@ -4,13 +4,13 @@ using System.Data.Entity;
 using System.Linq;
 using System.Transactions;
 using Calculates.Materials;
-using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
 using KursAM2.ViewModel.Logistiks;
 using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.References;
+using KursDomain.WindowsManager.WindowsManager;
 
 namespace KursAM2.Managers
 {

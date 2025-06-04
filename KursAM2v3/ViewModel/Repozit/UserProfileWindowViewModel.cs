@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using System.Windows.Input;
 using Core;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.XtraEditors.DXErrorProvider;
 using KursDomain;

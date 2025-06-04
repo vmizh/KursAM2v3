@@ -5,7 +5,7 @@ using System.Linq;
 using Core;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using KursDomain;
 using KursDomain.References;
 

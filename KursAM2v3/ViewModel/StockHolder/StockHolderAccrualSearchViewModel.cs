@@ -5,7 +5,7 @@ using System.Windows;
 using Core;
 using Core.EntityViewModel.CommonReferences;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using KursAM2.Managers;
 using KursAM2.View.Base;

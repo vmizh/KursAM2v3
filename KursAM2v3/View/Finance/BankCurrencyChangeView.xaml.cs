@@ -4,7 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core.EntityViewModel.CommonReferences;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.LayoutControl;

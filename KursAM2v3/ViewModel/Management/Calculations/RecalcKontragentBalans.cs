@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using Core;
 using Core.EntityViewModel.CommonReferences;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using Helper;
 using KursDomain;

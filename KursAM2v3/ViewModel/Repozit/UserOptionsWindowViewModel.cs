@@ -1,6 +1,6 @@
 ﻿using Core;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Grid;

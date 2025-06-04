@@ -9,7 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Data;
 using DevExpress.Xpf.Grid;

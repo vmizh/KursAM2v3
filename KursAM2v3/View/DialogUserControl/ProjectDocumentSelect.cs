@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using KursAM2.View.Management.Controls;
 using KursAM2.ViewModel.Management.Projects;
 using KursDomain;

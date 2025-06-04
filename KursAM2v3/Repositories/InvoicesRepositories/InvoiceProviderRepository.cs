@@ -7,6 +7,7 @@ using Helper;
 using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain;
 using KursDomain.Documents.Invoices;
+using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 using KursDomain.Repository;
@@ -22,6 +23,10 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         void DeleteTD26CurrencyConvert();
         InvoiceProvider GetByDocCode(decimal dc);
+
+        InvoiceProvider GetFullCopy(decimal dc);
+        InvoiceProvider GetRequisiteCopy(decimal dc);
+
         List<IInvoiceProvider> GetByDocCodes(List<decimal> dcs);
         List<IInvoiceProvider> GetAllByDates(DateTime dateStart, DateTime dateEnd, decimal? crsDC = null);
 
@@ -134,6 +139,63 @@ namespace KursAM2.Repositories.InvoicesRepositories
             DetachObjects();
             return new InvoiceProvider(Context.SD_26
                 .FirstOrDefault(_ => _.DOC_CODE == dc), new UnitOfWork<ALFAMEDIAEntities>());
+        }
+
+        public InvoiceProvider GetFullCopy(decimal dc)
+        {
+            var doc = Context.SD_26.Include(_ => _.TD_26).AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == dc);
+            if (doc == null) return null;
+            var newId = Guid.NewGuid();
+            var ret = new InvoiceProvider(doc)
+            {
+                Id = newId,
+                DocCode = -1,
+                Note = null,
+                SF_POSTAV_NUM = null,
+                DocDate = DateTime.Today,
+                SF_REGISTR_DATE = DateTime.Today,
+                CREATOR = GlobalOptions.UserInfo.Name,
+                myState = RowStatus.NewRow,
+                IsAccepted = false,
+                IsNDSInPrice = true,
+                NakladDistributedSumma = 0,
+            };
+
+            var newCode = 1;
+            foreach (var row in ret.Rows.Cast<InvoiceProviderRow>())
+            {
+                row.DocCode = -1;
+                row.Id = Guid.NewGuid();
+                row.DocId = newId;
+                row.Code = newCode;
+                row.Note = null;
+                row.myState = RowStatus.NewRow;
+                newCode++;
+            }
+
+            return ret;
+        }
+
+        public InvoiceProvider GetRequisiteCopy(decimal dc)
+        {
+            var doc = Context.SD_26.Include(_ => _.TD_26).AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == dc);
+            if (doc == null) return null;
+            var newId = Guid.NewGuid();
+            var ret = new InvoiceProvider(doc)
+            {
+                Id = newId,
+                DocCode = -1,
+                Note = null,
+                SF_POSTAV_NUM = null,
+                DocDate = DateTime.Today,
+                SF_REGISTR_DATE = DateTime.Today,
+                CREATOR = GlobalOptions.UserInfo.Name,
+                myState = RowStatus.NewRow,
+                IsAccepted = false,
+                IsNDSInPrice = true,
+                NakladDistributedSumma = 0,
+            };
+            return ret;
         }
 
         public List<IInvoiceProvider> GetByDocCodes(List<decimal> dcs)
