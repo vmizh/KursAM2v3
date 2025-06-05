@@ -6,7 +6,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Forms.VisualStyles;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using DevExpress.Xpf.Editors;
 using DevExpress.XtraSpreadsheet.Import.OpenXml;
 using KursAM2.Dialogs;

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -11,12 +12,14 @@ using KursAM2.View.Projects;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Projects;
+using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursRepositories.Repositories.Projects;
 
 namespace KursAM2.ViewModel.Management.Projects;
 
+[SuppressMessage("ReSharper", "CollectionNeverUpdated.Global")]
 public class ProjectDocSelectDialog : RSWindowViewModelBase
 {
     #region Constructors
@@ -199,7 +202,32 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
                         _.DDT_KOL_PRIHOD * (_.TD_26.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) / _.TD_26.SFT_KOL),
                     Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.DD_KONTR_OTPR_DC) as Kontragent,
                     Creator = doc.CREATOR,
-                    Note = doc.DD_NOTES
+                    Note = doc.DD_NOTES,
+                    ProductTypeName = ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.SD_26?.SF_VZAIMOR_TYPE_DC))?.Name
+                };
+                Rows.Add(newItem);
+            }
+
+        if (IsCurrencyConvert)
+            foreach (var doc in myProjectRepository.GetCurrencyConverts(myProject.Id, DateStart, DateEnd).ToList())
+            {
+                var nom = GlobalOptions.ReferencesCache.GetNomenkl(doc.NomenklId) as Nomenkl;
+                var newItem = new ProjectDocumentInfo
+                {
+                    ProjectId = myProject.Id,
+                    CurrencyConvertId = doc.Id,
+                    Currency = nom?.Currency as Currency,
+                    Nomenkl = nom,
+                    Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(doc.StoreDC) as Warehouse,
+                    DocumentType = DocumentType.InvoiceProvider,
+                    DocDate = doc.TD_26.SD_26.SF_POSTAV_DATE,
+                    InnerNumber = doc.TD_26.SD_26.SF_IN_NUM,
+                    ExtNumber = doc.TD_26.SD_26.SF_POSTAV_NUM,
+                    SummaIn = doc.Summa,
+                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.TD_26.SD_26.SF_POST_DC) as Kontragent,
+                    Creator = doc.TD_26.SD_26.CREATOR,
+                    Note = doc.TD_26.SD_26.SF_NOTES,
+                    ProductTypeName = ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.TD_26.SD_26?.SF_VZAIMOR_TYPE_DC))?.Name
                 };
                 Rows.Add(newItem);
             }
@@ -224,14 +252,15 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
                         _.DDT_KOL_RASHOD * (_.TD_84.SFT_NACENKA_DILERA ?? 0) / (decimal)_.TD_84.SFT_KOL),
                     Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.DD_KONTR_POL_DC) as Kontragent,
                     Creator = doc.CREATOR,
-                    Note = doc.DD_NOTES
+                    Note = doc.DD_NOTES,
+                    ProductTypeName = ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.SD_84?.SF_VZAIMOR_TYPE_DC))?.Name
                 };
                 Rows.Add(newItem);
             }
 
         if (IsUslugaProvider)
         {
-            foreach (var doc in myProjectRepository.GetUslagaProviderForProject(myProject.Id, DateStart, DateEnd).ToList())
+            foreach (var doc in myProjectRepository.GetUslugaProviderForProject(myProject.Id, DateStart, DateEnd).ToList())
             {
                 var crs = GlobalOptions.ReferencesCache.GetCurrency(doc.SD_26.SF_CRS_DC) as Currency;
                 var newItem = new ProjectDocumentInfo
@@ -257,7 +286,7 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
 
         if (IsUslugaClient)
         {
-            foreach (var doc in myProjectRepository.GetUslagaClientForProject(myProject.Id, DateStart, DateEnd).ToList())
+            foreach (var doc in myProjectRepository.GetUslugaClientForProject(myProject.Id, DateStart, DateEnd).ToList())
             {
                 var crs = GlobalOptions.ReferencesCache.GetCurrency(doc.SD_84.SF_CRS_DC) as Currency;
                 var newItem = new ProjectDocumentInfo
@@ -396,6 +425,7 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
     private readonly IProjectRepository myProjectRepository;
     private bool myIsUslugaClient;
     private bool myIsUslugaProvider;
+    private bool myIsCurrencyConvert;
 
     #endregion
 
@@ -524,6 +554,17 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
             RaisePropertyChanged();
         }
         get => myIsDirectProvider;
+    }
+
+    public bool IsCurrencyConvert
+    {
+        set
+        {
+            if (value == myIsCurrencyConvert) return;
+            myIsCurrencyConvert = value;
+            RaisePropertyChanged();
+        }
+        get => myIsCurrencyConvert;
     }
 
     public bool IsDirectClient

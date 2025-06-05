@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Core;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Helper;
 
 namespace KursAM2.ViewModel.Repozit

@@ -374,7 +374,9 @@
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorProviderViewModel.cs" />
     <Compile Include="ViewModel\Management\ProfitAndLossCommonRow.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectDocSelectDialog.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectLinkItem.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectManagerWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectSelectDialogWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\VzaimozachetRow.cs" />
     <Compile Include="ViewModel\MenuSearchWindowViewModel.cs" />
     <Compile Include="ViewModel\Reference\AccruedAmountTypeWindowViewModel.cs" />
@@ -1070,6 +1072,9 @@
     <Compile Include="View\Projects\ProjectManager.xaml.cs">
       <DependentUpon>ProjectManager.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Projects\SelectProjectDialogView.xaml.cs">
+      <DependentUpon>SelectProjectDialogView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Repozit\PasswordVerificationView.xaml.cs">
       <DependentUpon>PasswordVerificationView.xaml</DependentUpon>
     </Compile>
@@ -1212,6 +1217,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="dll\" />
     <Folder Include="Properties\DataSources\" />
     <Folder Include="Startup\" />
     <Folder Include="Tests\" />
@@ -1963,6 +1969,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Projects\ProjectManager.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Projects\SelectProjectDialogView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Input;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using DevExpress.Xpf.CodeView;
 using KursDomain;
 using KursDomain.ICommon;

@@ -6,7 +6,7 @@ using System.Windows.Input;
 using Core;
 using Core.EntityViewModel.NomenklManagement;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks;

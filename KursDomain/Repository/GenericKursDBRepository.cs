@@ -28,7 +28,7 @@ namespace KursDomain.Repository
         public ALFAMEDIAEntities Context { get; set; }
 
         public IQueryable<T> Table => Entities;
-        private IDbSet<T> Entities => entities ?? (entities = Context.Set<T>());
+        private IDbSet<T> Entities => entities ??= Context.Set<T>();
 
         public void Dispose()
         {

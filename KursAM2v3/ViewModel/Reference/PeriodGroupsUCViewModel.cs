@@ -5,7 +5,7 @@ using System.Linq;
 using System.Windows.Input;
 using Core;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using KursAM2.View.KursReferences.UC;
 using KursDomain;
 using KursDomain.Documents.Periods;

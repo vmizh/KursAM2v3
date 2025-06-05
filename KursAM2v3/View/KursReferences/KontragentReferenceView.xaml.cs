@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows;
 using Core;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;

@@ -74,7 +74,7 @@
         <Setter Property="ShowGroupPanel" Value="True" />
         <Setter Property="ContextMenu">
             <Setter.Value>
-                <ContextMenu>
+                <ContextMenu Name="DocumentMenu">
                     <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}">
                         <MenuItem.Icon>
                             <Image Source="{StaticResource DocOpenDrawingImage}" />

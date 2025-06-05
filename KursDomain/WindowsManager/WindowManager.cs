@@ -6,32 +6,15 @@ using System.Reflection;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using CKursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.WindowsUI;
-using KursDomain;
-using KursDomain.WindowsManager;
 
-namespace Core.WindowsManager;
+namespace KursDomain.WindowsManager.WindowsManager;
 
 public class WindowManager : IWindowManager
 {
-    public static KursDialogResult YesNo = KursDialogResult.Yes | KursDialogResult.No;
-    public static KursDialogResult YesNoCancel = KursDialogResult.Yes | KursDialogResult.No | KursDialogResult.Cancel;
-    public static KursDialogResult SaveCancel = KursDialogResult.Save | KursDialogResult.Cancel;
-    public static KursDialogResult SaveNotSaveCancel = KursDialogResult.Save | KursDialogResult.NotSave | KursDialogResult.Cancel;
-    public static KursDialogResult Confirm = KursDialogResult.Confirm;
-
-    public WindowManager()
-    {
-        DialogResultNames.Add(KursDialogResult.Yes,"Да");
-        DialogResultNames.Add(KursDialogResult.Save,"Сохранить");
-        DialogResultNames.Add(KursDialogResult.NotSave,"Не сохранять");
-        DialogResultNames.Add(KursDialogResult.Cancel,"Отмена");
-        DialogResultNames.Add(KursDialogResult.No,"Нет");
-        DialogResultNames.Add(KursDialogResult.Confirm,"ОК");
-    }
-
     [Flags]
     public enum KursDialogResult
     {
@@ -43,7 +26,26 @@ public class WindowManager : IWindowManager
         Confirm = 32
     }
 
+    public static KursDialogResult YesNo = KursDialogResult.Yes | KursDialogResult.No;
+    public static KursDialogResult YesNoCancel = KursDialogResult.Yes | KursDialogResult.No | KursDialogResult.Cancel;
+    public static KursDialogResult SaveCancel = KursDialogResult.Save | KursDialogResult.Cancel;
+
+    public static KursDialogResult SaveNotSaveCancel =
+        KursDialogResult.Save | KursDialogResult.NotSave | KursDialogResult.Cancel;
+
+    public static KursDialogResult Confirm = KursDialogResult.Confirm;
+
     public readonly Dictionary<KursDialogResult, string> DialogResultNames = new Dictionary<KursDialogResult, string>();
+
+    public WindowManager()
+    {
+        DialogResultNames.Add(KursDialogResult.Yes, "Да");
+        DialogResultNames.Add(KursDialogResult.Save, "Сохранить");
+        DialogResultNames.Add(KursDialogResult.NotSave, "Не сохранять");
+        DialogResultNames.Add(KursDialogResult.Cancel, "Отмена");
+        DialogResultNames.Add(KursDialogResult.No, "Нет");
+        DialogResultNames.Add(KursDialogResult.Confirm, "ОК");
+    }
 
     public MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button)
     {
@@ -53,13 +55,6 @@ public class WindowManager : IWindowManager
     public void ShowMessageBox(string messageBoxText, string caption)
     {
         DXMessageBox.Show(messageBoxText, caption);
-    }
-
-    public KursDialogResult ShowKursDialog(string text,string titleText, Brush titleTextColor,  KursDialogResult result)
-    { 
-        var dlg = new KursDialogViewModel(text,titleText, titleTextColor, result, DialogResultNames);
-        dlg.Show();
-        return dlg.DialogResult;
     }
 
     public MessageBoxResult ShowWinUIMessageBox(string messageBoxText, string caption,
@@ -74,6 +69,13 @@ public class WindowManager : IWindowManager
             result, options,
             FloatingMode.Adorner
         );
+    }
+
+    public KursDialogResult ShowKursDialog(string text, string titleText, Brush titleTextColor, KursDialogResult result)
+    {
+        var dlg = new KursDialogViewModel(text, titleText, titleTextColor, result, DialogResultNames);
+        dlg.Show();
+        return dlg.DialogResult;
     }
 
     public MessageBoxResult ShowMessageBox(string messageBoxText, string caption, MessageBoxButton button,

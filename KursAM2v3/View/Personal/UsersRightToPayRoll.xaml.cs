@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using DevExpress.Xpf.Bars;
 using DevExpress.Xpf.Core;
 using KursAM2.ViewModel.Personal;

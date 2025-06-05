@@ -5,7 +5,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows.Input;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Data;
 using DevExpress.Mvvm;

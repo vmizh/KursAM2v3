@@ -10,7 +10,7 @@ using System.Windows.Input;
 using System.Xml;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;

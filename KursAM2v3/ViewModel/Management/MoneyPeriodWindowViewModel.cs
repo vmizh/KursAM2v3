@@ -5,7 +5,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using DevExpress.Xpf.Editors;
 using KursAM2.Managers;
 using KursAM2.View.Management;

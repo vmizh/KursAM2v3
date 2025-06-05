@@ -6,7 +6,7 @@ using System.Windows;
 using Core;
 using Core.Helper;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using DevExpress.Mvvm.DataAnnotations;
 using Helper;
 using KursDomain;

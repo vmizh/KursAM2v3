@@ -2,8 +2,7 @@
 using System.Linq;
 using System.Windows;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
-using DevExpress.Xpf.Core;
+using KursDomain.WindowsManager.WindowsManager;
 using KursAM2.Managers;
 using KursAM2.ViewModel.Finance.controls;
 using KursDomain;

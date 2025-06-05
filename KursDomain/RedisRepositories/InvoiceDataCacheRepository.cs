@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
-using Core.WindowsManager;
 using Helper;
 using KursAM2.RedisRepositories;
 using KursAM2.Repositories.RedisRepository;
 using KursDomain;
 using KursDomain.References.RedisCache;
+using KursDomain.WindowsManager.WindowsManager;
 using RedisProvider;
 
 public class InvoiceDataCacheRepository : IInvoiceDataCacheRepository

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using JetBrains.Annotations;
 using KursAM2.Managers.Invoices;
 using KursAM2.Repositories.InvoicesRepositories;

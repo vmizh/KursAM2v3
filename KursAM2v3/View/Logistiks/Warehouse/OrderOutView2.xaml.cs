@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using DevExpress.Data;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;

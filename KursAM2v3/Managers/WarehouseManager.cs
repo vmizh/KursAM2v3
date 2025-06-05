@@ -4,7 +4,6 @@ using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using Calculates.Materials;
-using Core.WindowsManager;
 using Data;
 using KursAM2.ViewModel.Logistiks.Warehouse;
 using KursDomain;
@@ -12,6 +11,7 @@ using KursDomain.Documents.NomenklManagement;
 using KursDomain.ICommon;
 using KursDomain.Managers;
 using KursDomain.References;
+using KursDomain.WindowsManager.WindowsManager;
 
 namespace KursAM2.Managers
 {

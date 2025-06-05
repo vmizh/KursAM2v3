@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Data;
+using Helper;
 using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain;
 using KursDomain.Documents.Invoices;
+using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Repository;
 
@@ -30,7 +32,13 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         string GetInfoByRowId(Guid id);
         IDictionary<Guid,string> GetInfoByRowIds(List<Guid>  ids);
-        
+
+        IList<SD_84> GetSearch(DateTime start, DateTime end);
+
+        void UpdateProjectsInfo(decimal dc, IEnumerable<Guid> projectIds, string desc);
+
+
+
     }
 
     public class InvoiceClientRepository : GenericKursDBRepository<InvoiceClientViewModel>, IInvoiceClientRepository
@@ -60,6 +68,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
             throw new NotImplementedException();
         }
 
+        
         public InvoiceClientViewModel GetRequisiteCopy(InvoiceClientViewModel doc)
         {
             throw new NotImplementedException();
@@ -67,7 +76,38 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         public InvoiceClientViewModel GetFullCopy(decimal dc)
         {
-            throw new NotImplementedException();
+            var doc = Context.SD_84.Include(_ => _.TD_84).AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == dc);
+            if (doc == null) return null;
+            var newId = Guid.NewGuid();
+            var ret = new InvoiceClientViewModel(doc)
+            {
+                DocCode = -1,
+                DocDate = DateTime.Today,
+                Note = null,
+                REGISTER_DATE = DateTime.Today,
+                CREATOR = GlobalOptions.UserInfo.Name,
+                InnerNumber = -1,
+                OuterNumber = null,
+                IsAccepted = false,
+                myState = RowStatus.NewRow,
+                Id = newId
+            };
+            foreach (var row in ret.Rows)
+            {
+                var newCode = 1;
+                foreach (var item in ret.Rows.Cast<InvoiceClientRowViewModel>())
+                {
+                    item.DocCode = -1;
+                    item.Id = Guid.NewGuid();
+                    item.DocId = newId;
+                    item.Code = newCode;
+                    item.Note = " ";
+                    item.Shipped = 0;
+                    item.State = RowStatus.NewRow;
+                    newCode++;
+                }
+            }
+            return ret;
         }
 
         public InvoiceClientViewModel GetRequisiteCopy(decimal dc)
@@ -144,6 +184,63 @@ namespace KursAM2.Repositories.InvoicesRepositories
             var docIds = ids.Select(rowid => Context.TD_84.SingleOrDefault(_ => _.Id == rowid)?.DocId)
                 .Where(docId => docId is not null).Select(docId => (Guid)docId).ToList();
             return GetInfoByIds(docIds);
+        }
+
+        public IList<SD_84> GetSearch(DateTime start, DateTime end)
+        {
+            return Context
+                .SD_84
+                .Include(_ => _.SD_43)
+                .Include(_ => _.SD_431)
+                .Include(_ => _.SD_432)
+                .Include(_ => _.SD_301)
+                .Include(_ => _.TD_84)
+                .Include("TD_84.SD_83")
+                .Include("TD_84.TD_24")
+                .AsNoTracking()
+                .Where(_ => _.SF_DATE >= start && _.SF_DATE <= end).ToList();
+        }
+
+        public void UpdateProjectsInfo(decimal dc, IEnumerable<Guid> projectIds, string desc)
+        {
+
+            var convs = Context.TD_26_CurrencyConvert.Include(_ => _.TD_26)
+                .AsNoTracking()
+                .Where(_ => _.TD_26.DOC_CODE == dc).ToList();
+            foreach (var conv in convs)
+            {
+                var sql =
+                    $@"DELETE FROM ProjectDocuments WHERE CurrencyConvertId = '{CustomFormat.GuidToSqlString(conv.Id)}'";
+                Context.Database.ExecuteSqlCommand(sql);
+                foreach (var projId in projectIds.ToList())
+                {
+                    var sqlIns = $@"INSERT INTO dbo.ProjectDocuments
+                                    (
+                                      Id,ProjectId,DocType,DocInfo,Note,BankCode,CashInDC
+                                     ,CashOutDC,WarehouseOrderInDC,WaybillDC
+                                     ,AccruedClientRowId,AccruedSupplierRowId,UslugaClientRowId,UslugaProviderRowId
+                                     ,CurrencyConvertId
+                                    )
+                                    VALUES
+                                    (
+                                      newid() -- Id - uniqueidentifier NOT NULL
+                                     ,{CustomFormat.GuidToSqlString(projId)} 
+                                     ,26 
+                                     ,'{desc}' 
+                                     ,'' 
+                                     ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+                                     ,{CustomFormat.GuidToSqlString(projId)} -- CurrencyConvertId - uniqueidentifier
+                                    );";
+                    Context.Database.ExecuteSqlCommand(sqlIns);
+                }
+            }
+        }
+
+        public void UpdateLinkProjects(decimal dc, IEnumerable<Guid> projectIds)
+        {
+            var cashs = Context.SD_33.Where(_ => _.SFACT_DC == dc);
+            var waybills = Context.TD_24.Include(_ => _.SD_24).Where(_ => _.DDT_SFACT_DC == dc);
+
         }
     }
 }

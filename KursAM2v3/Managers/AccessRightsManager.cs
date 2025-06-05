@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Core;
-using Core.WindowsManager;
 using Data;
 using KursAM2.Managers.Base;
 using KursAM2.ViewModel.Reference;
 using KursDomain;
 using KursDomain.Documents.Systems;
 using KursDomain.ICommon;
+using KursDomain.WindowsManager.WindowsManager;
 
 namespace KursAM2.Managers
 {

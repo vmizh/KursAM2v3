@@ -18,6 +18,7 @@ namespace Data
         public TD_26_CurrencyConvert()
         {
             this.DistributeNakladRow = new HashSet<DistributeNakladRow>();
+            this.ProjectDocuments = new HashSet<ProjectDocuments>();
         }
     
         public System.Guid Id { get; set; }
@@ -38,5 +39,7 @@ namespace Data
         public virtual ICollection<DistributeNakladRow> DistributeNakladRow { get; set; }
         public virtual SD_27 SD_27 { get; set; }
         public virtual TD_26 TD_26 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectDocuments> ProjectDocuments { get; set; }
     }
 }

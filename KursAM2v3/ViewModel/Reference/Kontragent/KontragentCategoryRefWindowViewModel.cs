@@ -6,7 +6,7 @@ using System.Transactions;
 using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using KursDomain;
 using KursDomain.ICommon;

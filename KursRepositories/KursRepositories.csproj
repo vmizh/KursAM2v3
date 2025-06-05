@@ -188,7 +188,7 @@
       <Name>Kurs.RedisClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\KursDomain\KursDomain.csproj">
-      <Project>{2892B43C-A8F8-4939-9F88-EAB3B8F7108B}</Project>
+      <Project>{2892b43c-a8f8-4939-9f88-eab3b8f7108b}</Project>
       <Name>KursDomain</Name>
     </ProjectReference>
   </ItemGroup>

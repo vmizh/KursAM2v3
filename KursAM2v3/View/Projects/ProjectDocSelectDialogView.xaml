@@ -50,6 +50,10 @@
                                    EditValue="{Binding IsWarehouseIn, UpdateSourceTrigger=PropertyChanged}"
                                    Foreground="Blue" />
                     <dxe:CheckEdit DockPanel.Dock="Top"
+                                   Content="Валютная конвертация"
+                                   EditValue="{Binding IsCurrencyConvert, UpdateSourceTrigger=PropertyChanged}"
+                                   Foreground="Blue" />
+                    <dxe:CheckEdit DockPanel.Dock="Top"
                                    Content="Расходная накладная"
                                    EditValue="{Binding IsWaybill, UpdateSourceTrigger=PropertyChanged}"
                                    Margin="0 0 0 8"

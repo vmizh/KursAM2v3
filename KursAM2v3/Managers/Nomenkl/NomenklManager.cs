@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Transactions;
-using Core.WindowsManager;
+using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using KursAM2.View.Base;
 using KursAM2.View.DialogUserControl.ViewModel;
