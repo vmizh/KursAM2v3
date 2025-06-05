@@ -90,6 +90,10 @@
     <Reference Include="Prism, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
       <HintPath>..\packages\Prism.Core.8.1.97\lib\net47\Prism.dll</HintPath>
     </Reference>
+    <Reference Include="RedisProvider, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\KursAM2v3\bin\Debug\RedisProvider.dll</HintPath>
+    </Reference>
     <Reference Include="StackExchange.Redis, Version=2.0.0.0, Culture=neutral, PublicKeyToken=c219ff1ca8c2ce46, processorArchitecture=MSIL">
       <HintPath>..\packages\StackExchange.Redis.2.8.37\lib\net472\StackExchange.Redis.dll</HintPath>
     </Reference>
@@ -613,10 +617,6 @@
     <ProjectReference Include="..\LayoutManager\LayoutManager.csproj">
       <Project>{0AC84FA1-A12E-414A-8D3E-EDE48E795908}</Project>
       <Name>LayoutManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RedisProvider\RedisProvider.csproj">
-      <Project>{2daadaea-3147-406b-b45c-9977934e4db2}</Project>
-      <Name>RedisProvider</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
