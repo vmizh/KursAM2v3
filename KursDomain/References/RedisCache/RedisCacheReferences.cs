@@ -842,7 +842,27 @@ public class RedisCacheReferences : IReferencesCache
         if (!cacheKeysDict.ContainsKey("Nomenkl") ||
             (DateTime.Now - cacheKeysDict["Nomenkl"].LoadMoment).TotalSeconds > MaxTimersSec)
             LoadCacheKeys("Nomenkl");
-        var key = cacheKeysDict["Nomenkl"].CachKeys.SingleOrDefault(_ => _.DocCode == dc);
+        CachKey key = null;
+        var keys = cacheKeysDict["Nomenkl"].CachKeys.Where(_ => _.DocCode == dc).ToList();
+        if (keys.Any())
+        {
+            if (keys.Count > 1)
+            {
+                key = keys.First();
+                foreach (var k in keys.Where(_ => _.Key != key.Key))
+                {
+                    var d1 = Convert.ToDateTime(key.Key.Split('@')[1]);
+                    var d2 = Convert.ToDateTime(k.Key.Split('@')[1]);
+                    if (d2 > d1)
+                        key = k;
+                }
+            }
+            else
+            {
+                key = keys.First();
+            }
+        }
+
 
         if (key is not null)
         {
