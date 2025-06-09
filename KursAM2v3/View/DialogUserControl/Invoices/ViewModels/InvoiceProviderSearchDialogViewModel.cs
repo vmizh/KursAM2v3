@@ -323,6 +323,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                             Data.Add(new InvoicePostQueryConvertCurrency
                             {
                                 Currency = ((IName)nom.Currency)?.Name,
+                                RowId = c.TD_26.Id,
                                 Quantity = c.Quantity,
                                 Summa = c.Summa,
                                 Creator = c.TD_26.SD_26.CREATOR,
@@ -478,7 +479,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
                     NDSSumma = pos.NDSSumma,
                     SHPZ = pos.SHPZ,
                     NomenklDC = pos.NomenklDC,
-                    Note = pos.RowNote
+                    Note = pos.RowNote,
                 };
                 newItem.IsNotCanSelected = ExistingRows != null && ExistingRows.Count != 0 && ExistingRows.Any(_ => _.Item1 == pos.NomenklDC);
                 ItemPositionsCollection.Add(newItem);

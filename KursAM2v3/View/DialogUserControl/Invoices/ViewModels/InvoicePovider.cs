@@ -30,6 +30,7 @@ namespace KursAM2.View.DialogUserControl.Invoices.ViewModels
         public InvoiceProviderHead(InvoicePostQuery d)
         {
             DocCode = d.DocCode;
+            RowId = d.RowId;
             PrihodDate = d.PrihodDate;
             PostavNum = d.PostavNum;
             Date = d.Date;
