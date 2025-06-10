@@ -2183,18 +2183,18 @@
         <AssociationConnector Association="ALFAMEDIA.FK_TD_101_ProjectId" />
         <AssociationConnector Association="ALFAMEDIA.FK_AccruedAmountForClient_ProjectId" />
         <AssociationConnector Association="ALFAMEDIA.FK_AccruedAmountOfSupplier_ProjectId" />
-        <EntityTypeShape EntityType="ALFAMEDIA.ProjectDocuments" Width="1.5" PointX="56" PointY="684.375" />
+        <AssociationConnector Association="ALFAMEDIA.FK_SD_26_Projects" />
+        <AssociationConnector Association="ALFAMEDIA.FK_SD_84_Projects" />
+        <EntityTypeShape EntityType="ALFAMEDIA.ProjectDocuments" Width="1.5" PointX="56.25" PointY="682.75" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_AccruedClientRowId" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_AccruedSupplierRowId" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_BankCode" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_CashInDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_CashOutDC" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_CurrencyConvertId" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_ProjectId" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_WarehouseOrderInDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_WaybillDC" />
-        <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_CurrencyConvertId" />
-        <AssociationConnector Association="ALFAMEDIA.FK_SD_26_Projects" />
-        <AssociationConnector Association="ALFAMEDIA.FK_SD_84_Projects" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

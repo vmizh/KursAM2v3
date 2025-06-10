@@ -93,6 +93,9 @@ public interface IInvoiceClient : ILastChanged
     [Display(AutoGenerateField = true, Name = "Дата посл.изм.", Order = 21)]
     public DateTime LastChangerDate { set; get; }
 
+    [Display(AutoGenerateField = false)]
+    public decimal? VazaimoraschetTypeDC { set; get; }
+
     [Display(AutoGenerateField = false)] ObservableCollection<IInvoiceClientRow> Rows { set; get; }
 }
 

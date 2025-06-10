@@ -154,6 +154,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => Entity.AccruedClientRowId;
     }
+
     [Display(AutoGenerateField = false)]
     public Guid? AccruedSupplierRowId
     {
@@ -164,6 +165,31 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
             RaisePropertyChanged();
         }
         get => Entity.AccruedSupplierRowId;
+    }
+    
+
+    [Display(AutoGenerateField = false)]
+    public Guid? InvoiceClientId
+    {
+        set
+        {
+            if (Equals(Entity.InvoiceClientId, value)) return;
+            Entity.InvoiceClientId = value;
+            RaisePropertyChanged();
+        }
+        get => Entity.InvoiceClientId;
+    }
+
+    [Display(AutoGenerateField = false)]
+    public Guid? InvoiceProviderId
+    {
+        set
+        {
+            if (Equals(Entity.InvoiceProviderId, value)) return;
+            Entity.InvoiceProviderId = value;
+            RaisePropertyChanged();
+        }
+        get => Entity.InvoiceProviderId;
     }
 
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Тип док-та", Order = 1)]
@@ -185,27 +211,27 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
     public DateTime DocDate { set; get; }
     [Display(AutoGenerateField = true,GroupName = "Основные данные", Name = "Контрагент", Order = 5)]
     public Kontragent Kontragent { set; get; }
-    [Display(AutoGenerateField = true,GroupName = "Основные данные", Name = "Дилер", Order = 10)]
+    [Display(AutoGenerateField = true,GroupName = "Основные данные", Name = "Дилер", Order = 12)]
     public Kontragent Diler { set; get; }
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Склад", Order = 11)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Склад", Order = 13)]
     public References.Warehouse Warehouse { set; get; }
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Банк счет", Order = 12)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Банк счет", Order = 14)]
     public string BankAccount { set; get; }
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Касса", Order = 13)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Касса", Order = 15)]
     public CashBox CashBox { set; get; }
 
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Сотрудника", Order = 14)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Сотрудника", Order = 16)]
     public References.Employee Employee { set; get; }
 
     [Display(AutoGenerateField = false)]
     public Nomenkl Nomenkl { set; get; }
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Номенклатура", Order = 20)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Номенклатура", Order = 23)]
     public string NomenklName => Nomenkl is null ? null : $"{Nomenkl.NomenklNumber,-20} {Nomenkl.Name}";
 
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Вид продукции", Order = 20)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Вид продукции", Order = 22)]
     public string ProductTypeName { set; get; }
 
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Валюта", Order = 9)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Валюта", Order =11)]
     public References.Currency Currency { set; get; }
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Сумма прихода", Order = 6)]
     [DisplayFormat(DataFormatString = "n2")]
@@ -214,11 +240,18 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
     [DisplayFormat(DataFormatString = "n2")]
     public decimal SummaOut { set; get; }
 
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Сумма дилера", Order = 8)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Оплачено", Order = 8)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal SummaPay { set; get; }
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Отгружено", Order = 9)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal SummaShipped { set; get; }
+
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Сумма дилера", Order = 10)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal SummaDiler { set; get; }
 
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Описание", Order = 15)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Описание", Order = 17)]
     public string DocInfo
     {
         set
@@ -229,7 +262,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => Entity.DocInfo;
     }
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Примечание (проект)", Order = 16)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Примечание (проект)", Order = 18)]
     public string ProjectNote
     {
         set
@@ -240,7 +273,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => Entity.Note;
     }
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Примечание (док-т)", Order = 17)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Примечание (док-т)", Order = 19)]
     public new string Note
     {
         set

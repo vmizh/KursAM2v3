@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
 using Core.ViewModel.Base;
@@ -16,7 +15,8 @@ public sealed class ProjectSelectDialogWindowViewModel : RSWindowViewModelBase
 {
     #region Constructors
 
-    public ProjectSelectDialogWindowViewModel(DocumentType documentType, decimal documentDC, string invoiceDesc, bool isCurrencyConvert)
+    public ProjectSelectDialogWindowViewModel(DocumentType documentType, decimal documentDC, string invoiceDesc,
+        bool isCurrencyConvert)
     {
         DocumentType = documentType;
         DocumentDC = documentDC;
@@ -31,7 +31,7 @@ public sealed class ProjectSelectDialogWindowViewModel : RSWindowViewModelBase
 
     private readonly IProjectRepository myRepository = new ProjectRepository(GlobalOptions.GetEntities());
     private ProjectLinkItem myCurrentProject;
-    public bool IsCurrencyConvert;
+    public readonly bool IsCurrencyConvert;
 
     #endregion
 
@@ -73,7 +73,6 @@ public sealed class ProjectSelectDialogWindowViewModel : RSWindowViewModelBase
             var p = Projects.Single(_ => _.Id == id);
             p.IsSelected = false;
         }
-
     }
 
     public override void Ok(object obj)
@@ -91,7 +90,7 @@ public sealed class ProjectSelectDialogWindowViewModel : RSWindowViewModelBase
     public override void RefreshData(object d)
     {
         Projects.Clear();
-        var oldPrjs = myRepository.GetInvoiceProjects(DocumentType, DocumentDC,IsCurrencyConvert);
+        var oldPrjs = myRepository.GetInvoiceProjects(DocumentType, DocumentDC, IsCurrencyConvert);
         foreach (var prj in GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>())
         {
             var newItem = new ProjectLinkItem

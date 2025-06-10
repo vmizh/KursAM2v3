@@ -125,7 +125,6 @@ namespace KursAM2.Repositories.InvoicesRepositories
             var data = Context.InvoiceClientQuery.Where(_ => _.DocDate >= dateStart && _.DocDate <= dateEnd)
                 .AsNoTracking()
                 .OrderByDescending(_ => _.DocDate).ToList();
-            var dd = data.FirstOrDefault(_ => _.ClientDC == 10430003379);
             return data.Select(_ => _.DocCode).Distinct()
                 .Select(dc => new InvoiceClientBase(data.Where(_ => _.DocCode == dc))).Cast<IInvoiceClient>().ToList();
         }
@@ -204,35 +203,36 @@ namespace KursAM2.Repositories.InvoicesRepositories
         public void UpdateProjectsInfo(decimal dc, IEnumerable<Guid> projectIds, string desc)
         {
 
-            var convs = Context.TD_26_CurrencyConvert.Include(_ => _.TD_26)
+            var doc = Context.SD_84
                 .AsNoTracking()
-                .Where(_ => _.TD_26.DOC_CODE == dc).ToList();
-            foreach (var conv in convs)
+                .FirstOrDefault(_ => _.DOC_CODE == dc);
+            if (doc == null) return;
+
+            var sql =
+                $@"DELETE FROM ProjectDocuments WHERE InvoiceClientId = '{CustomFormat.GuidToSqlString(doc.Id)}'";
+            Context.Database.ExecuteSqlCommand(sql);
+            foreach (var projId in projectIds.ToList())
             {
-                var sql =
-                    $@"DELETE FROM ProjectDocuments WHERE CurrencyConvertId = '{CustomFormat.GuidToSqlString(conv.Id)}'";
-                Context.Database.ExecuteSqlCommand(sql);
-                foreach (var projId in projectIds.ToList())
-                {
-                    var sqlIns = $@"INSERT INTO dbo.ProjectDocuments
+                var sqlIns = $@"INSERT INTO dbo.ProjectDocuments
                                     (
                                       Id,ProjectId,DocType,DocInfo,Note,BankCode,CashInDC
                                      ,CashOutDC,WarehouseOrderInDC,WaybillDC
                                      ,AccruedClientRowId,AccruedSupplierRowId,UslugaClientRowId,UslugaProviderRowId
-                                     ,CurrencyConvertId
+                                     ,CurrencyConvertId,InvoiceClientId,InvoiceProviderId
                                     )
                                     VALUES
                                     (
                                       newid() -- Id - uniqueidentifier NOT NULL
-                                     ,{CustomFormat.GuidToSqlString(projId)} 
-                                     ,26 
+                                     ,'{CustomFormat.GuidToSqlString(projId)}' 
+                                     ,84 
                                      ,'{desc}' 
                                      ,'' 
-                                     ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
-                                     ,{CustomFormat.GuidToSqlString(projId)} -- CurrencyConvertId - uniqueidentifier
+                                     ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+                                     ,'{CustomFormat.GuidToSqlString(doc.Id)}'
+                                     ,NULL
                                     );";
-                    Context.Database.ExecuteSqlCommand(sqlIns);
-                }
+                Context.Database.ExecuteSqlCommand(sqlIns);
+
             }
         }
 

@@ -52,6 +52,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
                 FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(doc.FormRaschetDC) as PayForm;
                 IsNDSIncludeInPrice = doc.IsNDSIncludeInPrice ?? false;
                 PaySumma = Math.Round(doc.PaySumma ?? 0, 2);
+                VzaimoraschetType = GlobalOptions.ReferencesCache.GetNomenklProductType(doc.VzaimoraschetTypeDC) as NomenklProductType;
                 var r = ctx.SD_84.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
                 if (r != null)
                 {
@@ -109,6 +110,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public bool? IsExcludeFromPays { get; set; }
         public string LastChanger { get; set; }
         public DateTime LastChangerDate { get; set; }
+        public decimal? VazaimoraschetTypeDC { get; set; }
         public ObservableCollection<IInvoiceClientRow> Rows { get; set; }
     }
 
@@ -267,8 +269,13 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         [Display(AutoGenerateField = true, Name = "Искл. из поиска", Order = 20, Description = "Исключить из диалогов поиска для оплаты")]
         public bool? IsExcludeFromPays { get; set; }
 
+        [Display(AutoGenerateField = true, Name = "Посл.изменил", Order = 22)]
         public string LastChanger { get; set; }
+        [Display(AutoGenerateField = true, Name = "Дата посл.изм.", Order = 23)]
         public DateTime LastChangerDate { get; set; }
+        
+        [Display(AutoGenerateField = false)]
+        public decimal? VazaimoraschetTypeDC { get; set; }
         public ObservableCollection<IInvoiceClientRow> Rows { get; set; }
         [Display(AutoGenerateField = true, Name = "Кол-во", Order = 21)]
         public decimal NomQuantity { get; set; }

@@ -128,7 +128,9 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                                    _.AccruedSupplierRowId == item.AccruedSupplierRowId
                                    && _.UslugaClientRowId == item.UslugaClientRowId
                                    && _.UslugaProviderRowId == item.UslugaProviderRowId
-                                   && _.CurrencyConvertId == item.CurrencyConvertId))
+                                   && _.CurrencyConvertId == item.CurrencyConvertId
+                                   && _.InvoiceProviderId == item.InvoiceProviderId
+                                   && _.InvoiceClientId == item.InvoiceClientId))
                 continue;
             myProjectRepository.AddDocumentInfo(item);
         }
@@ -177,24 +179,43 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             case DocumentType.Bank:
                 DocumentsOpenManager.Open(DocumentType.Bank, (int)CurrentDocument.BankCode);
                 break;
+            case DocumentType.InvoiceProvider:
+                if (CurrentDocument.InvoiceProviderId is null) return;
+                var dc4 = myProjectRepository.GetInvoiceProviderDC(CurrentDocument.InvoiceProviderId.Value,false,false);
+                if (dc4 is not null)
+                    DocumentsOpenManager.Open(DocumentType.InvoiceProvider, dc4.Value);
+                break;
+            case DocumentType.InvoiceServiceProvider:
+                if (CurrentDocument.InvoiceProviderId is null) return;
+                var dc5 = myProjectRepository.GetInvoiceProviderDC(CurrentDocument.UslugaProviderRowId.Value,true,false);
+                if (dc5 is not null)
+                    DocumentsOpenManager.Open(DocumentType.InvoiceProvider, dc5.Value);
+                break;
+                break;
             case DocumentType.InvoiceClient:
-                if (CurrentDocument.UslugaClientRowId is null) return;
-                var dc = myProjectRepository.GetInvoiceClientDC(CurrentDocument.UslugaClientRowId.Value);
+                if (CurrentDocument.InvoiceClientId is null) return;
+                var dc = myProjectRepository.GetInvoiceClientDC(CurrentDocument.InvoiceClientId.Value,false);
                 if (dc is not null)
                     DocumentsOpenManager.Open(DocumentType.InvoiceClient, dc.Value);
                 break;
-            case DocumentType.InvoiceProvider:
+            case DocumentType.InvoiceServiceClient:
+                if (CurrentDocument.UslugaClientRowId is null) return;
+                var dc3 = myProjectRepository.GetInvoiceClientDC(CurrentDocument.UslugaClientRowId.Value, true);
+                if (dc3 is not null)
+                    DocumentsOpenManager.Open(DocumentType.InvoiceClient, dc3.Value);
+                break;
+            case DocumentType.NomenklCurrencyConverterProvider:
                 if (CurrentDocument.UslugaProviderRowId is not null)
                 {
                     var dc2 = myProjectRepository.GetInvoiceProviderDC(CurrentDocument.UslugaProviderRowId.Value,
-                        false);
+                        true,false);
                     if (dc2 is not null)
                         DocumentsOpenManager.Open(DocumentType.InvoiceProvider, dc2.Value);
                 }
 
                 if (CurrentDocument.CurrencyConvertId is not null)
                 {
-                    var dc2 = myProjectRepository.GetInvoiceProviderDC(CurrentDocument.CurrencyConvertId.Value, true);
+                    var dc2 = myProjectRepository.GetInvoiceProviderDC(CurrentDocument.CurrencyConvertId.Value,false, true);
                     if (dc2 is not null)
                         DocumentsOpenManager.Open(DocumentType.InvoiceProvider, dc2.Value);
                 }
@@ -352,12 +373,14 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                          select new ProjectNomenklInfo
                          {
                              Note = row.DDT_NOTE,
+                             // ReSharper disable once PossibleInvalidOperationException
                              Summa = row.DDT_KOL_PRIHOD * (decimal)row.TD_26.SFT_SUMMA_K_OPLATE_KONTR_CRS /
                                      row.TD_26.SFT_KOL,
                              NomenklName = nom.Name,
                              NomenklNumber = nom.NomenklNumber,
                              Quantity = row.DDT_KOL_PRIHOD,
                              Unit = ((IName)nom.Unit).Name,
+                             // ReSharper disable once PossibleInvalidOperationException
                              UnitPrice = (decimal)row.TD_26.SFT_ED_CENA
                          })
                     NomenklRows.Add(newItem);
@@ -371,12 +394,14 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                          select new ProjectNomenklInfo
                          {
                              Note = row.DDT_NOTE,
+                             // ReSharper disable once PossibleInvalidOperationException
                              Summa = row.DDT_KOL_RASHOD * (decimal)row.TD_84.SFT_SUMMA_K_OPLATE_KONTR_CRS /
                                      (decimal)row.TD_84.SFT_KOL,
                              NomenklName = nom.Name,
                              NomenklNumber = nom.NomenklNumber,
                              Quantity = row.DDT_KOL_RASHOD,
                              Unit = ((IName)nom.Unit).Name,
+                             // ReSharper disable once PossibleInvalidOperationException
                              UnitPrice = (decimal)row.TD_84.SFT_ED_CENA
                          })
                     NomenklRows.Add(newItem);
@@ -414,15 +439,15 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         if (Form is not ProjectManager frm) return;
         SetCrsBandNotVisible(frm.gridDocuments);
         var crsList = Documents.Where(_m => _m.Currency is not null).Select(_ => _.Currency).Distinct().ToList();
-        foreach (var col in frm.gridDocuments.Columns)
-        {
-            if (crsList.Count == 0) break;
-            foreach (var b in from crs in crsList
-                     from b in frm.gridDocuments.Bands
-                     where (string)b.Header == crs.Name
-                     select b)
-                b.Visible = true;
-        }
+        //foreach (var col in frm.gridDocuments.Columns)
+        //{
+        if (crsList.Count == 0) return;
+        foreach (var b in from crs in crsList
+                 from b in frm.gridDocuments.Bands
+                 where (string)b.Header == crs.Name
+                 select b)
+            b.Visible = true;
+        //}
     }
 
     #endregion

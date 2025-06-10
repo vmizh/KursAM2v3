@@ -30,9 +30,9 @@ namespace Data
             this.TD_101 = new HashSet<TD_101>();
             this.AccruedAmountForClient = new HashSet<AccruedAmountForClient>();
             this.AccruedAmountOfSupplier = new HashSet<AccruedAmountOfSupplier>();
-            this.ProjectDocuments = new HashSet<ProjectDocuments>();
             this.SD_26 = new HashSet<SD_26>();
             this.SD_84 = new HashSet<SD_84>();
+            this.ProjectDocuments = new HashSet<ProjectDocuments>();
         }
     
         public System.Guid Id { get; set; }
@@ -74,10 +74,10 @@ namespace Data
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<AccruedAmountOfSupplier> AccruedAmountOfSupplier { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<ProjectDocuments> ProjectDocuments { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_26> SD_26 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SD_84> SD_84 { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectDocuments> ProjectDocuments { get; set; }
     }
 }

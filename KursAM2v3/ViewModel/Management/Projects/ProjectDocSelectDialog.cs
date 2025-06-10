@@ -219,7 +219,7 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
                     Currency = nom?.Currency as Currency,
                     Nomenkl = nom,
                     Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(doc.StoreDC) as Warehouse,
-                    DocumentType = DocumentType.InvoiceProvider,
+                    DocumentType = DocumentType.NomenklCurrencyConverterProvider,
                     DocDate = doc.TD_26.SD_26.SF_POSTAV_DATE,
                     InnerNumber = doc.TD_26.SD_26.SF_IN_NUM,
                     ExtNumber = doc.TD_26.SD_26.SF_POSTAV_NUM,
@@ -364,7 +364,63 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
                 Rows.Add(newItem);
             }
         }
-        
+
+        if (IsInvoiceProvider)
+        {
+            foreach (var doc in myProjectRepository.GetInvoicesProvider(myProject.Id, DateStart, DateEnd)
+                         .ToList())
+            {
+                var newItem = new ProjectDocumentInfo
+                {
+                    ProjectId = myProject.Id,
+                    InvoiceProviderId = doc.Id,
+                    Currency = doc.Currency,
+                    DocumentType = DocumentType.InvoiceProvider,
+                    DocDate = doc.DocDate,
+                    InnerNumber = doc.SF_IN_NUM,
+                    ExtNumber = doc.SF_POSTAV_NUM,
+                    SummaOut = doc.Summa,
+                    Kontragent = doc.Kontragent,
+                    Creator = doc.CREATOR,
+                    Note = doc.Note,
+                    SummaPay = doc.PaySumma,
+                    SummaShipped = doc.SummaFact,
+                    ProductTypeName = ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.VzaimoraschetTypeDC)).Name
+                    
+                };
+                newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.InvoiceProvider, newItem);
+
+                Rows.Add(newItem);
+            }
+        }
+
+        if (IsInvoiceClient)
+        {
+            foreach (var doc in myProjectRepository.GetInvoicesClient(myProject.Id, DateStart, DateEnd)
+                         .ToList())
+            {
+                var newItem = new ProjectDocumentInfo
+                {
+                    ProjectId = myProject.Id,
+                    InvoiceClientId = doc.Id,
+                    Currency = doc.Currency,
+                    DocumentType = DocumentType.InvoiceClient,
+                    DocDate = doc.DocDate,
+                    InnerNumber = doc.InnerNumber,
+                    ExtNumber = doc.OuterNumber,
+                    SummaIn = doc.Summa,
+                    SummaDiler = doc.DilerSumma,
+                    SummaPay = doc.PaySumma,
+                    SummaShipped = doc.SummaOtgruz,
+                    Kontragent = doc.Client,
+                    Creator = doc.CREATOR,
+                    Note = doc.Note,
+                    ProductTypeName = doc.VzaimoraschetType?.Name
+                };
+                newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.InvoiceClient, newItem);
+                Rows.Add(newItem);
+            }
+        }
 
         foreach (var r in Rows)
         {
@@ -387,7 +443,8 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
                  where r != null
                  select r)
             SelectedRows.Add(r);
-        foreach (var r in ids.Select(id => Rows.FirstOrDefault(_ => _.Id == id)).Where(r => r != null)) Rows.Remove(r);
+        foreach (var r in ids.Select(id => Rows.FirstOrDefault(_ => _.Id == id))
+                     .Where(r => r != null)) Rows.Remove(r);
     }
 
     public ICommand DeleteRowCommand
@@ -426,6 +483,8 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
     private bool myIsUslugaClient;
     private bool myIsUslugaProvider;
     private bool myIsCurrencyConvert;
+    private bool myIsInvoiceClient;
+    private bool myIsInvoiceProvider;
 
     #endregion
 
@@ -599,6 +658,28 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
             RaisePropertyChanged();
         }
         get => myIsUslugaProvider;
+    }
+
+    public bool IsInvoiceClient
+    {
+        set
+        {
+            if (value == myIsInvoiceClient) return;
+            myIsInvoiceClient = value;
+            RaisePropertyChanged();
+        }
+        get => myIsInvoiceClient;
+    }
+
+    public bool IsInvoiceProvider
+    {
+        set
+        {
+            if (value == myIsInvoiceProvider) return;
+            myIsInvoiceProvider = value;
+            RaisePropertyChanged();
+        }
+        get => myIsInvoiceProvider;
     }
 
     #endregion

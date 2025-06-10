@@ -1,22 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Entity;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using Data;
-using DevExpress.Xpf.Core.Native;
+﻿using Data;
 using Helper;
 using KursAM2.Repositories.RedisRepository;
+using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Projects;
 using KursDomain.ICommon;
+using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 using KursDomain.Result;
 using KursRepositories.Repositories.Base;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 
 namespace KursRepositories.Repositories.Projects
 {
@@ -102,6 +103,8 @@ namespace KursRepositories.Repositories.Projects
                  ,UslugaClientRowId
                  ,UslugaProviderRowId
                  ,CurrencyConvertId
+                 ,InvoiceClientId
+                 ,InvoiceProviderId
                 )
                 VALUES
                 (
@@ -120,6 +123,8 @@ namespace KursRepositories.Repositories.Projects
                  ,{(doc.UslugaClientRowId.HasValue ? "'" + doc.UslugaClientRowId.Value + "'" : "NULL")}
                  ,{(doc.UslugaProviderRowId.HasValue ? "'" + doc.UslugaProviderRowId.Value + "'" : "NULL")}
                  ,{(doc.CurrencyConvertId.HasValue ? "'" + doc.CurrencyConvertId.Value + "'" : "NULL")}
+                 ,{(doc.InvoiceClientId.HasValue ? "'" + doc.InvoiceClientId.Value + "'" : "NULL")}
+                 ,{(doc.InvoiceProviderId.HasValue ? "'" + doc.InvoiceProviderId.Value + "'" : "NULL")}
                 );";
             Context.Database.ExecuteSqlCommand(sql);
         }
@@ -164,29 +169,39 @@ namespace KursRepositories.Repositories.Projects
                 case DocumentType.Waybill:
                     return $"Расходная накладная ({doc.Warehouse}) №{doc.InnerNumber} от {doc.DocDate}" +
                            $" {doc.Kontragent} на {doc.SummaIn} {doc.Currency}";
+                case DocumentType.InvoiceServiceClient:
                 case DocumentType.InvoiceClient:
                     return
                         $"Сф клиенту №{doc.InnerNumber}/{doc.ExtNumber} от {doc.DocDate} " +
                         $"для {doc.Kontragent} услуга {doc.NomenklName} на {doc.SummaIn} {doc.Currency}";
+                case DocumentType.InvoiceServiceProvider:
                 case DocumentType.InvoiceProvider:
                     return
                         $"Сф поставщика №{doc.InnerNumber}/{doc.ExtNumber} от {doc.DocDate} " +
                         $"для {doc.Kontragent} услуга {doc.NomenklName} на {doc.SummaOut} {doc.Currency}";
+                 case DocumentType.NomenklCurrencyConverterProvider:
+                     return 
+                         $"Валютная конвертация по Сф поставщика №{doc.InnerNumber}/{doc.ExtNumber} от {doc.DocDate} " +
+                         $"для {doc.Kontragent} номенклатура {doc.NomenklName} на {doc.SummaOut} {doc.Currency}";
             }
 
             return null;
         }
 
-        public decimal? GetInvoiceClientDC(Guid rowId)
+        public decimal? GetInvoiceClientDC(Guid rowId, bool isRow)
         {
-            return Context.TD_84.FirstOrDefault(_ => _.Id == rowId)?.DOC_CODE;
+            if(isRow)
+                return Context.TD_84.FirstOrDefault(_ => _.Id == rowId)?.DOC_CODE;
+            return Context.SD_84.FirstOrDefault(_ => _.Id == rowId)?.DOC_CODE;
         }
 
-        public decimal? GetInvoiceProviderDC(Guid rowId, bool isCrsConvert)
+        public decimal? GetInvoiceProviderDC(Guid rowId, bool isRow, bool isCrsConvert)
         {
-            return !isCrsConvert
+            if (isCrsConvert)
+                return Context.TD_26_CurrencyConvert.FirstOrDefault(_ => _.Id == rowId)?.DOC_CODE;
+            return isRow
                 ? Context.TD_26.FirstOrDefault(_ => _.Id == rowId)?.DOC_CODE
-                : Context.TD_26_CurrencyConvert.FirstOrDefault(_ => _.Id == rowId)?.DOC_CODE;
+                : Context.SD_26.FirstOrDefault(_ => _.Id == rowId)?.DOC_CODE;
         }
 
         public Guid? GetAccruedAmountForClientsId(Guid rowId)
@@ -197,6 +212,42 @@ namespace KursRepositories.Repositories.Projects
         public Guid? GetAccruedAmountProviderId(Guid rowId)
         {
             return Context.AccuredAmountOfSupplierRow.FirstOrDefault(_ => _.Id == rowId)?.DocId;
+        }
+
+        public List<IInvoiceProvider> GetInvoicesProvider(Guid projectId, DateTime dateStart, DateTime dateEnd)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.InvoicePostQuery.Where(_ => _.Date >= dateStart && _.Date <= dateEnd)
+                .OrderByDescending(_ => _.Date).ToList();
+            var ret = data.Select(_ => _.DocCode).Distinct()
+                .Select(dc => new InvoiceProviderBase(data.Where(_ => _.DocCode == dc))).Cast<IInvoiceProvider>()
+                .ToList();
+
+            var docIds = new List<Guid>();
+            foreach (var r in Context.Projects.Include(_ => _.ProjectDocuments)
+                         .Where(_ => ids.Contains(_.Id)))
+                docIds.AddRange(from rr in r.ProjectDocuments
+                    where rr.InvoiceProviderId is not null
+                    select rr.InvoiceProviderId.Value);
+
+            return ret.Where(row => !docIds.Contains(row.Id)).ToList();
+        }
+
+        public List<IInvoiceClient> GetInvoicesClient(Guid projectId, DateTime dateStart, DateTime dateEnd)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.InvoiceClientQuery.Where(_ => _.DocDate >= dateStart && _.DocDate <= dateEnd)
+                .AsNoTracking()
+                .OrderByDescending(_ => _.DocDate).ToList();
+            var ret =  data.Select(_ => _.DocCode).Distinct()
+                .Select(dc => new InvoiceClientBase(data.Where(_ => _.DocCode == dc))).Cast<IInvoiceClient>().ToList();
+            var docIds = new List<Guid>();
+            foreach (var r in Context.Projects.Include(_ => _.ProjectDocuments)
+                         .Where(_ => ids.Contains(_.Id)))
+                docIds.AddRange(from rr in r.ProjectDocuments
+                    where rr.InvoiceClientId is not null
+                    select rr.InvoiceClientId.Value);
+            return ret.Where(row => !docIds.Contains(row.Id)).ToList();
         }
 
         public List<TD_24> GetNomenklRows(decimal dc)
@@ -374,6 +425,51 @@ namespace KursRepositories.Repositories.Projects
                         }
                     }
 
+                    if (p.InvoiceProviderId is not null)
+                    {
+                        var d = Context.InvoicePostQuery.Where(_ => _.Id == p.InvoiceProviderId);
+
+                        if (d != null)
+                        {
+                            var doc = new InvoiceProviderBase(d);
+                            newItem.Kontragent = doc.Kontragent;
+                            newItem.Currency =
+                                newItem.Kontragent?.Currency as Currency;
+                            newItem.SummaOut = doc.Summa;
+                            newItem.SummaPay = doc.PaySumma;
+                            newItem.SummaShipped = doc.SummaFact;
+                            newItem.DocDate =doc.DocDate;
+                            newItem.InnerNumber = doc.SF_IN_NUM;
+                            newItem.ExtNumber = doc.SF_POSTAV_NUM;
+                            newItem.Note = doc.Note;
+                            newItem.DocInfo = GetDocDescription(DocumentType.InvoiceProvider, newItem);
+                            newItem.Creator = doc.CREATOR;
+                            newItem.ProductTypeName =
+                                ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(((IInvoiceProvider)doc)?.VzaimoraschetTypeDC))?.Name;
+                        }
+                    }
+
+                    if (p.InvoiceClientId is not null)
+                    {
+                        var d = Context.InvoiceClientQuery.Where(_ => _.Id == p.InvoiceClientId);
+                        if (d is not null)
+                        {
+                            var doc = new InvoiceClientBase(d);
+                            newItem.Kontragent = doc.Client;
+                            newItem.Currency = doc.Currency;
+                            newItem.SummaIn = doc.Summa;
+                            newItem.SummaPay = doc.PaySumma;
+                            newItem.SummaShipped = doc.SummaOtgruz;
+                            newItem.DocDate = doc.DocDate;
+                            newItem.InnerNumber = doc.InnerNumber;
+                            newItem.ExtNumber = doc.OuterNumber;
+                            newItem.Note = doc.Note;
+                            newItem.DocInfo = GetDocDescription(DocumentType.InvoiceClient, newItem);
+                            newItem.Creator = doc.CREATOR;
+                            newItem.ProductTypeName = doc.VzaimoraschetType?.Name;
+                        }
+                    }
+
                     if (p.UslugaProviderRowId is not null)
                     {
                         var row = Context.TD_26.Include(_ => _.SD_26)
@@ -384,13 +480,13 @@ namespace KursRepositories.Repositories.Projects
                                 GlobalOptions.ReferencesCache.GetKontragent(row.SD_26.SF_POST_DC) as Kontragent;
                             newItem.Currency =
                                 newItem.Kontragent?.Currency as Currency;
-                            newItem.SummaIn = (decimal)row.SFT_SUMMA_K_OPLATE_KONTR_CRS;
+                            newItem.SummaOut = (decimal)row.SFT_SUMMA_K_OPLATE_KONTR_CRS;
                             newItem.DocDate = row.SD_26.SF_POSTAV_DATE;
                             newItem.InnerNumber = row.SD_26.SF_IN_NUM;
                             newItem.ExtNumber = row.SD_26.SF_POSTAV_NUM;
                             newItem.Note = row.SD_26.SF_NOTES;
                             newItem.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.SFT_NEMENKL_DC) as Nomenkl;
-                            newItem.DocInfo = GetDocDescription(DocumentType.InvoiceProvider, newItem);
+                            newItem.DocInfo = GetDocDescription(DocumentType.InvoiceServiceProvider, newItem);
                             newItem.Creator = row.SD_26.CREATOR;
                             newItem.ProductTypeName =
                                 ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(
@@ -413,13 +509,14 @@ namespace KursRepositories.Repositories.Projects
                             newItem.ExtNumber = row.SD_84.SF_OUT_NUM;
                             newItem.Note = row.SD_84.SF_NOTE;
                             newItem.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.SFT_NEMENKL_DC) as Nomenkl;
-                            newItem.DocInfo = GetDocDescription(DocumentType.InvoiceClient, newItem);
+                            newItem.DocInfo = GetDocDescription(DocumentType.InvoiceServiceClient, newItem);
                             newItem.Creator = row.SD_84.CREATOR;
                             newItem.ProductTypeName =
                                 ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(
                                     row.SD_84.SF_VZAIMOR_TYPE_DC))?.Name;
                         }
                     }
+
 
                     if (p.AccruedClientRowId is not null)
                     {

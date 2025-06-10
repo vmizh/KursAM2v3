@@ -89,6 +89,9 @@ public interface IInvoiceProvider : IDocCode, IDocGuid, ILastChanged
     [Display(AutoGenerateField = true, Name = "Дата посл.изм.", Order = 21)]
     public DateTime LastChangerDate { set; get; }
 
+    [Display(AutoGenerateField = false)]
+    public decimal? VzaimoraschetTypeDC { set; get; }
+
 
     ObservableCollection<IInvoiceProviderRow> Rows { set; get; }
 }

@@ -168,7 +168,16 @@ public enum DocumentType
     NomenklReturnOfClient = 1007,
 
     [Display(Name = "Возвра товара поставщику")]
-    NomenklReturnToProvider = 1008
+    NomenklReturnToProvider = 1008,
+
+    [Display(Name = "Валютная кон-я товара (в счете)")]
+    NomenklCurrencyConverterProvider = 1009,
+
+    [Display(Name = "Услуги поставщиков)")]
+    InvoiceServiceProvider = 1010,
+
+    [Display(Name = "Услуги клиентам")]
+    InvoiceServiceClient = 1011
 
 
 

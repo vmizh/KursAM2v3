@@ -341,25 +341,37 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void UpdateVisualObjects()
         {
             base.UpdateVisualObjects();
+            var sMenuName = "Связать с проектами";
             if (Form is StandartSearchView frm)
             {
                 var menu = frm.gridDocumentsTableView.ContextMenu;
-                if (menu != null)
+                if (menu == null) return;
+                var menus = new List<object>();
+                foreach (var item in menu.Items)
                 {
-                    menu.Items.Insert(3, new MenuItem()
-                    {
-                        Header = "Связать с проектами", 
-                        Command = LinkProjectsCommand,
-                        Icon = new PackIcon { Kind = PackIconKind.ExternalLink }
-                    });
+                    if (item is not MenuItem mItem) continue;
+                    if ((string)mItem.Header == sMenuName)
+                        menus.Add(item);
                 }
+
+                foreach (var m in menus)
+                {
+                    menu.Items.Remove(m);
+                }
+
+                menu.Items.Insert(3, new MenuItem()
+                {
+                    Header = "Связать с проектами",
+                    Command = LinkProjectsCommand,
+                    Icon = new PackIcon { Kind = PackIconKind.ExternalLink }
+                });
+
             }
         }
-        
+
         public ICommand LinkProjectsCommand
         {
-            get { return new Command(LinkProjects, _ => CurrentDocument is not null 
-                                                        && InvoiceProviderRepository.IsInvoiceHasCurrencyConvert(CurrentDocument.DocCode)); }
+            get { return new Command(LinkProjects, _ => CurrentDocument is not null); }
         }
 
         private void LinkProjects(object obj)
@@ -376,7 +388,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (!ctx.DialogResult) return;
             InvoiceProviderRepository.UpdateProjectsInfo(CurrentDocument.DocCode,
                 ctx.Projects.Where(_ => _.IsSelected).Select(_ => _.Id),
-                $"Валютная конвертация СФ №{CurrentDocument.SF_IN_NUM}/{CurrentDocument.SF_POSTAV_NUM} от {CurrentDocument.DocDate.ToShortDateString()}" +
+                $"Счет-фактура поставщика №{CurrentDocument.SF_IN_NUM}/{CurrentDocument.SF_POSTAV_NUM} от {CurrentDocument.DocDate.ToShortDateString()}" +
                 $" {CurrentDocument.Kontragent} {CurrentDocument.Summa:n2} {CurrentDocument.Currency}");
         }
 

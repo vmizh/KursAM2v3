@@ -286,20 +286,28 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void UpdateVisualObjects()
         {
+            var sMenuName = "Связать с проектами";
             base.UpdateVisualObjects();
-            if (Form is StandartSearchView frm)
+            if (Form is not StandartSearchView frm) return;
+            var menu = frm.gridDocumentsTableView.ContextMenu;
+            if (menu == null) return;
+            var menus = new List<object>();
+            foreach (var item in menu.Items)
             {
-                var menu = frm.gridDocumentsTableView.ContextMenu;
-                if (menu != null)
-                {
-                    menu.Items.Insert(3, new MenuItem()
-                    {
-                        Header = "Связать с проектами", 
-                        Command = LinkProjectsCommand,
-                        Icon = new PackIcon { Kind = PackIconKind.ExternalLink }
-                    });
-                }
+                if (item is not MenuItem mItem) continue;
+                if((string)mItem.Header == sMenuName)
+                    menus.Add(item);
             }
+            foreach (var m in menus)
+            {
+                menu.Items.Remove(m);
+            }
+            menu.Items.Insert(3, new MenuItem()
+            {
+                Header = sMenuName,
+                Command = LinkProjectsCommand,
+                Icon = new PackIcon { Kind = PackIconKind.ExternalLink }
+            });
         }
 
         private void UpdateMutualPayments(RedisValue message)
@@ -462,10 +470,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
             dlg.DataContext = ctx;
             dlg.ShowDialog();
             if (!ctx.DialogResult) return;
-            //InvoiceClientRepository.UpdateProjectsInfo(CurrentDocument.DocCode,
-            //    ctx.Projects.Where(_ => _.IsSelected).Select(_ => _.Id),
-            //    $"Валютная конвертация СФ №{CurrentDocument.InnerNumber}/{CurrentDocument.OuterNumber} от {CurrentDocument.DocDate.ToShortDateString()}" +
-            //    $" {CurrentDocument.Client} {CurrentDocument.Summa:n2} {CurrentDocument.Currency}");
+            InvoiceClientRepository.UpdateProjectsInfo(CurrentDocument.DocCode,
+                ctx.Projects.Where(_ => _.IsSelected).Select(_ => _.Id),
+                $"Счет-фактура клиенту СФ №{CurrentDocument.InnerNumber}/{CurrentDocument.OuterNumber} от {CurrentDocument.DocDate.ToShortDateString()}" +
+                $" {CurrentDocument.Client} {CurrentDocument.Summa:n2} {CurrentDocument.Currency}");
 
         }
 

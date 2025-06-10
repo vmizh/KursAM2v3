@@ -419,50 +419,37 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         public void UpdateProjectsInfo(decimal dc, IEnumerable<Guid> projectIds, string desc)
         {
-            var convs = Context.TD_26_CurrencyConvert.Include(_ => _.TD_26)
+
+            var doc = Context.SD_26
                 .AsNoTracking()
-                .Where(_ => _.TD_26.DOC_CODE == dc).ToList();
-            foreach (var conv in convs)
+                .FirstOrDefault(_ => _.DOC_CODE == dc);
+            if (doc == null) return;
+
+            var sql =
+                $@"DELETE FROM ProjectDocuments WHERE InvoiceProviderId = '{CustomFormat.GuidToSqlString(doc.Id)}'";
+            Context.Database.ExecuteSqlCommand(sql);
+            foreach (var projId in projectIds.ToList())
             {
-                var olds = Context.Database.SqlQuery<Guid>($@"Select ProjectId 
-                            FROM ProjectDocuments WHERE CurrencyConvertId = '{CustomFormat.GuidToSqlString(conv.Id)}'").ToList();
-                foreach (var id in projectIds)
-                {
-                    if (olds.Any(_ => _ == id))
-                        olds.Remove(id);
-                }
-
-                foreach (var sql in olds.Select(pId =>
-                             $@"DELETE FROM ProjectDocuments WHERE ProjectId = '{CustomFormat.GuidToSqlString(pId)}' 
-                                AND CurrencyConvertId = '{CustomFormat.GuidToSqlString(conv.Id)}'"))
-                {
-                    Context.Database.ExecuteSqlCommand(sql);
-                }
-
-                foreach (var sqlIns in from projId in projectIds.ToList()
-                         let old = Context.Projects.Include(_ => _.ProjectDocuments)
-                             .Where(_ => _.Id == projId && _.ProjectDocuments.Any(_ => _.CurrencyConvertId == conv.Id))
-                         where !old.Any()
-                         select $@"INSERT INTO dbo.ProjectDocuments
+                var sqlIns = $@"INSERT INTO dbo.ProjectDocuments
                                     (
                                       Id,ProjectId,DocType,DocInfo,Note,BankCode,CashInDC
                                      ,CashOutDC,WarehouseOrderInDC,WaybillDC
                                      ,AccruedClientRowId,AccruedSupplierRowId,UslugaClientRowId,UslugaProviderRowId
-                                     ,CurrencyConvertId
+                                     ,CurrencyConvertId,InvoiceClientId,InvoiceProviderId
                                     )
                                     VALUES
                                     (
-                                      newid()
+                                      newid() -- Id - uniqueidentifier NOT NULL
                                      ,'{CustomFormat.GuidToSqlString(projId)}' 
-                                     ,26 
+                                     ,26
                                      ,'{desc}' 
                                      ,'' 
-                                     ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
-                                     ,'{CustomFormat.GuidToSqlString(conv.Id)}'
-                                    );")
-                {
-                    Context.Database.ExecuteSqlCommand(sqlIns);
-                }
+                                     ,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL
+                                     ,NULL
+                                     ,'{CustomFormat.GuidToSqlString(doc.Id)}'
+                                    );";
+                Context.Database.ExecuteSqlCommand(sqlIns);
+
             }
         }
 

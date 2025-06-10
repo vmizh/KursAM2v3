@@ -33,6 +33,15 @@
                 <DockPanel LastChildFill="False" HorizontalAlignment="Left" VerticalAlignment="Top"
                            Margin="0 45 5 0">
                     <dxe:CheckEdit DockPanel.Dock="Top"
+                                   Content="Счет-фактура поставщика"
+                                   EditValue="{Binding IsInvoiceProvider, UpdateSourceTrigger=PropertyChanged}"
+                                   Foreground="Brown" />
+                    <dxe:CheckEdit DockPanel.Dock="Top"
+                                   Content="Счет-фактура клиента"
+                                   EditValue="{Binding IsInvoiceClient, UpdateSourceTrigger=PropertyChanged}"
+                                   Margin="0 0 0 8"
+                                   Foreground="Brown" />
+                    <dxe:CheckEdit DockPanel.Dock="Top"
                                    Content="Банковская транзакция"
                                    EditValue="{Binding IsBank, UpdateSourceTrigger=PropertyChanged}"
                                    Foreground="Green" />

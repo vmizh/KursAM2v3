@@ -175,6 +175,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         new ObservableCollection<ProviderInvoicePayViewModel>();
 
     public DateTime LastChangerDate { get; set; }
+    public decimal? VzaimoraschetTypeDC { get; set; }
 
     public ObservableCollection<IInvoiceProviderRow> Rows { set; get; } =
         new ObservableCollection<IInvoiceProviderRow>();

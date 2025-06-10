@@ -29,15 +29,17 @@ namespace Data
         public Nullable<System.Guid> UslugaClientRowId { get; set; }
         public Nullable<System.Guid> UslugaProviderRowId { get; set; }
         public Nullable<System.Guid> CurrencyConvertId { get; set; }
+        public Nullable<System.Guid> InvoiceProviderId { get; set; }
+        public Nullable<System.Guid> InvoiceClientId { get; set; }
     
         public virtual AccuredAmountForClientRow AccuredAmountForClientRow { get; set; }
         public virtual AccuredAmountOfSupplierRow AccuredAmountOfSupplierRow { get; set; }
         public virtual TD_101 TD_101 { get; set; }
         public virtual SD_33 SD_33 { get; set; }
         public virtual SD_34 SD_34 { get; set; }
+        public virtual TD_26_CurrencyConvert TD_26_CurrencyConvert { get; set; }
         public virtual Projects Projects { get; set; }
         public virtual SD_24 SD_24 { get; set; }
         public virtual SD_24 SD_241 { get; set; }
-        public virtual TD_26_CurrencyConvert TD_26_CurrencyConvert { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Data;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Projects;
+using KursDomain.IDocuments.Finance;
 using KursDomain.Result;
 using System;
 using System.Collections.Generic;
@@ -40,11 +41,14 @@ namespace KursRepositories.Repositories.Projects
 
         string GetDocDescription(DocumentType docType, ProjectDocumentInfoBase doc);
 
-        decimal? GetInvoiceClientDC(Guid rowId);
-        decimal? GetInvoiceProviderDC(Guid rowId, bool isCrsConvert);
+        decimal? GetInvoiceClientDC(Guid rowId, bool isRow);
+        decimal? GetInvoiceProviderDC(Guid rowId, bool isRow, bool isCrsConvert);
 
         Guid? GetAccruedAmountForClientsId(Guid rowId);
         Guid? GetAccruedAmountProviderId(Guid rowId);
+
+        List<IInvoiceProvider> GetInvoicesProvider(Guid projectId, DateTime dateStart, DateTime dateEnd);
+        List<IInvoiceClient> GetInvoicesClient(Guid projectId, DateTime dateStart, DateTime dateEnd);
 
         List<TD_24> GetNomenklRows(decimal dc);
 

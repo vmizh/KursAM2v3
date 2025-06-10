@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using Data;
 using KursDomain;
+using KursDomain.Documents.Vzaimozachet;
 using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 
@@ -79,6 +80,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
             IsNDSInPrice = doc.IsNDSInPrice ?? false;
             CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(doc.CO_DC) as CentrResponsibility;
             KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(doc.PoluchatDC) as Kontragent;
+            VzaimoraschetTypeDC = doc.VzaimoraschetTypeDC;
             if (!isLoadDetails) return;
             Rows = new ObservableCollection<IInvoiceProviderRow>();
             foreach (var r in invList) Rows.Add(new InvoiceProviderRowBase(r));
@@ -283,6 +285,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
 
         public bool? IsExcludeFromPays { get; set; }
 
+        public decimal? VzaimoraschetTypeDC { get; set; }
         public ObservableCollection<IInvoiceProviderRow> Rows { get; set; }
         public event PropertyChangedEventHandler PropertyChanged;
 
