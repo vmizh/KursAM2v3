@@ -1,7 +1,6 @@
 ﻿using Data;
 using Helper;
 using KursAM2.Repositories.RedisRepository;
-using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Projects;
@@ -18,6 +17,7 @@ using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using KursDomain.Documents.Base;
 
 namespace KursRepositories.Repositories.Projects
 {

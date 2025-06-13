@@ -11,7 +11,6 @@ using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.Invoices;
-using KursAM2.ViewModel.Finance.Invoices.Base;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Event;
@@ -36,6 +35,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using KursAM2.View.Projects;
 using KursAM2.ViewModel.Management.Projects;
+using KursDomain.Documents.Base;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace KursAM2.ViewModel.Finance.Invoices

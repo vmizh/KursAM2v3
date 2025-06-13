@@ -10,7 +10,7 @@ using KursDomain;
 using KursDomain.IDocuments.Finance;
 using KursDomain.References;
 
-namespace KursAM2.ViewModel.Finance.Invoices.Base
+namespace KursDomain.Documents.Base
 {
     [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
     public class InvoiceClientBase :  RSViewModelBase, IInvoiceClient
@@ -41,7 +41,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
                 InnerNumber = doc.InnerNumber;
                 OuterNumber = doc.OuterNumber;
                 Client = GlobalOptions.ReferencesCache.GetKontragent(doc.ClientDC) as Kontragent;
-                Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CurrencyDC) as Currency;
+                Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CurrencyDC) as References.Currency;
                 SummaOtgruz = Math.Round(invList.Sum(_ => _.SummaOtgruz), 2);
                 DilerSumma = Math.Round(doc.DilerSumma, 2);
                 Note = doc.Note;
@@ -56,14 +56,14 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
                 var r = ctx.SD_84.FirstOrDefault(_ => _.DOC_CODE == doc.DocCode);
                 if (r != null)
                 {
-                    PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(r.PersonalResponsibleDC) as Employee;
+                    PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(r.PersonalResponsibleDC) as References.Employee;
                 }
                 else
                 {
                     var k = ctx.SD_43.FirstOrDefault(_ => _.DOC_CODE == doc.ClientDC);
                     if (k.OTVETSTV_LICO != null)
                         PersonaResponsible =
-                            GlobalOptions.ReferencesCache.GetEmployee(k.OTVETSTV_LICO.Value) as Employee;
+                            GlobalOptions.ReferencesCache.GetEmployee(k.OTVETSTV_LICO.Value) as References.Employee;
                 }
             }
 
@@ -97,7 +97,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public DateTime DocDate { get; set; }
         public int InnerNumber { get; set; }
         public string OuterNumber { get; set; }
-        public Currency Currency { get; set; }
+        public References.Currency Currency { get; set; }
         public decimal SummaOtgruz { get; set; }
         public decimal DilerSumma { get; set; }
         public override string Note { get; set; }
@@ -106,7 +106,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         public string CREATOR { get; set; }
         public bool IsNDSIncludeInPrice { get; set; }
         public decimal PaySumma { get; set; }
-        public Employee PersonaResponsible { get; set; }
+        public References.Employee PersonaResponsible { get; set; }
         public bool? IsExcludeFromPays { get; set; }
         public string LastChanger { get; set; }
         public DateTime LastChangerDate { get; set; }
@@ -242,7 +242,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         [Display(AutoGenerateField = true, Name = "Клиент", Order = 4)]
         public Kontragent Client { get; set; }
         [Display(AutoGenerateField = true, Name = "Валюта", Order = 6)]
-        public Currency Currency { get; set; }
+        public References.Currency Currency { get; set; }
         [Display(AutoGenerateField = true, Name = "Отгружено", Order = 8)]
         public decimal SummaOtgruz { get; set; }
         [Display(AutoGenerateField = true, Name = "Сумма дилера", Order = 17)]
@@ -264,7 +264,7 @@ namespace KursAM2.ViewModel.Finance.Invoices.Base
         [DisplayFormat (DataFormatString="n2") ]
         public decimal PaySumma { get; set; }
         [Display(AutoGenerateField = true, Name = "Ответственный", Order = 20)]
-        public Employee PersonaResponsible { get; set; }
+        public References.Employee PersonaResponsible { get; set; }
 
         [Display(AutoGenerateField = true, Name = "Искл. из поиска", Order = 20, Description = "Исключить из диалогов поиска для оплаты")]
         public bool? IsExcludeFromPays { get; set; }

@@ -279,8 +279,6 @@
     <Compile Include="ViewModel\Finance\AccruedAmount\AccuredAmountOfSupplierSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\AccuredAmountForClientSearchViewModel.cs" />
     <Compile Include="ViewModel\Finance\AccruedAmount\SelectCashBankDialogViewModel.cs" />
-    <Compile Include="ViewModel\Finance\Invoices\Base\InvoiceClientBase.cs" />
-    <Compile Include="ViewModel\Finance\Invoices\Base\InvoiceProviderBase.cs" />
     <Compile Include="ViewModel\Finance\NomenklCurrencyConvert\INomenklCurrencyConvertRepository.cs" />
     <Compile Include="ViewModel\Finance\NomenklCurrencyConvert\NomenklCurrencyConvertWindowViewModel.cs" />
     <Compile Include="ViewModel\Finance\SelectCashBankDialogView.xaml.cs">

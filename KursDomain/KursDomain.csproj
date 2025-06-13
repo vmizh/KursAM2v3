@@ -179,6 +179,8 @@
     <Compile Include="Documents\Bank\BankOperationType.cs" />
     <Compile Include="Documents\Bank\BankPeriodOperations.cs" />
     <Compile Include="Documents\Bank\BankStatements.cs" />
+    <Compile Include="Documents\Base\InvoiceClientBase.cs" />
+    <Compile Include="Documents\Base\InvoiceProviderBase.cs" />
     <Compile Include="Documents\Cash\CashCurrencyExchange.cs" />
     <Compile Include="Documents\Cash\CashCurrencyExchangeKontragentType.cs" />
     <Compile Include="Documents\Cash\CashInViewModel.cs" />
