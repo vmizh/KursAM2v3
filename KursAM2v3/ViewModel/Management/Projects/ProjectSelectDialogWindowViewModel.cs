@@ -32,6 +32,7 @@ public sealed class ProjectSelectDialogWindowViewModel : RSWindowViewModelBase
     private readonly IProjectRepository myRepository = new ProjectRepository(GlobalOptions.GetEntities());
     private ProjectLinkItem myCurrentProject;
     public readonly bool IsCurrencyConvert;
+    private bool myIsShowAll;
 
     #endregion
 
@@ -39,7 +40,20 @@ public sealed class ProjectSelectDialogWindowViewModel : RSWindowViewModelBase
 
     public override string LayoutName => "ProjectSelectDialogWindowView";
 
+    public bool IsShowAll
+    {
+        get => myIsShowAll;
+        set
+        {
+            if (value == myIsShowAll) return;
+            myIsShowAll = value;
+            showProjects();
+            RaisePropertyChanged();
+        }
+    }
+
     public ObservableCollection<ProjectLinkItem> Projects { set; get; } = new ObservableCollection<ProjectLinkItem>();
+    public ObservableCollection<ProjectLinkItem> AllProjects { set; get; } = new ObservableCollection<ProjectLinkItem>();
 
     public DocumentType DocumentType { get; set; }
     public decimal DocumentDC { set; get; }
@@ -89,16 +103,33 @@ public sealed class ProjectSelectDialogWindowViewModel : RSWindowViewModelBase
 
     public override void RefreshData(object d)
     {
-        Projects.Clear();
+        AllProjects.Clear();
         var oldPrjs = myRepository.GetInvoiceProjects(DocumentType, DocumentDC, IsCurrencyConvert);
         foreach (var prj in GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>())
         {
             var newItem = new ProjectLinkItem
             {
-                Project = prj
+                Project = prj,
+                DateEnd = prj.DateEnd,
+                DateStart = prj.DateStart,
+                IsClosed = prj.IsClosed,
+                Employee = prj.Employee as Employee,
+                Note = prj.Notes
+                
             };
             if (oldPrjs.Contains(newItem.Id)) newItem.IsSelected = true;
-            Projects.Add(newItem);
+            AllProjects.Add(newItem);
+            showProjects();
+        }
+    }
+
+    private void showProjects()
+    {
+        Projects.Clear();
+        foreach (var p in AllProjects)
+        {
+            if(IsShowAll || !p.IsClosed)
+                Projects.Add(p);
         }
     }
 
@@ -107,8 +138,18 @@ public sealed class ProjectSelectDialogWindowViewModel : RSWindowViewModelBase
         base.UpdateVisualObjects();
         if (Form is not SelectProjectDialogView frm) return;
         foreach (var col in frm.gridProjects.Columns)
-            if (col.FieldName == "IsSelected" || col.FieldName == "IsMain")
-                col.ReadOnly = false;
+        {
+            switch (col.FieldName)
+            {
+                case "IsSelected":
+                case "IsMain":
+                    col.ReadOnly = false;
+                    break;
+                case "State":
+                    col.Visible = false;
+                    break;
+            }
+        }
     }
 
     #endregion

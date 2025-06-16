@@ -259,13 +259,13 @@ namespace KursRepositories.Repositories.Projects
 
         public List<Guid> GetInvoiceProjects(DocumentType docType, decimal dc, bool isCrsConvert)
         {
-            var sqlClient = $@"SELECT ProjectId FROM ProjectDocuments pd
-                        INNER JOIN TD_24 ON pd.WaybillDC = TD_24.DOC_CODE AND TD_24.DDT_SFACT_DC = {CustomFormat.DecimalToSqlDecimal(dc)}";
+            var sqlClient = $@"SELECT pd.ProjectId FROM ProjectDocuments pd
+                        INNER JOIN SD_84 ON pd.InvoiceClientId = SD_84.Id";
             var sqlProvider = isCrsConvert
-                ? $@"SELECT ProjectId FROM ProjectDocuments pd
+                ? $@"SELECT pd.ProjectId FROM ProjectDocuments pd
                         INNER JOIN TD_26_CurrencyConvert t ON pd.CurrencyConvertId = t.Id AND t.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(dc)}"
                 : $@"SELECT ProjectId FROM ProjectDocuments pd
-                        INNER JOIN TD_24 ON pd.WarehouseOrderInDC = TD_24.DOC_CODE AND TD_24.DDT_SPOST_DC = {CustomFormat.DecimalToSqlDecimal(dc)}";
+                        INNER JOIN SD_26 ON pd.InvoiceProviderId = SD_26.Id";
 
             return docType switch
             {
