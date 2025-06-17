@@ -680,11 +680,11 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
 
         if (Parent is InvoiceClientViewModel p)
         {
-            foreach (var f in p.ShipmentRows)
-            {
-                var r = p.Rows.First(_ => _.Nomenkl.DocCode == f.Nomenkl.DocCode);
-                p.SummaOtgruz += Math.Round(r.Summa * r.Quantity / f.DDT_KOL_RASHOD, 2);
-            }
+            //foreach (var f in p.ShipmentRows)
+            //{
+            //    var r = p.Rows.First(_ => _.Nomenkl.DocCode == f.Nomenkl.DocCode);
+            //    p.SummaOtgruz += Math.Round(r.Summa * r.Quantity / f.DDT_KOL_RASHOD, 2);
+            //}
 
             p.Entity.SF_KONTR_CRS_SUMMA = p.Rows.Sum(_ => _.Price*_.Quantity);
             p.Entity.SF_CRS_SUMMA_K_OPLATE = p.Rows.Sum(_ => _.Price * _.Quantity);
