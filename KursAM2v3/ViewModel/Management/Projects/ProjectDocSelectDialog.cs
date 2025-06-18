@@ -385,7 +385,7 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
                     Note = doc.Note,
                     SummaPay = doc.PaySumma,
                     SummaShipped = doc.SummaFact,
-                    ProductTypeName = ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.VzaimoraschetTypeDC)).Name
+                    ProductTypeName = ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.VzaimoraschetTypeDC))?.Name
                     
                 };
                 newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.InvoiceProvider, newItem);
