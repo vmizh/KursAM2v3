@@ -1155,7 +1155,11 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
     public void CalcDoc()
     {
         Summa = Rows.Sum(_ => _.Price * _.Quantity);
-        RaisePropertyChanged("Summa");
+        SummaOtgruz = Rows.Sum(_ =>
+            _.Price * (ShipmentRows.FirstOrDefault(x => x.Nomenkl.DocCode == _.Nomenkl.DocCode)
+                ?.DDT_KOL_RASHOD) ?? 0);
+        RaisePropertyChanged(nameof(Summa));
+        RaisePropertyChanged(nameof(SummaOtgruz));
     }
 
     public List<SD_84> LoadList()

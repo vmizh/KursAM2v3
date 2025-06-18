@@ -39,7 +39,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
             Entity = entity;
             if(isLoadRef)
                 LoadReference();
-            CalcRow();
+            //CalcRow();
         }
 
         IsNDSInPrice = isNDSInPrice;
@@ -502,7 +502,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
                 //WindowManager.ShowMessage("Кол-во должно быть больше нуля", "Ошибка",
                 //    MessageBoxImage.Error);
                 Entity.SFT_KOL = 1;
-                CalcRow();
+                //CalcRow();
                 RaisePropertyChanged();
                 return;
             }
@@ -514,7 +514,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
             //    return;
 
             Entity.SFT_KOL = (double)value;
-            CalcRow();
+            //CalcRow();
             RaisePropertyChanged();
         }
     }
@@ -531,8 +531,11 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
 
             if (Entity.SFT_ED_CENA == value) return;
             Entity.SFT_ED_CENA = value;
-            CalcRow();
+            Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_ED_CENA * (decimal?)Entity.SFT_KOL;
+            Entity.SFT_SUMMA_K_OPLATE  = Entity.SFT_ED_CENA * (decimal?)Entity.SFT_KOL;
+            //CalcRow();
             RaisePropertyChanged();
+            RaisePropertyChanged(nameof(Summa));
         }
     }
 
@@ -549,7 +552,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
             // ReSharper disable once CompareOfFloatsByEqualityOperator
             if (Entity.SFT_NDS_PERCENT == (double)value) return;
             Entity.SFT_NDS_PERCENT = (double)value;
-            CalcRow();
+            //CalcRow();
             RaisePropertyChanged();
         }
     }
@@ -680,21 +683,19 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
 
         if (Parent is InvoiceClientViewModel p)
         {
-            p.SummaOtgruz = 0;
-            foreach (var f in p.ShipmentRows)
-            {
-                var r = p.Rows.First(_ => _.Nomenkl.DocCode == f.Nomenkl.DocCode);
-                p.SummaOtgruz += Math.Round(r.Summa * r.Quantity / f.DDT_KOL_RASHOD, 2);
-            }
-
-            p.Entity.SF_KONTR_CRS_SUMMA = p.Rows.Sum(_ => _.Price*_.Quantity);
+            p.SummaOtgruz = p.Rows.Sum(_ =>
+                _.Price * (p.ShipmentRows.FirstOrDefault(x => x.Nomenkl.DocCode == _.Nomenkl.DocCode)
+                    ?.DDT_KOL_RASHOD) ?? 0);
+            p.Entity.SF_KONTR_CRS_SUMMA = p.Rows.Sum(_ => _.Price * _.Quantity);
             p.Entity.SF_CRS_SUMMA_K_OPLATE = p.Rows.Sum(_ => _.Price * _.Quantity);
-            p.Summa =  p.Rows.Sum(_ => _.Price*_.Quantity);
+            p.Summa = p.Rows.Sum(_ => _.Price * _.Quantity);
+            p.RaisePropertyChanged(nameof(p.SummaOtgruz));
         }
 
         Shipped = IsUsluga ? Quantity : Entity.TD_24.Sum(_ => _.DDT_KOL_RASHOD);
         RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
         RaisePropertyChanged(nameof(Summa));
+
     }
 
     private void LoadReference()
