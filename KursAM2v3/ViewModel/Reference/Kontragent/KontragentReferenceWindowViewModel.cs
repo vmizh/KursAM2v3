@@ -371,51 +371,49 @@ namespace KursAM2.ViewModel.Reference.Kontragent
         {
             using (var ctx = GlobalOptions.GetEntities())
             {
-                using (var tnx = new TransactionScope())
+                try
                 {
-                    try
+                    int id = 0;
+                    switch (cat.State)
                     {
-                        int id = 0;
-                        switch (cat.State)
-                        {
-                            case RowStatus.Edited:
-                                id = cat.EG_ID;
-                                var oldcat = ctx.UD_43.SingleOrDefault(_ => _.EG_ID == id);
-                                if (oldcat == null) return false;
-                                oldcat.EG_NAME = cat.Name;
-                                oldcat.EG_PARENT_ID = cat.EG_PARENT_ID;
-                                break;
-                            case RowStatus.NewRow:
-                                id = ctx.UD_43.Any() ? ctx.UD_43.Max(_ => _.EG_ID)+1 : 1;
-                                var newItem = new UD_43
-                                {
-                                    EG_ID = id,
-                                    EG_PARENT_ID = cat.EG_PARENT_ID,
-                                    EG_NAME = cat.Name
-                                };
-                                ctx.UD_43.Add(newItem);
-                                break;
-                        }
+                        case RowStatus.Edited:
+                            id = cat.EG_ID;
+                            var oldcat = ctx.UD_43.SingleOrDefault(_ => _.EG_ID == id);
+                            if (oldcat == null) return false;
+                            oldcat.EG_NAME = cat.Name;
+                            oldcat.EG_PARENT_ID = cat.EG_PARENT_ID;
+                            break;
+                        case RowStatus.NewRow:
+                            id = ctx.UD_43.Any() ? ctx.UD_43.Max(_ => _.EG_ID) + 1 : 1;
+                            var newItem = new UD_43
+                            {
+                                EG_ID = id,
+                                EG_PARENT_ID = cat.EG_PARENT_ID,
+                                EG_NAME = cat.Name
+                            };
+                            ctx.UD_43.Add(newItem);
+                            break;
+                    }
 
-                        ctx.SaveChanges();
-                        tnx.Complete();
-                        var ent = ctx.UD_43.FirstOrDefault(_ => _.EG_ID == id);
-                        if (ent != null)
-                        {
-                            var cacheItem = new KontragentGroup();
-                            cacheItem.LoadFromEntity(ent);
-                            GlobalOptions.ReferencesCache.AddOrUpdate(cacheItem);
-                        }
-                        cat.EG_ID = id;
-                        cat.State = RowStatus.NotEdited;
-                    }
-                    catch (Exception ex)
+                    ctx.SaveChanges();
+                    var ent = ctx.UD_43.FirstOrDefault(_ => _.EG_ID == id);
+                    if (ent != null)
                     {
-                        WindowManager.ShowError(ex);
-                        return false;
+                        var cacheItem = new KontragentGroup();
+                        cacheItem.LoadFromEntity(ent);
+                        GlobalOptions.ReferencesCache.AddOrUpdate(cacheItem);
                     }
+
+                    cat.EG_ID = id;
+                    cat.State = RowStatus.NotEdited;
+                }
+                catch (Exception ex)
+                {
+                    WindowManager.ShowError(ex);
+                    return false;
                 }
             }
+
 
             return true;
         }
