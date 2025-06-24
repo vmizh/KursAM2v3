@@ -1953,8 +1953,7 @@ public class RedisCacheReferences : IReferencesCache
             redisClient.Db = GlobalOptions.RedisDBId ?? 0;
             if (!cacheKeysDict.ContainsKey(cacheName))
                 LoadCacheKeys(cacheName);
-            if (!((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec) &&
-                cacheKeysDict[cacheName].CachKeys.Count == Projects.Count)
+            if (!((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec))
                 return Projects.Values.ToList();
             var redis = redisClient.As<Project>();
             Projects.Clear();
@@ -3195,9 +3194,9 @@ public class RedisCacheReferences : IReferencesCache
                 break;
             case RedisMessageChannels.ProjectReference:
                 Projects.Clear();
+               
                 using (var ctx = GlobalOptions.GetEntities())
                 {
-                    var ddddd = ctx.Projects.AsNoTracking().ToList();
                     foreach (var itemPrj in ctx.Projects.AsNoTracking().ToList())
                     {
                         var newItem = new Project();
@@ -3207,7 +3206,8 @@ public class RedisCacheReferences : IReferencesCache
                     }
 
                     DropAllGuid<Project>();
-                    UpdateListGuid(Projects.Values.Cast<Project>(), DateTime.Now);
+                    UpdateListGuid(Projects.Values.Cast<Project>(), DateTime.Now); 
+                    LoadCacheKeys("Project");
                     GetProjectsAll();
                 }
 

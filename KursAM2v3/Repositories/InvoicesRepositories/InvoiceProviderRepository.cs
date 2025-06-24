@@ -160,6 +160,8 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 IsNDSInPrice = true,
                 NakladDistributedSumma = 0,
             };
+            ret.Entity.ProviderInvoicePay.Clear();
+            ret.PaymentDocs.Clear();
 
             var newCode = 1;
             foreach (var row in ret.Rows.Cast<InvoiceProviderRow>())
