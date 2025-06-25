@@ -280,6 +280,8 @@ public class InvoiceProviderBase : IInvoiceProvider, INotifyPropertyChanged
     public bool? IsExcludeFromPays { get; set; }
 
     public decimal? VzaimoraschetTypeDC { get; set; }
+    public bool IsLinkProject { get; set; }
+    public string LinkPrjectNames { get; set; }
     public ObservableCollection<IInvoiceProviderRow> Rows { get; set; }
 
     public string LastChanger { get; set; }

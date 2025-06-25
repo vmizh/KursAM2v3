@@ -17,6 +17,7 @@ using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using KursDomain.Documents.Base;
 
 namespace KursRepositories.Repositories.Projects
@@ -276,7 +277,38 @@ namespace KursRepositories.Repositories.Projects
                 _ => new List<Guid>()
             };
         }
-        
+
+
+        public Dictionary<decimal, string> GetInvoicesLinkWithProjects(DocumentType docType, bool isCrsConvert)
+        {
+            var sql = docType switch
+            {
+                DocumentType.InvoiceProvider =>
+                    @"select SD_26.DOC_CODE as DocCode, p.Name as ProjectName  from ProjectDocuments pd
+	                            inner join Projects p ON p.Id = pd.ProjectId
+	                        inner join SD_26 on sd_26.Id = pd.InvoiceProviderId",
+                DocumentType.InvoiceClient =>
+                    @"select SD_84.DOC_CODE as DocCode, p.Name as ProjectName  from ProjectDocuments pd
+	                            inner join Projects p ON p.Id = pd.ProjectId
+	                        inner join SD_84 on sd_84.Id = pd.InvoiceClientId",
+                _ => null
+            };
+
+            var data = Context.Database.SqlQuery<DocProjLink>(sql).ToList();
+            var res = new Dictionary<decimal, string>();
+            foreach (var dc in data.Select(_ => _.DocCode).Distinct())
+            {
+                var names = new StringBuilder();
+                foreach (var item in data.Where(_ => _.DocCode == dc))
+                {
+                    names.Append($"{item.ProjectName}; ");
+                }
+                res.Add(dc,names.ToString());
+            }
+
+            return res;
+        }
+
         public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Data.Projects project)
         {
             var ret = new List<ProjectDocumentInfo>();
@@ -758,7 +790,6 @@ namespace KursRepositories.Repositories.Projects
             }
         }
 
-
         /// <summary>
         ///     Получить все Id проектов, находящиеся в одной ветке с id
         /// </summary>
@@ -786,5 +817,12 @@ namespace KursRepositories.Repositories.Projects
 
             return ret;
         }
+
+        private class DocProjLink
+        {
+            public decimal DocCode { set; get; }
+            public string ProjectName  { set; get; }
+        }
     }
+   
 }

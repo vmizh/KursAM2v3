@@ -900,6 +900,8 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
 
     public DateTime LastChangerDate { get; set; }
     public decimal? VazaimoraschetTypeDC { get; set; }
+    public bool IsLinkProject { get; set; }
+    public string LinkPrjectNames { get; set; }
     public ObservableCollection<IInvoiceClientRow> Rows { set; get; } = new ObservableCollection<IInvoiceClientRow>();
 
     public decimal DilerSumma

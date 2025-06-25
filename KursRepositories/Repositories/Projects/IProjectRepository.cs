@@ -54,6 +54,8 @@ namespace KursRepositories.Repositories.Projects
 
         List<Guid> GetInvoiceProjects(DocumentType docType, decimal dc, bool isCrsConvert);
 
+        Dictionary<decimal,string> GetInvoicesLinkWithProjects(DocumentType docType, bool isCrsConvert);
+
         List<Guid> GetAllTreeProjectIds(Guid id);
         List<Guid> GetChilds(List<Data.Projects> list, Guid id);
     }

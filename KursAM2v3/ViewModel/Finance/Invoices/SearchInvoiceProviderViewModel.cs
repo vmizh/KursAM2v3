@@ -1,5 +1,4 @@
 ﻿using Core.ViewModel.Base;
-using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using DevExpress.Xpf.Core.ConditionalFormatting;
@@ -11,13 +10,17 @@ using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.Finance.Invoices;
+using KursAM2.View.Projects;
+using KursAM2.ViewModel.Management.Projects;
 using KursDomain;
+using KursDomain.Documents.Base;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Event;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Menu;
 using KursDomain.Repository;
 using KursDomain.Repository.DocHistoryRepository;
+using KursRepositories.Repositories.Projects;
 using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -33,9 +36,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using KursAM2.View.Projects;
-using KursAM2.ViewModel.Management.Projects;
-using KursDomain.Documents.Base;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -52,6 +52,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override bool IsDocNewCopyAllow => CurrentDocument is not null;
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument is not null;
         public override bool IsDocumentOpenAllow => CurrentDocument != null;
+
+        private readonly IProjectRepository myRepository = new ProjectRepository(GlobalOptions.GetEntities());
 
 
         // ReSharper disable once NotAccessedField.Local
@@ -205,6 +207,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         }
                 }
 
+                var prjs = myRepository.GetInvoicesLinkWithProjects(DocumentType.InvoiceProvider, false);
+                foreach (var p in prjs)
+                {
+                    var item = result.FirstOrDefault(_ => _.DocCode == p.Key);
+                    if (item == null) continue;
+                    item.IsLinkProject = true;
+                    item.LinkPrjectNames = p.Value;
+                }
+
                 frm?.Dispatcher.Invoke(() =>
                 {
                     frm.loadingIndicator.Visibility = Visibility.Hidden;
@@ -284,6 +295,19 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Documents.Remove(old);
                         break;
                 }
+            foreach (var doc in Documents)
+            {
+                doc.IsLinkProject = false;
+                doc.LinkPrjectNames = null;
+            }
+            var prjs = myRepository.GetInvoicesLinkWithProjects(DocumentType.InvoiceProvider, false);
+            foreach (var p in prjs)
+            {
+                var item = Documents.FirstOrDefault(_ => _.DocCode == p.Key);
+                if (item == null) continue;
+                item.IsLinkProject = true;
+                item.LinkPrjectNames = p.Value;
+            }
         }
 
         public override void DocNewEmpty(object form)

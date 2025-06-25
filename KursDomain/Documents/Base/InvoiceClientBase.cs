@@ -111,6 +111,8 @@ namespace KursDomain.Documents.Base
         public string LastChanger { get; set; }
         public DateTime LastChangerDate { get; set; }
         public decimal? VazaimoraschetTypeDC { get; set; }
+        public bool IsLinkProject { get; set; }
+        public string LinkPrjectNames { get; set; }
         public ObservableCollection<IInvoiceClientRow> Rows { get; set; }
     }
 
@@ -276,6 +278,9 @@ namespace KursDomain.Documents.Base
         
         [Display(AutoGenerateField = false)]
         public decimal? VazaimoraschetTypeDC { get; set; }
+
+        public bool IsLinkProject { get; set; }
+        public string LinkPrjectNames { get; set; }
         public ObservableCollection<IInvoiceClientRow> Rows { get; set; }
         [Display(AutoGenerateField = true, Name = "Кол-во", Order = 21)]
         public decimal NomQuantity { get; set; }

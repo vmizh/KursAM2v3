@@ -86,11 +86,16 @@ public interface IInvoiceProvider : IDocCode, IDocGuid, ILastChanged
     /// <summary>
     /// Дата последнего изменения
     /// </summary>
-    [Display(AutoGenerateField = true, Name = "Дата посл.изм.", Order = 21)]
+    [Display(AutoGenerateField = true, Name = "Дата посл.изм.", Order = 22)]
     public DateTime LastChangerDate { set; get; }
 
     [Display(AutoGenerateField = false)]
     public decimal? VzaimoraschetTypeDC { set; get; }
+
+    [Display(AutoGenerateField = true, Name = "Вкл.проект", Order = 23)]
+    public bool IsLinkProject { set; get; }
+    [Display(AutoGenerateField = true, Name = "Проекты", Order = 24)]
+    public string LinkPrjectNames { set; get; }
 
 
     ObservableCollection<IInvoiceProviderRow> Rows { set; get; }

@@ -96,6 +96,11 @@ public interface IInvoiceClient : ILastChanged
     [Display(AutoGenerateField = false)]
     public decimal? VazaimoraschetTypeDC { set; get; }
 
+    [Display(AutoGenerateField = true, Name = "Вкл.проект", Order = 23)]
+    public bool IsLinkProject { set; get; }
+    [Display(AutoGenerateField = true, Name = "Проекты", Order = 24)]
+    public string LinkPrjectNames { set; get; }
+
     [Display(AutoGenerateField = false)] ObservableCollection<IInvoiceClientRow> Rows { set; get; }
 }
 

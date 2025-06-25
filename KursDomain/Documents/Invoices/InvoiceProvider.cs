@@ -176,6 +176,8 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
 
     public DateTime LastChangerDate { get; set; }
     public decimal? VzaimoraschetTypeDC { get; set; }
+    public bool IsLinkProject { get; set; }
+    public string LinkPrjectNames { get; set; }
 
     public ObservableCollection<IInvoiceProviderRow> Rows { set; get; } =
         new ObservableCollection<IInvoiceProviderRow>();
