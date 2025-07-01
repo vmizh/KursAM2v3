@@ -107,7 +107,7 @@ namespace KursDomain.Documents.Base
         public bool IsNDSIncludeInPrice { get; set; }
         public decimal PaySumma { get; set; }
         public References.Employee PersonaResponsible { get; set; }
-        public bool? IsExcludeFromPays { get; set; }
+        public bool? IsExcludeFromPays { get; set; } = false;
         public string LastChanger { get; set; }
         public DateTime LastChangerDate { get; set; }
         public decimal? VazaimoraschetTypeDC { get; set; }

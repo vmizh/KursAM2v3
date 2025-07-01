@@ -403,7 +403,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var dlg = new SelectProjectDialogView();
             var ctx = new ProjectSelectDialogWindowViewModel(DocumentType.InvoiceProvider, CurrentDocument.DocCode,
                 $"№{CurrentDocument.SF_IN_NUM}/{CurrentDocument.SF_POSTAV_NUM} от {CurrentDocument.DocDate.ToShortDateString()} " +
-                $"{CurrentDocument.Kontragent}.",true)
+                $"{CurrentDocument.Kontragent}.",false)
             {
                 Form = dlg
             };

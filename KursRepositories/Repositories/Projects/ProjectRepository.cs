@@ -18,6 +18,7 @@ using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using KursDomain.Base;
 using KursDomain.Documents.Base;
 
 namespace KursRepositories.Repositories.Projects
@@ -75,7 +76,7 @@ namespace KursRepositories.Repositories.Projects
 
         public IEnumerable<Data.Projects> LoadReference()
         {
-            return Context.Projects.ToList();
+            return Context.Projects.AsNoTracking().ToList();
         }
 
         public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Guid projectId)
@@ -258,7 +259,7 @@ namespace KursRepositories.Repositories.Projects
                 .Where(_ => _.DOC_CODE == dc).ToList();
         }
 
-        public List<Guid> GetInvoiceProjects(DocumentType docType, decimal dc, bool isCrsConvert)
+        public List<Guid> GetDocumentsProjects(DocumentType docType, decimal dc, bool isCrsConvert)
         {
             var sqlClient = $@"SELECT pd.ProjectId FROM ProjectDocuments pd
                         INNER JOIN SD_84 ON pd.InvoiceClientId = SD_84.Id
@@ -266,14 +267,28 @@ namespace KursRepositories.Repositories.Projects
             var sqlProvider = isCrsConvert
                 ? $@"SELECT pd.ProjectId FROM ProjectDocuments pd
                         INNER JOIN TD_26_CurrencyConvert t ON pd.CurrencyConvertId = t.Id AND t.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(dc)}"
-                : $@"SELECT ProjectId FROM ProjectDocuments pd
+                : $@"SELECT pd.ProjectId FROM ProjectDocuments pd
                         INNER JOIN SD_26 ON pd.InvoiceProviderId = SD_26.Id 
                             AND SD_26.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(dc)}";
-
+            var sqlBank = $@"select pd.ProjectId from ProjectDocuments pd
+	                            inner join TD_101 t101 on t101.CODE = pd.BankCode and t101.CODE = cast({CustomFormat.DecimalToSqlDecimal(dc)} as int)";
+            var sqlCashIn = $@"select pd.ProjectId from ProjectDocuments pd
+	                            inner join SD_33 s33 on s33.DOC_CODE = pd.CashInDC and s33.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(dc)}";
+            var sqlCashOut = $@"select pd.ProjectId from ProjectDocuments pd
+	                            inner join SD_34 s34 on s34.DOC_CODE = pd.CashOutDC and s34.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(dc)}";
+            var sqlWaybill = $@"select pd.ProjectId from ProjectDocuments pd
+	                            inner join SD_24 s24 on s24.DOC_CODE = pd.WaybillDC and s24.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(dc)}";
+            var sqlStoreIn = $@"select pd.ProjectId from ProjectDocuments pd
+	                            inner join SD_24 s24 on s24.DOC_CODE = pd.[WarehouseOrderInDC] and s24.DOC_CODE = {CustomFormat.DecimalToSqlDecimal(dc)}";
             return docType switch
             {
                 DocumentType.InvoiceClient => Context.Database.SqlQuery<Guid>(sqlClient).Distinct().ToList(),
                 DocumentType.InvoiceProvider => Context.Database.SqlQuery<Guid>(sqlProvider).Distinct().ToList(),
+                DocumentType.Bank => Context.Database.SqlQuery<Guid>(sqlBank).Distinct().ToList(),
+                DocumentType.CashIn => Context.Database.SqlQuery<Guid>(sqlCashIn).Distinct().ToList(),
+                DocumentType.CashOut => Context.Database.SqlQuery<Guid>(sqlCashOut).Distinct().ToList(),
+                DocumentType.Waybill => Context.Database.SqlQuery<Guid>(sqlWaybill).Distinct().ToList(),
+                DocumentType.StoreOrderIn => Context.Database.SqlQuery<Guid>(sqlStoreIn).Distinct().ToList(),
                 _ => new List<Guid>()
             };
         }

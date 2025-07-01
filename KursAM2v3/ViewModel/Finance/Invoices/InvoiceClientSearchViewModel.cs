@@ -58,7 +58,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public IInvoiceClientRepository InvoiceClientRepository;
         private IInvoiceClient myCurrentDocument;
 
-        private readonly IProjectRepository myRepository = new ProjectRepository(GlobalOptions.GetEntities());
+        private readonly IProjectRepository myProjectRepository = new ProjectRepository(GlobalOptions.GetEntities());
 
         public InvoiceClientSearchViewModel(Window form) : base(form)
         {
@@ -451,7 +451,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Documents.Remove(old);
                         break;
                 }
-            var prjs = myRepository.GetInvoicesLinkWithProjects(DocumentType.InvoiceClient, false);
+            var prjs = myProjectRepository.GetInvoicesLinkWithProjects(DocumentType.InvoiceClient, false);
             foreach (var doc in Documents)
             {
                 doc.IsLinkProject = false;
@@ -574,7 +574,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             r.LastChangerDate = r.DocDate;
                         }
                 }
-                var prjs = myRepository.GetInvoicesLinkWithProjects(DocumentType.InvoiceClient, false);
+                var prjs = myProjectRepository.GetInvoicesLinkWithProjects(DocumentType.InvoiceClient, false);
                 foreach (var p in prjs)
                 {
                     var item = result.FirstOrDefault(_ => _.DocCode == p.Key);

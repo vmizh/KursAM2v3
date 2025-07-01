@@ -5,6 +5,7 @@ using KursDomain.IDocuments.Finance;
 using KursDomain.Result;
 using System;
 using System.Collections.Generic;
+using KursDomain.Base;
 
 namespace KursRepositories.Repositories.Projects
 {
@@ -52,7 +53,7 @@ namespace KursRepositories.Repositories.Projects
 
         List<TD_24> GetNomenklRows(decimal dc);
 
-        List<Guid> GetInvoiceProjects(DocumentType docType, decimal dc, bool isCrsConvert);
+        List<Guid> GetDocumentsProjects(DocumentType docType, decimal dc, bool isCrsConvert);
 
         Dictionary<decimal,string> GetInvoicesLinkWithProjects(DocumentType docType, bool isCrsConvert);
 

@@ -154,6 +154,7 @@
   <ItemGroup>
     <Compile Include="Base\CurrencyValue.cs" />
     <Compile Include="Base\GridControlStartEditingService.cs" />
+    <Compile Include="Base\IdItem.cs" />
     <Compile Include="Base\IStartEditingService.cs" />
     <Compile Include="Control\SearchButtonEditor.xaml.cs">
       <DependentUpon>SearchButtonEditor.xaml</DependentUpon>
