@@ -22,6 +22,7 @@ using KursRepositories.Repositories.Base;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 
+
 namespace KursRepositories.Repositories.Projects
 {
     public class ProjectRepository : BaseRepository, IProjectRepository
