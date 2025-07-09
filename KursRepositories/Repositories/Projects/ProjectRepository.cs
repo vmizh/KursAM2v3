@@ -75,7 +75,7 @@ namespace KursRepositories.Repositories.Projects
 
         public IEnumerable<Data.Projects> LoadReference()
         {
-            return Context.Projects.ToList();
+            return Context.Projects.AsNoTracking().ToList();
         }
 
         public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Guid projectId)
