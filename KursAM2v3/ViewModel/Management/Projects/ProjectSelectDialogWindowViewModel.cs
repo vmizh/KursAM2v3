@@ -104,7 +104,7 @@ public sealed class ProjectSelectDialogWindowViewModel : RSWindowViewModelBase
     public override void RefreshData(object d)
     {
         AllProjects.Clear();
-        var oldPrjs = myRepository.GetInvoiceProjects(DocumentType, DocumentDC, IsCurrencyConvert);
+        var oldPrjs = myRepository.GetDocumentsProjects(DocumentType, DocumentDC, IsCurrencyConvert);
         foreach (var prj in GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>())
         {
             var newItem = new ProjectLinkItem

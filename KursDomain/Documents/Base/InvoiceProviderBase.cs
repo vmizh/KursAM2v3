@@ -277,7 +277,7 @@ public class InvoiceProviderBase : IInvoiceProvider, INotifyPropertyChanged
         }
     }
 
-    public bool? IsExcludeFromPays { get; set; }
+    public bool? IsExcludeFromPays { get; set; } = false;
 
     public decimal? VzaimoraschetTypeDC { get; set; }
     public bool IsLinkProject { get; set; }
