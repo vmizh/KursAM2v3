@@ -1,7 +1,17 @@
-﻿using Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text;
+using System.Windows.Controls;
+using Data;
 using Helper;
 using KursAM2.Repositories.RedisRepository;
 using KursDomain;
+using KursDomain.Base;
+using KursDomain.Documents.Base;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Projects;
 using KursDomain.ICommon;
@@ -11,20 +21,13 @@ using KursDomain.Result;
 using KursRepositories.Repositories.Base;
 using Newtonsoft.Json;
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Entity;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using KursDomain.Base;
-using KursDomain.Documents.Base;
 
 namespace KursRepositories.Repositories.Projects
 {
     public class ProjectRepository : BaseRepository, IProjectRepository
     {
+        #region Constructors
+
         public ProjectRepository(ALFAMEDIAEntities context)
         {
             Context = context;
@@ -32,60 +35,9 @@ namespace KursRepositories.Repositories.Projects
             mySubscriber = redis.GetSubscriber();
         }
 
-        public IBoolResult SaveReference(IEnumerable<Data.Projects> data, IEnumerable<Guid> deleteIds = null)
-        {
-            var delList = deleteIds is null ? new List<Guid>() : deleteIds.ToList();
-            if (deleteIds is not null && delList.Any())
-                foreach (var id in delList)
-                {
-                    var old = Context.Projects
-                        .Include(_ => _.NomenklReturnToProvider)
-                        .Include(_ => _.NomenklReturnOfClient)
-                        .Include(_ => _.ProjectGroupLink)
-                        .Include(_ => _.SD_33)
-                        .Include(_ => _.SD_34)
-                        .Include(_ => _.SD_24)
-                        .Include(_ => _.TD_101)
-                        .FirstOrDefault(_ => _.Id == id);
-                    if (old is null) continue;
-                    if (old.SD_24.Count == 0 && old.TD_101.Count == 0 && old.SD_33.Count == 0 && old.SD_34.Count == 0 &&
-                        old.ProjectGroupLink.Count == 0
-                        && old.NomenklReturnToProvider.Count == 0 && old.NomenklReturnOfClient.Count == 0)
-                        Context.Projects.Remove(old);
-                    else
-                        return new BoolResult
-                        {
-                            Result = false,
-                            ErrorText = $"Для проекта {old.Name} есть связанные в документах"
-                        };
-                }
+        #endregion
 
-            foreach (var p in data)
-                if (Context.Projects.Any(_ => _.Id == p.Id))
-                {
-                    Context.Projects.Attach(p);
-                    Context.Entry(p).State = EntityState.Modified;
-                }
-                else
-                {
-                    Context.Projects.Add(p);
-                }
-
-            return new BoolResult { Result = true };
-        }
-
-        public IEnumerable<Data.Projects> LoadReference()
-        {
-            return Context.Projects.AsNoTracking().ToList();
-        }
-
-        public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Guid projectId)
-        {
-            var prj = Context.Projects.Include(_ => _.ProjectDocuments).AsNoTracking()
-                .FirstOrDefault(_ => _.Id == projectId);
-            if (prj is null) return new List<ProjectDocumentInfo>();
-            return LoadProjectDocuments(prj);
-        }
+        #region DocumentInfo
 
         public void AddDocumentInfo(ProjectDocumentInfoBase doc)
         {
@@ -181,20 +133,74 @@ namespace KursRepositories.Repositories.Projects
                     return
                         $"Сф поставщика №{doc.InnerNumber}/{doc.ExtNumber} от {doc.DocDate} " +
                         $"для {doc.Kontragent} услуга {doc.NomenklName} на {doc.SummaOut} {doc.Currency}";
-                 case DocumentType.NomenklCurrencyConverterProvider:
-                     return 
-                         $"Валютная конвертация по Сф поставщика №{doc.InnerNumber}/{doc.ExtNumber} от {doc.DocDate} " +
-                         $"для {doc.Kontragent} номенклатура {doc.NomenklName} на {doc.SummaOut} {doc.Currency}";
+                case DocumentType.NomenklCurrencyConverterProvider:
+                    return
+                        $"Валютная конвертация по Сф поставщика №{doc.InnerNumber}/{doc.ExtNumber} от {doc.DocDate} " +
+                        $"для {doc.Kontragent} номенклатура {doc.NomenklName} на {doc.SummaOut} {doc.Currency}";
             }
 
             return null;
         }
 
+        #endregion
+
+        #region InvoiceClient
+
         public decimal? GetInvoiceClientDC(Guid rowId, bool isRow)
         {
-            if(isRow)
+            if (isRow)
                 return Context.TD_84.FirstOrDefault(_ => _.Id == rowId)?.DOC_CODE;
             return Context.SD_84.FirstOrDefault(_ => _.Id == rowId)?.DOC_CODE;
+        }
+
+        public List<IInvoiceClient> GetInvoicesClient(Guid projectId, DateTime dateStart, DateTime dateEnd)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.InvoiceClientQuery.Where(_ => _.DocDate >= dateStart && _.DocDate <= dateEnd)
+                .AsNoTracking()
+                .OrderByDescending(_ => _.DocDate).ToList();
+            var ret = data.Select(_ => _.DocCode).Distinct()
+                .Select(dc => new InvoiceClientBase(data.Where(_ => _.DocCode == dc))).Cast<IInvoiceClient>().ToList();
+            var docIds = new List<Guid>();
+            foreach (var r in Context.Projects.Include(_ => _.ProjectDocuments)
+                         .Where(_ => ids.Contains(_.Id)))
+                docIds.AddRange(from rr in r.ProjectDocuments
+                    where rr.InvoiceClientId is not null
+                    select rr.InvoiceClientId.Value);
+            return ret.Where(row => !docIds.Contains(row.Id)).ToList();
+        }
+
+        public List<IInvoiceClient> GetInvoicesClient(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
+            int limit, out int count)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            count = Context.InvoiceClientQuery.Count(_ => _.DocDate >= dateStart && _.DocDate <= dateEnd);
+            var data = Context.InvoiceClientQuery.Where(_ => _.DocDate >= dateStart && _.DocDate <= dateEnd)
+                .AsNoTracking()
+                .OrderByDescending(_ => _.DocDate).Skip((page - 1) * limit).Take(limit).ToList();
+            var ret = data.Select(_ => _.DocCode).Distinct()
+                .Select(dc => new InvoiceClientBase(data.Where(_ => _.DocCode == dc))).Cast<IInvoiceClient>().ToList();
+            var docIds = new List<Guid>();
+            foreach (var r in Context.Projects.Include(_ => _.ProjectDocuments)
+                         .Where(_ => ids.Contains(_.Id)))
+                docIds.AddRange(from rr in r.ProjectDocuments
+                    where rr.InvoiceClientId is not null
+                    select rr.InvoiceClientId.Value);
+            return ret.Where(row => !docIds.Contains(row.Id)).ToList();
+        }
+
+        public int GetInvoicesClientCount(DateTime dateStart, DateTime dateEnd)
+        {
+            return Context.InvoiceClientQuery.Count(_ => _.DocDate >= dateStart && _.DocDate <= dateEnd);
+        }
+
+        #endregion
+
+        #region InvoiceProvider
+
+        public int GetInvoicesProviderCount(DateTime dateStart, DateTime dateEnd)
+        {
+            return Context.InvoicePostQuery.Count(_ => _.Date >= dateStart && _.Date <= dateEnd);
         }
 
         public decimal? GetInvoiceProviderDC(Guid rowId, bool isRow, bool isCrsConvert)
@@ -204,16 +210,6 @@ namespace KursRepositories.Repositories.Projects
             return isRow
                 ? Context.TD_26.FirstOrDefault(_ => _.Id == rowId)?.DOC_CODE
                 : Context.SD_26.FirstOrDefault(_ => _.Id == rowId)?.DOC_CODE;
-        }
-
-        public Guid? GetAccruedAmountForClientsId(Guid rowId)
-        {
-            return Context.AccuredAmountForClientRow.FirstOrDefault(_ => _.Id == rowId)?.DocId;
-        }
-
-        public Guid? GetAccruedAmountProviderId(Guid rowId)
-        {
-            return Context.AccuredAmountOfSupplierRow.FirstOrDefault(_ => _.Id == rowId)?.DocId;
         }
 
         public List<IInvoiceProvider> GetInvoicesProvider(Guid projectId, DateTime dateStart, DateTime dateEnd)
@@ -235,28 +231,133 @@ namespace KursRepositories.Repositories.Projects
             return ret.Where(row => !docIds.Contains(row.Id)).ToList();
         }
 
-        public List<IInvoiceClient> GetInvoicesClient(Guid projectId, DateTime dateStart, DateTime dateEnd)
+        public List<IInvoiceProvider> GetInvoicesProvider(Guid projectId, DateTime dateStart, DateTime dateEnd,
+            int page, int limit, out int count)
         {
             var ids = GetAllTreeProjectIds(projectId);
-            var data = Context.InvoiceClientQuery.Where(_ => _.DocDate >= dateStart && _.DocDate <= dateEnd)
+            count = Context.InvoicePostQuery.Count(_ => _.Date >= dateStart && _.Date <= dateEnd);
+            var data = Context.InvoicePostQuery.Where(_ => _.Date >= dateStart && _.Date <= dateEnd)
                 .AsNoTracking()
-                .OrderByDescending(_ => _.DocDate).ToList();
-            var ret =  data.Select(_ => _.DocCode).Distinct()
-                .Select(dc => new InvoiceClientBase(data.Where(_ => _.DocCode == dc))).Cast<IInvoiceClient>().ToList();
+                .OrderByDescending(_ => _.Date).Skip((page - 1) * limit).Take(limit).ToList();
+            var ret = data.Select(_ => _.DocCode).Distinct()
+                .Select(dc => new InvoiceProviderBase(data.Where(_ => _.DocCode == dc))).Cast<IInvoiceProvider>()
+                .ToList();
+
             var docIds = new List<Guid>();
             foreach (var r in Context.Projects.Include(_ => _.ProjectDocuments)
                          .Where(_ => ids.Contains(_.Id)))
                 docIds.AddRange(from rr in r.ProjectDocuments
-                    where rr.InvoiceClientId is not null
-                    select rr.InvoiceClientId.Value);
+                    where rr.InvoiceProviderId is not null
+                    select rr.InvoiceProviderId.Value);
+
             return ret.Where(row => !docIds.Contains(row.Id)).ToList();
         }
 
-        public List<TD_24> GetNomenklRows(decimal dc)
+        #endregion
+
+        #region Прямые затраты
+
+        public Guid? GetAccruedAmountForClientsId(Guid rowId)
         {
-            return Context.TD_24.Include(_ => _.TD_26)
-                .Include(_ => _.TD_84)
-                .Where(_ => _.DOC_CODE == dc).ToList();
+            return Context.AccuredAmountForClientRow.FirstOrDefault(_ => _.Id == rowId)?.DocId;
+        }
+
+        public Guid? GetAccruedAmountProviderId(Guid rowId)
+        {
+            return Context.AccuredAmountOfSupplierRow.FirstOrDefault(_ => _.Id == rowId)?.DocId;
+        }
+
+        public int GetAccruedAmountForClientsCount(DateTime dateStart, DateTime dateEnd)
+        {
+            return Context.AccuredAmountForClientRow.Include(_ => _.AccruedAmountForClient)
+                .Count(_ => _.AccruedAmountForClient.DocDate >= dateStart &&
+                            _.AccruedAmountForClient.DocDate <= dateEnd);
+        }
+
+        public IEnumerable<AccuredAmountForClientRow> GetAccruedAmountForClients(Guid projectId, DateTime dateStart,
+            DateTime dateEnd)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.AccuredAmountForClientRow.Include(_ => _.AccruedAmountForClient)
+                .Include(_ => _.ProjectDocuments)
+                .Where(_ => _.AccruedAmountForClient.DocDate >= dateStart &&
+                            _.AccruedAmountForClient.DocDate <= dateEnd).ToList();
+
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        public IEnumerable<AccuredAmountForClientRow> GetAccruedAmountForClients(Guid projectId, DateTime dateStart,
+            DateTime dateEnd, int page, int limit,
+            out int count)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            count = Context.AccuredAmountForClientRow.Include(_ => _.AccruedAmountForClient)
+                .Include(_ => _.ProjectDocuments)
+                .Count(_ => _.AccruedAmountForClient.DocDate >= dateStart &&
+                            _.AccruedAmountForClient.DocDate <= dateEnd);
+            var data = Context.AccuredAmountForClientRow.Include(_ => _.AccruedAmountForClient)
+                .Include(_ => _.ProjectDocuments)
+                .Where(_ => _.AccruedAmountForClient.DocDate >= dateStart &&
+                            _.AccruedAmountForClient.DocDate <= dateEnd).OrderByDescending(_ => _.AccruedAmountForClient.DocDate)
+                .Skip((page - 1) * limit).Take(limit).ToList();
+
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        public int GetAccruedAmountOfSuppliersCount(DateTime dateStart, DateTime dateEnd)
+        {
+            return Context.AccuredAmountOfSupplierRow.Include(_ => _.AccruedAmountOfSupplier)
+                .Count(_ => _.AccruedAmountOfSupplier.DocDate >= dateStart &&
+                            _.AccruedAmountOfSupplier.DocDate <= dateEnd);
+        }
+
+        public IEnumerable<AccuredAmountOfSupplierRow> GetAccruedAmountOfSuppliers(Guid projectId, DateTime dateStart,
+            DateTime dateEnd)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.AccuredAmountOfSupplierRow.Include(_ => _.AccruedAmountOfSupplier)
+                .Include(_ => _.ProjectDocuments)
+                .Where(_ => _.AccruedAmountOfSupplier.DocDate >= dateStart &&
+                            _.AccruedAmountOfSupplier.DocDate <= dateEnd).ToList();
+
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        public IEnumerable<AccuredAmountOfSupplierRow> GetAccruedAmountOfSuppliers(Guid projectId, DateTime dateStart,
+            DateTime dateEnd, int page, int limit,
+            out int count)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.AccuredAmountOfSupplierRow.Include(_ => _.AccruedAmountOfSupplier)
+                .Include(_ => _.ProjectDocuments)
+                .Where(_ => _.AccruedAmountOfSupplier.DocDate >= dateStart &&
+                            _.AccruedAmountOfSupplier.DocDate <= dateEnd).OrderByDescending(_ => _.AccruedAmountOfSupplier.DocDate)
+                .Skip((page - 1) * limit).Take(limit).ToList();
+            
+            count = Context.AccuredAmountOfSupplierRow.Include(_ => _.AccruedAmountOfSupplier)
+                .Count(_ => _.AccruedAmountOfSupplier.DocDate >= dateStart &&
+                            _.AccruedAmountOfSupplier.DocDate <= dateEnd);
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        #endregion
+
+        #region Связь проектов и документов
+
+        public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Guid projectId)
+        {
+            var prj = Context.Projects.Include(_ => _.ProjectDocuments).AsNoTracking()
+                .FirstOrDefault(_ => _.Id == projectId);
+            if (prj is null) return new List<ProjectDocumentInfo>();
+            return LoadProjectDocuments(prj);
         }
 
         public List<Guid> GetDocumentsProjects(DocumentType docType, decimal dc, bool isCrsConvert)
@@ -293,6 +394,86 @@ namespace KursRepositories.Repositories.Projects
             };
         }
 
+        public Dictionary<IdItem, string> GetDocumentsLinkWithProjects(DocumentType docType)
+        {
+            var sql = docType switch
+            {
+                DocumentType.InvoiceProvider =>
+                    @"select SD_26.DOC_CODE as DocCode, p.Name as ProjectName  from ProjectDocuments pd
+	                            inner join Projects p ON p.Id = pd.ProjectId
+	                        inner join SD_26 on sd_26.Id = pd.InvoiceProviderId",
+                DocumentType.InvoiceClient =>
+                    @"select SD_84.DOC_CODE as DocCode, p.Name as ProjectName  from ProjectDocuments pd
+	                            inner join Projects p ON p.Id = pd.ProjectId
+	                        inner join SD_84 on sd_84.Id = pd.InvoiceClientId",
+                DocumentType.Bank => @"select td_101.CODE as Code, p.Name as ProjectName  from ProjectDocuments pd
+	                            inner join Projects p ON p.Id = pd.ProjectId
+	                        inner join TD_101 on TD_101.CODE = pd.BankCode",
+                DocumentType.CashIn =>
+                    @"select SD_33.DOC_CODE as DocCode, p.Name as ProjectName  from ProjectDocuments pd
+	                            inner join Projects p ON p.Id = pd.ProjectId
+	                            inner join SD_33 on SD_33.DOC_CODE = pd.CashInDC",
+                DocumentType.CashOut =>
+                    @"select SD_34.DOC_CODE as DocCode, p.Name as ProjectName  from ProjectDocuments pd
+	                            inner join Projects p ON p.Id = pd.ProjectId
+	                            inner join SD_34 on SD_34.DOC_CODE = pd.CashOutDC",
+                DocumentType.Waybill =>
+                    @"select SD_24.DOC_CODE as DocCode, p.Name as ProjectName  from ProjectDocuments pd
+	                            inner join Projects p ON p.Id = pd.ProjectId
+	                            inner join SD_24 on SD_24.DOC_CODE = pd.WaybillDC",
+                DocumentType.StoreOrderIn =>
+                    @"select SD_24.DOC_CODE as DocCode, p.Name as ProjectName  from ProjectDocuments pd
+	                            inner join Projects p ON p.Id = pd.ProjectId
+	                            inner join SD_24 on SD_24.DOC_CODE = pd.WarehouseOrderInDC",
+
+                _ => null
+            };
+            var res = new Dictionary<IdItem, string>();
+            switch (docType)
+            {
+                case DocumentType.Bank:
+                    var dataBank = Context.Database.SqlQuery<DocIntProjLink>(sql).ToList();
+                    foreach (var code in dataBank.Select(_ => _.Code).Distinct())
+                    {
+                        var names = new StringBuilder();
+                        foreach (var item in dataBank.Where(_ => _.Code == code)) names.Append($"{item.ProjectName}; ");
+
+                        res.Add(new IdItem { Code = code }, names.ToString());
+                    }
+
+                    break;
+                case DocumentType.InvoiceProvider:
+                case DocumentType.InvoiceClient:
+                case DocumentType.CashIn:
+                case DocumentType.CashOut:
+                case DocumentType.Waybill:
+                    var data = Context.Database.SqlQuery<DocDecimalProjLink>(sql).ToList();
+                    foreach (var dc in data.Select(_ => _.DocCode).Distinct())
+                    {
+                        var names = new StringBuilder();
+                        foreach (var item in data.Where(_ => _.DocCode == dc)) names.Append($"{item.ProjectName}; ");
+
+                        res.Add(new IdItem { DocCode = dc }, names.ToString());
+                    }
+
+                    break;
+                case DocumentType.AccruedAmountForClient:
+                case DocumentType.AccruedAmountOfSupplier:
+                    var dataAcc = Context.Database.SqlQuery<DocGuidProjLink>(sql).ToList();
+                    foreach (var id in dataAcc.Select(_ => _.Id).Distinct())
+                    {
+                        var names = new StringBuilder();
+                        foreach (var item in dataAcc.Where(_ => _.Id == id)) names.Append($"{item.ProjectName}; ");
+
+                        res.Add(new IdItem { Id = id }, names.ToString());
+                    }
+
+                    break;
+            }
+
+
+            return res;
+        }
 
         public Dictionary<decimal, string> GetInvoicesLinkWithProjects(DocumentType docType, bool isCrsConvert)
         {
@@ -309,16 +490,13 @@ namespace KursRepositories.Repositories.Projects
                 _ => null
             };
 
-            var data = Context.Database.SqlQuery<DocProjLink>(sql).ToList();
+            var data = Context.Database.SqlQuery<DocDecimalProjLink>(sql).ToList();
             var res = new Dictionary<decimal, string>();
             foreach (var dc in data.Select(_ => _.DocCode).Distinct())
             {
                 var names = new StringBuilder();
-                foreach (var item in data.Where(_ => _.DocCode == dc))
-                {
-                    names.Append($"{item.ProjectName}; ");
-                }
-                res.Add(dc,names.ToString());
+                foreach (var item in data.Where(_ => _.DocCode == dc)) names.Append($"{item.ProjectName}; ");
+                res.Add(dc, names.ToString());
             }
 
             return res;
@@ -406,7 +584,7 @@ namespace KursRepositories.Repositories.Projects
                                 GlobalOptions.ReferencesCache.GetKontragent(ord.DD_KONTR_OTPR_DC) as Kontragent;
                             newItem.Currency =
                                 GlobalOptions.ReferencesCache.GetKontragent(ord.DD_KONTR_OTPR_DC)?.Currency as Currency;
-                            newItem.SummaOut = ord.TD_24.Sum(_ =>
+                            newItem.SummaIn = ord.TD_24.Sum(_ =>
                                 _.DDT_KOL_PRIHOD * (_.TD_26.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) / _.TD_26.SFT_KOL);
                             newItem.DocDate = ord.DD_DATE;
                             newItem.InnerNumber = ord.DD_IN_NUM;
@@ -426,7 +604,8 @@ namespace KursRepositories.Repositories.Projects
                             .FirstOrDefault(_ => _.Id == p.CurrencyConvertId);
                         if (ord != null)
                         {
-                            var kontr = GlobalOptions.ReferencesCache.GetKontragent(ord.TD_26.SD_26.SF_POST_DC) as Kontragent;
+                            var kontr =
+                                GlobalOptions.ReferencesCache.GetKontragent(ord.TD_26.SD_26.SF_POST_DC) as Kontragent;
                             newItem.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(ord.NomenklId) as Nomenkl;
                             newItem.Warehouse =
                                 GlobalOptions.ReferencesCache.GetWarehouse(ord.StoreDC) as Warehouse;
@@ -458,7 +637,7 @@ namespace KursRepositories.Repositories.Projects
                                 GlobalOptions.ReferencesCache.GetKontragent(row.DD_KONTR_POL_DC) as Kontragent;
                             newItem.Currency =
                                 newItem.Kontragent?.Currency as Currency;
-                            newItem.SummaIn = row.TD_24.Sum(_ =>
+                            newItem.SummaOut = row.TD_24.Sum(_ =>
                                 _.DDT_KOL_RASHOD * (_.TD_84.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) /
                                 (decimal)_.TD_84.SFT_KOL);
                             newItem.SummaDiler = row.TD_24.Sum(_ =>
@@ -476,7 +655,7 @@ namespace KursRepositories.Repositories.Projects
 
                     if (p.InvoiceProviderId is not null)
                     {
-                        var d = Context.InvoicePostQuery.Where(_ => _.Id == p.InvoiceProviderId);
+                        var d = Context.InvoicePostQuery.Where(_ => _.Id == p.InvoiceProviderId).ToList();
 
                         if (d != null)
                         {
@@ -484,31 +663,54 @@ namespace KursRepositories.Repositories.Projects
                             newItem.Kontragent = doc.Kontragent;
                             newItem.Currency =
                                 newItem.Kontragent?.Currency as Currency;
-                            newItem.SummaOut = doc.Summa;
+                            newItem.SummaIn = doc.Summa;
                             newItem.SummaPay = doc.PaySumma;
                             newItem.SummaShipped = doc.SummaFact;
-                            newItem.DocDate =doc.DocDate;
+                            newItem.QuantityInDocument =  d.Where(_ => _.DocCode == doc.DocCode).Sum(_ => _.Quantity);
+                            foreach (var r in d)
+                            {
+                                if (r.IsUsluga ?? false)
+                                    newItem.QuantityInShipped += r.Quantity;
+                                else
+                                    newItem.QuantityInShipped +=
+                                        d.Where(_ => _.DocCode == doc.DocCode).Sum(_ => _.Shipped);
+                            }
+                            newItem.QuantityInRemain = newItem.QuantityInDocument - newItem.QuantityInShipped;
+                            newItem.SummaInRemain = newItem.SummaIn - newItem.SummaShipped;
+                            newItem.DocDate = doc.DocDate;
                             newItem.InnerNumber = doc.SF_IN_NUM;
                             newItem.ExtNumber = doc.SF_POSTAV_NUM;
                             newItem.Note = doc.Note;
                             newItem.DocInfo = GetDocDescription(DocumentType.InvoiceProvider, newItem);
                             newItem.Creator = doc.CREATOR;
                             newItem.ProductTypeName =
-                                ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(((IInvoiceProvider)doc)?.VzaimoraschetTypeDC))?.Name;
+                                ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(((IInvoiceProvider)doc)
+                                    ?.VzaimoraschetTypeDC))?.Name;
                         }
                     }
 
                     if (p.InvoiceClientId is not null)
                     {
-                        var d = Context.InvoiceClientQuery.Where(_ => _.Id == p.InvoiceClientId);
+                        var d = Context.InvoiceClientQuery.Where(_ => _.Id == p.InvoiceClientId).ToList();
                         if (d is not null)
                         {
                             var doc = new InvoiceClientBase(d);
                             newItem.Kontragent = doc.Client;
                             newItem.Currency = doc.Currency;
-                            newItem.SummaIn = doc.Summa;
+                            newItem.SummaOut = doc.Summa;
                             newItem.SummaPay = doc.PaySumma;
                             newItem.SummaShipped = doc.SummaOtgruz;
+                            newItem.QuantityOutDocument =  d.Where(_ => _.DocCode == doc.DocCode).Sum(_ => _.Quantity) ?? 0;
+                            foreach (var r in d)
+                            {
+                                if (r.IsUsluga ?? false)
+                                    newItem.QuantityOutShipped += r.Quantity ?? 0;
+                                else
+                                    newItem.QuantityOutShipped +=
+                                        d.Where(_ => _.DocCode == doc.DocCode).Sum(_ => _.Shipped);
+                            }
+                            newItem.QuantityOutRemain = newItem.QuantityOutDocument - newItem.QuantityOutShipped;
+                            newItem.SummaOutRemain = newItem.SummaOut - newItem.SummaShipped;
                             newItem.DocDate = doc.DocDate;
                             newItem.InnerNumber = doc.InnerNumber;
                             newItem.ExtNumber = doc.OuterNumber;
@@ -566,7 +768,6 @@ namespace KursRepositories.Repositories.Projects
                         }
                     }
 
-
                     if (p.AccruedClientRowId is not null)
                     {
                         var row = Context.AccuredAmountForClientRow.Include(_ => _.AccruedAmountForClient)
@@ -616,7 +817,312 @@ namespace KursRepositories.Repositories.Projects
 
             return ret;
         }
+
+        #endregion
+
+        #region Касса
         
+        public int GetcCashInCount(DateTime dateStart, DateTime dateEnd)
+        {
+            return Context.SD_33.Count(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd);
+        }
+        public IEnumerable<SD_33> GetCashInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.SD_33.Include(_ => _.ProjectDocuments)
+                .Where(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd).ToList();
+
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+        public IEnumerable<SD_33> GetCashInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
+            int limit,
+            out int count)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.SD_33.Include(_ => _.ProjectDocuments)
+                .Where(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd)
+                .OrderByDescending(_ => _.DATE_ORD).Skip((page-1)*limit).Take(limit).ToList();
+            count = Context.SD_33.Count(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd);
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        public int GetCashOutCount(DateTime dateStart, DateTime dateEnd)
+        {
+            return Context.SD_34.Count(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd);
+        }
+
+        public IEnumerable<SD_34> GetCashOutForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.SD_34.Include(_ => _.ProjectDocuments)
+                .Where(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd).ToList();
+
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        public IEnumerable<SD_34> GetCashOutForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
+            int limit,
+            out int count)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            count = Context.SD_34.Include(_ => _.ProjectDocuments)
+                .Count(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd);
+            var data = Context.SD_34.Include(_ => _.ProjectDocuments)
+                .Where(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd).OrderByDescending(_ => _.DATE_ORD)
+                .Skip((page-1)*limit).Take(limit).ToList();
+
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        #endregion
+
+        #region Банки
+
+        public int GetBankCount(DateTime dateStart, DateTime dateEnd)
+        {
+            return Context.TD_101.Include(_ => _.SD_101).Count(_ =>
+                _.SD_101.VV_START_DATE >= dateStart && _.SD_101.VV_START_DATE <= dateEnd);
+        }
+
+        public IEnumerable<TD_101> GetBankForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.TD_101.Include(_ => _.SD_101).Include(_ => _.SD_101.SD_114)
+                .Include(_ => _.ProjectDocuments)
+                .Where(_ => _.SD_101.VV_START_DATE >= dateStart && _.SD_101.VV_STOP_DATE <= dateEnd &&
+                            _.VVT_KONTRAGENT != null).ToList();
+
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        public IEnumerable<TD_101> GetBankForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
+            int limit, out int count)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.TD_101.Include(_ => _.SD_101).Include(_ => _.SD_101.SD_114)
+                .Include(_ => _.ProjectDocuments)
+                .Where(_ => _.SD_101.VV_START_DATE >= dateStart && _.SD_101.VV_STOP_DATE <= dateEnd &&
+                            _.VVT_KONTRAGENT != null).OrderByDescending(_ => _.SD_101.VV_START_DATE)
+                .Skip((page-1)*limit).Take(limit).ToList();
+
+            count = Context.TD_101.Include(_ => _.SD_101).Count(_ =>
+                _.SD_101.VV_START_DATE >= dateStart && _.SD_101.VV_START_DATE <= dateEnd);
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        #endregion
+
+        #region Приходный складской ордер
+
+        public int GetWarehouseInCount(DateTime dateStart, DateTime dateEnd)
+        {
+            return Context.SD_24.Include(_ => _.TD_24)
+                .Include(_ => _.SD_26)
+                .Include("TD_24.TD_26")
+                .Count(_ => _.DD_TYPE_DC == 2010000001 && _.DD_SKLAD_OTPR_DC == null && _.DD_DATE >= dateStart &&
+                            _.DD_DATE <= dateEnd);
+        }
+
+        public IEnumerable<SD_24> GetWarehouseInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.SD_24.Include(_ => _.TD_24)
+                .Include(_ => _.ProjectDocuments)
+                .Include(_ => _.SD_26)
+                .Include("TD_24.TD_26")
+                .Where(_ => _.DD_TYPE_DC == 2010000001 && _.DD_SKLAD_OTPR_DC == null && _.DD_DATE >= dateStart &&
+                            _.DD_DATE <= dateEnd).ToList();
+
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        public IEnumerable<SD_24> GetWarehouseInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd,
+            int page, int limit,
+            out int count)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.SD_24.Include(_ => _.TD_24)
+                .Include(_ => _.ProjectDocuments)
+                .Include(_ => _.SD_26)
+                .Include("TD_24.TD_26")
+                .Where(_ => _.DD_TYPE_DC == 2010000001 && _.DD_SKLAD_OTPR_DC == null && _.DD_DATE >= dateStart &&
+                            _.DD_DATE <= dateEnd).OrderByDescending(_ => _.DD_DATE)
+                .Skip((page-1)*limit).Take(limit).ToList();
+
+            count = Context.SD_24.Include(_ => _.TD_24)
+                .Include(_ => _.ProjectDocuments)
+                .Include(_ => _.SD_26)
+                .Include("TD_24.TD_26")
+                .Count(_ => _.DD_TYPE_DC == 2010000001 && _.DD_SKLAD_OTPR_DC == null && _.DD_DATE >= dateStart &&
+                            _.DD_DATE <= dateEnd);
+
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        #endregion
+
+        #region Расходная накладная
+
+        public int GetWaybillCount(DateTime dateStart, DateTime dateEnd)
+        {
+            return Context.SD_24.Include(_ => _.TD_24).Include(_ => _.ProjectDocuments)
+                .Count(_ => _.DD_TYPE_DC == 2010000012 && _.DD_DATE >= dateStart && _.DD_DATE <= dateEnd);
+        }
+
+        public IEnumerable<SD_24> GetWaybillInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.SD_24.Include(_ => _.TD_24).Include(_ => _.ProjectDocuments)
+                .Where(_ => _.DD_TYPE_DC == 2010000012 && _.DD_DATE >= dateStart && _.DD_DATE <= dateEnd).ToList();
+
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        public IEnumerable<SD_24> GetWaybillInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
+            int limit,
+            out int count)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.SD_24.Include(_ => _.TD_24).Include(_ => _.ProjectDocuments)
+                .Where(_ => _.DD_TYPE_DC == 2010000012 && _.DD_DATE >= dateStart && _.DD_DATE <= dateEnd)
+                .OrderByDescending(_ => _.DD_DATE)
+                .Skip((page-1)*limit).Take(limit).ToList();
+
+            count = Context.SD_24.Include(_ => _.TD_24).Include(_ => _.ProjectDocuments)
+                .Count(_ => _.DD_TYPE_DC == 2010000012 && _.DD_DATE >= dateStart && _.DD_DATE <= dateEnd);
+
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        #endregion
+
+        #region Услуги
+
+        public IEnumerable<TD_84> GetUslugaClientForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.TD_84.Include(_ => _.SD_84).Include(_ => _.SD_83)
+                .Where(_ => _.SD_84.SF_DATE >= dateStart && _.SD_84.SF_DATE <= dateEnd &&
+                            _.SD_83.NOM_0MATER_1USLUGA == 1
+                            && _.SD_84.SF_ACCEPTED == 1).ToList();
+
+            var docIds = new List<Guid>();
+            foreach (var r in Context.Projects.Include(_ => _.ProjectDocuments)
+                         .Where(_ => ids.Contains(_.Id)))
+                docIds.AddRange(from rr in r.ProjectDocuments
+                    where rr.UslugaProviderRowId is not null
+                    select rr.UslugaProviderRowId.Value);
+
+            return data.Where(row => !docIds.Contains(row.Id)).ToList();
+        }
+
+        public int GetUslugaClientCount(DateTime dateStart, DateTime dateEnd)
+        {
+            return Context.TD_84.Include(_ => _.SD_84).Include(_ => _.SD_83)
+                .Count(_ => _.SD_84.SF_DATE >= dateStart && _.SD_84.SF_DATE <= dateEnd &&
+                            _.SD_83.NOM_0MATER_1USLUGA == 1
+                            && _.SD_84.SF_ACCEPTED == 1);
+        }
+
+        public IEnumerable<TD_84> GetUslugaClientForProject(Guid projectId, DateTime dateStart, DateTime dateEnd,
+            int page, int limit,
+            out int count)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.TD_84.Include(_ => _.SD_84).Include(_ => _.SD_83)
+                .Where(_ => _.SD_84.SF_DATE >= dateStart && _.SD_84.SF_DATE <= dateEnd &&
+                            _.SD_83.NOM_0MATER_1USLUGA == 1
+                            && _.SD_84.SF_ACCEPTED == 1).OrderByDescending(_ => _.SD_84.SF_DATE)
+                .Skip((page-1)*limit).Take(limit).ToList();
+
+            var docIds = new List<Guid>();
+            foreach (var r in Context.Projects.Include(_ => _.ProjectDocuments)
+                         .Where(_ => ids.Contains(_.Id)))
+                docIds.AddRange(from rr in r.ProjectDocuments
+                    where rr.UslugaProviderRowId is not null
+                    select rr.UslugaProviderRowId.Value);
+            count = Context.TD_84.Include(_ => _.SD_84).Include(_ => _.SD_83)
+                .Count(_ => _.SD_84.SF_DATE >= dateStart && _.SD_84.SF_DATE <= dateEnd &&
+                            _.SD_83.NOM_0MATER_1USLUGA == 1
+                            && _.SD_84.SF_ACCEPTED == 1);
+            return data.Where(row => !docIds.Contains(row.Id)).ToList();
+        }
+
+        public int GetUslugaProviderCount(DateTime dateStart, DateTime dateEnd)
+        {
+            return Context.TD_26.Include(_ => _.SD_26).Include(_ => _.SD_83)
+                .Count(_ => _.SD_26.SF_POSTAV_DATE >= dateStart && _.SD_26.SF_POSTAV_DATE <= dateEnd &&
+                            _.SD_83.NOM_0MATER_1USLUGA == 1
+                            && _.SD_26.SF_ACCEPTED == 1);
+        }
+
+        public IEnumerable<TD_26> GetUslugaProviderForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.TD_26.Include(_ => _.SD_26).Include(_ => _.SD_83)
+                .Where(_ => _.SD_26.SF_POSTAV_DATE >= dateStart && _.SD_26.SF_POSTAV_DATE <= dateEnd &&
+                            _.SD_83.NOM_0MATER_1USLUGA == 1
+                            && _.SD_26.SF_ACCEPTED == 1).ToList();
+
+            var docIds = new List<Guid>();
+            foreach (var r in Context.Projects.Include(_ => _.ProjectDocuments)
+                         .Where(_ => ids.Contains(_.Id)))
+                docIds.AddRange(from rr in r.ProjectDocuments
+                    where rr.UslugaProviderRowId is not null
+                    select rr.UslugaProviderRowId.Value);
+
+            return data.Where(row => !docIds.Contains(row.Id)).ToList();
+        }
+
+        public IEnumerable<TD_26> GetUslugaProviderForProject(Guid projectId, DateTime dateStart, DateTime dateEnd,
+            int page, int limit,
+            out int count)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.TD_26.Include(_ => _.SD_26).Include(_ => _.SD_83)
+                .Where(_ => _.SD_26.SF_POSTAV_DATE >= dateStart && _.SD_26.SF_POSTAV_DATE <= dateEnd &&
+                            _.SD_83.NOM_0MATER_1USLUGA == 1
+                            && _.SD_26.SF_ACCEPTED == 1).OrderByDescending(_ => _.SD_26)
+                .Skip((page-1)*limit).Take(limit).ToList();
+
+            var docIds = new List<Guid>();
+            foreach (var r in Context.Projects.Include(_ => _.ProjectDocuments)
+                         .Where(_ => ids.Contains(_.Id)))
+                docIds.AddRange(from rr in r.ProjectDocuments
+                    where rr.UslugaProviderRowId is not null
+                    select rr.UslugaProviderRowId.Value);
+
+            count = Context.TD_26.Include(_ => _.SD_26).Include(_ => _.SD_83)
+                .Count(_ => _.SD_26.SF_POSTAV_DATE >= dateStart && _.SD_26.SF_POSTAV_DATE <= dateEnd &&
+                            _.SD_83.NOM_0MATER_1USLUGA == 1
+                            && _.SD_26.SF_ACCEPTED == 1);
+            return data.Where(row => !docIds.Contains(row.Id)).ToList();
+        }
+
+        #endregion
+
+        #region Группы проектов
+
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         public IBoolResult SaveGroups(IEnumerable<ProjectGroups> data, IEnumerable<Guid> deleteGrpIds = null,
             IEnumerable<Guid> deleteLinkIds = null)
@@ -648,142 +1154,103 @@ namespace KursRepositories.Repositories.Projects
         {
             return Context.ProjectGroups.Include(_ => _.ProjectGroupLink).ToList();
         }
-        
-        public IEnumerable<SD_33> GetCashInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
-        {
-            var ids = GetAllTreeProjectIds(projectId);
-            var data = Context.SD_33.Include(_ => _.ProjectDocuments)
-                .Where(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd).ToList();
 
-            return data.Where(item =>
-                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
-                .ToList();
+        #endregion
+
+        #region Справочник проектов
+
+        public IBoolResult SaveReference(IEnumerable<Data.Projects> data, IEnumerable<Guid> deleteIds = null)
+        {
+            var delList = deleteIds is null ? new List<Guid>() : deleteIds.ToList();
+            if (deleteIds is not null && delList.Any())
+                foreach (var id in delList)
+                {
+                    var old = Context.Projects
+                        .Include(_ => _.NomenklReturnToProvider)
+                        .Include(_ => _.NomenklReturnOfClient)
+                        .Include(_ => _.ProjectGroupLink)
+                        .Include(_ => _.SD_33)
+                        .Include(_ => _.SD_34)
+                        .Include(_ => _.SD_24)
+                        .Include(_ => _.TD_101)
+                        .FirstOrDefault(_ => _.Id == id);
+                    if (old is null) continue;
+                    if (old.SD_24.Count == 0 && old.TD_101.Count == 0 && old.SD_33.Count == 0 && old.SD_34.Count == 0 &&
+                        old.ProjectGroupLink.Count == 0
+                        && old.NomenklReturnToProvider.Count == 0 && old.NomenklReturnOfClient.Count == 0)
+                        Context.Projects.Remove(old);
+                    else
+                        return new BoolResult
+                        {
+                            Result = false,
+                            ErrorText = $"Для проекта {old.Name} есть связанные в документах"
+                        };
+                }
+
+            foreach (var p in data)
+                if (Context.Projects.Any(_ => _.Id == p.Id))
+                {
+                    Context.Projects.Attach(p);
+                    Context.Entry(p).State = EntityState.Modified;
+                }
+                else
+                {
+                    Context.Projects.Add(p);
+                }
+
+            return new BoolResult { Result = true };
         }
 
-        public IEnumerable<SD_34> GetCashOutForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
+        public IEnumerable<Data.Projects> LoadReference()
         {
-            var ids = GetAllTreeProjectIds(projectId);
-            var data = Context.SD_34.Include(_ => _.ProjectDocuments)
-                .Where(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd).ToList();
-
-            return data.Where(item =>
-                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
-                .ToList();
+            return Context.Projects.AsNoTracking().ToList();
         }
 
-        public IEnumerable<TD_101> GetBankForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
-        {
-            var ids = GetAllTreeProjectIds(projectId);
-            var data = Context.TD_101.Include(_ => _.SD_101).Include(_ => _.SD_101.SD_114)
-                .Include(_ => _.ProjectDocuments)
-                .Where(_ => _.SD_101.VV_START_DATE >= dateStart && _.SD_101.VV_STOP_DATE <= dateEnd &&
-                            _.VVT_KONTRAGENT != null).ToList();
+        #endregion
 
-            return data.Where(item =>
-                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
-                .ToList();
+        #region Валютная конвертация
+
+        public int GetCurrencyConvertsCount(DateTime dateStart, DateTime dateEnd)
+        {
+            return Context.TD_26_CurrencyConvert.Include(_ => _.TD_26).Include(_ => _.TD_26.SD_26)
+                .Include(td26CurrencyConvert => td26CurrencyConvert.ProjectDocuments)
+                .Count(_ => _.TD_26.SD_26.SF_POSTAV_DATE >= dateStart && _.TD_26.SD_26.SF_POSTAV_DATE <= dateEnd);
         }
 
-        public IEnumerable<SD_24> GetWarehouseInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
-        {
-            var ids = GetAllTreeProjectIds(projectId);
-            var data = Context.SD_24.Include(_ => _.TD_24)
-                .Include(_ => _.ProjectDocuments)
-                .Include(_ => _.SD_26)
-                .Include("TD_24.TD_26")
-                .Where(_ => _.DD_TYPE_DC == 2010000001 && _.DD_SKLAD_OTPR_DC == null && _.DD_DATE >= dateStart &&
-                            _.DD_DATE <= dateEnd).ToList();
-
-            return data.Where(item =>
-                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
-                .ToList();
-        }
-
-        public IEnumerable<SD_24> GetWaybillInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
-        {
-            var ids = GetAllTreeProjectIds(projectId);
-            var data = Context.SD_24.Include(_ => _.TD_24).Include(_ => _.ProjectDocuments)
-                .Where(_ => _.DD_TYPE_DC == 2010000012 && _.DD_DATE >= dateStart && _.DD_DATE <= dateEnd).ToList();
-
-            return data.Where(item =>
-                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
-                .ToList();
-        }
-
-        public IEnumerable<TD_26> GetUslugaProviderForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
-        {
-            var ids = GetAllTreeProjectIds(projectId);
-            var data = Context.TD_26.Include(_ => _.SD_26).Include(_ => _.SD_83)
-                .Where(_ => _.SD_26.SF_POSTAV_DATE >= dateStart && _.SD_26.SF_POSTAV_DATE <= dateEnd &&
-                            _.SD_83.NOM_0MATER_1USLUGA == 1
-                            && _.SD_26.SF_ACCEPTED == 1).ToList();
-
-            var docIds = new List<Guid>();
-            foreach (var r in Context.Projects.Include(_ => _.ProjectDocuments)
-                         .Where(_ => ids.Contains(_.Id)))
-                docIds.AddRange(from rr in r.ProjectDocuments
-                    where rr.UslugaProviderRowId is not null
-                    select rr.UslugaProviderRowId.Value);
-
-            return data.Where(row => !docIds.Contains(row.Id)).ToList();
-        }
-
-        public IEnumerable<TD_84> GetUslugaClientForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
-        {
-            var ids = GetAllTreeProjectIds(projectId);
-            var data = Context.TD_84.Include(_ => _.SD_84).Include(_ => _.SD_83)
-                .Where(_ => _.SD_84.SF_DATE >= dateStart && _.SD_84.SF_DATE <= dateEnd &&
-                            _.SD_83.NOM_0MATER_1USLUGA == 1
-                            && _.SD_84.SF_ACCEPTED == 1).ToList();
-
-            var docIds = new List<Guid>();
-            foreach (var r in Context.Projects.Include(_ => _.ProjectDocuments)
-                         .Where(_ => ids.Contains(_.Id)))
-                docIds.AddRange(from rr in r.ProjectDocuments
-                    where rr.UslugaProviderRowId is not null
-                    select rr.UslugaProviderRowId.Value);
-
-            return data.Where(row => !docIds.Contains(row.Id)).ToList();
-        }
-
-        public IEnumerable<AccuredAmountForClientRow> GetAccruedAmountForClients(Guid projectId, DateTime dateStart,
+        public IEnumerable<TD_26_CurrencyConvert> GetCurrencyConverts(Guid projectId, DateTime dateStart,
             DateTime dateEnd)
-        {
-            var ids = GetAllTreeProjectIds(projectId);
-            var data = Context.AccuredAmountForClientRow.Include(_ => _.AccruedAmountForClient)
-                .Include(_ => _.ProjectDocuments)
-                .Where(_ => _.AccruedAmountForClient.DocDate >= dateStart &&
-                            _.AccruedAmountForClient.DocDate <= dateEnd).ToList();
-
-            return data.Where(item =>
-                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
-                .ToList();
-        }
-
-        public IEnumerable<AccuredAmountOfSupplierRow> GetAccruedAmountOfSuppliers(Guid projectId, DateTime dateStart,
-            DateTime dateEnd)
-        {
-            var ids = GetAllTreeProjectIds(projectId);
-            var data = Context.AccuredAmountOfSupplierRow.Include(_ => _.AccruedAmountOfSupplier)
-                .Include(_ => _.ProjectDocuments)
-                .Where(_ => _.AccruedAmountOfSupplier.DocDate >= dateStart &&
-                            _.AccruedAmountOfSupplier.DocDate <= dateEnd).ToList();
-
-            return data.Where(item =>
-                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
-                .ToList();
-        }
-
-        public IEnumerable<TD_26_CurrencyConvert> GetCurrencyConverts(Guid projectId, DateTime dateStart, DateTime dateEnd)
         {
             var ids = GetAllTreeProjectIds(projectId);
             var data = Context.TD_26_CurrencyConvert.Include(_ => _.TD_26).Include(_ => _.TD_26.SD_26)
                 .Include(td26CurrencyConvert => td26CurrencyConvert.ProjectDocuments)
-                .Where(_ => _.TD_26.SD_26.SF_POSTAV_DATE >= dateStart && _.TD_26.SD_26.SF_POSTAV_DATE <= dateEnd).ToList();
+                .Where(_ => _.TD_26.SD_26.SF_POSTAV_DATE >= dateStart && _.TD_26.SD_26.SF_POSTAV_DATE <= dateEnd)
+                .ToList();
             return data.Where(item =>
                     item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
                 .ToList();
         }
+
+        public IEnumerable<TD_26_CurrencyConvert> GetCurrencyConverts(Guid projectId, DateTime dateStart,
+            DateTime dateEnd, int page, int limit,
+            out int count)
+        {
+            var ids = GetAllTreeProjectIds(projectId);
+            var data = Context.TD_26_CurrencyConvert.Include(_ => _.TD_26).Include(_ => _.TD_26.SD_26)
+                .Include(td26CurrencyConvert => td26CurrencyConvert.ProjectDocuments)
+                .Where(_ => _.TD_26.SD_26.SF_POSTAV_DATE >= dateStart && _.TD_26.SD_26.SF_POSTAV_DATE <= dateEnd)
+                .OrderByDescending(_ => _.TD_26.SD_26.SF_POSTAV_DATE).Skip((page-1)*limit).Take(limit)
+                .ToList();
+            count = Context.TD_26_CurrencyConvert.Include(_ => _.TD_26).Include(_ => _.TD_26.SD_26)
+                .Include(td26CurrencyConvert => td26CurrencyConvert.ProjectDocuments)
+                .Count(_ => _.TD_26.SD_26.SF_POSTAV_DATE >= dateStart && _.TD_26.SD_26.SF_POSTAV_DATE <= dateEnd);
+            return data.Where(item =>
+                    item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
+                .ToList();
+        }
+
+        #endregion
+
+        #region Вспомогательное
 
         public void UpdateCache()
         {
@@ -833,11 +1300,31 @@ namespace KursRepositories.Repositories.Projects
             return ret;
         }
 
-        private class DocProjLink
+        public List<TD_24> GetNomenklRows(decimal dc)
+        {
+            return Context.TD_24.Include(_ => _.TD_26)
+                .Include(_ => _.TD_84)
+                .Where(_ => _.DOC_CODE == dc).ToList();
+        }
+
+        private class DocDecimalProjLink
         {
             public decimal DocCode { set; get; }
-            public string ProjectName  { set; get; }
+            public string ProjectName { set; get; }
         }
+
+        private class DocGuidProjLink
+        {
+            public Guid Id { set; get; }
+            public string ProjectName { set; get; }
+        }
+
+        private class DocIntProjLink
+        {
+            public int Code { set; get; }
+            public string ProjectName { set; get; }
+        }
+
+        #endregion
     }
-   
 }

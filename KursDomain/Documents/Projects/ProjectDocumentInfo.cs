@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using Core;
+using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using KursDomain.Documents.CommonReferences;
@@ -17,6 +18,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
     {
         Entity = DefaultValue();
     }
+
     public ProjectDocumentInfoBase(ProjectDocuments entity)
     {
         Entity = entity ?? DefaultValue();
@@ -33,6 +35,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => Entity.Id;
     }
+
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Создатель")]
     public string Creator { set; get; }
 
@@ -83,6 +86,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => Entity.CashOutDC;
     }
+
     [Display(AutoGenerateField = false)]
     public decimal? WarehouseOrderInDC
     {
@@ -106,6 +110,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => Entity.CurrencyConvertId;
     }
+
     [Display(AutoGenerateField = false)]
     public decimal? WaybillDC
     {
@@ -166,7 +171,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => Entity.AccruedSupplierRowId;
     }
-    
+
 
     [Display(AutoGenerateField = false)]
     public Guid? InvoiceClientId
@@ -193,6 +198,9 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
     }
 
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Тип док-та", Order = 1)]
+    public string DocType => DocumentType.GetDisplayAttributesFrom(DocumentType.GetType()).Name;
+
+    [Display(AutoGenerateField = false, GroupName = "Основные данные", Name = "Тип док-та", Order = 1)]
     public DocumentType DocumentType
     {
         set
@@ -203,39 +211,49 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => (DocumentType)Entity.DocType;
     }
+
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Внут.№", Order = 2)]
     public int? InnerNumber { set; get; }
-    [Display(AutoGenerateField = true,GroupName = "Основные данные", Name = "Внеш.№", Order = 3)]
+
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Внеш.№", Order = 3)]
     public string ExtNumber { set; get; }
-    [Display(AutoGenerateField = true,GroupName = "Основные данные", Name = "Дата", Order = 4)]
+
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Дата", Order = 4)]
     public DateTime DocDate { set; get; }
-    [Display(AutoGenerateField = true,GroupName = "Основные данные", Name = "Контрагент", Order = 5)]
+
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Контрагент", Order = 5)]
     public Kontragent Kontragent { set; get; }
-    [Display(AutoGenerateField = true,GroupName = "Основные данные", Name = "Дилер", Order = 12)]
+
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Дилер", Order = 12)]
     public Kontragent Diler { set; get; }
+
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Склад", Order = 13)]
     public References.Warehouse Warehouse { set; get; }
+
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Банк счет", Order = 14)]
     public string BankAccount { set; get; }
+
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Касса", Order = 15)]
     public CashBox CashBox { set; get; }
 
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Сотрудника", Order = 16)]
     public References.Employee Employee { set; get; }
 
-    [Display(AutoGenerateField = false)]
-    public Nomenkl Nomenkl { set; get; }
+    [Display(AutoGenerateField = false)] public Nomenkl Nomenkl { set; get; }
+
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Номенклатура", Order = 23)]
     public string NomenklName => Nomenkl is null ? null : $"{Nomenkl.NomenklNumber,-20} {Nomenkl.Name}";
 
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Вид продукции", Order = 22)]
     public string ProductTypeName { set; get; }
 
-    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Валюта", Order =11)]
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Валюта", Order = 11)]
     public References.Currency Currency { set; get; }
+
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Сумма прихода", Order = 6)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal SummaIn { set; get; }
+
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Сумма расхода", Order = 7)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal SummaOut { set; get; }
@@ -243,6 +261,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Оплачено", Order = 8)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal SummaPay { set; get; }
+
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Отгружено", Order = 9)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal SummaShipped { set; get; }
@@ -262,6 +281,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => Entity.DocInfo;
     }
+
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Примечание (проект)", Order = 18)]
     public string ProjectNote
     {
@@ -273,6 +293,7 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => Entity.Note;
     }
+
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Примечание (док-т)", Order = 19)]
     public new string Note
     {
@@ -284,8 +305,44 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
         }
         get => _Note;
     }
-    [Display(AutoGenerateField = false)]
-    public ProjectDocuments Entity { get; set; }
+
+
+    [Display(AutoGenerateField = true, GroupName = "Приход", Name = "Кол-во(док-т)", Order = 20)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal QuantityInDocument { set; get; }
+
+    [Display(AutoGenerateField = true, GroupName = "Приход", Name = "Кол-во(отгружено)", Order = 20)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal QuantityInShipped { set; get; }
+
+    [Display(AutoGenerateField = true, GroupName = "Приход", Name = "Остаток(кол-во)", Order = 20)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal QuantityInRemain { set; get; }
+
+
+    [Display(AutoGenerateField = true, GroupName = "Приход", Name = "Остаток(сумма)", Order = 20)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal SummaInRemain { set; get; }
+
+    [Display(AutoGenerateField = true, GroupName = "Расход", Name = "Кол-во(док-т)", Order = 20)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal QuantityOutDocument { set; get; }
+
+    [Display(AutoGenerateField = true, GroupName = "Расход", Name = "Кол-во(отгружено)", Order = 20)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal QuantityOutShipped { set; get; }
+
+    [Display(AutoGenerateField = true, GroupName = "Расход", Name = "Остаток(кол-во)", Order = 20)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal QuantityOutRemain { set; get; }
+
+
+    [Display(AutoGenerateField = true, GroupName = "Расход", Name = "Остаток(сумма)", Order = 20)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal SummaOutRemain { set; get; }
+
+
+    [Display(AutoGenerateField = false)] public ProjectDocuments Entity { get; set; }
 
     public ProjectDocuments DefaultValue()
     {
@@ -301,14 +358,13 @@ public class ProjectDocumentInfo : ProjectDocumentInfoBase, IMultyWithDilerCurre
 {
     #region Constructors
 
-    public ProjectDocumentInfo() : base()
+    public ProjectDocumentInfo()
     {
     }
 
 
     public ProjectDocumentInfo(ProjectDocuments entity) : base(entity)
     {
-        
     }
 
     #endregion
@@ -333,6 +389,7 @@ public class ProjectDocumentInfo : ProjectDocumentInfoBase, IMultyWithDilerCurre
         LossSEK = 0;
         LossUSD = 0;
     }
+
     public void SetCurrency()
     {
         SetCurrencyToZero();
@@ -382,65 +439,87 @@ public class ProjectDocumentInfo : ProjectDocumentInfoBase, IMultyWithDilerCurre
 
     [Display(AutoGenerateField = true, GroupName = "CHF", Name = "Приход")]
     public decimal ProfitCHF { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "EUR", Name = "Приход")]
     public decimal ProfitEUR { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "GBP", Name = "Приход")]
     public decimal ProfitGBP { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "RUR", Name = "Приход")]
     public decimal ProfitRUB { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "SEK", Name = "Приход")]
     public decimal ProfitSEK { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "USD", Name = "Приход")]
     public decimal ProfitUSD { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "CNY", Name = "Приход")]
     public decimal ProfitCNY { get; set; }
 
     [Display(AutoGenerateField = true, GroupName = "CHF", Name = "Расход")]
     public decimal LossCHF { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "EUR", Name = "Расход")]
     public decimal LossEUR { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "GBP", Name = "Расход")]
     public decimal LossGBP { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "RUR", Name = "Расход")]
     public decimal LossRUB { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "SEK", Name = "Расход")]
     public decimal LossSEK { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "USD", Name = "Расход")]
     public decimal LossUSD { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "CNY", Name = "Расход")]
     public decimal LossCNY { get; set; }
 
     [Display(AutoGenerateField = true, GroupName = "CHF", Name = "Дилер")]
     public decimal DilerCHF { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "EUR", Name = "Дилер")]
     public decimal DilerEUR { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "GBP", Name = "Дилер")]
     public decimal DilerGBP { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "RUR", Name = "Дилер")]
     public decimal DilerRUB { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "SEK", Name = "Дилер")]
     public decimal DilerSEK { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "USD", Name = "Дилер")]
     public decimal DilerUSD { get; set; }
+
     [Display(AutoGenerateField = true, GroupName = "CNY", Name = "Дилер")]
     public decimal DilerCNY { get; set; }
 
     [Display(AutoGenerateField = true, GroupName = "CHF", Name = "Результат")]
     public decimal ResultCHF => ProfitCHF - DilerCHF - LossCHF;
+
     [Display(AutoGenerateField = true, GroupName = "EUR", Name = "Результат")]
     public decimal ResultEUR => ProfitEUR - DilerEUR - LossEUR;
+
     [Display(AutoGenerateField = true, GroupName = "GBP", Name = "Результат")]
     public decimal ResultGBP => ProfitGBP - DilerGBP - LossGBP;
+
     [Display(AutoGenerateField = true, GroupName = "RUR", Name = "Результат")]
     public decimal ResultRUB => ProfitRUB - DilerRUB - LossRUB;
+
     [Display(AutoGenerateField = true, GroupName = "SEK", Name = "Результат")]
     public decimal ResultSEK => ProfitSEK - DilerSEK - LossSEK;
+
     [Display(AutoGenerateField = true, GroupName = "USD", Name = "Результат")]
     public decimal ResultUSD => ProfitUSD - DilerUSD - LossUSD;
+
     [Display(AutoGenerateField = true, GroupName = "CNY", Name = "Результат")]
     public decimal ResultCNY => ProfitCNY - DilerCNY - LossCNY;
-    
+
     #endregion
 }
-
-

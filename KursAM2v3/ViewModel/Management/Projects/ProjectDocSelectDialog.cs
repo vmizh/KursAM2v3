@@ -121,310 +121,383 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
     }
 
     public override void RefreshData(object obj)
-    {
+    { 
+        var resultCount = 0;
         Rows.Clear();
         if (IsCashOrderIn)
-            foreach (var doc in myProjectRepository.GetCashInForProject(myProject.Id, DateStart, DateEnd).ToList())
-            {
-                var newItem = new ProjectDocumentInfo
-                {
-                    ProjectId = myProject.Id,
-                    CashInDC = doc.DOC_CODE,
-                    Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CRS_DC) as Currency,
-                    CashBox = GlobalOptions.ReferencesCache.GetCashBox(doc.CA_DC) as CashBox,
-                    DocumentType = DocumentType.CashIn,
-                    DocDate = doc.DATE_ORD ?? DateTime.MinValue,
-                    InnerNumber = doc.NUM_ORD ?? 0,
-                    SummaIn = doc.SUMM_ORD ?? 0,
-                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.KONTRAGENT_DC) as Kontragent,
-                    Creator = doc.CREATOR,
-                    Note = doc.NOTES_ORD
-                };
-                Rows.Add(newItem);
-            }
+        {
+            LoadCashOrderIn();
+        }
 
-        if (IsCashOrderOut)
-            foreach (var doc in myProjectRepository.GetCashOutForProject(myProject.Id, DateStart, DateEnd).ToList())
-            {
-                var newItem = new ProjectDocumentInfo
-                {
-                    ProjectId = myProject.Id,
-                    CashOutDC = doc.DOC_CODE,
-                    Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CRS_DC) as Currency,
-                    CashBox = GlobalOptions.ReferencesCache.GetCashBox(doc.CA_DC) as CashBox,
-                    DocumentType = DocumentType.CashOut,
-                    DocDate = doc.DATE_ORD ?? DateTime.MinValue,
-                    InnerNumber = doc.NUM_ORD ?? 0,
-                    SummaOut = doc.SUMM_ORD ?? 0,
-                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.KONTRAGENT_DC) as Kontragent,
-                    Creator = doc.CREATOR,
-                    Note = doc.NOTES_ORD
-                };
-                Rows.Add(newItem);
-            }
+        if (IsCashOrderOut) GetCashOut();
 
-        if (IsBank)
-            foreach (var doc in myProjectRepository.GetBankForProject(myProject.Id, DateStart, DateEnd).ToList())
-            {
-                var newItem = new ProjectDocumentInfo
-                {
-                    ProjectId = myProject.Id,
-                    BankCode = doc.CODE,
-                    Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.SD_101.SD_114.CurrencyDC) as Currency,
-                    BankAccount = (GlobalOptions.ReferencesCache.GetBankAccount(doc.SD_101.VV_ACC_DC) as BankAccount)
-                        ?.Name,
-                    DocumentType = DocumentType.Bank,
-                    DocDate = doc.SD_101.VV_START_DATE,
-                    SummaIn = doc.VVT_VAL_PRIHOD ?? 0,
-                    SummaOut = doc.VVT_VAL_RASHOD ?? 0,
-                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.VVT_KONTRAGENT) as Kontragent,
-                    Note = doc.VVT_DOC_NUM,
-                };
-                Rows.Add(newItem);
-            }
+        if (IsBank) GetBank();
 
-        if (IsWarehouseIn)
-            foreach (var doc in myProjectRepository.GetWarehouseInForProject(myProject.Id, DateStart, DateEnd).ToList())
-            {
-                var crs = GlobalOptions.ReferencesCache.GetCurrency(doc.TD_24.Select(t => t.TD_26).First().SD_26
-                    .SF_CRS_DC) as Currency;
-                var newItem = new ProjectDocumentInfo
-                {
-                    ProjectId = myProject.Id,
-                    WarehouseOrderInDC = doc.DOC_CODE,
-                    Currency = crs,
-                    Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(doc.DD_SKLAD_POL_DC) as Warehouse,
-                    DocumentType = DocumentType.StoreOrderIn,
-                    DocDate = doc.DD_DATE,
-                    InnerNumber = doc.DD_IN_NUM,
-                    ExtNumber = doc.DD_EXT_NUM,
-                    SummaIn = doc.TD_24.Sum(_ =>
-                        _.DDT_KOL_PRIHOD * (_.TD_26.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) / _.TD_26.SFT_KOL),
-                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.DD_KONTR_OTPR_DC) as Kontragent,
-                    Creator = doc.CREATOR,
-                    Note = doc.DD_NOTES,
-                    ProductTypeName = ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.SD_26?.SF_VZAIMOR_TYPE_DC))?.Name
-                };
-                Rows.Add(newItem);
-            }
+        if (IsWarehouseIn) GetWarehouseIn();
 
         if (IsCurrencyConvert)
-            foreach (var doc in myProjectRepository.GetCurrencyConverts(myProject.Id, DateStart, DateEnd).ToList())
-            {
-                var nom = GlobalOptions.ReferencesCache.GetNomenkl(doc.NomenklId) as Nomenkl;
-                var newItem = new ProjectDocumentInfo
-                {
-                    ProjectId = myProject.Id,
-                    CurrencyConvertId = doc.Id,
-                    Currency = nom?.Currency as Currency,
-                    Nomenkl = nom,
-                    Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(doc.StoreDC) as Warehouse,
-                    DocumentType = DocumentType.NomenklCurrencyConverterProvider,
-                    DocDate = doc.TD_26.SD_26.SF_POSTAV_DATE,
-                    InnerNumber = doc.TD_26.SD_26.SF_IN_NUM,
-                    ExtNumber = doc.TD_26.SD_26.SF_POSTAV_NUM,
-                    SummaIn = doc.Summa,
-                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.TD_26.SD_26.SF_POST_DC) as Kontragent,
-                    Creator = doc.TD_26.SD_26.CREATOR,
-                    Note = doc.TD_26.SD_26.SF_NOTES,
-                    ProductTypeName = ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.TD_26.SD_26?.SF_VZAIMOR_TYPE_DC))?.Name
-                };
-                Rows.Add(newItem);
-            }
+        {
+            GetCurrencyConvert();
+        }
 
-        if (IsWaybill)
-            foreach (var doc in myProjectRepository.GetWaybillInForProject(myProject.Id, DateStart, DateEnd).ToList())
-            {
-                var crs = GlobalOptions.ReferencesCache.GetCurrency(doc.SD_84.SF_CRS_DC) as Currency;
-                var newItem = new ProjectDocumentInfo
-                {
-                    ProjectId = myProject.Id,
-                    WaybillDC = doc.DOC_CODE,
-                    Currency = crs,
-                    Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(doc.DD_SKLAD_OTPR_DC) as Warehouse,
-                    DocumentType = DocumentType.Waybill,
-                    DocDate = doc.DD_DATE,
-                    InnerNumber = doc.DD_IN_NUM,
-                    ExtNumber = doc.DD_EXT_NUM,
-                    SummaOut = doc.TD_24.Sum(_ =>
-                        _.DDT_KOL_RASHOD * (_.TD_84.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) / (decimal)_.TD_84.SFT_KOL),
-                    SummaDiler = doc.TD_24.Sum(_ =>
-                        _.DDT_KOL_RASHOD * (_.TD_84.SFT_NACENKA_DILERA ?? 0) / (decimal)_.TD_84.SFT_KOL),
-                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.DD_KONTR_POL_DC) as Kontragent,
-                    Creator = doc.CREATOR,
-                    Note = doc.DD_NOTES,
-                    ProductTypeName = ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.SD_84?.SF_VZAIMOR_TYPE_DC))?.Name
-                };
-                Rows.Add(newItem);
-            }
+        if (IsWaybill) GetWayBill();
 
         if (IsUslugaProvider)
         {
-            foreach (var doc in myProjectRepository.GetUslugaProviderForProject(myProject.Id, DateStart, DateEnd).ToList())
-            {
-                var crs = GlobalOptions.ReferencesCache.GetCurrency(doc.SD_26.SF_CRS_DC) as Currency;
-                var newItem = new ProjectDocumentInfo
-                {
-                    ProjectId = myProject.Id,
-                    UslugaProviderRowId = doc.Id,
-                    Currency = crs,
-                    DocumentType = DocumentType.InvoiceProvider,
-                    DocDate = doc.SD_26.SF_POSTAV_DATE,
-                    InnerNumber = doc.SD_26.SF_IN_NUM,
-                    ExtNumber = doc.SD_26.SF_POSTAV_NUM,
-                    SummaOut = doc.TD_24.Sum(_ =>
-                        _.DDT_KOL_RASHOD * (_.TD_26.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) / _.TD_26.SFT_KOL),
-                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SD_26.SF_POST_DC) as Kontragent,
-                    Creator = doc.SD_26.CREATOR,
-                    Note = doc.SD_26.SF_NOTES,
-                };
-                newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.InvoiceProvider, newItem);
-
-                Rows.Add(newItem);
-            }
+            LoadUslugaProvider();
         }
 
         if (IsUslugaClient)
         {
-            foreach (var doc in myProjectRepository.GetUslugaClientForProject(myProject.Id, DateStart, DateEnd).ToList())
-            {
-                var crs = GlobalOptions.ReferencesCache.GetCurrency(doc.SD_84.SF_CRS_DC) as Currency;
-                var newItem = new ProjectDocumentInfo
-                {
-                    ProjectId = myProject.Id,
-                    UslugaClientRowId = doc.Id,
-                    Currency = crs,
-                    DocumentType = DocumentType.InvoiceClient,
-                    DocDate = doc.SD_84.SF_DATE,
-                    InnerNumber = doc.SD_84.SF_IN_NUM,
-                    ExtNumber = doc.SD_84.SF_OUT_NUM,
-                    SummaIn = doc.TD_24.Sum(_ =>
-                        _.DDT_KOL_RASHOD * (_.TD_84.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) / (decimal)_.TD_84.SFT_KOL),
-                    SummaDiler = doc.TD_24.Sum(_ =>
-                        _.DDT_KOL_RASHOD * (_.TD_84.SFT_NACENKA_DILERA ?? 0) / (decimal)_.TD_84.SFT_KOL),
-                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SD_84.SF_CLIENT_DC) as Kontragent,
-                    Creator = doc.SD_84.CREATOR,
-                    Note = doc.SD_84.SF_NOTE
-                };
-                newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.InvoiceClient, newItem);
-                Rows.Add(newItem);
-            }
+            LoadUskugaClient();
         }
 
         if (IsDirectClient)
         {
-            foreach (var doc in myProjectRepository.GetAccruedAmountForClients(myProject.Id, DateStart, DateEnd).ToList())
-            {
-                var kontr = GlobalOptions.ReferencesCache.GetKontragent(doc.AccruedAmountForClient.KontrDC) as Kontragent;
-                if(kontr is null) continue;
-                var crs = kontr.Currency as Currency;
-                var newItem = new ProjectDocumentInfo
-                {
-                    ProjectId = myProject.Id,
-                    AccruedClientRowId = doc.Id,
-                    Currency = crs,
-                    DocumentType = DocumentType.AccruedAmountForClient,
-                    DocDate = doc.AccruedAmountForClient.DocDate,
-                    InnerNumber = doc.AccruedAmountForClient.DocInNum,
-                    ExtNumber =doc.AccruedAmountForClient.DocExtNum,
-                    SummaIn = doc.Summa,
-                    Kontragent = kontr,
-                    Creator = doc.AccruedAmountForClient.Creator,
-                    Note = doc.AccruedAmountForClient.Note,
-                    Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(doc.NomenklDC) as Nomenkl
-                };
-                newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.AccruedAmountForClient, newItem);
-                Rows.Add(newItem);
-            }
+            LoadDirectClient();
         }
 
         if (IsDirectProvider)
         {
-            foreach (var doc in myProjectRepository.GetAccruedAmountOfSuppliers(myProject.Id, DateStart, DateEnd).ToList())
-            {
-                var kontr = GlobalOptions.ReferencesCache.GetKontragent(doc.AccruedAmountOfSupplier.KontrDC) as Kontragent;
-                if(kontr is null) continue;
-                var crs = kontr.Currency as Currency;
-                var newItem = new ProjectDocumentInfo
-                {
-                    ProjectId = myProject.Id,
-                    AccruedSupplierRowId = doc.Id,
-                    Currency = crs,
-                    DocumentType = DocumentType.AccruedAmountOfSupplier,
-                    DocDate = doc.AccruedAmountOfSupplier.DocDate,
-                    InnerNumber = doc.AccruedAmountOfSupplier.DocInNum,
-                    ExtNumber =doc.AccruedAmountOfSupplier.DocExtNum,
-                    SummaOut = doc.Summa,
-                    Kontragent = kontr,
-                    Creator = doc.AccruedAmountOfSupplier.Creator,
-                    Note = doc.AccruedAmountOfSupplier.Note,
-                    Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(doc.NomenklDC) as Nomenkl
-                };
-                newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.AccruedAmountOfSupplier, newItem);
-                Rows.Add(newItem);
-            }
+            LoadDirectProvider();
         }
 
         if (IsInvoiceProvider)
         {
-            foreach (var doc in myProjectRepository.GetInvoicesProvider(myProject.Id, DateStart, DateEnd)
-                         .ToList())
-            {
-                var newItem = new ProjectDocumentInfo
-                {
-                    ProjectId = myProject.Id,
-                    InvoiceProviderId = doc.Id,
-                    Currency = doc.Currency,
-                    DocumentType = DocumentType.InvoiceProvider,
-                    DocDate = doc.DocDate,
-                    InnerNumber = doc.SF_IN_NUM,
-                    ExtNumber = doc.SF_POSTAV_NUM,
-                    SummaOut = doc.Summa,
-                    Kontragent = doc.Kontragent,
-                    Creator = doc.CREATOR,
-                    Note = doc.Note,
-                    SummaPay = doc.PaySumma,
-                    SummaShipped = doc.SummaFact,
-                    ProductTypeName = ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.VzaimoraschetTypeDC))?.Name
-                    
-                };
-                newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.InvoiceProvider, newItem);
-
-                Rows.Add(newItem);
-            }
+            var count = ResultCount;
+            LoadInvoiceProvider();
         }
 
         if (IsInvoiceClient)
         {
-            foreach (var doc in myProjectRepository.GetInvoicesClient(myProject.Id, DateStart, DateEnd)
-                         .ToList())
-            {
-                var newItem = new ProjectDocumentInfo
-                {
-                    ProjectId = myProject.Id,
-                    InvoiceClientId = doc.Id,
-                    Currency = doc.Currency,
-                    DocumentType = DocumentType.InvoiceClient,
-                    DocDate = doc.DocDate,
-                    InnerNumber = doc.InnerNumber,
-                    ExtNumber = doc.OuterNumber,
-                    SummaIn = doc.Summa,
-                    SummaDiler = doc.DilerSumma,
-                    SummaPay = doc.PaySumma,
-                    SummaShipped = doc.SummaOtgruz,
-                    Kontragent = doc.Client,
-                    Creator = doc.CREATOR,
-                    Note = doc.Note,
-                    ProductTypeName = doc.VzaimoraschetType?.Name
-                };
-                newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.InvoiceClient, newItem);
-                Rows.Add(newItem);
-            }
+            GetInvoiceClient();
         }
 
         foreach (var r in Rows)
         {
             r.DocInfo = myProjectRepository.GetDocDescription(r.DocumentType, r);
+        }
+    }
+
+    private int GetDocumentsCount()
+    {
+        return 0;
+    }
+
+    private void GetInvoiceClient()
+    {
+        foreach (var doc in myProjectRepository.GetInvoicesClient(myProject.Id, DateStart, DateEnd)
+                     .ToList())
+        {
+            var newItem = new ProjectDocumentInfo
+            {
+                ProjectId = myProject.Id,
+                InvoiceClientId = doc.Id,
+                Currency = doc.Currency,
+                DocumentType = DocumentType.InvoiceClient,
+                DocDate = doc.DocDate,
+                InnerNumber = doc.InnerNumber,
+                ExtNumber = doc.OuterNumber,
+                SummaIn = doc.Summa,
+                SummaDiler = doc.DilerSumma,
+                SummaPay = doc.PaySumma,
+                SummaShipped = doc.SummaOtgruz,
+                Kontragent = doc.Client,
+                Creator = doc.CREATOR,
+                Note = doc.Note,
+                ProductTypeName = doc.VzaimoraschetType?.Name
+            };
+            newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.InvoiceClient, newItem);
+            Rows.Add(newItem);
+        }
+    }
+
+    private void GetBank()
+    {
+        foreach (var doc in myProjectRepository.GetBankForProject(myProject.Id, DateStart, DateEnd).ToList())
+        {
+            var newItem = new ProjectDocumentInfo
+            {
+                ProjectId = myProject.Id,
+                BankCode = doc.CODE,
+                Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.SD_101.SD_114.CurrencyDC) as Currency,
+                BankAccount = (GlobalOptions.ReferencesCache.GetBankAccount(doc.SD_101.VV_ACC_DC) as BankAccount)
+                    ?.Name,
+                DocumentType = DocumentType.Bank,
+                DocDate = doc.SD_101.VV_START_DATE,
+                SummaIn = doc.VVT_VAL_PRIHOD ?? 0,
+                SummaOut = doc.VVT_VAL_RASHOD ?? 0,
+                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.VVT_KONTRAGENT) as Kontragent,
+                Note = doc.VVT_DOC_NUM,
+            };
+            Rows.Add(newItem);
+        }
+    }
+
+    private void GetWarehouseIn()
+    {
+        foreach (var doc in myProjectRepository.GetWarehouseInForProject(myProject.Id, DateStart, DateEnd).ToList())
+        {
+            var crs = GlobalOptions.ReferencesCache.GetCurrency(doc.TD_24.Select(t => t.TD_26).First().SD_26
+                .SF_CRS_DC) as Currency;
+            var newItem = new ProjectDocumentInfo
+            {
+                ProjectId = myProject.Id,
+                WarehouseOrderInDC = doc.DOC_CODE,
+                Currency = crs,
+                Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(doc.DD_SKLAD_POL_DC) as Warehouse,
+                DocumentType = DocumentType.StoreOrderIn,
+                DocDate = doc.DD_DATE,
+                InnerNumber = doc.DD_IN_NUM,
+                ExtNumber = doc.DD_EXT_NUM,
+                SummaIn = doc.TD_24.Sum(_ =>
+                    _.DDT_KOL_PRIHOD * (_.TD_26.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) / _.TD_26.SFT_KOL),
+                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.DD_KONTR_OTPR_DC) as Kontragent,
+                Creator = doc.CREATOR,
+                Note = doc.DD_NOTES,
+                ProductTypeName = ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.SD_26?.SF_VZAIMOR_TYPE_DC))?.Name
+            };
+            Rows.Add(newItem);
+        }
+    }
+
+    private void GetCurrencyConvert()
+    {
+        var noms = GlobalOptions.ReferencesCache.GetNomenklsAll().Cast<Nomenkl>().ToList();
+        var data = myProjectRepository.GetCurrencyConverts(myProject.Id, DateStart, DateEnd).ToList();
+        foreach (var doc in data)
+        {
+            var nom = noms.FirstOrDefault(_ => ((IDocGuid)_).Id == doc.NomenklId) ??
+                      GlobalOptions.ReferencesCache.GetNomenkl(doc.NomenklId) as Nomenkl;
+            var newItem = new ProjectDocumentInfo
+            {
+                ProjectId = myProject.Id,
+                CurrencyConvertId = doc.Id,
+                Currency = nom?.Currency as Currency,
+                Nomenkl = nom,
+                Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(doc.StoreDC) as Warehouse,
+                DocumentType = DocumentType.NomenklCurrencyConverterProvider,
+                DocDate = doc.TD_26.SD_26.SF_POSTAV_DATE,
+                InnerNumber = doc.TD_26.SD_26.SF_IN_NUM,
+                ExtNumber = doc.TD_26.SD_26.SF_POSTAV_NUM,
+                SummaIn = doc.Summa,
+                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.TD_26.SD_26.SF_POST_DC) as Kontragent,
+                Creator = doc.TD_26.SD_26.CREATOR,
+                Note = doc.TD_26.SD_26.SF_NOTES,
+                ProductTypeName =
+                    ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.TD_26.SD_26
+                        ?.SF_VZAIMOR_TYPE_DC))?.Name
+            };
+            Rows.Add(newItem);
+        }
+    }
+
+    private void GetWayBill()
+    {
+        foreach (var doc in myProjectRepository.GetWaybillInForProject(myProject.Id, DateStart, DateEnd).ToList())
+        {
+            var crs = GlobalOptions.ReferencesCache.GetCurrency(doc.SD_84.SF_CRS_DC) as Currency;
+            var newItem = new ProjectDocumentInfo
+            {
+                ProjectId = myProject.Id,
+                WaybillDC = doc.DOC_CODE,
+                Currency = crs,
+                Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(doc.DD_SKLAD_OTPR_DC) as Warehouse,
+                DocumentType = DocumentType.Waybill,
+                DocDate = doc.DD_DATE,
+                InnerNumber = doc.DD_IN_NUM,
+                ExtNumber = doc.DD_EXT_NUM,
+                SummaOut = doc.TD_24.Sum(_ =>
+                    _.DDT_KOL_RASHOD * (_.TD_84.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) / (decimal)_.TD_84.SFT_KOL),
+                SummaDiler = doc.TD_24.Sum(_ =>
+                    _.DDT_KOL_RASHOD * (_.TD_84.SFT_NACENKA_DILERA ?? 0) / (decimal)_.TD_84.SFT_KOL),
+                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.DD_KONTR_POL_DC) as Kontragent,
+                Creator = doc.CREATOR,
+                Note = doc.DD_NOTES,
+                ProductTypeName = ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.SD_84?.SF_VZAIMOR_TYPE_DC))?.Name
+            };
+            Rows.Add(newItem);
+        }
+    }
+
+    private void LoadUskugaClient()
+    {
+        foreach (var doc in myProjectRepository.GetUslugaClientForProject(myProject.Id, DateStart, DateEnd).ToList())
+        {
+            var crs = GlobalOptions.ReferencesCache.GetCurrency(doc.SD_84.SF_CRS_DC) as Currency;
+            var newItem = new ProjectDocumentInfo
+            {
+                ProjectId = myProject.Id,
+                UslugaClientRowId = doc.Id,
+                Currency = crs,
+                DocumentType = DocumentType.InvoiceClient,
+                DocDate = doc.SD_84.SF_DATE,
+                InnerNumber = doc.SD_84.SF_IN_NUM,
+                ExtNumber = doc.SD_84.SF_OUT_NUM,
+                SummaIn = doc.TD_24.Sum(_ =>
+                    _.DDT_KOL_RASHOD * (_.TD_84.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) / (decimal)_.TD_84.SFT_KOL),
+                SummaDiler = doc.TD_24.Sum(_ =>
+                    _.DDT_KOL_RASHOD * (_.TD_84.SFT_NACENKA_DILERA ?? 0) / (decimal)_.TD_84.SFT_KOL),
+                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SD_84.SF_CLIENT_DC) as Kontragent,
+                Creator = doc.SD_84.CREATOR,
+                Note = doc.SD_84.SF_NOTE
+            };
+            newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.InvoiceClient, newItem);
+            Rows.Add(newItem);
+        }
+    }
+
+    private void LoadDirectClient()
+    {
+        foreach (var doc in myProjectRepository.GetAccruedAmountForClients(myProject.Id, DateStart, DateEnd).ToList())
+        {
+            var kontr = GlobalOptions.ReferencesCache.GetKontragent(doc.AccruedAmountForClient.KontrDC) as Kontragent;
+            if(kontr is null) continue;
+            var crs = kontr.Currency as Currency;
+            var newItem = new ProjectDocumentInfo
+            {
+                ProjectId = myProject.Id,
+                AccruedClientRowId = doc.Id,
+                Currency = crs,
+                DocumentType = DocumentType.AccruedAmountForClient,
+                DocDate = doc.AccruedAmountForClient.DocDate,
+                InnerNumber = doc.AccruedAmountForClient.DocInNum,
+                ExtNumber =doc.AccruedAmountForClient.DocExtNum,
+                SummaIn = doc.Summa,
+                Kontragent = kontr,
+                Creator = doc.AccruedAmountForClient.Creator,
+                Note = doc.AccruedAmountForClient.Note,
+                Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(doc.NomenklDC) as Nomenkl
+            };
+            newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.AccruedAmountForClient, newItem);
+            Rows.Add(newItem);
+        }
+    }
+
+    private void LoadDirectProvider()
+    {
+        foreach (var doc in myProjectRepository.GetAccruedAmountOfSuppliers(myProject.Id, DateStart, DateEnd).ToList())
+        {
+            var kontr = GlobalOptions.ReferencesCache.GetKontragent(doc.AccruedAmountOfSupplier.KontrDC) as Kontragent;
+            if(kontr is null) continue;
+            var crs = kontr.Currency as Currency;
+            var newItem = new ProjectDocumentInfo
+            {
+                ProjectId = myProject.Id,
+                AccruedSupplierRowId = doc.Id,
+                Currency = crs,
+                DocumentType = DocumentType.AccruedAmountOfSupplier,
+                DocDate = doc.AccruedAmountOfSupplier.DocDate,
+                InnerNumber = doc.AccruedAmountOfSupplier.DocInNum,
+                ExtNumber =doc.AccruedAmountOfSupplier.DocExtNum,
+                SummaOut = doc.Summa,
+                Kontragent = kontr,
+                Creator = doc.AccruedAmountOfSupplier.Creator,
+                Note = doc.AccruedAmountOfSupplier.Note,
+                Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(doc.NomenklDC) as Nomenkl
+            };
+            newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.AccruedAmountOfSupplier, newItem);
+            Rows.Add(newItem);
+        }
+    }
+
+    private void LoadUslugaProvider()
+    {
+        foreach (var doc in myProjectRepository.GetUslugaProviderForProject(myProject.Id, DateStart, DateEnd).ToList())
+        {
+            var crs = GlobalOptions.ReferencesCache.GetCurrency(doc.SD_26.SF_CRS_DC) as Currency;
+            var newItem = new ProjectDocumentInfo
+            {
+                ProjectId = myProject.Id,
+                UslugaProviderRowId = doc.Id,
+                Currency = crs,
+                DocumentType = DocumentType.InvoiceProvider,
+                DocDate = doc.SD_26.SF_POSTAV_DATE,
+                InnerNumber = doc.SD_26.SF_IN_NUM,
+                ExtNumber = doc.SD_26.SF_POSTAV_NUM,
+                SummaOut = doc.TD_24.Sum(_ =>
+                    _.DDT_KOL_RASHOD * (_.TD_26.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) / _.TD_26.SFT_KOL),
+                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SD_26.SF_POST_DC) as Kontragent,
+                Creator = doc.SD_26.CREATOR,
+                Note = doc.SD_26.SF_NOTES,
+            };
+            newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.InvoiceProvider, newItem);
+
+            Rows.Add(newItem);
+        }
+    }
+
+    private void GetCashOut()
+    {
+        foreach (var doc in myProjectRepository.GetCashOutForProject(myProject.Id, DateStart, DateEnd).ToList())
+        {
+            var newItem = new ProjectDocumentInfo
+            {
+                ProjectId = myProject.Id,
+                CashOutDC = doc.DOC_CODE,
+                Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CRS_DC) as Currency,
+                CashBox = GlobalOptions.ReferencesCache.GetCashBox(doc.CA_DC) as CashBox,
+                DocumentType = DocumentType.CashOut,
+                DocDate = doc.DATE_ORD ?? DateTime.MinValue,
+                InnerNumber = doc.NUM_ORD ?? 0,
+                SummaOut = doc.SUMM_ORD ?? 0,
+                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.KONTRAGENT_DC) as Kontragent,
+                Creator = doc.CREATOR,
+                Note = doc.NOTES_ORD
+            };
+            Rows.Add(newItem);
+        }
+    }
+
+    private void LoadCashOrderIn()
+    {
+        foreach (var doc in myProjectRepository.GetCashInForProject(myProject.Id, DateStart, DateEnd).ToList())
+        {
+            var newItem = new ProjectDocumentInfo
+            {
+                ProjectId = myProject.Id,
+                CashInDC = doc.DOC_CODE,
+                Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.CRS_DC) as Currency,
+                CashBox = GlobalOptions.ReferencesCache.GetCashBox(doc.CA_DC) as CashBox,
+                DocumentType = DocumentType.CashIn,
+                DocDate = doc.DATE_ORD ?? DateTime.MinValue,
+                InnerNumber = doc.NUM_ORD ?? 0,
+                SummaIn = doc.SUMM_ORD ?? 0,
+                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.KONTRAGENT_DC) as Kontragent,
+                Creator = doc.CREATOR,
+                Note = doc.NOTES_ORD
+            };
+            Rows.Add(newItem);
+        }
+    }
+
+    private void LoadInvoiceProvider()
+    {
+        int cnt = 0;
+        foreach (var doc in myProjectRepository.GetInvoicesProvider(myProject.Id, DateStart, DateEnd)
+                     .ToList())
+        {
+            var newItem = new ProjectDocumentInfo
+            {
+                ProjectId = myProject.Id,
+                InvoiceProviderId = doc.Id,
+                Currency = doc.Currency,
+                DocumentType = DocumentType.InvoiceProvider,
+                DocDate = doc.DocDate,
+                InnerNumber = doc.SF_IN_NUM,
+                ExtNumber = doc.SF_POSTAV_NUM,
+                SummaOut = doc.Summa,
+                Kontragent = doc.Kontragent,
+                Creator = doc.CREATOR,
+                Note = doc.Note,
+                SummaPay = doc.PaySumma,
+                SummaShipped = doc.SummaFact,
+                ProductTypeName = ((IName)GlobalOptions.ReferencesCache.GetNomenklProductType(doc.VzaimoraschetTypeDC))?.Name
+                    
+            };
+            newItem.DocInfo = myProjectRepository.GetDocDescription(DocumentType.InvoiceProvider, newItem);
+
+            Rows.Add(newItem);
         }
     }
 
@@ -486,6 +559,7 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
     private bool myIsInvoiceClient;
     private bool myIsInvoiceProvider;
 
+   
     #endregion
 
     #region Properties
@@ -515,6 +589,11 @@ public class ProjectDocSelectDialog : RSWindowViewModelBase
             RaisePropertyChanged();
         }
     }
+    public int Page { set; get; } = 0;
+    public int Limit { set; get; } = 100; 
+
+    public int ResultCount { set; get; } 
+
 
     public ProjectDocumentInfoBase CurrentSelectedRow
     {

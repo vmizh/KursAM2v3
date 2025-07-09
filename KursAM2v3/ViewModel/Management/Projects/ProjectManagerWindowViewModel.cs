@@ -170,6 +170,12 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     {
         switch (CurrentDocument.DocumentType)
         {
+            case DocumentType.StoreOrderIn:
+                DocumentsOpenManager.Open(DocumentType.StoreOrderIn, CurrentDocument.WarehouseOrderInDC.Value);
+                break;
+            case DocumentType.Waybill:
+                DocumentsOpenManager.Open(DocumentType.Waybill, CurrentDocument.WaybillDC.Value);
+                break;
             case DocumentType.CashIn:
                 DocumentsOpenManager.Open(DocumentType.CashIn, CurrentDocument.CashInDC.Value);
                 break;
