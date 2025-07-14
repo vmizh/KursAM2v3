@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using KursAM2.Managers;
+using KursDomain.Documents.CommonReferences;
 
 namespace KursAM2.ViewModel.Management.Projects;
 
@@ -48,6 +50,13 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         {
             WindowManager.ShowError(ex);
         }
+    }
+
+    public override bool IsDocumentOpenAllow => CurrentDocument is not null;
+
+    protected override void DocumentOpen(object obj)
+    {
+        DocumentsOpenManager.Open(CurrentDocument.DocumentType,CurrentDocument.DocCode);
     }
 
     #endregion
