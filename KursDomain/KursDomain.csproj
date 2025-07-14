@@ -231,6 +231,7 @@
     <Compile Include="Documents\Projects\ProjectDocument.cs" />
     <Compile Include="Documents\Projects\ProjectDocumentInfo.cs" />
     <Compile Include="Documents\Projects\ProjectNomenklInfo.cs" />
+    <Compile Include="Documents\Projects\ProjectNomenklMoveDocumentInfo.cs" />
     <Compile Include="Documents\Refund\RefundFromClientSimple.cs" />
     <Compile Include="Event\AFterOpenBaseWrapperEvent.cs" />
     <Compile Include="Event\AFterSaveBaseWrapperEvent.cs" />
