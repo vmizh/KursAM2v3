@@ -918,16 +918,16 @@ namespace KursAM2.View
                         form2.Show();
                         break;
 
-                    //case "Распределение приходов":
-                    //    var ctxProjectPrihod = new ProjectProviderPrihodWindowViewModelOld();
-                    //    form = new ProjectProviderPrihodView
-                    //    {
-                    //        Owner = Application.Current.MainWindow,
-                    //        DataContext = ctxProjectPrihod
-                    //    };
-                    //    ctxProjectPrihod.Form = form;
-                    //    form.Show();
-                    //    break;
+                    case "Движение товара по проектам":
+                        var ctxProjectNomenkl = new ProjectNomenklMoveViewModel();
+                        form = new ProjectNomenklMove
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = ctxProjectNomenkl
+                        };
+                        ctxProjectNomenkl.Form = form;
+                        form.Show();
+                        break;
                     //case "Прибыли и убытки по проектам":
                     //    var ctxProjectProfitAndLoss = new ProjectProfitAndLossesWindowViewModelOld();
                     //    form = new ProjectProfitAndLossView

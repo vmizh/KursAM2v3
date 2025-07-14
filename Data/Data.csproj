@@ -517,6 +517,9 @@
     <Compile Include="FormLayout.cs">
       <DependentUpon>KursSystem.tt</DependentUpon>
     </Compile>
+    <Compile Include="GetNomenklMoveForProject_Result.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="GROZO_REQUISITE.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

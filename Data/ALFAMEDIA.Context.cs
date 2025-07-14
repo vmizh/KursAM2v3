@@ -811,6 +811,7 @@ namespace Data
         public virtual DbSet<NomenklReturnToProviderRow> NomenklReturnToProviderRow { get; set; }
         public virtual DbSet<ProjectGroupLink> ProjectGroupLink { get; set; }
         public virtual DbSet<ProjectGroups> ProjectGroups { get; set; }
+        public virtual DbSet<ProjectDocuments> ProjectDocuments { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()
@@ -944,6 +945,20 @@ namespace Data
                 new ObjectParameter("SFDocDC", typeof(decimal));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction("GenerateSFProviderCash", sFDocDCParameter);
+        }
+    
+        [DbFunction("Entities", "GetNomenklMoveForProject")]
+        public virtual IQueryable<GetNomenklMoveForProject_Result> GetNomenklMoveForProject(Nullable<System.Guid> projectId, Nullable<byte> isRecursive)
+        {
+            var projectIdParameter = projectId.HasValue ?
+                new ObjectParameter("ProjectId", projectId) :
+                new ObjectParameter("ProjectId", typeof(System.Guid));
+    
+            var isRecursiveParameter = isRecursive.HasValue ?
+                new ObjectParameter("IsRecursive", isRecursive) :
+                new ObjectParameter("IsRecursive", typeof(byte));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.CreateQuery<GetNomenklMoveForProject_Result>("[Entities].[GetNomenklMoveForProject](@ProjectId, @IsRecursive)", projectIdParameter, isRecursiveParameter);
         }
     }
 }

@@ -1,11 +1,11 @@
-﻿using Data;
+﻿using System;
+using System.Collections.Generic;
+using Data;
+using KursDomain.Base;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Projects;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Result;
-using System;
-using System.Collections.Generic;
-using KursDomain.Base;
 
 namespace KursRepositories.Repositories.Projects
 {
@@ -21,42 +21,74 @@ namespace KursRepositories.Repositories.Projects
         void UpdateDocumentInfo(Guid id, string note);
         void DeleteDocumentInfo(Guid projectId);
 
-        IBoolResult SaveGroups(IEnumerable<ProjectGroups> data, IEnumerable<Guid> deleteGrpIds = null, IEnumerable<Guid> deleteLinkIds = null);
-        IEnumerable<Data.ProjectGroups> LoadGroups();
+        IBoolResult SaveGroups(IEnumerable<ProjectGroups> data, IEnumerable<Guid> deleteGrpIds = null,
+            IEnumerable<Guid> deleteLinkIds = null);
+
+        IEnumerable<ProjectGroups> LoadGroups();
 
         IEnumerable<SD_33> GetCashInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd);
         int GetcCashInCount(DateTime dateStart, DateTime dateEnd);
-        IEnumerable<SD_33> GetCashInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page, int limit, out int count);
+
+        IEnumerable<SD_33> GetCashInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
+            int limit, out int count);
+
         int GetCashOutCount(DateTime dateStart, DateTime dateEnd);
         IEnumerable<SD_34> GetCashOutForProject(Guid projectId, DateTime dateStart, DateTime dateEnd);
-        IEnumerable<SD_34> GetCashOutForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page, int limit, out int count);
+
+        IEnumerable<SD_34> GetCashOutForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
+            int limit, out int count);
 
         int GetBankCount(DateTime dateStart, DateTime dateEnd);
         IEnumerable<TD_101> GetBankForProject(Guid projectId, DateTime dateStart, DateTime dateEnd);
-        IEnumerable<TD_101> GetBankForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page, int limit, out int count);
-        int GetWarehouseInCount( DateTime dateStart, DateTime dateEnd);
+
+        IEnumerable<TD_101> GetBankForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page, int limit,
+            out int count);
+
+        int GetWarehouseInCount(DateTime dateStart, DateTime dateEnd);
         IEnumerable<SD_24> GetWarehouseInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd);
-        IEnumerable<SD_24> GetWarehouseInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page, int limit, out int count);
+
+        IEnumerable<SD_24> GetWarehouseInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
+            int limit, out int count);
+
         int GetWaybillCount(DateTime dateStart, DateTime dateEnd);
         IEnumerable<SD_24> GetWaybillInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd);
-        IEnumerable<SD_24> GetWaybillInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page, int limit, out int count);
+
+        IEnumerable<SD_24> GetWaybillInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
+            int limit, out int count);
 
         int GetUslugaClientCount(DateTime dateStart, DateTime dateEnd);
-        IEnumerable<TD_84> GetUslugaClientForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page, int limit, out int count);
+
+        IEnumerable<TD_84> GetUslugaClientForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
+            int limit, out int count);
+
         IEnumerable<TD_84> GetUslugaClientForProject(Guid projectId, DateTime dateStart, DateTime dateEnd);
         int GetUslugaProviderCount(DateTime dateStart, DateTime dateEnd);
         IEnumerable<TD_26> GetUslugaProviderForProject(Guid projectId, DateTime dateStart, DateTime dateEnd);
-        IEnumerable<TD_26> GetUslugaProviderForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page, int limit, out int count);
 
-        int GetAccruedAmountForClientsCount( DateTime dateStart, DateTime dateEnd);
-        IEnumerable<AccuredAmountForClientRow> GetAccruedAmountForClients(Guid projectId, DateTime dateStart, DateTime dateEnd);
-        IEnumerable<AccuredAmountForClientRow> GetAccruedAmountForClients(Guid projectId, DateTime dateStart, DateTime dateEnd, int page, int limit, out int count);
+        IEnumerable<TD_26> GetUslugaProviderForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
+            int limit, out int count);
+
+        int GetAccruedAmountForClientsCount(DateTime dateStart, DateTime dateEnd);
+
+        IEnumerable<AccuredAmountForClientRow> GetAccruedAmountForClients(Guid projectId, DateTime dateStart,
+            DateTime dateEnd);
+
+        IEnumerable<AccuredAmountForClientRow> GetAccruedAmountForClients(Guid projectId, DateTime dateStart,
+            DateTime dateEnd, int page, int limit, out int count);
+
         int GetAccruedAmountOfSuppliersCount(DateTime dateStart, DateTime dateEnd);
-        IEnumerable<AccuredAmountOfSupplierRow> GetAccruedAmountOfSuppliers(Guid projectId, DateTime dateStart, DateTime dateEnd);
-        IEnumerable<AccuredAmountOfSupplierRow> GetAccruedAmountOfSuppliers(Guid projectId, DateTime dateStart, DateTime dateEnd, int page, int limit, out int count);
+
+        IEnumerable<AccuredAmountOfSupplierRow> GetAccruedAmountOfSuppliers(Guid projectId, DateTime dateStart,
+            DateTime dateEnd);
+
+        IEnumerable<AccuredAmountOfSupplierRow> GetAccruedAmountOfSuppliers(Guid projectId, DateTime dateStart,
+            DateTime dateEnd, int page, int limit, out int count);
+
         int GetCurrencyConvertsCount(DateTime dateStart, DateTime dateEnd);
         IEnumerable<TD_26_CurrencyConvert> GetCurrencyConverts(Guid projectId, DateTime dateStart, DateTime dateEnd);
-        IEnumerable<TD_26_CurrencyConvert> GetCurrencyConverts(Guid projectId, DateTime dateStart, DateTime dateEnd, int page, int limit, out int count);
+
+        IEnumerable<TD_26_CurrencyConvert> GetCurrencyConverts(Guid projectId, DateTime dateStart, DateTime dateEnd,
+            int page, int limit, out int count);
 
         void UpdateCache();
 
@@ -69,9 +101,14 @@ namespace KursRepositories.Repositories.Projects
         Guid? GetAccruedAmountProviderId(Guid rowId);
 
         List<IInvoiceProvider> GetInvoicesProvider(Guid projectId, DateTime dateStart, DateTime dateEnd);
-        List<IInvoiceProvider> GetInvoicesProvider(Guid projectId, DateTime dateStart, DateTime dateEnd, int page, int limit, out int count);
+
+        List<IInvoiceProvider> GetInvoicesProvider(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
+            int limit, out int count);
+
         List<IInvoiceClient> GetInvoicesClient(Guid projectId, DateTime dateStart, DateTime dateEnd);
-        List<IInvoiceClient> GetInvoicesClient(Guid projectId, DateTime dateStart, DateTime dateEnd, int page, int limit, out int count);
+
+        List<IInvoiceClient> GetInvoicesClient(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
+            int limit, out int count);
 
         int GetInvoicesProviderCount(DateTime dateStart, DateTime dateEnd);
         int GetInvoicesClientCount(DateTime dateStart, DateTime dateEnd);
@@ -80,11 +117,17 @@ namespace KursRepositories.Repositories.Projects
 
         List<Guid> GetDocumentsProjects(DocumentType docType, decimal dc, bool isCrsConvert);
 
-        Dictionary<decimal,string> GetInvoicesLinkWithProjects(DocumentType docType, bool isCrsConvert);
+        Dictionary<decimal, string> GetInvoicesLinkWithProjects(DocumentType docType, bool isCrsConvert);
 
         Dictionary<IdItem, string> GetDocumentsLinkWithProjects(DocumentType docType);
 
         List<Guid> GetAllTreeProjectIds(Guid id);
         List<Guid> GetChilds(List<Data.Projects> list, Guid id);
+
+        List<GetNomenklMoveForProject_Result> GetNomenklMoveForProject(Guid projectId, bool isRecursive);
+
+        List<Guid> GetChilds(Guid projectId);
+
+        List<ProjectNomenklMoveDocumentInfo> GetDocumentsForNomenkl(List<Guid> projectIds, decimal nomDC);
     }
 }

@@ -1,11 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Entity;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Windows.Controls;
 using Data;
 using Helper;
 using KursAM2.Repositories.RedisRepository;
@@ -13,6 +5,7 @@ using KursDomain;
 using KursDomain.Base;
 using KursDomain.Documents.Base;
 using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Invoices;
 using KursDomain.Documents.Projects;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
@@ -21,6 +14,14 @@ using KursDomain.Result;
 using KursRepositories.Repositories.Base;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text;
+using System.Windows.Controls;
 
 
 namespace KursRepositories.Repositories.Projects
@@ -1301,6 +1302,85 @@ namespace KursRepositories.Repositories.Projects
             return ret;
         }
 
+        public List<GetNomenklMoveForProject_Result> GetNomenklMoveForProject(Guid projectId, bool isRecursive)
+        {
+            return Context.GetNomenklMoveForProject(projectId, (byte?)(isRecursive ? 1 : 0)).ToList();
+        }
+
+        public List<Guid> GetChilds(Guid projectId)
+        {
+            var sql = $@"WITH AllProjects (Id, ParentId, Name, ProjectLevel)
+                    AS (   SELECT
+                                   Id,
+                                   ParentId,
+                                   Name,
+                                   0 AS ProjectLevel
+                           FROM
+                                   Projects
+                           WHERE
+                                   Id = '{CustomFormat.GuidToSqlString(projectId)}'
+                           UNION ALL
+                           SELECT
+                                   p.Id,
+                                   p.ParentId,
+                                   p.Name,
+                                   ProjectLevel + 1 AS ProjectLevel
+                           FROM
+                                   Projects p
+                               INNER JOIN
+                                 AllProjects AS ap
+                                     ON p.ParentId = ap.Id)
+                    SELECT
+                            Id
+                    FROM
+                            AllProjects";
+            return Context.Database.SqlQuery<Guid>(sql).ToList();
+        }
+
+        public List<ProjectNomenklMoveDocumentInfo> GetDocumentsForNomenkl(List<Guid> projectIds, decimal nomDC)
+        {
+            List<ProjectNomenklMoveDocumentInfo> ret = new List<ProjectNomenklMoveDocumentInfo>();
+            var invoicesProvider = Context.SD_26.Include(_ => _.TD_26)
+                .Include(_ => _.Projects).Where(_ => projectIds.Contains(_.Projects.Id)).ToList();
+
+            var invoiceProvider = invoicesProvider.Where(_ => _.TD_26.Any(x => x.SFT_NEMENKL_DC == nomDC));
+            foreach (var doc in invoiceProvider)
+            {
+                    ret.Add(new ProjectNomenklMoveDocumentInfo()
+                    {
+                        Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_POST_DC) as Kontragent,
+                        DocDate = doc.SF_POSTAV_DATE,
+                        DocumentType = DocumentType.InvoiceProvider,
+                        Note = doc.SF_NOTES,
+                        ExtNumber = doc.SF_POSTAV_NUM,
+                        InnerNumber = doc.SF_IN_NUM,
+                    });
+            }
+
+            var nomId = Context.SD_83.Single(_ => _.DOC_CODE == nomDC).Id;
+            var invCrs = Context.TD_26_CurrencyConvert.Where(_ => _.NomenklId == nomId).Select(_ => _.DOC_CODE);
+            
+            foreach (var doc in invoicesProvider)
+            {
+                if(invCrs.Any(_ => _ == doc.DOC_CODE))
+                {
+                    ret.Add(new ProjectNomenklMoveDocumentInfo
+                    {
+                        Kontragent =
+                            GlobalOptions.ReferencesCache.GetKontragent(
+                                doc.SF_POST_DC) as Kontragent,
+                        DocDate = doc.SF_POSTAV_DATE,
+                        DocumentType = DocumentType.InvoiceProvider,
+                        Note = doc.SF_NOTES,
+                        ExtNumber = doc.SF_POSTAV_NUM,
+                        InnerNumber = doc.SF_IN_NUM,
+                    });
+                }
+            }
+
+            return ret;
+        }
+
         public List<TD_24> GetNomenklRows(decimal dc)
         {
             return Context.TD_24.Include(_ => _.TD_26)
@@ -1328,4 +1408,6 @@ namespace KursRepositories.Repositories.Projects
 
         #endregion
     }
+
+   
 }
