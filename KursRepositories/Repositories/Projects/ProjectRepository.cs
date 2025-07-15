@@ -1340,14 +1340,28 @@ namespace KursRepositories.Repositories.Projects
         public List<ProjectNomenklMoveDocumentInfo> GetDocumentsForNomenkl(List<Guid> projectIds, decimal nomDC)
         {
             List<ProjectNomenklMoveDocumentInfo> ret = new List<ProjectNomenklMoveDocumentInfo>();
+
+            var invProviderIds = Context.ProjectDocuments.Where(_ => projectIds.Contains(_.ProjectId)
+                                                                     && _.InvoiceProviderId != null).Select(_ => _.InvoiceProviderId).ToList();
+
+            var invClientIds = Context.ProjectDocuments.Where(_ => projectIds.Contains(_.ProjectId)
+                                                                     && _.InvoiceClientId != null).Select(_ => _.InvoiceClientId).ToList();
+
             var invoicesProvider = Context.SD_26.Include(_ => _.TD_26)
-                .Include(_ => _.Projects).Where(_ => projectIds.Contains(_.Projects.Id)).ToList();
+                .Where(_ => invProviderIds.Contains(_ .Id)).ToList();
+            var invoicesClient = Context.SD_84.Include(_ => _.TD_84)
+                .Where(_ => invClientIds.Contains(_ .Id)).ToList();
+
 
             var invoiceProvider = invoicesProvider.Where(_ => _.TD_26.Any(x => x.SFT_NEMENKL_DC == nomDC));
+            var invoiceClient = invoicesClient.Where(_ => _.TD_84.Any(x => x.SFT_NEMENKL_DC == nomDC));
+
             foreach (var doc in invoiceProvider)
             {
+                var s = doc.TD_26.FirstOrDefault(_ => _.SFT_NEMENKL_DC == nomDC);
                     ret.Add(new ProjectNomenklMoveDocumentInfo()
                     {
+                        DocCode = doc.DOC_CODE,
                         Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_POST_DC) as Kontragent,
                         DocDate = doc.SF_POSTAV_DATE,
                         DocumentType = DocumentType.InvoiceProvider,
@@ -1355,17 +1369,72 @@ namespace KursRepositories.Repositories.Projects
                         ExtNumber = doc.SF_POSTAV_NUM,
                         InnerNumber = doc.SF_IN_NUM,
                     });
+                    if (s is not null)
+                    {
+                        var prih = Context.TD_24.Include(_ => _.SD_24).FirstOrDefault(_ =>
+                            _.DDT_SPOST_DC == s.DOC_CODE && _.DDT_SPOST_ROW_CODE == s.CODE);
+                        if (prih != null)
+                        {
+                            ret.Add(new ProjectNomenklMoveDocumentInfo()
+                            {
+                                DocCode = prih.DOC_CODE,
+                                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_POST_DC) as Kontragent,
+                                DocDate = prih.SD_24.DD_DATE,
+                                DocumentType = DocumentType.StoreOrderIn,
+                                Note = prih.SD_24.DD_NOTES,
+                                ExtNumber = prih.SD_24.DD_EXT_NUM,
+                                InnerNumber = prih.SD_24.DD_IN_NUM,
+                            });
+                        }
+                    }
+            }
+
+            foreach (var doc in invoiceClient)
+            {
+                var s = doc.TD_84.FirstOrDefault(_ => _.SFT_NEMENKL_DC == nomDC);
+                ret.Add(new ProjectNomenklMoveDocumentInfo()
+                {
+                    DocCode = s.DOC_CODE,
+                    Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_CLIENT_DC) as Kontragent,
+                    DocDate = doc.SF_DATE,
+                    DocumentType = DocumentType.InvoiceClient,
+                    Note = doc.SF_NOTE,
+                    ExtNumber = doc.SF_OUT_NUM,
+                    InnerNumber = doc.SF_IN_NUM,
+                });
+                if (s is not null)
+                {
+                    var prih = Context.TD_24.Include(_ => _.SD_24).FirstOrDefault(_ =>
+                        _.DDT_SFACT_DC == s.DOC_CODE && _.DDT_SFACT_ROW_CODE == s.CODE);
+                    if (prih != null)
+                    {
+                        ret.Add(new ProjectNomenklMoveDocumentInfo()
+                        {
+                            DocCode = prih.DOC_CODE,
+                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_CLIENT_DC) as Kontragent,
+                            DocDate = prih.SD_24.DD_DATE,
+                            DocumentType = DocumentType.Waybill,
+                            Note = prih.SD_24.DD_NOTES,
+                            ExtNumber = prih.SD_24.DD_EXT_NUM,
+                            InnerNumber = prih.SD_24.DD_IN_NUM,
+                            Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(prih.SD_24.DD_SKLAD_OTPR_DC) as Warehouse,
+                        });
+                    }
+                }
             }
 
             var nomId = Context.SD_83.Single(_ => _.DOC_CODE == nomDC).Id;
-            var invCrs = Context.TD_26_CurrencyConvert.Where(_ => _.NomenklId == nomId).Select(_ => _.DOC_CODE);
+            var invCrs = Context.TD_26_CurrencyConvert.Where(_ => _.NomenklId == nomId)
+                .ToList();
             
             foreach (var doc in invoicesProvider)
             {
-                if(invCrs.Any(_ => _ == doc.DOC_CODE))
+                var crsConv = invCrs.FirstOrDefault(_ => (_.DOC_CODE ?? 0) == doc.DOC_CODE);
+                if(crsConv is not null)
                 {
                     ret.Add(new ProjectNomenklMoveDocumentInfo
                     {
+                        DocCode = doc.DOC_CODE,
                         Kontragent =
                             GlobalOptions.ReferencesCache.GetKontragent(
                                 doc.SF_POST_DC) as Kontragent,
@@ -1374,6 +1443,8 @@ namespace KursRepositories.Repositories.Projects
                         Note = doc.SF_NOTES,
                         ExtNumber = doc.SF_POSTAV_NUM,
                         InnerNumber = doc.SF_IN_NUM,
+                        Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(crsConv.StoreDC) as Warehouse
+
                     });
                 }
             }

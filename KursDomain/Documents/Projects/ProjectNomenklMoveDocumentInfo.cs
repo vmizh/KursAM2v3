@@ -9,6 +9,9 @@ namespace KursDomain.Documents.Projects;
 public class ProjectNomenklMoveDocumentInfo
 {
     [Display(AutoGenerateField = false)]
+    public decimal DocCode { set; get; }
+
+    [Display(AutoGenerateField = false)]
     public DocumentType DocumentType { set; get; }
     [Display(AutoGenerateField = true, Name = "Тип док-та", Order = 1)]
     public string DocType => DocumentType.GetDisplayAttributesFrom(DocumentType.GetType()).Name;
@@ -30,6 +33,6 @@ public class ProjectNomenklMoveDocumentInfo
 
     [Display(AutoGenerateField = true,  Name = "Склад", Order = 7)]
     public References.Warehouse Warehouse { set; get; }
-    [Display(AutoGenerateField = true,  Name = "Склад", Order = 8)]
+    [Display(AutoGenerateField = true,  Name = "Примечание", Order = 8)]
     public string Note { set; get; }
 }
