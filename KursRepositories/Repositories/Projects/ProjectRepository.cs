@@ -1,3 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text;
 using Data;
 using Helper;
 using KursAM2.Repositories.RedisRepository;
@@ -5,7 +12,6 @@ using KursDomain;
 using KursDomain.Base;
 using KursDomain.Documents.Base;
 using KursDomain.Documents.CommonReferences;
-using KursDomain.Documents.Invoices;
 using KursDomain.Documents.Projects;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
@@ -14,15 +20,6 @@ using KursDomain.Result;
 using KursRepositories.Repositories.Base;
 using Newtonsoft.Json;
 using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Entity;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Windows.Controls;
-
 
 namespace KursRepositories.Repositories.Projects
 {
@@ -302,7 +299,8 @@ namespace KursRepositories.Repositories.Projects
             var data = Context.AccuredAmountForClientRow.Include(_ => _.AccruedAmountForClient)
                 .Include(_ => _.ProjectDocuments)
                 .Where(_ => _.AccruedAmountForClient.DocDate >= dateStart &&
-                            _.AccruedAmountForClient.DocDate <= dateEnd).OrderByDescending(_ => _.AccruedAmountForClient.DocDate)
+                            _.AccruedAmountForClient.DocDate <= dateEnd)
+                .OrderByDescending(_ => _.AccruedAmountForClient.DocDate)
                 .Skip((page - 1) * limit).Take(limit).ToList();
 
             return data.Where(item =>
@@ -339,9 +337,10 @@ namespace KursRepositories.Repositories.Projects
             var data = Context.AccuredAmountOfSupplierRow.Include(_ => _.AccruedAmountOfSupplier)
                 .Include(_ => _.ProjectDocuments)
                 .Where(_ => _.AccruedAmountOfSupplier.DocDate >= dateStart &&
-                            _.AccruedAmountOfSupplier.DocDate <= dateEnd).OrderByDescending(_ => _.AccruedAmountOfSupplier.DocDate)
+                            _.AccruedAmountOfSupplier.DocDate <= dateEnd)
+                .OrderByDescending(_ => _.AccruedAmountOfSupplier.DocDate)
                 .Skip((page - 1) * limit).Take(limit).ToList();
-            
+
             count = Context.AccuredAmountOfSupplierRow.Include(_ => _.AccruedAmountOfSupplier)
                 .Count(_ => _.AccruedAmountOfSupplier.DocDate >= dateStart &&
                             _.AccruedAmountOfSupplier.DocDate <= dateEnd);
@@ -668,15 +667,13 @@ namespace KursRepositories.Repositories.Projects
                             newItem.SummaIn = doc.Summa;
                             newItem.SummaPay = doc.PaySumma;
                             newItem.SummaShipped = doc.SummaFact;
-                            newItem.QuantityInDocument =  d.Where(_ => _.DocCode == doc.DocCode).Sum(_ => _.Quantity);
+                            newItem.QuantityInDocument = d.Where(_ => _.DocCode == doc.DocCode).Sum(_ => _.Quantity);
                             foreach (var r in d)
-                            {
                                 if (r.IsUsluga ?? false)
                                     newItem.QuantityInShipped += r.Quantity;
                                 else
                                     newItem.QuantityInShipped +=
                                         d.Where(_ => _.DocCode == doc.DocCode).Sum(_ => _.Shipped);
-                            }
                             newItem.QuantityInRemain = newItem.QuantityInDocument - newItem.QuantityInShipped;
                             newItem.SummaInRemain = newItem.SummaIn - newItem.SummaShipped;
                             newItem.DocDate = doc.DocDate;
@@ -702,15 +699,14 @@ namespace KursRepositories.Repositories.Projects
                             newItem.SummaOut = doc.Summa;
                             newItem.SummaPay = doc.PaySumma;
                             newItem.SummaShipped = doc.SummaOtgruz;
-                            newItem.QuantityOutDocument =  d.Where(_ => _.DocCode == doc.DocCode).Sum(_ => _.Quantity) ?? 0;
+                            newItem.QuantityOutDocument =
+                                d.Where(_ => _.DocCode == doc.DocCode).Sum(_ => _.Quantity) ?? 0;
                             foreach (var r in d)
-                            {
                                 if (r.IsUsluga ?? false)
                                     newItem.QuantityOutShipped += r.Quantity ?? 0;
                                 else
                                     newItem.QuantityOutShipped +=
                                         d.Where(_ => _.DocCode == doc.DocCode).Sum(_ => _.Shipped);
-                            }
                             newItem.QuantityOutRemain = newItem.QuantityOutDocument - newItem.QuantityOutShipped;
                             newItem.SummaOutRemain = newItem.SummaOut - newItem.SummaShipped;
                             newItem.DocDate = doc.DocDate;
@@ -823,11 +819,12 @@ namespace KursRepositories.Repositories.Projects
         #endregion
 
         #region Касса
-        
+
         public int GetcCashInCount(DateTime dateStart, DateTime dateEnd)
         {
             return Context.SD_33.Count(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd);
         }
+
         public IEnumerable<SD_33> GetCashInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd)
         {
             var ids = GetAllTreeProjectIds(projectId);
@@ -838,6 +835,7 @@ namespace KursRepositories.Repositories.Projects
                     item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
                 .ToList();
         }
+
         public IEnumerable<SD_33> GetCashInForProject(Guid projectId, DateTime dateStart, DateTime dateEnd, int page,
             int limit,
             out int count)
@@ -845,7 +843,7 @@ namespace KursRepositories.Repositories.Projects
             var ids = GetAllTreeProjectIds(projectId);
             var data = Context.SD_33.Include(_ => _.ProjectDocuments)
                 .Where(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd)
-                .OrderByDescending(_ => _.DATE_ORD).Skip((page-1)*limit).Take(limit).ToList();
+                .OrderByDescending(_ => _.DATE_ORD).Skip((page - 1) * limit).Take(limit).ToList();
             count = Context.SD_33.Count(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd);
             return data.Where(item =>
                     item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
@@ -877,7 +875,7 @@ namespace KursRepositories.Repositories.Projects
                 .Count(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd);
             var data = Context.SD_34.Include(_ => _.ProjectDocuments)
                 .Where(_ => _.DATE_ORD >= dateStart && _.DATE_ORD <= dateEnd).OrderByDescending(_ => _.DATE_ORD)
-                .Skip((page-1)*limit).Take(limit).ToList();
+                .Skip((page - 1) * limit).Take(limit).ToList();
 
             return data.Where(item =>
                     item.ProjectDocuments == null || ids.All(id => item.ProjectDocuments.All(_ => _.ProjectId != id)))
@@ -915,7 +913,7 @@ namespace KursRepositories.Repositories.Projects
                 .Include(_ => _.ProjectDocuments)
                 .Where(_ => _.SD_101.VV_START_DATE >= dateStart && _.SD_101.VV_STOP_DATE <= dateEnd &&
                             _.VVT_KONTRAGENT != null).OrderByDescending(_ => _.SD_101.VV_START_DATE)
-                .Skip((page-1)*limit).Take(limit).ToList();
+                .Skip((page - 1) * limit).Take(limit).ToList();
 
             count = Context.TD_101.Include(_ => _.SD_101).Count(_ =>
                 _.SD_101.VV_START_DATE >= dateStart && _.SD_101.VV_START_DATE <= dateEnd);
@@ -963,7 +961,7 @@ namespace KursRepositories.Repositories.Projects
                 .Include("TD_24.TD_26")
                 .Where(_ => _.DD_TYPE_DC == 2010000001 && _.DD_SKLAD_OTPR_DC == null && _.DD_DATE >= dateStart &&
                             _.DD_DATE <= dateEnd).OrderByDescending(_ => _.DD_DATE)
-                .Skip((page-1)*limit).Take(limit).ToList();
+                .Skip((page - 1) * limit).Take(limit).ToList();
 
             count = Context.SD_24.Include(_ => _.TD_24)
                 .Include(_ => _.ProjectDocuments)
@@ -1006,7 +1004,7 @@ namespace KursRepositories.Repositories.Projects
             var data = Context.SD_24.Include(_ => _.TD_24).Include(_ => _.ProjectDocuments)
                 .Where(_ => _.DD_TYPE_DC == 2010000012 && _.DD_DATE >= dateStart && _.DD_DATE <= dateEnd)
                 .OrderByDescending(_ => _.DD_DATE)
-                .Skip((page-1)*limit).Take(limit).ToList();
+                .Skip((page - 1) * limit).Take(limit).ToList();
 
             count = Context.SD_24.Include(_ => _.TD_24).Include(_ => _.ProjectDocuments)
                 .Count(_ => _.DD_TYPE_DC == 2010000012 && _.DD_DATE >= dateStart && _.DD_DATE <= dateEnd);
@@ -1055,7 +1053,7 @@ namespace KursRepositories.Repositories.Projects
                 .Where(_ => _.SD_84.SF_DATE >= dateStart && _.SD_84.SF_DATE <= dateEnd &&
                             _.SD_83.NOM_0MATER_1USLUGA == 1
                             && _.SD_84.SF_ACCEPTED == 1).OrderByDescending(_ => _.SD_84.SF_DATE)
-                .Skip((page-1)*limit).Take(limit).ToList();
+                .Skip((page - 1) * limit).Take(limit).ToList();
 
             var docIds = new List<Guid>();
             foreach (var r in Context.Projects.Include(_ => _.ProjectDocuments)
@@ -1105,7 +1103,7 @@ namespace KursRepositories.Repositories.Projects
                 .Where(_ => _.SD_26.SF_POSTAV_DATE >= dateStart && _.SD_26.SF_POSTAV_DATE <= dateEnd &&
                             _.SD_83.NOM_0MATER_1USLUGA == 1
                             && _.SD_26.SF_ACCEPTED == 1).OrderByDescending(_ => _.SD_26)
-                .Skip((page-1)*limit).Take(limit).ToList();
+                .Skip((page - 1) * limit).Take(limit).ToList();
 
             var docIds = new List<Guid>();
             foreach (var r in Context.Projects.Include(_ => _.ProjectDocuments)
@@ -1240,7 +1238,7 @@ namespace KursRepositories.Repositories.Projects
             var data = Context.TD_26_CurrencyConvert.Include(_ => _.TD_26).Include(_ => _.TD_26.SD_26)
                 .Include(td26CurrencyConvert => td26CurrencyConvert.ProjectDocuments)
                 .Where(_ => _.TD_26.SD_26.SF_POSTAV_DATE >= dateStart && _.TD_26.SD_26.SF_POSTAV_DATE <= dateEnd)
-                .OrderByDescending(_ => _.TD_26.SD_26.SF_POSTAV_DATE).Skip((page-1)*limit).Take(limit)
+                .OrderByDescending(_ => _.TD_26.SD_26.SF_POSTAV_DATE).Skip((page - 1) * limit).Take(limit)
                 .ToList();
             count = Context.TD_26_CurrencyConvert.Include(_ => _.TD_26).Include(_ => _.TD_26.SD_26)
                 .Include(td26CurrencyConvert => td26CurrencyConvert.ProjectDocuments)
@@ -1339,18 +1337,22 @@ namespace KursRepositories.Repositories.Projects
 
         public List<ProjectNomenklMoveDocumentInfo> GetDocumentsForNomenkl(List<Guid> projectIds, decimal nomDC)
         {
-            List<ProjectNomenklMoveDocumentInfo> ret = new List<ProjectNomenklMoveDocumentInfo>();
+            var ret = new List<ProjectNomenklMoveDocumentInfo>();
 
             var invProviderIds = Context.ProjectDocuments.Where(_ => projectIds.Contains(_.ProjectId)
-                                                                     && _.InvoiceProviderId != null).Select(_ => _.InvoiceProviderId).ToList();
+                                                                     && _.InvoiceProviderId != null)
+                .Select(_ => _.InvoiceProviderId).ToList();
 
             var invClientIds = Context.ProjectDocuments.Where(_ => projectIds.Contains(_.ProjectId)
-                                                                     && _.InvoiceClientId != null).Select(_ => _.InvoiceClientId).ToList();
+                                                                   && _.InvoiceClientId != null)
+                .Select(_ => _.InvoiceClientId).ToList();
 
             var invoicesProvider = Context.SD_26.Include(_ => _.TD_26)
-                .Where(_ => invProviderIds.Contains(_ .Id)).ToList();
+                .Include(_ => _.ProviderInvoicePay)
+                .Include("TD_26.TD_24")
+                .Where(_ => invProviderIds.Contains(_.Id)).ToList();
             var invoicesClient = Context.SD_84.Include(_ => _.TD_84)
-                .Where(_ => invClientIds.Contains(_ .Id)).ToList();
+                .Where(_ => invClientIds.Contains(_.Id)).ToList();
 
 
             var invoiceProvider = invoicesProvider.Where(_ => _.TD_26.Any(x => x.SFT_NEMENKL_DC == nomDC));
@@ -1358,8 +1360,12 @@ namespace KursRepositories.Repositories.Projects
 
             foreach (var doc in invoiceProvider)
             {
-                var s = doc.TD_26.FirstOrDefault(_ => _.SFT_NEMENKL_DC == nomDC);
-                    ret.Add(new ProjectNomenklMoveDocumentInfo()
+                if (ret.All(_ => _.DocCode != doc.DOC_CODE))
+                {
+                    var shipped = Context.TD_24.Include(_ => _.TD_26)
+                        .Where(_ => _.DDT_SPOST_DC == doc.DOC_CODE)
+                        .Sum(_ => _.TD_26.SFT_SUMMA_K_OPLATE_KONTR_CRS * _.TD_26.SFT_KOL / _.DDT_KOL_PRIHOD) ?? 0;
+                    ret.Add(new ProjectNomenklMoveDocumentInfo
                     {
                         DocCode = doc.DOC_CODE,
                         Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_POST_DC) as Kontragent,
@@ -1368,31 +1374,58 @@ namespace KursRepositories.Repositories.Projects
                         Note = doc.SF_NOTES,
                         ExtNumber = doc.SF_POSTAV_NUM,
                         InnerNumber = doc.SF_IN_NUM,
+                        Creator = doc.CREATOR,
+                        ProviderPayed = doc.ProviderInvoicePay.Sum(_ => _.Summa),
+                        ProviderShipped = shipped,
+                        ProviderSumma = doc.TD_26.Sum(_ => _.SFT_SUMMA_K_OPLATE_KONTR_CRS) ?? 0
                     });
-                    if (s is not null)
+                }
+
+                var s = doc.TD_26.FirstOrDefault(_ => _.SFT_NEMENKL_DC == nomDC);
+                if (s is null) continue;
+
+                var prih = Context.TD_24.Include(_ => _.SD_24).Include(_ => _.TD_26).FirstOrDefault(_ =>
+                    _.DDT_SPOST_DC == s.DOC_CODE && _.DDT_SPOST_ROW_CODE == s.CODE);
+                if (prih != null && ret.All(_ => _.DocCode != prih.DOC_CODE))
+                    ret.Add(new ProjectNomenklMoveDocumentInfo
                     {
-                        var prih = Context.TD_24.Include(_ => _.SD_24).FirstOrDefault(_ =>
-                            _.DDT_SPOST_DC == s.DOC_CODE && _.DDT_SPOST_ROW_CODE == s.CODE);
-                        if (prih != null)
-                        {
-                            ret.Add(new ProjectNomenklMoveDocumentInfo()
-                            {
-                                DocCode = prih.DOC_CODE,
-                                Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_POST_DC) as Kontragent,
-                                DocDate = prih.SD_24.DD_DATE,
-                                DocumentType = DocumentType.StoreOrderIn,
-                                Note = prih.SD_24.DD_NOTES,
-                                ExtNumber = prih.SD_24.DD_EXT_NUM,
-                                InnerNumber = prih.SD_24.DD_IN_NUM,
-                            });
-                        }
-                    }
+                        DocCode = prih.DOC_CODE,
+                        Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_POST_DC) as Kontragent,
+                        DocDate = prih.SD_24.DD_DATE,
+                        DocumentType = DocumentType.StoreOrderIn,
+                        Note = prih.SD_24.DD_NOTES,
+                        ExtNumber = prih.SD_24.DD_EXT_NUM,
+                        InnerNumber = prih.SD_24.DD_IN_NUM,
+                        Creator = prih.SD_24.CREATOR,
+                    });
+
+                var nakl = Context.DistributeNakladRow
+                    .Include(_ => _.DistributeNaklad)
+                    .Where(_ => _.TovarInvoiceRowId == s.Id).ToList();
+                foreach (var nak in nakl)
+                {
+                    if (ret.Any(_ => _.Id == nak.DocId)) continue;
+                    ret.Add(new ProjectNomenklMoveDocumentInfo
+                    {
+                        Id = nak.DocId,
+                        Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_POST_DC) as Kontragent,
+                        DocDate = nak.DistributeNaklad.DocDate,
+                        DocumentType = DocumentType.Naklad,
+                        Note = nak.DistributeNaklad.Note,
+                        ExtNumber = nak.DistributeNaklad.DocNum,
+                        InnerNumber = 0,
+                        Creator = nak.DistributeNaklad.Creator
+                    });
+                }
+                
             }
 
             foreach (var doc in invoiceClient)
             {
                 var s = doc.TD_84.FirstOrDefault(_ => _.SFT_NEMENKL_DC == nomDC);
-                ret.Add(new ProjectNomenklMoveDocumentInfo()
+                if (s is null) continue;
+                var info = Context.CashSFClient.FirstOrDefault(_ => _.Id == doc.Id);
+                ret.Add(new ProjectNomenklMoveDocumentInfo
                 {
                     DocCode = s.DOC_CODE,
                     Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_CLIENT_DC) as Kontragent,
@@ -1401,37 +1434,38 @@ namespace KursRepositories.Repositories.Projects
                     Note = doc.SF_NOTE,
                     ExtNumber = doc.SF_OUT_NUM,
                     InnerNumber = doc.SF_IN_NUM,
+                    Creator = doc.CREATOR,
+                    ClientSumma = doc.TD_84.Sum(_ => _.SFT_SUMMA_K_OPLATE_KONTR_CRS) ?? 0,
+                    ClientPayed = info?.Payed ?? 0,
+                    ClientShipped = info?.Otgruzheno ?? 0
                 });
-                if (s is not null)
-                {
-                    var prih = Context.TD_24.Include(_ => _.SD_24).FirstOrDefault(_ =>
-                        _.DDT_SFACT_DC == s.DOC_CODE && _.DDT_SFACT_ROW_CODE == s.CODE);
-                    if (prih != null)
+
+                var prih = Context.TD_24.Include(_ => _.SD_24).FirstOrDefault(_ =>
+                    _.DDT_SFACT_DC == s.DOC_CODE && _.DDT_SFACT_ROW_CODE == s.CODE);
+                if (prih != null)
+                    ret.Add(new ProjectNomenklMoveDocumentInfo
                     {
-                        ret.Add(new ProjectNomenklMoveDocumentInfo()
-                        {
-                            DocCode = prih.DOC_CODE,
-                            Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_CLIENT_DC) as Kontragent,
-                            DocDate = prih.SD_24.DD_DATE,
-                            DocumentType = DocumentType.Waybill,
-                            Note = prih.SD_24.DD_NOTES,
-                            ExtNumber = prih.SD_24.DD_EXT_NUM,
-                            InnerNumber = prih.SD_24.DD_IN_NUM,
-                            Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(prih.SD_24.DD_SKLAD_OTPR_DC) as Warehouse,
-                        });
-                    }
-                }
+                        DocCode = prih.DOC_CODE,
+                        Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_CLIENT_DC) as Kontragent,
+                        DocDate = prih.SD_24.DD_DATE,
+                        DocumentType = DocumentType.Waybill,
+                        Note = prih.SD_24.DD_NOTES,
+                        ExtNumber = prih.SD_24.DD_EXT_NUM,
+                        InnerNumber = prih.SD_24.DD_IN_NUM,
+                        Warehouse =
+                            GlobalOptions.ReferencesCache.GetWarehouse(prih.SD_24.DD_SKLAD_OTPR_DC) as Warehouse,
+                        Creator = prih.SD_24.CREATOR
+                    });
             }
 
             var nomId = Context.SD_83.Single(_ => _.DOC_CODE == nomDC).Id;
             var invCrs = Context.TD_26_CurrencyConvert.Where(_ => _.NomenklId == nomId)
                 .ToList();
-            
+
             foreach (var doc in invoicesProvider)
             {
                 var crsConv = invCrs.FirstOrDefault(_ => (_.DOC_CODE ?? 0) == doc.DOC_CODE);
-                if(crsConv is not null)
-                {
+                if (crsConv is not null)
                     ret.Add(new ProjectNomenklMoveDocumentInfo
                     {
                         DocCode = doc.DOC_CODE,
@@ -1443,10 +1477,9 @@ namespace KursRepositories.Repositories.Projects
                         Note = doc.SF_NOTES,
                         ExtNumber = doc.SF_POSTAV_NUM,
                         InnerNumber = doc.SF_IN_NUM,
-                        Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(crsConv.StoreDC) as Warehouse
-
+                        Warehouse = GlobalOptions.ReferencesCache.GetWarehouse(crsConv.StoreDC) as Warehouse,
+                        Creator = doc.CREATOR
                     });
-                }
             }
 
             return ret;
@@ -1479,6 +1512,4 @@ namespace KursRepositories.Repositories.Projects
 
         #endregion
     }
-
-   
 }
