@@ -12,6 +12,9 @@ public class ProjectNomenklMoveDocumentInfo
     public decimal DocCode { set; get; }
 
     [Display(AutoGenerateField = false)]
+    public Guid Id { set; get; }
+
+    [Display(AutoGenerateField = false)]
     public DocumentType DocumentType { set; get; }
     [Display(AutoGenerateField = true, Name = "Тип док-та", Order = 1)]
     public string DocType => DocumentType.GetDisplayAttributesFrom(DocumentType.GetType()).Name;
@@ -35,4 +38,31 @@ public class ProjectNomenklMoveDocumentInfo
     public References.Warehouse Warehouse { set; get; }
     [Display(AutoGenerateField = true,  Name = "Примечание", Order = 8)]
     public string Note { set; get; }
+
+    [Display(AutoGenerateField = true,  Name = "Создатель", Order = 9)]
+    public string Creator { set; get; }
+
+    [Display(AutoGenerateField = true,  Name = "Сумма (поставщик)", Order = 10)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal ProviderSumma { set; get; }
+    [Display(AutoGenerateField = true,  Name = "Сумма (клиент)", Order = 10)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal ClientSumma { set; get; }
+
+    [Display(AutoGenerateField = true,  Name = "Отгружено (поставщик)", Order = 10)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal ProviderShipped { set; get; }
+
+    [Display(AutoGenerateField = true,  Name = "Отгружено (клиент)", Order = 10)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal ClientShipped { set; get; }
+
+    [Display(AutoGenerateField = true,  Name = "Оплачено (поставщику)", Order = 10)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal ProviderPayed { set; get; }
+
+    [Display(AutoGenerateField = true,  Name = "Оплачено (клиенту)", Order = 10)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal ClientPayed { set; get; }
+
 }

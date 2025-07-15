@@ -1,18 +1,17 @@
-﻿using Core.ViewModel.Base;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using Core.ViewModel.Base;
 using Data;
+using KursAM2.Managers;
 using KursDomain;
 using KursDomain.Documents.Projects;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.WindowsManager.WindowsManager;
 using KursRepositories.Repositories.Projects;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using KursAM2.Managers;
-using KursDomain.Documents.CommonReferences;
 
 namespace KursAM2.ViewModel.Management.Projects;
 
@@ -28,35 +27,6 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         myContext = GlobalOptions.GetEntities();
         myProjectRepository = new ProjectRepository(myContext);
         RefreshData(null);
-    }
-
-    #endregion
-
-    #region Commands
-
-    public override void RefreshData(object obj)
-    {
-        try
-        {
-            Projects.Clear();
-            foreach (var prj in myProjectRepository.LoadReference().OrderBy(_ => _.Name))
-            {
-                var newItem = new Project();
-                newItem.LoadFromEntity(prj, GlobalOptions.ReferencesCache);
-                Projects.Add(newItem);
-            }
-        }
-        catch (Exception ex)
-        {
-            WindowManager.ShowError(ex);
-        }
-    }
-
-    public override bool IsDocumentOpenAllow => CurrentDocument is not null;
-
-    protected override void DocumentOpen(object obj)
-    {
-        DocumentsOpenManager.Open(CurrentDocument.DocumentType,CurrentDocument.DocCode);
     }
 
     #endregion
@@ -125,6 +95,44 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         [Display(AutoGenerateField = true, Name = "Результат (сумма)")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal SummaResult => FactQuantityOut - DilerSumma - FactSummaIn - NakladSumma;
+
+        [Display(AutoGenerateField = true, Name = "Услуги поставщиков")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal ServiceProviderSumma { get; set; }
+
+        [Display(AutoGenerateField = true, Name = "Услуги клиентам")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal ServiceClientSumma { get; set; }
+    }
+
+    #endregion
+
+    #region Commands
+
+    public override void RefreshData(object obj)
+    {
+        try
+        {
+            Projects.Clear();
+            foreach (var prj in myProjectRepository.LoadReference().OrderBy(_ => _.Name))
+            {
+                if (!IsAllProject && prj.IsDeleted) continue;
+                var newItem = new Project();
+                newItem.LoadFromEntity(prj, GlobalOptions.ReferencesCache);
+                Projects.Add(newItem);
+            }
+        }
+        catch (Exception ex)
+        {
+            WindowManager.ShowError(ex);
+        }
+    }
+
+    public override bool IsDocumentOpenAllow => CurrentDocument is not null;
+
+    protected override void DocumentOpen(object obj)
+    {
+        DocumentsOpenManager.Open(CurrentDocument.DocumentType, CurrentDocument.DocCode);
     }
 
     #endregion
@@ -172,7 +180,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
     public ObservableCollection<ProjectNomenklMoveDocumentInfo> DocumentRows { set; get; } = [];
 
-    public ProjectNomenklMoveDocumentInfo CurrentDocument   
+    public ProjectNomenklMoveDocumentInfo CurrentDocument
     {
         get => myCurrentDocument;
         set
@@ -214,6 +222,9 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         {
             if (value == myIsAllProject) return;
             myIsAllProject = value;
+            NomenklRows.Clear();
+            DocumentRows.Clear();
+            RefreshData(null);
             RaisePropertyChanged();
         }
     }
@@ -225,6 +236,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         {
             if (value == myIsRecursive) return;
             myIsRecursive = value;
+            LoadNomenkls();
             RaisePropertyChanged();
         }
     }
@@ -242,31 +254,32 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
             ProjIds.AddRange(myProjectRepository.GetChilds(CurrentProject.Id));
         else
             ProjIds.Add(CurrentProject.Id);
-        
+
         foreach (var doc in myProjectRepository.GetDocumentsForNomenkl(ProjIds, CurrentNomenkl.NomDC))
-        {
             DocumentRows.Add(doc);
-        }
     }
 
     private void LoadNomenkls()
     {
         NomenklRows.Clear();
+        DocumentRows.Clear();
         if (CurrentProject is null) return;
         foreach (var n in myProjectRepository.GetNomenklMoveForProject(CurrentProject.Id, IsRecursive))
             NomenklRows.Add(new ProjectNomenklMoveInfo
             {
                 NakladSumma = n.NakladSumma ?? 0,
-                FactSummaIn = n.FactSummaIn ?? 0,
-                FactQuantityOut = n.FactQuantityOut ?? 0,
+                FactSummaIn = n.IsService == 0 ? n.FactSummaIn ?? 0 : 0,
+                FactQuantityOut = n.IsService == 0 ? n.FactQuantityOut ?? 0 : 0,
                 DilerSumma = n.DilerSumma,
-                DocQuantityIn = n.DocQuantityIn ?? 0,
-                DocQuantityOut = n.DocQuantityOut ?? 0,
-                DocSummaIn = n.DocSummaIn ?? 0,
-                DocSummaOut = n.DocSummaOut ?? 0,
-                FactQuantityIn = n.FactQuantityIn ?? 0,
-                FactSummaOut = n.FactSummaOut ?? 0,
+                DocQuantityIn = n.IsService == 0 ? n.DocQuantityIn ?? 0 : 0,
+                DocQuantityOut = n.IsService == 0 ? n.DocQuantityOut ?? 0 : 0,
+                DocSummaIn = n.IsService == 0 ? n.DocSummaIn ?? 0 : 0,
+                DocSummaOut = n.IsService == 0 ? n.DocSummaOut ?? 0 : 0,
+                FactQuantityIn = n.IsService == 0 ? n.FactQuantityIn ?? 0 : 0,
+                FactSummaOut = n.IsService == 0 ? n.FactSummaOut ?? 0 : 0,
                 IsService = (n.IsService ?? 0) == 1,
+                ServiceClientSumma = n.IsService == 1 ? n.DocSummaOut ?? 0 : 0,
+                ServiceProviderSumma = n.IsService == 1 ? n.DocSummaIn ?? 0 : 0,
                 NomDC = n.NomDC ?? 0,
                 NomId = n.NomId ?? Guid.Empty,
                 NomName = n.NomName,
