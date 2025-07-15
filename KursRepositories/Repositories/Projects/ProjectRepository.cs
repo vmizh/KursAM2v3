@@ -41,22 +41,6 @@ namespace KursRepositories.Repositories.Projects
 
         #region DocumentInfo
 
-            return new BoolResult { Result = true };
-        }
-
-        public IEnumerable<Data.Projects> LoadReference()
-        {
-            return Context.Projects.ToList();
-        }
-
-        public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Guid projectId)
-        {
-            var prj = Context.Projects.Include(_ => _.ProjectDocuments).AsNoTracking()
-                .FirstOrDefault(_ => _.Id == projectId);
-            if (prj is null) return new List<ProjectDocumentInfo>();
-            return LoadProjectDocuments(prj);
-        }
-
         public void AddDocumentInfo(ProjectDocumentInfoBase doc)
         {
             var sql = $@"INSERT INTO dbo.ProjectDocuments (
