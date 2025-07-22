@@ -712,7 +712,6 @@ public class ReferencesKursCache : IReferencesCache
                 Currencies.Add(newItem.DocCode, newItem);
         }
 
-
         foreach (var item in Context.Countries.AsNoTracking().ToList())
         {
             var newItem = new Country();

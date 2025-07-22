@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
@@ -10,6 +11,7 @@ using Core.ViewModel.Base;
 using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.XtraEditors.DXErrorProvider;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.KursReferences;
 using KursDomain;
@@ -17,6 +19,8 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 using NomenklMain = Data.NomenklMain;
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
@@ -25,11 +29,15 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
     {
         private readonly Guid myId = Guid.Empty;
         private NomenklMainViewModel myNomenklMain;
+        private readonly ConnectionMultiplexer redis;
+        private readonly ISubscriber mySubscriber;
 
         public MainCardWindowViewModel()
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.NomenklCardRightBar(this);
+            redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+            mySubscriber = redis.GetSubscriber();
             LoadReferences();
         }
 
@@ -259,7 +267,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     ProductDC = ((IDocCode)NomenklMain.ProductType).DocCode,
                                     IsRentabelnost = NomenklMain.IsRentabelnost,
                                     IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer,
-                                    IsOnlyState = NomenklMain.IsOnlyState
+                                    IsOnlyState = NomenklMain.IsOnlyState,
+                                    UpdateDate = DateTime.Now
                                 };
                                 ctx.NomenklMain.Add(newItem);
                                 savedListId.Add(newItem.Id);
@@ -317,6 +326,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 old.IsRentabelnost = NomenklMain.IsRentabelnost;
                                 old.IsCurrencyTransfer = NomenklMain.IsCurrencyTransfer;
                                 old.IsOnlyState = NomenklMain.IsOnlyState;
+                                old.UpdateDate = DateTime.Now;
                                 var oldNoms = ctx.SD_83.Where(_ => _.MainId == NomenklMain.Id);
                                 foreach (var nom in oldNoms)
                                 {
@@ -332,74 +342,106 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                         tnx.Commit();
                         NomenklMain.myState = RowStatus.NotEdited;
                         RaisePropertyChanged(nameof(IsCanSaveData));
+
                         savedListDC.AddRange(from nom in NomenklMain.NomenklCollection
                             let n = GlobalOptions.ReferencesCache.GetNomenkl(nom.DocCode)
                             select nom.DocCode);
 
-                        foreach (var item in from id in savedListId.Distinct()
-                                 select ctx.NomenklMain.AsNoTracking().FirstOrDefault(_ => _.Id == id)
-                                 into entity
-                                 where entity is not null
-                                 select new KursDomain.References.NomenklMain
-                                 {
-                                     Id = entity.Id,
-                                     Name = entity.Name,
-                                     Notes = entity.Note,
-                                     NomenklNumber = entity.NomenklNumber,
-                                     FullName = entity.FullName,
-                                     IsUsluga = entity.IsUsluga,
-                                     IsProguct = entity.IsComplex,
-                                     IsNakladExpense = entity.IsNakladExpense,
-                                     IsOnlyState = entity.IsOnlyState ?? false,
-                                     IsCurrencyTransfer = entity.IsCurrencyTransfer ?? false,
-                                     IsRentabelnost = entity.IsRentabelnost ?? false,
-                                     UnitDC = entity.UnitDC,
-                                     CategoryDC = entity.CategoryDC,
-                                     NomenklTypeDC = entity.TypeDC,
-                                     ProductTypeDC = entity.ProductDC
-                                 })
-                            GlobalOptions.ReferencesCache.AddOrUpdateGuid(item);
+                        if (mySubscriber != null && mySubscriber.IsConnected())
+                        {
+                            var str = "обновление справочника NomenklMain";
+                            var message = new RedisMessage
+                            {
+                                DocumentType = DocumentType.None,
+                                DocCode = null,
+                                Id = NomenklMain.Id,
+                                DocDate = DateTime.Now,
+                                IsDocument = false,
+                                OperationType = RedisMessageDocumentOperationTypeEnum.Update,
+                                Message =
+                                    $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} номенклатура: {NomenklMain.Id} {NomenklMain.Name}"
+                            };
+                            message.ExternalValues.Add("NomenklDC", NomenklMain.NomenklCollection);
+                            var jsonSerializerSettings = new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All
+                            };
+                            var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                            mySubscriber.Publish(
+                                new RedisChannel(RedisMessageChannels.NomenklMainReference,
+                                    RedisChannel.PatternMode.Auto), json);
+                        }
 
-                        foreach (var item in from dc in savedListDC.Distinct()
-                                 select ctx.SD_83.Include(_ => _.NomenklMain).AsNoTracking()
-                                     .FirstOrDefault(_ => _.DOC_CODE == dc)
-                                 into entity
-                                 where entity is not null
-                                 select new KursDomain.References.Nomenkl
-                                 {
-                                     DocCode = entity.DOC_CODE,
-                                     Id = entity.Id,
-                                     Name = entity.NOM_NAME,
-                                     FullName =
-                                         entity.NOM_FULL_NAME,
-                                     Notes = entity.NOM_NOTES,
-                                     IsUsluga =
-                                         entity.NOM_0MATER_1USLUGA == 1,
-                                     IsProguct = entity.NOM_1PROD_0MATER == 1,
-                                     IsNakladExpense =
-                                         entity.NOM_1NAKLRASH_0NO == 1,
-                                     DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT,
-                                     IsDeleted =
-                                         entity.NOM_DELETED == 1,
-                                     IsUslugaInRentabelnost =
-                                         entity.IsUslugaInRent ?? false,
-                                     UpdateDate =
-                                         entity.UpdateDate ?? DateTime.MinValue,
-                                     MainId =
-                                         entity.MainId ?? Guid.Empty,
-                                     IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
-                                     NomenklNumber =
-                                         entity.NOM_NOMENKL,
-                                     NomenklTypeDC =
-                                         entity.NomenklMain.TypeDC,
-                                     ProductTypeDC = entity.NomenklMain.ProductDC,
-                                     UnitDC = entity.NOM_ED_IZM_DC,
-                                     CurrencyDC = entity.NOM_SALE_CRS_DC,
-                                     GroupDC = entity.NOM_CATEG_DC
-                                 })
-                            GlobalOptions.ReferencesCache.AddOrUpdate(item);
+                        //foreach (var item in from id in savedListId.Distinct()
+                        //         select ctx.NomenklMain.Include(_ => _.SD_83).AsNoTracking()
+                        //             .FirstOrDefault(_ => _.Id == id)
+                        //         into entity
+                        //         where entity is not null
+                        //         select new KursDomain.References.NomenklMain
+                        //         {
+                        //             Id = entity.Id,
+                        //             Name = entity.Name,
+                        //             Notes = entity.Note,
+                        //             NomenklNumber = entity.NomenklNumber,
+                        //             FullName = entity.FullName,
+                        //             IsUsluga = entity.IsUsluga,
+                        //             IsProguct = entity.IsComplex,
+                        //             IsNakladExpense = entity.IsNakladExpense,
+                        //             IsOnlyState = entity.IsOnlyState ?? false,
+                        //             IsCurrencyTransfer = entity.IsCurrencyTransfer ?? false,
+                        //             IsRentabelnost = entity.IsRentabelnost ?? false,
+                        //             UnitDC = entity.UnitDC,
+                        //             CategoryDC = entity.CategoryDC,
+                        //             NomenklTypeDC = entity.TypeDC,
+                        //             ProductTypeDC = entity.ProductDC,
+                        //             Nomenkls = entity.SD_83 != null ? entity.SD_83.Select(_ => _.DOC_CODE).ToList() : []
+                        //         })
+                        //{
+
+                        //    GlobalOptions.ReferencesCache.AddOrUpdateGuid(item);
+                        //}
+
+                        //foreach (var item in from dc in savedListDC.Distinct()
+                        //         select ctx.SD_83.Include(_ => _.NomenklMain).AsNoTracking()
+                        //             .FirstOrDefault(_ => _.DOC_CODE == dc)
+                        //         into entity
+                        //         where entity is not null
+                        //         select new KursDomain.References.Nomenkl
+                        //         {
+                        //             DocCode = entity.DOC_CODE,
+                        //             Id = entity.Id,
+                        //             Name = entity.NOM_NAME,
+                        //             FullName =
+                        //                 entity.NOM_FULL_NAME,
+                        //             Notes = entity.NOM_NOTES,
+                        //             IsUsluga =
+                        //                 entity.NOM_0MATER_1USLUGA == 1,
+                        //             IsProguct = entity.NOM_1PROD_0MATER == 1,
+                        //             IsNakladExpense =
+                        //                 entity.NOM_1NAKLRASH_0NO == 1,
+                        //             DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT,
+                        //             IsDeleted =
+                        //                 entity.NOM_DELETED == 1,
+                        //             IsUslugaInRentabelnost =
+                        //                 entity.IsUslugaInRent ?? false,
+                        //             UpdateDate =
+                        //                 entity.UpdateDate ?? DateTime.MinValue,
+                        //             MainId =
+                        //                 entity.MainId ?? Guid.Empty,
+                        //             IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
+                        //             NomenklNumber =
+                        //                 entity.NOM_NOMENKL,
+                        //             NomenklTypeDC =
+                        //                 entity.NomenklMain.TypeDC,
+                        //             ProductTypeDC = entity.NomenklMain.ProductDC,
+                        //             UnitDC = entity.NOM_ED_IZM_DC,
+                        //             CurrencyDC = entity.NOM_SALE_CRS_DC,
+                        //             GroupDC = entity.NOM_CATEG_DC,
+                        //         })
+                            //GlobalOptions.ReferencesCache.AddOrUpdate(item);
 
                         //foreach (var n in dcs) MainReferences.LoadNomenkl(n);
+
                     }
                     catch (Exception ex)
                     {

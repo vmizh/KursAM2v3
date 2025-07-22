@@ -825,6 +825,9 @@
     <Compile Include="ProjectProviderUslugi.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="ProjectRowExclude.cs">
+      <DependentUpon>ALFAMEDIA.tt</DependentUpon>
+    </Compile>
     <Compile Include="Projects.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>

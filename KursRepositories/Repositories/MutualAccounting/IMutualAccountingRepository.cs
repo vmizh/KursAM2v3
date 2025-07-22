@@ -1,9 +1,9 @@
-﻿using KursDomain.Documents.Vzaimozachet;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Data;
+using KursDomain.Documents.Vzaimozachet;
 
 namespace KursRepositories.Repositories.MutualAccounting
 {
@@ -26,14 +26,19 @@ namespace KursRepositories.Repositories.MutualAccounting
         public void Delete(SD_110ViewModel doc);
         public void Delete(decimal dc);
 
-        public TD_110ViewModel AddRow(ObservableCollection<TD_110ViewModel> rows, TD_110ViewModel row,
+        public TD_110ViewModel AddRow(
+            ObservableCollection<TD_110ViewModel> rows,
+            TD_110ViewModel row,
             // ReSharper disable once OptionalParameterHierarchyMismatch
-            short dolg = 0);
+            short dolg = 0
+        );
 
-        public TD_110ViewModel DeleteRow(ObservableCollection<TD_110ViewModel> rows,
-            ObservableCollection<TD_110ViewModel> deletedrows, TD_110ViewModel row);
+        public TD_110ViewModel DeleteRow(
+            ObservableCollection<TD_110ViewModel> rows,
+            ObservableCollection<TD_110ViewModel> deletedrows,
+            TD_110ViewModel row
+        );
 
         public Tuple<bool, string> IsRowChecked(TD_110ViewModel r);
-
     }
 }
