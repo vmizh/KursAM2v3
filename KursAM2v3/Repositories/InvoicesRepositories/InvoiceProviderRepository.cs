@@ -180,7 +180,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         public InvoiceProvider GetRequisiteCopy(decimal dc)
         {
-            var doc = Context.SD_26.Include(_ => _.TD_26).AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == dc);
+            var doc = Context.SD_26.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == dc);
             if (doc == null) return null;
             var newId = Guid.NewGuid();
             var ret = new InvoiceProvider(doc)
@@ -197,6 +197,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 IsNDSInPrice = true,
                 NakladDistributedSumma = 0,
             };
+            
             return ret;
         }
 

@@ -1967,6 +1967,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (Document == null) return;
             var ctx = new ProviderWindowViewModel();
             ctx.Document = ctx.InvoiceProviderRepository.GetRequisiteCopy(Document.DocCode);
+            ctx.Document.Rows.Clear();
+            ctx.Document.Entity.TD_26.Clear();
+            ctx.Document.Facts.Clear();
+            ctx.Document.PaymentDocs.Clear();
+            ctx.Document.Entity.ProviderInvoicePay.Clear();
             ctx.UnitOfWork.Context.SD_26.Add(ctx.Document.Entity);
             foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
             {
