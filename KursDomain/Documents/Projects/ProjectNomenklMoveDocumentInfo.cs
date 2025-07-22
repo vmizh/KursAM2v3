@@ -12,6 +12,9 @@ public class ProjectNomenklMoveDocumentInfo
     public decimal DocCode { set; get; }
 
     [Display(AutoGenerateField = false)]
+    public decimal NomenklDC { set; get; }
+
+    [Display(AutoGenerateField = false)]
     public Guid Id { set; get; }
 
     [Display(AutoGenerateField = false)]
@@ -57,12 +60,20 @@ public class ProjectNomenklMoveDocumentInfo
     [DisplayFormat(DataFormatString = "n2")]
     public decimal ClientShipped { set; get; }
 
-    [Display(AutoGenerateField = true,  Name = "Оплачено (поставщику)", Order = 10)]
+    [Display(AutoGenerateField = true,  Name = "Кол-во (поставщик)", Order = 10)]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal ProviderPayed { set; get; }
+    public decimal ProviderQuantity { set; get; }
 
-    [Display(AutoGenerateField = true,  Name = "Оплачено (клиенту)", Order = 10)]
+    [Display(AutoGenerateField = true,  Name = "Кол-во (клиент)", Order = 10)]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal ClientPayed { set; get; }
+    public decimal ClientQuantity { set; get; }
+
+    [Display(AutoGenerateField = true,  Name = "Кол-во отгр. (поставщик)", Order = 10)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal ProviderShippedQuantity { set; get; }
+
+    [Display(AutoGenerateField = true,  Name = "Кол-во отгр. (клиент)", Order = 10)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal ClientShippedQuantity { set; get; }
 
 }

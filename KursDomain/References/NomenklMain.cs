@@ -96,10 +96,21 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
         IsCurrencyTransfer = entity.IsCurrencyTransfer ?? false;
         IsRentabelnost = entity.IsRentabelnost ?? false;
         Unit = refCache?.GetUnit(entity.UnitDC);
+        UnitDC = entity.UnitDC;
         Category = refCache?.GetNomenklGroup(entity.CategoryDC);
+        CategoryDC = entity.CategoryDC;
         NomenklType = refCache?.GetNomenklType(entity.TypeDC);
+        NomenklTypeDC = entity.TypeDC;
         ProductType = refCache?.GetProductType(entity.ProductDC);
+        ProductTypeDC = entity.ProductDC;
         UpdateDate = entity.UpdateDate ?? DateTime.Now;
+        if (entity.SD_83 is not null && entity.SD_83.Count > 0)
+        {
+            foreach (var n in entity.SD_83)
+            {
+                Nomenkls.Add(n.DOC_CODE);
+            }
+        }
     }
 
     public bool Equals(IDocGuid x, IDocGuid y)
@@ -143,6 +154,7 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
             ProductType = cache.GetItem<ProductType>(ProductTypeDC.Value);
         if (CountryId is not null)
             Country = cache.GetItemGuid<Country>(CountryId.Value);
+        
     }
     [Display(AutoGenerateField = false, Name = "Посл.обновление")]
     public DateTime UpdateDate { get; set; }

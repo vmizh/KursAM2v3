@@ -812,6 +812,7 @@ namespace Data
         public virtual DbSet<ProjectGroupLink> ProjectGroupLink { get; set; }
         public virtual DbSet<ProjectGroups> ProjectGroups { get; set; }
         public virtual DbSet<ProjectDocuments> ProjectDocuments { get; set; }
+        public virtual DbSet<ProjectRowExclude> ProjectRowExclude { get; set; }
     
         [DbFunction("Entities", "H043_DVIZH_LIC_SCHET_KONTR_TABLE")]
         public virtual IQueryable<H043_DVIZH_LIC_SCHET_KONTR_TABLE_Result> H043_DVIZH_LIC_SCHET_KONTR_TABLE()

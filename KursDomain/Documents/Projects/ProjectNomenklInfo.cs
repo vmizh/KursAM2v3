@@ -22,4 +22,5 @@ public class ProjectNomenklInfo
 
     [Display(AutoGenerateField = true, Name = "Примечание",Order = 7)]
     public string Note { set; get; }
+ 
 }

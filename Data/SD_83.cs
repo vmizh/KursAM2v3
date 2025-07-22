@@ -110,6 +110,7 @@ namespace Data
             this.TransferOutBalansRows = new HashSet<TransferOutBalansRows>();
             this.NomenklReturnOfClientRow = new HashSet<NomenklReturnOfClientRow>();
             this.NomenklReturnToProviderRow = new HashSet<NomenklReturnToProviderRow>();
+            this.ProjectRowExclude = new HashSet<ProjectRowExclude>();
         }
     
         public decimal DOC_CODE { get; set; }
@@ -381,5 +382,7 @@ namespace Data
         public virtual ICollection<NomenklReturnOfClientRow> NomenklReturnOfClientRow { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<NomenklReturnToProviderRow> NomenklReturnToProviderRow { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectRowExclude> ProjectRowExclude { get; set; }
     }
 }

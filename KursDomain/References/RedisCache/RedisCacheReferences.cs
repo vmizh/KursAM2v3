@@ -3096,9 +3096,17 @@ public class RedisCacheReferences : IReferencesCache
                 break;
             case RedisMessageChannels.NomenklMainReference:
                 if (message.Id is null) return;
+                NomenklMain nm_item = default;
+                using (var ctx = GlobalOptions.GetEntities())
+                {
+                    var nm = ctx.NomenklMain.Include(_ => _.SD_83).FirstOrDefault(_ => _.Id == message.Id);
+                    if (nm is null) return;
+                    nm_item = new NomenklMain();
+                    nm_item.LoadFromEntity(nm,this);
+                }
                 LoadCacheKeys("NomenklMain");
-                var nm_item = GetItemGuid<NomenklMain>((string)message.ExternalValues["RedisKey"]);
-                nm_item.LoadFromCache();
+                //nm_item = GetItemGuid<NomenklMain>((string)message.ExternalValues["RedisKey"]);
+                //nm_item.LoadFromCache();
                 var nm_oldKey = cacheKeysDict["NomenklMain"].CachKeys.SingleOrDefault(_ => _.Id == message.Id);
                 if (nm_oldKey is null)
                     cacheKeysDict["NomenklMain"].CachKeys.AddCacheKey(new CachKey
@@ -3109,6 +3117,12 @@ public class RedisCacheReferences : IReferencesCache
                         LastUpdate =
                             Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
                     });
+                else
+                {
+                    
+                    AddOrUpdateGuid(nm_item);
+                }
+                
 
                 if (NomenklMains.ContainsKey(message.Id.Value))
                     NomenklMains[message.Id.Value] = nm_item;
@@ -3419,7 +3433,6 @@ public class RedisCacheReferences : IReferencesCache
     #endregion
 
     #region Generic Guid Id
-
     public void UpdateListGuid<T>(IEnumerable<T> list, DateTime? nowFix = null) where T : IDocGuid
     {
         ITypeSerializer<T> serializer = new JsonSerializer<T>();
@@ -3442,7 +3455,6 @@ public class RedisCacheReferences : IReferencesCache
             }
         }
     }
-
     public void AddOrUpdateGuid<T>(T item) where T : IDocGuid
     {
         using (var redisClient = redisManager.GetClient())
@@ -3461,26 +3473,26 @@ public class RedisCacheReferences : IReferencesCache
             foreach (var oldKey in olds) redisClient.Remove(oldKey);
             redisClient.Save();
             redis.SetValue(key, item);
-            var message = new RedisMessage
-            {
-                DocumentType = DocumentType.None,
-                Id = item.Id,
-                DocDate = DateTime.Now,
-                IsDocument = false,
-                OperationType = RedisMessageDocumentOperationTypeEnum.Execute,
-                Message =
-                    $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник {typeof(T).Name} '{item.Id}'"
-            };
-            message.ExternalValues.Add("RedisKey", key);
-            var jsonSerializerSettings = new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.All
-            };
-            redisClient.PublishMessage(getChannelName(typeof(T).Name),
-                JsonConvert.SerializeObject(message, jsonSerializerSettings));
+            redisClient.Save();
+            //var message = new RedisMessage
+            //{
+            //    DocumentType = DocumentType.None,
+            //    Id = item.Id,
+            //    DocDate = DateTime.Now,
+            //    IsDocument = false,
+            //    OperationType = RedisMessageDocumentOperationTypeEnum.Execute,
+            //    Message =
+            //        $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник {typeof(T).Name} '{item.Id}'"
+            //};
+            //message.ExternalValues.Add("RedisKey", key);
+            //var jsonSerializerSettings = new JsonSerializerSettings
+            //{
+            //    TypeNameHandling = TypeNameHandling.All
+            //};
+            //redisClient.PublishMessage(getChannelName(typeof(T).Name),
+            //    JsonConvert.SerializeObject(message, jsonSerializerSettings));
         }
     }
-
     public void DropAllGuid<T>() where T : IDocGuid
     {
         using (var redisClient = redisManager.GetClient())
@@ -3495,7 +3507,6 @@ public class RedisCacheReferences : IReferencesCache
             }
         }
     }
-
     public void DropGuid<T>(Guid id) where T : IDocGuid
     {
         using (var redisClient = redisManager.GetClient())
@@ -3507,7 +3518,6 @@ public class RedisCacheReferences : IReferencesCache
                 redisClient.Remove(enumerable.First());
         }
     }
-
     public T GetItemGuid<T>(Guid id) where T : IDocGuid
     {
         using (var redisClient = redisManager.GetClient())
@@ -3575,7 +3585,6 @@ public class RedisCacheReferences : IReferencesCache
             return item;
         }
     }
-
     public T GetItemGuid<T>(string key) where T : IDocGuid
     {
         using (var redisClient = redisManager.GetClient())
@@ -3589,7 +3598,6 @@ public class RedisCacheReferences : IReferencesCache
             return item;
         }
     }
-
     public IEnumerable<T> GetAllGuid<T>() where T : IDocGuid
     {
         using (var redisClient = redisManager.GetClient())
@@ -3605,7 +3613,6 @@ public class RedisCacheReferences : IReferencesCache
             return list;
         }
     }
-
     public IEnumerable<T> GetListGuid<T>(IEnumerable<Guid> ids) where T : IDocGuid
     {
         if (ids is null) return Enumerable.Empty<T>();
@@ -3694,7 +3701,6 @@ public class RedisCacheReferences : IReferencesCache
             }
         }
     }
-
     public void AddOrUpdate<T>(T item) where T : IDocCode
     {
         using (var redisClient = redisManager.GetClient())
@@ -3716,26 +3722,25 @@ public class RedisCacheReferences : IReferencesCache
             foreach (var oldKey in olds) redisClient.Remove(oldKey);
             redisClient.Save();
             redis.SetValue(key, item);
-            var message = new RedisMessage
-            {
-                DocumentType = DocumentType.None,
-                DocCode = item.DocCode,
-                DocDate = DateTime.Now,
-                IsDocument = false,
-                OperationType = RedisMessageDocumentOperationTypeEnum.Execute,
-                Message =
-                    $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник {typeof(T).Name} '{item.DocCode}'"
-            };
-            message.ExternalValues.Add("RedisKey", key);
-            var jsonSerializerSettings = new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.All
-            };
-            redisClient.PublishMessage(getChannelName(typeof(T).Name),
-                JsonConvert.SerializeObject(message, jsonSerializerSettings));
+            //var message = new RedisMessage
+            //{
+            //    DocumentType = DocumentType.None,
+            //    DocCode = item.DocCode,
+            //    DocDate = DateTime.Now,
+            //    IsDocument = false,
+            //    OperationType = RedisMessageDocumentOperationTypeEnum.Execute,
+            //    Message =
+            //        $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник {typeof(T).Name} '{item.DocCode}'"
+            //};
+            //message.ExternalValues.Add("RedisKey", key);
+            //var jsonSerializerSettings = new JsonSerializerSettings
+            //{
+            //    TypeNameHandling = TypeNameHandling.All
+            //};
+            //redisClient.PublishMessage(getChannelName(typeof(T).Name),
+            //    JsonConvert.SerializeObject(message, jsonSerializerSettings));
         }
     }
-
     private string getChannelName(string typeName)
     {
         return typeName switch
@@ -3768,7 +3773,6 @@ public class RedisCacheReferences : IReferencesCache
             _ => string.Empty
         };
     }
-
     public void DropAll<T>() where T : IDocCode
     {
         using (var redisClient = redisManager.GetClient())
@@ -3783,7 +3787,6 @@ public class RedisCacheReferences : IReferencesCache
             }
         }
     }
-
     public void Drop<T>(decimal dc) where T : IDocCode
     {
         using (var redisClient = redisManager.GetClient())
@@ -3795,7 +3798,6 @@ public class RedisCacheReferences : IReferencesCache
                 redisClient.Remove(enumerable.First());
         }
     }
-
     public T GetItem<T>(decimal dc) where T : IDocCode
     {
         using (var redisClient = redisManager.GetClient())
@@ -3863,8 +3865,6 @@ public class RedisCacheReferences : IReferencesCache
             return item;
         }
     }
-
-
     public T GetItem<T>(string key) where T : IDocCode
     {
         using (var redisClient = redisManager.GetClient())
@@ -3878,8 +3878,6 @@ public class RedisCacheReferences : IReferencesCache
             return item;
         }
     }
-
-
     public IEnumerable<T> GetAll<T>() where T : IDocCode
     {
         using (var redisClient = redisManager.GetClient())
