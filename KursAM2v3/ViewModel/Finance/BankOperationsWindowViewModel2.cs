@@ -474,7 +474,7 @@ namespace KursAM2.ViewModel.Finance
         }
 
         private Currency myCurrency;
-        private bool myIsAll = false;
+        private bool myIsAll;
 
         public Currency Currency
         {

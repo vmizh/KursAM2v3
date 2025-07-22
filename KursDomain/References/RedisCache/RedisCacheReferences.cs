@@ -598,30 +598,76 @@ public class RedisCacheReferences : IReferencesCache
 
     public IEnumerable<IBankAccount> GetBankAccountAll()
     {
+        int count = 0;
         var cacheName = "BankAccount";
-        using (var redisClient = redisManager.GetClient())
+        using (var ctx = GlobalOptions.GetEntities())
         {
-            redisClient.Db = GlobalOptions.RedisDBId ?? 0;
-            if (cacheKeysDict.ContainsKey(cacheName) &&
-                !((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec))
-                return BankAccounts.Values.ToList();
-            LoadCacheKeys(cacheName);
-            var redis = redisClient.As<BankAccount>();
-            BankAccounts.Clear();
-            //var keys = redisClient.GetKeysByPattern("Cache:BankAccount:*").ToList();
-            using (var pipe = redis.CreatePipeline())
-            {
-                foreach (var key in cacheKeysDict[cacheName].CachKeys)
-                    pipe.QueueCommand(r => r.GetValue(key.Key),
-                        x =>
-                        {
-                            x.LoadFromCache();
-                            if (BankAccounts.ContainsKey(x.DocCode)) BankAccounts[x.DocCode] = x;
-                            else BankAccounts.Add(x.DocCode, x);
-                        });
+            count = ctx.SD_114.Count();
 
-                pipe.Flush();
+            using (var redisClient = redisManager.GetClient())
+            {
+                redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+                if (cacheKeysDict.ContainsKey(cacheName) &&
+                    !((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec))
+                    return BankAccounts.Values.ToList();
+                LoadCacheKeys(cacheName);
+                var redis = redisClient.As<BankAccount>();
+                BankAccounts.Clear();
+                //var keys = redisClient.GetKeysByPattern("Cache:BankAccount:*").ToList();
+                using (var pipe = redis.CreatePipeline())
+                {
+                    foreach (var key in cacheKeysDict[cacheName].CachKeys)
+                        pipe.QueueCommand(r => r.GetValue(key.Key),
+                            x =>
+                            {
+                                x.LoadFromCache();
+                                if (BankAccounts.ContainsKey(x.DocCode)) BankAccounts[x.DocCode] = x;
+                                else BankAccounts.Add(x.DocCode, x);
+                            });
+
+                    pipe.Flush();
+                }
             }
+
+            if (count == BankAccounts.Count) return BankAccounts.Values.ToList();
+            foreach (var item in ctx.SD_44.AsNoTracking().ToList())
+            {
+                var newItem = new Bank();
+                newItem.LoadFromEntity(item);
+                if (!ContractTypes.ContainsKey(newItem.DocCode))
+                    Banks.Add(newItem.DocCode, newItem);
+            }
+
+            DropAll<Bank>();
+            UpdateList(Banks.Values.Cast<Bank>(), DateTime.Now);
+            GetBanksAll();
+            BankAccounts = ctx.SD_114.AsNoTracking()
+                .ToList()
+                .Select(entity => new BankAccount
+                {
+                    RashAccCode = entity.BA_RASH_ACC_CODE,
+                    RashAccount = entity.BA_RASH_ACC,
+                    BACurrency = entity.BA_CURRENCY,
+                    IsTransit = entity.BA_TRANSIT == 1,
+                    IsNegativeRests = entity.BA_NEGATIVE_RESTS == 1,
+                    BABankAccount = entity.BA_BANK_ACCOUNT,
+                    ShortName = entity.BA_ACC_SHORTNAME,
+                    StartDate = entity.StartDate,
+                    StartSumma = entity.StartSumma,
+                    DateNonZero = entity.DateNonZero,
+                    DocCode = entity.DOC_CODE,
+                    KontragentDC = entity.BA_BANK_AS_KONTRAGENT_DC,
+                    CentrResponsibilityDC = entity.BA_CENTR_OTV_DC,
+                    CurrencyDC = entity.CurrencyDC,
+                    BankDC = entity.BA_BANKDC,
+                    IsDeleted = entity.IsDeleted ?? false
+                })
+                .ToDictionary<BankAccount, decimal, IBankAccount>(newItem => newItem.DocCode, newItem => newItem);
+            foreach (var k in BankAccounts.Values.Cast<BankAccount>()) k.LoadFromCache();
+
+            DropAll<BankAccount>();
+            UpdateList(BankAccounts.Values.Cast<BankAccount>(), DateTime.Now);
+            GetBankAccountAll();
         }
 
         return BankAccounts.Values.ToList();
