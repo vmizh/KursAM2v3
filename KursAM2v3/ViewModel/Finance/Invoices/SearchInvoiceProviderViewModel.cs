@@ -36,6 +36,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using DevExpress.Mvvm.Native;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -347,6 +348,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (CurrentDocument == null) return;
             var ctx = new ProviderWindowViewModel();
             ctx.Document = ctx.InvoiceProviderRepository.GetRequisiteCopy(CurrentDocument.DocCode);
+            ctx.Document.Rows.Clear();
+            ctx.Document.Entity.TD_26.Clear();
+            ctx.Document.Facts.Clear();
+            ctx.Document.PaymentDocs.Clear();
+            ctx.Document.Entity.ProviderInvoicePay.Clear();
             ctx.UnitOfWork.Context.SD_26.Add(ctx.Document.Entity);
             foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
             {

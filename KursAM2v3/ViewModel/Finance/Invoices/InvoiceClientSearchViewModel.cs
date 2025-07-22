@@ -625,6 +625,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ctx.Document.Rows.Clear();
             ctx.Document.Entity.TD_84.Clear();
             ctx.UnitOfWork.Context.SD_84.Add(ctx.Document.Entity);
+            ctx.Document.ShipmentRows.Clear();
+            ctx.Document.Entity.TD_24.Clear();
+            ctx.Document.PaymentDocs.Clear();
             foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
             {
                 if (ent.Entity is SD_84 or TD_84) continue;
