@@ -5,12 +5,14 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Core.ViewModel.Base;
 using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
+using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
 using KursAM2.View.KursReferences;
@@ -46,7 +48,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
     public override void UpdateVisualObjects()
     {
-        var colNameNotVisible = new List<string>([nameof(ProjectDocumentInfo.DocInfo)]);
+        var colNameNotVisible = new List<string>([nameof(ProjectDocumentInfo.DocInfo),nameof(ProjectDocumentInfo.HasExcludeRow)]);
         base.UpdateVisualObjects();
         if (Form is not ProjectManager frm) return;
         var sumNames = new List<string>();
@@ -76,6 +78,21 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             });
 
         foreach (var col in frm.gridInfoRows.Columns) col.ReadOnly = true;
+
+        frm.tableViewDocuemts.FormatConditions.Clear();
+        var excludeRows = new FormatCondition
+        {
+            //Expression = "[SummaFact] < [Summa]",
+            FieldName = "HasExcludeRow",
+            ApplyToRow = true,
+            Format = new Format
+            {
+                Foreground = Brushes.Blue
+            },
+            ValueRule = ConditionRule.Equal,
+            Value1 = true
+        };
+        frm.tableViewDocuemts.FormatConditions.Add(excludeRows);
     }
 
     public override void SaveData(object data)
@@ -196,7 +213,6 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 var dc5 = myProjectRepository.GetInvoiceProviderDC(CurrentDocument.UslugaProviderRowId.Value,true,false);
                 if (dc5 is not null)
                     DocumentsOpenManager.Open(DocumentType.InvoiceProvider, dc5.Value);
-                break;
                 break;
             case DocumentType.InvoiceClient:
                 if (CurrentDocument.InvoiceClientId is null) return;
@@ -422,7 +438,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     private void LoadDocuments(Guid? currentProjectId)
     {
         Documents.Clear();
-        if (currentProjectId is null) return;
+        if (currentProjectId is null) return; 
         foreach (var prj in myProjectRepository.LoadProjectDocuments(currentProjectId.Value))
         {
             prj.myState = RowStatus.NotEdited;
@@ -456,5 +472,6 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         //}
     }
 
+    
     #endregion
 }

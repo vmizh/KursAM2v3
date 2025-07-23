@@ -344,6 +344,8 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
 
     [Display(AutoGenerateField = false)] public ProjectDocuments Entity { get; set; }
 
+    [Display(AutoGenerateField = true, Name = "Искл.строки")] public bool HasExcludeRow { get; set; }
+
     public ProjectDocuments DefaultValue()
     {
         return new ProjectDocuments
