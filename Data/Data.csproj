@@ -770,6 +770,7 @@
     <Compile Include="OLAP_BALANS_KURS.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>
     </Compile>
+    <Compile Include="PartialEntity\InvoicePostQuery.cs" />
     <Compile Include="PartialEntity\SD_24.cs" />
     <Compile Include="PD_114.cs">
       <DependentUpon>ALFAMEDIA.tt</DependentUpon>

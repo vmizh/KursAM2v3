@@ -54,15 +54,11 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         var sumNames = new List<string>();
         foreach (var col in frm.gridDocuments.Columns)
         {
-            switch (col.FieldName)
+            col.ReadOnly = col.FieldName switch
             {
-                case nameof(ProjectDocumentInfo.ProjectNote):
-                    col.ReadOnly = false;
-                    break;
-                default:
-                    col.ReadOnly = true;
-                    break;
-            }
+                nameof(ProjectDocumentInfo.ProjectNote) => false,
+                _ => true
+            };
 
             if (colNameNotVisible.Contains(col.FieldName)) col.Visible = false;
         }
@@ -278,6 +274,8 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     private ProjectNomenklInfo myCurrentNomenklRow;
     private Visibility myIsNotInfoVisibility = Visibility.Visible;
     private Visibility myGridInfoVisibility = Visibility.Hidden;
+    private Visibility myGridInvoiceInfoVisibility = Visibility.Hidden;
+    private ProjectInvoiceNomenklInfo myCurrentInvoiceNomenklRow;
 
     #endregion
 
@@ -305,6 +303,18 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         }
     }
 
+    //GridInvoiceInfoVisibility
+    public Visibility GridInvoiceInfoVisibility
+    {
+        get => myGridInvoiceInfoVisibility;
+        set
+        {
+            if (value == myGridInvoiceInfoVisibility) return;
+            myGridInvoiceInfoVisibility = value;
+            RaisePropertyChanged();
+        }
+    }
+
     public override bool IsCanSaveData => Documents.Any(_ => _.State != RowStatus.NotEdited);
     public override string WindowName => "Управление проектами";
     public override string LayoutName => "ProjectManagerWindowViewModel";
@@ -312,6 +322,8 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     public ObservableCollection<Project> Projects { set; get; } = [];
 
     public ObservableCollection<ProjectNomenklInfo> NomenklRows { set; get; } = [];
+
+    public ObservableCollection<ProjectInvoiceNomenklInfo> InvoiceNomenklRows { set; get; } = [];
 
     public ObservableCollection<ProjectDocumentInfo> Documents { set; get; } =
         [];
@@ -330,6 +342,17 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         }
     }
 
+    public ProjectInvoiceNomenklInfo CurrentInvoiceNomenklRow
+    {
+        get => myCurrentInvoiceNomenklRow;
+        set
+        {
+            if (Equals(value, myCurrentInvoiceNomenklRow)) return;
+            myCurrentInvoiceNomenklRow = value;
+            RaisePropertyChanged();
+        }
+    } 
+
     public ProjectDocumentInfo CurrentDocument
     {
         get => myCurrentDocument;
@@ -337,12 +360,16 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         {
             if (Equals(value?.Id, myCurrentDocument?.Id)) return;
             myCurrentDocument = value;
-            if (myCurrentDocument is not null &&
-                (myCurrentDocument.WaybillDC ?? myCurrentDocument.WarehouseOrderInDC) is not null)
+            if (myCurrentDocument is not null)
             {
-                LoadNomenklInfo(myCurrentDocument.DocumentType,
-                    // ReSharper disable once PossibleInvalidOperationException
-                    (decimal)(myCurrentDocument.WaybillDC ?? myCurrentDocument.WarehouseOrderInDC));
+                if(myCurrentDocument.WaybillDC != null || myCurrentDocument.WarehouseOrderInDC != null
+                   || myCurrentDocument.InvoiceProviderId != null || myCurrentDocument.InvoiceClientId != null)
+                {
+                    LoadNomenklInfo(myCurrentDocument.DocumentType,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        myCurrentDocument.WaybillDC ?? myCurrentDocument.WarehouseOrderInDC,
+                        myCurrentDocument.InvoiceProviderId ?? myCurrentDocument.InvoiceClientId);
+                }
             }
             else
             {
@@ -360,6 +387,9 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         {
             if (Equals(value?.Id, myCurrentProject?.Id)) return;
             myCurrentProject = value;
+            IsNotInfoVisibility = Visibility.Visible;
+            GridInfoVisibility = Visibility.Hidden;
+            GridInvoiceInfoVisibility = Visibility.Hidden;
             LoadDocuments(myCurrentProject?.Id);
             SetCrsColumnsVisible();
             RaisePropertyChanged();
@@ -382,15 +412,74 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
     #region Methods
 
-    private void LoadNomenklInfo(DocumentType docType, decimal dc)
+    private void LoadNomenklInfo(DocumentType docType, decimal? dc, Guid? id)
     {
         NomenklRows.Clear();
+        InvoiceNomenklRows.Clear();
         switch (docType)
         {
+            case DocumentType.InvoiceClient:
+                if (id is null) return;
+                GridInfoVisibility = Visibility.Hidden;
+                IsNotInfoVisibility = Visibility.Hidden;
+                GridInvoiceInfoVisibility = Visibility.Visible;
+                var rows = myProjectRepository.GetInvoiceClientRows(id.Value);
+                foreach (var r in rows)
+                {
+                    InvoiceNomenklRows.Add(new ProjectInvoiceNomenklInfo()
+                    {
+                        Note = r.SFT_TEXT,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        Summa = r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0,
+                        NomenklName = r.SD_83.NOM_NAME,
+                        NomenklNumber = r.SD_83.NOM_NOMENKL,
+                        Quantity = (decimal) r.SFT_KOL,
+                        Unit = r.SD_83.SD_175.ED_IZM_NAME,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        UnitPrice = (decimal)r.SFT_ED_CENA,
+                        Shipped = r.SD_83.NOM_0MATER_1USLUGA == 1 ?
+                            1 : r.TD_24?.Sum(_ => _.DDT_KOL_RASHOD) ?? 0,
+                        ShippedSumma =  r.SD_83.NOM_0MATER_1USLUGA == 1 ?
+                            r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0 :
+                            (r.TD_24?.Sum(_ => _.DDT_KOL_RASHOD) ?? 0)*r.SFT_SUMMA_K_OPLATE_KONTR_CRS/(decimal?)r.SFT_KOL ?? 0,
+                        IsUsluga = r.SD_83.NOM_0MATER_1USLUGA == 1
+                    });
+                }
+                break;
+            case DocumentType.InvoiceProvider:
+                if(id is null) return;
+                GridInfoVisibility = Visibility.Hidden;
+                IsNotInfoVisibility = Visibility.Hidden;
+                GridInvoiceInfoVisibility = Visibility.Visible;
+                var rows2 = myProjectRepository.GetInvoiceProviderRows(id.Value);
+                foreach (var r in rows2)
+                {
+                    InvoiceNomenklRows.Add(new ProjectInvoiceNomenklInfo()
+                    {
+                        Note = r.SFT_TEXT,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        Summa = r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0,
+                        NomenklName = r.SD_83.NOM_NAME,
+                        NomenklNumber = r.SD_83.NOM_NOMENKL,
+                        Quantity = (decimal) r.SFT_KOL,
+                        Unit = r.SD_83.SD_175.ED_IZM_NAME,
+                        // ReSharper disable once PossibleInvalidOperationException
+                        UnitPrice = (decimal)r.SFT_ED_CENA,
+                        Shipped = r.SD_83.NOM_0MATER_1USLUGA == 1 ?
+                            1 : r.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0,
+                        ShippedSumma = r.SD_83.NOM_0MATER_1USLUGA == 1 ?
+                            r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0 :
+                            (r.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0)*r.SFT_SUMMA_K_OPLATE_KONTR_CRS/r.SFT_KOL ?? 0,
+                        IsUsluga = r.SD_83.NOM_0MATER_1USLUGA == 1
+                    });
+                }
+                break;
             case DocumentType.StoreOrderIn:
                 GridInfoVisibility = Visibility.Visible;
+                GridInvoiceInfoVisibility = Visibility.Hidden;
                 IsNotInfoVisibility = Visibility.Hidden;
-                foreach (var newItem in from row in myProjectRepository.GetNomenklRows(dc)
+                if (dc is null) return;
+                foreach (var newItem in from row in myProjectRepository.GetNomenklRows(dc.Value)
                          let nom = GlobalOptions.ReferencesCache.GetNomenkl(row.DDT_NOMENKL_DC) as Nomenkl
                          select new ProjectNomenklInfo
                          {
@@ -411,7 +500,9 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             case DocumentType.Waybill:
                 GridInfoVisibility = Visibility.Visible;
                 IsNotInfoVisibility = Visibility.Hidden;
-                foreach (var newItem in from row in myProjectRepository.GetNomenklRows(dc)
+                GridInvoiceInfoVisibility = Visibility.Hidden;
+                if (dc is null) return;
+                foreach (var newItem in from row in myProjectRepository.GetNomenklRows(dc.Value)
                          let nom = GlobalOptions.ReferencesCache.GetNomenkl(row.DDT_NOMENKL_DC) as Nomenkl
                          select new ProjectNomenklInfo
                          {
@@ -431,6 +522,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             default:
                 IsNotInfoVisibility = Visibility.Visible;
                 GridInfoVisibility = Visibility.Hidden;
+                GridInvoiceInfoVisibility = Visibility.Hidden;
                 break;
         }
     }

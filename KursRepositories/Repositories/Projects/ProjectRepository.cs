@@ -1,11 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Entity;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using Data;
 using Helper;
 using KursAM2.Repositories.RedisRepository;
@@ -21,6 +13,13 @@ using KursDomain.Result;
 using KursRepositories.Repositories.Base;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Text;
 
 namespace KursRepositories.Repositories.Projects
 {
@@ -231,6 +230,12 @@ namespace KursRepositories.Repositories.Projects
             );
         }
 
+        public List<TD_84> GetInvoiceClientRows(Guid id)
+        {
+            return Context.TD_84.Include(_ => _.SD_83).Include(_ => _.TD_24)
+                .Include(_ => _.SD_83.SD_175).Where(_ => _.DocId == id).ToList();
+        }
+
         #endregion
 
         #region InvoiceProvider
@@ -238,6 +243,13 @@ namespace KursRepositories.Repositories.Projects
         public int GetInvoicesProviderCount(DateTime dateStart, DateTime dateEnd)
         {
             return Context.InvoicePostQuery.Count(_ => _.Date >= dateStart && _.Date <= dateEnd);
+        }
+
+        public List<TD_26> GetInvoiceProviderRows(Guid id)
+        {
+            return Context.TD_26.Include(_ => _.SD_83)
+                .Include(_ => _.SD_83.SD_175)
+                .Include(_ => _.TD_24).Where(_ => _.DocId == id).ToList();
         }
 
         public decimal? GetInvoiceProviderDC(Guid rowId, bool isRow, bool isCrsConvert)
@@ -485,7 +497,7 @@ namespace KursRepositories.Repositories.Projects
                 return new List<ProjectDocumentInfo>();
             return LoadProjectDocuments(prj);
         }
-
+        
         public List<Guid> GetDocumentsProjects(DocumentType docType, decimal dc, bool isCrsConvert)
         {
             var sqlClient =
@@ -662,6 +674,7 @@ namespace KursRepositories.Repositories.Projects
         public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Data.Projects project)
         {
             var ret = new List<ProjectDocumentInfo>();
+            var excl = GetDocumentsRowExclude(new List<Guid> { project.Id }).Select(_ => _.NomenklDC).ToList();
             if (project.ProjectDocuments is not null && project.ProjectDocuments.Count > 0)
                 foreach (var p in project.ProjectDocuments)
                 {
@@ -675,9 +688,9 @@ namespace KursRepositories.Repositories.Projects
                         {
                             newItem.BankAccount = (
                                 (IName)
-                                    GlobalOptions.ReferencesCache.GetBankAccount(
-                                        bb.SD_101.VV_ACC_DC
-                                    )
+                                GlobalOptions.ReferencesCache.GetBankAccount(
+                                    bb.SD_101.VV_ACC_DC
+                                )
                             )?.Name;
                             newItem.Currency =
                                 GlobalOptions
@@ -690,7 +703,7 @@ namespace KursRepositories.Repositories.Projects
                             newItem.DocDate = bb.SD_101.VV_START_DATE;
                             newItem.Kontragent =
                                 GlobalOptions.ReferencesCache.GetKontragent(bb.VVT_KONTRAGENT)
-                                as Kontragent;
+                                    as Kontragent;
                             newItem.DocInfo = GetDocDescription(DocumentType.Bank, newItem);
                         }
                     }
@@ -706,7 +719,7 @@ namespace KursRepositories.Repositories.Projects
                                 GlobalOptions.ReferencesCache.GetCurrency(chIn.CRS_DC) as Currency;
                             newItem.Kontragent =
                                 GlobalOptions.ReferencesCache.GetKontragent(chIn.KONTRAGENT_DC)
-                                as Kontragent;
+                                    as Kontragent;
                             newItem.SummaIn = (decimal)chIn.CRS_SUMMA;
                             newItem.DocDate = (DateTime)chIn.DATE_ORD;
                             newItem.InnerNumber = chIn.NUM_ORD;
@@ -750,17 +763,18 @@ namespace KursRepositories.Repositories.Projects
                             .FirstOrDefault(_ => _.DOC_CODE == p.WarehouseOrderInDC);
                         if (ord != null)
                         {
+                            newItem.HasExcludeRow = ord.TD_24.Any(_ => excl.All(x => x != _.DDT_NOMENKL_DC));
                             newItem.Warehouse =
                                 GlobalOptions.ReferencesCache.GetWarehouse(ord.DD_SKLAD_POL_DC)
-                                as Warehouse;
+                                    as Warehouse;
                             newItem.Kontragent =
                                 GlobalOptions.ReferencesCache.GetKontragent(ord.DD_KONTR_OTPR_DC)
-                                as Kontragent;
+                                    as Kontragent;
                             newItem.Currency =
                                 GlobalOptions
                                     .ReferencesCache.GetKontragent(ord.DD_KONTR_OTPR_DC)
                                     ?.Currency as Currency;
-                            newItem.SummaIn = ord.TD_24.Sum(_ =>
+                            newItem.SummaIn = ord.TD_24.Where(_ => excl.All(x => x != _.DDT_NOMENKL_DC)).Sum(_ =>
                                 _.DDT_KOL_PRIHOD
                                 * (_.TD_26.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0)
                                 / _.TD_26.SFT_KOL
@@ -773,9 +787,9 @@ namespace KursRepositories.Repositories.Projects
                             newItem.Creator = ord.CREATOR;
                             newItem.ProductTypeName = (
                                 (IName)
-                                    GlobalOptions.ReferencesCache.GetNomenklProductType(
-                                        ord.SD_26?.SF_VZAIMOR_TYPE_DC
-                                    )
+                                GlobalOptions.ReferencesCache.GetNomenklProductType(
+                                    ord.SD_26?.SF_VZAIMOR_TYPE_DC
+                                )
                             )?.Name;
                         }
                     }
@@ -786,7 +800,8 @@ namespace KursRepositories.Repositories.Projects
                             .TD_26_CurrencyConvert.Include(_ => _.TD_26)
                             .Include(_ => _.TD_26.SD_26)
                             .FirstOrDefault(_ => _.Id == p.CurrencyConvertId);
-                        if (ord != null)
+                        var n = GlobalOptions.ReferencesCache.GetNomenkl(ord.NomenklId);
+                        if (ord != null && excl.All(_ => _ != ((IDocCode)n).DocCode))
                         {
                             var kontr =
                                 GlobalOptions.ReferencesCache.GetKontragent(
@@ -796,7 +811,7 @@ namespace KursRepositories.Repositories.Projects
                                 GlobalOptions.ReferencesCache.GetNomenkl(ord.NomenklId) as Nomenkl;
                             newItem.Warehouse =
                                 GlobalOptions.ReferencesCache.GetWarehouse(ord.StoreDC)
-                                as Warehouse;
+                                    as Warehouse;
                             newItem.Kontragent = kontr;
                             newItem.Currency = newItem.Nomenkl.Currency as Currency;
                             newItem.SummaOut = ord.Summa;
@@ -811,9 +826,9 @@ namespace KursRepositories.Repositories.Projects
                             newItem.Creator = ord.TD_26.SD_26.CREATOR;
                             newItem.ProductTypeName = (
                                 (IName)
-                                    GlobalOptions.ReferencesCache.GetNomenklProductType(
-                                        ord.TD_26.SD_26?.SF_VZAIMOR_TYPE_DC
-                                    )
+                                GlobalOptions.ReferencesCache.GetNomenklProductType(
+                                    ord.TD_26.SD_26?.SF_VZAIMOR_TYPE_DC
+                                )
                             )?.Name;
                         }
                     }
@@ -826,19 +841,20 @@ namespace KursRepositories.Repositories.Projects
                             .FirstOrDefault(_ => _.DOC_CODE == p.WaybillDC);
                         if (row != null)
                         {
+                            newItem.HasExcludeRow = row.TD_24.Any(_ => excl.All(x => x != _.DDT_NOMENKL_DC));
                             newItem.Warehouse =
                                 GlobalOptions.ReferencesCache.GetWarehouse(row.DD_SKLAD_OTPR_DC)
-                                as Warehouse;
+                                    as Warehouse;
                             newItem.Kontragent =
                                 GlobalOptions.ReferencesCache.GetKontragent(row.DD_KONTR_POL_DC)
-                                as Kontragent;
+                                    as Kontragent;
                             newItem.Currency = newItem.Kontragent?.Currency as Currency;
-                            newItem.SummaOut = row.TD_24.Sum(_ =>
+                            newItem.SummaOut = row.TD_24.Where(_ => excl.All(x => x != _.DDT_NOMENKL_DC)).Sum(_ =>
                                 _.DDT_KOL_RASHOD
                                 * (_.TD_84.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0)
                                 / (decimal)_.TD_84.SFT_KOL
                             );
-                            newItem.SummaDiler = row.TD_24.Sum(_ =>
+                            newItem.SummaDiler = row.TD_24.Where(_ => excl.All(x => x != _.DDT_NOMENKL_DC)).Sum(_ =>
                                 _.DDT_KOL_RASHOD
                                 * (_.TD_84.SFT_NACENKA_DILERA ?? 0)
                                 / (decimal)_.TD_84.SFT_KOL
@@ -850,9 +866,9 @@ namespace KursRepositories.Repositories.Projects
                             newItem.Creator = row.CREATOR;
                             newItem.ProductTypeName = (
                                 (IName)
-                                    GlobalOptions.ReferencesCache.GetNomenklProductType(
-                                        row.SD_84?.SF_VZAIMOR_TYPE_DC
-                                    )
+                                GlobalOptions.ReferencesCache.GetNomenklProductType(
+                                    row.SD_84?.SF_VZAIMOR_TYPE_DC
+                                )
                             )?.Name;
                         }
                     }
@@ -866,6 +882,24 @@ namespace KursRepositories.Repositories.Projects
                         if (d != null)
                         {
                             var doc = new InvoiceProviderBase(d);
+
+                            var hasExclude = false;
+                            var rem = new List<InvoicePostQuery>();
+                            foreach (var r in d.Where(r => excl.Any(_ => _ == r.NomenklDC)))
+                            {
+                                hasExclude = true;
+                                rem.Add(r);
+                            }
+
+                            if (rem.Count > 0)
+                            {
+                                foreach (var rr in rem)
+                                {
+                                    d.Remove(rr);
+                                }
+                            }
+
+                            newItem.HasExcludeRow = hasExclude;
                             newItem.Kontragent = doc.Kontragent;
                             newItem.Currency = newItem.Kontragent?.Currency as Currency;
                             newItem.SummaIn = doc.Summa;
@@ -875,7 +909,10 @@ namespace KursRepositories.Repositories.Projects
                                 .Sum(_ => _.Quantity);
                             foreach (var r in d)
                                 if (r.IsUsluga ?? false)
+                                {
                                     newItem.QuantityInShipped += r.Quantity;
+                                    newItem.UslugaSummaOut += r.Summa ?? 0;
+                                }
                                 else
                                     newItem.QuantityInShipped += d.Where(_ =>
                                             _.DocCode == doc.DocCode
@@ -895,9 +932,9 @@ namespace KursRepositories.Repositories.Projects
                             newItem.Creator = doc.CREATOR;
                             newItem.ProductTypeName = (
                                 (IName)
-                                    GlobalOptions.ReferencesCache.GetNomenklProductType(
-                                        ((IInvoiceProvider)doc)?.VzaimoraschetTypeDC
-                                    )
+                                GlobalOptions.ReferencesCache.GetNomenklProductType(
+                                    ((IInvoiceProvider)doc)?.VzaimoraschetTypeDC
+                                )
                             )?.Name;
                         }
                     }
@@ -909,22 +946,72 @@ namespace KursRepositories.Repositories.Projects
                             .ToList();
                         if (d is not null)
                         {
-                            var doc = new InvoiceClientBase(d);
-                            newItem.Kontragent = doc.Client;
-                            newItem.Currency = doc.Currency;
-                            newItem.SummaOut = doc.Summa;
-                            newItem.SummaPay = doc.PaySumma;
-                            newItem.SummaShipped = doc.SummaOtgruz;
-                            newItem.QuantityOutDocument =
-                                d.Where(_ => _.DocCode == doc.DocCode).Sum(_ => _.Quantity) ?? 0;
-                            foreach (var r in d)
-                                if (r.IsUsluga ?? false)
-                                    newItem.QuantityOutShipped += r.Quantity ?? 0;
-                                else
-                                    newItem.QuantityOutShipped += d.Where(_ =>
-                                            _.DocCode == doc.DocCode
-                                        )
-                                        .Sum(_ => _.Shipped);
+                            var hasExclude = Context.InvoiceClientQuery.Any(_ =>
+                                _.Id == p.InvoiceClientId && excl.Any(x => x == _.NomenklDC));
+                            
+                            var doc = new InvoiceClientBase(d); 
+                            newItem.HasExcludeRow = hasExclude;
+                                newItem.Kontragent = doc.Client;
+                                newItem.Currency = doc.Currency;
+                            if (!hasExclude)
+                            {
+                                newItem.SummaOut = doc.Summa;
+                                newItem.SummaPay = doc.PaySumma;
+                                newItem.SummaShipped = doc.SummaOtgruz;
+                                newItem.QuantityOutDocument =
+                                    d.Where(_ => _.DocCode == doc.DocCode).Sum(_ => _.Quantity) ?? 0;
+                                foreach (var r in d)
+                                    if (r.IsUsluga ?? false)
+                                    {
+                                        newItem.QuantityOutShipped += r.Quantity ?? 0;
+                                        newItem.UslugaSummaOut += r.Summa ?? 0;
+                                    }
+                                    else
+                                        newItem.QuantityOutShipped += d.Where(_ =>
+                                                _.DocCode == doc.DocCode
+                                            )
+                                            .Sum(_ => _.Shipped);
+                            }
+                            else
+                            {
+                                var excludeRows = Context.TD_84.Include(_ => _.SD_83)
+                                    .Where(_ => _.DOC_CODE == doc.DocCode && excl.Contains(_.SFT_NEMENKL_DC)).ToList();
+                                newItem.SummaOut = doc.Summa - excludeRows.Sum(_ => _.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0);
+                                newItem.SummaPay = doc.PaySumma;
+                                var sOtgr = 0m;
+                                var qOtgr = 0m;
+                                foreach (var r in excludeRows)
+                                {
+                                    if (r.SD_83.NOM_0MATER_1USLUGA == 1)
+                                    {
+                                        sOtgr += r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0;
+                                        qOtgr += 1;
+                                        continue;
+                                    }
+
+                                    var otgr = Context.TD_24.Where(_ => _.DOC_CODE == doc.DocCode).ToList();
+                                    foreach (var rs in otgr)
+                                    {
+                                        sOtgr += rs.DDT_KOL_RASHOD * (r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) / (decimal)r.SFT_KOL;
+                                        qOtgr += rs.DDT_KOL_RASHOD;
+                                    }
+                                }
+
+                                newItem.UslugaSummaIn = d.Where(_ => _.DocCode == doc.DocCode && (_.IsUsluga ?? false)).Sum(_ => _.Price*_.Quantity) ?? 0;
+                                newItem.SummaShipped = doc.SummaOtgruz - sOtgr;
+                                newItem.QuantityOutDocument =
+                                    d.Where(_ => _.DocCode == doc.DocCode).Sum(_ => _.Quantity) ?? 0;
+                                foreach (var r in d)
+                                    if (r.IsUsluga ?? false)
+                                        newItem.QuantityOutShipped += r.Quantity ?? 0;
+                                    else
+                                        newItem.QuantityOutShipped += d.Where(_ =>
+                                                _.DocCode == doc.DocCode
+                                            )
+                                            .Sum(_ => _.Shipped);
+                                newItem.QuantityOutShipped -= qOtgr;
+                            }
+
                             newItem.QuantityOutRemain =
                                 newItem.QuantityOutDocument - newItem.QuantityOutShipped;
                             newItem.SummaOutRemain = newItem.SummaOut - newItem.SummaShipped;
@@ -939,13 +1026,15 @@ namespace KursRepositories.Repositories.Projects
                             newItem.Creator = doc.CREATOR;
                             newItem.ProductTypeName = doc.VzaimoraschetType?.Name;
                         }
+
                     }
+
 
                     if (p.UslugaProviderRowId is not null)
                     {
                         var row = Context
                             .TD_26.Include(_ => _.SD_26)
-                            .FirstOrDefault(_ => _.Id == p.UslugaProviderRowId);
+                            .FirstOrDefault(_ => _.Id == p.UslugaProviderRowId && excl.All(x=>x != _.SFT_NEMENKL_DC));
                         if (row != null)
                         {
                             newItem.Kontragent =
@@ -978,7 +1067,7 @@ namespace KursRepositories.Repositories.Projects
                     {
                         var row = Context
                             .TD_84.Include(_ => _.SD_84)
-                            .FirstOrDefault(_ => _.Id == p.UslugaClientRowId);
+                            .FirstOrDefault(_ => _.Id == p.UslugaClientRowId && excl.All(x => x != _.SFT_NEMENKL_DC));
                         if (row != null)
                         {
                             newItem.Kontragent =
@@ -2123,13 +2212,18 @@ namespace KursRepositories.Repositories.Projects
 
         public void IncludeNomenklToProject(Guid projectIdGuid, decimal nomDC)
         {
-            var old = Context.ProjectRowExclude.FirstOrDefault(_ =>
-                _.ProjectId == projectIdGuid && _.NomenklDC == nomDC
-            );
-            if (old is null)
-                return;
-            Context.ProjectRowExclude.Remove(old);
-            Context.SaveChanges();
+            var ids = GetAllTreeProjectIds(projectIdGuid);
+            foreach (var old in ids.Select(id => Context.ProjectRowExclude.FirstOrDefault(_ =>
+                         _.ProjectId == id && _.NomenklDC == nomDC
+                     )))
+            {
+                if (old is null)
+                    return;
+                Context.ProjectRowExclude.Remove(old);
+            }
+
+            if(Context.ChangeTracker.HasChanges())
+                Context.SaveChanges();
         }
 
         public List<Tuple<Guid, int>> GetCountDocumentsForProjects()
@@ -2160,6 +2254,8 @@ namespace KursRepositories.Repositories.Projects
                 .Where(_ => _.DOC_CODE == dc)
                 .ToList();
         }
+
+        
 
         private class DocDecimalProjLink
         {

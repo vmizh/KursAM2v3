@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using Data;
+﻿using Data;
+using DevExpress.XtraRichEdit.Fields;
 using Helper;
 using KursDomain;
 using KursDomain.Documents.Base;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
-using KursDomain.References;
 using KursDomain.Repository;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Runtime.Remoting.Contexts;
+using Currency = KursDomain.References.Currency;
 
 namespace KursAM2.Repositories.InvoicesRepositories
 {
@@ -143,7 +145,10 @@ namespace KursAM2.Repositories.InvoicesRepositories
 
         public InvoiceProvider GetFullCopy(decimal dc)
         {
-            var doc = Context.SD_26.Include(_ => _.TD_26).AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == dc);
+            var prxContext = Context.Configuration.ProxyCreationEnabled;
+            Context.Configuration.ProxyCreationEnabled = false;
+            var doc = Context.SD_26.Include(_ => _.TD_26)
+                .Include("TD_26.TD_24").AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == dc);
             if (doc == null) return null;
             var newId = Guid.NewGuid();
             var ret = new InvoiceProvider(doc)
@@ -175,14 +180,24 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 newCode++;
             }
 
+            foreach (var t in ret.Entity.TD_26)
+            {
+                t.TD_24.Clear();
+            }
+            Context.Configuration.ProxyCreationEnabled = prxContext;
             return ret;
         }
 
         public InvoiceProvider GetRequisiteCopy(decimal dc)
         {
+            var prxContext = Context.Configuration.ProxyCreationEnabled;
+            Context.Configuration.ProxyCreationEnabled = false;
             var doc = Context.SD_26.AsNoTracking().FirstOrDefault(_ => _.DOC_CODE == dc);
             if (doc == null) return null;
             var newId = Guid.NewGuid();
+            doc.SF_KONTR_CRS_SUMMA = 0;
+            doc.SF_FACT_SUMMA = 0;
+            doc.SF_CRS_SUMMA = 0;
             var ret = new InvoiceProvider(doc)
             {
                 Id = newId,
@@ -196,8 +211,10 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 IsAccepted = false,
                 IsNDSInPrice = true,
                 NakladDistributedSumma = 0,
+                
             };
             
+            Context.Configuration.ProxyCreationEnabled = prxContext;
             return ret;
         }
 
