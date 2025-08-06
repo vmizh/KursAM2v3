@@ -258,6 +258,16 @@ public class ProjectDocumentInfoBase : RSViewModelBase, IEntity<ProjectDocuments
     [DisplayFormat(DataFormatString = "n2")]
     public decimal SummaOut { set; get; }
 
+
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Сумма(услуга) приход", Order = 6)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal UslugaSummaIn { set; get; }
+
+    [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Сумма(услуга) расход", Order = 7)]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal UslugaSummaOut { set; get; }
+
+
     [Display(AutoGenerateField = true, GroupName = "Основные данные", Name = "Оплачено", Order = 8)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal SummaPay { set; get; }

@@ -104,6 +104,8 @@ public class InvoiceClientRepository : GenericKursDBRepository<InvoiceClientView
                 newCode++;
             }
         }
+        ret.ShipmentRows.Clear();
+        ret.PaymentDocs.Clear();
 
         return ret;
     }

@@ -1427,6 +1427,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         ctx.Document = ctx.InvoiceClientRepository.GetFullCopy(Document.DocCode);
         ctx.Document.Rows.Clear();
         ctx.Document.Entity.TD_84.Clear();
+        ctx.Document.Summa = 0;
         ctx.UnitOfWork.Context.SD_84.Add(ctx.Document.Entity);
         foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
         {

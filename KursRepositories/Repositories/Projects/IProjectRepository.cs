@@ -235,6 +235,9 @@ namespace KursRepositories.Repositories.Projects
 
         List<TD_24> GetNomenklRows(decimal dc);
 
+        List<TD_84> GetInvoiceClientRows(Guid id);
+        List<TD_26> GetInvoiceProviderRows(Guid id);
+
         List<Guid> GetDocumentsProjects(DocumentType docType, decimal dc, bool isCrsConvert);
 
         Dictionary<decimal, string> GetInvoicesLinkWithProjects(

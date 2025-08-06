@@ -627,6 +627,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ctx.UnitOfWork.Context.SD_84.Add(ctx.Document.Entity);
             ctx.Document.ShipmentRows.Clear();
             ctx.Document.Entity.TD_24.Clear();
+            ctx.Document.Summa = 0;
             ctx.Document.PaymentDocs.Clear();
             foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
             {
