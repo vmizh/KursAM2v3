@@ -19,6 +19,7 @@ namespace Data
         {
             this.DistributeNakladRow = new HashSet<DistributeNakladRow>();
             this.ProjectDocuments = new HashSet<ProjectDocuments>();
+            this.ProjectRowExclude = new HashSet<ProjectRowExclude>();
         }
     
         public System.Guid Id { get; set; }
@@ -41,5 +42,7 @@ namespace Data
         public virtual TD_26 TD_26 { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProjectDocuments> ProjectDocuments { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectRowExclude> ProjectRowExclude { get; set; }
     }
 }

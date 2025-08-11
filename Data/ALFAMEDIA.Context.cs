@@ -949,7 +949,7 @@ namespace Data
         }
     
         [DbFunction("Entities", "GetNomenklMoveForProject")]
-        public virtual IQueryable<GetNomenklMoveForProject_Result> GetNomenklMoveForProject(Nullable<System.Guid> projectId, Nullable<byte> isRecursive)
+        public virtual IQueryable<GetNomenklMoveForProject_Result> GetNomenklMoveForProject(Nullable<System.Guid> projectId, Nullable<byte> isRecursive, Nullable<byte> isExcludeAllow)
         {
             var projectIdParameter = projectId.HasValue ?
                 new ObjectParameter("ProjectId", projectId) :
@@ -959,7 +959,11 @@ namespace Data
                 new ObjectParameter("IsRecursive", isRecursive) :
                 new ObjectParameter("IsRecursive", typeof(byte));
     
-            return ((IObjectContextAdapter)this).ObjectContext.CreateQuery<GetNomenklMoveForProject_Result>("[Entities].[GetNomenklMoveForProject](@ProjectId, @IsRecursive)", projectIdParameter, isRecursiveParameter);
+            var isExcludeAllowParameter = isExcludeAllow.HasValue ?
+                new ObjectParameter("IsExcludeAllow", isExcludeAllow) :
+                new ObjectParameter("IsExcludeAllow", typeof(byte));
+    
+            return ((IObjectContextAdapter)this).ObjectContext.CreateQuery<GetNomenklMoveForProject_Result>("[Entities].[GetNomenklMoveForProject](@ProjectId, @IsRecursive, @IsExcludeAllow)", projectIdParameter, isRecursiveParameter, isExcludeAllowParameter);
         }
     }
 }
