@@ -416,6 +416,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     {
         NomenklRows.Clear();
         InvoiceNomenklRows.Clear();
+        var exclude = myProjectRepository.GetDocumentsRowExclude([CurrentProject.Id]);
         switch (docType)
         {
             case DocumentType.InvoiceClient:
@@ -426,6 +427,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 var rows = myProjectRepository.GetInvoiceClientRows(id.Value);
                 foreach (var r in rows)
                 {
+                    if (exclude.Select(_ => _.SFClientRowId).Contains(r.Id)) continue;
                     InvoiceNomenklRows.Add(new ProjectInvoiceNomenklInfo()
                     {
                         Note = r.SFT_TEXT,
@@ -454,6 +456,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 var rows2 = myProjectRepository.GetInvoiceProviderRows(id.Value);
                 foreach (var r in rows2)
                 {
+                    if (exclude.Select(_ => _.SFProviderRowId).Contains(r.Id)) continue;
                     InvoiceNomenklRows.Add(new ProjectInvoiceNomenklInfo()
                     {
                         Note = r.SFT_TEXT,

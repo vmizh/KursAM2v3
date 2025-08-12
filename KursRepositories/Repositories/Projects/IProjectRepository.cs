@@ -250,9 +250,10 @@ namespace KursRepositories.Repositories.Projects
         List<Guid> GetAllTreeProjectIds(Guid id);
         List<Guid> GetChilds(List<Data.Projects> list, Guid id);
 
-        List<GetNomenklMoveForProject_Result> GetNomenklMoveForProject(
+        List<GetNomenklMoveForProject_Result1> GetNomenklMoveForProject(
             Guid projectId,
-            bool isRecursive
+            bool isRecursive,
+            bool isExcludeShow
         );
 
         List<Guid> GetChilds(Guid projectId);
@@ -262,10 +263,21 @@ namespace KursRepositories.Repositories.Projects
             decimal nomDC
         );
 
+        List<ProjectNomenklMoveDocumentInfo> GetDocumentsForNomenkl(
+            List<Guid> projectIds,
+            decimal nomDC,
+            bool isExcludeShow
+        );
+
         List<ProjectRowExclude> GetDocumentsRowExclude(List<Guid> projectIdGuids);
 
         void ExcludeNomenklFromProjects(List<Guid> projectIdGuids, decimal nomDC);
+
+        void ExcludeNomenklFromProjects(Guid projectId, DocumentType docType, Guid rowId);
+
         void IncludeNomenklToProject(Guid projectIdGuid, decimal nomDC);
+
+        void IncludeNomenklToProject(Guid projectId, DocumentType docType, Guid rowId);
 
         List<Tuple<Guid, int>> GetCountDocumentsForProjects();
     }

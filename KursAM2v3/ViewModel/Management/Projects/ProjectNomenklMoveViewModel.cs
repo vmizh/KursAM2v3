@@ -1,18 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Windows.Input;
-using Core.ViewModel.Base;
+﻿using Core.ViewModel.Base;
 using Data;
 using KursAM2.Managers;
+using KursAM2.View.Projects;
 using KursDomain;
 using KursDomain.Documents.Projects;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.WindowsManager.WindowsManager;
 using KursRepositories.Repositories.Projects;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Windows.Input;
+using System.Windows.Media;
+using DevExpress.Xpf.Core.ConditionalFormatting;
+using DevExpress.Xpf.Grid;
 
 namespace KursAM2.ViewModel.Management.Projects;
 
@@ -104,10 +108,8 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         [Display(AutoGenerateField = true, Name = "Услуги клиентам")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal ServiceClientSumma { get; set; }
-
-        [Display(AutoGenerateField = false)] public bool IsInclude { set; get; }
-
-
+        [Display(AutoGenerateField = true, Name = "Есть исключенные")]
+        public bool HasExcluded { set; get; }
     }
 
     #endregion
@@ -116,26 +118,30 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
     public ICommand ExcludeFromProjectCommand
     {
-        get { return new Command(ExcludeFromProject, _ => CurrentNomenkl?.IsInclude == true); }
+        get { return new Command(ExcludeFromProject, _ => CurrentDocument?.IsInclude == true); }
     }
 
     private void ExcludeFromProject(object obj)
     {
-        myProjectRepository.ExcludeNomenklFromProjects(
-            IsRecursive ? myProjectRepository.GetChilds(CurrentProject.Id) : [CurrentProject.Id], CurrentNomenkl.NomDC);
-        CurrentNomenkl.IsInclude = false;
-        NomenklRows.Remove(CurrentNomenkl);
+        myProjectRepository.ExcludeNomenklFromProjects(CurrentProject.Id, CurrentDocument.DocumentType,
+            CurrentDocument.Id);
+        CurrentDocument.IsInclude = false;
+        if(!IsShowExcluded)
+            DocumentRows.Remove(CurrentDocument);
+        CurrentNomenkl.HasExcluded = DocumentRows.Any(_ => !_.IsInclude);
     }
 
     public ICommand IncludeIntoProjectCommand
     {
-        get { return new Command(IncludeIntoProject, _ => (CurrentNomenkl?.IsInclude ?? false) == false); }
+        get { return new Command(IncludeIntoProject, _ => (CurrentDocument?.IsInclude ?? false) == false); }
     }
 
     private void IncludeIntoProject(object obj)
     {
-        myProjectRepository.IncludeNomenklToProject(CurrentProject.Id, CurrentNomenkl.NomDC);
-        CurrentNomenkl.IsInclude = true;
+        myProjectRepository.IncludeNomenklToProject(CurrentProject.Id, CurrentDocument.DocumentType,
+            CurrentDocument.Id);
+        CurrentDocument.IsInclude = true;
+        CurrentNomenkl.HasExcluded = DocumentRows.Any(_ => !_.IsInclude);
     }
 
     public override void RefreshData(object obj)
@@ -170,8 +176,6 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
                     newItem.LoadFromEntity(prj, GlobalOptions.ReferencesCache);
                     Projects.Add(newItem);
                 }
-
-
             }
         }
         catch (Exception ex)
@@ -310,6 +314,48 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
     #region Methods
 
+    public override void UpdateVisualObjects()
+    {
+        if (Form is not ProjectNomenklMove frm) return;
+        foreach (var col in frm.gridNomenklRows.Columns)
+        {
+            if (col.FieldName == "HasExcluded")
+                col.Visible = false;
+        } 
+        foreach (var col in frm.gridDocumentsRows.Columns)
+        {
+            if (col.FieldName == "IsInclude")
+                col.Visible = false;
+        } 
+        frm.tableViewDocuemts.FormatConditions.Clear();
+        var showRowForExcluded = new FormatCondition
+        {
+            //Expression = "[SummaFact] < [Summa]",
+            FieldName = "HasExcluded",
+            ApplyToRow = true,
+            Format = new Format
+            {
+                Foreground = Brushes.Blue
+            },
+            ValueRule = ConditionRule.Equal,
+            Value1 = true
+        };
+        var showRowForExcluded2 = new FormatCondition
+        {
+            FieldName = "IsInclude",
+            ApplyToRow = true,
+            Format = new Format
+            {
+                Foreground = Brushes.Blue
+            },
+            ValueRule = ConditionRule.Equal,
+            Value1 = false
+        };
+       
+        frm.tableViewDocuemts.FormatConditions.Add(showRowForExcluded);
+        frm.tableViewDocumentRows.FormatConditions.Add(showRowForExcluded2);
+    }
+
     private void LoadDocuments()
     {
         DocumentRows.Clear();
@@ -320,51 +366,44 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         else
             ProjIds.Add(CurrentProject.Id);
 
-        foreach (var doc in myProjectRepository.GetDocumentsForNomenkl(ProjIds, CurrentNomenkl.NomDC))
-        {
+        foreach (var doc in myProjectRepository.GetDocumentsForNomenkl(ProjIds, CurrentNomenkl.NomDC, IsShowExcluded))
             DocumentRows.Add(doc);
-        }
     }
 
+    
     private void LoadNomenkls()
     {
         NomenklRows.Clear();
         DocumentRows.Clear();
         if (CurrentProject is null) return;
-        var excl = myProjectRepository.GetDocumentsRowExclude(IsRecursive
-            ? myProjectRepository.GetChilds(CurrentProject.Id)
-            : [CurrentProject.Id]);
+        //var excl = myProjectRepository.GetDocumentsRowExclude(IsRecursive
+        //    ? myProjectRepository.GetChilds(CurrentProject.Id)
+        //    : [CurrentProject.Id]).ToList();
 
 
-        foreach (var n in myProjectRepository.GetNomenklMoveForProject(CurrentProject.Id, IsRecursive))
-        {
-            if (excl.Any(_ => _.NomenklDC == n.NomDC) && !IsShowExcluded) continue;
-            
-                NomenklRows.Add(new ProjectNomenklMoveInfo
-                {
-                    NakladSumma = n.NakladSumma ?? 0,
-                    FactSummaIn = n.IsService == 0 ? n.FactSummaIn ?? 0 : 0,
-                    FactQuantityOut = n.IsService == 0 ? n.FactQuantityOut ?? 0 : 0,
-                    DilerSumma = n.DilerSumma,
-                    DocQuantityIn = n.IsService == 0 ? n.DocQuantityIn ?? 0 : 0,
-                    DocQuantityOut = n.IsService == 0 ? n.DocQuantityOut ?? 0 : 0,
-                    DocSummaIn = n.IsService == 0 ? n.DocSummaIn ?? 0 : 0,
-                    DocSummaOut = n.IsService == 0 ? n.DocSummaOut ?? 0 : 0,
-                    FactQuantityIn = n.IsService == 0 ? n.FactQuantityIn ?? 0 : 0,
-                    FactSummaOut = n.IsService == 0 ? n.FactSummaOut ?? 0 : 0,
-                    IsService = (n.IsService ?? 0) == 1,
-                    ServiceClientSumma = n.IsService == 1 ? n.DocSummaIn ?? 0 : 0,
-                    ServiceProviderSumma = n.IsService == 1 ? n.DocSummaOut ?? 0 : 0,
-                    NomDC = n.NomDC ?? 0,
-                    NomId = n.NomId ?? Guid.Empty,
-                    NomName = n.NomName,
-                    NomNomenkl = n.NomNomenkl,
-                    IsInclude = excl.All(_ => _.NomenklDC != n.NomDC)
-                });
-            
-        }
-
-
+        foreach (var n in myProjectRepository.GetNomenklMoveForProject(CurrentProject.Id, IsRecursive, IsShowExcluded))
+            NomenklRows.Add(new ProjectNomenklMoveInfo
+            {
+                NakladSumma = n.NakladSumma ?? 0,
+                FactSummaIn = n.IsService == 0 ? n.FactSummaIn ?? 0 : 0,
+                FactQuantityOut = n.IsService == 0 ? n.FactQuantityOut ?? 0 : 0,
+                DilerSumma = n.DilerSumma ?? 0,
+                DocQuantityIn = n.IsService == 0 ? n.DocQuantityIn ?? 0 : 0,
+                DocQuantityOut = n.IsService == 0 ? n.DocQuantityOut ?? 0 : 0,
+                DocSummaIn = n.IsService == 0 ? n.DocSummaIn ?? 0 : 0,
+                DocSummaOut = n.IsService == 0 ? n.DocSummaOut ?? 0 : 0,
+                FactQuantityIn = n.IsService == 0 ? n.FactQuantityIn ?? 0 : 0,
+                FactSummaOut = n.IsService == 0 ? n.FactSummaOut ?? 0 : 0,
+                IsService = (n.IsService ?? 0) == 1,
+                ServiceClientSumma = n.IsService == 1 ? n.DocSummaIn ?? 0 : 0,
+                ServiceProviderSumma = n.IsService == 1 ? n.DocSummaOut ?? 0 : 0,
+                NomDC = n.NomDC ?? 0,
+                NomId = n.NomId ?? Guid.Empty,
+                NomName = n.NomName,
+                NomNomenkl = n.NomNomenkl,
+                HasExcluded = n.HasExcluded ?? false
+                
+            });
     }
 
     #endregion
