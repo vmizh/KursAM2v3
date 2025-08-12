@@ -110,18 +110,6 @@ RelativeSource={RelativeSource Mode=FindAncestor,
                                            ShowAutoFilterRow="True">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
-                                        <MenuItem Header="Исключить из проекта" 
-                                                  Command="{Binding ExcludeFromProjectCommand}">
-                                            <MenuItem.Icon>
-                                                <materialDesign:PackIcon Kind="StoreMinus" Foreground="Red" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
-                                        <MenuItem Header="Включить в проект" 
-                                                  Command="{Binding IncludeIntoProjectCommand}">
-                                            <MenuItem.Icon>
-                                                <materialDesign:PackIcon Kind="StorePlus" Foreground="Green" />
-                                            </MenuItem.Icon>
-                                        </MenuItem>
                                         <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                                   CommandParameter="{Binding Path=PlacementTarget, 
         RelativeSource={RelativeSource Mode=FindAncestor,
@@ -165,6 +153,19 @@ RelativeSource={RelativeSource Mode=FindAncestor,
                                                       Command="{Binding DocumentOpenCommand}">
                                                 <MenuItem.Icon>
                                                     <materialDesign:PackIcon Kind="PresentOpen" Foreground="Blue" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <Separator />
+                                            <MenuItem Header="Исключить из проекта" 
+                                                      Command="{Binding ExcludeFromProjectCommand}">
+                                                <MenuItem.Icon>
+                                                    <materialDesign:PackIcon Kind="StoreMinus" Foreground="Red" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Включить в проект" 
+                                                      Command="{Binding IncludeIntoProjectCommand}">
+                                                <MenuItem.Icon>
+                                                    <materialDesign:PackIcon Kind="StorePlus" Foreground="Green" />
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                             <Separator />

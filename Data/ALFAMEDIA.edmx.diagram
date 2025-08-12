@@ -2195,7 +2195,8 @@
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_ProjectId" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_WarehouseOrderInDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectDocuments_WaybillDC" />
-        <EntityTypeShape EntityType="ALFAMEDIA.ProjectRowExclude" Width="1.5" PointX="53.75" PointY="684.125" />
+        <EntityTypeShape EntityType="ALFAMEDIA.ProjectRowExclude" Width="1.5" PointX="60.25" PointY="699.75" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectRowExclude_NomCurrencyConvertRowId" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectRowExclude_NomenklDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectRowExclude_ProjectId" />
         </Diagram>

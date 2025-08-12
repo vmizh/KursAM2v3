@@ -17,7 +17,11 @@ namespace Data
         public System.Guid Id { get; set; }
         public System.Guid ProjectId { get; set; }
         public decimal NomenklDC { get; set; }
+        public Nullable<System.Guid> SFProviderRowId { get; set; }
+        public Nullable<System.Guid> SFClientRowId { get; set; }
+        public Nullable<System.Guid> NomCurrencyConvertRowId { get; set; }
     
+        public virtual TD_26_CurrencyConvert TD_26_CurrencyConvert { get; set; }
         public virtual SD_83 SD_83 { get; set; }
         public virtual Projects Projects { get; set; }
     }

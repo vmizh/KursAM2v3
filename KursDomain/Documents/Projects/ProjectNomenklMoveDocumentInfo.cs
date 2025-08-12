@@ -76,4 +76,6 @@ public class ProjectNomenklMoveDocumentInfo
     [DisplayFormat(DataFormatString = "n2")]
     public decimal ClientShippedQuantity { set; get; }
 
+    [Display(AutoGenerateField = true)] public bool IsInclude { set; get; } = false;
+
 }
