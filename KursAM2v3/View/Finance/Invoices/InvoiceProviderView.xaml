@@ -209,7 +209,7 @@
                                     MaskUseAsDisplayFormat="True"
                                     IsReadOnly="True" />
                             </dxlc:LayoutItem>
-                            <dxlc:LayoutItem Label="Условия оплаты:">
+                            <dxlc:LayoutItem Label="Статус:">
                                 <dxe:ComboBoxEdit
                                     Style="{StaticResource ComboBoxEditWithError}"
                                     AutoComplete="True"
