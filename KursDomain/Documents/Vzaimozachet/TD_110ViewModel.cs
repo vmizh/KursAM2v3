@@ -347,8 +347,18 @@ public class TD_110ViewModel : RSViewModelBase, IEntity<TD_110>, IEquatable<TD_1
         set
         {
             if (Entity.VZT_KONTR_CRS_SUMMA == value) return;
+            
             Entity.VZT_KONTR_CRS_SUMMA = value;
             RaisePropertyChanged();
+            if (Parent is SD_110ViewModel p)
+            {
+                if (VZT_1MYDOLZH_0NAMDOLZH == 0)
+                    p.VZ_RIGHT_UCH_CRS_SUM = -p.Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_KONTR_CRS_SUMMA);
+                else
+                {
+                    p.VZ_LEFT_UCH_CRS_SUM =  p.Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 1).Sum(_ => _.VZT_KONTR_CRS_SUMMA);
+                }
+            }
         }
     }
 

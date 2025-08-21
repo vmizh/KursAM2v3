@@ -103,9 +103,11 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
                               0;
             var sumDebitor = Document.Rows.Where(_ => _.VZT_1MYDOLZH_0NAMDOLZH == 0).Sum(_ => _.VZT_CRS_SUMMA) ?? 0;
             if (Equals(Document.CreditorCurrency, GlobalOptions.SystemProfile.NationalCurrency))
-                return sumDebitor == 0 ? 0 : sumCreditor / sumDebitor;
+
+                return Math.Round(sumDebitor == 0 ? 0 : sumCreditor / sumDebitor, 4);
             if (Equals(Document.DebitorCurrency, GlobalOptions.SystemProfile.NationalCurrency))
-                return sumCreditor == 0 ? 0 : sumDebitor / sumCreditor;
+                return Math.Round(sumCreditor == 0 ? 0 : sumDebitor / sumCreditor, 4);
+            Document.RaisePropertyAllChanged();
             return sumDebitor == 0 ? 0 : sumCreditor / sumDebitor;
         }
     }
