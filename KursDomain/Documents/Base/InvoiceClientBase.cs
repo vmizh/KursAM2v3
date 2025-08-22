@@ -233,7 +233,7 @@ namespace KursDomain.Documents.Base
         public NomenklProductType VzaimoraschetType { get; set; }
         [Display(AutoGenerateField = true, Name = "Форма расчетов", Order = 15)]
         public PayForm FormRaschet { get; set; }
-        [Display(AutoGenerateField = true, Name = "Условия оплаты", Order = 14)]
+        [Display(AutoGenerateField = true, Name = "Статус", Order = 14)]
         public PayCondition PayCondition { get; set; }
         [Display(AutoGenerateField = true, Name = "Дата", Order = 1)]
         public DateTime DocDate { get; set; }

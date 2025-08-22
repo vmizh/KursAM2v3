@@ -49,7 +49,7 @@ public interface IInvoiceProvider : IDocCode, IDocGuid, ILastChanged
     [DisplayFormat(DataFormatString = "n2")]
     decimal PaySumma { get; }
 
-    [Display(AutoGenerateField = true, Name = "Усл.платежа", Order = 15)]
+    [Display(AutoGenerateField = true, Name = "Статус", Order = 15)]
     PayCondition PayCondition { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Акцептован", Order = 11)]
