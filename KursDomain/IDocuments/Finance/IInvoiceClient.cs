@@ -24,7 +24,7 @@ public interface IInvoiceClient : ILastChanged
     [Display(AutoGenerateField = true, Name = "Форма расчетов", Order = 15)]
     PayForm FormRaschet { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Условия оплаты", Order = 14)]
+    [Display(AutoGenerateField = true, Name = "Статус", Order = 14)]
     PayCondition PayCondition { set; get; }
 
     [Display(AutoGenerateField = true, Name = "Дата", Order = 1)]
