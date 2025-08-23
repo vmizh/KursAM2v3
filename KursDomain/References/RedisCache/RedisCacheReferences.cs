@@ -3160,8 +3160,7 @@ public class RedisCacheReferences : IReferencesCache
                         Key = (string)message.ExternalValues["RedisKey"],
                         //DocCode = message.DocCode,
                         Id = nm_item.Id,
-                        LastUpdate =
-                            Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                        LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split('@')[1])
                     });
                 else
                 {

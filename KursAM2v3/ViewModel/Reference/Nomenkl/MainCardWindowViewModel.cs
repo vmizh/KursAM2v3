@@ -362,6 +362,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                     $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} номенклатура: {NomenklMain.Id} {NomenklMain.Name}"
                             };
                             message.ExternalValues.Add("NomenklDC", NomenklMain.NomenklCollection);
+                            message.ExternalValues.Add("RedisKey", $"Cache:NomenklMain:{NomenklMain.Id}@{DateTime.Now}");
                             var jsonSerializerSettings = new JsonSerializerSettings
                             {
                                 TypeNameHandling = TypeNameHandling.All

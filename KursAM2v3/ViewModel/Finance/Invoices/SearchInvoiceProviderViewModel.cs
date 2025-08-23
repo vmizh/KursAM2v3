@@ -52,7 +52,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override bool IsDocNewCopyAllow => CurrentDocument is not null;
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument is not null;
-        public override bool IsDocumentOpenAllow => CurrentDocument != null;
+        //public override bool IsDocumentOpenAllow => CurrentDocument != null;
 
         private readonly IProjectRepository myRepository = new ProjectRepository(GlobalOptions.GetEntities());
 
@@ -143,7 +143,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             set
             {
                 // ReSharper disable once PossibleUnintendedReferenceComparison
-                if (myCurrentDocument == value) return;
+                if (myCurrentDocument?.DocCode == value?.DocCode) return;
                 myCurrentDocument = value;
                 if (myCurrentDocument != null)
                 {

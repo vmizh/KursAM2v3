@@ -49,7 +49,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override bool IsDocNewCopyAllow => CurrentDocument is not null;
         public override bool IsDocNewCopyRequisiteAllow => CurrentDocument is not null;
-        public override bool IsDocumentOpenAllow => CurrentDocument != null;
+        //public override bool IsDocumentOpenAllow => CurrentDocument != null;
         
         public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
             new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
@@ -164,7 +164,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             get => myCurrentDocument;
             set
             {
-                if (myCurrentDocument == value) return;
+                if (myCurrentDocument?.DocCode == value?.DocCode) return;
                 myCurrentDocument = value;
                 if (myCurrentDocument != null)
                 {
