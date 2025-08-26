@@ -123,12 +123,17 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
     private void ExcludeFromProject(object obj)
     {
-        myProjectRepository.ExcludeNomenklFromProjects(CurrentProject.Id, CurrentDocument.DocumentType,
+        var projectGuids = new List<Guid>();
+        if(IsRecursive)
+            projectGuids.AddRange(myProjectRepository.GetAllTreeProjectIds(CurrentProject.Id));
+        else projectGuids.Add(CurrentProject.Id);
+        myProjectRepository.ExcludeNomenklFromProjects(projectGuids, CurrentDocument.DocumentType,
             CurrentDocument.Id);
         CurrentDocument.IsInclude = false;
+        CurrentNomenkl.HasExcluded = true;
         if(!IsShowExcluded)
             DocumentRows.Remove(CurrentDocument);
-        CurrentNomenkl.HasExcluded = DocumentRows.Any(_ => !_.IsInclude);
+        
     }
 
     public ICommand IncludeIntoProjectCommand
@@ -138,7 +143,11 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
     private void IncludeIntoProject(object obj)
     {
-        myProjectRepository.IncludeNomenklToProject(CurrentProject.Id, CurrentDocument.DocumentType,
+        var projectGuids = new List<Guid>();
+        if(IsRecursive)
+            projectGuids.AddRange(myProjectRepository.GetAllTreeProjectIds(CurrentProject.Id));
+        else projectGuids.Add(CurrentProject.Id);
+        myProjectRepository.IncludeNomenklToProject(projectGuids, CurrentDocument.DocumentType,
             CurrentDocument.Id);
         CurrentDocument.IsInclude = true;
         CurrentNomenkl.HasExcluded = DocumentRows.Any(_ => !_.IsInclude);
@@ -380,8 +389,8 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         //    ? myProjectRepository.GetChilds(CurrentProject.Id)
         //    : [CurrentProject.Id]).ToList();
 
-
         foreach (var n in myProjectRepository.GetNomenklMoveForProject(CurrentProject.Id, IsRecursive, IsShowExcluded))
+        {
             NomenklRows.Add(new ProjectNomenklMoveInfo
             {
                 NakladSumma = n.NakladSumma ?? 0,
@@ -402,8 +411,9 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
                 NomName = n.NomName,
                 NomNomenkl = n.NomNomenkl,
                 HasExcluded = n.HasExcluded ?? false
-                
+
             });
+        }
     }
 
     #endregion

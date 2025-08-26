@@ -250,6 +250,7 @@ namespace KursRepositories.Repositories.Projects
         {
             return Context.TD_26.Include(_ => _.SD_83)
                 .Include(_ => _.SD_83.SD_175)
+                .Include(_ => _.TD_26_CurrencyConvert)
                 .Include(_ => _.TD_24).Where(_ => _.DocId == id).ToList();
         }
 
@@ -676,7 +677,7 @@ namespace KursRepositories.Repositories.Projects
         {
             var ret = new List<ProjectDocumentInfo>();
             var excl = GetDocumentsRowExclude(new List<Guid> { project.Id }).Select(_ => _.NomenklDC).ToList();
-            var exclInvoices = Context.ProjectRowExclude.Where(_ => _.ProjectId == project.Id).ToList();
+            var exclInvoices = Context.ProjectRowExclude.Include(_ => _.TD_26_CurrencyConvert).Where(_ => _.ProjectId == project.Id).ToList();
             if (project.ProjectDocuments is not null && project.ProjectDocuments.Count > 0)
                 foreach (var p in project.ProjectDocuments)
                 {
@@ -809,6 +810,7 @@ namespace KursRepositories.Repositories.Projects
                                 GlobalOptions.ReferencesCache.GetKontragent(
                                     ord.TD_26.SD_26.SF_POST_DC
                                 ) as Kontragent;
+                            newItem.HasExcludeRow = exclInvoices.Any(_ => _.NomCurrencyConvertRowId == ord.Id);
                             newItem.Nomenkl =
                                 GlobalOptions.ReferencesCache.GetNomenkl(ord.NomenklId) as Nomenkl;
                             newItem.Warehouse =
@@ -888,6 +890,17 @@ namespace KursRepositories.Repositories.Projects
                             foreach (var ex in from ex in exclInvoices from dd in d where dd.RowId == ex.SFProviderRowId select ex)
                             {
                                 hasExclude = true;
+                            }
+
+                            if (!hasExclude)
+                            {
+                                var dc = d.First().DocCode;
+                                foreach (var c in Context.TD_26_CurrencyConvert.Where(_ => _.DOC_CODE == dc))
+                                {
+                                    if (exclInvoices.All(_ => _.NomCurrencyConvertRowId != c.Id)) continue;
+                                    hasExclude = true;
+                                    break;
+                                }
                             }
                             //var hasExclude = exclInvoices.Any(_ => _.SFProviderRowId == d.Any(_ => _.RowId ==));
 
@@ -1945,7 +1958,7 @@ namespace KursRepositories.Repositories.Projects
         )
         {
             return Context
-                .GetNomenklMoveForProject(projectId, (byte?)(isRecursive ? 1 : 0),(byte?)(isRecursive ? 1 : 0))
+                .GetNomenklMoveForProject(projectId, (byte?)(isRecursive ? 1 : 0),(byte?)(isExcludeShow ? 1 : 0))
                 .ToList();
         }
 
@@ -2383,54 +2396,91 @@ namespace KursRepositories.Repositories.Projects
             }
         }
 
-        public void ExcludeNomenklFromProjects(Guid projectId, DocumentType docType, Guid rowId)
+        public void ExcludeNomenklFromProjects(List<Guid> projectIdGuids, DocumentType docType, Guid rowId)
         {
             decimal? nomDC;
             switch (docType)
             {
                 case DocumentType.InvoiceProvider:
-                    var p = Context.ProjectRowExclude.FirstOrDefault(_ =>
-                        _.Id == projectId && _.SFProviderRowId == rowId);
-                    if (p is not null) return;
+                    var pEx = Context.ProjectRowExclude.Where(_ =>
+                        projectIdGuids.Contains(_.Id) && _.SFProviderRowId == rowId).ToList();
+                    if (pEx.Count > 0)
+                    {
+                        foreach (var p in pEx)
+                        {
+                            Context.ProjectRowExclude.Remove(p);
+                        }
+                    }
+
+                    Context.SaveChanges();
                     nomDC = Context.TD_26.FirstOrDefault(_ => _.Id == rowId)?.SFT_NEMENKL_DC;
                     if (nomDC is null) return;
-                    Context.ProjectRowExclude.Add(new ProjectRowExclude()
+                    foreach (var pp in projectIdGuids)
                     {
-                        Id = Guid.NewGuid(),
-                        ProjectId = projectId,
-                        SFProviderRowId = rowId,
-                        NomenklDC = nomDC.Value
-                    });
+                        Context.ProjectRowExclude.Add(new ProjectRowExclude()
+                        {
+                            Id = Guid.NewGuid(),
+                            ProjectId = pp,
+                            SFProviderRowId = rowId,
+                            NomenklDC = nomDC.Value
+                        });
+                    }
+
                     break;
                 case DocumentType.InvoiceClient:
-                    var c = Context.ProjectRowExclude.FirstOrDefault(_ =>
-                        _.Id == projectId && _.SFClientRowId == rowId);
-                    if (c is not null) return;
+                    var pcEx = Context.ProjectRowExclude.Where(_ =>
+                        projectIdGuids.Contains(_.Id) && _.SFClientRowId == rowId).ToList();
+                    if (pcEx.Count > 0)
+                    {
+                        foreach (var p in pcEx)
+                        {
+                            Context.ProjectRowExclude.Remove(p);
+                        }
+                    }
+
+                    Context.SaveChanges();
                     nomDC = Context.TD_84.FirstOrDefault(_ => _.Id == rowId)?.SFT_NEMENKL_DC;
                     if (nomDC is null) return;
-                    Context.ProjectRowExclude.Add(new ProjectRowExclude()
+                    foreach (var pp in projectIdGuids)
                     {
-                        Id = Guid.NewGuid(),
-                        ProjectId = projectId,
-                        SFClientRowId = rowId,
-                        NomenklDC = nomDC.Value
-                    });
+                        Context.ProjectRowExclude.Add(new ProjectRowExclude()
+                        {
+                            Id = Guid.NewGuid(),
+                            ProjectId = pp,
+                            SFProviderRowId = rowId,
+                            NomenklDC = nomDC.Value
+                        });
+                    }
+
+                    Context.SaveChanges();
                     break;
                 case DocumentType.NomenklCurrencyConverterProvider:
-                    var cc = Context.ProjectRowExclude.FirstOrDefault(_ =>
-                        _.Id == projectId && _.NomCurrencyConvertRowId == rowId);
-                    if (cc is not null) return;
+                    var pnEx = Context.ProjectRowExclude.Where(_ =>
+                        projectIdGuids.Contains(_.Id) && _.NomCurrencyConvertRowId == rowId).ToList();
+                    if (pnEx.Count > 0)
+                    {
+                        foreach (var p in pnEx)
+                        {
+                            Context.ProjectRowExclude.Remove(p);
+                        }
+                    }
+
+                    Context.SaveChanges();
                     var ccRow = Context.TD_26_CurrencyConvert.FirstOrDefault(_ => _.Id == rowId);
                     if (ccRow is null) return;
                     nomDC = Context.SD_83.FirstOrDefault(_ => _.Id == ccRow.NomenklId)?.DOC_CODE;
                     if (nomDC is null) return;
-                    Context.ProjectRowExclude.Add(new ProjectRowExclude()
+                    foreach (var pp in projectIdGuids)
                     {
-                        Id = Guid.NewGuid(),
-                        ProjectId = projectId,
-                        NomCurrencyConvertRowId = rowId,
-                        NomenklDC = nomDC.Value
-                    });
+                        Context.ProjectRowExclude.Add(new ProjectRowExclude()
+                        {
+                            Id = Guid.NewGuid(),
+                            ProjectId = pp,
+                            NomCurrencyConvertRowId = rowId,
+                            NomenklDC = nomDC.Value
+                        });
+                    }
+
                     break;
             }
 
@@ -2453,27 +2503,37 @@ namespace KursRepositories.Repositories.Projects
                 Context.SaveChanges();
         }
 
-        public void IncludeNomenklToProject(Guid projectId, DocumentType docType, Guid rowId)
+        public void IncludeNomenklToProject(List<Guid> projectIdGuids, DocumentType docType, Guid rowId)
         {
+            List<ProjectRowExclude> pEx = null;
             switch (docType)
             {
                 case DocumentType.InvoiceProvider:
-                    var p = Context.ProjectRowExclude.FirstOrDefault(_ =>
-                        _.ProjectId == projectId && _.SFProviderRowId == rowId);
-                    if (p is null) return;
-                    Context.ProjectRowExclude.Remove(p);
+                    pEx = Context.ProjectRowExclude.Where(_ =>
+                        projectIdGuids.Contains(_.ProjectId) && _.SFProviderRowId == rowId).ToList();
+                    if (pEx.Count == 0) return;
+                    foreach (var p in pEx)
+                    {
+                        Context.ProjectRowExclude.Remove(p);
+                    }
                     break;
                 case DocumentType.InvoiceClient:
-                   var c = Context.ProjectRowExclude.FirstOrDefault(_ =>
-                        _.ProjectId == projectId && _.SFClientRowId == rowId);
-                    if (c is null)  return;
-                    Context.ProjectRowExclude.Remove(c);
+                    pEx = Context.ProjectRowExclude.Where(_ =>
+                        projectIdGuids.Contains(_.ProjectId) && _.SFClientRowId == rowId).ToList();
+                    if (pEx.Count == 0) return;
+                    foreach (var p in pEx)
+                    {
+                        Context.ProjectRowExclude.Remove(p);
+                    }
                     break;
                 case DocumentType.NomenklCurrencyConverterProvider:
-                    var ccRow = Context.ProjectRowExclude.FirstOrDefault(_ =>
-                        _.ProjectId == projectId && _.NomCurrencyConvertRowId == rowId);
-                    if (ccRow is null)  return;
-                    Context.ProjectRowExclude.Remove(ccRow);
+                    pEx = Context.ProjectRowExclude.Where(_ =>
+                        projectIdGuids.Contains(_.ProjectId) && _.NomCurrencyConvertRowId == rowId).ToList();
+                    if (pEx.Count == 0) return;
+                    foreach (var p in pEx)
+                    {
+                        Context.ProjectRowExclude.Remove(p);
+                    }
                     break;
             }
 
@@ -2508,9 +2568,7 @@ namespace KursRepositories.Repositories.Projects
                 .Where(_ => _.DOC_CODE == dc)
                 .ToList();
         }
-
         
-
         private class DocDecimalProjLink
         {
             public decimal DocCode { set; get; }

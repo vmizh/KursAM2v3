@@ -25,6 +25,7 @@ using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursRepositories.Repositories.Projects;
+using MoreLinq.Extensions;
 
 namespace KursAM2.ViewModel.Management.Projects;
 
@@ -457,6 +458,8 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 foreach (var r in rows2)
                 {
                     if (exclude.Select(_ => _.SFProviderRowId).Contains(r.Id)) continue;
+                    if(r.TD_26_CurrencyConvert.Any(c => exclude.Select(_ => _.NomCurrencyConvertRowId).Contains(c.Id))) continue;
+                    
                     InvoiceNomenklRows.Add(new ProjectInvoiceNomenklInfo()
                     {
                         Note = r.SFT_TEXT,

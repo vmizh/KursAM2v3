@@ -757,7 +757,7 @@ public class RedisCacheReferences : IReferencesCache
         if (!cacheKeysDict.ContainsKey("Kontragent"))
             LoadCacheKeys("Kontragent");
 
-        var key = cacheKeysDict["Kontragent"].CachKeys.SingleOrDefault(_ => _.DocCode == dc);
+        var key = cacheKeysDict["Kontragent"].CachKeys.FirstOrDefault(_ => _.DocCode == dc);
         Kontragent itemNew;
         if (key is not null)
         {

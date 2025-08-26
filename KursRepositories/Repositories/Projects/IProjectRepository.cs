@@ -273,11 +273,11 @@ namespace KursRepositories.Repositories.Projects
 
         void ExcludeNomenklFromProjects(List<Guid> projectIdGuids, decimal nomDC);
 
-        void ExcludeNomenklFromProjects(Guid projectId, DocumentType docType, Guid rowId);
+        void ExcludeNomenklFromProjects(List<Guid> projectIdGuids, DocumentType docType, Guid rowId);
 
         void IncludeNomenklToProject(Guid projectIdGuid, decimal nomDC);
 
-        void IncludeNomenklToProject(Guid projectId, DocumentType docType, Guid rowId);
+        void IncludeNomenklToProject(List<Guid> projectIdGuids, DocumentType docType, Guid rowId);
 
         List<Tuple<Guid, int>> GetCountDocumentsForProjects();
     }
