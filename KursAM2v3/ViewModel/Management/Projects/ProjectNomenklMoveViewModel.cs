@@ -17,6 +17,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
+using KursDomain.Documents.CommonReferences;
 
 namespace KursAM2.ViewModel.Management.Projects;
 
@@ -197,7 +198,9 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
     protected override void DocumentOpen(object obj)
     {
-        DocumentsOpenManager.Open(CurrentDocument.DocumentType, CurrentDocument.DocCode);
+
+        DocumentsOpenManager.Open(CurrentDocument.DocumentType == DocumentType.NomenklCurrencyConverterProvider ?
+            DocumentType.InvoiceProvider : CurrentDocument.DocumentType, CurrentDocument.DocCode);
     }
 
     #endregion
