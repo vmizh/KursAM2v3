@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+using KursDomain.Documents.CommonReferences;
 
 namespace KursDomain.Documents.Projects;
 
@@ -22,6 +24,14 @@ public class ProjectNomenklInfo
 
     [Display(AutoGenerateField = true, Name = "Примечание",Order = 7)]
     public string Note { set; get; }
+
+    [Display(AutoGenerateField = false, Name = "Id",Order = 8)]
+    public Guid Id { set; get; }
+
+    [Display(AutoGenerateField = false, Name = "Тип",Order = 8)]
+    public DocumentType DocumentType { set; get; }
+
+
  
 }
 
@@ -54,6 +64,14 @@ public class ProjectInvoiceNomenklInfo
     [Display(AutoGenerateField = true, Name = "Сумма отгрузки",Order = 9)]
     public decimal? ShippedSumma { set; get; }
 
+    [Display(AutoGenerateField = false, Name = "Исключен",Order = 10)]
+    public bool IsExclude { set; get; }
+
+    [Display(AutoGenerateField = false, Name = "Id",Order = 8)]
+    public Guid Id { set; get; }
+
+    [Display(AutoGenerateField = false, Name = "Тип",Order = 8)]
+    public DocumentType DocumentType { set; get; }
  
 }
 

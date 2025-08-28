@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using Core.ViewModel.Base;
-using KursDomain.WindowsManager.WindowsManager;
+﻿using Core.ViewModel.Base;
 using Data;
 using DevExpress.Data;
 using DevExpress.Mvvm;
@@ -24,8 +15,16 @@ using KursDomain.Documents.Projects;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.WindowsManager.WindowsManager;
 using KursRepositories.Repositories.Projects;
-using MoreLinq.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace KursAM2.ViewModel.Management.Projects;
 
@@ -46,6 +45,31 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     #endregion
 
     #region Commands
+
+    public ICommand ExcludeFromProjectCommand
+    {
+        get { return new Command(ExcludeFromProject, _ => CurrentInvoiceNomenklRow?.IsExclude == false); }
+    }
+
+    private void ExcludeFromProject(object obj)
+    {
+        myProjectRepository.ExcludeNomenklFromProjects([CurrentProject.Id], CurrentInvoiceNomenklRow.DocumentType, CurrentInvoiceNomenklRow.Id);
+        CurrentDocument.HasExcludeRow = true;
+        CurrentInvoiceNomenklRow.IsExclude = true;
+    }
+
+    public ICommand IncludeIntoProjectCommand
+    {
+        get { return new Command(IncludeToProject, _ => CurrentInvoiceNomenklRow?.IsExclude == true); }
+    }
+
+    private void IncludeToProject(object obj)
+    {
+        myProjectRepository.IncludeNomenklToProject([CurrentProject.Id], CurrentInvoiceNomenklRow.DocumentType,
+            CurrentInvoiceNomenklRow.Id);
+        CurrentDocument.HasExcludeRow = InvoiceNomenklRows.Any(_ => _.IsExclude);
+        CurrentInvoiceNomenklRow.IsExclude = false; 
+    }
 
     public override void UpdateVisualObjects()
     {
@@ -77,6 +101,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         foreach (var col in frm.gridInfoRows.Columns) col.ReadOnly = true;
 
         frm.tableViewDocuemts.FormatConditions.Clear();
+        frm.tableViewInvoiceRows.FormatConditions.Clear();
         var excludeRows = new FormatCondition
         {
             //Expression = "[SummaFact] < [Summa]",
@@ -89,7 +114,20 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             ValueRule = ConditionRule.Equal,
             Value1 = true
         };
+        var excludeInvoiceRows = new FormatCondition
+        {
+            //Expression = "[SummaFact] < [Summa]",
+            FieldName = "IsExclude",
+            ApplyToRow = true,
+            Format = new Format
+            {
+                Foreground = Brushes.Blue
+            },
+            ValueRule = ConditionRule.Equal,
+            Value1 = true
+        };
         frm.tableViewDocuemts.FormatConditions.Add(excludeRows);
+        frm.tableViewInvoiceRows.FormatConditions.Add(excludeInvoiceRows);
     }
 
     public override void SaveData(object data)
@@ -457,27 +495,59 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 var rows2 = myProjectRepository.GetInvoiceProviderRows(id.Value);
                 foreach (var r in rows2)
                 {
-                    if (exclude.Select(_ => _.SFProviderRowId).Contains(r.Id)) continue;
-                    if(r.TD_26_CurrencyConvert.Any(c => exclude.Select(_ => _.NomCurrencyConvertRowId).Contains(c.Id))) continue;
-                    
-                    InvoiceNomenklRows.Add(new ProjectInvoiceNomenklInfo()
+
+                    if (r.TD_26_CurrencyConvert.Count > 0)
                     {
-                        Note = r.SFT_TEXT,
-                        // ReSharper disable once PossibleInvalidOperationException
-                        Summa = r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0,
-                        NomenklName = r.SD_83.NOM_NAME,
-                        NomenklNumber = r.SD_83.NOM_NOMENKL,
-                        Quantity = (decimal) r.SFT_KOL,
-                        Unit = r.SD_83.SD_175.ED_IZM_NAME,
-                        // ReSharper disable once PossibleInvalidOperationException
-                        UnitPrice = (decimal)r.SFT_ED_CENA,
-                        Shipped = r.SD_83.NOM_0MATER_1USLUGA == 1 ?
-                            1 : r.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0,
-                        ShippedSumma = r.SD_83.NOM_0MATER_1USLUGA == 1 ?
-                            r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0 :
-                            (r.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0)*r.SFT_SUMMA_K_OPLATE_KONTR_CRS/r.SFT_KOL ?? 0,
-                        IsUsluga = r.SD_83.NOM_0MATER_1USLUGA == 1
-                    });
+                        foreach (var c in r.TD_26_CurrencyConvert)
+                        {
+                            InvoiceNomenklRows.Add(new ProjectInvoiceNomenklInfo()
+                            {
+                                Note = r.SFT_TEXT,
+                                // ReSharper disable once PossibleInvalidOperationException
+                                Summa = r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0,
+                                NomenklName = r.SD_83.NOM_NAME,
+                                NomenklNumber = r.SD_83.NOM_NOMENKL,
+                                Quantity = (decimal)r.SFT_KOL,
+                                Unit = r.SD_83.SD_175.ED_IZM_NAME,
+                                // ReSharper disable once PossibleInvalidOperationException
+                                UnitPrice = (decimal)r.SFT_ED_CENA,
+                                Shipped = r.SD_83.NOM_0MATER_1USLUGA == 1 ? 1 : r.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0,
+                                ShippedSumma = r.SD_83.NOM_0MATER_1USLUGA == 1
+                                    ? r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0
+                                    : (r.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0) * r.SFT_SUMMA_K_OPLATE_KONTR_CRS /
+                                    r.SFT_KOL ?? 0,
+                                IsUsluga = r.SD_83.NOM_0MATER_1USLUGA == 1,
+                                IsExclude = exclude.Select(_ => _.NomCurrencyConvertRowId).Contains(c.Id),
+                                DocumentType = DocumentType.NomenklCurrencyConverterProvider,
+                                Id = c.Id
+                            });
+                        }
+                    }
+                    else
+                    {
+
+                        InvoiceNomenklRows.Add(new ProjectInvoiceNomenklInfo()
+                        {
+                            IsExclude = exclude.Select(_ => _.SFProviderRowId).Contains(r.Id),
+                            Note = r.SFT_TEXT,
+                            // ReSharper disable once PossibleInvalidOperationException
+                            Summa = r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0,
+                            NomenklName = r.SD_83.NOM_NAME,
+                            NomenklNumber = r.SD_83.NOM_NOMENKL,
+                            Quantity = (decimal)r.SFT_KOL,
+                            Unit = r.SD_83.SD_175.ED_IZM_NAME,
+                            // ReSharper disable once PossibleInvalidOperationException
+                            UnitPrice = (decimal)r.SFT_ED_CENA,
+                            Shipped = r.SD_83.NOM_0MATER_1USLUGA == 1 ? 1 : r.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0,
+                            ShippedSumma = r.SD_83.NOM_0MATER_1USLUGA == 1
+                                ? r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0
+                                : (r.TD_24?.Sum(_ => _.DDT_KOL_PRIHOD) ?? 0) * r.SFT_SUMMA_K_OPLATE_KONTR_CRS /
+                                r.SFT_KOL ?? 0,
+                            IsUsluga = r.SD_83.NOM_0MATER_1USLUGA == 1,
+                            DocumentType = DocumentType.InvoiceProvider,
+                            Id = r.Id
+                        });
+                    }
                 }
                 break;
             case DocumentType.StoreOrderIn:
