@@ -165,6 +165,11 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 IsNDSInPrice = true,
                 NakladDistributedSumma = 0,
             };
+            ret.Facts.Clear();
+            foreach (var f in ret.Entity.TD_26)
+            {
+                f.TD_24.Clear();
+            }
             ret.Entity.ProviderInvoicePay.Clear();
             ret.PaymentDocs.Clear();
 

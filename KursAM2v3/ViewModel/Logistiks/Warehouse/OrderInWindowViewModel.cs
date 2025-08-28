@@ -220,7 +220,7 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             get => myCurrentRow;
             set
             {
-                if (Equals(myCurrentRow, value)) return;
+                if (myCurrentRow?.Code == value?.Code) return;
                 myCurrentRow = value;
                 RaisePropertyChanged();
             }
@@ -860,6 +860,8 @@ namespace KursAM2.ViewModel.Logistiks.Warehouse
             if (CurrentRow.State == RowStatus.NewRow)
             {
                 Document.Rows.Remove(CurrentRow);
+                if(Document.Entity.TD_24.Contains(CurrentRow.Entity))
+                    Document.Entity.TD_24.Remove(CurrentRow.Entity);
             }
             else
             {

@@ -1026,6 +1026,7 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
         set { }
         get
         {
+            if (Rows.Count == 0) return 0;
             return (from r in ShipmentRows
                 where r.DDT_KOL_RASHOD > 0
                 let nom = Rows.First(_ => _.Nomenkl.DocCode == r.Nomenkl.DocCode)
