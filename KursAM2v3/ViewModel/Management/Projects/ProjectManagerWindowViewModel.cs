@@ -3,6 +3,7 @@ using Data;
 using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
+using DevExpress.Mvvm.Xpf;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
@@ -45,6 +46,34 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     #endregion
 
     #region Commands
+
+    private Dictionary<string, decimal> summary = new Dictionary<string, decimal>();
+
+
+    public ICommand<RowSummaryArgs> CustomSummaryCommand
+    {
+        get { return new DelegateCommand<RowSummaryArgs>(CustomSummary, _ => true); }
+    }
+
+    private void CustomSummary(object obj)
+    {
+        if (obj is RowSummaryArgs args)
+        {
+
+            switch (args.SummaryProcess)
+            {
+                case SummaryProcess.Start:
+                    summary[args.SummaryItem.PropertyName] = 0;
+                    break;
+                case SummaryProcess.Calculate:
+                    {
+                        summary[args.SummaryItem.PropertyName] += (decimal)args.FieldValue;
+                        args.TotalValue = summary[args.SummaryItem.PropertyName];
+                        break;
+                    }
+            }
+        }
+    }
 
     public ICommand ExcludeFromProjectCommand
     {
@@ -507,7 +536,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                                 Summa = r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0,
                                 NomenklName = r.SD_83.NOM_NAME,
                                 NomenklNumber = r.SD_83.NOM_NOMENKL,
-                                Quantity = (decimal)r.SFT_KOL,
+                                Quantity = r.SFT_KOL,
                                 Unit = r.SD_83.SD_175.ED_IZM_NAME,
                                 // ReSharper disable once PossibleInvalidOperationException
                                 UnitPrice = (decimal)r.SFT_ED_CENA,
@@ -534,7 +563,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                             Summa = r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0,
                             NomenklName = r.SD_83.NOM_NAME,
                             NomenklNumber = r.SD_83.NOM_NOMENKL,
-                            Quantity = (decimal)r.SFT_KOL,
+                            Quantity = r.SFT_KOL,
                             Unit = r.SD_83.SD_175.ED_IZM_NAME,
                             // ReSharper disable once PossibleInvalidOperationException
                             UnitPrice = (decimal)r.SFT_ED_CENA,
