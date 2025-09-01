@@ -40,7 +40,7 @@ namespace KursRepositories.Repositories.Projects
         #endregion
 
         #region DocumentInfo
-
+        
         public void AddDocumentInfo(ProjectDocumentInfoBase doc)
         {
             var sql =
@@ -489,7 +489,8 @@ namespace KursRepositories.Repositories.Projects
 
         #region Связь проектов и документов
 
-        public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Guid projectId)
+        
+        public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Guid projectId, bool isShowAll)
         {
             var prj = Context
                 .Projects.Include(_ => _.ProjectDocuments)
@@ -497,9 +498,97 @@ namespace KursRepositories.Repositories.Projects
                 .FirstOrDefault(_ => _.Id == projectId);
             if (prj is null)
                 return new List<ProjectDocumentInfo>();
-            return LoadProjectDocuments(prj);
+            return LoadProjectDocuments(prj, isShowAll);
         }
-        
+
+        public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments2(Guid projectId, bool isShowAll)
+        {
+            var ret = new List<ProjectDocumentInfo>();
+            var project = Context.Projects.Include(_ => _.ProjectDocuments).FirstOrDefault(_ => _.Id == projectId);
+            if (project is null) return new List<ProjectDocumentInfo>();
+            var exclInvoices = Context.ProjectRowExclude.Include(_ => _.TD_26_CurrencyConvert).Where(_ => _.ProjectId == projectId).ToList();
+            if(project.ProjectDocuments.Any(_ => _.InvoiceProviderId != null))
+                ret.AddRange(GetInvoiceProviders(project.ProjectDocuments.Where(_ => _.InvoiceProviderId != null).ToList(), isShowAll, exclInvoices));
+            if(project.ProjectDocuments.Any(_ => _.InvoiceClientId != null))
+                ret.AddRange(GetInvoiceClients(project.ProjectDocuments.Where(_ => _.InvoiceClientId != null).ToList(), isShowAll, exclInvoices));
+
+            return ret;
+        }
+
+        private IEnumerable<ProjectDocumentInfo> GetInvoiceClients(ICollection<ProjectDocuments> docs, bool isShowAll,
+            List<ProjectRowExclude> exclInvoices)
+        {
+            var ret = new List<ProjectDocumentInfo>();
+            var invoices = docs.Select(_ => _.InvoiceClientId)
+                .Select(id => Context.SD_84.Include(_ => _.TD_84)
+                    .Include("TD_84.TD_24")
+                    .FirstOrDefault(_ => _.Id == id))
+                .Where(item => item != null)
+                .Select(inv => new InvoiceClientBase(inv))
+                .ToList();
+
+            foreach (var p in docs)
+            {
+                var newItem = new ProjectDocumentInfo(p);
+                var inv = invoices.FirstOrDefault(_ => _.Id == p.InvoiceClientId);
+                if (inv is null) continue;
+                var exIds = inv.Rows.Where(_ => exclInvoices.Select(x => x.SFClientRowId).Contains(_.Id))
+                    .Select(y => y.Id).ToList();
+                newItem.HasExcludeRow = exIds.Count > 0;
+                newItem.Kontragent = inv.Client;
+                newItem.SummaPay = inv.PaySumma;
+                newItem.Currency = inv.Currency;
+                newItem.InnerNumber = inv.InnerNumber;
+                newItem.ExtNumber = inv.OuterNumber;
+                newItem.DocumentType = DocumentType.InvoiceClient;
+
+                if (newItem.HasExcludeRow && !isShowAll)
+                {
+                    var exRows = inv.Rows.Where(_ => exIds.Contains(_.Id)).ToList();
+                    newItem.QuantityOutDocument = inv.Rows.Sum(_ => _.Quantity) - exRows.Sum(_ => _.Quantity);
+                    newItem.QuantityOutShipped = inv.Rows.Sum(_ => _.Shipped) -
+                                                 inv.Rows.Where(_ => exIds.Contains(_.Id)).Sum(_ => _.Shipped);
+                    newItem.SummaShipped = inv.SummaOtgruz - exRows.Sum(_ => _.Shipped * _.Summa);
+                    newItem.SummaOut = inv.Summa - newItem.UslugaSummaIn - exRows.Sum(_ => _.Shipped * _.Summa);
+                }
+                else
+                {
+                    newItem.QuantityOutDocument = inv.Rows.Sum(_ => _.Quantity);
+                    newItem.QuantityOutShipped = inv.Rows.Sum(_ => _.Shipped);
+                    newItem.UslugaSummaIn = inv.Rows.Where(_ => _.IsUsluga).Sum(_ => _.Summa);
+                    newItem.SummaShipped = inv.SummaOtgruz - newItem.UslugaSummaIn;
+                    newItem.SummaOut = inv.Summa - newItem.UslugaSummaIn;
+                }
+
+                newItem.QuantityOutRemain =
+                    newItem.QuantityOutDocument - newItem.QuantityOutShipped;
+                newItem.SummaOutRemain = newItem.SummaOut - newItem.SummaShipped;
+                newItem.DocDate = inv.DocDate;
+                newItem.InnerNumber = inv.InnerNumber;
+                newItem.ExtNumber = inv.OuterNumber;
+                newItem.Note = inv.Note;
+                newItem.DocInfo = GetDocDescription(
+                    DocumentType.InvoiceClient,
+                    newItem
+                );
+                newItem.Creator = inv.CREATOR;
+                newItem.ProductTypeName = inv.VzaimoraschetType?.Name;
+
+                if(isShowAll || inv.Rows.Any(_ => !exIds.Contains(_.Id)))
+                    ret.Add(newItem);
+            }
+
+            return ret;
+        }
+
+        private IEnumerable<ProjectDocumentInfo> GetInvoiceProviders(ICollection<ProjectDocuments> projectProjectDocuments, bool isShowAll,
+            List<ProjectRowExclude> exclInvoices)
+        {
+            var ret = new List<ProjectDocumentInfo>();
+            return ret;
+        }
+
+
         public List<Guid> GetDocumentsProjects(DocumentType docType, decimal dc, bool isCrsConvert)
         {
             var sqlClient =
@@ -673,7 +762,7 @@ namespace KursRepositories.Repositories.Projects
             return res;
         }
 
-        public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Data.Projects project)
+        public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Data.Projects project,  bool isShowAll)
         {
             var ret = new List<ProjectDocumentInfo>();
             var excl = GetDocumentsRowExclude(new List<Guid> { project.Id }).Select(_ => _.NomenklDC).ToList();
@@ -882,14 +971,28 @@ namespace KursRepositories.Repositories.Projects
                         var d = Context
                             .InvoicePostQuery.Where(_ => _.Id == p.InvoiceProviderId)
                             .ToList();
-
+                        decimal exQuan = 0, exSumma = 0, exSummaShipped = 0, exQuanShipped = 0;
                         if (d != null)
                         {
                             var doc = new InvoiceProviderBase(d);
                             bool hasExclude = false;
-                            foreach (var ex in from ex in exclInvoices from dd in d where dd.RowId == ex.SFProviderRowId select ex)
+                            foreach (var ex in from ex in exclInvoices
+                                     from dd in d
+                                     where dd.RowId == ex.SFProviderRowId
+                                     select ex)
                             {
                                 hasExclude = true;
+                                var r = Context.TD_26.Include(_ => _.TD_24)
+                                    .FirstOrDefault(_ => _.Id == ex.SFProviderRowId);
+                                if (r is not null)
+                                {
+                                    exQuan += r.SFT_KOL;
+                                    exSumma += r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0;
+                                    exQuanShipped += r.TD_24.Sum(_ => _.DDT_KOL_PRIHOD);
+                                    if (r.TD_24.Sum(_ => _.DDT_KOL_PRIHOD) > 0)
+                                        exSummaShipped += (r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) * r.SFT_KOL /
+                                                          r.TD_24.Sum(_ => _.DDT_KOL_PRIHOD);
+                                }
                             }
 
                             if (!hasExclude)
@@ -901,31 +1004,20 @@ namespace KursRepositories.Repositories.Projects
                                     hasExclude = true;
                                     break;
                                 }
+
+                                if (hasExclude)
+                                {
+
+                                }
                             }
-                            //var hasExclude = exclInvoices.Any(_ => _.SFProviderRowId == d.Any(_ => _.RowId ==));
-
-                            //var rem = new List<InvoicePostQuery>();
-                            //foreach (var r in d.Where(r => excl.Any(_ => _ == r.NomenklDC)))
-                            //{
-                            //    hasExclude = true;
-                            //    rem.Add(r);
-                            //}
-
-                            //if (rem.Count > 0)
-                            //{
-                            //    foreach (var rr in rem)
-                            //    {
-                            //        d.Remove(rr);
-                            //    }
-                            //}
 
                             newItem.HasExcludeRow = hasExclude;
                             newItem.Kontragent = doc.Kontragent;
                             newItem.Currency = newItem.Kontragent?.Currency as Currency;
-                            newItem.SummaIn = doc.Summa;
+                            newItem.SummaIn = hasExclude ? doc.Summa - exSumma : doc.Summa;
                             newItem.SummaPay = doc.PaySumma;
-                            newItem.SummaShipped = doc.SummaFact;
-                            newItem.QuantityInDocument = d.Where(_ => _.DocCode == doc.DocCode)
+                            newItem.SummaShipped = hasExclude ? doc.SummaFact-exSummaShipped : doc.SummaFact;
+                            newItem.QuantityInDocument =  d.Where(_ => _.DocCode == doc.DocCode)
                                 .Sum(_ => _.Quantity);
                             foreach (var r in d)
                                 if (r.IsUsluga ?? false)
@@ -940,7 +1032,8 @@ namespace KursRepositories.Repositories.Projects
                                         .Sum(_ => _.Shipped);
                             newItem.QuantityInRemain =
                                 newItem.QuantityInDocument - newItem.QuantityInShipped;
-                            newItem.SummaInRemain = newItem.SummaIn - newItem.SummaShipped;
+                            newItem.SummaInRemain = hasExclude ? newItem.SummaShipped - newItem.SummaIn- exSumma-exSummaShipped 
+                                : newItem.SummaShipped - newItem.SummaIn;
                             newItem.DocDate = doc.DocDate;
                             newItem.InnerNumber = doc.SF_IN_NUM;
                             newItem.ExtNumber = doc.SF_POSTAV_NUM;
@@ -2447,7 +2540,7 @@ namespace KursRepositories.Repositories.Projects
                         {
                             Id = Guid.NewGuid(),
                             ProjectId = pp,
-                            SFProviderRowId = rowId,
+                            SFClientRowId = rowId,
                             NomenklDC = nomDC.Value
                         });
                     }
@@ -2480,11 +2573,11 @@ namespace KursRepositories.Repositories.Projects
                             NomenklDC = nomDC.Value
                         });
                     }
-
+                    Context.SaveChanges();
                     break;
             }
 
-            Context.SaveChanges();
+            
         }
 
         public void IncludeNomenklToProject(Guid projectIdGuid, decimal nomDC)

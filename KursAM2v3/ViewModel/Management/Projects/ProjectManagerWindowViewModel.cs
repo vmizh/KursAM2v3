@@ -3,7 +3,6 @@ using Data;
 using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
-using DevExpress.Mvvm.Xpf;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
@@ -46,35 +45,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     #endregion
 
     #region Commands
-
-    private Dictionary<string, decimal> summary = new Dictionary<string, decimal>();
-
-
-    public ICommand<RowSummaryArgs> CustomSummaryCommand
-    {
-        get { return new DelegateCommand<RowSummaryArgs>(CustomSummary, _ => true); }
-    }
-
-    private void CustomSummary(object obj)
-    {
-        if (obj is RowSummaryArgs args)
-        {
-
-            switch (args.SummaryProcess)
-            {
-                case SummaryProcess.Start:
-                    summary[args.SummaryItem.PropertyName] = 0;
-                    break;
-                case SummaryProcess.Calculate:
-                    {
-                        summary[args.SummaryItem.PropertyName] += (decimal)args.FieldValue;
-                        args.TotalValue = summary[args.SummaryItem.PropertyName];
-                        break;
-                    }
-            }
-        }
-    }
-
+    
     public ICommand ExcludeFromProjectCommand
     {
         get { return new Command(ExcludeFromProject, _ => CurrentInvoiceNomenklRow?.IsExclude == false); }
@@ -83,8 +54,22 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     private void ExcludeFromProject(object obj)
     {
         myProjectRepository.ExcludeNomenklFromProjects([CurrentProject.Id], CurrentInvoiceNomenklRow.DocumentType, CurrentInvoiceNomenklRow.Id);
-        CurrentDocument.HasExcludeRow = true;
         CurrentInvoiceNomenklRow.IsExclude = true;
+        CurrentDocument.HasExcludeRow = InvoiceNomenklRows.Any(_ => _.IsExclude);
+        if (!IsShowExcluded)
+        {
+            CurrentDocument.QuantityOutDocument -= CurrentInvoiceNomenklRow.Quantity;
+            CurrentDocument.QuantityOutShipped -=
+                CurrentInvoiceNomenklRow.IsUsluga ? 0 : CurrentInvoiceNomenklRow.Shipped;
+            CurrentDocument.UslugaSummaIn -= CurrentInvoiceNomenklRow.IsUsluga ? CurrentInvoiceNomenklRow.Summa : 0;
+            CurrentDocument.SummaShipped -= CurrentInvoiceNomenklRow.ShippedSumma ?? 0;
+            CurrentDocument.SummaOut -= CurrentInvoiceNomenklRow.IsUsluga ? 0 : CurrentInvoiceNomenklRow.Summa;
+
+            InvoiceNomenklRows.Remove(CurrentInvoiceNomenklRow);
+        }
+
+        CurrentDocument.RaisePropertyAllChanged();
+       
     }
 
     public ICommand IncludeIntoProjectCommand
@@ -95,9 +80,10 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     private void IncludeToProject(object obj)
     {
         myProjectRepository.IncludeNomenklToProject([CurrentProject.Id], CurrentInvoiceNomenklRow.DocumentType,
-            CurrentInvoiceNomenklRow.Id);
-        CurrentDocument.HasExcludeRow = InvoiceNomenklRows.Any(_ => _.IsExclude);
+            CurrentInvoiceNomenklRow.Id); 
         CurrentInvoiceNomenklRow.IsExclude = false; 
+        CurrentDocument.HasExcludeRow = InvoiceNomenklRows.Any(_ => _.IsExclude);
+       
     }
 
     public override void UpdateVisualObjects()
@@ -216,7 +202,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             myProjectRepository.AddDocumentInfo(item);
         }
 
-        foreach (var prj in myProjectRepository.LoadProjectDocuments(CurrentProject.Id))
+        foreach (var prj in myProjectRepository.LoadProjectDocuments(CurrentProject.Id, IsShowExcluded))
         {
             prj.myState = RowStatus.NotEdited;
             prj.SetCurrency();
@@ -344,6 +330,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     private Visibility myGridInfoVisibility = Visibility.Hidden;
     private Visibility myGridInvoiceInfoVisibility = Visibility.Hidden;
     private ProjectInvoiceNomenklInfo myCurrentInvoiceNomenklRow;
+    private bool myIsShowExcluded;
 
     #endregion
 
@@ -465,6 +452,23 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         get => myCurrentProject;
     }
 
+    public bool IsShowExcluded
+    {
+        set
+        {
+            if (value == myIsShowExcluded) return;
+            myIsShowExcluded = value;
+            if (myCurrentProject != null)
+            {
+                LoadDocuments(myCurrentProject?.Id);
+                SetCrsColumnsVisible();
+            }
+
+            RaisePropertyChanged();
+        }
+        get => myIsShowExcluded;
+    }
+
     public bool IsAllProject
     {
         set
@@ -495,7 +499,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 var rows = myProjectRepository.GetInvoiceClientRows(id.Value);
                 foreach (var r in rows)
                 {
-                    if (exclude.Select(_ => _.SFClientRowId).Contains(r.Id)) continue;
+                    if (!IsShowExcluded && exclude.Select(_ => _.SFClientRowId).Contains(r.Id)) continue;
                     InvoiceNomenklRows.Add(new ProjectInvoiceNomenklInfo()
                     {
                         Note = r.SFT_TEXT,
@@ -512,7 +516,10 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                         ShippedSumma =  r.SD_83.NOM_0MATER_1USLUGA == 1 ?
                             r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0 :
                             (r.TD_24?.Sum(_ => _.DDT_KOL_RASHOD) ?? 0)*r.SFT_SUMMA_K_OPLATE_KONTR_CRS/(decimal?)r.SFT_KOL ?? 0,
-                        IsUsluga = r.SD_83.NOM_0MATER_1USLUGA == 1
+                        IsUsluga = r.SD_83.NOM_0MATER_1USLUGA == 1,
+                        DocumentType = DocumentType.InvoiceClient,
+                        IsExclude = exclude.Select(_ => _.SFClientRowId).Contains(r.Id),
+                        Id = r.Id
                     });
                 }
                 break;
@@ -524,7 +531,6 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 var rows2 = myProjectRepository.GetInvoiceProviderRows(id.Value);
                 foreach (var r in rows2)
                 {
-
                     if (r.TD_26_CurrencyConvert.Count > 0)
                     {
                         foreach (var c in r.TD_26_CurrencyConvert)
@@ -636,7 +642,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     {
         Documents.Clear();
         if (currentProjectId is null) return; 
-        foreach (var prj in myProjectRepository.LoadProjectDocuments(currentProjectId.Value))
+        foreach (var prj in myProjectRepository.LoadProjectDocuments2(currentProjectId.Value, IsShowExcluded))
         {
             prj.myState = RowStatus.NotEdited;
             prj.SetCurrency();

@@ -1178,8 +1178,6 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
 
     public void LoadReferences()
     {
-        var sw = new Stopwatch();
-        sw.Start();
         Currency = GlobalOptions.ReferencesCache.GetCurrency(Entity.SF_CRS_DC) as References.Currency;
         Client = GlobalOptions.ReferencesCache.GetKontragent(Entity.SF_CLIENT_DC) as Kontragent;
         CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(Entity.SF_CENTR_OTV_DC) as CentrResponsibility;
@@ -1194,9 +1192,6 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
             Rows = new ObservableCollection<IInvoiceClientRow>();
         else
             Rows.Clear();
-        sw.Stop();
-        var sw1 = new Stopwatch();
-        sw1.Start();
         //Rows = new ObservableCollection<IInvoiceClientRow>();
         if (Entity.TD_84 != null && Entity.TD_84.Count > 0)
             //var noms = GlobalOptions.ReferencesCache.GetNomenkls(Entity.TD_84.Select(_ => _.SFT_NEMENKL_DC)).Cast<Nomenkl>().ToList();

@@ -17,8 +17,9 @@ namespace KursRepositories.Repositories.Projects
         );
         IEnumerable<Data.Projects> LoadReference();
 
-        IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Data.Projects project);
-        IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Guid projectId);
+        IEnumerable<ProjectDocumentInfo> LoadProjectDocuments(Guid projectId, bool isShowAll);
+
+        IEnumerable<ProjectDocumentInfo> LoadProjectDocuments2(Guid projectId, bool isShowAll);
 
         void AddDocumentInfo(ProjectDocumentInfoBase doc);
         void UpdateDocumentInfo(Guid id, string note);

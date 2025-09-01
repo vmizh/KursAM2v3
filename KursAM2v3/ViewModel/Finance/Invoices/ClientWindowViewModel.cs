@@ -15,7 +15,6 @@ using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm;
-using DevExpress.Mvvm.Native;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Mvvm.Xpf;
 using DevExpress.Xpf.Core.ConditionalFormatting;
