@@ -504,13 +504,89 @@ namespace KursRepositories.Repositories.Projects
         public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments2(Guid projectId, bool isShowAll)
         {
             var ret = new List<ProjectDocumentInfo>();
-            var project = Context.Projects.Include(_ => _.ProjectDocuments).FirstOrDefault(_ => _.Id == projectId);
+            var project = Context.Projects.Include(_ => _.ProjectDocuments).AsNoTracking().FirstOrDefault(_ => _.Id == projectId);
             if (project is null) return new List<ProjectDocumentInfo>();
-            var exclInvoices = Context.ProjectRowExclude.Include(_ => _.TD_26_CurrencyConvert).Where(_ => _.ProjectId == projectId).ToList();
+            var exclInvoices = Context.ProjectRowExclude.Include(_ => _.TD_26_CurrencyConvert)
+                .AsNoTracking().Where(_ => _.ProjectId == projectId).ToList();
             if(project.ProjectDocuments.Any(_ => _.InvoiceProviderId != null))
                 ret.AddRange(GetInvoiceProviders(project.ProjectDocuments.Where(_ => _.InvoiceProviderId != null).ToList(), isShowAll, exclInvoices));
             if(project.ProjectDocuments.Any(_ => _.InvoiceClientId != null))
                 ret.AddRange(GetInvoiceClients(project.ProjectDocuments.Where(_ => _.InvoiceClientId != null).ToList(), isShowAll, exclInvoices));
+
+            return ret;
+        }
+        private IEnumerable<ProjectDocumentInfo> GetInvoiceProviders(ICollection<ProjectDocuments> docs, bool isShowAll,
+            List<ProjectRowExclude> exclInvoices)
+        {
+            var ret = new List<ProjectDocumentInfo>();
+            var invoices = docs.Select(_ => _.InvoiceProviderId)
+                .Select(id => Context.SD_26.Include(_ => _.TD_26)
+                    .Include("TD_26.TD_24")
+                    .FirstOrDefault(_ => _.Id == id))
+                .Where(item => item != null)
+                .Select(inv => new InvoiceProvider(inv))
+                .ToList();
+            foreach (var p in docs)
+            {
+                var newItem = new ProjectDocumentInfo(p);
+                var inv = invoices.FirstOrDefault(_ => _.Id == p.InvoiceProviderId);
+                if (inv is null) continue;
+                var exIds = inv.Rows.Where(_ => exclInvoices.Select(x => x.SFProviderRowId).Contains(_.Id))
+                    .Select(y => y.Id).ToList();
+                var exCrsRows = Context.TD_26_CurrencyConvert.AsNoTracking().Include(_ => _.TD_26).Where(_ => _.DOC_CODE == inv.DocCode).ToList();
+                var exCrsIds = exCrsRows.Where(_ => exclInvoices.Select(x => x.NomCurrencyConvertRowId).Contains(_.Id))
+                    .Select(y => y.Id).ToList();
+                newItem.HasExcludeRow = exIds.Any() || exCrsIds.Any();
+                newItem.Kontragent = inv.Kontragent;
+                newItem.SummaPay = inv.PaySumma;
+                newItem.Currency = inv.Currency;
+                newItem.InnerNumber = inv.SF_IN_NUM;
+                newItem.ExtNumber = inv.SF_POSTAV_NUM;
+                newItem.DocumentType = DocumentType.InvoiceProvider;
+                newItem.UslugaSummaIn = inv.Rows.Where(_ => _.IsUsluga).Sum(_ => _.Summa);
+
+                if (newItem.HasExcludeRow && !isShowAll)
+                {
+                    var exRows = inv.Rows.Where(_ => exIds.Contains(_.Id)).ToList();
+                    newItem.QuantityInDocument = inv.Rows.Sum(_ => _.Quantity) - exRows.Sum(_ => _.Quantity) -
+                                                 exCrsRows.Sum(_ => _.Quantity);
+                    newItem.QuantityInShipped = inv.Rows.Sum(_ => _.Shipped) -
+                                                inv.Rows.Where(_ => exIds.Contains(_.Id)).Sum(_ => _.Shipped)
+                                                - exCrsRows.Sum(_ => _.Quantity);
+                    newItem.SummaShipped = (decimal)(inv.SummaFact - exRows.Sum(_ => _.Shipped * _.Summa) -
+                                                     -exCrsRows.Sum(_ =>
+                                                         _.TD_26.SFT_SUMMA_K_OPLATE_KONTR_CRS * _.Quantity /
+                                                         _.TD_26.SFT_KOL));
+                    newItem.SummaIn = (decimal)(inv.Summa - newItem.UslugaSummaIn - exRows
+                        .Where(x => exCrsIds.Contains(x.Id))
+                        .Sum(_ => _.Shipped * _.Summa) - exCrsRows.Where(x => exCrsIds.Contains(x.Id))
+                        .Sum(_ => _.TD_26.SFT_SUMMA_K_OPLATE_KONTR_CRS * _.Quantity / _.TD_26.SFT_KOL));
+                }
+                else
+                {
+                    newItem.QuantityInDocument = inv.Rows.Sum(_ => _.Quantity);
+                    newItem.QuantityInShipped = inv.Rows.Sum(_ => _.Shipped);
+                    newItem.SummaShipped = inv.SummaFact - newItem.UslugaSummaIn;
+                    newItem.SummaIn = inv.Summa - newItem.UslugaSummaIn;
+                }
+
+                newItem.QuantityInRemain =
+                    newItem.QuantityInDocument - newItem.QuantityInShipped;
+                newItem.SummaInRemain = newItem.SummaIn - newItem.SummaShipped;
+                newItem.DocDate = inv.DocDate;
+                newItem.InnerNumber = inv.SF_IN_NUM;
+                newItem.ExtNumber = inv.SF_POSTAV_NUM;
+                newItem.Note = inv.Note;
+                newItem.DocInfo = GetDocDescription(
+                    DocumentType.InvoiceClient,
+                    newItem
+                );
+                newItem.Creator = inv.CREATOR;
+                newItem.ProductTypeName = inv.VzaimoraschetType?.Name;
+
+                if(isShowAll || inv.Rows.Any(_ => !exIds.Contains(_.Id)))
+                    ret.Add(newItem);
+            }
 
             return ret;
         }
@@ -581,12 +657,7 @@ namespace KursRepositories.Repositories.Projects
             return ret;
         }
 
-        private IEnumerable<ProjectDocumentInfo> GetInvoiceProviders(ICollection<ProjectDocuments> projectProjectDocuments, bool isShowAll,
-            List<ProjectRowExclude> exclInvoices)
-        {
-            var ret = new List<ProjectDocumentInfo>();
-            return ret;
-        }
+       
 
 
         public List<Guid> GetDocumentsProjects(DocumentType docType, decimal dc, bool isCrsConvert)

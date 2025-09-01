@@ -463,7 +463,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 LoadDocuments(myCurrentProject?.Id);
                 SetCrsColumnsVisible();
             }
-
+            InvoiceNomenklRows.Clear();
             RaisePropertyChanged();
         }
         get => myIsShowExcluded;
@@ -533,8 +533,10 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 {
                     if (r.TD_26_CurrencyConvert.Count > 0)
                     {
+                        
                         foreach (var c in r.TD_26_CurrencyConvert)
                         {
+                            if (!IsShowExcluded && exclude.Select(_ => _.NomCurrencyConvertRowId).Contains(c.Id)) continue;
                             InvoiceNomenklRows.Add(new ProjectInvoiceNomenklInfo()
                             {
                                 Note = r.SFT_TEXT,
@@ -560,7 +562,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                     }
                     else
                     {
-
+                        if (!IsShowExcluded && exclude.Select(_ => _.SFProviderRowId).Contains(r.Id)) continue;
                         InvoiceNomenklRows.Add(new ProjectInvoiceNomenklInfo()
                         {
                             IsExclude = exclude.Select(_ => _.SFProviderRowId).Contains(r.Id),
