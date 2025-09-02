@@ -15,6 +15,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
+using DevExpress.Data;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using KursDomain.Documents.CommonReferences;
@@ -94,13 +95,21 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         [DisplayFormat(DataFormatString = "n2")]
         public decimal DilerSumma { get; set; }
 
-        [Display(AutoGenerateField = true, Name = "Результат (кол-во)")]
+        [Display(AutoGenerateField = true, Name = "Результат (кол-во/док)")]
         [DisplayFormat(DataFormatString = "n2")]
-        public decimal QuantityResult => DocQuantityIn - DocQuantityOut;
+        public decimal DocQuantityResult => DocQuantityIn - DocQuantityOut;
 
-        [Display(AutoGenerateField = true, Name = "Результат (сумма)")]
+        [Display(AutoGenerateField = true, Name = "Результат (сумма/док)")]
         [DisplayFormat(DataFormatString = "n2")]
-        public decimal SummaResult => FactQuantityOut - DilerSumma - FactSummaIn - NakladSumma;
+        public decimal DocSummaResult => DocSummaOut - DilerSumma - DocSummaIn - NakladSumma - ServiceProviderSumma + ServiceClientSumma;
+
+        [Display(AutoGenerateField = true, Name = "Результат (кол-во/факт)")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal FactQuantityResult => FactQuantityIn - FactQuantityOut;
+
+        [Display(AutoGenerateField = true, Name = "Результат (сумма/факт)")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal FactSummaResult => FactQuantityOut - DilerSumma - FactSummaIn - NakladSumma - ServiceProviderSumma + ServiceClientSumma;
 
         [Display(AutoGenerateField = true, Name = "Услуги поставщиков")]
         [DisplayFormat(DataFormatString = "n2")]
@@ -328,11 +337,25 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
     public override void UpdateVisualObjects()
     {
+        HashSet<string> colSumNames = ["NomName","DocQuantityIn","DocSummaIn","DocQuantityOut","DocSummaOut",
+                                        "DocQuantityResult","DocSummaResult","FactQuantityResult","FactSummaResult","FactQuantityIn","FactQuantityOut",
+                                        "FactSummaIn","FactSummaOut","NakladSumma","DilerSumma"];
         if (Form is not ProjectNomenklMove frm) return;
+        frm.gridNomenklRows.TotalSummary.Clear();
         foreach (var col in frm.gridNomenklRows.Columns)
         {
             if (col.FieldName == "HasExcluded")
                 col.Visible = false;
+            if (!colSumNames.Contains(col.FieldName)) continue;
+            var sum = new GridSummaryItem()
+            {
+                FieldName = col.FieldName,
+                DisplayFormat = "n2",
+                ShowInColumn = col.FieldName,
+                SummaryType = col.FieldName == "NomName" ? SummaryItemType.Count : SummaryItemType.Sum,
+            };
+            frm.gridNomenklRows.TotalSummary.Add(sum);
+
         } 
         foreach (var col in frm.gridDocumentsRows.Columns)
         {

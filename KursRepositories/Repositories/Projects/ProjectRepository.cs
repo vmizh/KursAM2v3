@@ -2566,6 +2566,7 @@ namespace KursRepositories.Repositories.Projects
             switch (docType)
             {
                 case DocumentType.InvoiceProvider:
+                    var row = Context.TD_26.Single(_ => _.Id == rowId);
                     var pEx = Context.ProjectRowExclude.Where(_ =>
                         projectIdGuids.Contains(_.Id) && _.SFProviderRowId == rowId).ToList();
                     if (pEx.Count > 0)
@@ -2575,10 +2576,9 @@ namespace KursRepositories.Repositories.Projects
                             Context.ProjectRowExclude.Remove(p);
                         }
                     }
-
                     Context.SaveChanges();
-                    nomDC = Context.TD_26.FirstOrDefault(_ => _.Id == rowId)?.SFT_NEMENKL_DC;
-                    if (nomDC is null) return;
+
+                    nomDC = row.SFT_NEMENKL_DC;
                     foreach (var pp in projectIdGuids)
                     {
                         Context.ProjectRowExclude.Add(new ProjectRowExclude()
@@ -2589,6 +2589,10 @@ namespace KursRepositories.Repositories.Projects
                             NomenklDC = nomDC.Value
                         });
                     }
+
+                    updateExcludeForClient(projectIdGuids, nomDC);
+
+                    Context.SaveChanges();
 
                     break;
                 case DocumentType.InvoiceClient:
@@ -2644,11 +2648,45 @@ namespace KursRepositories.Repositories.Projects
                             NomenklDC = nomDC.Value
                         });
                     }
+                    updateExcludeForClient(projectIdGuids, nomDC);
+
                     Context.SaveChanges();
                     break;
             }
 
             
+        }
+
+        private void updateExcludeForClient(List<Guid> projectIdGuids, decimal? nomDC)
+        {
+            var clientRowIds = new HashSet<Guid>();
+            foreach (var pId in projectIdGuids)
+            {
+                var d = Context.ProjectDocuments.Where(_ => _.ProjectId == pId).Select(_ => _.InvoiceClientId).ToList();
+                foreach (var r in d.SelectMany(docId =>
+                             Context.TD_84.Where(_ => _.DocId == docId).ToList().Where(r => r.SFT_NEMENKL_DC == nomDC)))
+                {
+                    clientRowIds.Add(r.Id);
+                }
+            }
+
+            foreach (var rId in clientRowIds)
+            {
+                foreach (var pp in from pp in projectIdGuids
+                         let t = Context.ProjectRowExclude.FirstOrDefault(_ =>
+                             _.ProjectId == pp && _.SFClientRowId == rId)
+                         where t == null
+                         select pp)
+                {
+                    Context.ProjectRowExclude.Add(new ProjectRowExclude()
+                    {
+                        Id = Guid.NewGuid(),
+                        ProjectId = pp,
+                        SFClientRowId = rId,
+                        NomenklDC = nomDC.Value
+                    });
+                }
+            }
         }
 
         public void IncludeNomenklToProject(Guid projectIdGuid, decimal nomDC)
