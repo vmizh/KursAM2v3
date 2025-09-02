@@ -109,7 +109,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
         [Display(AutoGenerateField = true, Name = "Результат (сумма/факт)")]
         [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactSummaResult => FactQuantityOut - DilerSumma - FactSummaIn - NakladSumma - ServiceProviderSumma + ServiceClientSumma;
+        public decimal FactSummaResult => FactSummaOut - DilerSumma - FactSummaIn - NakladSumma - ServiceProviderSumma + ServiceClientSumma;
 
         [Display(AutoGenerateField = true, Name = "Услуги поставщиков")]
         [DisplayFormat(DataFormatString = "n2")]

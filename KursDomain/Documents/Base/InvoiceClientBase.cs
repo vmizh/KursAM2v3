@@ -38,16 +38,20 @@ public sealed class InvoiceClientBase : RSViewModelBase, IInvoiceClient
             GlobalOptions.ReferencesCache.GetNomenklProductType(doc.SD_77?.DOC_CODE) as NomenklProductType;
         PersonaResponsible =
             GlobalOptions.ReferencesCache.GetEmployee(doc.PersonalResponsibleDC) as References.Employee;
+        
+        foreach (var t84 in doc.TD_84)
+        {
+            var q = t84.TD_24.Sum(t24 => t24.DDT_KOL_RASHOD);
+            if (q > 0)
+                SummaOtgruz += (t84.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) * (decimal)t84.SFT_KOL / q;
+        }
 
 
-        SummaOtgruz = Math.Round(doc.TD_84.Sum(row =>
-            (decimal)row.SFT_SUMMA_K_OPLATE_KONTR_CRS * (decimal)row.SFT_KOL /
-            row.TD_24.Sum(x => x.DDT_KOL_RASHOD)), 2);
         //DilerSumma = Math.Round(doc.DilerSumma, 2);
         Note = doc.SF_NOTE;
         //Diler = GlobalOptions.ReferencesCache.GetKontragent(doc.DilerDC) as Kontragent;
         IsAccepted = doc.SF_ACCEPTED == 1;
-        Summa = Math.Round(doc.SF_CRS_SUMMA_K_OPLATE ?? 0, 2);
+        Summa = Math.Round(doc.TD_84.Sum(_ => _.SFT_SUMMA_K_OPLATE_KONTR_CRS) ?? 0, 2);
         CREATOR = doc.CREATOR;
         IsNDSIncludeInPrice = doc.SF_NDS_1INCLUD_0NO == 1;
         decimal pSum = 0;
