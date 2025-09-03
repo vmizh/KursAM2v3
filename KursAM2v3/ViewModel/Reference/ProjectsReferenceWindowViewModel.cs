@@ -4,12 +4,14 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 using Core.ViewModel.Base;
 using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
+using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using KursAM2.Dialogs;
 using KursAM2.View.KursReferences;
@@ -175,7 +177,18 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
         try
         {
             foreach (var prj in myPojectRepository.LoadReference())
-                Projects.Add(new ProjectViewModel(prj) { myState = RowStatus.NotEdited });
+                Projects.Add(new ProjectViewModel(prj)
+                {
+                    myState = RowStatus.NotEdited
+                });
+            foreach (var p in Projects.Where(_ => _.ParentId == null))
+            {
+                if (Projects.All(_ => _.ParentId != p.Id)) continue;
+                foreach (var pd in Projects.Where(_ => _.ParentId == p.Id))
+                {
+                    p.LinkDocumentsCount += pd.Entity.ProjectDocuments.Count;
+                }
+            }
             foreach (var grp in myPojectRepository.LoadGroups())
                 GroupProjects.Add(new ProjectGroupViewModel(grp) { myState = RowStatus.NotEdited });
         }
@@ -258,7 +271,8 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
         get
         {
             return new Command(DeleteProject,
-                _ => CurrentProject != null && Projects.All(x => x.ParentId != CurrentProject.Id));
+                _ => CurrentProject != null && CurrentProject.LinkDocumentsCount == 0
+                                            && Projects.All(x => x.ParentId != CurrentProject.Id));
         }
     }
 
@@ -266,7 +280,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
     {
         var WinManager = new WindowManager();
         if (CurrentProject.State != RowStatus.NewRow)
-            DeletedProjects.Add(CurrentProject);
+           DeletedProjects.Add(CurrentProject);
         Projects.Remove(CurrentProject);
     }
 
@@ -352,6 +366,9 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
             foreach (var col in frm.gridProjects.Columns)
                 switch (col.FieldName)
                 {
+                    case "LinkDocumentsCount":
+                        col.Visible = false;
+                        break;
                     case "Name":
                         frm.gridProjects.TotalSummary.Add(new TreeListSummaryItem
                         {
@@ -363,6 +380,20 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
                         });
                         break;
                 }
+
+            frm.tableViewProjects.FormatConditions.Clear();
+            var notDocumentsLinkCondition = new FormatCondition
+            {
+                FieldName = "LinkDocumentsCount",
+                ApplyToRow = true,
+                Format = new Format
+                {
+                    Foreground = Brushes.Blue
+                },
+                ValueRule = ConditionRule.Equal,
+                Value1 = 0m
+            };
+            frm.tableViewProjects.FormatConditions.Add(notDocumentsLinkCondition);
         }
     }
 

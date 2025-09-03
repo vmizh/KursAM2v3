@@ -123,6 +123,9 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
         UpdateFrom(Entity);
     }
 
+
+    public int LinkDocumentsCount { set; get; }
+
     public override Guid Id
     {
         set
@@ -266,6 +269,7 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
         {
             Id = Guid.NewGuid()
         };
+        LinkDocumentsCount = 0;
     }
 
     public bool Check()
@@ -293,6 +297,8 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
         DateEnd = ent.DateEnd;
         ManagerDC = ent.ManagerDC;
         Responsible = GlobalOptions.ReferencesCache.GetEmployee(ManagerDC) as Employee;
+        LinkDocumentsCount = ent.ProjectDocuments.Count;
+
     }
 
     public void UpdateTo(Projects ent)
