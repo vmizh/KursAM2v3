@@ -2690,7 +2690,7 @@ namespace KursRepositories.Repositories.Projects
             foreach (var row in doc.TD_84.Where(_ => _.SFT_NEMENKL_DC == nomDC))
             {
                 var shippedRow = Context.TD_24.Include(_ => _.SD_24)
-                    .FirstOrDefault(_ => row.DOC_CODE == _.DDT_SFACT_DC && row.CODE == _.DDT_SFACT_ROW_CODE);
+                    .Where(_ => row.DOC_CODE == _.DDT_SFACT_DC && row.CODE == _.DDT_SFACT_ROW_CODE).ToList();
 
                 ret.Add(
                     new ProjectNomenklMoveDocumentInfo
@@ -2709,11 +2709,10 @@ namespace KursRepositories.Repositories.Projects
                         Creator = doc.CREATOR,
                         ClientSumma = row.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0,
                         ClientQuantity = (decimal)row.SFT_KOL,
-                        ClientShipped = shippedRow?.DDT_KOL_RASHOD * row.SFT_SUMMA_K_OPLATE_KONTR_CRS /
-                            (decimal?)row.SFT_KOL ?? 0,
-                        ClientShippedQuantity = shippedRow?.DDT_KOL_RASHOD ?? 0,
-                        Warehouse = shippedRow != null
-                            ? (Warehouse)GlobalOptions.ReferencesCache.GetWarehouse(shippedRow.SD_24
+                        ClientShipped = shippedRow.Sum(_ => _.DDT_KOL_RASHOD * row.SFT_SUMMA_K_OPLATE_KONTR_CRS / (decimal?)row.SFT_KOL ?? 0),
+                        ClientShippedQuantity = shippedRow.Sum(_ => _.DDT_KOL_RASHOD),
+                        Warehouse = shippedRow.Any()
+                            ? (Warehouse)GlobalOptions.ReferencesCache.GetWarehouse(shippedRow.First().SD_24
                                 .DD_SKLAD_OTPR_DC)
                             : null
                     }

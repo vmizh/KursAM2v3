@@ -340,8 +340,23 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         HashSet<string> colSumNames = ["NomName","DocQuantityIn","DocSummaIn","DocQuantityOut","DocSummaOut",
                                         "DocQuantityResult","DocSummaResult","FactQuantityResult","FactSummaResult","FactQuantityIn","FactQuantityOut",
                                         "FactSummaIn","FactSummaOut","NakladSumma","DilerSumma"];
+        HashSet<string> colDocSumNames = ["DocumentType","ProviderSumma","ClientSumma","ProviderShipped","ClientShipped","ProviderQuantity",
+                                            "ClientQuantity","ProviderShippedQuantity","ClientShippedQuantity"];
         if (Form is not ProjectNomenklMove frm) return;
         frm.gridNomenklRows.TotalSummary.Clear();
+        frm.gridDocumentsRows.TotalSummary.Clear();
+        foreach (var col in frm.gridDocumentsRows.Columns)
+        {
+            if (!colDocSumNames.Contains(col.FieldName)) continue;
+            var sum = new GridSummaryItem()
+            {
+                FieldName = col.FieldName,
+                DisplayFormat = "n2",
+                ShowInColumn = col.FieldName,
+                SummaryType = col.FieldName == "DocumentType" ? SummaryItemType.Count : SummaryItemType.Sum,
+            };
+            frm.gridDocumentsRows.TotalSummary.Add(sum);
+        }
         foreach (var col in frm.gridNomenklRows.Columns)
         {
             if (col.FieldName == "HasExcluded")
