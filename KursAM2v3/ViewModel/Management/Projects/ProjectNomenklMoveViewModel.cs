@@ -105,7 +105,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
         [Display(AutoGenerateField = true, Name = "Результат (кол-во/факт)")]
         [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactQuantityResult => FactQuantityIn - FactQuantityOut;
+        public decimal FactQuantityResult => FactQuantityOut - FactQuantityIn;
 
         [Display(AutoGenerateField = true, Name = "Результат (сумма/факт)")]
         [DisplayFormat(DataFormatString = "n2")]

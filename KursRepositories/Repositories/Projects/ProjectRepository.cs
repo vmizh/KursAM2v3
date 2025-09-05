@@ -2533,9 +2533,10 @@ namespace KursRepositories.Repositories.Projects
             bool isExcludeShow
         )
         {
-            return Context
+            var ret = Context
                 .GetNomenklMoveForProject(projectId, (byte?)(isRecursive ? 1 : 0), (byte?)(isExcludeShow ? 1 : 0))
                 .ToList();
+            return ret;
         }
 
         public List<Guid> GetChilds(Guid projectId)
