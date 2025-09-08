@@ -1,24 +1,24 @@
-﻿using Core.ViewModel.Base;
-using Data;
-using KursAM2.Managers;
-using KursAM2.View.Projects;
-using KursDomain;
-using KursDomain.Documents.Projects;
-using KursDomain.Menu;
-using KursDomain.References;
-using KursDomain.WindowsManager.WindowsManager;
-using KursRepositories.Repositories.Projects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Media;
+using Core.ViewModel.Base;
+using Data;
 using DevExpress.Data;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
+using KursAM2.Managers;
+using KursAM2.View.Projects;
+using KursDomain;
 using KursDomain.Documents.CommonReferences;
+using KursDomain.Documents.Projects;
+using KursDomain.Menu;
+using KursDomain.References;
+using KursDomain.WindowsManager.WindowsManager;
+using KursRepositories.Repositories.Projects;
 
 namespace KursAM2.ViewModel.Management.Projects;
 
@@ -46,80 +46,129 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
         [Display(AutoGenerateField = false)] public decimal NomDC { get; set; }
 
-        [Display(AutoGenerateField = true, Name = "Ном.№")]
+        [Display(AutoGenerateField = true, GroupName = "Основные", Name = "Ном.№")]
         public string NomNomenkl { get; set; }
 
-        [Display(AutoGenerateField = true, Name = "Номенклатура")]
+        [Display(AutoGenerateField = true, GroupName = "Основные", Name = "Номенклатура")]
         public string NomName { get; set; }
 
-        [Display(AutoGenerateField = true, Name = "Услуга")]
+        [Display(AutoGenerateField = true, GroupName = "Основные", Name = "Услуга")]
         public bool IsService { get; set; }
 
-        [Display(AutoGenerateField = true, Name = "Кол-во(прих/док)")]
+
+        [Display(AutoGenerateField = true, Name = "Есть исключенные")]
+        public bool HasExcluded { set; get; }
+
+        #region Документы
+
+        [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Кол-во(приход)")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal DocQuantityIn { get; set; }
 
-        [Display(AutoGenerateField = true, Name = "Сумма(прих/док)")]
+        [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Сумма(приход)")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal DocSummaIn { get; set; }
 
-        [Display(AutoGenerateField = true, Name = "Кол-во(расх/док)")]
+
+        [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Кол-во(расход)")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal DocQuantityOut { get; set; }
 
-        [Display(AutoGenerateField = true, Name = "Сумма(расх/док)")]
+        [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Сумма(расход)")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal DocSummaOut { get; set; }
 
-        [Display(AutoGenerateField = true, Name = "Кол-во(прих/факт)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactQuantityIn { get; set; }
-
-        [Display(AutoGenerateField = true, Name = "Кол-во(расх/факт)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactQuantityOut { get; set; }
-
-        [Display(AutoGenerateField = true, Name = "Сумма(прих/факт)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactSummaIn { get; set; }
-
-        [Display(AutoGenerateField = true, Name = "Сумма(расх/факт)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactSummaOut { get; set; }
-
-        [Display(AutoGenerateField = true, Name = "Сумма накл.")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal NakladSumma { get; set; }
-
-        [Display(AutoGenerateField = true, Name = "Сумма дилер")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal DilerSumma { get; set; }
-
-        [Display(AutoGenerateField = true, Name = "Результат (кол-во/док)")]
+        [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Результат (кол-во")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal DocQuantityResult => DocQuantityIn - DocQuantityOut;
 
-        [Display(AutoGenerateField = true, Name = "Результат (сумма/док)")]
+        [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Результат (сумма)")]
         [DisplayFormat(DataFormatString = "n2")]
-        public decimal DocSummaResult => DocSummaOut - DilerSumma - DocSummaIn - NakladSumma - ServiceProviderSumma + ServiceClientSumma;
+        public decimal DocSummaResult => DocSummaIn - DocSummaOut - DilerSumma - NakladSumma - ServiceProviderSumma +
+                                         ServiceClientSumma;
 
-        [Display(AutoGenerateField = true, Name = "Результат (кол-во/факт)")]
+        #endregion
+
+        #region Фактически
+
+        [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Кол-во(приход)")]
         [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactQuantityResult => FactQuantityOut - FactQuantityIn;
+        public decimal FactQuantityIn { get; set; }
 
-        [Display(AutoGenerateField = true, Name = "Результат (сумма/факт)")]
+        [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Кол-во(расход)")]
         [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactSummaResult => FactSummaOut - DilerSumma - FactSummaIn - NakladSumma - ServiceProviderSumma + ServiceClientSumma;
+        public decimal FactQuantityOut { get; set; }
 
-        [Display(AutoGenerateField = true, Name = "Услуги поставщиков")]
+        [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Сумма(приход)")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal FactSummaIn { get; set; }
+
+        [Display(AutoGenerateField = true,GroupName = "Фактические", Name = "Сумма(расход)")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal FactSummaOut { get; set; }
+
+        [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Результат (кол-во)")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal FactQuantityResult => FactQuantityIn - FactQuantityOut;
+
+        [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Результат (сумма)")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal FactSummaResult => FactSummaIn - DilerSumma - FactSummaOut - NakladSumma - ServiceProviderSumma +
+                                          ServiceClientSumma;
+
+        #endregion
+
+        #region Услуги и прочее
+
+        [Display(AutoGenerateField = true, GroupName = "Услуги и затраты", Name = "Сумма дилер")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal DilerSumma { get; set; }
+
+        [Display(AutoGenerateField = true, GroupName = "Услуги и затраты", Name = "Сумма накл.")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal NakladSumma { get; set; }
+
+        [Display(AutoGenerateField = true, GroupName = "Услуги и затраты", Name = "Услуги поставщиков")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal ServiceProviderSumma { get; set; }
 
-        [Display(AutoGenerateField = true, Name = "Услуги клиентам")]
+        [Display(AutoGenerateField = true, GroupName = "Услуги и затраты", Name = "Услуги клиентам")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal ServiceClientSumma { get; set; }
-        [Display(AutoGenerateField = true, Name = "Есть исключенные")]
-        public bool HasExcluded { set; get; }
+
+        #endregion
+
+        #region Сводные результаты
+        
+        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Цена закупки")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal ResultPriceIn { get; set; }
+
+        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Сумма закупки")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal ResultSummaIn { get; set; }
+
+        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Цена продажи")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal ResultPriceOut { get; set; }
+        
+        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Продано (кол-во)")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal ResultQuantityOut { get; set; }
+
+        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Сумма продажи")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal ResultSummaOut { get; set; }
+
+        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Результат")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal Result { get; set; }
+
+        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Остаток не реализованных")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal ResultOstatok { get; set; }
+
+        #endregion
     }
 
     #endregion
@@ -134,16 +183,15 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
     private void ExcludeFromProject(object obj)
     {
         var projectGuids = new List<Guid>();
-        if(IsRecursive)
+        if (IsRecursive)
             projectGuids.AddRange(myProjectRepository.GetAllTreeProjectIds(CurrentProject.Id));
         else projectGuids.Add(CurrentProject.Id);
         myProjectRepository.ExcludeNomenklFromProjects(projectGuids, CurrentDocument.DocumentType,
             CurrentDocument.Id);
         CurrentDocument.IsInclude = false;
         CurrentNomenkl.HasExcluded = true;
-        if(!IsShowExcluded)
+        if (!IsShowExcluded)
             DocumentRows.Remove(CurrentDocument);
-        
     }
 
     public ICommand IncludeIntoProjectCommand
@@ -154,7 +202,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
     private void IncludeIntoProject(object obj)
     {
         var projectGuids = new List<Guid>();
-        if(IsRecursive)
+        if (IsRecursive)
             projectGuids.AddRange(myProjectRepository.GetAllTreeProjectIds(CurrentProject.Id));
         else projectGuids.Add(CurrentProject.Id);
         myProjectRepository.IncludeNomenklToProject(projectGuids, CurrentDocument.DocumentType,
@@ -207,9 +255,10 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
     protected override void DocumentOpen(object obj)
     {
-
-        DocumentsOpenManager.Open(CurrentDocument.DocumentType == DocumentType.NomenklCurrencyConverterProvider ?
-            DocumentType.InvoiceProvider : CurrentDocument.DocumentType, CurrentDocument.DocCode);
+        DocumentsOpenManager.Open(
+            CurrentDocument.DocumentType == DocumentType.NomenklCurrencyConverterProvider
+                ? DocumentType.InvoiceProvider
+                : CurrentDocument.DocumentType, CurrentDocument.DocCode);
     }
 
     #endregion
@@ -337,46 +386,53 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
     public override void UpdateVisualObjects()
     {
-        HashSet<string> colSumNames = ["NomName","DocQuantityIn","DocSummaIn","DocQuantityOut","DocSummaOut",
-                                        "DocQuantityResult","DocSummaResult","FactQuantityResult","FactSummaResult","FactQuantityIn","FactQuantityOut",
-                                        "FactSummaIn","FactSummaOut","NakladSumma","DilerSumma"];
-        HashSet<string> colDocSumNames = ["DocumentType","ProviderSumma","ClientSumma","ProviderShipped","ClientShipped","ProviderQuantity",
-                                            "ClientQuantity","ProviderShippedQuantity","ClientShippedQuantity"];
+        HashSet<string> colSumNames =
+        [
+            "NomName", "DocQuantityIn", "DocSummaIn", "DocQuantityOut", "DocSummaOut",
+            "DocQuantityResult", "DocSummaResult", "FactQuantityResult", "FactSummaResult", "FactQuantityIn",
+            "FactQuantityOut",
+            "FactSummaIn", "FactSummaOut", "NakladSumma", "DilerSumma",
+            "ResultSummaIn","ResultQuantityIn","ResultQuantityOut","ResultSummaOut","Result","ResultOstatok"
+        ];
+        HashSet<string> colDocSumNames =
+        [
+            "DocumentType", "ProviderSumma", "ClientSumma", "ProviderShipped", "ClientShipped", "ProviderQuantity",
+            "ClientQuantity", "ProviderShippedQuantity", "ClientShippedQuantity"
+        ];
         if (Form is not ProjectNomenklMove frm) return;
         frm.gridNomenklRows.TotalSummary.Clear();
         frm.gridDocumentsRows.TotalSummary.Clear();
         foreach (var col in frm.gridDocumentsRows.Columns)
         {
             if (!colDocSumNames.Contains(col.FieldName)) continue;
-            var sum = new GridSummaryItem()
+            var sum = new GridSummaryItem
             {
                 FieldName = col.FieldName,
                 DisplayFormat = "n2",
                 ShowInColumn = col.FieldName,
-                SummaryType = col.FieldName == "DocumentType" ? SummaryItemType.Count : SummaryItemType.Sum,
+                SummaryType = col.FieldName == "DocumentType" ? SummaryItemType.Count : SummaryItemType.Sum
             };
             frm.gridDocumentsRows.TotalSummary.Add(sum);
         }
+
         foreach (var col in frm.gridNomenklRows.Columns)
         {
             if (col.FieldName == "HasExcluded")
                 col.Visible = false;
             if (!colSumNames.Contains(col.FieldName)) continue;
-            var sum = new GridSummaryItem()
+            var sum = new GridSummaryItem
             {
                 FieldName = col.FieldName,
                 DisplayFormat = "n2",
                 ShowInColumn = col.FieldName,
-                SummaryType = col.FieldName == "NomName" ? SummaryItemType.Count : SummaryItemType.Sum,
+                SummaryType = col.FieldName == "NomName" ? SummaryItemType.Count : SummaryItemType.Sum
             };
             frm.gridNomenklRows.TotalSummary.Add(sum);
+        }
 
-        } 
         foreach (var col in frm.gridDocumentsRows.Columns)
-        {
             if (col.FieldName == "IsInclude")
                 col.Visible = false;
-        } 
         frm.tableViewDocuemts.FormatConditions.Clear();
         var showRowForExcluded = new FormatCondition
         {
@@ -401,7 +457,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
             ValueRule = ConditionRule.Equal,
             Value1 = false
         };
-       
+
         frm.tableViewDocuemts.FormatConditions.Add(showRowForExcluded);
         frm.tableViewDocumentRows.FormatConditions.Add(showRowForExcluded2);
     }
@@ -420,7 +476,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
             DocumentRows.Add(doc);
     }
 
-    
+
     private void LoadNomenkls()
     {
         NomenklRows.Clear();
@@ -432,7 +488,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
         foreach (var n in myProjectRepository.GetNomenklMoveForProject(CurrentProject.Id, IsRecursive, IsShowExcluded))
         {
-            NomenklRows.Add(new ProjectNomenklMoveInfo
+            var newItem = new ProjectNomenklMoveInfo
             {
                 NakladSumma = n.NakladSumma ?? 0,
                 FactSummaIn = n.IsService == 0 ? n.FactSummaIn ?? 0 : 0,
@@ -451,9 +507,18 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
                 NomId = n.NomId ?? Guid.Empty,
                 NomName = n.NomName,
                 NomNomenkl = n.NomNomenkl,
-                HasExcluded = n.HasExcluded ?? false
+                HasExcluded = n.HasExcluded ?? false,
 
-            });
+            };
+            newItem.ResultPriceIn = newItem.FactSummaIn == 0 ? 0 : (newItem.FactSummaIn + newItem.NakladSumma) / newItem.FactQuantityIn;
+            newItem.ResultSummaIn = newItem.ResultPriceIn * newItem.FactQuantityOut + newItem.ServiceProviderSumma;
+            newItem.ResultQuantityOut = newItem.FactQuantityOut;
+            newItem.ResultSummaOut = newItem.FactSummaOut - newItem.DilerSumma + newItem.ServiceClientSumma;
+            newItem.ResultPriceOut =
+                newItem.ResultQuantityOut == 0 ? 0 : (newItem.ResultSummaOut - newItem.ServiceClientSumma) / newItem.ResultQuantityOut;
+            newItem.Result = newItem.ResultSummaOut - newItem.ResultSummaIn;
+            newItem.ResultOstatok = newItem.FactQuantityIn - newItem.FactQuantityOut;
+            NomenklRows.Add(newItem);
         }
     }
 
