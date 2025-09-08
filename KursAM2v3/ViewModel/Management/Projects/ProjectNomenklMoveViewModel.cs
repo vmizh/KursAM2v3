@@ -520,11 +520,11 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
                 HasExcluded = n.HasExcluded ?? false,
 
             };
-            newItem.ResultPriceIn = newItem.FactSummaIn == 0 ? 0 : (newItem.FactSummaIn + newItem.NakladSumma) / newItem.FactQuantityIn;
+            newItem.ResultPriceIn = Math.Round(newItem.FactSummaIn == 0 ? 0 : (newItem.FactSummaIn + newItem.NakladSumma) / newItem.FactQuantityIn,2);
             newItem.ResultSummaIn = newItem.ResultPriceIn * newItem.FactQuantityOut + newItem.ServiceProviderSumma;
             newItem.ResultQuantityOut = newItem.FactQuantityOut;
             newItem.ResultSummaOut = (decimal)(n.FactSummaOut - n.DilerSumma + (newItem.IsService ? n.DocSummaOut : 0));
-            newItem.ResultPriceOut = newItem.ResultQuantityOut == 0 ? 0 : newItem.ResultSummaOut / newItem.ResultQuantityOut;
+            newItem.ResultPriceOut = Math.Round(newItem.ResultQuantityOut == 0 ? 0 : newItem.ResultSummaOut / newItem.ResultQuantityOut,2);
             newItem.Result = newItem.ResultSummaOut - newItem.ResultSummaIn;
             newItem.ResultOstatok = newItem.FactQuantityIn - newItem.FactQuantityOut;
             newItem.ResultOstatokSumma = newItem.ResultPriceIn * newItem.ResultOstatok;
