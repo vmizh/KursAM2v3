@@ -84,8 +84,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
         [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Результат (сумма)")]
         [DisplayFormat(DataFormatString = "n2")]
-        public decimal DocSummaResult => DocSummaIn - DocSummaOut - DilerSumma - NakladSumma - ServiceProviderSumma +
-                                         ServiceClientSumma;
+        public decimal DocSummaResult =>  DocSummaIn - DocSummaOut;
 
         #endregion
 
@@ -113,8 +112,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
         [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Результат (сумма)")]
         [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactSummaResult => FactSummaIn - DilerSumma - FactSummaOut - NakladSumma - ServiceProviderSumma +
-                                          ServiceClientSumma;
+        public decimal FactSummaResult =>  FactSummaIn - FactSummaOut;
 
         #endregion
 
@@ -167,6 +165,17 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Остаток не реализованных")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal ResultOstatok { get; set; }
+
+        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Остаток (сумма)")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal ResultOstatokSumma { get; set; }
+
+        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Предполагаемый доход")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal ExpectedIncomeSumma { get; set; }
+        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Предполагаемая маржа")]
+        [DisplayFormat(DataFormatString = "n2")]
+        public decimal ExpectedIncomeProfit { get; set; }
 
         #endregion
     }
@@ -392,7 +401,8 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
             "DocQuantityResult", "DocSummaResult", "FactQuantityResult", "FactSummaResult", "FactQuantityIn",
             "FactQuantityOut",
             "FactSummaIn", "FactSummaOut", "NakladSumma", "DilerSumma",
-            "ResultSummaIn","ResultQuantityIn","ResultQuantityOut","ResultSummaOut","Result","ResultOstatok"
+            "ResultSummaIn","ResultQuantityIn","ResultQuantityOut","ResultSummaOut","Result","ResultOstatok",
+            "ResultOstatokSumma","ExpectedIncomeSumma","ExpectedIncomeProfit"
         ];
         HashSet<string> colDocSumNames =
         [
@@ -497,9 +507,9 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
                 DocQuantityIn = n.IsService == 0 ? n.DocQuantityIn ?? 0 : 0,
                 DocQuantityOut = n.IsService == 0 ? n.DocQuantityOut ?? 0 : 0,
                 DocSummaIn = n.IsService == 0 ? n.DocSummaIn ?? 0 : 0,
-                DocSummaOut = n.IsService == 0 ? n.DocSummaOut ?? 0 : 0,
+                DocSummaOut = n.IsService == 0 ? ( n.DocQuantityIn == 0 ? 0 : n.DocSummaIn * n.DocQuantityOut/n.DocQuantityIn) ?? 0 : 0,
                 FactQuantityIn = n.IsService == 0 ? n.FactQuantityIn ?? 0 : 0,
-                FactSummaOut = n.IsService == 0 ? n.FactSummaOut ?? 0 : 0,
+                FactSummaOut = n.IsService == 0 ? ( n.FactQuantityIn == 0 ? 0 : n.FactSummaIn * n.FactQuantityOut/n.FactQuantityIn) ?? 0 : 0,
                 IsService = (n.IsService ?? 0) == 1,
                 ServiceClientSumma = n.IsService == 1 ? n.DocSummaIn ?? 0 : 0,
                 ServiceProviderSumma = n.IsService == 1 ? n.DocSummaOut ?? 0 : 0,
@@ -513,11 +523,14 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
             newItem.ResultPriceIn = newItem.FactSummaIn == 0 ? 0 : (newItem.FactSummaIn + newItem.NakladSumma) / newItem.FactQuantityIn;
             newItem.ResultSummaIn = newItem.ResultPriceIn * newItem.FactQuantityOut + newItem.ServiceProviderSumma;
             newItem.ResultQuantityOut = newItem.FactQuantityOut;
-            newItem.ResultSummaOut = newItem.FactSummaOut - newItem.DilerSumma + newItem.ServiceClientSumma;
-            newItem.ResultPriceOut =
-                newItem.ResultQuantityOut == 0 ? 0 : (newItem.ResultSummaOut - newItem.ServiceClientSumma) / newItem.ResultQuantityOut;
+            newItem.ResultSummaOut = (decimal)(n.FactSummaOut - n.DilerSumma + (newItem.IsService ? n.DocSummaOut : 0));
+            newItem.ResultPriceOut = newItem.ResultQuantityOut == 0 ? 0 : newItem.ResultSummaOut / newItem.ResultQuantityOut;
             newItem.Result = newItem.ResultSummaOut - newItem.ResultSummaIn;
             newItem.ResultOstatok = newItem.FactQuantityIn - newItem.FactQuantityOut;
+            newItem.ResultOstatokSumma = newItem.ResultPriceIn * newItem.ResultOstatok;
+            newItem.ExpectedIncomeSumma = newItem.ResultPriceOut * newItem.ResultOstatok;
+            newItem.ExpectedIncomeProfit = newItem.ResultPriceOut * newItem.ResultOstatok -
+                                           newItem.ResultPriceIn * newItem.ResultOstatok;
             NomenklRows.Add(newItem);
         }
     }
