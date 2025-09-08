@@ -84,7 +84,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
         [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Результат (сумма)")]
         [DisplayFormat(DataFormatString = "n2")]
-        public decimal DocSummaResult =>  DocSummaIn - DocSummaOut;
+        public decimal DocSummaResult =>  DocSummaOut - DocSummaIn;
 
         #endregion
 
@@ -112,7 +112,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
         [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Результат (сумма)")]
         [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactSummaResult =>  FactSummaIn - FactSummaOut;
+        public decimal FactSummaResult => FactSummaOut - FactSummaIn;
 
         #endregion
 
@@ -507,9 +507,9 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
                 DocQuantityIn = n.IsService == 0 ? n.DocQuantityIn ?? 0 : 0,
                 DocQuantityOut = n.IsService == 0 ? n.DocQuantityOut ?? 0 : 0,
                 DocSummaIn = n.IsService == 0 ? n.DocSummaIn ?? 0 : 0,
-                DocSummaOut = n.IsService == 0 ? ( n.DocQuantityIn == 0 ? 0 : n.DocSummaIn * n.DocQuantityOut/n.DocQuantityIn) ?? 0 : 0,
+                DocSummaOut = n.IsService == 0 ? n.DocSummaOut ?? 0 : 0,
                 FactQuantityIn = n.IsService == 0 ? n.FactQuantityIn ?? 0 : 0,
-                FactSummaOut = n.IsService == 0 ? ( n.FactQuantityIn == 0 ? 0 : n.FactSummaIn * n.FactQuantityOut/n.FactQuantityIn) ?? 0 : 0,
+                FactSummaOut = n.IsService == 0 ? n.FactSummaOut ?? 0 : 0,
                 IsService = (n.IsService ?? 0) == 1,
                 ServiceClientSumma = n.IsService == 1 ? n.DocSummaIn ?? 0 : 0,
                 ServiceProviderSumma = n.IsService == 1 ? n.DocSummaOut ?? 0 : 0,
