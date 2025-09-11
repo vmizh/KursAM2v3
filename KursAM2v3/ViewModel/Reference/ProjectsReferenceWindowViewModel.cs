@@ -149,9 +149,34 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
 
     #region Commands
 
+    public ICommand ExcludeFromProfitLossCommand
+    {
+        get { return new Command(ExcludeFromProfitLoss, _ => CurrentProject?.IsExcludeFromProfitAndLoss == false); }
+    }
+
+    private void ExcludeFromProfitLoss(object obj)
+    {
+        CurrentProject.IsExcludeFromProfitAndLoss = true;
+        myPojectRepository.ExcludeFromProfitLoss(CurrentProject.Id);
+        CurrentProject.myState = RowStatus.NotEdited;
+    }
+
+
     public ICommand AddSubProjectCommand
     {
         get { return new Command(AddSubProject, _ => CurrentProject is not null); }
+    }
+
+    public ICommand IncludeInProfitLossCommand
+    {
+        get { return new Command(IncludeInProfitLoss, _ => CurrentProject?.IsExcludeFromProfitAndLoss == true); }
+    }
+
+    private void IncludeInProfitLoss(object obj)
+    { 
+        CurrentProject.IsExcludeFromProfitAndLoss = false;
+        myPojectRepository.IncludeInProfitLoss(CurrentProject.Id);
+        CurrentProject.myState = RowStatus.NotEdited;
     }
 
     private void AddSubProject(object obj)
@@ -393,7 +418,19 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
                 ValueRule = ConditionRule.Equal,
                 Value1 = 0m
             };
+            var notProfitLossCondition = new FormatCondition
+            {
+                FieldName = "IsExcludeFromProfitAndLoss",
+                ApplyToRow = true,
+                Format = new Format
+                {
+                    Foreground = Brushes.DarkOrange
+                },
+                ValueRule = ConditionRule.Equal,
+                Value1 = true
+            };
             frm.tableViewProjects.FormatConditions.Add(notDocumentsLinkCondition);
+            frm.tableViewProjects.FormatConditions.Add(notProfitLossCondition);
         }
     }
 

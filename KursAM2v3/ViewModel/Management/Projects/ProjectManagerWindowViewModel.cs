@@ -45,6 +45,28 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     #endregion
 
     #region Commands
+    public ICommand ExcludeFromProfitLossCommand
+    {
+        get { return new Command(ExcludeFromProfitLoss, _ => CurrentProject?.IsExcludeFromProfitAndLoss == false); }
+    }
+
+    private void ExcludeFromProfitLoss(object obj)
+    {
+        CurrentProject.IsExcludeFromProfitAndLoss = true;
+        myProjectRepository.ExcludeFromProfitLoss(CurrentProject.Id);
+    }
+    
+
+    public ICommand IncludeInProfitLossCommand
+    {
+        get { return new Command(IncludeInProfitLoss, _ => CurrentProject?.IsExcludeFromProfitAndLoss == true); }
+    }
+
+    private void IncludeInProfitLoss(object obj)
+    { 
+        CurrentProject.IsExcludeFromProfitAndLoss = false;
+        myProjectRepository.IncludeInProfitLoss(CurrentProject.Id);
+    }
     
     public ICommand ExcludeFromProjectCommand
     {
@@ -117,6 +139,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
         frm.tableViewDocuemts.FormatConditions.Clear();
         frm.tableViewInvoiceRows.FormatConditions.Clear();
+        frm.tableViewPtojects.FormatConditions.Clear();
         var excludeRows = new FormatCondition
         {
             //Expression = "[SummaFact] < [Summa]",
@@ -141,8 +164,20 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             ValueRule = ConditionRule.Equal,
             Value1 = true
         };
+        var notProfitLossCondition = new FormatCondition
+        {
+            FieldName = "IsExcludeFromProfitAndLoss",
+            ApplyToRow = true,
+            Format = new Format
+            {
+                Foreground = Brushes.DarkOrange
+            },
+            ValueRule = ConditionRule.Equal,
+            Value1 = true
+        };
         frm.tableViewDocuemts.FormatConditions.Add(excludeRows);
         frm.tableViewInvoiceRows.FormatConditions.Add(excludeInvoiceRows);
+        frm.tableViewPtojects.FormatConditions.Add(notProfitLossCondition);
     }
 
     public override void SaveData(object data)

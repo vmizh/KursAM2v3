@@ -281,5 +281,10 @@ namespace KursRepositories.Repositories.Projects
         void IncludeNomenklToProject(List<Guid> projectIdGuids, DocumentType docType, Guid rowId);
 
         List<Tuple<Guid, int>> GetCountDocumentsForProjects();
+
+        void ExcludeFromProfitLoss(Guid projectId);
+        void IncludeInProfitLoss(Guid projectId);
+
+
     }
 }

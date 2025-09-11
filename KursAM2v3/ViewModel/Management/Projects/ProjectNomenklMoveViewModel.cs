@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core.ViewModel.Base;
@@ -11,10 +12,13 @@ using DevExpress.Data;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
+using KursAM2.View.KursReferences;
 using KursAM2.View.Projects;
+using KursAM2.ViewModel.Reference;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Projects;
+using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.WindowsManager.WindowsManager;
@@ -183,6 +187,49 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
     #endregion
 
     #region Commands
+
+    public ICommand ExcludeFromProfitLossCommand
+    {
+        get { return new Command(ExcludeFromProfitLoss, _ => CurrentProject?.IsExcludeFromProfitAndLoss == false); }
+    }
+
+    private void ExcludeFromProfitLoss(object obj)
+    {
+        CurrentProject.IsExcludeFromProfitAndLoss = true;
+        myProjectRepository.ExcludeFromProfitLoss(CurrentProject.Id);
+    }
+
+
+    
+
+    public ICommand IncludeInProfitLossCommand
+    {
+        get { return new Command(IncludeInProfitLoss, _ => CurrentProject?.IsExcludeFromProfitAndLoss == true); }
+    }
+
+    private void IncludeInProfitLoss(object obj)
+    { 
+        CurrentProject.IsExcludeFromProfitAndLoss = false;
+        myProjectRepository.IncludeInProfitLoss(CurrentProject.Id);
+    }
+
+
+    public ICommand ProjectsReferenceOpenCommand
+    {
+        get { return new Command(ProjectsReferenceOpen, _ => true); }
+    }
+
+    private void ProjectsReferenceOpen(object obj)
+    {
+        var prjCtx = new ProjectReferenceWindowViewModel();
+        var form = new ProjectReferenceView
+        {
+            Owner = Application.Current.MainWindow,
+            DataContext = prjCtx
+        };
+        prjCtx.Form = form;
+        form.Show();
+    }
 
     public ICommand ExcludeFromProjectCommand
     {
@@ -444,6 +491,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
             if (col.FieldName == "IsInclude")
                 col.Visible = false;
         frm.tableViewDocuemts.FormatConditions.Clear();
+        frm.tableViewPtojects.FormatConditions.Clear();
         var showRowForExcluded = new FormatCondition
         {
             //Expression = "[SummaFact] < [Summa]",
@@ -467,9 +515,21 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
             ValueRule = ConditionRule.Equal,
             Value1 = false
         };
+        var notProfitLossCondition = new FormatCondition
+        {
+            FieldName = "IsExcludeFromProfitAndLoss",
+            ApplyToRow = true,
+            Format = new Format
+            {
+                Foreground = Brushes.DarkOrange
+            },
+            ValueRule = ConditionRule.Equal,
+            Value1 = true
+        };
 
         frm.tableViewDocuemts.FormatConditions.Add(showRowForExcluded);
         frm.tableViewDocumentRows.FormatConditions.Add(showRowForExcluded2);
+        frm.tableViewPtojects.FormatConditions.Add(notProfitLossCondition);
     }
 
     private void LoadDocuments()

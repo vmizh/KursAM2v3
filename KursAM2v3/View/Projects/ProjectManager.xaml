@@ -60,6 +60,20 @@
                                                 <materialDesign:PackIcon Kind="BookOpen" Foreground="Blue" />
                                             </MenuItem.Icon>
                                         </MenuItem>
+                                        <Separator />
+                                        <MenuItem Header="Отключить учет в прибылях/убытках"
+                                                  Command="{Binding ExcludeFromProfitLossCommand}">
+                                            <MenuItem.Icon>
+                                                <materialDesign:PackIcon Kind="CashMinus" Foreground="Red" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <MenuItem Header="Включить в учет прибыли/убытков"
+                                                  Command="{Binding IncludeInProfitLossCommand}">
+                                            <MenuItem.Icon>
+                                                <materialDesign:PackIcon Kind="CashPlus" Foreground="Green" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                        <Separator />
                                         <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                                   CommandParameter="{Binding Path=PlacementTarget, 
         RelativeSource={RelativeSource Mode=FindAncestor,

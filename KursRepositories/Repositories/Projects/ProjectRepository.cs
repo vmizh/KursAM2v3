@@ -2377,7 +2377,7 @@ namespace KursRepositories.Repositories.Projects
                 if (Context.Projects.Any(_ => _.Id == p.Id))
                 {
                     Context.Projects.Attach(p);
-                    Context.Entry(p).State = EntityState.Modified;
+                    //Context.Entry(p).State = EntityState.Modified;
                 }
                 else
                 {
@@ -3116,6 +3116,22 @@ namespace KursRepositories.Repositories.Projects
             foreach (var r in data) res.Add(new Tuple<Guid, int>(r.ProjectId, r.Count));
 
             return res;
+        }
+
+        public void ExcludeFromProfitLoss(Guid projectId)
+        {
+            var pr = Context.Projects.FirstOrDefault(_ => _.Id == projectId);
+            if (pr is null) return;
+            pr.IsExcludeFromProfitAndLoss = true;
+            Context.SaveChanges();
+        }
+
+        public void IncludeInProfitLoss(Guid projectId)
+        {
+            var pr = Context.Projects.FirstOrDefault(_ => _.Id == projectId);
+            if (pr is null) return;
+            pr.IsExcludeFromProfitAndLoss = false;
+            Context.SaveChanges();
         }
 
         public List<TD_24> GetNomenklRows(decimal dc)
