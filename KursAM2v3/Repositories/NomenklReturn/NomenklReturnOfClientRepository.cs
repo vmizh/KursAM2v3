@@ -187,6 +187,7 @@ namespace KursAM2.Repositories.NomenklReturn
             var data = Context.TD_24.Include(_ => _.SD_24)
                 .Include(_ => _.TD_84).Include(_ => _.TD_84.SD_84).Where(_ => _.SD_24.DD_KONTR_POL_DC == kontrDC)
                 .OrderBy(_ => _.SD_24.DD_DATE).ToList();
+            if (data.Count == 0) return [];
             var retRows = Context.NomenklReturnOfClientRow.ToList();
             foreach (var rowId in retRows.Select(_ => _.RashodNakladId).Distinct())
             {
