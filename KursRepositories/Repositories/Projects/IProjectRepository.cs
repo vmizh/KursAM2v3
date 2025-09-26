@@ -285,6 +285,7 @@ namespace KursRepositories.Repositories.Projects
         void ExcludeFromProfitLoss(Guid projectId);
         void IncludeInProfitLoss(Guid projectId);
 
+        void DeleteRowExcludeForDocGuid(Guid id);
 
     }
 }

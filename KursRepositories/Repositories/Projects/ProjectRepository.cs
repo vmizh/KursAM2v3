@@ -2788,26 +2788,13 @@ namespace KursRepositories.Repositories.Projects
                 .Where(_ => invClientIds.Contains(_.Id))
                 .ToList();
 
-            List<SD_26> invoiceProvider;
-            invoiceProvider = invoicesProvider.Where(_ =>
+            var invoiceProvider = invoicesProvider.Where(_ =>
                 _.TD_26.Any(x => x.SFT_NEMENKL_DC == nomDC)
             ).ToList();
-            //}
 
-            List<SD_84> invoiceClient;
-            //if (isExcludeShow)
-            //{
-            //    invoiceClient = invoicesClient.Where(_ =>
-            //        _.TD_84.Any(x => x.SFT_NEMENKL_DC == nomDC && !prj.Select(z => z.SFClientRowId).Contains(_.Id))
-            //    ).ToList();
-            //}
-            //else
-            //{
-            invoiceClient = invoicesClient.Where(_ =>
+            var invoiceClient = invoicesClient.Where(_ =>
                 _.TD_84.Any(x => x.SFT_NEMENKL_DC == nomDC)
             ).ToList();
-            //}
-
 
             foreach (var doc in invoiceProvider)
             {
@@ -3132,6 +3119,39 @@ namespace KursRepositories.Repositories.Projects
             if (pr is null) return;
             pr.IsExcludeFromProfitAndLoss = false;
             Context.SaveChanges();
+        }
+
+        public void DeleteRowExcludeForDocGuid(Guid id)
+        {
+            bool hasChanges = false;
+            var row = Context.ProjectDocuments.FirstOrDefault(_ => _.Id == id);
+            if (row is null) return; 
+            var projs = GetChilds(row.ProjectId);
+            if (row.InvoiceClientId is not null)
+            {
+                var rowsId = Context.TD_84.Where(_ => _.DocId == row.InvoiceClientId).ToList();
+                foreach (var ex in rowsId.Select(rowId => Context.ProjectRowExclude.FirstOrDefault(_ =>
+                             _.SFClientRowId == rowId.Id)).Where(ex => ex is not null))
+                {
+                    if (!projs.Contains(ex.ProjectId)) continue;
+                    hasChanges = true;
+                    Context.ProjectRowExclude.Remove(ex);
+                }
+            }
+
+            if (row.InvoiceProviderId is not null)
+            {
+                var rowsId = Context.TD_26.Where(_ => _.DocId == row.InvoiceProviderId).ToList();
+                foreach (var ex in rowsId.Select(rowId => Context.ProjectRowExclude.FirstOrDefault(_ =>
+                             _.SFProviderRowId == rowId.Id)).Where(ex => ex is not null))
+                {
+                    if (!projs.Contains(ex.ProjectId)) continue;
+                    hasChanges = true;
+                    Context.ProjectRowExclude.Remove(ex);
+                }
+            }
+            if(hasChanges)
+                Context.SaveChanges();
         }
 
         public List<TD_24> GetNomenklRows(decimal dc)

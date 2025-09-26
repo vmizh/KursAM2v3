@@ -257,6 +257,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         try
         {
             myProjectRepository.DeleteDocumentInfo(CurrentDocument.Id);
+            myProjectRepository.DeleteRowExcludeForDocGuid(CurrentDocument.Id);
             Documents.Remove(CurrentDocument);
         }
         catch (Exception ex)
