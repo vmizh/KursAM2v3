@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
@@ -11,15 +12,19 @@ using Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Navigation;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursAM2.View.KursReferences;
 using KursAM2.View.KursReferences.KontragentControls;
 using KursAM2.ViewModel.Reference.Dialogs;
 using KursDomain;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.CommonReferences.Kontragent;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 using static DevExpress.Utils.Drawing.Helpers.NativeMethods;
 using Region = KursDomain.Documents.CommonReferences.Region;
 
@@ -27,6 +32,8 @@ namespace KursAM2.ViewModel.Reference.Kontragent
 {
     public sealed class KontragentCardWindowViewModel : RSWindowViewModelBase
     {
+        private readonly ConnectionMultiplexer redis;
+        private readonly ISubscriber mySubscriber;
         // ReSharper disable once FieldCanBeMadeReadOnly.Global
         public ObservableCollection<KontragentBank> DeletedBankAndAccountses =
             new ObservableCollection<KontragentBank>();
@@ -43,12 +50,17 @@ namespace KursAM2.ViewModel.Reference.Kontragent
             RightMenuBar = MenuGenerator.KontragentCardRightBar(this);
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             IsNewDoc = true;
+
+            redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+            mySubscriber = redis.GetSubscriber();
+
             Categories.Clear();
             foreach (var item in GlobalOptions.GetEntities().SD_148.ToList())
                 Categories.Add(new KontragentClientCategory(item));
             Regions.Clear();
             foreach (var item in GlobalOptions.GetEntities().SD_23.ToList())
                 Regions.Add(new Region(item));
+
         }
 
         public KontragentCardWindowViewModel(decimal dc) : this()
@@ -706,7 +718,31 @@ namespace KursAM2.ViewModel.Reference.Kontragent
                         ResponsibleEmployeeDC = entity.SD_2?.DOC_CODE
                     };
                     newItem.LoadFromEntity(entity, GlobalOptions.ReferencesCache);
-                    GlobalOptions.ReferencesCache.AddOrUpdate(newItem);
+                    //GlobalOptions.ReferencesCache.AddOrUpdate(newItem);
+                    if (mySubscriber != null && mySubscriber.IsConnected())
+                    {
+                        var message = new RedisMessage
+                        {
+                            DocumentType = DocumentType.None,
+                            DocCode = entity.DOC_CODE,
+                            Id = entity.Id,
+                            DocDate = DateTime.Now,
+                            IsDocument = false,
+                            OperationType = RedisMessageDocumentOperationTypeEnum.Update,
+                            Message =
+                                $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил контрагентаа: '{entity.Id}'/{entity.DOC_CODE} {entity.NAME}"
+                        };
+                        message.ExternalValues.Add("Kontragent",newItem );
+                        message.ExternalValues.Add("RedisKey", $"Cache:Kontragent:{newItem.DocCode}:{newItem.Id}@{DateTime.Now}");
+                        var jsonSerializerSettings = new JsonSerializerSettings
+                        {
+                            TypeNameHandling = TypeNameHandling.All
+                        };
+                        var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                        mySubscriber.Publish(
+                            new RedisChannel(RedisMessageChannels.KontragentReference,
+                                RedisChannel.PatternMode.Auto), json);
+                    }
                 }
                 catch (Exception e)
                 {

@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data.Entity;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Helper.Extensions;
+﻿using Helper.Extensions;
 using KursAM2.Repositories.RedisRepository;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
@@ -16,9 +7,19 @@ using KursDomain.IReferences.Kontragent;
 using KursDomain.IReferences.Nomenkl;
 using KursDomain.WindowsManager.WindowsManager;
 using Newtonsoft.Json;
+using ServiceStack;
 using ServiceStack.Redis;
 using ServiceStack.Text;
 using ServiceStack.Text.Common;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Entity;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace KursDomain.References.RedisCache;
 
@@ -3374,25 +3375,48 @@ public class RedisCacheReferences : IReferencesCache
                 else Units.Add(message.DocCode.Value, u_item);
                 break;
             case RedisMessageChannels.KontragentReference:
-                if (message.DocCode is null) return;
-                LoadCacheKeys("Kontragent");
-                var k_item = GetItem<Kontragent>((string)message.ExternalValues["RedisKey"]);
-                k_item.LoadFromCache();
-                var k_oldKey = cacheKeysDict["Kontragent"].CachKeys
-                    .SingleOrDefault(_ => _.DocCode == message.DocCode);
-                if (k_oldKey is null)
-                    cacheKeysDict["Kontragent"].CachKeys.AddCacheKey(new CachKey
+                using (var redisClient = redisManager.GetClient())
+                {
+                    redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+                    if (message.DocCode is null) return;
+                    LoadCacheKeys("Kontragent");
+                    using (var ctx = GlobalOptions.GetEntities())
                     {
-                        Key = (string)message.ExternalValues["RedisKey"],
-                        DocCode = message.DocCode,
-                        Id = k_item.Id,
-                        LastUpdate =
-                            Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
-                    });
+                        var entity = ctx.SD_43.Include(_ => _.SD_2).FirstOrDefault(_ => _.DOC_CODE == message.DocCode);
+                        var newItem = new Kontragent
+                        {
+                            DocCode = entity.DOC_CODE,
+                            StartBalans = entity.START_BALANS ?? new DateTime(2000, 1, 1),
+                            Name = entity.NAME,
+                            Notes = entity.NOTES,
+                            IsBalans = entity.FLAG_BALANS == 1,
+                            IsDeleted = entity.DELETED == 1,
+                            Id = entity.Id,
+                            CurrencyDC = entity.VALUTA_DC,
+                            GroupDC = entity.EG_ID,
+                            ResponsibleEmployeeDC = entity.SD_2?.DOC_CODE
+                        };
+                        newItem.LoadFromEntity(entity, GlobalOptions.ReferencesCache);
+                        AddOrUpdate(newItem);
+                        var k_oldKey = cacheKeysDict["Kontragent"].CachKeys
+                            .SingleOrDefault(_ => _.DocCode == message.DocCode);
+                        if (k_oldKey is null)
+                        {
+                            cacheKeysDict["Kontragent"].CachKeys.AddCacheKey(new CachKey
+                            {
+                                Key = (string)message.ExternalValues["RedisKey"],
+                                DocCode = message.DocCode,
+                                Id = newItem.Id,
+                                LastUpdate = newItem.UpdateDate
+                            });
+                        }
 
-                if (Kontragents.ContainsKey(message.DocCode.Value))
-                    Kontragents[message.DocCode.Value] = k_item;
-                else Kontragents.Add(message.DocCode.Value, k_item);
+                        if (Kontragents.ContainsKey(message.DocCode.Value))
+                            Kontragents[message.DocCode.Value] = newItem;
+                        else Kontragents.Add(message.DocCode.Value, newItem);
+                    }
+                }
+
                 break;
             case RedisMessageChannels.NomenklReference:
                 if (message.DocCode is null) return;
