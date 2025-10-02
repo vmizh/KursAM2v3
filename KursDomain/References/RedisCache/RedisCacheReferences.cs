@@ -1,4 +1,6 @@
-﻿using Helper.Extensions;
+﻿using Core.ViewModel.Base;
+using Data;
+using Helper.Extensions;
 using KursAM2.Repositories.RedisRepository;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
@@ -3143,36 +3145,78 @@ public class RedisCacheReferences : IReferencesCache
                 break;
             case RedisMessageChannels.NomenklMainReference:
                 if (message.Id is null) return;
-                NomenklMain nm_item = default;
-                using (var ctx = GlobalOptions.GetEntities())
+                using (var redisClient = redisManager.GetClient())
                 {
-                    var nm = ctx.NomenklMain.Include(_ => _.SD_83).FirstOrDefault(_ => _.Id == message.Id);
-                    if (nm is null) return;
-                    nm_item = new NomenklMain();
-                    nm_item.LoadFromEntity(nm,this);
-                }
-                LoadCacheKeys("NomenklMain");
-                //nm_item = GetItemGuid<NomenklMain>((string)message.ExternalValues["RedisKey"]);
-                //nm_item.LoadFromCache();
-                var nm_oldKey = cacheKeysDict["NomenklMain"].CachKeys.SingleOrDefault(_ => _.Id == message.Id);
-                if (nm_oldKey is null)
-                    cacheKeysDict["NomenklMain"].CachKeys.AddCacheKey(new CachKey
+                    redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+                    //if (message.DocCode is null) return;
+                    LoadCacheKeys("Kontragent");
+                    NomenklMain nm_item = null;
+                    List<SD_83> nomenkls = new List<SD_83>();
+                    using (var ctx = GlobalOptions.GetEntities())
                     {
-                        Key = (string)message.ExternalValues["RedisKey"],
-                        //DocCode = message.DocCode,
-                        Id = nm_item.Id,
-                        LastUpdate = Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split('@')[1])
-                    });
-                else
-                {
-                    
-                    AddOrUpdateGuid(nm_item);
-                }
-                
+                        var nm = ctx.NomenklMain.Include(_ => _.SD_83).FirstOrDefault(_ => _.Id == message.Id);
+                        if (nm is null) return;
+                        nm_item = new NomenklMain();
+                        nm_item.LoadFromEntity(nm, this);
 
-                if (NomenklMains.ContainsKey(message.Id.Value))
-                    NomenklMains[message.Id.Value] = nm_item;
-                else NomenklMains.Add(message.Id.Value, nm_item);
+                        LoadCacheKeys("NomenklMain");
+                        AddOrUpdateGuid(nm_item);
+                        var nm_oldKey = cacheKeysDict["NomenklMain"].CachKeys.SingleOrDefault(_ => _.Id == message.Id);
+                        if (nm_oldKey is null)
+                            cacheKeysDict["NomenklMain"].CachKeys.AddCacheKey(new CachKey
+                            {
+                                Key = (string)message.ExternalValues["RedisKey"],
+                                Id = nm_item.Id,
+                                LastUpdate = nm_item.UpdateDate
+                            });
+
+                        if (NomenklMains.ContainsKey(nm_item.Id))
+                            NomenklMains[nm_item.Id] = nm_item;
+                        else NomenklMains.Add(nm_item.Id, nm_item);
+
+                        foreach (var nom in ctx.SD_83.Include(_ => _.NomenklMain)
+                                     .Where(_ => nm_item.Nomenkls.Contains(_.DOC_CODE)).AsNoTracking())
+                        {
+                            var nomItem = new Nomenkl
+                            {
+                                DocCode = nom.DOC_CODE,
+                                Id = nom.Id,
+                                Name = nm_item.Name,
+                                FullName =
+                                    nm_item.FullName,
+                                Notes = nom.NOM_NOTES,
+                                IsUsluga =
+                                    nom.NOM_0MATER_1USLUGA == 1,
+                                IsProguct = nom.NOM_1PROD_0MATER == 1,
+                                IsNakladExpense =
+                                    nom.NOM_1NAKLRASH_0NO == 1,
+                                DefaultNDSPercent = (decimal?)nom.NOM_NDS_PERCENT,
+                                IsDeleted =
+                                    nom.NOM_DELETED == 1,
+                                IsUslugaInRentabelnost =
+                                    nom.IsUslugaInRent ?? false,
+                                UpdateDate =
+                                    nm_item.UpdateDate == default ? DateTime.Now : nm_item.UpdateDate,
+                                MainId =
+                                    nom.MainId ?? Guid.Empty,
+                                IsCurrencyTransfer = nom.NomenklMain.IsCurrencyTransfer ?? false,
+                                NomenklNumber =
+                                    nom.NOM_NOMENKL,
+                                NomenklTypeDC =
+                                    nom.NomenklMain.TypeDC,
+                                ProductTypeDC = nom.NomenklMain.ProductDC,
+                                UnitDC = nom.NOM_ED_IZM_DC,
+                                CurrencyDC = nom.NOM_SALE_CRS_DC,
+                                GroupDC = nom.NOM_CATEG_DC
+                            };
+                            nomItem.LoadFromEntity(nom, this);
+                            AddOrUpdate(nomItem);
+                            //UpdateList2(new List<Nomenkl>(new[] { nomItem }));
+                            Nomenkls.AddOrUpdate(nomItem.DocCode, nomItem);
+                        }
+                    }
+                }
+
                 break;
             case RedisMessageChannels.NomenklProductTypeReference:
                 if (message.DocCode is null) return;
@@ -3416,28 +3460,68 @@ public class RedisCacheReferences : IReferencesCache
                         else Kontragents.Add(message.DocCode.Value, newItem);
                     }
                 }
-
                 break;
             case RedisMessageChannels.NomenklReference:
-                if (message.DocCode is null) return;
-                LoadCacheKeys("Nomenkl");
-                var item = GetItem<Nomenkl>((string)message.ExternalValues["RedisKey"]);
-                item.LoadFromCache();
-                var oldKey = cacheKeysDict["Nomenkl"].CachKeys
-                    .SingleOrDefault(_ => _.DocCode == message.DocCode);
-                if (oldKey is null)
-                    cacheKeysDict["Nomenkl"].CachKeys.AddCacheKey(new CachKey
+                using (var redisClient = redisManager.GetClient())
+                {
+                    redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+                    if (message.DocCode is null) return;
+                    LoadCacheKeys("Nomenkl");
+                    using (var ctx = GlobalOptions.GetEntities())
                     {
-                        Key = (string)message.ExternalValues["RedisKey"],
-                        DocCode = message.DocCode,
-                        Id = item.Id,
-                        LastUpdate =
-                            Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
-                    });
+                        var nom = ctx.SD_83.Include(_ => _.NomenklMain).FirstOrDefault(_ => _.DOC_CODE == message.DocCode);
+                        var nomItem = new Nomenkl
+                        {
+                            DocCode = nom.DOC_CODE,
+                            Id = nom.Id,
+                            Name = nom.NOM_NAME,
+                            FullName =
+                                nom.NOM_FULL_NAME,
+                            Notes = nom.NOM_NOTES,
+                            IsUsluga =
+                                nom.NOM_0MATER_1USLUGA == 1,
+                            IsProguct = nom.NOM_1PROD_0MATER == 1,
+                            IsNakladExpense =
+                                nom.NOM_1NAKLRASH_0NO == 1,
+                            DefaultNDSPercent = (decimal?)nom.NOM_NDS_PERCENT,
+                            IsDeleted =
+                                nom.NOM_DELETED == 1,
+                            IsUslugaInRentabelnost =
+                                nom.IsUslugaInRent ?? false,
+                            UpdateDate =
+                                nom.UpdateDate ?? DateTime.MinValue,
+                            MainId =
+                                nom.MainId ?? Guid.Empty,
+                            IsCurrencyTransfer = nom.NomenklMain.IsCurrencyTransfer ?? false,
+                            NomenklNumber =
+                                nom.NOM_NOMENKL,
+                            NomenklTypeDC =
+                                nom.NomenklMain.TypeDC,
+                            ProductTypeDC = nom.NomenklMain.ProductDC,
+                            UnitDC = nom.NOM_ED_IZM_DC,
+                            CurrencyDC = nom.NOM_SALE_CRS_DC,
+                            GroupDC = nom.NOM_CATEG_DC
+                        };
+                        nomItem.LoadFromEntity(nom, GlobalOptions.ReferencesCache);
+                        AddOrUpdate(nomItem);
+                        var k_oldKey = cacheKeysDict["Nomenkl"].CachKeys
+                            .SingleOrDefault(_ => _.DocCode == message.DocCode);
+                        if (k_oldKey is null)
+                        {
+                            cacheKeysDict["Nomenkl"].CachKeys.AddCacheKey(new CachKey
+                            {
+                                Key = (string)message.ExternalValues["RedisKey"],
+                                DocCode = message.DocCode,
+                                Id = nomItem.Id,
+                                LastUpdate = nomItem.UpdateDate
+                            });
+                        }
 
-                if (Nomenkls.ContainsKey(message.DocCode.Value))
-                    Nomenkls[message.DocCode.Value] = item;
-                else Nomenkls.Add(message.DocCode.Value, item);
+                        if (Nomenkls.ContainsKey(nomItem.DocCode))
+                            Nomenkls[nomItem.DocCode] = nomItem;
+                        else Nomenkls.Add(nomItem.DocCode, nomItem);
+                    }
+                }
                 break;
             default:
                 Console.WriteLine($"{channel} - не обработан");
@@ -3778,6 +3862,12 @@ public class RedisCacheReferences : IReferencesCache
             var redis = redisClient.As<T>();
             var now = DateTime.Now;
             ((ICache)item).UpdateDate = now;
+            now = item switch
+            {
+                Nomenkl nom => nom.UpdateDate == default ? now : nom.UpdateDate,
+                Kontragent kontr => kontr.UpdateDate == default ? now : kontr.UpdateDate,
+                _ => now
+            };
             var name = $"{typeof(T).Name}";
 
             var key = name switch

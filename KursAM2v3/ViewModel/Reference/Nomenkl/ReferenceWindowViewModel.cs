@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Transactions;
@@ -15,13 +16,18 @@ using DevExpress.Mvvm.POCO;
 using DevExpress.Mvvm.Xpf;
 using Helper;
 using KursAM2.Managers.Nomenkl;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.DialogUserControl.ViewModel;
 using KursAM2.View.KursReferences;
 using KursDomain;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using Newtonsoft.Json;
 using NomenklMain = KursDomain.References.NomenklMain;
+using StackExchange.Redis;
+
 
 namespace KursAM2.ViewModel.Reference.Nomenkl
 {
@@ -34,10 +40,16 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
         private bool myIsCanChangeCurrency;
         private bool myIsCategoryEnabled;
 
+        private readonly ISubscriber mySubscriber;
+        private readonly ConnectionMultiplexer redis;
+
+
         public ReferenceWindowViewModel()
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
+            redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+            mySubscriber = redis.GetSubscriber();
             LoadReferences();
             RefreshData(null);
             IsCategoryEnabled = true;
@@ -375,7 +387,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 GroupDC = entity.NOM_CATEG_DC
                             };
                             updItem.LoadFromEntity(entity, GlobalOptions.ReferencesCache);
-                            GlobalOptions.ReferencesCache.AddOrUpdate(updItem);
+                            //GlobalOptions.ReferencesCache.AddOrUpdate(updItem);
                         }
 
                         var mentity = ctx.NomenklMain.Include(_ => _.SD_83).FirstOrDefault(_ => _.Id == nom.MainId);
@@ -401,7 +413,32 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 Nomenkls = new List<decimal>(mentity.SD_83.Select(_ => _.DOC_CODE))
                             };
                             updMain.LoadFromEntity(mentity, GlobalOptions.ReferencesCache);
-                            GlobalOptions.ReferencesCache.AddOrUpdateGuid(updMain);
+                            //GlobalOptions.ReferencesCache.AddOrUpdateGuid(updMain);
+                            if (mySubscriber != null && mySubscriber.IsConnected())
+                            {
+                                var str = "обновление справочника NomenklMain";
+                                var message = new RedisMessage
+                                {
+                                    DocumentType = DocumentType.None,
+                                    DocCode = null,
+                                    Id = updMain.Id,
+                                    DocDate = DateTime.Now,
+                                    IsDocument = false,
+                                    OperationType = RedisMessageDocumentOperationTypeEnum.Update,
+                                    Message =
+                                        $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} номенклатура: {updMain.Id} {updMain.Name}"
+                                };
+                                message.ExternalValues.Add("NomenklDC", updMain.Nomenkls);
+                                message.ExternalValues.Add("RedisKey", $"Cache:NomenklMain:{updMain.Id}@{updMain.UpdateDate}");
+                                var jsonSerializerSettings = new JsonSerializerSettings
+                                {
+                                    TypeNameHandling = TypeNameHandling.All
+                                };
+                                var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                                mySubscriber.Publish(
+                                    new RedisChannel(RedisMessageChannels.NomenklMainReference,
+                                        RedisChannel.PatternMode.Auto), json);
+                            }
                         }
 
                         nom.myState = RowStatus.NotEdited;

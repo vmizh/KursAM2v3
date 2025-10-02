@@ -276,7 +276,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 var newNomItem = new SD_83
                                 {
                                     DOC_CODE = newDC,
-                                    NOM_NAME = newItem.Name,
+                                    NOM_NAME = NomenklMain.Name,
                                     NOM_NOMENKL = newItem.NomenklNumber + " " +
                                                   GlobalOptions.SystemProfile.NationalCurrency.Name,
                                     NOM_NOTES = newItem.Note,
@@ -303,6 +303,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 if (nomFormMain.Count > 0)
                                     foreach (var n in nomFormMain)
                                     {
+                                        n.NOM_NAME = NomenklMain.Name;
                                         n.NOM_0MATER_1USLUGA = NomenklMain.IsUsluga ? 1 : 0;
                                         n.NOM_1NAKLRASH_0NO = NomenklMain.IsNakladExpense ? 1 : 0;
                                         n.IsUslugaInRent = NomenklMain.IsRentabelnost;
@@ -372,77 +373,6 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                                 new RedisChannel(RedisMessageChannels.NomenklMainReference,
                                     RedisChannel.PatternMode.Auto), json);
                         }
-
-                        //foreach (var item in from id in savedListId.Distinct()
-                        //         select ctx.NomenklMain.Include(_ => _.SD_83).AsNoTracking()
-                        //             .FirstOrDefault(_ => _.Id == id)
-                        //         into entity
-                        //         where entity is not null
-                        //         select new KursDomain.References.NomenklMain
-                        //         {
-                        //             Id = entity.Id,
-                        //             Name = entity.Name,
-                        //             Notes = entity.Note,
-                        //             NomenklNumber = entity.NomenklNumber,
-                        //             FullName = entity.FullName,
-                        //             IsUsluga = entity.IsUsluga,
-                        //             IsProguct = entity.IsComplex,
-                        //             IsNakladExpense = entity.IsNakladExpense,
-                        //             IsOnlyState = entity.IsOnlyState ?? false,
-                        //             IsCurrencyTransfer = entity.IsCurrencyTransfer ?? false,
-                        //             IsRentabelnost = entity.IsRentabelnost ?? false,
-                        //             UnitDC = entity.UnitDC,
-                        //             CategoryDC = entity.CategoryDC,
-                        //             NomenklTypeDC = entity.TypeDC,
-                        //             ProductTypeDC = entity.ProductDC,
-                        //             Nomenkls = entity.SD_83 != null ? entity.SD_83.Select(_ => _.DOC_CODE).ToList() : []
-                        //         })
-                        //{
-
-                        //    GlobalOptions.ReferencesCache.AddOrUpdateGuid(item);
-                        //}
-
-                        //foreach (var item in from dc in savedListDC.Distinct()
-                        //         select ctx.SD_83.Include(_ => _.NomenklMain).AsNoTracking()
-                        //             .FirstOrDefault(_ => _.DOC_CODE == dc)
-                        //         into entity
-                        //         where entity is not null
-                        //         select new KursDomain.References.Nomenkl
-                        //         {
-                        //             DocCode = entity.DOC_CODE,
-                        //             Id = entity.Id,
-                        //             Name = entity.NOM_NAME,
-                        //             FullName =
-                        //                 entity.NOM_FULL_NAME,
-                        //             Notes = entity.NOM_NOTES,
-                        //             IsUsluga =
-                        //                 entity.NOM_0MATER_1USLUGA == 1,
-                        //             IsProguct = entity.NOM_1PROD_0MATER == 1,
-                        //             IsNakladExpense =
-                        //                 entity.NOM_1NAKLRASH_0NO == 1,
-                        //             DefaultNDSPercent = (decimal?)entity.NOM_NDS_PERCENT,
-                        //             IsDeleted =
-                        //                 entity.NOM_DELETED == 1,
-                        //             IsUslugaInRentabelnost =
-                        //                 entity.IsUslugaInRent ?? false,
-                        //             UpdateDate =
-                        //                 entity.UpdateDate ?? DateTime.MinValue,
-                        //             MainId =
-                        //                 entity.MainId ?? Guid.Empty,
-                        //             IsCurrencyTransfer = entity.NomenklMain.IsCurrencyTransfer ?? false,
-                        //             NomenklNumber =
-                        //                 entity.NOM_NOMENKL,
-                        //             NomenklTypeDC =
-                        //                 entity.NomenklMain.TypeDC,
-                        //             ProductTypeDC = entity.NomenklMain.ProductDC,
-                        //             UnitDC = entity.NOM_ED_IZM_DC,
-                        //             CurrencyDC = entity.NOM_SALE_CRS_DC,
-                        //             GroupDC = entity.NOM_CATEG_DC,
-                        //         })
-                            //GlobalOptions.ReferencesCache.AddOrUpdate(item);
-
-                        //foreach (var n in dcs) MainReferences.LoadNomenkl(n);
-
                     }
                     catch (Exception ex)
                     {
