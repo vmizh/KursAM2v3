@@ -27,6 +27,7 @@ using KursAM2.ReportManagers.SFClientAndWayBill;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.DialogUserControl;
+using KursAM2.View.DialogUserControl.Invoices.ViewModels;
 using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Helper;
@@ -1021,6 +1022,14 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         {
             Document.Client = GlobalOptions.ReferencesCache.GetKontragent(Document.Client?.DocCode) as Kontragent;
         }
+        if ((string)message.ExternalValues["Type"] == "Nomenkl")
+        {
+            foreach (var row in Document.Rows)
+            {
+                row.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.Nomenkl.DocCode) as Nomenkl;
+                ((InvoiceClientRowViewModel)row).RaisePropertyAllChanged();
+            }
+        }
 
         Document.myState = state;
         RaisePropertyChanged(nameof(Document));
@@ -1197,7 +1206,6 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
                 if (string.IsNullOrEmpty(r.Note))
                     r.Note = " ";
 
-            var modifiedObjects = UnitOfWork.Context.ChangeTracker.Entries();
             UnitOfWork.Save();
             UnitOfWork.Commit();
             DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,

@@ -587,6 +587,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 Document.Kontragent = GlobalOptions.ReferencesCache.GetKontragent(Document.Kontragent?.DocCode) as Kontragent;
                 Document.KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(Document.KontrReceiver?.DocCode) as Kontragent;
             }
+
+            if ((string)message.ExternalValues["Type"] == "Nomenkl")
+            {
+                foreach (var row in Document.Rows)
+                {
+                    row.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.Nomenkl.DocCode) as Nomenkl;
+                    ((InvoiceProviderRow)row).RaisePropertyAllChanged();
+                }
+            }
             Document.RaisePropertyAllChanged();
             Document.myState = state;
             RaisePropertyChanged(nameof(Document));

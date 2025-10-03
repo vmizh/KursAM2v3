@@ -40,8 +40,8 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     public bool Equals(Nomenkl other)
     {
         if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return DocCode == other.DocCode;
+        if (ReferenceEquals(this, other)) return Name == other.Name && NomenklNumber == other.NomenklNumber;
+        return DocCode == other.DocCode && Name == other.Name && NomenklNumber == other.NomenklNumber;
     }
 
     [Display(AutoGenerateField = true, Name = "Наименование")]
@@ -191,7 +191,12 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
     public override bool Equals(object obj)
     {
         if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
+        if (ReferenceEquals(this, obj))
+        {
+            var nom = obj as Nomenkl;
+            if (nom is null) return false;
+            return nom.DocCode == DocCode && nom.Name == Name && nom.NomenklNumber == NomenklNumber;
+        }
         if (obj.GetType() != GetType()) return false;
         return Equals((Nomenkl) obj);
     }

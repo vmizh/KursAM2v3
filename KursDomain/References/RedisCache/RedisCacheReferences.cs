@@ -3227,6 +3227,20 @@ public class RedisCacheReferences : IReferencesCache
                             Nomenkls.AddOrUpdate(nomItem.DocCode, nomItem);
                         }
                     }
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var redisMessage = new RedisMessage
+                    {
+                        Message =
+                            $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник номенклатур."
+                    };
+                    redisMessage.ExternalValues["Type"] = "Nomenkl";
+                    var json = JsonConvert.SerializeObject(redisMessage, jsonSerializerSettings);
+                    mySubscriber.Publish(
+                        new RedisChannel(RedisMessageChannels.ReferenceUpdate,
+                            RedisChannel.PatternMode.Auto),json);
                 }
 
                 break;
@@ -3511,7 +3525,7 @@ public class RedisCacheReferences : IReferencesCache
                     var redisMessage = new RedisMessage
                     {
                         Message =
-                            $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник центров ответственности."
+                            $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник контрагентов."
                     };
                     redisMessage.ExternalValues["Type"] = "Kontragent";
                     var json = JsonConvert.SerializeObject(redisMessage, jsonSerializerSettings);

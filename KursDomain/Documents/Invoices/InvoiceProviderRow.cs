@@ -636,8 +636,8 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
         get => myNomenkl;
         set
         {
-            if (Entity.SFT_NEMENKL_DC != default &&
-                GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC) == value) return;
+
+            if (Equals(myNomenkl, value)) return;
             myNomenkl = value;
             if (myNomenkl != null)
             {
