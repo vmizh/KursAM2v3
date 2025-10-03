@@ -36,6 +36,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using KursDomain.References;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -83,6 +84,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             Console.WriteLine($@"Redis - {message}");
                             Form.Dispatcher.Invoke(() => UpdateList(message));
                         });
+
+                mySubscriber.Subscribe(
+                    new RedisChannel(RedisMessageChannels.ReferenceUpdate, RedisChannel.PatternMode.Auto),
+                    (_, message) => { Form.Dispatcher.Invoke(() => UpdateReferences(message)); });
+
                 mySubscriber.Subscribe(
                     new RedisChannel(RedisMessageChannels.CashOut, RedisChannel.PatternMode.Auto),
                     (_, message) =>
@@ -240,6 +246,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (CurrentDocument == null) return;
             DocumentsOpenManager.Open(
                 DocumentType.InvoiceProvider, CurrentDocument.DocCode);
+        }
+
+        private void UpdateReferences(RedisValue msg)
+        {
+            var message = JsonConvert.DeserializeObject<RedisMessage>(msg);
+            if (message == null || !message.ExternalValues.ContainsKey("Type")) return;
+            foreach (var doc in Documents)
+                if ((string)message.ExternalValues["Type"] == "PayCondition")
+                {
+                    var payDC = doc.PayCondition?.DocCode;
+                    if (payDC is null) continue;
+                    doc.PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(payDC) as PayCondition;
+                }
+
+            RaisePropertyChanged(nameof(Documents));
         }
 
         private void UpdateList(RedisValue message)

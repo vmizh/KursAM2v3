@@ -2160,7 +2160,9 @@ public class RedisCacheReferences : IReferencesCache
     public IPayCondition GetPayCondition(decimal? dc)
     {
         if (dc is null) return null;
-        return PayConditions.ContainsKey(dc.Value) ? PayConditions[dc.Value] : null;
+        if (PayConditions.Count == 0)
+            GetPayConditionAll();
+        return PayConditions.ContainsKey(dc.Value ) ? PayConditions[dc.Value] : null;
     }
 
     public IEnumerable<IPayCondition> GetPayConditionAll()

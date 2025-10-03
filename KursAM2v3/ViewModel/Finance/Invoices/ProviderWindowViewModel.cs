@@ -381,6 +381,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                 Form.Dispatcher.Invoke(() => ShowNotify(message));
                             }
                         });
+
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.ReferenceUpdate, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+
+                            Form.Dispatcher.Invoke(() => UpdateReferences(message));
+
+                        });
                     mySubscriber.Subscribe(
                         new RedisChannel(RedisMessageChannels.CashOut, RedisChannel.PatternMode.Auto),
                         (_, message) =>
@@ -551,6 +560,15 @@ namespace KursAM2.ViewModel.Finance.Invoices
             RaisePropertyChanged(nameof(Document));
         }
 
+        private void UpdateReferences(RedisValue message)
+        {
+            PayConditionList = GlobalOptions.ReferencesCache.GetPayConditionAll()
+                .Cast<PayCondition>()
+                .OrderBy(_ => _.Name).ToList();
+            RaisePropertyChanged(nameof(Document));
+            RaisePropertyChanged(nameof(PayConditionList));
+        }
+
         private void UpdateCash(RedisValue message)
         {
             if (string.IsNullOrWhiteSpace(message)) return;
@@ -588,7 +606,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             .GetNomenklProductTypesAll().Cast<NomenklProductType>()
             .OrderBy(_ => _.Name).ToList();
 
-        public List<PayCondition> PayConditionList => GlobalOptions.ReferencesCache.GetPayConditionAll()
+        public List<PayCondition> PayConditionList { set; get; } = GlobalOptions.ReferencesCache.GetPayConditionAll()
             .Cast<PayCondition>()
             .OrderBy(_ => _.Name).ToList();
 
