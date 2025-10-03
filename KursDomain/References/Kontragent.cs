@@ -25,10 +25,7 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
     public Kontragent()
     {
         DocCode = -1;
-        
     }
-
-    
     public int CompareTo(object obj)
     {
         var c = obj as Unit;
@@ -44,8 +41,9 @@ public class Kontragent : IKontragent, IDocCode, IDocGuid, IName, IEquatable<Kon
     public bool Equals(Kontragent other)
     {
         if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return DocCode == other.DocCode;
+        if (ReferenceEquals(this, other))
+            return other.Name == Name;
+        return DocCode == other.DocCode && other.Name == Name;
     }
 
     [Display(AutoGenerateField = true, Name = "Коротокие имя")]

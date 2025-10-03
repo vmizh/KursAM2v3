@@ -3504,6 +3504,20 @@ public class RedisCacheReferences : IReferencesCache
                             Kontragents[message.DocCode.Value] = newItem;
                         else Kontragents.Add(message.DocCode.Value, newItem);
                     }
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var redisMessage = new RedisMessage
+                    {
+                        Message =
+                            $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник центров ответственности."
+                    };
+                    redisMessage.ExternalValues["Type"] = "Kontragent";
+                    var json = JsonConvert.SerializeObject(redisMessage, jsonSerializerSettings);
+                    mySubscriber.Publish(
+                        new RedisChannel(RedisMessageChannels.ReferenceUpdate,
+                            RedisChannel.PatternMode.Auto),json);
                 }
 
                 break;

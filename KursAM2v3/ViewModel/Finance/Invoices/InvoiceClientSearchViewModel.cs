@@ -231,6 +231,11 @@ public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
                 if (payDC is null) continue;
                 doc.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(payDC) as CentrResponsibility;
             }
+
+            if ((string)message.ExternalValues["Type"] == "Kontragent")
+            {
+                doc.Client = GlobalOptions.ReferencesCache.GetKontragent(doc.Client?.DocCode) as Kontragent;
+            }
         }
 
         RaisePropertyChanged(nameof(Documents));

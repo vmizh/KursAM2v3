@@ -563,6 +563,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private void UpdateReferences(RedisValue msg)
         {
+            var state = Document.State;
             var message = JsonConvert.DeserializeObject<RedisMessage>(msg);
             if (message == null || !message.ExternalValues.ContainsKey("Type")) return;
             if ((string)message.ExternalValues["Type"] == "PayCondition")
@@ -581,7 +582,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 RaisePropertyChanged(nameof(COList));
                 Document.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(Document.CO?.DocCode) as CentrResponsibility;
             }
+            if ((string)message.ExternalValues["Type"] == "Kontragent")
+            {
+                Document.Kontragent = GlobalOptions.ReferencesCache.GetKontragent(Document.Kontragent?.DocCode) as Kontragent;
+                Document.KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(Document.KontrReceiver?.DocCode) as Kontragent;
+            }
             Document.RaisePropertyAllChanged();
+            Document.myState = state;
             RaisePropertyChanged(nameof(Document));
 
         }

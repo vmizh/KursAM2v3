@@ -266,6 +266,11 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     if (payDC is null) continue;
                     doc.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(payDC) as CentrResponsibility;
                 }
+                if ((string)message.ExternalValues["Type"] == "Kontragent")
+                {
+                    doc.Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.Kontragent?.DocCode) as Kontragent;
+                    doc.KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(doc.KontrReceiver?.DocCode) as Kontragent;
+                }
             }
 
             RaisePropertyChanged(nameof(Documents));

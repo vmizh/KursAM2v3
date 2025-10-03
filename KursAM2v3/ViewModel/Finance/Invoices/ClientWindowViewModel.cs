@@ -997,6 +997,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
 
     private void UpdateReferences(RedisValue msg)
     {
+        var state = Document.State;
         var message = JsonConvert.DeserializeObject<RedisMessage>(msg);
         if (message == null || !message.ExternalValues.ContainsKey("Type")) return;
         if ((string)message.ExternalValues["Type"] == "PayCondition")
@@ -1015,6 +1016,13 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
             RaisePropertyChanged(nameof(COList));
             Document.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(Document.CO?.DocCode) as CentrResponsibility;
         }
+
+        if ((string)message.ExternalValues["Type"] == "Kontragent")
+        {
+            Document.Client = GlobalOptions.ReferencesCache.GetKontragent(Document.Client?.DocCode) as Kontragent;
+        }
+
+        Document.myState = state;
         RaisePropertyChanged(nameof(Document));
         
     }
