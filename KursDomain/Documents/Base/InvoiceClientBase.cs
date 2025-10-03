@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Core.ViewModel.Base;
+using Data;
+using KursDomain.IDocuments.Finance;
+using KursDomain.IReferences;
+using KursDomain.References;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Data.Entity;
-using Core.ViewModel.Base;
-using Data;
-using KursDomain.IDocuments.Finance;
-using KursDomain.References;
 
 namespace KursDomain.Documents.Base;
 
@@ -16,6 +17,7 @@ namespace KursDomain.Documents.Base;
 public sealed class InvoiceClientBase : RSViewModelBase, IInvoiceClient
 {
     private Kontragent myClient;
+    private PayCondition myPayCondition;
 
     public InvoiceClientBase(SD_84 doc)
     {
@@ -119,7 +121,13 @@ public sealed class InvoiceClientBase : RSViewModelBase, IInvoiceClient
         foreach (var r in invList) Rows.Add(new InvoiceClientRowBase(r));
     }
 
-    public PayCondition PayCondition { get; set; }
+    public PayCondition PayCondition {get => myPayCondition;
+        set
+        {
+            if (Equals(value, myPayCondition) && value?.Name == myPayCondition?.Name) return;
+            myPayCondition = value;
+            RaisePropertyChanged();
+        } }
 
     public Kontragent Receiver { get; set; }
 

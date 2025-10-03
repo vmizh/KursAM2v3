@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using Data;
+﻿using Data;
 using Helper;
 using KursDomain;
 using KursDomain.Documents.Base;
@@ -10,6 +6,11 @@ using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
 using KursDomain.IDocuments.Finance;
 using KursDomain.Repository;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Linq;
 
 namespace KursAM2.Repositories.InvoicesRepositories;
 
@@ -122,6 +123,7 @@ public class InvoiceClientRepository : GenericKursDBRepository<InvoiceClientView
 
     public List<IInvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd)
     {
+        var entries = Context.ChangeTracker.Entries();
         var data = Context.InvoiceClientQuery.Where(_ => _.DocDate >= dateStart && _.DocDate <= dateEnd)
             .AsNoTracking()
             .OrderByDescending(_ => _.DocDate).ToList();

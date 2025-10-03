@@ -1,19 +1,4 @@
-﻿using Core.ViewModel.Base;
-using Data;
-using Helper.Extensions;
-using KursAM2.Repositories.RedisRepository;
-using KursDomain.Documents.CommonReferences;
-using KursDomain.ICommon;
-using KursDomain.IReferences;
-using KursDomain.IReferences.Kontragent;
-using KursDomain.IReferences.Nomenkl;
-using KursDomain.WindowsManager.WindowsManager;
-using Newtonsoft.Json;
-using ServiceStack;
-using ServiceStack.Redis;
-using ServiceStack.Text;
-using ServiceStack.Text.Common;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Configuration;
@@ -22,6 +7,20 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Data;
+using Helper.Extensions;
+using KursAM2.Repositories.RedisRepository;
+using KursDomain.ICommon;
+using KursDomain.IReferences;
+using KursDomain.IReferences.Kontragent;
+using KursDomain.IReferences.Nomenkl;
+using KursDomain.WindowsManager.WindowsManager;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using ServiceStack.Redis;
+using ServiceStack.Text;
+using ServiceStack.Text.Common;
+using StackExchange.Redis;
 
 namespace KursDomain.References.RedisCache;
 
@@ -57,18 +56,20 @@ public record CachKey
 public class CacheKeys
 {
     public DateTime LoadMoment { set; get; }
-    public List<CachKey> CachKeys { get; set; } = new List<CachKey>();
+    public List<CachKey> CachKeys { get; set; } = new();
 }
 
 [SuppressMessage("ReSharper", "RedundantDictionaryContainsKeyBeforeAdding")]
 public class RedisCacheReferences : IReferencesCache
 {
+    private readonly ISubscriber mySubscriber;
+    private readonly ConnectionMultiplexer redis;
+
     public const int MaxTimersSec = 10800; // 3 часа
 
-    public readonly Dictionary<string, CacheKeys> cacheKeysDict = new Dictionary<string, CacheKeys>();
+    public readonly Dictionary<string, CacheKeys> cacheKeysDict = new();
 
-    private readonly RedisManagerPool redisManager =
-        new RedisManagerPool(ConfigurationManager.AppSettings["redis.connection"]);
+    private readonly RedisManagerPool redisManager = new(ConfigurationManager.AppSettings["redis.connection"]);
 
     public bool isNomenklCacheLoad = true;
 
@@ -78,6 +79,8 @@ public class RedisCacheReferences : IReferencesCache
     public RedisCacheReferences()
     {
         isStartLoad = true;
+        redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+        mySubscriber = redis.GetSubscriber();
 
         ThreadPool.QueueUserWorkItem(_ =>
         {
@@ -601,7 +604,7 @@ public class RedisCacheReferences : IReferencesCache
 
     public IEnumerable<IBankAccount> GetBankAccountAll()
     {
-        int count = 0;
+        var count = 0;
         var cacheName = "BankAccount";
         using (var ctx = GlobalOptions.GetEntities())
         {
@@ -2002,7 +2005,7 @@ public class RedisCacheReferences : IReferencesCache
             redisClient.Db = GlobalOptions.RedisDBId ?? 0;
             if (!cacheKeysDict.ContainsKey(cacheName))
                 LoadCacheKeys(cacheName);
-            if (!((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec) 
+            if (!((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec)
                 && cacheKeysDict[cacheName].CachKeys.Count == Projects.Count)
                 return Projects.Values.ToList();
             var redis = redisClient.As<Project>();
@@ -2157,30 +2160,7 @@ public class RedisCacheReferences : IReferencesCache
     public IPayCondition GetPayCondition(decimal? dc)
     {
         if (dc is null) return null;
-        if (!cacheKeysDict.ContainsKey("PayCondition"))
-            LoadCacheKeys("PayCondition");
-
-        var key = cacheKeysDict["PayCondition"].CachKeys.SingleOrDefault(_ => _.DocCode == dc.Value);
-        PayCondition itemNew;
-        if (key is not null)
-        {
-            if (PayConditions.TryGetValue(dc.Value, out var PayCondition))
-                return PayCondition;
-            itemNew = GetItem<PayCondition>(key.Key);
-            if (itemNew is null) return null;
-            itemNew.LoadFromCache();
-        }
-        else
-        {
-            return null;
-        }
-
-        if (PayConditions.ContainsKey(dc.Value))
-            PayConditions[dc.Value] = itemNew;
-        else
-            PayConditions.Add(dc.Value, itemNew);
-
-        return PayConditions[dc.Value];
+        return PayConditions.ContainsKey(dc.Value) ? PayConditions[dc.Value] : null;
     }
 
     public IEnumerable<IPayCondition> GetPayConditionAll()
@@ -3151,7 +3131,7 @@ public class RedisCacheReferences : IReferencesCache
                     //if (message.DocCode is null) return;
                     LoadCacheKeys("Kontragent");
                     NomenklMain nm_item = null;
-                    List<SD_83> nomenkls = new List<SD_83>();
+                    var nomenkls = new List<SD_83>();
                     using (var ctx = GlobalOptions.GetEntities())
                     {
                         var nm = ctx.NomenklMain.Include(_ => _.SD_83).FirstOrDefault(_ => _.Id == message.Id);
@@ -3259,24 +3239,59 @@ public class RedisCacheReferences : IReferencesCache
                 else NomenklTypes.Add(message.DocCode.Value, nt_item);
                 break;
             case RedisMessageChannels.PayConditionReference:
-                if (message.DocCode is null) return;
-                LoadCacheKeys("PayCondition");
-                var pc_item = GetItem<PayCondition>((string)message.ExternalValues["RedisKey"]);
-                pc_item.LoadFromCache();
-                var pc_oldKey = cacheKeysDict["PayCondition"].CachKeys
-                    .SingleOrDefault(_ => _.DocCode == message.DocCode);
-                if (pc_oldKey is null)
-                    cacheKeysDict["PayCondition"].CachKeys.AddCacheKey(new CachKey
+                using (var redisClient = redisManager.GetClient())
+                {
+                    redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+                    if (!message.ExternalValues.ContainsKey("DocCodes")) return;
+                    LoadCacheKeys("PayCondition");
+                    using (var ctx = GlobalOptions.GetEntities())
                     {
-                        Key = (string)message.ExternalValues["RedisKey"],
-                        DocCode = message.DocCode,
-                        LastUpdate =
-                            Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
-                    });
+                        var lst = (message.ExternalValues["DocCodes"] as JArray).ToObject<List<decimal>>();
 
-                if (PayConditions.ContainsKey(message.DocCode.Value))
-                    PayConditions[message.DocCode.Value] = pc_item;
-                else PayConditions.Add(message.DocCode.Value, pc_item);
+                        var entities = ctx.SD_179.Where(_ => lst.Contains(_.DOC_CODE));
+                        foreach (var entity in entities)
+                        {
+                            var newItem = new PayCondition
+                            {
+                                DocCode = entity.DOC_CODE,
+                                Name = entity.PT_NAME,
+                                IsDefault = entity.DEFAULT_VALUE == 1,
+                                UpdateDate = entity.UpdateDate ?? DateTime.Now
+                            };
+                            newItem.LoadFromEntity(entity);
+                            AddOrUpdate(newItem);
+                            var k_oldKey = cacheKeysDict["PayCondition"].CachKeys
+                                .SingleOrDefault(_ => _.DocCode == message.DocCode);
+                            if (k_oldKey is null)
+                                cacheKeysDict["PayCondition"].CachKeys.AddCacheKey(new CachKey
+                                {
+                                    Key = $"Cache:{newItem.Name}:{newItem.DocCode}@{newItem.UpdateDate}",
+                                    DocCode = message.DocCode,
+                                    Id = null,
+                                    LastUpdate = newItem.UpdateDate
+                                });
+
+                            if (PayConditions.ContainsKey(newItem.DocCode))
+                                PayConditions[newItem.DocCode] = newItem;
+                            else PayConditions.Add(newItem.DocCode, newItem);
+                        }
+                    }
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var redisMessage = new RedisMessage
+                    {
+                       Message =
+                            $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник условий оплаты."
+                    };
+                    redisMessage.ExternalValues["Type"] = "PayCondition";
+                    var json = JsonConvert.SerializeObject(redisMessage, jsonSerializerSettings);
+                    mySubscriber.Publish(
+                        new RedisChannel(RedisMessageChannels.ReferenceUpdate,
+                            RedisChannel.PatternMode.Auto),json);
+                }
+
                 break;
             case RedisMessageChannels.PayFormReference:
                 if (message.DocCode is null) return;
@@ -3300,7 +3315,7 @@ public class RedisCacheReferences : IReferencesCache
                 break;
             case RedisMessageChannels.ProjectReference:
                 Projects.Clear();
-               
+
                 using (var ctx = GlobalOptions.GetEntities())
                 {
                     foreach (var itemPrj in ctx.Projects.AsNoTracking().ToList())
@@ -3312,7 +3327,7 @@ public class RedisCacheReferences : IReferencesCache
                     }
 
                     DropAllGuid<Project>();
-                    UpdateListGuid(Projects.Values.Cast<Project>(), DateTime.Now); 
+                    UpdateListGuid(Projects.Values.Cast<Project>(), DateTime.Now);
                     LoadCacheKeys("Project");
                     GetProjectsAll();
                 }
@@ -3445,7 +3460,6 @@ public class RedisCacheReferences : IReferencesCache
                         var k_oldKey = cacheKeysDict["Kontragent"].CachKeys
                             .SingleOrDefault(_ => _.DocCode == message.DocCode);
                         if (k_oldKey is null)
-                        {
                             cacheKeysDict["Kontragent"].CachKeys.AddCacheKey(new CachKey
                             {
                                 Key = (string)message.ExternalValues["RedisKey"],
@@ -3453,13 +3467,13 @@ public class RedisCacheReferences : IReferencesCache
                                 Id = newItem.Id,
                                 LastUpdate = newItem.UpdateDate
                             });
-                        }
 
                         if (Kontragents.ContainsKey(message.DocCode.Value))
                             Kontragents[message.DocCode.Value] = newItem;
                         else Kontragents.Add(message.DocCode.Value, newItem);
                     }
                 }
+
                 break;
             case RedisMessageChannels.NomenklReference:
                 using (var redisClient = redisManager.GetClient())
@@ -3469,7 +3483,8 @@ public class RedisCacheReferences : IReferencesCache
                     LoadCacheKeys("Nomenkl");
                     using (var ctx = GlobalOptions.GetEntities())
                     {
-                        var nom = ctx.SD_83.Include(_ => _.NomenklMain).FirstOrDefault(_ => _.DOC_CODE == message.DocCode);
+                        var nom = ctx.SD_83.Include(_ => _.NomenklMain)
+                            .FirstOrDefault(_ => _.DOC_CODE == message.DocCode);
                         var nomItem = new Nomenkl
                         {
                             DocCode = nom.DOC_CODE,
@@ -3507,7 +3522,6 @@ public class RedisCacheReferences : IReferencesCache
                         var k_oldKey = cacheKeysDict["Nomenkl"].CachKeys
                             .SingleOrDefault(_ => _.DocCode == message.DocCode);
                         if (k_oldKey is null)
-                        {
                             cacheKeysDict["Nomenkl"].CachKeys.AddCacheKey(new CachKey
                             {
                                 Key = (string)message.ExternalValues["RedisKey"],
@@ -3515,13 +3529,13 @@ public class RedisCacheReferences : IReferencesCache
                                 Id = nomItem.Id,
                                 LastUpdate = nomItem.UpdateDate
                             });
-                        }
 
                         if (Nomenkls.ContainsKey(nomItem.DocCode))
                             Nomenkls[nomItem.DocCode] = nomItem;
                         else Nomenkls.Add(nomItem.DocCode, nomItem);
                     }
                 }
+
                 break;
             default:
                 Console.WriteLine($"{channel} - не обработан");
@@ -3539,53 +3553,48 @@ public class RedisCacheReferences : IReferencesCache
 
     #region Dictionaries
 
-    private readonly Dictionary<decimal, INomenklProductType> NomenklProductTypes
-        = new Dictionary<decimal, INomenklProductType>();
+    private readonly Dictionary<decimal, INomenklProductType> NomenklProductTypes = new();
 
-    private readonly Dictionary<int, IKontragentGroup> KontragentGroups =
-        new Dictionary<int, IKontragentGroup>();
+    private readonly Dictionary<int, IKontragentGroup> KontragentGroups = new();
 
     // ReSharper disable once UnusedMember.Local
-    private readonly Dictionary<decimal, IDeliveryCondition> DeliveryConditions =
-        new Dictionary<decimal, IDeliveryCondition>();
+    private readonly Dictionary<decimal, IDeliveryCondition> DeliveryConditions = new();
 
-    public Dictionary<decimal, IKontragent> Kontragents = new Dictionary<decimal, IKontragent>();
-    public Dictionary<decimal, INomenkl> Nomenkls = new Dictionary<decimal, INomenkl>();
-    public readonly Dictionary<Guid, INomenklMain> NomenklMains = new Dictionary<Guid, INomenklMain>();
+    public Dictionary<decimal, IKontragent> Kontragents = new();
+    public Dictionary<decimal, INomenkl> Nomenkls = new();
+    public readonly Dictionary<Guid, INomenklMain> NomenklMains = new();
 
-    private readonly Dictionary<decimal, INomenklGroup> NomenklGroups =
-        new Dictionary<decimal, INomenklGroup>();
+    private readonly Dictionary<decimal, INomenklGroup> NomenklGroups = new();
 
-    private readonly Dictionary<decimal, IWarehouse> Warehouses = new Dictionary<decimal, IWarehouse>();
-    private readonly Dictionary<decimal, IEmployee> Employees = new Dictionary<decimal, IEmployee>();
-    private readonly Dictionary<decimal, IBank> Banks = new Dictionary<decimal, IBank>();
-    private Dictionary<decimal, IBankAccount> BankAccounts = new Dictionary<decimal, IBankAccount>();
+    private readonly Dictionary<decimal, IWarehouse> Warehouses = new();
+    private readonly Dictionary<decimal, IEmployee> Employees = new();
+    private readonly Dictionary<decimal, IBank> Banks = new();
+    private Dictionary<decimal, IBankAccount> BankAccounts = new();
 
-    private readonly Dictionary<decimal, ICentrResponsibility> CentrResponsibilities =
-        new Dictionary<decimal, ICentrResponsibility>();
+    private readonly Dictionary<decimal, ICentrResponsibility> CentrResponsibilities = new();
 
-    private readonly Dictionary<decimal, ISDRSchet> SDRSchets = new Dictionary<decimal, ISDRSchet>();
-    private readonly Dictionary<decimal, ISDRState> SDRStates = new Dictionary<decimal, ISDRState>();
-    private readonly Dictionary<decimal, IClientCategory> ClientCategories = new Dictionary<decimal, IClientCategory>();
-    private readonly Dictionary<decimal, ICurrency> Currencies = new Dictionary<decimal, ICurrency>();
-    private readonly Dictionary<decimal, IRegion> Regions = new Dictionary<decimal, IRegion>();
-    private readonly Dictionary<decimal, IUnit> Units = new Dictionary<decimal, IUnit>();
-    private Dictionary<decimal, ICashBox> CashBoxes = new Dictionary<decimal, ICashBox>();
+    private readonly Dictionary<decimal, ISDRSchet> SDRSchets = new();
+    private readonly Dictionary<decimal, ISDRState> SDRStates = new();
+    private readonly Dictionary<decimal, IClientCategory> ClientCategories = new();
+    private readonly Dictionary<decimal, ICurrency> Currencies = new();
+    private readonly Dictionary<decimal, IRegion> Regions = new();
+    private readonly Dictionary<decimal, IUnit> Units = new();
+    private Dictionary<decimal, ICashBox> CashBoxes = new();
 
-    private readonly Dictionary<decimal, IMutualSettlementType> MutualSettlementTypes =
-        new Dictionary<decimal, IMutualSettlementType>();
+    private readonly Dictionary<decimal, IMutualSettlementType> MutualSettlementTypes = new();
 
-    private readonly Dictionary<Guid, ICountry> Countries = new Dictionary<Guid, ICountry>();
-    private readonly Dictionary<Guid, IProject> Projects = new Dictionary<Guid, IProject>();
-    private readonly Dictionary<decimal, IContractType> ContractTypes = new Dictionary<decimal, IContractType>();
-    private readonly Dictionary<decimal, INomenklType> NomenklTypes = new Dictionary<decimal, INomenklType>();
-    private readonly Dictionary<decimal, IProductType> ProductTypes = new Dictionary<decimal, IProductType>();
-    private readonly Dictionary<decimal, IPayForm> PayForms = new Dictionary<decimal, IPayForm>();
-    private readonly Dictionary<decimal, IPayCondition> PayConditions = new Dictionary<decimal, IPayCondition>();
+    private readonly Dictionary<Guid, ICountry> Countries = new();
+    private readonly Dictionary<Guid, IProject> Projects = new();
+    private readonly Dictionary<decimal, IContractType> ContractTypes = new();
+    private readonly Dictionary<decimal, INomenklType> NomenklTypes = new();
+    private readonly Dictionary<decimal, IProductType> ProductTypes = new();
+    private readonly Dictionary<decimal, IPayForm> PayForms = new();
+    private readonly Dictionary<decimal, IPayCondition> PayConditions = new();
 
     #endregion
 
     #region Generic Guid Id
+
     public void UpdateListGuid<T>(IEnumerable<T> list, DateTime? nowFix = null) where T : IDocGuid
     {
         ITypeSerializer<T> serializer = new JsonSerializer<T>();
@@ -3608,6 +3617,7 @@ public class RedisCacheReferences : IReferencesCache
             }
         }
     }
+
     public void AddOrUpdateGuid<T>(T item) where T : IDocGuid
     {
         using (var redisClient = redisManager.GetClient())
@@ -3646,6 +3656,7 @@ public class RedisCacheReferences : IReferencesCache
             //    JsonConvert.SerializeObject(message, jsonSerializerSettings));
         }
     }
+
     public void DropAllGuid<T>() where T : IDocGuid
     {
         using (var redisClient = redisManager.GetClient())
@@ -3660,6 +3671,7 @@ public class RedisCacheReferences : IReferencesCache
             }
         }
     }
+
     public void DropGuid<T>(Guid id) where T : IDocGuid
     {
         using (var redisClient = redisManager.GetClient())
@@ -3671,6 +3683,7 @@ public class RedisCacheReferences : IReferencesCache
                 redisClient.Remove(enumerable.First());
         }
     }
+
     public T GetItemGuid<T>(Guid id) where T : IDocGuid
     {
         using (var redisClient = redisManager.GetClient())
@@ -3738,6 +3751,7 @@ public class RedisCacheReferences : IReferencesCache
             return item;
         }
     }
+
     public T GetItemGuid<T>(string key) where T : IDocGuid
     {
         using (var redisClient = redisManager.GetClient())
@@ -3751,6 +3765,7 @@ public class RedisCacheReferences : IReferencesCache
             return item;
         }
     }
+
     public IEnumerable<T> GetAllGuid<T>() where T : IDocGuid
     {
         using (var redisClient = redisManager.GetClient())
@@ -3766,6 +3781,7 @@ public class RedisCacheReferences : IReferencesCache
             return list;
         }
     }
+
     public IEnumerable<T> GetListGuid<T>(IEnumerable<Guid> ids) where T : IDocGuid
     {
         if (ids is null) return Enumerable.Empty<T>();
@@ -3854,6 +3870,7 @@ public class RedisCacheReferences : IReferencesCache
             }
         }
     }
+
     public void AddOrUpdate<T>(T item) where T : IDocCode
     {
         using (var redisClient = redisManager.GetClient())
@@ -3881,25 +3898,9 @@ public class RedisCacheReferences : IReferencesCache
             foreach (var oldKey in olds) redisClient.Remove(oldKey);
             redisClient.Save();
             redis.SetValue(key, item);
-            //var message = new RedisMessage
-            //{
-            //    DocumentType = DocumentType.None,
-            //    DocCode = item.DocCode,
-            //    DocDate = DateTime.Now,
-            //    IsDocument = false,
-            //    OperationType = RedisMessageDocumentOperationTypeEnum.Execute,
-            //    Message =
-            //        $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник {typeof(T).Name} '{item.DocCode}'"
-            //};
-            //message.ExternalValues.Add("RedisKey", key);
-            //var jsonSerializerSettings = new JsonSerializerSettings
-            //{
-            //    TypeNameHandling = TypeNameHandling.All
-            //};
-            //redisClient.PublishMessage(getChannelName(typeof(T).Name),
-            //    JsonConvert.SerializeObject(message, jsonSerializerSettings));
         }
     }
+
     private string getChannelName(string typeName)
     {
         return typeName switch
@@ -3932,6 +3933,7 @@ public class RedisCacheReferences : IReferencesCache
             _ => string.Empty
         };
     }
+
     public void DropAll<T>() where T : IDocCode
     {
         using (var redisClient = redisManager.GetClient())
@@ -3946,6 +3948,7 @@ public class RedisCacheReferences : IReferencesCache
             }
         }
     }
+
     public void Drop<T>(decimal dc) where T : IDocCode
     {
         using (var redisClient = redisManager.GetClient())
@@ -3957,6 +3960,7 @@ public class RedisCacheReferences : IReferencesCache
                 redisClient.Remove(enumerable.First());
         }
     }
+
     public T GetItem<T>(decimal dc) where T : IDocCode
     {
         using (var redisClient = redisManager.GetClient())
@@ -4024,6 +4028,7 @@ public class RedisCacheReferences : IReferencesCache
             return item;
         }
     }
+
     public T GetItem<T>(string key) where T : IDocCode
     {
         using (var redisClient = redisManager.GetClient())
@@ -4037,6 +4042,7 @@ public class RedisCacheReferences : IReferencesCache
             return item;
         }
     }
+
     public IEnumerable<T> GetAll<T>() where T : IDocCode
     {
         using (var redisClient = redisManager.GetClient())

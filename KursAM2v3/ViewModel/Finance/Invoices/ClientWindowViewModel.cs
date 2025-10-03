@@ -110,6 +110,14 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
                         }
                     });
                 mySubscriber.Subscribe(
+                    new RedisChannel(RedisMessageChannels.ReferenceUpdate, RedisChannel.PatternMode.Auto),
+                    (_, message) =>
+                    {
+
+                        Form.Dispatcher.Invoke(() => UpdateReferences(message));
+
+                    });
+                mySubscriber.Subscribe(
                     new RedisChannel(RedisMessageChannels.Bank, RedisChannel.PatternMode.Auto),
                     (_, message) =>
                     {
@@ -257,7 +265,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         .Cast<NomenklProductType>()
         .OrderBy(_ => _.Name).ToList();
 
-    public List<PayCondition> PayConditions => GlobalOptions.ReferencesCache.GetPayConditionAll()
+    public List<PayCondition> PayConditions { set; get; } = GlobalOptions.ReferencesCache.GetPayConditionAll()
         .Cast<PayCondition>()
         .OrderBy(_ => _.Name).ToList();
 
@@ -985,6 +993,15 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         var notification = KursNotyficationService.CreateCustomNotification(this);
         notification.ShowAsync();
         RaisePropertyChanged(nameof(Document));
+    }
+
+    private void UpdateReferences(RedisValue message)
+    {
+        PayConditions = GlobalOptions.ReferencesCache.GetPayConditionAll()
+            .Cast<PayCondition>()
+            .OrderBy(_ => _.Name).ToList();
+        RaisePropertyChanged(nameof(Document));
+        RaisePropertyChanged(nameof(PayConditions));
     }
 
     private void UpdateCash(RedisValue message)

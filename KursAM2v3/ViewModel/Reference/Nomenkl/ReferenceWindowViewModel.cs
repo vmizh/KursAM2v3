@@ -574,7 +574,31 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                             updMain.LoadFromEntity(mentity, GlobalOptions.ReferencesCache);
                             GlobalOptions.ReferencesCache.AddOrUpdateGuid(updMain);
                         }
-
+                        if (mySubscriber != null && mySubscriber.IsConnected())
+                        {
+                            var str = "обновление справочника NomenklMain";
+                            var message = new RedisMessage
+                            {
+                                DocumentType = DocumentType.None,
+                                DocCode = null,
+                                Id = CurrentNomenklMain.Id,
+                                DocDate = DateTime.Now,
+                                IsDocument = false,
+                                OperationType = RedisMessageDocumentOperationTypeEnum.Update,
+                                Message =
+                                    $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} номенклатура: {CurrentNomenklMain.Id} {CurrentNomenklMain.Name}"
+                            };
+                            message.ExternalValues.Add("NomenklDC", CurrentNomenklMain.NomenklCollection);
+                            message.ExternalValues.Add("RedisKey", $"Cache:NomenklMain:{CurrentNomenklMain.Id}@{DateTime.Now}");
+                            var jsonSerializerSettings = new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All
+                            };
+                            var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                            mySubscriber.Publish(
+                                new RedisChannel(RedisMessageChannels.NomenklMainReference,
+                                    RedisChannel.PatternMode.Auto), json);
+                        }
                         foreach (var nm in NomenklMainCollection)
                             nm.myState = RowStatus.NotEdited;
                         foreach (var nom in CurrentNomenklMain.NomenklCollection)

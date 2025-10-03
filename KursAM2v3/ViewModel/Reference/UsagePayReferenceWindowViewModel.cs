@@ -1,23 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using System.Windows.Input;
-using Core;
 using Core.ViewModel.Base;
 using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using KursAM2.Managers.Nomenkl;
+using KursAM2.Repositories.RedisRepository;
 using KursDomain;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace KursAM2.ViewModel.Reference
 {
     public class UsagePayReferenceWindowViewModel : RSWindowViewModelBase
     {
         #region Fields
+
+        private readonly ISubscriber mySubscriber;
+        private readonly ConnectionMultiplexer redis;
 
         private readonly UnitManager UnitManager = new UnitManager();
 
@@ -30,6 +37,9 @@ namespace KursAM2.ViewModel.Reference
             WindowName = "Справочник условий оплаты";
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
+            redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+            mySubscriber = redis.GetSubscriber();
+
             // ReSharper disable once VirtualMemberCallInConstructor
             RefreshData(null);
         }
@@ -66,6 +76,7 @@ namespace KursAM2.ViewModel.Reference
 
         public override void SaveData(object data)
         {
+            List<decimal> savedDCs = new List<decimal>();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 using (var tn = ctx.Database.BeginTransaction())
@@ -95,6 +106,7 @@ namespace KursAM2.ViewModel.Reference
                                         PT_NAME = u.PT_NAME
                                     };
                                     ctx.SD_179.Add(sd179);
+                                    savedDCs.Add(newDC);
                                     break;
                                 case RowStatus.Edited:
                                     var old1 = ctx.SD_179.FirstOrDefault(_ => _.DOC_CODE == u.DocCode);
@@ -104,12 +116,36 @@ namespace KursAM2.ViewModel.Reference
                                         old1.PT_DAYS_OPL = u.PT_DAYS_OPL;
                                         old1.PT_NAME = u.Name;
                                     }
-
+                                    savedDCs.Add(u.DocCode);
                                     break;
                             }
 
                         ctx.SaveChanges();
                         tn.Commit();
+                        if (mySubscriber != null && mySubscriber.IsConnected())
+                        {
+                            var message = new RedisMessage
+                            {
+                                DocumentType = DocumentType.None,
+                                DocCode = null,
+                                Id = null,
+                                DocDate = DateTime.Now,
+                                IsDocument = false,
+                                OperationType = RedisMessageDocumentOperationTypeEnum.Update,
+                                Message =
+                                    $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник условий оплаты."
+                            };
+                            message.ExternalValues["DocCodes"] = savedDCs;
+                            
+                            var jsonSerializerSettings = new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All
+                            };
+                            var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                            mySubscriber.Publish(
+                                new RedisChannel(RedisMessageChannels.PayConditionReference,
+                                    RedisChannel.PatternMode.Auto), json);
+                        } 
                         foreach (var r in Rows)
                             r.myState = RowStatus.NotEdited;
                         DeletedRows.Clear();

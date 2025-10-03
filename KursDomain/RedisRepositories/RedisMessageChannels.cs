@@ -21,6 +21,8 @@ public static class RedisMessageChannels
     public const string NomenklReturnOfClient = "NomenklReturnOfClient";
     public const string NomenklReturnToProvider = "NomenklReturnToProvider";
 
+    public const string ReferenceUpdate = "ReferenceUpdate";
+
     public const string BankReference = "Cache:Bank";
     public const string RegionReference = "Cache:Region";
     public const string BankAccountReference = "Cache:BankAccount";

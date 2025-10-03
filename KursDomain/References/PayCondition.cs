@@ -10,6 +10,7 @@ using KursDomain.ICommon;
 using KursDomain.IReferences;
 using KursDomain.References.RedisCache;
 using Newtonsoft.Json;
+using Prism.Events;
 
 namespace KursDomain.References;
 
@@ -28,7 +29,7 @@ public class PayCondition : IPayCondition, IDocCode, IName, IEquatable<PayCondit
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return DocCode == other.DocCode;
+        return DocCode == other.DocCode && Name == other.Name;
     }
 
     [Display(AutoGenerateField = true, Name = "Наименование")]
@@ -60,14 +61,14 @@ public class PayCondition : IPayCondition, IDocCode, IName, IEquatable<PayCondit
     public override bool Equals(object obj)
     {
         if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
+        if (ReferenceEquals(this, obj) && Name == (obj as PayCondition)?.Name) return true;
         if (obj.GetType() != GetType()) return false;
         return Equals((PayCondition) obj);
     }
 
     public override int GetHashCode()
     {
-        return DocCode.GetHashCode();
+        return $"{DocCode}{Name}".GetHashCode();
     }
 
     public void LoadFromCache()

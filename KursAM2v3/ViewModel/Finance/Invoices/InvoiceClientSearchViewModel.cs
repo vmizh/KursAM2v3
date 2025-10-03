@@ -37,6 +37,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using DevExpress.Mvvm.POCO;
+using KursDomain.References;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace KursAM2.ViewModel.Finance.Invoices
@@ -74,6 +76,14 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         {
                             Console.WriteLine($@"Redis - {message}");
                             Form.Dispatcher.Invoke(() => UpdateList(message));
+                        });
+                    mySubscriber.Subscribe(
+                        new RedisChannel(RedisMessageChannels.ReferenceUpdate, RedisChannel.PatternMode.Auto),
+                        (_, message) =>
+                        {
+
+                            Form.Dispatcher.Invoke(() => UpdateReferences(message));
+
                         });
                     mySubscriber.Subscribe(
                         new RedisChannel(RedisMessageChannels.CashIn, RedisChannel.PatternMode.Auto),
@@ -155,6 +165,22 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 });
                 prn.SubMenu.Add(sf);
             }
+        }
+
+        private void UpdateReferences(RedisValue msg)
+        {
+            var message = JsonConvert.DeserializeObject<RedisMessage>(msg);
+            if (message == null || !message.ExternalValues.ContainsKey("Type")) return;
+            foreach (var doc in Documents)
+            {
+                if ((string)message.ExternalValues["Type"] == "PayCondition")
+                {
+                    var payDC = doc.PayCondition?.DocCode;
+                    if (payDC is null) continue;
+                    doc.PayCondition= GlobalOptions.ReferencesCache.GetPayCondition(payDC) as PayCondition;
+                }
+            }
+            RaisePropertyChanged(nameof(Documents));
         }
 
         public override string LayoutName => "InvoiceClientSearchViewModel";
@@ -584,11 +610,13 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 }
                 frm?.Dispatcher.Invoke(() =>
                 {
+                    frm.gridDocuments.RefreshData();
                     frm.loadingIndicator.Visibility = Visibility.Hidden;
                     foreach (var d in result)
                     {
                         ((InvoiceClientBase)d).RaisePropertyAllChanged();
                         Documents.Add(d);
+                        
                     }
                 });
                 GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
