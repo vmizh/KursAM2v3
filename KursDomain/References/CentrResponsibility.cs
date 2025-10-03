@@ -30,8 +30,9 @@ public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEquat
     public bool Equals(CentrResponsibility other)
     {
         if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return DocCode == other.DocCode;
+        if (ReferenceEquals(this, other))
+            return other.Name == Name;
+        return DocCode == other.DocCode && Name == other.Name;
     }
 
     public string Name { get; set; }
@@ -56,14 +57,15 @@ public class CentrResponsibility : ICentrResponsibility, IDocCode, IName, IEquat
     public override bool Equals(object obj)
     {
         if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
+        if (ReferenceEquals(this, obj)) 
+            return (obj as CentrResponsibility)?.Name == Name;
         if (obj.GetType() != GetType()) return false;
         return Equals((CentrResponsibility) obj);
     }
 
     public override int GetHashCode()
     {
-        return DocCode.GetHashCode();
+        return $"{DocCode}{Name}".GetHashCode();
     }
 
     public void LoadFromCache()

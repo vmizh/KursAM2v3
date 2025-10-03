@@ -1,5 +1,6 @@
 ﻿using Core.ViewModel.Base;
 using Data;
+using KursDomain.Documents.Vzaimozachet;
 using KursDomain.IDocuments.Finance;
 using KursDomain.IReferences;
 using KursDomain.References;
@@ -18,6 +19,9 @@ public sealed class InvoiceClientBase : RSViewModelBase, IInvoiceClient
 {
     private Kontragent myClient;
     private PayCondition myPayCondition;
+    private CentrResponsibility myCO;
+    private NomenklProductType myVzaimoraschetType;
+    private PayForm myFormRaschet;
 
     public InvoiceClientBase(SD_84 doc)
     {
@@ -146,9 +150,27 @@ public sealed class InvoiceClientBase : RSViewModelBase, IInvoiceClient
 
     public override decimal DocCode { get; set; }
     public override Guid Id { get; set; }
-    public CentrResponsibility CO { get; set; }
-    public NomenklProductType VzaimoraschetType { get; set; }
-    public PayForm FormRaschet { get; set; }
+    public CentrResponsibility CO {  get => myCO;
+        set
+        {
+            if (Equals(value, myCO)) return;
+            myCO = value;
+            RaisePropertyChanged();
+        } }
+    public NomenklProductType VzaimoraschetType {  get => myVzaimoraschetType;
+        set
+        {
+            if (Equals(value, myVzaimoraschetType)) return;
+            myVzaimoraschetType = value;
+            RaisePropertyChanged();
+        }  }
+    public PayForm FormRaschet {  get => myFormRaschet;
+        set
+        {
+            if (Equals(value, myFormRaschet)) return;
+            myFormRaschet = value;
+            RaisePropertyChanged();
+        }  }
     public DateTime DocDate { get; set; }
     public int InnerNumber { get; set; }
     public string OuterNumber { get; set; }

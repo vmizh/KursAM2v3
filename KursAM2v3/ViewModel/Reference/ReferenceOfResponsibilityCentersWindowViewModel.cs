@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -10,17 +11,24 @@ using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Mvvm.Native;
 using Helper;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.KursReferences;
 using KursDomain;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace KursAM2.ViewModel.Reference
 {
     public sealed class ReferenceOfResponsibilityCentersWindowViewModel : RSWindowViewModelBase
     {
         #region Fields
+
+        private readonly ISubscriber mySubscriber;
+        private readonly ConnectionMultiplexer redis;
 
         private CentrResponsibilityViewModel myCurrentCenter;
 
@@ -30,6 +38,8 @@ namespace KursAM2.ViewModel.Reference
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
+            redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+            mySubscriber = redis.GetSubscriber();
             // ReSharper disable once VirtualMemberCallInConstructor
             RefreshData(null);
         }
@@ -135,17 +145,42 @@ namespace KursAM2.ViewModel.Reference
 
                         ctx.SaveChanges();
                         transaction.Commit();
-                        foreach (var dc in dc_list)
+                        if (mySubscriber != null && mySubscriber.IsConnected())
                         {
-                            var ent = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == dc);
-                            if (ent == null) continue;
-                            var c = new CentrResponsibility();
-                            c.LoadFromEntity(ent);
-                            GlobalOptions.ReferencesCache.AddOrUpdate(c);
-                        }
+                            var message = new RedisMessage
+                            {
+                                DocumentType = DocumentType.None,
+                                DocCode = null,
+                                Id = null,
+                                DocDate = DateTime.Now,
+                                IsDocument = false,
+                                OperationType = RedisMessageDocumentOperationTypeEnum.Update,
+                                Message =
+                                    $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник центров ответственности."
+                            };
+                            message.ExternalValues["DocCodes"] = dc_list;
+                            
+                            var jsonSerializerSettings = new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All
+                            };
+                            var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                            mySubscriber.Publish(
+                                new RedisChannel(RedisMessageChannels.CentrResponsibilityReference,
+                                    RedisChannel.PatternMode.Auto), json);
+                        } 
+                        //foreach (var dc in dc_list)
+                        //{
+                        //    var ent = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == dc);
+                        //    if (ent == null) continue;
+                        //    var c = new CentrResponsibility();
+                        //    c.LoadFromEntity(ent);
+                        //    GlobalOptions.ReferencesCache.AddOrUpdate(c);
+                        //}
 
                         foreach (var с in CenterCollection)
                             с.myState = RowStatus.NotEdited;
+
                         RaisePropertyChanged(nameof(IsCanSaveData));
                     }
                     catch (Exception ex)

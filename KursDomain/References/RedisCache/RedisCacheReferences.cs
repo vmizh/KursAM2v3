@@ -420,43 +420,38 @@ public class RedisCacheReferences : IReferencesCache
     public ICentrResponsibility GetCentrResponsibility(decimal? dc)
     {
         if (dc is null) return null;
+        if (CentrResponsibilities.Count == 0)
+            GetCentrResponsibilitiesAll();
+        //if (!cacheKeysDict.ContainsKey("CentrResponsibility"))
+        //    LoadCacheKeys("CentrResponsibility");
+        //var key = cacheKeysDict["CentrResponsibility"].CachKeys.SingleOrDefault(_ => _.DocCode == dc.Value);
+        //CentrResponsibility itemNew;
+        //if (key is not null)
+        //{
+        //    if (CentrResponsibilities.TryGetValue(dc.Value, out var CentrResponsibility))
+        //        return CentrResponsibility;
+        //    itemNew = GetItem<CentrResponsibility>(key.Key);
+        //    if (itemNew is null) return null;
+        //    itemNew.LoadFromCache();
+        //}
+        //else
+        //{
+        //    using (var ctx = GlobalOptions.GetEntities())
+        //    {
+        //        var entity = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == dc);
+        //        if (entity is null) return null;
+        //        var newItem = new CentrResponsibility
+        //        {
+        //            DocCode = entity.DOC_CODE
+        //        };
+        //        newItem.LoadFromEntity(entity);
+        //        UpdateList(new List<CentrResponsibility>(new[] { newItem }));
+        //        CentrResponsibilities.AddOrUpdate(dc.Value, newItem);
+        //        return CentrResponsibilities[dc.Value];
+        //    }
+        //}
 
-        if (!cacheKeysDict.ContainsKey("CentrResponsibility"))
-            LoadCacheKeys("CentrResponsibility");
-
-        var key = cacheKeysDict["CentrResponsibility"].CachKeys.SingleOrDefault(_ => _.DocCode == dc.Value);
-        CentrResponsibility itemNew;
-        if (key is not null)
-        {
-            if (CentrResponsibilities.TryGetValue(dc.Value, out var CentrResponsibility))
-                return CentrResponsibility;
-            itemNew = GetItem<CentrResponsibility>(key.Key);
-            if (itemNew is null) return null;
-            itemNew.LoadFromCache();
-        }
-        else
-        {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var entity = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == dc);
-                if (entity is null) return null;
-                var newItem = new CentrResponsibility
-                {
-                    DocCode = entity.DOC_CODE
-                };
-                newItem.LoadFromEntity(entity);
-                UpdateList(new List<CentrResponsibility>(new[] { newItem }));
-                CentrResponsibilities.AddOrUpdate(dc.Value, newItem);
-                return CentrResponsibilities[dc.Value];
-            }
-        }
-
-        if (CentrResponsibilities.ContainsKey(dc.Value))
-            CentrResponsibilities[dc.Value] = itemNew;
-        else
-            CentrResponsibilities.Add(dc.Value, itemNew);
-
-        return CentrResponsibilities[dc.Value];
+        return CentrResponsibilities.ContainsKey(dc.Value) ? CentrResponsibilities[dc.Value] : null;
     }
 
     public IEnumerable<ICentrResponsibility> GetCentrResponsibilitiesAll()
@@ -2962,24 +2957,59 @@ public class RedisCacheReferences : IReferencesCache
                 else CashBoxes.Add(message.DocCode.Value, cb_item);
                 break;
             case RedisMessageChannels.CentrResponsibilityReference:
-                if (message.DocCode is null) return;
-                LoadCacheKeys("CentrResponsibility");
-                var cr_item = GetItem<CentrResponsibility>((string)message.ExternalValues["RedisKey"]);
-                cr_item.LoadFromCache();
-                var cr_oldKey = cacheKeysDict["CentrResponsibility"].CachKeys
-                    .SingleOrDefault(_ => _.DocCode == message.DocCode);
-                if (cr_oldKey is null)
-                    cacheKeysDict["CentrResponsibility"].CachKeys.AddCacheKey(new CachKey
+                using (var redisClient = redisManager.GetClient())
+                {
+                    redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+                    if (!message.ExternalValues.ContainsKey("DocCodes")) return;
+                    LoadCacheKeys("PayCondition");
+                    using (var ctx = GlobalOptions.GetEntities())
                     {
-                        Key = (string)message.ExternalValues["RedisKey"],
-                        DocCode = message.DocCode,
-                        LastUpdate =
-                            Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
-                    });
+                        var lst = (message.ExternalValues["DocCodes"] as JArray).ToObject<List<decimal>>();
 
-                if (CentrResponsibilities.ContainsKey(message.DocCode.Value))
-                    CentrResponsibilities[message.DocCode.Value] = cr_item;
-                else CentrResponsibilities.Add(message.DocCode.Value, cr_item);
+                        var entities = ctx.SD_40.Where(_ => lst.Contains(_.DOC_CODE));
+                        foreach (var entity in entities)
+                        {
+                            var newItem = new CentrResponsibility
+                            {
+                                DocCode = entity.DOC_CODE,
+                                Name = entity.CENT_NAME,
+                                FullName = entity.CENT_FULLNAME,
+                                ParentDC = entity.CENT_PARENT_DC,
+                                UpdateDate = entity.UpdateDate ?? DateTime.Now
+                            };
+                            newItem.LoadFromEntity(entity);
+                            AddOrUpdate(newItem);
+                            var k_oldKey = cacheKeysDict["CentrResponsibility"].CachKeys
+                                .SingleOrDefault(_ => _.DocCode == message.DocCode);
+                            if (k_oldKey is null)
+                                cacheKeysDict["CentrResponsibility"].CachKeys.AddCacheKey(new CachKey
+                                {
+                                    Key = $"Cache:{newItem.Name}:{newItem.DocCode}@{newItem.UpdateDate}",
+                                    DocCode = message.DocCode,
+                                    Id = null,
+                                    LastUpdate = newItem.UpdateDate
+                                });
+
+                            if (CentrResponsibilities.ContainsKey(newItem.DocCode))
+                                CentrResponsibilities[newItem.DocCode] = newItem;
+                            else CentrResponsibilities.Add(newItem.DocCode, newItem);
+                        }
+                    }
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var redisMessage = new RedisMessage
+                    {
+                       Message =
+                            $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник центров ответственности."
+                    };
+                    redisMessage.ExternalValues["Type"] = "CentrResponsibility";
+                    var json = JsonConvert.SerializeObject(redisMessage, jsonSerializerSettings);
+                    mySubscriber.Publish(
+                        new RedisChannel(RedisMessageChannels.ReferenceUpdate,
+                            RedisChannel.PatternMode.Auto),json);
+                }
                 break;
             case RedisMessageChannels.ClientCategoryReference:
                 if (message.DocCode is null) return;

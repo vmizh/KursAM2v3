@@ -217,12 +217,21 @@ public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
         var message = JsonConvert.DeserializeObject<RedisMessage>(msg);
         if (message == null || !message.ExternalValues.ContainsKey("Type")) return;
         foreach (var doc in Documents)
+        {
             if ((string)message.ExternalValues["Type"] == "PayCondition")
             {
                 var payDC = doc.PayCondition?.DocCode;
                 if (payDC is null) continue;
                 doc.PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(payDC) as PayCondition;
             }
+
+            if ((string)message.ExternalValues["Type"] == "CentrResponsibility")
+            {
+                var payDC = doc.CO?.DocCode;
+                if (payDC is null) continue;
+                doc.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(payDC) as CentrResponsibility;
+            }
+        }
 
         RaisePropertyChanged(nameof(Documents));
     }

@@ -19,6 +19,7 @@ using DevExpress.Mvvm.POCO;
 using DevExpress.Mvvm.Xpf;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
+using DevExpress.XtraCharts.GLGraphics;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -560,13 +561,29 @@ namespace KursAM2.ViewModel.Finance.Invoices
             RaisePropertyChanged(nameof(Document));
         }
 
-        private void UpdateReferences(RedisValue message)
+        private void UpdateReferences(RedisValue msg)
         {
-            PayConditionList = GlobalOptions.ReferencesCache.GetPayConditionAll()
-                .Cast<PayCondition>()
-                .OrderBy(_ => _.Name).ToList();
+            var message = JsonConvert.DeserializeObject<RedisMessage>(msg);
+            if (message == null || !message.ExternalValues.ContainsKey("Type")) return;
+            if ((string)message.ExternalValues["Type"] == "PayCondition")
+            {
+                PayConditionList = GlobalOptions.ReferencesCache.GetPayConditionAll()
+                    .Cast<PayCondition>()
+                    .OrderBy(_ => _.Name).ToList();
+                RaisePropertyChanged(nameof(PayConditionList));
+                Document.PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(Document.PayCondition?.DocCode) as PayCondition;
+            }
+            if ((string)message.ExternalValues["Type"] == "CentrResponsibility")
+            {
+                COList = GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
+                    .Cast<CentrResponsibility>()
+                    .OrderBy(_ => _.Name).ToList();
+                RaisePropertyChanged(nameof(COList));
+                Document.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(Document.CO?.DocCode) as CentrResponsibility;
+            }
+            Document.RaisePropertyAllChanged();
             RaisePropertyChanged(nameof(Document));
-            RaisePropertyChanged(nameof(PayConditionList));
+
         }
 
         private void UpdateCash(RedisValue message)
@@ -593,7 +610,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public List<Currency> CurrencyList => GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>()
             .OrderBy(_ => _.Name).ToList();
 
-        public List<CentrResponsibility> COList => GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
+        public List<CentrResponsibility> COList { set; get; } = GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
             .Cast<CentrResponsibility>().OrderBy(_ => _.Name).ToList();
 
         public List<Employee> EmployeeList => GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>()

@@ -252,7 +252,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
     public List<Currency> CurrencyList => GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>()
         .OrderBy(_ => _.Name).ToList();
 
-    public List<CentrResponsibility> COList => GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
+    public List<CentrResponsibility> COList { set; get; } = GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
         .Cast<CentrResponsibility>().OrderBy(_ => _.Name).ToList();
 
     public List<Employee> EmployeeList => GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>()
@@ -995,13 +995,28 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         RaisePropertyChanged(nameof(Document));
     }
 
-    private void UpdateReferences(RedisValue message)
+    private void UpdateReferences(RedisValue msg)
     {
-        PayConditions = GlobalOptions.ReferencesCache.GetPayConditionAll()
-            .Cast<PayCondition>()
-            .OrderBy(_ => _.Name).ToList();
+        var message = JsonConvert.DeserializeObject<RedisMessage>(msg);
+        if (message == null || !message.ExternalValues.ContainsKey("Type")) return;
+        if ((string)message.ExternalValues["Type"] == "PayCondition")
+        {
+            PayConditions = GlobalOptions.ReferencesCache.GetPayConditionAll()
+                .Cast<PayCondition>()
+                .OrderBy(_ => _.Name).ToList();
+            RaisePropertyChanged(nameof(PayConditions));
+            Document.PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(Document.PayCondition?.DocCode) as PayCondition;
+        }
+        if ((string)message.ExternalValues["Type"] == "CentrResponsibility")
+        {
+             COList = GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
+                .Cast<PayCondition>()
+                .OrderBy(_ => _.Name).Cast<CentrResponsibility>().ToList();
+            RaisePropertyChanged(nameof(COList));
+            Document.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(Document.CO?.DocCode) as CentrResponsibility;
+        }
         RaisePropertyChanged(nameof(Document));
-        RaisePropertyChanged(nameof(PayConditions));
+        
     }
 
     private void UpdateCash(RedisValue message)
