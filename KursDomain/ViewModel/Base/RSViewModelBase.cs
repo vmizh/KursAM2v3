@@ -5,8 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using DevExpress.Mvvm;
-using KursDomain;
 using KursDomain.Annotations;
 using KursDomain.ICommon;
 using KursDomain.Services;
@@ -20,41 +18,7 @@ public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
     IComparable, IEquatable<RSViewModelBase>
 {
 
-    #region Fields
-
-    protected int myCode;
-    private string myDescription;
-    private decimal myDocCode;
-    private Guid myId;
-    public string myName;
-    protected string myNote;
-    protected object myParent;
-    private decimal? myParentDC;
-    private Guid? myParentId;
-    private Guid myRowId;
-
-    protected IEventAggregator EventAggregator;
-    protected IMessageDialogService MessageDialogService;
-
-    #endregion
-
-    #region Constructors
-
-    protected RSViewModelBase(IEventAggregator eventAggregator, IMessageDialogService messageDialogService)
-    {
-        EventAggregator = eventAggregator;
-        MessageDialogService = messageDialogService;
-    }
-
-    public RSViewModelBase()
-    {
-        EventAggregator = new EventAggregator();
-        MessageDialogService = new MessageDialogService();
-    }
-
-    #endregion
-    
-
+    public DateTime timeLoad { set; get; } = DateTime.Now;
     // ReSharper disable once InconsistentNaming
     public RowStatus myState = RowStatus.NotEdited;
     //private RSWindowViewModelBase myWindowViewModel;
@@ -64,7 +28,6 @@ public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
     // ReSharper disable once MemberCanBePrivate.Global
     public IList<string> NotifyProtocol = new List<string>();
 
-    
 
     [Display(AutoGenerateField = false)]
     public virtual object Parent
@@ -218,7 +181,7 @@ public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
         return myDocCode == other.DocCode && myId == other.Id && myCode == other.Code &&
-               myRowId == other.RowId;
+               myRowId == other.RowId && other.timeLoad == timeLoad;
     }
 
 
@@ -325,4 +288,38 @@ public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
     {
         foreach (var prop in GetType().GetProperties()) RaisePropertyChanged(prop.Name);
     }
+
+    #region Fields
+
+    protected int myCode;
+    private string myDescription;
+    private decimal myDocCode;
+    private Guid myId;
+    public string myName;
+    protected string myNote;
+    protected object myParent;
+    private decimal? myParentDC;
+    private Guid? myParentId;
+    private Guid myRowId;
+
+    protected IEventAggregator EventAggregator;
+    protected IMessageDialogService MessageDialogService;
+
+    #endregion
+
+    #region Constructors
+
+    protected RSViewModelBase(IEventAggregator eventAggregator, IMessageDialogService messageDialogService)
+    {
+        EventAggregator = eventAggregator;
+        MessageDialogService = messageDialogService;
+    }
+
+    public RSViewModelBase()
+    {
+        EventAggregator = new EventAggregator();
+        MessageDialogService = new MessageDialogService();
+    }
+
+    #endregion
 }

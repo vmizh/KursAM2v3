@@ -81,7 +81,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
     #endregion
 
     #region Constructors
-
+    
     public ClientWindowViewModel()
     {
         try
@@ -1031,9 +1031,22 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
             }
         }
 
+        if ((string)message.ExternalValues["Type"] == "SDRSchet")
+        {
+            foreach (var row in Document.Rows)
+            {
+                row.SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(row.SDRSchet.DocCode) as SDRSchet;
+                ((InvoiceClientRowViewModel)row).RaisePropertyAllChanged();
+            }
+
+            if (Form is InvoiceClientView frm)
+            {
+                frm.SDRSchetList.ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().ToList();
+            }
+
+        }
         Document.myState = state;
         RaisePropertyChanged(nameof(Document));
-        
     }
 
     private void UpdateCash(RedisValue message)
@@ -1359,12 +1372,12 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
                 Document.myState = RowStatus.Edited;
         }
 
+        Document.Rows.Remove(CurrentRow);
         var d = UnitOfWork.Context.TD_84.FirstOrDefault(_ => _.CODE == CurrentRow.Code);
         if (d is not null)
         {
             UnitOfWork.Context.TD_84.Remove(d); 
             UnitOfWork.Context.TD_84.Remove(CurrentRow.Entity);
-            Document.Rows.Remove(CurrentRow);
         }
         UpdateVisualData(null);
     }

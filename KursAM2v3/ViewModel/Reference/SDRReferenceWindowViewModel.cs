@@ -1,16 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Linq;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.XtraReports.Design.ParameterEditor;
+using KursAM2.Repositories.RedisRepository;
 using KursDomain;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -22,6 +27,8 @@ namespace KursAM2.ViewModel.Reference
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
+            redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+            mySubscriber = redis.GetSubscriber();
             RefreshData(null);
         }
 
@@ -31,6 +38,9 @@ namespace KursAM2.ViewModel.Reference
 
         private decimal newDC = -1;
         private decimal newDC2 = -1;
+
+        private readonly ISubscriber mySubscriber;
+        private readonly ConnectionMultiplexer redis;
 
         #endregion
 
@@ -344,22 +354,31 @@ namespace KursAM2.ViewModel.Reference
                         }
                         ctx.SaveChanges();
                         tnx.Commit();
-                        foreach (var dc in sdr_shets)
+                        if (mySubscriber != null && mySubscriber.IsConnected())
                         {
-                            var ent = ctx.SD_303.FirstOrDefault(_ => _.DOC_CODE == dc);
-                            if (ent == null) continue;
-                            var c = new SDRSchet();
-                            c.LoadFromEntity(ent,GlobalOptions.ReferencesCache);
-                            GlobalOptions.ReferencesCache.AddOrUpdate(c);
-                        }
-                        foreach (var dc in sdr_states)
-                        {
-                            var ent = ctx.SD_99.FirstOrDefault(_ => _.DOC_CODE == dc);
-                            if (ent == null) continue;
-                            var c = new SDRState();
-                            c.LoadFromEntity(ent);
-                            GlobalOptions.ReferencesCache.AddOrUpdate(c);
-                        }
+                            var message = new RedisMessage
+                            {
+                                DocumentType = DocumentType.None,
+                                DocCode = null,
+                                Id = null,
+                                DocDate = DateTime.Now,
+                                IsDocument = false,
+                                OperationType = RedisMessageDocumentOperationTypeEnum.Update,
+                                Message =
+                                    $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил: справочник счетов/доходов"
+                            };
+                            message.ExternalValues["States"] = sdr_states;
+                            message.ExternalValues["Schets"] = sdr_shets;
+    
+                            var jsonSerializerSettings = new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All
+                            };
+                            var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                            mySubscriber.Publish(
+                                new RedisChannel(RedisMessageChannels.SDRSchetReference,
+                                    RedisChannel.PatternMode.Auto), json);
+                        } 
                         sdr_shets.Clear();
                         sdr_states.Clear();
                         RefreshData(null);

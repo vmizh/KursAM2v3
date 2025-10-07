@@ -1383,42 +1383,9 @@ public class RedisCacheReferences : IReferencesCache
     public ISDRSchet GetSDRSchet(decimal? dc)
     {
         if (dc is null) return null;
-        if (!cacheKeysDict.ContainsKey("SDRSchet"))
-            LoadCacheKeys("SDRSchet");
-
-        var key = cacheKeysDict["SDRSchet"].CachKeys.SingleOrDefault(_ => _.DocCode == dc.Value);
-        SDRSchet itemNew;
-        if (key is not null)
-        {
-            if (SDRSchets.TryGetValue(dc.Value, out var SDRSchet))
-                return SDRSchet;
-            itemNew = GetItem<SDRSchet>(key.Key);
-            if (itemNew is null) return null;
-            itemNew.LoadFromCache();
-        }
-        else
-        {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var entity = ctx.SD_303.FirstOrDefault(_ => _.DOC_CODE == dc);
-                if (entity is null) return null;
-                var newItem = new SDRSchet
-                {
-                    DocCode = entity.DOC_CODE
-                };
-                newItem.LoadFromEntity(entity, this);
-                UpdateList(new List<SDRSchet>(new[] { newItem }));
-                SDRSchets.AddOrUpdate(dc.Value, newItem);
-                return SDRSchets[dc.Value];
-            }
-        }
-
-        if (SDRSchets.ContainsKey(dc.Value))
-            SDRSchets[dc.Value] = itemNew;
-        else
-            SDRSchets.Add(dc.Value, itemNew);
-
-        return SDRSchets[dc.Value];
+        if (SDRSchets.Count == 0)
+            GetSDRSchetAll();
+        return SDRSchets.ContainsKey(dc.Value) ? SDRSchets[dc.Value] : null;
     }
 
     public ISDRSchet GetSDRSchet(Guid? id)
@@ -1462,42 +1429,9 @@ public class RedisCacheReferences : IReferencesCache
     public ISDRState GetSDRState(decimal? dc)
     {
         if (dc is null) return null;
-        if (!cacheKeysDict.ContainsKey("SDRState"))
-            LoadCacheKeys("SDRState");
-
-        var key = cacheKeysDict["SDRState"].CachKeys.SingleOrDefault(_ => _.DocCode == dc.Value);
-        SDRState itemNew;
-        if (key is not null)
-        {
-            if (SDRStates.TryGetValue(dc.Value, out var SDRState))
-                return SDRState;
-            itemNew = GetItem<SDRState>(key.Key);
-            if (itemNew is null) return null;
-            itemNew.LoadFromCache();
-        }
-        else
-        {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var entity = ctx.SD_99.FirstOrDefault(_ => _.DOC_CODE == dc);
-                if (entity is null) return null;
-                var newItem = new SDRState
-                {
-                    DocCode = entity.DOC_CODE
-                };
-                newItem.LoadFromEntity(entity);
-                UpdateList(new List<SDRState>(new[] { newItem }));
-                SDRStates.AddOrUpdate(dc.Value, newItem);
-                return SDRStates[dc.Value];
-            }
-        }
-
-        if (SDRStates.ContainsKey(dc.Value))
-            SDRStates[dc.Value] = itemNew;
-        else
-            SDRStates.Add(dc.Value, itemNew);
-
-        return SDRStates[dc.Value];
+        if (SDRStates.Count == 0)
+            GetSDRStateAll();
+        return SDRStates.ContainsKey(dc.Value) ? SDRStates[dc.Value] : null;
     }
 
     public ISDRState GetSDRState(Guid? id)
@@ -2961,7 +2895,7 @@ public class RedisCacheReferences : IReferencesCache
                 {
                     redisClient.Db = GlobalOptions.RedisDBId ?? 0;
                     if (!message.ExternalValues.ContainsKey("DocCodes")) return;
-                    LoadCacheKeys("PayCondition");
+                    LoadCacheKeys("CentrResponsibility");
                     using (var ctx = GlobalOptions.GetEntities())
                     {
                         var lst = (message.ExternalValues["DocCodes"] as JArray).ToObject<List<decimal>>();
@@ -3400,24 +3334,100 @@ public class RedisCacheReferences : IReferencesCache
                 else ProductTypes.Add(message.DocCode.Value, pt_item);
                 break;
             case RedisMessageChannels.SDRSchetReference:
-                if (message.DocCode is null) return;
-                LoadCacheKeys("SDRSchet");
-                var sds_item = GetItem<SDRSchet>((string)message.ExternalValues["RedisKey"]);
-                sds_item.LoadFromCache();
-                var sds_oldKey = cacheKeysDict["SDRSchet"].CachKeys
-                    .SingleOrDefault(_ => _.DocCode == message.DocCode);
-                if (sds_oldKey is null)
-                    cacheKeysDict["SDRSchet"].CachKeys.AddCacheKey(new CachKey
+                 using (var redisClient = redisManager.GetClient())
+                 {
+                     if (!message.ExternalValues.ContainsKey("States") ||
+                         !message.ExternalValues.ContainsKey("Schets")) return;
+                    redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+                    //if (!message.ExternalValues.ContainsKey("DocCodes")) return;
+                    LoadCacheKeys("SDRSchet");
+                    LoadCacheKeys("SDRState");
+                    using (var ctx = GlobalOptions.GetEntities())
                     {
-                        Key = (string)message.ExternalValues["RedisKey"],
-                        DocCode = message.DocCode,
-                        LastUpdate =
-                            Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
-                    });
+                        var lstStates = (message.ExternalValues["States"] as JArray).ToObject<List<decimal>>();
+                        var lstSchets = (message.ExternalValues["Schets"] as JArray).ToObject<List<decimal>>();
 
-                if (SDRSchets.ContainsKey(message.DocCode.Value))
-                    SDRSchets[message.DocCode.Value] = sds_item;
-                else SDRSchets.Add(message.DocCode.Value, sds_item);
+                        var e_states = ctx.SD_99.Where(_ => lstStates.Contains(_.DOC_CODE));
+                        foreach (var entity in e_states.Include(_ => _.SD_303))
+                        {
+                            foreach (var schet in entity.SD_303)
+                            {
+                                if(lstSchets.Contains(schet.DOC_CODE)) continue;
+                                lstSchets.Add(schet.DOC_CODE);
+                            }
+                            var newItem = new SDRState
+                            {
+                                DocCode = entity.DOC_CODE,
+                                Name = entity.SZ_NAME,
+                                ParentDC = entity.SZ_PARENT_DC,
+                                IsDohod = entity.SZ_1DOHOD_0_RASHOD == 1,
+                                Shifr = entity.SZ_SHIFR,
+                                UpdateDate = entity.UpdateDate ?? DateTime.Now
+                            };
+                            newItem.LoadFromEntity(entity);
+                            AddOrUpdate(newItem);
+                            var k_oldKey = cacheKeysDict["SDRState"].CachKeys
+                                .SingleOrDefault(_ => _.DocCode == message.DocCode);
+                            if (k_oldKey is null)
+                                cacheKeysDict["SDRState"].CachKeys.AddCacheKey(new CachKey
+                                {
+                                    Key = $"Cache:{newItem.Name}:{newItem.DocCode}@{newItem.UpdateDate}",
+                                    DocCode = message.DocCode,
+                                    Id = null,
+                                    LastUpdate = newItem.UpdateDate
+                                });
+
+                            if (SDRStates.ContainsKey(newItem.DocCode))
+                                SDRStates[newItem.DocCode] = newItem;
+                            else SDRStates.Add(newItem.DocCode, newItem);
+                        }
+                        var e_schets = ctx.SD_303.Where(_ => lstSchets.Contains(_.DOC_CODE));
+                        foreach (var entity in e_schets)
+                        {
+                            var newItem = new SDRSchet
+                            {
+                                DocCode = entity.DOC_CODE,
+                                Name = entity.SHPZ_NAME,
+                                SDRStateDC = entity.SHPZ_STATIA_DC,
+                                IsDeleted = entity.SHPZ_DELETED == 1,
+                                UpdateDate = entity.UpdateDate ?? DateTime.Now
+                            };
+                            newItem.LoadFromEntity(entity,this);
+                            AddOrUpdate(newItem);
+                            var k_oldKey = cacheKeysDict["SDRSchet"].CachKeys
+                                .SingleOrDefault(_ => _.DocCode == message.DocCode);
+                            if (k_oldKey is null)
+                                cacheKeysDict["SDRSchet"].CachKeys.AddCacheKey(new CachKey
+                                {
+                                    Key = $"Cache:{newItem.Name}:{newItem.DocCode}@{newItem.UpdateDate}",
+                                    DocCode = message.DocCode,
+                                    Id = null,
+                                    LastUpdate = newItem.UpdateDate
+                                });
+
+                            if (SDRSchets.ContainsKey(newItem.DocCode))
+                                SDRSchets[newItem.DocCode] = newItem;
+                            else SDRSchets.Add(newItem.DocCode, newItem);
+                        }
+                    }
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var redisMessage = new RedisMessage
+                    {
+                       Message =
+                            $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник счетов и статей доходов/расъодов.",
+                       ExternalValues =
+                       {
+                           ["Type"] = "SDRSchet"
+                       }
+                    };
+                    var json = JsonConvert.SerializeObject(redisMessage, jsonSerializerSettings);
+                    mySubscriber.Publish(
+                        new RedisChannel(RedisMessageChannels.ReferenceUpdate,
+                            RedisChannel.PatternMode.Auto),json);
+                }
                 break;
             case RedisMessageChannels.SDRStateReference:
                 if (message.DocCode is null) return;

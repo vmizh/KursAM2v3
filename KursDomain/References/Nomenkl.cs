@@ -24,7 +24,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
 {
     public int CompareTo(object obj)
     {
-        var c = obj as Unit;
+        var c = obj as Nomenkl;
         return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
     }
     [Display(AutoGenerateField = false)] public DateTime UpdateDate { get; set; }
@@ -197,8 +197,7 @@ public class Nomenkl : IDocCode, IDocGuid, IName, IEquatable<Nomenkl>, INomenkl,
             if (nom is null) return false;
             return nom.DocCode == DocCode && nom.Name == Name && nom.NomenklNumber == NomenklNumber;
         }
-        if (obj.GetType() != GetType()) return false;
-        return Equals((Nomenkl) obj);
+        return obj.GetType() == GetType() && Equals((Nomenkl) obj);
     }
 
     public override int GetHashCode()

@@ -169,15 +169,7 @@ namespace KursAM2.ViewModel.Reference
                                 new RedisChannel(RedisMessageChannels.CentrResponsibilityReference,
                                     RedisChannel.PatternMode.Auto), json);
                         } 
-                        //foreach (var dc in dc_list)
-                        //{
-                        //    var ent = ctx.SD_40.FirstOrDefault(_ => _.DOC_CODE == dc);
-                        //    if (ent == null) continue;
-                        //    var c = new CentrResponsibility();
-                        //    c.LoadFromEntity(ent);
-                        //    GlobalOptions.ReferencesCache.AddOrUpdate(c);
-                        //}
-
+                        
                         foreach (var с in CenterCollection)
                             с.myState = RowStatus.NotEdited;
 

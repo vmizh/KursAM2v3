@@ -11,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Core.Helper;
 using Core.ViewModel.Base;
-using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Data;
 using DevExpress.Mvvm;
@@ -19,7 +18,6 @@ using DevExpress.Mvvm.POCO;
 using DevExpress.Mvvm.Xpf;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
-using DevExpress.XtraCharts.GLGraphics;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
@@ -50,6 +48,7 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.Repository;
 using KursDomain.Services;
+using KursDomain.WindowsManager.WindowsManager;
 using Newtonsoft.Json;
 using Prism.Events;
 using Reports.Base;
@@ -385,12 +384,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
                     mySubscriber.Subscribe(
                         new RedisChannel(RedisMessageChannels.ReferenceUpdate, RedisChannel.PatternMode.Auto),
-                        (_, message) =>
-                        {
-
-                            Form.Dispatcher.Invoke(() => UpdateReferences(message));
-
-                        });
+                        (_, message) => { Form.Dispatcher.Invoke(() => UpdateReferences(message)); });
                     mySubscriber.Subscribe(
                         new RedisChannel(RedisMessageChannels.CashOut, RedisChannel.PatternMode.Auto),
                         (_, message) =>
@@ -504,12 +498,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     foreach (var rr in r.CurrencyConvertRows)
                     {
                         if (rr.Nomenkl is null && rr.NomenklId != Guid.Empty)
-                        {
                             rr.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(rr.NomenklId) as Nomenkl;
-                        }
                         rr.Rate = rate;
                         rr.myState = RowStatus.NotEdited;
-                        if(rr.Nomenkl is not null)
+                        if (rr.Nomenkl is not null)
                             AddUsedNomenkl(rr.Nomenkl.DocCode);
                     }
 
@@ -535,10 +527,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (Document.PaymentDocs.Count == 0) return Visibility.Visible;
             if (Document.PaymentDocs.Any(_ => _.CashDC != null) && !Document
                     .PaymentDocs
-                    .Any(_ => _.CashBook is not null && GlobalOptions.UserInfo.CashAccess.Contains(_.CashBook.DocCode))) return Visibility.Hidden;
+                    .Any(_ => _.CashBook is not null && GlobalOptions.UserInfo.CashAccess.Contains(_.CashBook.DocCode)))
+                return Visibility.Hidden;
             if (Document.PaymentDocs.Any(_ => _.BankCode != null) && !Document
                     .PaymentDocs
-                    .Any(_ => _.Bank is not null && GlobalOptions.UserInfo.BankAccess.Contains(_.Bank.DocCode))) return Visibility.Hidden;
+                    .Any(_ => _.Bank is not null && GlobalOptions.UserInfo.BankAccess.Contains(_.Bank.DocCode)))
+                return Visibility.Hidden;
             return Visibility.Visible;
         }
 
@@ -558,6 +552,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     from d in q.TD_24
                     select d.DDT_KOL_PRIHOD * q.SFT_ED_CENA ?? 0).Sum();
             }
+
             RaisePropertyChanged(nameof(Document));
         }
 
@@ -572,34 +567,50 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     .Cast<PayCondition>()
                     .OrderBy(_ => _.Name).ToList();
                 RaisePropertyChanged(nameof(PayConditionList));
-                Document.PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(Document.PayCondition?.DocCode) as PayCondition;
+                Document.PayCondition =
+                    GlobalOptions.ReferencesCache.GetPayCondition(Document.PayCondition?.DocCode) as PayCondition;
             }
+
             if ((string)message.ExternalValues["Type"] == "CentrResponsibility")
             {
                 COList = GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
                     .Cast<CentrResponsibility>()
                     .OrderBy(_ => _.Name).ToList();
                 RaisePropertyChanged(nameof(COList));
-                Document.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(Document.CO?.DocCode) as CentrResponsibility;
+                Document.CO =
+                    GlobalOptions.ReferencesCache.GetCentrResponsibility(Document.CO?.DocCode) as CentrResponsibility;
             }
+
             if ((string)message.ExternalValues["Type"] == "Kontragent")
             {
-                Document.Kontragent = GlobalOptions.ReferencesCache.GetKontragent(Document.Kontragent?.DocCode) as Kontragent;
-                Document.KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(Document.KontrReceiver?.DocCode) as Kontragent;
+                Document.Kontragent =
+                    GlobalOptions.ReferencesCache.GetKontragent(Document.Kontragent?.DocCode) as Kontragent;
+                Document.KontrReceiver =
+                    GlobalOptions.ReferencesCache.GetKontragent(Document.KontrReceiver?.DocCode) as Kontragent;
             }
 
             if ((string)message.ExternalValues["Type"] == "Nomenkl")
-            {
                 foreach (var row in Document.Rows)
                 {
                     row.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.Nomenkl.DocCode) as Nomenkl;
                     ((InvoiceProviderRow)row).RaisePropertyAllChanged();
                 }
+
+            if ((string)message.ExternalValues["Type"] == "SDRSchet")
+            {
+                foreach (var row in Document.Rows)
+                {
+                    row.SDRSchet = GlobalOptions.ReferencesCache.GetSDRSchet(row.SDRSchet.DocCode) as SDRSchet;
+                    ((InvoiceProviderRow)row).RaisePropertyAllChanged();
+                }
+
+                if (Form is InvoiceProviderView frm)
+                    frm.SDRSchetList.ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().ToList();
             }
+
             Document.RaisePropertyAllChanged();
             Document.myState = state;
             RaisePropertyChanged(nameof(Document));
-
         }
 
         private void UpdateCash(RedisValue message)
@@ -626,7 +637,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public List<Currency> CurrencyList => GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>()
             .OrderBy(_ => _.Name).ToList();
 
-        public List<CentrResponsibility> COList { set; get; } = GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
+        public List<CentrResponsibility> COList { set; get; } = GlobalOptions.ReferencesCache
+            .GetCentrResponsibilitiesAll()
             .Cast<CentrResponsibility>().OrderBy(_ => _.Name).ToList();
 
         public List<Employee> EmployeeList => GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>()
@@ -912,7 +924,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 return;
             }
 
-            var kontr = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions() { Currency = Document.Currency });
+            var kontr = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions
+                { Currency = Document.Currency });
             if (kontr == null) return;
             Document.Kontragent = kontr;
             Document.Currency = kontr.Currency as Currency;
@@ -987,8 +1000,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         };
                         r.Entity.SFT_POST_ED_IZM_DC = ((IDocCode)item.Nomenkl.Unit).DocCode;
                         Document.Rows.Add(r);
-                        var oldOrdRow = GenericProviderRepository.Context.TD_24.Include(_ => _.SD_24).FirstOrDefault(
-                            _ =>
+                        var oldOrdRow = GenericProviderRepository.Context.TD_24.Include(_ => _.SD_24)
+                            .FirstOrDefault(_ =>
                                 _.DOC_CODE == item.DocCode
                                 && _.CODE == item.Code);
                         Document.Facts.Add(new WarehouseOrderInRow(oldOrdRow)
@@ -1002,8 +1015,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     }
                     else
                     {
-                        var oldOrdRow = GenericProviderRepository.Context.TD_24.Include(_ => _.SD_24).FirstOrDefault(
-                            _ =>
+                        var oldOrdRow = GenericProviderRepository.Context.TD_24.Include(_ => _.SD_24)
+                            .FirstOrDefault(_ =>
                                 _.DOC_CODE == item.DocCode
                                 && _.CODE == item.Code);
                         Document.Facts.Add(new WarehouseOrderInRow(oldOrdRow)
@@ -1392,8 +1405,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
             var main = GlobalOptions.ReferencesCache.GetNomenklMain(CurrentRow.Nomenkl.MainId);
             var nomDCs = main.Nomenkls.Where(_ => _ != Document.Currency.DocCode).ToList();
-            var noms = nomDCs.Select(dc => GlobalOptions.ReferencesCache.GetNomenkl(dc)).OfType<Nomenkl>().
-                Where(_ => ((IDocCode)_.Currency).DocCode != ((IDocCode)CurrentRow.Nomenkl.Currency).DocCode ).ToList();
+            var noms = nomDCs.Select(dc => GlobalOptions.ReferencesCache.GetNomenkl(dc)).OfType<Nomenkl>().Where(_ =>
+                ((IDocCode)_.Currency).DocCode != ((IDocCode)CurrentRow.Nomenkl.Currency).DocCode).ToList();
             if (noms.Count == 0) return;
             Nomenkl n;
             if (noms.Count > 1)
@@ -1543,7 +1556,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         private IEnumerable<Nomenkl> LoadNomenkl(string srchText, decimal? crsDC)
         {
-            List<Nomenkl> ret = new List<Nomenkl>();
+            var ret = new List<Nomenkl>();
             using (var ctx = GlobalOptions.GetEntities())
             {
                 var data = ctx.SD_83.Where(_ =>
@@ -1563,7 +1576,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
         private void AddNomenklSimple(object obj)
         {
             decimal defaultNDS;
-            var dtx = new TableSearchWindowViewMove<Nomenkl>(LoadNomenkl, "Выбор номенклатур", "NomenklSipleListView",Document.Currency.DocCode);
+            var dtx = new TableSearchWindowViewMove<Nomenkl>(LoadNomenkl, "Выбор номенклатур", "NomenklSipleListView",
+                Document.Currency.DocCode);
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Выбор номенклатур", dtx) == MessageResult.OK
                 || dtx.DialogResult)
@@ -1959,7 +1973,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                             : RedisMessageDocumentOperationTypeEnum.Update,
                         Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} счет {Document.Description}"
                     };
-                    message.ExternalValues.Add("KontragentDC",Document.Kontragent.DocCode);
+                    message.ExternalValues.Add("KontragentDC", Document.Kontragent.DocCode);
                     var jsonSerializerSettings = new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.All
@@ -1998,11 +2012,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var ctx = new ProviderWindowViewModel();
             ctx.Document = ctx.InvoiceProviderRepository.GetFullCopy(Document.DocCode);
             ctx.UnitOfWork.Context.SD_26.Add(ctx.Document.Entity);
-            foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
+            foreach (var ent in ctx.UnitOfWork.Context.ChangeTracker.Entries())
             {
                 if (ent.Entity is SD_26 or TD_26) continue;
                 ent.State = EntityState.Unchanged;
             }
+
             var frm = new InvoiceProviderView
             {
                 Owner = Application.Current.MainWindow,
@@ -2024,11 +2039,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ctx.Document.PaymentDocs.Clear();
             ctx.Document.Entity.ProviderInvoicePay.Clear();
             ctx.UnitOfWork.Context.SD_26.Add(ctx.Document.Entity);
-            foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
+            foreach (var ent in ctx.UnitOfWork.Context.ChangeTracker.Entries())
             {
                 if (ent.Entity is SD_26 or TD_26) continue;
                 ent.State = EntityState.Unchanged;
             }
+
             var frm = new InvoiceProviderView
             {
                 Owner = Application.Current.MainWindow,
@@ -2159,16 +2175,18 @@ namespace KursAM2.ViewModel.Finance.Invoices
                                     OperationType = Document.myState == RowStatus.NewRow
                                         ? RedisMessageDocumentOperationTypeEnum.Create
                                         : RedisMessageDocumentOperationTypeEnum.Update,
-                                    Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' удалил счет {Document.Description}"
+                                    Message =
+                                        $"Пользователь '{GlobalOptions.UserInfo.Name}' удалил счет {Document.Description}"
                                 };
-                                message.ExternalValues.Add("KontragentDC",Document.Kontragent.DocCode);
+                                message.ExternalValues.Add("KontragentDC", Document.Kontragent.DocCode);
                                 var jsonSerializerSettings = new JsonSerializerSettings
                                 {
                                     TypeNameHandling = TypeNameHandling.All
                                 };
                                 var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
                                 mySubscriber.Publish(
-                                    new RedisChannel(RedisMessageChannels.InvoiceProvider, RedisChannel.PatternMode.Auto), json);
+                                    new RedisChannel(RedisMessageChannels.InvoiceProvider,
+                                        RedisChannel.PatternMode.Auto), json);
                             }
                             //TODO Сохранить последний документ
                             //DocumentsOpenManager.DeleteFromLastDocument(null, Document.DocCode);

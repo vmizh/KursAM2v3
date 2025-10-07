@@ -850,10 +850,9 @@ public class InvoiceProviderRow : RSViewModelBase, IEntity<TD_26>, IInvoiceProvi
         get => mySDRSchet;
         set
         {
-            if (mySDRSchet != null && mySDRSchet.Equals(value)) return;
+            if (Equals(mySDRSchet,value)) return;
             mySDRSchet = value;
-            if (mySDRSchet != null)
-                Entity.SFT_SHPZ_DC = mySDRSchet.DocCode;
+            Entity.SFT_SHPZ_DC = mySDRSchet?.DocCode;
             RaisePropertyChanged(nameof(Entity.SFT_SHPZ_DC));
             RaisePropertyChanged();
         }

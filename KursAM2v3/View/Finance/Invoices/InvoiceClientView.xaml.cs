@@ -35,6 +35,8 @@ namespace KursAM2.View.Finance.Invoices
         private ClientWindowViewModel viewModel => DataContext as ClientWindowViewModel;
 
 
+        public ComboBoxEditSettings SDRSchetList;
+
         private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
             e.Column.Name = e.Column.FieldName;
@@ -67,12 +69,13 @@ namespace KursAM2.View.Finance.Invoices
                 case nameof(inv.Note):
                     break;
                 case nameof(inv.SDRSchet):
-                    e.Column.EditSettings = new ComboBoxEditSettings
+                    SDRSchetList = new ComboBoxEditSettings
                     {
                         ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().ToList(),
                         DisplayMember = "Name",
                         AutoComplete = true
                     };
+                    e.Column.EditSettings = SDRSchetList;
                     break;
             }
         }

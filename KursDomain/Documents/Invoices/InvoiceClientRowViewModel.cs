@@ -19,7 +19,11 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
 
     // ReSharper disable once RedundantDefaultMemberInitializer
     public bool myIsNDSInPrice = true;
+
+    private Nomenkl myNomenkl;
     private decimal myRest;
+
+    private SDRSchet mySDRSchet;
     private decimal myShipped;
 
     public InvoiceClientRowViewModel(bool isNDSInPrice = true)
@@ -37,7 +41,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         else
         {
             Entity = entity;
-            if(isLoadRef)
+            if (isLoadRef)
                 LoadReference();
             //CalcRow();
         }
@@ -476,17 +480,14 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         }
     }
 
-    private Nomenkl myNomenkl;
-    
     public Nomenkl Nomenkl
     {
-        get => myNomenkl; //GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC) as Nomenkl;
+        get => myNomenkl;
         set
         {
-            //if (Equals(GlobalOptions.ReferencesCache.GetNomenkl(Entity.SFT_NEMENKL_DC), value)) return;
-            if(myNomenkl == value) return;
+            if (myNomenkl == value) return;
             myNomenkl = value;
-            if(value != null)
+            if (value != null)
                 Entity.SFT_NEMENKL_DC = value.DocCode;
             RaisePropertyChanged();
         }
@@ -499,22 +500,12 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         {
             if (value <= (decimal)0.01 || value < Shipped)
             {
-                //WindowManager.ShowMessage("Кол-во должно быть больше нуля", "Ошибка",
-                //    MessageBoxImage.Error);
                 Entity.SFT_KOL = 1;
-                //CalcRow();
                 RaisePropertyChanged();
                 return;
             }
 
-            //if (Math.Abs(Entity.SFT_KOL - (double)value) < 0.00001) return;
-            //if ()
-            //    //WindowManager.ShowMessage($"Отгружено {Shipped}. Уменьшить кол-во в счете нельзя", "Ошибка",
-            //    //    MessageBoxImage.Error);
-            //    return;
-
             Entity.SFT_KOL = (double)value;
-            //CalcRow();
             RaisePropertyChanged();
         }
     }
@@ -532,7 +523,7 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
             if (Entity.SFT_ED_CENA == value) return;
             Entity.SFT_ED_CENA = value;
             Entity.SFT_SUMMA_K_OPLATE_KONTR_CRS = Entity.SFT_ED_CENA * (decimal?)Entity.SFT_KOL;
-            Entity.SFT_SUMMA_K_OPLATE  = Entity.SFT_ED_CENA * (decimal?)Entity.SFT_KOL;
+            Entity.SFT_SUMMA_K_OPLATE = Entity.SFT_ED_CENA * (decimal?)Entity.SFT_KOL;
             //CalcRow();
             RaisePropertyChanged();
             RaisePropertyChanged(nameof(Summa));
@@ -580,15 +571,12 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         }
     }
 
-    private SDRSchet mySDRSchet;
-
     public SDRSchet SDRSchet
     {
-        get => mySDRSchet; //GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC) as SDRSchet;
+        get => mySDRSchet;
         set
         {
-            //if (Equals(GlobalOptions.ReferencesCache.GetSDRSchet(Entity.SFT_SHPZ_DC), value)) return;
-            if(mySDRSchet == value) return;
+            if (Equals(mySDRSchet, value)) return;
             mySDRSchet = value;
             Entity.SFT_SHPZ_DC = value?.DocCode;
             RaisePropertyChanged();
@@ -667,7 +655,8 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
     public void CalcRow()
     {
         if (IsNDSInPrice)
-        {   var s = (decimal)Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0;
+        {
+            var s = (decimal)Entity.SFT_KOL * Entity.SFT_ED_CENA ?? 0;
             Entity.SFT_SUMMA_NDS = Math.Round(s - s * 100 / (100 + (decimal)Entity.SFT_NDS_PERCENT), 2);
         }
         else
@@ -684,8 +673,8 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         if (Parent is InvoiceClientViewModel p)
         {
             p.SummaOtgruz = p.Rows.Sum(_ =>
-                _.Price * (p.ShipmentRows.FirstOrDefault(x => x.Nomenkl.DocCode == _.Nomenkl.DocCode)
-                    ?.DDT_KOL_RASHOD) ?? 0);
+                _.Price * p.ShipmentRows.FirstOrDefault(x => x.Nomenkl.DocCode == _.Nomenkl.DocCode)
+                    ?.DDT_KOL_RASHOD ?? 0);
             p.Entity.SF_KONTR_CRS_SUMMA = p.Rows.Sum(_ => _.Price * _.Quantity);
             p.Entity.SF_CRS_SUMMA_K_OPLATE = p.Rows.Sum(_ => _.Price * _.Quantity);
             p.Summa = p.Rows.Sum(_ => _.Price * _.Quantity);
@@ -695,7 +684,6 @@ public class InvoiceClientRowViewModel : RSViewModelBase, IEntity<TD_84>, IInvoi
         Shipped = IsUsluga ? Quantity : Entity.TD_24.Sum(_ => _.DDT_KOL_RASHOD);
         RaisePropertyChanged(nameof(SFT_SUMMA_NDS));
         RaisePropertyChanged(nameof(Summa));
-
     }
 
     private void LoadReference()

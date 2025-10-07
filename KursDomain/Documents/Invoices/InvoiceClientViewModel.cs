@@ -1192,18 +1192,12 @@ public sealed class InvoiceClientViewModel : RSViewModelBase, IEntity<SD_84>, ID
             Rows = new ObservableCollection<IInvoiceClientRow>();
         else
             Rows.Clear();
-        //Rows = new ObservableCollection<IInvoiceClientRow>();
         if (Entity.TD_84 != null && Entity.TD_84.Count > 0)
-            //var noms = GlobalOptions.ReferencesCache.GetNomenkls(Entity.TD_84.Select(_ => _.SFT_NEMENKL_DC)).Cast<Nomenkl>().ToList();
             foreach (var t in Entity.TD_84)
             {
                 var newRow = new InvoiceClientRowViewModel(t)
                 {
                     Parent = this,
-                    //Nomenkl =  GlobalOptions.ReferencesCache.GetNomenkl(t.SFT_NEMENKL_DC) as Nomenkl,
-                    SDRSchet = t.SFT_SHPZ_DC is null
-                        ? null
-                        : GlobalOptions.ReferencesCache.GetSDRSchet(t.SFT_SHPZ_DC.Value) as SDRSchet
                 };
                 Rows.Add(newRow);
             }

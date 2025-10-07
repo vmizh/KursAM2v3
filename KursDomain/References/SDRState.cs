@@ -18,7 +18,7 @@ public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>, ICompa
 {
     public int CompareTo(object obj)
     {
-        var c = obj as Unit;
+        var c = obj as SDRState;
         return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
     }
     public decimal DocCode { get; set; }
@@ -26,8 +26,8 @@ public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>, ICompa
     public bool Equals(SDRState other)
     {
         if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return DocCode == other.DocCode;
+        if (ReferenceEquals(this, other)) return DocCode == other.DocCode && Name == other.Name;
+        return DocCode == other.DocCode && Name == other.Name;
     }
 
     public string Name { get; set; }
@@ -62,14 +62,19 @@ public class SDRState : ISDRState, IDocCode, IName, IEquatable<SDRState>, ICompa
     public override bool Equals(object obj)
     {
         if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
+        if (ReferenceEquals(this, obj))
+        {
+            var o = obj as SDRState;
+            if(o == null) return false;
+            return DocCode == o.DocCode && Name == o.Name;
+        }
         if (obj.GetType() != GetType()) return false;
         return Equals((SDRState) obj);
     }
 
     public override int GetHashCode()
     {
-        return DocCode.GetHashCode();
+        return $"{DocCode}{Name}".GetHashCode();
     }
 
     public void LoadFromCache()

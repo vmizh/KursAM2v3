@@ -3,11 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using Core;
-using Core.ViewModel.Base;
-using KursDomain.WindowsManager.WindowsManager;
 using DevExpress.Data;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
@@ -18,332 +14,326 @@ using KursAM2.ViewModel.Finance.Invoices;
 using KursDomain;
 using KursDomain.Documents.Invoices;
 using KursDomain.ICommon;
+using KursDomain.WindowsManager.WindowsManager;
 
-namespace KursAM2.View.Finance.Invoices 
+namespace KursAM2.View.Finance.Invoices;
+
+/// <summary>
+///     Interaction logic for InvoiceForm.xaml
+/// </summary>
+public partial class InvoiceProviderView
 {
-    /// <summary>
-    ///     Interaction logic for InvoiceForm.xaml
-    /// </summary>
-    public partial class InvoiceProviderView
+    private readonly Dictionary<string, SummaryItemType> listSummaryFields = new();
+
+    private readonly WindowManager myWManager = new();
+
+
+    public PopupCalcEdit PaySummaEditor;
+
+    public ComboBoxEditSettings SDRSchetList;
+
+    static InvoiceProviderView()
     {
-        private readonly Dictionary<string, SummaryItemType> listSummaryFields
-            = new Dictionary<string, SummaryItemType>();
+        GridControlLocalizer.Active = new CustomDXGridLocalizer();
+    }
 
-        private readonly WindowManager myWManager = new WindowManager();
+    public InvoiceProviderView()
+    {
+        listSummaryFields.Add("Nomenkl", SummaryItemType.Count);
+        listSummaryFields.Add("SFT_KOL", SummaryItemType.Sum);
+        listSummaryFields.Add("Summa", SummaryItemType.Sum);
+        listSummaryFields.Add("SummaNaklad", SummaryItemType.Sum);
+        listSummaryFields.Add("NDSSumma", SummaryItemType.Sum);
+        listSummaryFields.Add("DDT_KOL_PRIHOD", SummaryItemType.Sum);
+        InitializeComponent();
+    }
 
-
-        public PopupCalcEdit PaySummaEditor;
-
-        public InvoiceProviderView()
+    private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+    {
+        e.Column.Name = e.Column.FieldName;
+        if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(e.Column.FieldType))
+            e.Column.EditSettings = new CalcEditSettings
+            {
+                DisplayFormat = "n2",
+                Name = e.Column.FieldName + "Calc"
+            };
+        var ctx = DataContext as ProviderWindowViewModel;
+        var doc = ctx?.Document;
+        if (doc == null)
+            return;
+        // ReSharper disable once LocalNameCapturedOnly
+        // ReSharper disable once RedundantAssignment
+        // ReSharper disable once EntityNameCapturedOnly.Local
+        var row = new InvoiceProviderRow();
+        switch (e.Column.Name)
         {
-            listSummaryFields.Add("Nomenkl", SummaryItemType.Count);
-            listSummaryFields.Add("SFT_KOL", SummaryItemType.Sum);
-            listSummaryFields.Add("Summa", SummaryItemType.Sum);
-            listSummaryFields.Add("SummaNaklad", SummaryItemType.Sum);
-            listSummaryFields.Add("NDSSumma", SummaryItemType.Sum);
-            listSummaryFields.Add("DDT_KOL_PRIHOD", SummaryItemType.Sum);
-            InitializeComponent(); 
-        }
-
-        static InvoiceProviderView()
-        {
-            GridControlLocalizer.Active = new CustomDXGridLocalizer();
-        }
-        private void GridRows_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
-        {
-            e.Column.Name = e.Column.FieldName;
-            if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(e.Column.FieldType))
-                e.Column.EditSettings = new CalcEditSettings
+            case nameof(row.Unit):
+            case nameof(row.NomenklNumber):
+                e.Column.ReadOnly = true;
+                break;
+            case nameof(row.Note):
+                break;
+            case nameof(row.KontragentForNaklad):
+                var kontrForNakladEdit = new ButtonEditSettings
                 {
-                    DisplayFormat = "n2",
-                    Name = e.Column.FieldName + "Calc"
+                    TextWrapping = TextWrapping.Wrap,
+                    IsTextEditable = false
                 };
-            var ctx = DataContext as ProviderWindowViewModel;
-            var doc = ctx?.Document;
-            if (doc == null)
-                return;
-            // ReSharper disable once LocalNameCapturedOnly
-            // ReSharper disable once RedundantAssignment
-            // ReSharper disable once EntityNameCapturedOnly.Local
-            var row = new InvoiceProviderRow();
-            switch (e.Column.Name)
-            {
-                case nameof(row.Unit):
-                case nameof(row.NomenklNumber):
-                    e.Column.ReadOnly = true;
-                    break;
-                case nameof(row.Note):
-                    //e.Column.EditSettings = new MemoEditSettings
-                    //{
-                    //    ShowIcon = false
-                    //};
-                    break;
-                case nameof(row.KontragentForNaklad):
-                    var kontrForNakladEdit = new ButtonEditSettings
-                    {
-                        TextWrapping = TextWrapping.Wrap,
-                        IsTextEditable = false
-                    };
-                    kontrForNakladEdit.DefaultButtonClick += kontrForNaklad_DefaultButtonClick;
-                    e.Column.EditSettings = kontrForNakladEdit;
-                    break;
-                case nameof(row.SDRSchet):
-                    e.Column.EditSettings = new ComboBoxEditSettings
-                    {
-                        ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().ToList(),
-                        DisplayMember = "Name",
-                        AutoComplete = true
-                    };
-                    break;
-            }
-        }
-
-        private void kontrForNaklad_DefaultButtonClick(object sender, RoutedEventArgs e)
-        {
-            var ctx = DataContext as ProviderWindowViewModel;
-            var doc = ctx?.Document;
-            if (doc == null)
-                return;
-            if (ctx.CurrentRow == null) return;
-            var kontr = StandartDialogs.SelectKontragent();
-            if (kontr == null) return;
-            ctx.CurrentRow.KontragentForNaklad = kontr;
-        }
-
-        private void GridRows_OnAutoGeneratedColumns(object sender, RoutedEventArgs e)
-        {
-            gridRows.TotalSummary.Clear();
-            foreach (var c in gridRows.Columns)
-            {
-                if (!listSummaryFields.ContainsKey(c.FieldName)) continue;
-                if (c.EditSettings == null)
-                    c.EditSettings = new TextEditSettings
-                    {
-                        SelectAllOnMouseUp = true
-                    };
-                if (hasPaysTotalSummary(c.FieldName) != null) continue;
-                gridRows.TotalSummary.Add(new GridSummaryItem
+                kontrForNakladEdit.DefaultButtonClick += kontrForNaklad_DefaultButtonClick;
+                e.Column.EditSettings = kontrForNakladEdit;
+                break;
+            case nameof(row.SDRSchet):
+                e.Column.EditSettings = SDRSchetList = 
+                 new ComboBoxEditSettings
                 {
-                    FieldName = c.FieldName,
-                    SummaryType = listSummaryFields[c.FieldName],
-                    DisplayFormat = "n2"
-                });
-            }
-
-        }
-
-        private void GridLayoutHelper_Trigger(object sender, MyEventArgs e)
-        {
-            var maxWidith = new GridColumnWidth(800);
-           
-            if (e.LayoutChangedTypes.Contains(LayoutChangedType.ColumnWidth))
-            {
-                if (sender is GridLayoutHelper m)
-                {
-                    if(m.AssociatedObject is GridControl grid)
-                        foreach(var col in grid.Columns)
-                            if (col.Width.Value > maxWidith.Value )
-                            {
-                                col.Width = maxWidith;
-                            }
-                }
-            }
-        }
-
-        private void GridFacts_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
-        {
-            e.Column.Name = e.Column.FieldName;
-            e.Column.ReadOnly = true;
-            switch (e.Column.Name)
-            {
-                case "LinkInvoice":
-                case "LinkOrder":
-                    e.Column.Visible = false;
-                    break;
-            }
-        }
-
-        private void GridFacts_OnAutoGeneratedColumns(object sender, RoutedEventArgs e)
-        {
-            gridFacts.TotalSummary.Clear();
-            foreach (var c in gridRows.Columns)
-            {
-                if (!listSummaryFields.ContainsKey(c.FieldName)) continue;
-                if (c.EditSettings == null)
-                    c.EditSettings = new TextEditSettings
-                    {
-                        SelectAllOnMouseUp = true
-                    };
-                gridFacts.TotalSummary.Add(new GridSummaryItem
-                {
-                    FieldName = c.FieldName,
-                    SummaryType = listSummaryFields[c.FieldName],
-                    DisplayFormat = "n2"
-                });
-            }
-        }
-
-        private void GridPays_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
-        {
-            e.Column.Name = e.Column.FieldName;
-            if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(e.Column.FieldType))
-                e.Column.EditSettings = new CalcEditSettings
-                {
-                    DisplayFormat = "n2",
-                    Name = e.Column.FieldName + "Calc"
+                    ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().ToList(),
+                    DisplayMember = "Name",
+                    AutoComplete = true
                 };
+                break;
         }
+    }
 
-        private void GridPays_OnAutoGeneratedColumns(object sender, RoutedEventArgs e)
+    private void kontrForNaklad_DefaultButtonClick(object sender, RoutedEventArgs e)
+    {
+        var ctx = DataContext as ProviderWindowViewModel;
+        var doc = ctx?.Document;
+        if (doc == null)
+            return;
+        if (ctx.CurrentRow == null) return;
+        var kontr = StandartDialogs.SelectKontragent();
+        if (kontr == null) return;
+        ctx.CurrentRow.KontragentForNaklad = kontr;
+    }
+
+    private void GridRows_OnAutoGeneratedColumns(object sender, RoutedEventArgs e)
+    {
+        gridRows.TotalSummary.Clear();
+        foreach (var c in gridRows.Columns)
         {
-            gridPays.TotalSummary.Clear();
-            gridPays.BeginInit();
-            gridPays.CustomSummary += GridPays_OnCustomSummary;
-            foreach (var col in gridPays.Columns)
-            {
-                //myGridPaysLayout.AutoGeneratedColumnSetProperties(columnsInfo.ColumnsInfo, col);
-                if (col.EditSettings == null)
-                    col.EditSettings = new TextEditSettings
-                    {
-                        SelectAllOnMouseUp = true
-                    };
-                if (col.FieldName != "Summa" && col.FieldName != "Note" && col.FieldName != "Rate")
-                    col.ReadOnly = true;
-                else
-                    col.ReadOnly = false;
-
-                if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType))
+            if (!listSummaryFields.ContainsKey(c.FieldName)) continue;
+            if (c.EditSettings == null)
+                c.EditSettings = new TextEditSettings
                 {
-                    if (col.FieldName == "Rate")
+                    SelectAllOnMouseUp = true
+                };
+            if (hasPaysTotalSummary(c.FieldName) != null) continue;
+            gridRows.TotalSummary.Add(new GridSummaryItem
+            {
+                FieldName = c.FieldName,
+                SummaryType = listSummaryFields[c.FieldName],
+                DisplayFormat = "n2"
+            });
+        }
+    }
+
+    private void GridLayoutHelper_Trigger(object sender, MyEventArgs e)
+    {
+        var maxWidith = new GridColumnWidth(800);
+
+        if (e.LayoutChangedTypes.Contains(LayoutChangedType.ColumnWidth))
+            if (sender is GridLayoutHelper m)
+                if (m.AssociatedObject is GridControl grid)
+                    foreach (var col in grid.Columns)
+                        if (col.Width.Value > maxWidith.Value)
+                            col.Width = maxWidith;
+    }
+
+    private void GridFacts_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+    {
+        e.Column.Name = e.Column.FieldName;
+        e.Column.ReadOnly = true;
+        switch (e.Column.Name)
+        {
+            case "LinkInvoice":
+            case "LinkOrder":
+                e.Column.Visible = false;
+                break;
+        }
+    }
+
+    private void GridFacts_OnAutoGeneratedColumns(object sender, RoutedEventArgs e)
+    {
+        gridFacts.TotalSummary.Clear();
+        foreach (var c in gridRows.Columns)
+        {
+            if (!listSummaryFields.ContainsKey(c.FieldName)) continue;
+            if (c.EditSettings == null)
+                c.EditSettings = new TextEditSettings
+                {
+                    SelectAllOnMouseUp = true
+                };
+            gridFacts.TotalSummary.Add(new GridSummaryItem
+            {
+                FieldName = c.FieldName,
+                SummaryType = listSummaryFields[c.FieldName],
+                DisplayFormat = "n2"
+            });
+        }
+    }
+
+    private void GridPays_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+    {
+        e.Column.Name = e.Column.FieldName;
+        if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(e.Column.FieldType))
+            e.Column.EditSettings = new CalcEditSettings
+            {
+                DisplayFormat = "n2",
+                Name = e.Column.FieldName + "Calc"
+            };
+    }
+
+    private void GridPays_OnAutoGeneratedColumns(object sender, RoutedEventArgs e)
+    {
+        gridPays.TotalSummary.Clear();
+        gridPays.BeginInit();
+        gridPays.CustomSummary += GridPays_OnCustomSummary;
+        foreach (var col in gridPays.Columns)
+        {
+            //myGridPaysLayout.AutoGeneratedColumnSetProperties(columnsInfo.ColumnsInfo, col);
+            if (col.EditSettings == null)
+                col.EditSettings = new TextEditSettings
+                {
+                    SelectAllOnMouseUp = true
+                };
+            if (col.FieldName != "Summa" && col.FieldName != "Note" && col.FieldName != "Rate")
+                col.ReadOnly = true;
+            else
+                col.ReadOnly = false;
+
+            if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType))
+            {
+                if (col.FieldName == "Rate")
+                {
+                    var p = hasPaysTotalSummary(col.FieldName);
+                    if (p == null)
                     {
-                        var p = hasPaysTotalSummary(col.FieldName);
-                        if (p == null) 
-                            gridPays.TotalSummary.Add(new GridSummaryItem
-                            {
-                                FieldName = col.FieldName,
-                                SummaryType = SummaryItemType.Custom,
-                                DisplayFormat = "n4"
-                            });
-                        else
-                        {
-                            p.SummaryType = SummaryItemType.Custom;
-                            p.DisplayFormat = "n4";
-                        }
-                    }
-                    else
-                    {
-                        if (hasPaysTotalSummary(col.FieldName) != null) continue;
                         gridPays.TotalSummary.Add(new GridSummaryItem
                         {
                             FieldName = col.FieldName,
-                            SummaryType = SummaryItemType.Sum,
-                            DisplayFormat = "n2"
+                            SummaryType = SummaryItemType.Custom,
+                            DisplayFormat = "n4"
                         });
                     }
-                }
-            }
-
-            gridPays.EndInit();
-        }
-
-        private GridSummaryItem hasPaysTotalSummary(string fName)
-        {
-            foreach (var ts in gridPays.TotalSummary)
-                if (ts.FieldName == fName)
-                    return ts;
-            return null;
-        }
-
-        private void TableView_CellValueChanged(object sender, CellValueChangedEventArgs e)
-        {
-            if (!(DataContext is ProviderWindowViewModel dtx)) return;
-            switch (e.Column.FieldName)
-            {
-                case nameof(InvoiceProviderRowCurrencyConvertViewModel.Rate):
-                    dtx.CurrentCrsConvertItem?.CalcRow(DirectCalc.Rate);
-                    break;
-                case nameof(InvoiceProviderRowCurrencyConvertViewModel.Price):
-                    dtx.CurrentCrsConvertItem?.CalcRow(DirectCalc.Price);
-                    break;
-                case nameof(InvoiceProviderRowCurrencyConvertViewModel.PriceWithNaklad):
-                    dtx.CurrentCrsConvertItem?.CalcRow(DirectCalc.PriceWithNaklad);
-                    break;
-                case nameof(InvoiceProviderRowCurrencyConvertViewModel.Quantity):
-                    dtx.CurrentCrsConvertItem?.CalcRow(DirectCalc.Quantity);
-                    break;
-            }
-
-            if (dtx.CurrentRow == null)
-            {
-                var row = dtx.Document.Rows.Cast<InvoiceProviderRow>().FirstOrDefault(_ => _.Code == dtx.CurrentCrsConvertItem.Code);
-                if (row != null)
-                    row.State = RowStatus.Edited;
-            }
-            else
-            {
-                dtx.CurrentRow.State = RowStatus.Edited;
-            }
-        }
-
-        private void gridRows_MasterRowExpanding(object sender, RowAllowEventArgs e)
-        {
-            if (DataContext is ProviderWindowViewModel dtx) dtx.CurrentRow = (InvoiceProviderRow) e.Row;
-        }
-
-        private void TableViewPay_OnCellValueChanged(object sender, CellValueChangedEventArgs e)
-        {
-            if (!(DataContext is ProviderWindowViewModel dtx)) return;
-            if (e.Column.FieldName == "Summa")
-                if ((decimal) e.Value < 0 || (decimal) e.Value > dtx.CurrentPaymentDoc.DocSumma)
-                {
-                    myWManager.ShowWinUIMessageBox("Сумма не может быть меньше 0 и больше суммы документа",
-                        "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                    dtx.CurrentPaymentDoc.Summa = dtx.CurrentPaymentDoc.DocSumma;
-                    tableViewPay.CloseEditor();
-                }
-
-            if (dtx.Document.myState != RowStatus.NewRow)
-                dtx.Document.myState = RowStatus.Edited;
-
-            if(PaySummaEditor != null)
-                PaySummaEditor.Foreground = dtx.Document.PaySumma > dtx.Document.Summa
-                    ? new SolidColorBrush(Colors.Red)
-                    : new SolidColorBrush(Colors.Black);
-            dtx.Document.RaisePropertyChanged("PaySumma");
-            dtx.RaisePropertyChanged("Document");
-        }
-
-        private void GridPays_OnCustomSummary(object sender, CustomSummaryEventArgs e)
-        {
-            var dtx = DataContext as ProviderWindowViewModel;
-            if (dtx == null) return;
-            if (((GridSummaryItem) e.Item).FieldName != "Rate")
-                return;
-            if (e.IsTotalSummary)
-                if (e.SummaryProcess == CustomSummaryProcess.Calculate)
-                {
-                    var s = 0.0m;
-                    var sr = 0.0m;
-                    foreach (var item in dtx.Document.PaymentDocs)
+                    else
                     {
-                        s += item.Summa * item.Rate;
-                        sr += item.Summa;
+                        p.SummaryType = SummaryItemType.Custom;
+                        p.DisplayFormat = "n4";
                     }
-
-                    e.TotalValue = sr != 0
-                        ? Math.Round(s / sr, 4)
-                        : Math.Round(dtx.Document.PaymentDocs.Sum(_ => _.Rate) / dtx.Document.PaymentDocs.Count, 4);
                 }
+                else
+                {
+                    if (hasPaysTotalSummary(col.FieldName) != null) continue;
+                    gridPays.TotalSummary.Add(new GridSummaryItem
+                    {
+                        FieldName = col.FieldName,
+                        SummaryType = SummaryItemType.Sum,
+                        DisplayFormat = "n2"
+                    });
+                }
+            }
         }
 
-        private void CheckEdit_EditValueChanged(object sender, EditValueChangedEventArgs e)
+        gridPays.EndInit();
+    }
+
+    private GridSummaryItem hasPaysTotalSummary(string fName)
+    {
+        foreach (var ts in gridPays.TotalSummary)
+            if (ts.FieldName == fName)
+                return ts;
+        return null;
+    }
+
+    private void TableView_CellValueChanged(object sender, CellValueChangedEventArgs e)
+    {
+        if (!(DataContext is ProviderWindowViewModel dtx)) return;
+        switch (e.Column.FieldName)
         {
-            gridRows.UpdateTotalSummary();
+            case nameof(InvoiceProviderRowCurrencyConvertViewModel.Rate):
+                dtx.CurrentCrsConvertItem?.CalcRow(DirectCalc.Rate);
+                break;
+            case nameof(InvoiceProviderRowCurrencyConvertViewModel.Price):
+                dtx.CurrentCrsConvertItem?.CalcRow(DirectCalc.Price);
+                break;
+            case nameof(InvoiceProviderRowCurrencyConvertViewModel.PriceWithNaklad):
+                dtx.CurrentCrsConvertItem?.CalcRow(DirectCalc.PriceWithNaklad);
+                break;
+            case nameof(InvoiceProviderRowCurrencyConvertViewModel.Quantity):
+                dtx.CurrentCrsConvertItem?.CalcRow(DirectCalc.Quantity);
+                break;
         }
 
-        private void CurrencyConvertGridControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+        if (dtx.CurrentRow == null)
         {
-           
+            var row = dtx.Document.Rows.Cast<InvoiceProviderRow>()
+                .FirstOrDefault(_ => _.Code == dtx.CurrentCrsConvertItem.Code);
+            if (row != null)
+                row.State = RowStatus.Edited;
         }
+        else
+        {
+            dtx.CurrentRow.State = RowStatus.Edited;
+        }
+    }
+
+    private void gridRows_MasterRowExpanding(object sender, RowAllowEventArgs e)
+    {
+        if (DataContext is ProviderWindowViewModel dtx) dtx.CurrentRow = (InvoiceProviderRow)e.Row;
+    }
+
+    private void TableViewPay_OnCellValueChanged(object sender, CellValueChangedEventArgs e)
+    {
+        if (!(DataContext is ProviderWindowViewModel dtx)) return;
+        if (e.Column.FieldName == "Summa")
+            if ((decimal)e.Value < 0 || (decimal)e.Value > dtx.CurrentPaymentDoc.DocSumma)
+            {
+                myWManager.ShowWinUIMessageBox("Сумма не может быть меньше 0 и больше суммы документа",
+                    "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                dtx.CurrentPaymentDoc.Summa = dtx.CurrentPaymentDoc.DocSumma;
+                tableViewPay.CloseEditor();
+            }
+
+        if (dtx.Document.myState != RowStatus.NewRow)
+            dtx.Document.myState = RowStatus.Edited;
+
+        if (PaySummaEditor != null)
+            PaySummaEditor.Foreground = dtx.Document.PaySumma > dtx.Document.Summa
+                ? new SolidColorBrush(Colors.Red)
+                : new SolidColorBrush(Colors.Black);
+        dtx.Document.RaisePropertyChanged("PaySumma");
+        dtx.RaisePropertyChanged("Document");
+    }
+
+    private void GridPays_OnCustomSummary(object sender, CustomSummaryEventArgs e)
+    {
+        var dtx = DataContext as ProviderWindowViewModel;
+        if (dtx == null) return;
+        if (((GridSummaryItem)e.Item).FieldName != "Rate")
+            return;
+        if (e.IsTotalSummary)
+            if (e.SummaryProcess == CustomSummaryProcess.Calculate)
+            {
+                var s = 0.0m;
+                var sr = 0.0m;
+                foreach (var item in dtx.Document.PaymentDocs)
+                {
+                    s += item.Summa * item.Rate;
+                    sr += item.Summa;
+                }
+
+                e.TotalValue = sr != 0
+                    ? Math.Round(s / sr, 4)
+                    : Math.Round(dtx.Document.PaymentDocs.Sum(_ => _.Rate) / dtx.Document.PaymentDocs.Count, 4);
+            }
+    }
+
+    private void CheckEdit_EditValueChanged(object sender, EditValueChangedEventArgs e)
+    {
+        gridRows.UpdateTotalSummary();
+    }
+
+    private void CurrencyConvertGridControl_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+    {
     }
 }

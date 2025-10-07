@@ -13,12 +13,12 @@ using Newtonsoft.Json;
 
 namespace KursDomain.References;
 
-[DebuggerDisplay("{DocCode,nq}/{Id} {Name,nq}")]
+[DebuggerDisplay("{DocCode,nq} {Name,nq}")]
 public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>, IComparable, ICache
 {
     public int CompareTo(object obj)
     {
-        var c = obj as Unit;
+        var c = obj as SDRSchet;
         return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
     }
     [Display(AutoGenerateField = false, Name = "DocCode")]
@@ -27,8 +27,8 @@ public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>, ICompa
     public bool Equals(SDRSchet other)
     {
         if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return DocCode == other.DocCode;
+        if (ReferenceEquals(this, other)) return Name == other.Name;
+        return DocCode == other.DocCode && Name == other.Name;
     }
 
     [Display(AutoGenerateField = true, Name = "Наименование")]
@@ -81,14 +81,18 @@ public class SDRSchet : ISDRSchet, IDocCode, IName, IEquatable<SDRSchet>, ICompa
     public override bool Equals(object obj)
     {
         if (ReferenceEquals(null, obj)) return false;
-        if (ReferenceEquals(this, obj)) return true;
-        if (obj.GetType() != GetType()) return false;
-        return Equals((SDRSchet) obj);
+        if (ReferenceEquals(this, obj))
+        {
+            var nom = obj as SDRSchet;
+            if (nom is null) return false;
+            return nom.DocCode == DocCode && nom.Name == Name ;
+        }
+        return obj.GetType() == GetType() && Equals((SDRSchet) obj);
     }
 
     public override int GetHashCode()
     {
-        return DocCode.GetHashCode();
+        return $"{DocCode}{Name}".GetHashCode();
     }
 
     public void LoadFromCache()
