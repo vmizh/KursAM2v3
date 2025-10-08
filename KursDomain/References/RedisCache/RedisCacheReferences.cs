@@ -1297,39 +1297,38 @@ public class RedisCacheReferences : IReferencesCache
     public IEmployee GetEmployee(decimal? dc)
     {
         if (dc is null) return null;
-        if (!cacheKeysDict.ContainsKey("Employee"))
-            LoadCacheKeys("Employee");
+        if (Employees.Count == 0)
+            GetEmployees();
+        //if (!cacheKeysDict.ContainsKey("Employee"))
+        //    LoadCacheKeys("Employee");
 
-        var key = cacheKeysDict["Employee"].CachKeys.SingleOrDefault(_ => _.DocCode == dc.Value);
-        Employee itemNew;
-        if (key is not null)
-        {
-            if (Employees.TryGetValue(dc.Value, out var Employee))
-                return Employee;
-            itemNew = GetItem<Employee>(key.Key);
-            if (itemNew is null) return null;
-            itemNew.LoadFromCache();
-        }
-        else
-        {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var ent = ctx.SD_2.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
-                if (ent is null) return null;
-                var newItem = new Employee();
-                newItem.LoadFromEntity(ent, this);
-                UpdateList2(new List<Employee>(new[] { newItem }));
-                Employees.AddOrUpdate(dc.Value, newItem);
-                return Employees[dc.Value];
-            }
-        }
+        //var key = cacheKeysDict["Employee"].CachKeys.SingleOrDefault(_ => _.DocCode == dc.Value);
+        //Employee itemNew;
+        //if (key is not null)
+        //{
+        //    if (Employees.TryGetValue(dc.Value, out var Employee))
+        //        return Employee;
+        //    itemNew = GetItem<Employee>(key.Key);
+        //    if (itemNew is null) return null;
+        //    itemNew.LoadFromCache();
+        //}
+        //else
+        //{
+        //    using (var ctx = GlobalOptions.GetEntities())
+        //    {
+        //        var ent = ctx.SD_2.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
+        //        if (ent is null) return null;
+        //        var newItem = new Employee();
+        //        newItem.LoadFromEntity(ent, this);
+        //        UpdateList2(new List<Employee>(new[] { newItem }));
+        //        Employees.AddOrUpdate(dc.Value, newItem);
+        //        return Employees[dc.Value];
+        //    }
+        //}
 
         if (Employees.ContainsKey(dc.Value))
-            Employees[dc.Value] = itemNew;
-        else
-            Employees.Add(dc.Value, itemNew);
-
-        return Employees[dc.Value];
+            return Employees[dc.Value];
+        return null;
     }
 
     public IEmployee GetEmployee(Guid? id)
@@ -1339,32 +1338,53 @@ public class RedisCacheReferences : IReferencesCache
 
     public IEnumerable<IEmployee> GetEmployees()
     {
-        var cacheName = "Employee";
-        using (var redisClient = redisManager.GetClient())
-        {
-            redisClient.Db = GlobalOptions.RedisDBId ?? 0;
-            if (cacheKeysDict.ContainsKey(cacheName) &&
-                !((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec))
-                return Employees.Values.ToList();
-            LoadCacheKeys(cacheName);
-            var redis = redisClient.As<Employee>();
-            Employees.Clear();
-            using (var pipe = redis.CreatePipeline())
-            {
-                foreach (var key in cacheKeysDict[cacheName].CachKeys)
-                    pipe.QueueCommand(r => r.GetValue(key.Key),
-                        x =>
-                        {
-                            x.LoadFromCache();
-                            if (Employees.ContainsKey(x.DocCode))
-                                Employees[x.DocCode] = x;
-                            else
-                                Employees.Add(x.DocCode, x);
-                        });
+        //var cacheName = "Employee";
+        //using (var redisClient = redisManager.GetClient())
+        //{
+        //    redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+        //    if (cacheKeysDict.ContainsKey(cacheName) &&
+        //        !((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec))
+        //        return Employees.Values.ToList();
+        //    LoadCacheKeys(cacheName);
+        //    var redis = redisClient.As<Employee>();
+        //    Employees.Clear();
+        //    using (var pipe = redis.CreatePipeline())
+        //    {
+        //        foreach (var key in cacheKeysDict[cacheName].CachKeys)
+        //            pipe.QueueCommand(r => r.GetValue(key.Key),
+        //                x =>
+        //                {
+        //                    x.LoadFromCache();
+        //                    if (Employees.ContainsKey(x.DocCode))
+        //                        Employees[x.DocCode] = x;
+        //                    else
+        //                        Employees.Add(x.DocCode, x);
+        //                });
 
-                pipe.Flush();
+        //        pipe.Flush();
+        //    }
+        //}
+
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            if (ctx.SD_2.Count() > Employees.Count)
+            {
+                var updList = new List<Employee>();
+                var data = ctx.SD_2.ToList();
+                foreach (var emp in data)
+                {
+                    var newItem = new Employee();
+                    newItem.LoadFromEntity(emp, this);
+                    updList.Add(newItem);
+                }
+
+                DropAll<Employee>();
+                UpdateList2(updList);
+                foreach (var emp in updList)
+                    Employees[emp.DocCode] = emp;
             }
         }
+
 
         return Employees.Values.ToList();
     }
@@ -2301,19 +2321,19 @@ public class RedisCacheReferences : IReferencesCache
                 UpdateList(ProductTypes.Values.Cast<ProductType>(), now);
                 GetProductTypeAll();
 
-                foreach (var item in Context.SD_2.AsNoTracking().ToList())
-                {
-                    var newItem = new Employee();
-                    newItem.LoadFromEntity(item, this);
-                    if (!Employees.ContainsKey(newItem.DocCode))
-                        Employees.Add(newItem.DocCode, newItem);
-                    else Employees[newItem.DocCode] = newItem;
-                }
+                //foreach (var item in Context.SD_2.AsNoTracking().ToList())
+                //{
+                //    var newItem = new Employee();
+                //    newItem.LoadFromEntity(item, this);
+                //    if (!Employees.ContainsKey(newItem.DocCode))
+                //        Employees.Add(newItem.DocCode, newItem);
+                //    else Employees[newItem.DocCode] = newItem;
+                //}
 
-                foreach (var item in Employees.Values.Cast<Employee>())
-                    item.CurrencyDC = ((IDocCode)item.Currency)?.DocCode;
-                DropAll<Employee>();
-                UpdateList2(Employees.Values.Cast<Employee>(), now);
+                //foreach (var item in Employees.Values.Cast<Employee>())
+                //    item.CurrencyDC = ((IDocCode)item.Currency)?.DocCode;
+                //DropAll<Employee>();
+                //UpdateList2(Employees.Values.Cast<Employee>(), now);
                 GetEmployees();
 
 
@@ -2843,13 +2863,13 @@ public class RedisCacheReferences : IReferencesCache
                 if (message.DocCode is null) return;
                 LoadCacheKeys("BankAccount");
                 var ba_oldKey = cacheKeysDict["BankAccount"].CachKeys
-                    .SingleOrDefault(_ => _.DocCode == message.DocCode); 
+                    .SingleOrDefault(_ => _.DocCode == message.DocCode);
                 cacheKeysDict["BankAccount"].CachKeys.Remove(ba_oldKey);
                 if (message.OperationType == RedisMessageDocumentOperationTypeEnum.Delete)
                 {
-                   
+
                     BankAccounts.Remove(message.DocCode.Value);
-                    
+
                 }
                 else
                 {
@@ -2889,7 +2909,7 @@ public class RedisCacheReferences : IReferencesCache
                 var json1 = JsonConvert.SerializeObject(redisMessage1, jsonSerializerSettings1);
                 mySubscriber.Publish(
                     new RedisChannel(RedisMessageChannels.ReferenceUpdate,
-                        RedisChannel.PatternMode.Auto),json1);
+                        RedisChannel.PatternMode.Auto), json1);
                 break;
             case RedisMessageChannels.CashBoxReference:
                 if (message.DocCode is null) return;
@@ -2939,7 +2959,7 @@ public class RedisCacheReferences : IReferencesCache
                             if (k_oldKey is null)
                                 cacheKeysDict["CentrResponsibility"].CachKeys.AddCacheKey(new CachKey
                                 {
-                                    Key = $"Cache:{newItem.Name}:{newItem.DocCode}@{newItem.UpdateDate}",
+                                    Key = $"Cache:CentrResponsibility:{newItem.DocCode}@{newItem.UpdateDate}",
                                     DocCode = message.DocCode,
                                     Id = null,
                                     LastUpdate = newItem.UpdateDate
@@ -2950,21 +2970,23 @@ public class RedisCacheReferences : IReferencesCache
                             else CentrResponsibilities.Add(newItem.DocCode, newItem);
                         }
                     }
+
                     var jsonSerializerSettings = new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.All
                     };
                     var redisMessage = new RedisMessage
                     {
-                       Message =
+                        Message =
                             $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник центров ответственности."
                     };
                     redisMessage.ExternalValues["Type"] = "CentrResponsibility";
                     var json = JsonConvert.SerializeObject(redisMessage, jsonSerializerSettings);
                     mySubscriber.Publish(
                         new RedisChannel(RedisMessageChannels.ReferenceUpdate,
-                            RedisChannel.PatternMode.Auto),json);
+                            RedisChannel.PatternMode.Auto), json);
                 }
+
                 break;
             case RedisMessageChannels.ClientCategoryReference:
                 if (message.DocCode is null) return;
@@ -3035,24 +3057,93 @@ public class RedisCacheReferences : IReferencesCache
                 GetDeliveryCondition(message.DocCode);
                 break;
             case RedisMessageChannels.EmployeeReference:
-                if (message.DocCode is null) return;
-                LoadCacheKeys("Employee");
-                var emp_item = GetItem<Employee>((string)message.ExternalValues["RedisKey"]);
-                emp_item.LoadFromCache();
-                var emp_oldKey = cacheKeysDict["Employee"].CachKeys
-                    .SingleOrDefault(_ => _.DocCode == message.DocCode);
-                if (emp_oldKey is null)
-                    cacheKeysDict["Employee"].CachKeys.AddCacheKey(new CachKey
+                using (var redisClient = redisManager.GetClient())
+                {
+                    if (!message.ExternalValues.ContainsKey("Updates") ||
+                        !message.ExternalValues.ContainsKey("Deletes")) return;
+                    LoadCacheKeys("Employee");
+                    redisClient.Db = GlobalOptions.RedisDBId ?? 0;
+                    var lstUpdates = (message.ExternalValues["Updates"] as JArray).ToObject<List<decimal>>();
+                    var lstDels = (message.ExternalValues["Deletes"] as JArray).ToObject<List<decimal>>();
+                    using (var ctx = GlobalOptions.GetEntities())
                     {
-                        Key = (string)message.ExternalValues["RedisKey"],
-                        DocCode = message.DocCode,
-                        LastUpdate =
-                            Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
-                    });
+                        if (lstDels.Count > 0)
+                        {
+                            var delItems = ctx.SD_2.Where(_ => lstDels.Contains(_.DOC_CODE)).ToList();
+                            ctx.SD_2.RemoveRange(delItems);
+                            foreach (var dc in lstDels.Where(dc => Employees.ContainsKey(dc)))
+                            {
+                                Employees.Remove(dc);
+                            }
+                        }
 
-                if (Employees.ContainsKey(message.DocCode.Value))
-                    Employees[message.DocCode.Value] = emp_item;
-                else Employees.Add(message.DocCode.Value, emp_item);
+                        if (lstUpdates.Count > 0)
+                        {
+                            var updItems = ctx.SD_2.Where(_ => lstUpdates.Contains(_.DOC_CODE)).ToList();
+                            foreach (var ent in updItems)
+                            {
+                                var newItem = new Employee();
+                                newItem.LoadFromEntity(ent, this);
+                                AddOrUpdate(newItem);
+                                var k_oldKey = cacheKeysDict["Employee"].CachKeys
+                                    .SingleOrDefault(_ => _.DocCode == message.DocCode);
+                                if (k_oldKey is null) 
+                                {
+                                    cacheKeysDict["Employee"].CachKeys.AddCacheKey(new CachKey
+                                    {
+                                        Key = $"Cache:Employee:{newItem.DocCode}@{newItem.UpdateDate}",
+                                        DocCode = message.DocCode,
+                                        Id = null,
+                                        LastUpdate = newItem.UpdateDate
+                                    });
+                                }
+                                else
+                                {
+                                    k_oldKey.LastUpdate = newItem.UpdateDate;
+                                }
+
+                                Employees[newItem.DocCode] = newItem;
+                            }
+                        }
+                    }
+                    var jsonSerializerSettings2 = new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.All
+                    };
+                    var redisMessage2 = new RedisMessage
+                    {
+                        Message =
+                            $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник сотрудников.",
+                        ExternalValues =
+                        {
+                            ["Type"] = "Employee"
+                        }
+                    };
+                    
+                    var json2 = JsonConvert.SerializeObject(redisMessage2, jsonSerializerSettings2);
+                    mySubscriber.Publish(
+                        new RedisChannel(RedisMessageChannels.ReferenceUpdate,
+                            RedisChannel.PatternMode.Auto), json2);
+                }
+
+                //if (message.DocCode is null) return;
+                //LoadCacheKeys("Employee");
+                //var emp_item = GetItem<Employee>((string)message.ExternalValues["RedisKey"]);
+                //emp_item.LoadFromCache();
+                //var emp_oldKey = cacheKeysDict["Employee"].CachKeys
+                //    .SingleOrDefault(_ => _.DocCode == message.DocCode);
+                //if (emp_oldKey is null)
+                //    cacheKeysDict["Employee"].CachKeys.AddCacheKey(new CachKey
+                //    {
+                //        Key = (string)message.ExternalValues["RedisKey"],
+                //        DocCode = message.DocCode,
+                //        LastUpdate =
+                //            Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
+                //    });
+
+                //if (Employees.ContainsKey(message.DocCode.Value))
+                //    Employees[message.DocCode.Value] = emp_item;
+                //else Employees.Add(message.DocCode.Value, emp_item);
                 break;
             case RedisMessageChannels.KontragentGroupReference:
                 if (message.DocCode is null) return;
@@ -3266,7 +3357,7 @@ public class RedisCacheReferences : IReferencesCache
                             if (k_oldKey is null)
                                 cacheKeysDict["PayCondition"].CachKeys.AddCacheKey(new CachKey
                                 {
-                                    Key = $"Cache:{newItem.Name}:{newItem.DocCode}@{newItem.UpdateDate}",
+                                    Key = $"Cache:PayCondition:{newItem.DocCode}@{newItem.UpdateDate}",
                                     DocCode = message.DocCode,
                                     Id = null,
                                     LastUpdate = newItem.UpdateDate
@@ -3393,7 +3484,7 @@ public class RedisCacheReferences : IReferencesCache
                             if (k_oldKey is null)
                                 cacheKeysDict["SDRState"].CachKeys.AddCacheKey(new CachKey
                                 {
-                                    Key = $"Cache:{newItem.Name}:{newItem.DocCode}@{newItem.UpdateDate}",
+                                    Key = $"Cache:SDRState:{newItem.DocCode}@{newItem.UpdateDate}",
                                     DocCode = message.DocCode,
                                     Id = null,
                                     LastUpdate = newItem.UpdateDate
@@ -3422,7 +3513,7 @@ public class RedisCacheReferences : IReferencesCache
                             if (k_oldKey is null)
                                 cacheKeysDict["SDRSchet"].CachKeys.AddCacheKey(new CachKey
                                 {
-                                    Key = $"Cache:{newItem.Name}:{newItem.DocCode}@{newItem.UpdateDate}",
+                                    Key = $"Cache:SDRSchet:{newItem.DocCode}@{newItem.UpdateDate}",
                                     DocCode = message.DocCode,
                                     Id = null,
                                     LastUpdate = newItem.UpdateDate

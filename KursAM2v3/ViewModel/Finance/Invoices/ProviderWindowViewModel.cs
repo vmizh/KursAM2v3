@@ -561,6 +561,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var state = Document.State;
             var message = JsonConvert.DeserializeObject<RedisMessage>(msg);
             if (message == null || !message.ExternalValues.ContainsKey("Type")) return;
+            if ((string)message.ExternalValues["Type"] == "Employee")
+            {
+                EmployeeList = GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>()
+                    .OrderBy(_ => _.Name).ToList();
+                Document.PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(Document.PersonaResponsible.DocCode) as Employee;
+            }
             if ((string)message.ExternalValues["Type"] == "PayCondition")
             {
                 PayConditionList = GlobalOptions.ReferencesCache.GetPayConditionAll()
@@ -641,7 +647,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             .GetCentrResponsibilitiesAll()
             .Cast<CentrResponsibility>().OrderBy(_ => _.Name).ToList();
 
-        public List<Employee> EmployeeList => GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>()
+        public List<Employee> EmployeeList { set; get; } = GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>()
             .OrderBy(_ => _.Name).ToList();
 
         public List<PayForm> FormRaschetList => GlobalOptions.ReferencesCache.GetPayFormAll().Cast<PayForm>()

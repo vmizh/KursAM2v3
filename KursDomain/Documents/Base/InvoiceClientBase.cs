@@ -22,6 +22,7 @@ public sealed class InvoiceClientBase : RSViewModelBase, IInvoiceClient
     private CentrResponsibility myCO;
     private NomenklProductType myVzaimoraschetType;
     private PayForm myFormRaschet;
+    private References.Employee myPersonaResponsible;
 
     public InvoiceClientBase(SD_84 doc)
     {
@@ -183,7 +184,18 @@ public sealed class InvoiceClientBase : RSViewModelBase, IInvoiceClient
     public string CREATOR { get; set; }
     public bool IsNDSIncludeInPrice { get; set; }
     public decimal PaySumma { get; set; }
-    public References.Employee PersonaResponsible { get; set; }
+
+    public References.Employee PersonaResponsible
+    {
+        get => myPersonaResponsible;
+        set
+        {
+            if (Equals(value, myPersonaResponsible)) return;
+            myPersonaResponsible = value;
+            RaisePropertyChanged();
+        }
+    }
+
     public bool? IsExcludeFromPays { get; set; } = false;
     public string LastChanger { get; set; }
     public DateTime LastChangerDate { get; set; }

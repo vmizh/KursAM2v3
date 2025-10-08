@@ -1,19 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data.Entity;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using Core.ViewModel.Base;
-using KursDomain.WindowsManager.WindowsManager;
+﻿using Core.ViewModel.Base;
 using Data;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Base;
 using KursDomain;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Systems;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.WindowsManager.WindowsManager;
+using Newtonsoft.Json;
+using StackExchange.Redis;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Configuration;
+using System.Data.Entity;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using System.Xml.Linq;
 
 namespace KursAM2.ViewModel.Personal
 {
@@ -23,6 +29,9 @@ namespace KursAM2.ViewModel.Personal
         private EmployeeViewModel myCurrentPersona;
         private User myCurrentUser;
 
+        private readonly ISubscriber mySubscriber;
+        private readonly ConnectionMultiplexer redis;
+
         public PersonaReferenceWindowViewModel()
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
@@ -31,6 +40,10 @@ namespace KursAM2.ViewModel.Personal
             });
                     ;
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
+
+            redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+            mySubscriber = redis.GetSubscriber();
+
             CurenciesCollection = GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<Currency>().ToList();
             RefreshData(null);
         }
@@ -131,6 +144,8 @@ namespace KursAM2.ViewModel.Personal
         {
             var WinManager = new WindowManager();
             if (PersonaCollection.All(_ => _.State == RowStatus.NotEdited)) return;
+            var updList = new List<decimal>();
+            var delList = new List<decimal>();
             using (var ctxsave = GlobalOptions.GetEntities())
             {
                 using (var tnx = ctxsave.Database.BeginTransaction())
@@ -148,12 +163,13 @@ namespace KursAM2.ViewModel.Personal
                                 ed.CHANGE_DATE = DateTime.Now;
                                 ed.DELETED = CurrentPersona.DELETED ?? 0;
                                 ed.STATUS_NOTES = CurrentPersona.StatusNotes;
-                                ed.NAME = CurrentPersona.Name;
+                                ed.NAME =
+                                    $"{CurrentPersona.LastName} {CurrentPersona.FirstName} {CurrentPersona.SecondName}";
                                 if (ed.crs_dc != CurrentPersona.Currency.DocCode)
                                     if (!(ctxsave.SD_33.Any(_ => _.TABELNUMBER == CurrentPersona.TabelNumber)
                                           || ctxsave.SD_34.Any(_ => _.TABELNUMBER == CurrentPersona.TabelNumber)))
                                         ed.crs_dc = CurrentPersona.Currency.DocCode;
-
+                                updList.Add(ed.DOC_CODE);
                                 break;
                             case RowStatus.NewRow:
                                 if (CurrentPersona.TabelNumber == 0 || CurrentPersona.Currency == null)
@@ -171,20 +187,22 @@ namespace KursAM2.ViewModel.Personal
                                     NAME_FIRST = CurrentPersona.FirstName,
                                     NAME_LAST = CurrentPersona.LastName,
                                     NAME_SECOND = CurrentPersona.SecondName,
+                                    NAME = $"{CurrentPersona.LastName} {CurrentPersona.FirstName} {CurrentPersona.SecondName}",
                                     CHANGE_DATE = DateTime.Now,
                                     DELETED = CurrentPersona.DELETED ?? 0,
                                     STATUS_NOTES = CurrentPersona.StatusNotes,
-                                    NAME = CurrentPersona.ToString(),
                                     TABELNUMBER = CurrentPersona.TabelNumber,
                                     crs_dc = CurrentPersona.Currency.DocCode,
                                     ID = Guid.NewGuid().ToString().Replace("-", string.Empty),
                                     OLD = 0
                                 });
+                                updList.Add(newDC);
                                 break;
                         }
 
                         foreach (var uu in UserDeleteCollection.Distinct())
                         {
+                            delList.Add(uu.DocCode);
                             var udel =
                                 ctxsave.EMP_USER_RIGHTS.FirstOrDefault(
                                     _ =>
@@ -204,14 +222,44 @@ namespace KursAM2.ViewModel.Personal
                                 EMP_DC = CurrentPersona.DocCode,
                                 USER = u.NickName
                             });
+                            //delList.Add(u.DocCode);
                         }
 
                         ctxsave.SaveChanges();
                         tnx.Commit();
+
                         foreach (var pers in PersonaCollection)
                         {
                             pers.myState = RowStatus.NotEdited;
                         }
+                        if (mySubscriber != null && mySubscriber.IsConnected())
+                        {
+                            var message = new RedisMessage
+                            {
+                                DocumentType = DocumentType.None,
+                                DocCode = null,
+                                Id = null,
+                                DocDate = DateTime.Now,
+                                IsDocument = false,
+                                OperationType = RedisMessageDocumentOperationTypeEnum.Update,
+                                Message =
+                                    $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник сотрудников",
+                                ExternalValues =
+                                {
+                                    ["Updates"] = updList,
+                                    ["Deletes"] = delList
+                                }
+                            };
+
+                            var jsonSerializerSettings = new JsonSerializerSettings
+                            {
+                                TypeNameHandling = TypeNameHandling.All
+                            };
+                            var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                            mySubscriber.Publish(
+                                new RedisChannel(RedisMessageChannels.EmployeeReference,
+                                    RedisChannel.PatternMode.Auto), json);
+                        } 
                         RefreshData(null);
                     }
                     catch (Exception ex)

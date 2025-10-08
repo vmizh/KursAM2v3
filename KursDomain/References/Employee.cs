@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
-using System.Linq;
-using Core.Helper;
+﻿using Core.Helper;
 using Core.ViewModel.Base;
 using Core.ViewModel.Base.Column;
 using Data;
@@ -13,6 +7,13 @@ using KursDomain.ICommon;
 using KursDomain.IReferences;
 using KursDomain.References.RedisCache;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace KursDomain.References;
 
@@ -21,7 +22,7 @@ public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employe
 {
     public int CompareTo(object obj)
     {
-        var c = obj as Unit;
+        var c = obj as Employee;
         return c == null ? 0 : String.Compare(Name, c.Name, StringComparison.Ordinal);
     }
     public decimal DocCode { get; set; }
@@ -39,8 +40,10 @@ public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employe
     public bool Equals(Employee other)
     {
         if (ReferenceEquals(null, other)) return false;
-        if (ReferenceEquals(this, other)) return true;
-        return DocCode == other.DocCode;
+        if (ReferenceEquals(this, other)) return TabelNumber == other.TabelNumber && NameFirst == other.NameFirst
+            && NameLast == other.NameLast && NameSecond == other.NameSecond;
+        return DocCode == other.DocCode && TabelNumber == other.TabelNumber && NameFirst == other.NameFirst
+            && NameLast == other.NameLast && NameSecond == other.NameSecond;
     }
 
     [JsonIgnore]
@@ -86,7 +89,7 @@ public class Employee : IEmployee, IDocCode, IDocGuid, IName, IEquatable<Employe
 
     public override int GetHashCode()
     {
-        return DocCode.GetHashCode();
+        return $"{DocCode}{Name}".GetHashCode();
     }
 
     public void LoadFromCache()
@@ -138,6 +141,7 @@ public class EmployeeViewModel : RSViewModelBase, IDataErrorInfo, IEntity<SD_2>
             if (Entity.NAME_FIRST == value) return;
             Entity.NAME_FIRST = value;
             RaisePropertyChanged();
+            RaisePropertyChanged(nameof(Name));
         }
     }
 
@@ -149,6 +153,7 @@ public class EmployeeViewModel : RSViewModelBase, IDataErrorInfo, IEntity<SD_2>
             if (Entity.NAME_LAST == value) return;
             Entity.NAME_LAST = value;
             RaisePropertyChanged();
+            RaisePropertyChanged(nameof(Name));
         }
     }
 
@@ -160,6 +165,7 @@ public class EmployeeViewModel : RSViewModelBase, IDataErrorInfo, IEntity<SD_2>
             if (Entity.NAME_SECOND == value) return;
             Entity.NAME_SECOND = value;
             RaisePropertyChanged();
+            RaisePropertyChanged(nameof(Name));
         }
     }
 
@@ -303,7 +309,7 @@ public class EmployeeViewModel : RSViewModelBase, IDataErrorInfo, IEntity<SD_2>
         set
         {
             if (Entity.NAME == value) return;
-            Entity.NAME = value;
+            Entity.NAME = $"{LastName} {FirstName} {SecondName}";
             RaisePropertyChanged();
         }
     }

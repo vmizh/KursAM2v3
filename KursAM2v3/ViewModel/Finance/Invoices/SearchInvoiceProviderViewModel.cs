@@ -254,22 +254,34 @@ namespace KursAM2.ViewModel.Finance.Invoices
             if (message == null || !message.ExternalValues.ContainsKey("Type")) return;
             foreach (var doc in Documents)
             {
-                if ((string)message.ExternalValues["Type"] == "PayCondition")
+                switch ((string)message.ExternalValues["Type"])
                 {
-                    var payDC = doc.PayCondition?.DocCode;
-                    if (payDC is null) continue;
-                    doc.PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(payDC) as PayCondition;
-                }
-                if ((string)message.ExternalValues["Type"] == "CentrResponsibility")
-                {
-                    var payDC = doc.CO?.DocCode;
-                    if (payDC is null) continue;
-                    doc.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(payDC) as CentrResponsibility;
-                }
-                if ((string)message.ExternalValues["Type"] == "Kontragent")
-                {
-                    doc.Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.Kontragent?.DocCode) as Kontragent;
-                    doc.KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(doc.KontrReceiver?.DocCode) as Kontragent;
+                    case "Employee":
+                    {
+                        var empDC = doc.PersonaResponsible?.DocCode;
+                        if(empDC is null) continue;
+                        doc.PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(empDC) as Employee;
+                        continue;
+                    }
+
+                    case "PayCondition":
+                    {
+                        var payDC = doc.PayCondition?.DocCode;
+                        if (payDC is null) continue;
+                        doc.PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(payDC) as PayCondition;
+                        continue;
+                    }
+                    case "CentrResponsibility":
+                    {
+                        var payDC = doc.CO?.DocCode;
+                        if (payDC is null) continue;
+                        doc.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(payDC) as CentrResponsibility;
+                        continue;
+                    }
+                    case "Kontragent":
+                        doc.Kontragent = GlobalOptions.ReferencesCache.GetKontragent(doc.Kontragent?.DocCode) as Kontragent;
+                        doc.KontrReceiver = GlobalOptions.ReferencesCache.GetKontragent(doc.KontrReceiver?.DocCode) as Kontragent;
+                        continue;
                 }
             }
 

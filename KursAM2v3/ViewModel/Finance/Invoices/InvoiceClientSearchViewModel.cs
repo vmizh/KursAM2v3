@@ -218,23 +218,33 @@ public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
         if (message == null || !message.ExternalValues.ContainsKey("Type")) return;
         foreach (var doc in Documents)
         {
-            if ((string)message.ExternalValues["Type"] == "PayCondition")
+            switch ((string)message.ExternalValues["Type"])
             {
-                var payDC = doc.PayCondition?.DocCode;
-                if (payDC is null) continue;
-                doc.PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(payDC) as PayCondition;
-            }
+                case "Employee":
+                {
+                    var empDC = doc.PersonaResponsible?.DocCode;
+                    if (empDC is null) continue;
+                    doc.PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(empDC) as Employee;
+                    continue;
+                }
 
-            if ((string)message.ExternalValues["Type"] == "CentrResponsibility")
-            {
-                var payDC = doc.CO?.DocCode;
-                if (payDC is null) continue;
-                doc.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(payDC) as CentrResponsibility;
-            }
-
-            if ((string)message.ExternalValues["Type"] == "Kontragent")
-            {
-                doc.Client = GlobalOptions.ReferencesCache.GetKontragent(doc.Client?.DocCode) as Kontragent;
+                case "PayCondition":
+                {
+                    var payDC = doc.PayCondition?.DocCode;
+                    if (payDC is null) continue;
+                    doc.PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(payDC) as PayCondition;
+                    continue;
+                }
+                case "CentrResponsibility":
+                {
+                    var payDC = doc.CO?.DocCode;
+                    if (payDC is null) continue;
+                    doc.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(payDC) as CentrResponsibility;
+                    continue;
+                }
+                case "Kontragent":
+                    doc.Client = GlobalOptions.ReferencesCache.GetKontragent(doc.Client?.DocCode) as Kontragent;
+                    continue;
             }
         }
 

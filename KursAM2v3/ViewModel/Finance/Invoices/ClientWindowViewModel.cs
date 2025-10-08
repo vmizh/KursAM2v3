@@ -256,7 +256,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
     public List<CentrResponsibility> COList { set; get; } = GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
         .Cast<CentrResponsibility>().OrderBy(_ => _.Name).ToList();
 
-    public List<Employee> EmployeeList => GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>()
+    public List<Employee> EmployeeList { set; get; } = GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>()
         .OrderBy(_ => _.Name).ToList();
 
     public List<PayForm> FormRaschets => GlobalOptions.ReferencesCache.GetPayFormAll().Cast<PayForm>()
@@ -1001,6 +1001,12 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         var state = Document.State;
         var message = JsonConvert.DeserializeObject<RedisMessage>(msg);
         if (message == null || !message.ExternalValues.ContainsKey("Type")) return;
+        if ((string)message.ExternalValues["Type"] == "Employee")
+        {
+            EmployeeList = GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>()
+                .OrderBy(_ => _.Name).ToList();
+            Document.PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(Document.PersonaResponsible.DocCode) as Employee;
+        }
         if ((string)message.ExternalValues["Type"] == "PayCondition")
         {
             PayConditions = GlobalOptions.ReferencesCache.GetPayConditionAll()
