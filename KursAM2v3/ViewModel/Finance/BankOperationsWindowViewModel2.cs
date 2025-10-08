@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -13,6 +14,7 @@ using KursDomain.WindowsManager.WindowsManager;
 using Helper;
 using KursAM2.Dialogs;
 using KursAM2.Managers;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.Finance;
 using KursAM2.View.Finance.AccruedAmount;
 using KursAM2.View.Helper;
@@ -24,6 +26,8 @@ using KursDomain.Documents.Currency;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace KursAM2.ViewModel.Finance
 {
@@ -33,6 +37,10 @@ namespace KursAM2.ViewModel.Finance
         #region Fields
 
         private readonly BankOperationsManager manager = new BankOperationsManager();
+
+        private readonly ISubscriber mySubscriber;
+
+        private readonly ConnectionMultiplexer redis;
 
         #endregion
 
@@ -158,6 +166,16 @@ namespace KursAM2.ViewModel.Finance
             decimal bs = 0;
             if (CurrentBankAccount != null)
                 bs = CurrentBankAccount.DocCode;
+            UpdateBankAcccounts();
+
+            RaisePropertyChanged(nameof(BankAccountCollection));
+            CurrentBankAccount = BankAccountCollection.FirstOrDefault(_ => _.DocCode == bs);
+            if (CurrentBankAccount != null)
+                GetPeriods();
+        }
+
+        private void UpdateBankAcccounts()
+        {
             BankOperationsCollection.Clear();
             BankAccountCollection.Clear();
             BankAccountCollectionAll.Clear();
@@ -189,11 +207,6 @@ namespace KursAM2.ViewModel.Finance
                 if(IsAll || !b.IsDeleted)
                     BankAccountCollection.Add(b);
             }
-
-            RaisePropertyChanged(nameof(BankAccountCollection));
-            CurrentBankAccount = BankAccountCollection.FirstOrDefault(_ => _.DocCode == bs);
-            if (CurrentBankAccount != null)
-                GetPeriods();
         }
 
         public ICommand RemoveCommand => new Command(DocDelete, _ => CurrentBankOperations != null
@@ -342,6 +355,21 @@ namespace KursAM2.ViewModel.Finance
 
         public BankOperationsWindowViewModel2()
         {
+            redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+            mySubscriber = redis.GetSubscriber();
+
+            mySubscriber.Subscribe(
+                new RedisChannel(RedisMessageChannels.ReferenceUpdate, RedisChannel.PatternMode.Auto),
+                (_, message) => { Form.Dispatcher.Invoke(() => UpdateReferences(message)); });
+        }
+
+        private void UpdateReferences(RedisValue msg)
+        {
+            var dc = CurrentBankAccount.DocCode;
+            var message = JsonConvert.DeserializeObject<RedisMessage>(msg);
+            if (message == null || !message.ExternalValues.ContainsKey("Type") || (string)message.ExternalValues["Type"] != "BankAccount") return;
+            UpdateBankAcccounts();
+            CurrentBankAccount = GlobalOptions.ReferencesCache.GetBankAccount(dc) as BankAccount;
         }
 
         public BankOperationsWindowViewModel2(Window form) : this()

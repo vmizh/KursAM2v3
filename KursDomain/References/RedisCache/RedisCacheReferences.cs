@@ -562,115 +562,104 @@ public class RedisCacheReferences : IReferencesCache
     {
         if (dc is null) return null;
 
-        if (!cacheKeysDict.ContainsKey("BankAccount"))
-            LoadCacheKeys("BankAccount");
+        //if (!cacheKeysDict.ContainsKey("BankAccount"))
+        //    LoadCacheKeys("BankAccount");
 
-        var key = cacheKeysDict["BankAccount"].CachKeys.SingleOrDefault(_ => _.DocCode == dc.Value);
-        BankAccount itemNew;
-        if (key is not null)
-        {
-            if (BankAccounts.TryGetValue(dc.Value, out var BankAccount))
-                return BankAccount;
-            itemNew = GetItem<BankAccount>(key.Key);
-            if (itemNew is null) return null;
-            itemNew.LoadFromCache();
-        }
-        else
-        {
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var entity = ctx.SD_114.FirstOrDefault(_ => _.DOC_CODE == dc);
-                if (entity is null) return null;
-                var newItem = new BankAccount
-                {
-                    DocCode = entity.DOC_CODE
-                };
-                newItem.LoadFromEntity(entity, this);
-                UpdateList(new List<BankAccount>(new[] { newItem }));
-                BankAccounts.AddOrUpdate(dc.Value, newItem);
-                return BankAccounts[dc.Value];
-            }
-        }
+        //var key = cacheKeysDict["BankAccount"].CachKeys.SingleOrDefault(_ => _.DocCode == dc.Value);
+        //BankAccount itemNew;
+        //if (key is not null)
+        //{
+        //    if (BankAccounts.TryGetValue(dc.Value, out var BankAccount))
+        //        return BankAccount;
+        //    itemNew = GetItem<BankAccount>(key.Key);
+        //    if (itemNew is null) return null;
+        //    itemNew.LoadFromCache();
+        //}
+        //else
+        //{
+        //    using (var ctx = GlobalOptions.GetEntities())
+        //    {
+        //        var entity = ctx.SD_114.FirstOrDefault(_ => _.DOC_CODE == dc);
+        //        if (entity is null) return null;
+        //        var newItem = new BankAccount
+        //        {
+        //            DocCode = entity.DOC_CODE
+        //        };
+        //        newItem.LoadFromEntity(entity, this);
+        //        UpdateList(new List<BankAccount>(new[] { newItem }));
+        //        BankAccounts.AddOrUpdate(dc.Value, newItem);
+        //        return BankAccounts[dc.Value];
+        //    }
+        //}
 
-        BankAccounts.AddOrUpdate(dc.Value, itemNew);
-
+        //BankAccounts.AddOrUpdate(dc.Value, itemNew);
+        if (BankAccounts.Count == 0)
+            GetBankAccountAll();
         return BankAccounts[dc.Value];
     }
 
     public IEnumerable<IBankAccount> GetBankAccountAll()
     {
-        var count = 0;
-        var cacheName = "BankAccount";
         using (var ctx = GlobalOptions.GetEntities())
         {
-            count = ctx.SD_114.Count();
-
-            using (var redisClient = redisManager.GetClient())
+            if (BankAccounts.Count == 0)
             {
-                redisClient.Db = GlobalOptions.RedisDBId ?? 0;
-                if (cacheKeysDict.ContainsKey(cacheName) &&
-                    !((DateTime.Now - cacheKeysDict[cacheName].LoadMoment).TotalSeconds > MaxTimersSec))
-                    return BankAccounts.Values.ToList();
-                LoadCacheKeys(cacheName);
-                var redis = redisClient.As<BankAccount>();
-                BankAccounts.Clear();
-                //var keys = redisClient.GetKeysByPattern("Cache:BankAccount:*").ToList();
-                using (var pipe = redis.CreatePipeline())
-                {
-                    foreach (var key in cacheKeysDict[cacheName].CachKeys)
-                        pipe.QueueCommand(r => r.GetValue(key.Key),
-                            x =>
-                            {
-                                x.LoadFromCache();
-                                if (BankAccounts.ContainsKey(x.DocCode)) BankAccounts[x.DocCode] = x;
-                                else BankAccounts.Add(x.DocCode, x);
-                            });
+                BankAccounts = ctx.SD_114.AsNoTracking()
+                        .ToList()
+                        .Select(entity => new BankAccount
+                        {
+                            RashAccCode = entity.BA_RASH_ACC_CODE,
+                            RashAccount = entity.BA_RASH_ACC,
+                            BACurrency = entity.BA_CURRENCY,
+                            IsTransit = entity.BA_TRANSIT == 1,
+                            IsNegativeRests = entity.BA_NEGATIVE_RESTS == 1,
+                            BABankAccount = entity.BA_BANK_ACCOUNT,
+                            ShortName = entity.BA_ACC_SHORTNAME,
+                            StartDate = entity.StartDate,
+                            StartSumma = entity.StartSumma,
+                            DateNonZero = entity.DateNonZero,
+                            DocCode = entity.DOC_CODE,
+                            KontragentDC = entity.BA_BANK_AS_KONTRAGENT_DC,
+                            CentrResponsibilityDC = entity.BA_CENTR_OTV_DC,
+                            CurrencyDC = entity.CurrencyDC,
+                            BankDC = entity.BA_BANKDC,
+                            IsDeleted = entity.IsDeleted ?? false
+                        })
+                        .ToDictionary<BankAccount, decimal, IBankAccount>(newItem => newItem.DocCode, newItem => newItem);
+                foreach (var k in BankAccounts.Values.Cast<BankAccount>()) k.LoadFromCache();
 
-                    pipe.Flush();
+                DropAll<BankAccount>();
+                UpdateList(BankAccounts.Values.Cast<BankAccount>(), DateTime.Now);
+            }
+            else
+            {
+                var minDate = BankAccounts.Count == 0
+                    ? DateTime.MaxValue
+                    : BankAccounts.Values.Cast<ICache>().Max(_ => _.UpdateDate);
+                var dels = ctx.SD_114.Where(_ => !BankAccounts.Keys.Contains(_.DOC_CODE)).Select(x => x.DOC_CODE)
+                    .ToList();
+                foreach (var d in dels)
+                {
+                    BankAccounts.Remove(d);
                 }
-            }
 
-            if (count == BankAccounts.Count) return BankAccounts.Values.ToList();
-            foreach (var item in ctx.SD_44.AsNoTracking().ToList())
-            {
-                var newItem = new Bank();
-                newItem.LoadFromEntity(item);
-                if (!ContractTypes.ContainsKey(newItem.DocCode))
-                    Banks.Add(newItem.DocCode, newItem);
-            }
-
-            DropAll<Bank>();
-            UpdateList(Banks.Values.Cast<Bank>(), DateTime.Now);
-            GetBanksAll();
-            BankAccounts = ctx.SD_114.AsNoTracking()
-                .ToList()
-                .Select(entity => new BankAccount
+                var upds = ctx.SD_114.AsNoTracking().Where(_ => _.UpdateDate > minDate).ToList();
+                var updList = new List<BankAccount>();
+                foreach (var entity in upds)
                 {
-                    RashAccCode = entity.BA_RASH_ACC_CODE,
-                    RashAccount = entity.BA_RASH_ACC,
-                    BACurrency = entity.BA_CURRENCY,
-                    IsTransit = entity.BA_TRANSIT == 1,
-                    IsNegativeRests = entity.BA_NEGATIVE_RESTS == 1,
-                    BABankAccount = entity.BA_BANK_ACCOUNT,
-                    ShortName = entity.BA_ACC_SHORTNAME,
-                    StartDate = entity.StartDate,
-                    StartSumma = entity.StartSumma,
-                    DateNonZero = entity.DateNonZero,
-                    DocCode = entity.DOC_CODE,
-                    KontragentDC = entity.BA_BANK_AS_KONTRAGENT_DC,
-                    CentrResponsibilityDC = entity.BA_CENTR_OTV_DC,
-                    CurrencyDC = entity.CurrencyDC,
-                    BankDC = entity.BA_BANKDC,
-                    IsDeleted = entity.IsDeleted ?? false
-                })
-                .ToDictionary<BankAccount, decimal, IBankAccount>(newItem => newItem.DocCode, newItem => newItem);
-            foreach (var k in BankAccounts.Values.Cast<BankAccount>()) k.LoadFromCache();
+                    var newItem = new BankAccount();
+                    newItem.LoadFromEntity(entity,this);
+                    updList.Add(newItem);
+                }
+                foreach (var b in updList)
+                {
+                    BankAccounts[b.DocCode] = b;
+                    Drop<BankAccount>(b.DocCode);
+                }
+                UpdateList(updList, DateTime.Now);
+            }
 
-            DropAll<BankAccount>();
-            UpdateList(BankAccounts.Values.Cast<BankAccount>(), DateTime.Now);
-            GetBankAccountAll();
         }
-
         return BankAccounts.Values.ToList();
     }
 
@@ -2853,22 +2842,54 @@ public class RedisCacheReferences : IReferencesCache
             case RedisMessageChannels.BankAccountReference:
                 if (message.DocCode is null) return;
                 LoadCacheKeys("BankAccount");
-                var ba_item = GetItem<BankAccount>((string)message.ExternalValues["RedisKey"]);
-                ba_item.LoadFromCache();
                 var ba_oldKey = cacheKeysDict["BankAccount"].CachKeys
-                    .SingleOrDefault(_ => _.DocCode == message.DocCode);
-                if (ba_oldKey is null)
-                    cacheKeysDict["BankAccount"].CachKeys.AddCacheKey(new CachKey
+                    .SingleOrDefault(_ => _.DocCode == message.DocCode); 
+                cacheKeysDict["BankAccount"].CachKeys.Remove(ba_oldKey);
+                if (message.OperationType == RedisMessageDocumentOperationTypeEnum.Delete)
+                {
+                   
+                    BankAccounts.Remove(message.DocCode.Value);
+                    
+                }
+                else
+                {
+                    using (var ctx = GlobalOptions.GetEntities())
                     {
-                        Key = (string)message.ExternalValues["RedisKey"],
-                        DocCode = message.DocCode,
-                        LastUpdate =
-                            Convert.ToDateTime(((string)message.ExternalValues["RedisKey"]).Split("@"[1]))
-                    });
+                        var ent = ctx.SD_114.SingleOrDefault(_ => _.DOC_CODE == message.DocCode);
+                        if (ent is not null)
+                        {
+                            var newItem = new BankAccount();
+                            newItem.LoadFromEntity(ent, this);
+                            AddOrUpdate(newItem);
+                            BankAccounts[newItem.DocCode] = newItem;
+                            cacheKeysDict["BankAccount"].CachKeys.AddCacheKey(new CachKey
+                            {
+                                Key = $"Cache:BankAcount:{newItem.DocCode}@{newItem.UpdateDate}",
+                                DocCode = message.DocCode,
+                                LastUpdate = newItem.UpdateDate
 
-                if (BankAccounts.ContainsKey(message.DocCode.Value))
-                    BankAccounts[message.DocCode.Value] = ba_item;
-                else BankAccounts.Add(message.DocCode.Value, ba_item);
+                            });
+                        }
+                    }
+                }
+
+                var jsonSerializerSettings1 = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                };
+                var redisMessage1 = new RedisMessage
+                {
+                    Message =
+                        $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник банков.",
+                    ExternalValues =
+                    {
+                        ["Type"] = "BankAccount"
+                    }
+                };
+                var json1 = JsonConvert.SerializeObject(redisMessage1, jsonSerializerSettings1);
+                mySubscriber.Publish(
+                    new RedisChannel(RedisMessageChannels.ReferenceUpdate,
+                        RedisChannel.PatternMode.Auto),json1);
                 break;
             case RedisMessageChannels.CashBoxReference:
                 if (message.DocCode is null) return;
@@ -3334,10 +3355,10 @@ public class RedisCacheReferences : IReferencesCache
                 else ProductTypes.Add(message.DocCode.Value, pt_item);
                 break;
             case RedisMessageChannels.SDRSchetReference:
-                 using (var redisClient = redisManager.GetClient())
-                 {
-                     if (!message.ExternalValues.ContainsKey("States") ||
-                         !message.ExternalValues.ContainsKey("Schets")) return;
+                using (var redisClient = redisManager.GetClient())
+                {
+                    if (!message.ExternalValues.ContainsKey("States") ||
+                        !message.ExternalValues.ContainsKey("Schets")) return;
                     redisClient.Db = GlobalOptions.RedisDBId ?? 0;
                     //if (!message.ExternalValues.ContainsKey("DocCodes")) return;
                     LoadCacheKeys("SDRSchet");
@@ -3352,9 +3373,10 @@ public class RedisCacheReferences : IReferencesCache
                         {
                             foreach (var schet in entity.SD_303)
                             {
-                                if(lstSchets.Contains(schet.DOC_CODE)) continue;
+                                if (lstSchets.Contains(schet.DOC_CODE)) continue;
                                 lstSchets.Add(schet.DOC_CODE);
                             }
+
                             var newItem = new SDRState
                             {
                                 DocCode = entity.DOC_CODE,
@@ -3381,6 +3403,7 @@ public class RedisCacheReferences : IReferencesCache
                                 SDRStates[newItem.DocCode] = newItem;
                             else SDRStates.Add(newItem.DocCode, newItem);
                         }
+
                         var e_schets = ctx.SD_303.Where(_ => lstSchets.Contains(_.DOC_CODE));
                         foreach (var entity in e_schets)
                         {
@@ -3392,7 +3415,7 @@ public class RedisCacheReferences : IReferencesCache
                                 IsDeleted = entity.SHPZ_DELETED == 1,
                                 UpdateDate = entity.UpdateDate ?? DateTime.Now
                             };
-                            newItem.LoadFromEntity(entity,this);
+                            newItem.LoadFromEntity(entity, this);
                             AddOrUpdate(newItem);
                             var k_oldKey = cacheKeysDict["SDRSchet"].CachKeys
                                 .SingleOrDefault(_ => _.DocCode == message.DocCode);
@@ -3410,24 +3433,26 @@ public class RedisCacheReferences : IReferencesCache
                             else SDRSchets.Add(newItem.DocCode, newItem);
                         }
                     }
+
                     var jsonSerializerSettings = new JsonSerializerSettings
                     {
                         TypeNameHandling = TypeNameHandling.All
                     };
                     var redisMessage = new RedisMessage
                     {
-                       Message =
+                        Message =
                             $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил справочник счетов и статей доходов/расъодов.",
-                       ExternalValues =
-                       {
-                           ["Type"] = "SDRSchet"
-                       }
+                        ExternalValues =
+                        {
+                            ["Type"] = "SDRSchet"
+                        }
                     };
                     var json = JsonConvert.SerializeObject(redisMessage, jsonSerializerSettings);
                     mySubscriber.Publish(
                         new RedisChannel(RedisMessageChannels.ReferenceUpdate,
-                            RedisChannel.PatternMode.Auto),json);
+                            RedisChannel.PatternMode.Auto), json);
                 }
+
                 break;
             case RedisMessageChannels.SDRStateReference:
                 if (message.DocCode is null) return;

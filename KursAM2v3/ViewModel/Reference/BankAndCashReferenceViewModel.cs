@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -14,13 +15,17 @@ using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using Helper;
 using KursAM2.Dialogs;
+using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.KursReferences;
 using KursDomain;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.Cash;
+using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace KursAM2.ViewModel.Reference
 {
@@ -33,12 +38,17 @@ namespace KursAM2.ViewModel.Reference
         {
             LeftMenuBar = MenuGenerator.BaseLeftBar(this);
             RightMenuBar = MenuGenerator.ReferenceRightBar(this);
+            redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
+            mySubscriber = redis.GetSubscriber();
             RefreshData(null);
         }
 
         #endregion
 
         #region Fields
+
+        private readonly ISubscriber mySubscriber;
+        private readonly ConnectionMultiplexer redis;
 
         #endregion
 
@@ -248,6 +258,29 @@ namespace KursAM2.ViewModel.Reference
                                 ctx.SD_114.Remove(old);
                                 ctx.SaveChanges();
                                 transaction.Commit();
+                                if (mySubscriber != null && mySubscriber.IsConnected())
+                                {
+                                    var message = new RedisMessage
+                                    {
+                                        DocumentType = DocumentType.Bank,
+                                        DocCode = CurrentBank.DocCode,
+                                        Id = null,
+                                        DocDate = DateTime.Now,
+                                        IsDocument = false,
+                                        OperationType = RedisMessageDocumentOperationTypeEnum.Delete,
+                                        Message =
+                                            $"Пользователь '{GlobalOptions.UserInfo.Name}' удалил банк: '{CurrentBank.DocCode} {CurrentBank.Name}"
+                                    };
+    
+                                    var jsonSerializerSettings = new JsonSerializerSettings
+                                    {
+                                        TypeNameHandling = TypeNameHandling.All
+                                    };
+                                    var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                                    mySubscriber.Publish(
+                                        new RedisChannel(RedisMessageChannels.BankAccountReference,
+                                            RedisChannel.PatternMode.Auto), json);
+                                }
                                 Banks.Remove(CurrentBank);
                             }
                             catch (Exception ex)
@@ -301,7 +334,29 @@ namespace KursAM2.ViewModel.Reference
                 frm.gridBank.SelectedItems.Clear();
                 frm.gridBank.SelectedItems.Add(CurrentBank);
             }
-
+            if (mySubscriber != null && mySubscriber.IsConnected())
+            {
+                var message = new RedisMessage
+                {
+                    DocumentType = DocumentType.Bank,
+                    DocCode = CurrentBank.DocCode,
+                    Id = null,
+                    DocDate = DateTime.Now,
+                    IsDocument = false,
+                    OperationType = RedisMessageDocumentOperationTypeEnum.Create,
+                    Message =
+                        $"Пользователь '{GlobalOptions.UserInfo.Name}' создал банк: '{CurrentBank.DocCode} {CurrentBank.Name}"
+                };
+    
+                var jsonSerializerSettings = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                };
+                var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                mySubscriber.Publish(
+                    new RedisChannel(RedisMessageChannels.BankAccountReference,
+                        RedisChannel.PatternMode.Auto), json);
+            }
             RaisePropertyChanged(nameof(IsCanUserRight));
         }
 
@@ -504,6 +559,7 @@ namespace KursAM2.ViewModel.Reference
                         if (newKontrAcc.Any())
                             newKontrAccCode = newKontrAcc.Max(c => c.CODE) + 1;
                         var newDC = ctx.SD_114.Any() ? ctx.SD_114.Max(_ => _.DOC_CODE) + 1 : 11140000001;
+                        var updBanks = new List<decimal>();
                         foreach (var b in Banks.Where(_ => _.State != RowStatus.NotEdited))
                         {
                             switch (b.State)
@@ -515,6 +571,7 @@ namespace KursAM2.ViewModel.Reference
                                     break;
                                 case RowStatus.Edited:
                                     updateBank(ctx, b);
+                                    updBanks.Add(b.DocCode);
                                     break;
                             }
 
@@ -532,7 +589,36 @@ namespace KursAM2.ViewModel.Reference
                             c.myState = RowStatus.NotEdited;
                         }
 
-                        foreach (var b in Banks) b.myState = RowStatus.NotEdited;
+                        foreach (var dc in updBanks)
+                        {
+                            if (mySubscriber != null && mySubscriber.IsConnected())
+                            {
+                                var message = new RedisMessage
+                                {
+                                    DocumentType = DocumentType.Bank,
+                                    DocCode = dc,
+                                    Id = null,
+                                    DocDate = DateTime.Now,
+                                    IsDocument = false,
+                                    OperationType = RedisMessageDocumentOperationTypeEnum.Update,
+                                    Message =
+                                        $"Пользователь '{GlobalOptions.UserInfo.Name}' обновил банк: '{dc} {Banks.FirstOrDefault(_ => _.DocCode == dc)?.Name}"
+                                };
+    
+                                var jsonSerializerSettings = new JsonSerializerSettings
+                                {
+                                    TypeNameHandling = TypeNameHandling.All
+                                };
+                                var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                                mySubscriber.Publish(
+                                    new RedisChannel(RedisMessageChannels.BankAccountReference,
+                                        RedisChannel.PatternMode.Auto), json);
+                            }
+
+                            var b = Banks.FirstOrDefault(_ => _.DocCode == dc);
+                            if(b is not null)
+                                b.myState = RowStatus.NotEdited;
+                        }
                         RaisePropertyChanged(nameof(IsCanSaveData));
                         RaisePropertyChanged(nameof(IsCanUserRight));
                     }
@@ -567,6 +653,7 @@ namespace KursAM2.ViewModel.Reference
             old.StartDate = bAcc.StartDate;
             old.IsDeleted = bAcc.IsDeleted;
             old.DateNonZero = bAcc.DateNonZero;
+
         }
 
         private void addNewBank(ALFAMEDIAEntities ctx, BankAccountReference bAcc, int newKontrAccCode, decimal newDC)
