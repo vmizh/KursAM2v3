@@ -161,6 +161,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             set
             {
                 if (myCurrentTovar == value) return;
+                var oldState = State;
                 myCurrentTovar = value;
                 DistributeNaklads.Clear();
                 if (myCurrentTovar != null)
@@ -168,6 +169,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                                  .Where(_ => _.RowId == CurrentTovar.Id))
                         DistributeNaklads.Add(n);
                 RaisePropertyChanged();
+                myState = oldState;
             }
         }
 
@@ -191,8 +193,10 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             set
             {
                 if (myCurrentDistributeNaklad == value) return;
+                var oldState = State;
                 myCurrentDistributeNaklad = value;
                 RaisePropertyChanged();
+                myState = oldState;
             }
         }
 
@@ -211,6 +215,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             set
             {
                 if (myCurrentNakladInvoice == value) return;
+                var oldSTate = State;
                 myCurrentNakladInvoice = value;
                 if (myCurrentNakladInvoice != null)
                     if (Form is DistributedNakladView frm)
@@ -220,6 +225,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     }
 
                 RaisePropertyChanged();
+                myState = oldSTate;
             }
         }
 
@@ -631,6 +637,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                         });
                     }
 
+            RecalcAllResult();
             RaisePropertyChanged();
         }
 
@@ -933,15 +940,10 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     if (grid.View.ActiveEditor != null)
                         return;
             recalcDistributeSummForInvoice();
-            if (Form is DistributedNakladView frm)
-            {
-                var col = frm.gridNaklad.Columns.GetColumnByName("Rate");
-                if (myCurrentNakladInvoice.DistributeType ==
-                    DistributeNakladTypeEnum.NotDistribute)
-                    col.ReadOnly = false;
-                else
-                    col.ReadOnly = true;
-            }
+            if (Form is not DistributedNakladView frm) return;
+            var col = frm.gridNaklad.Columns.GetColumnByName("Rate");
+            col.ReadOnly = myCurrentNakladInvoice.DistributeType !=
+                           DistributeNakladTypeEnum.NotDistribute;
         }
 
         public ICommand AddNomenklCommand
@@ -968,6 +970,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             };
             dialog.ShowDialog();
             if (dtx.DialogResult == MessageResult.OK)
+            {
                 foreach (var r in dtx.SelectedItems)
                 {
                     if (Tovars.Any(_ => _.InvoiceRow.DocCode == r.DocCode && _.InvoiceRow.Code == r.CODE)) continue;
@@ -1003,7 +1006,13 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                             Tovars.Add(newTovar);
                         }
                     }
+
                 }
+                if (State != RowStatus.NewRow)
+                    myState = RowStatus.Edited;
+            }
+
+            RecalcAllResult();
         }
 
         public bool CanAddNomenkl()
@@ -1063,7 +1072,6 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 var sql = $"exec dbo.NomenklCalculateCostsForOne {CustomFormat.DecimalToSqlDecimal(n.Nomenkl.DocCode)}";
                 unitOfWork.Context.Database.ExecuteSqlCommand(sql);
             }
-
             SelectedTovars.Clear();
             RecalcAllResult();
             RaisePropertyChanged();
@@ -1102,14 +1110,19 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                     var d = DistributeAllNaklads.First(_ => _.Id == id);
                     var r = Tovars.First(_ => _.Id == d.RowId);
                     r.DistributePrice -= d.DistributeSumma;
-                    unitOfWork.Context.DistributeNakladInfo.Remove(d.Entity);
+                    unitOfWork.Context.DistributeNakladInfo.Remove(d.Entity); 
+                    var n = DistributeNaklads.FirstOrDefault(_ => _.Id == id);
+                    if (n is not null)
+                        DistributeNaklads.Remove(n);
                     DistributeAllNaklads.Remove(d);
                 }
-
+                
                 unitOfWork.Context.DistributeNakladInvoices.Remove(CurrentNakladInvoice.Entity);
                 NakladInvoices.Remove(CurrentNakladInvoice);
                 State = RowStatus.Edited;
             }
+
+            RecalcAllResult();
         }
 
         // ReSharper disable once UnusedMember.Global
@@ -1168,7 +1181,11 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                         Invoice = s,
                         Currency = GlobalOptions.ReferencesCache.GetCurrency(item.CurrencyDC) as Currency
                     });
+                    if (State != RowStatus.NewRow)
+                        myState = RowStatus.Edited;
                 }
+
+            RecalcAllResult();
         }
 
         public bool CanAddNakladInvoice()

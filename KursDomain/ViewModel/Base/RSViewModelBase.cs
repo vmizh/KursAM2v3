@@ -17,7 +17,7 @@ public abstract class RSViewModelBase : ISimpleObject, INotifyPropertyChanged,
     IComparable<RSViewModelBase>,
     IComparable, IEquatable<RSViewModelBase>
 {
-
+    [Display(AutoGenerateField = false)]
     public DateTime timeLoad { set; get; } = DateTime.Now;
     // ReSharper disable once InconsistentNaming
     public RowStatus myState = RowStatus.NotEdited;

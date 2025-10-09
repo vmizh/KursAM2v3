@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -1789,9 +1790,54 @@ namespace KursAM2.ViewModel.Finance.Invoices
             }
         }
 
+        private (bool, string) checkLinkForDistributeNaklad()
+        {
+            var nakldDocIds = new HashSet<Guid>(); 
+            var naklInv = UnitOfWork.Context.DistributeNakladInvoices.Where(_ => _.InvoiceId == Document.Id).ToList();
+            foreach (var ni in naklInv)
+            {
+                nakldDocIds.Add(ni.DocId);
+            }
+
+            var rowsId = new List<Guid>(Document.Rows.Select(x => x.Id));
+            if (rowsId.Count > 0)
+            {
+                var naklRows =
+                    UnitOfWork.Context.DistributeNakladRow.Where(_ => rowsId.Contains(_.TovarInvoiceRowId.Value));
+                foreach (var nr in naklRows)
+                {
+                    nakldDocIds.Add(nr.DocId);
+                }
+            }
+
+            var naklInfo = UnitOfWork.Context.DistributeNakladInfo
+                .Include(_ => _.DistributeNakladRow).Where(_ => _.InvoiceNakladId == Document.Id)
+                .ToList();
+            foreach (var ni in naklInfo)
+            {
+                nakldDocIds.Add(ni.DistributeNakladRow.DocId);
+            }
+            if(nakldDocIds.Count == 0)
+                return (false, "");
+            var docs = UnitOfWork.Context.DistributeNaklad.Where(_ => nakldDocIds.Contains(_.Id)).ToList();
+            var str = new StringBuilder("Счет проведен по распределению накладных расходов:\n");
+            foreach (var doc in docs)
+            {
+                str.Append($"№ {doc.DocNum} от {doc.DocDate} {doc.Note}\n");
+            }
+
+            return (true, str.ToString());
+        }
+
         public override void SaveData(object data)
         {
             var WinManager = new WindowManager();
+            var checkDistr = checkLinkForDistributeNaklad();
+            if (checkDistr.Item1)
+            {
+                myWManager.ShowWinUIMessageBox(checkDistr.Item2, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
             // ReSharper disable once PossibleInvalidCastExceptionInForeachLoop
             foreach (InvoiceProviderRow r in Document.Rows)
@@ -2063,7 +2109,12 @@ namespace KursAM2.ViewModel.Finance.Invoices
         public override void DocDelete(object form)
         {
             var WinManager = new WindowManager();
-
+            var checkDistr = checkLinkForDistributeNaklad();
+            if (checkDistr.Item1)
+            {
+                myWManager.ShowWinUIMessageBox(checkDistr.Item2, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             if (Document.State == RowStatus.NewRow)
             {
                 var res = WinManager.ShowWinUIMessageBox("Вы уверены, что хотите удалить данный документ?", "Запрос",
