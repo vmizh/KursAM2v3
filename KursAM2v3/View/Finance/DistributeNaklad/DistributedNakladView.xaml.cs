@@ -2,171 +2,167 @@
 using System.Linq;
 using System.Windows;
 using DevExpress.Data;
-using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
-using DevExpress.XtraRichEdit.API.Native;
 using Helper;
 using KursAM2.ViewModel.Finance.DistributeNaklad;
 using KursDomain;
 using KursDomain.ICommon;
 
-namespace KursAM2.View.Finance.DistributeNaklad
+namespace KursAM2.View.Finance.DistributeNaklad;
+
+/// <summary>
+///     Interaction logic for DistributedNakladView.xaml
+/// </summary>
+public partial class DistributedNakladView
 {
-    /// <summary>
-    ///     Interaction logic for DistributedNakladView.xaml
-    /// </summary>
-    public partial class DistributedNakladView
+    public DistributedNakladView()
     {
-        public DistributedNakladView()
+        InitializeComponent();
+    }
+
+    public GridColumn NakladSummaColumn { set; get; }
+    public ComboBoxEdit CurrencyItem { set; get; }
+
+    private void DataLayoutControlHeader_OnAutoGeneratingItem(object sender,
+        DataLayoutControlAutoGeneratingItemEventArgs e)
+    {
+        var doc = DataContext as DistributeNakladViewModel;
+        if (doc == null) return;
+        var oldContent = e.Item.Content as BaseEdit;
+        if (e.PropertyName.Contains("Command"))
         {
-            InitializeComponent();
-            
+            e.Item.Visibility = Visibility.Hidden;
+            return;
         }
 
-        public GridColumn NakladSummaColumn { set; get; }
-        public ComboBoxEdit CurrencyItem { set; get; }
-
-        private void DataLayoutControlHeader_OnAutoGeneratingItem(object sender,
-            DataLayoutControlAutoGeneratingItemEventArgs e)
+        switch (e.PropertyName)
         {
-            var doc = DataContext as DistributeNakladViewModel;
-            if (doc == null) return;
-            var oldContent = e.Item.Content as BaseEdit;
-            if (e.PropertyName.Contains("Command"))
-            {
-                e.Item.Visibility = Visibility.Hidden;
-                return;
-            }
-            
-            switch (e.PropertyName)
-            {
-                case nameof(DistributeNakladViewModel.DocNum):
-                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
-                    e.Item.LabelHorizontalAlignment = HorizontalAlignment.Left;
-                    e.Item.MinWidth = 200;
-                    var edit = new TextEdit
-                    {
-                        IsReadOnly = true,
-                        HorizontalContentAlignment = HorizontalAlignment.Right,
-                    };
-                    //edit.Width = 50;
-                    BindingHelper.CopyBinding(oldContent, edit, BaseEdit.EditValueProperty);
-                    e.Item.Content = edit;                    
-                    break;
-                case nameof(DistributeNakladViewModel.DocDate):
-                    e.Item.Margin = new Thickness(25, 0, 0, 0);
-                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
-                    //e.Item.Width = 120;
-                    break;
-                case nameof(DistributeNakladViewModel.Currency):
-                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
-                    e.Item.Margin = new Thickness(155, 0, 0, 0);
-                    //e.Item.Width = 50;
-                    CurrencyItem = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Currency, "Currency",
-                        GlobalOptions.ReferencesCache.GetCurrenciesAll().ToList(), width: 50);
-                    if (doc.Tovars.Count > 0 && doc.State != RowStatus.NewRow)
-                        CurrencyItem.IsEnabled = false;
-                    break;
-                case nameof(DistributeNakladViewModel.State):
-                    e.Item.IsReadOnly = true;
-                    e.Item.Margin = new Thickness(5, 0, 0, 0);
-                    if (e.Item.Content is ComboBoxEdit cbState) cbState.IsEnabled = false;
-                    e.Item.HorizontalAlignment = HorizontalAlignment.Right;
-                    break;
-                case nameof(DistributeNakladViewModel.Creator):
-                    e.Item.HorizontalAlignment = HorizontalAlignment.Right;
-                    e.Item.MinWidth = 150;
-                    e.Item.IsReadOnly = true;
-                    //e.Item.IsEnabled = false;
-                    break;
-                case nameof(DistributeNakladViewModel.Note):
-                    e.Item.Margin = new Thickness(0, 5, 0, 0);
-                    ViewFluentHelper.SetDefaultTextEdit(e.Item, HorizontalAlignment.Left, 600, 50);
-                    e.Item.LabelVerticalAlignment = VerticalAlignment.Top;
-                    break;
-                case nameof(DistributeNakladViewModel.DistributedSumma):
-                    e.Item.HorizontalAlignment = HorizontalAlignment.Left;
-                    e.Item.MaxWidth = 300;
-                    e.Item.MinWidth = 200;
-                    break;
-            }
-
-            ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);
-        }
-
-        private void DataLayoutControlHeader_OnAutoGeneratedUI(object sender, EventArgs e)
-        {
-        }
-
-        private void gridTovar_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
-        {
-            e.Column.Name = e.Column.FieldName;
-            KursGridControlHelper.DefaultAutoGeneratingColumn(e.Column);
-        }
-
-        private void gridTovar_OnAutoGeneratedColumns(object sender, RoutedEventArgs e)
-        {
-            gridTovar.TotalSummary.Clear();
-            foreach (var col in gridTovar.Columns)
-                if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType))
+            case nameof(DistributeNakladViewModel.DocNum):
+                e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                e.Item.LabelHorizontalAlignment = HorizontalAlignment.Left;
+                e.Item.MinWidth = 200;
+                var edit = new TextEdit
                 {
-                    col.EditSettings = new CalcEditSettings
+                    IsReadOnly = true,
+                    HorizontalContentAlignment = HorizontalAlignment.Right
+                };
+                //edit.Width = 50;
+                BindingHelper.CopyBinding(oldContent, edit, BaseEdit.EditValueProperty);
+                e.Item.Content = edit;
+                break;
+            case nameof(DistributeNakladViewModel.DocDate):
+                e.Item.Margin = new Thickness(25, 0, 0, 0);
+                e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                //e.Item.Width = 120;
+                break;
+            case nameof(DistributeNakladViewModel.Currency):
+                e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                e.Item.Margin = new Thickness(155, 0, 0, 0);
+                //e.Item.Width = 50;
+                CurrencyItem = ViewFluentHelper.SetComboBoxEdit(e.Item, doc.Currency, "Currency",
+                    GlobalOptions.ReferencesCache.GetCurrenciesAll().ToList(), width: 50);
+                if (doc.Tovars.Count > 0 && doc.State != RowStatus.NewRow)
+                    CurrencyItem.IsEnabled = false;
+                break;
+            case nameof(DistributeNakladViewModel.State):
+                e.Item.IsReadOnly = true;
+                e.Item.Margin = new Thickness(5, 0, 0, 0);
+                if (e.Item.Content is ComboBoxEdit cbState) cbState.IsEnabled = false;
+                e.Item.HorizontalAlignment = HorizontalAlignment.Right;
+                break;
+            case nameof(DistributeNakladViewModel.Creator):
+                e.Item.HorizontalAlignment = HorizontalAlignment.Right;
+                e.Item.MinWidth = 150;
+                e.Item.IsReadOnly = true;
+                //e.Item.IsEnabled = false;
+                break;
+            case nameof(DistributeNakladViewModel.Note):
+                e.Item.Margin = new Thickness(0, 5, 0, 0);
+                ViewFluentHelper.SetDefaultTextEdit(e.Item, HorizontalAlignment.Left, 600, 50);
+                e.Item.LabelVerticalAlignment = VerticalAlignment.Top;
+                break;
+            case nameof(DistributeNakladViewModel.DistributedSumma):
+                e.Item.HorizontalAlignment = HorizontalAlignment.Left;
+                e.Item.MaxWidth = 300;
+                e.Item.MinWidth = 200;
+                break;
+        }
+
+        ViewFluentHelper.SetModeUpdateProperties(doc, e.Item, e.PropertyName);
+    }
+
+    private void DataLayoutControlHeader_OnAutoGeneratedUI(object sender, EventArgs e)
+    {
+    }
+
+    private void gridTovar_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+    {
+        e.Column.Name = e.Column.FieldName;
+        KursGridControlHelper.DefaultAutoGeneratingColumn(e.Column);
+    }
+
+    private void gridTovar_OnAutoGeneratedColumns(object sender, RoutedEventArgs e)
+    {
+        gridTovar.TotalSummary.Clear();
+        foreach (var col in gridTovar.Columns)
+            if (KursGridControlHelper.ColumnFieldTypeCheckDecimal(col.FieldType))
+            {
+                col.EditSettings = new CalcEditSettings
+                {
+                    DisplayFormat = "n2",
+                    Name = col.FieldName + "Calc",
+                    AllowDefaultButton = !col.ReadOnly
+                };
+                if (!col.FieldName.Contains("Price"))
+                {
+                    var summary = new GridSummaryItem
                     {
-                        DisplayFormat = "n2",
-                        Name = col.FieldName + "Calc",
-                        AllowDefaultButton = !col.ReadOnly
+                        SummaryType = SummaryItemType.Sum,
+                        ShowInColumn = col.FieldName,
+                        DisplayFormat = "{0:n2}",
+                        FieldName = col.FieldName
                     };
-                    if (!col.FieldName.Contains("Price"))
-                    {
-                        var summary = new GridSummaryItem
-                        {
-                            SummaryType = SummaryItemType.Sum,
-                            ShowInColumn = col.FieldName,
-                            DisplayFormat = "{0:n2}",
-                            FieldName = col.FieldName
-                        };
-                        gridTovar.TotalSummary.Add(summary);
-                    }
+                    gridTovar.TotalSummary.Add(summary);
                 }
-        }
-
-        private void gridNaklad_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
-        {
-            e.Column.Name = e.Column.FieldName;
-            KursGridControlHelper.DefaultAutoGeneratingColumn(e.Column);
-            switch (e.Column.FieldName)
-            {
-                case "DistributeType":
-                case "Rate":
-                    e.Column.ReadOnly = false;
-                    break;
-                default:
-                    e.Column.ReadOnly = true;
-                    break;
             }
-        }
+    }
 
-        private void gridNaklad_OnAutoGeneratedColumns(object sender, RoutedEventArgs e)
+    private void gridNaklad_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+    {
+        e.Column.Name = e.Column.FieldName;
+        KursGridControlHelper.DefaultAutoGeneratingColumn(e.Column);
+        switch (e.Column.FieldName)
         {
+            case "DistributeType":
+            case "Rate":
+                e.Column.ReadOnly = false;
+                break;
+            default:
+                e.Column.ReadOnly = true;
+                break;
         }
+    }
 
-        private void gridDistributeSumma_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
-        {
-            e.Column.Name = e.Column.FieldName;
-            KursGridControlHelper.DefaultAutoGeneratingColumn(e.Column);
-            switch (e.Column.Name)
-            {
-                case "NakladSumma":
-                    NakladSummaColumn = (GridColumn)e.Column;
-                    break;
-            }
-        }
+    private void gridNaklad_OnAutoGeneratedColumns(object sender, RoutedEventArgs e)
+    {
+    }
 
-        private void gridDistributeSumma_OnAutoGeneratedColumns(object sender, RoutedEventArgs e)
+    private void gridDistributeSumma_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
+    {
+        e.Column.Name = e.Column.FieldName;
+        KursGridControlHelper.DefaultAutoGeneratingColumn(e.Column);
+        switch (e.Column.Name)
         {
+            case "NakladSumma":
+                NakladSummaColumn = (GridColumn)e.Column;
+                break;
         }
+    }
+
+    private void gridDistributeSumma_OnAutoGeneratedColumns(object sender, RoutedEventArgs e)
+    {
     }
 }

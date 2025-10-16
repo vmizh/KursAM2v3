@@ -143,6 +143,8 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         #region Fields
 
+        private DateTime MinDateSaveDoc = DateTime.Today;
+
         private readonly ALFAMEDIAEntities myContext = GlobalOptions.GetEntities();
 
         private readonly INomenklReturnOfClientRepository myRepository;
@@ -451,12 +453,8 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         private void AddNomenkl(object obj)
         {
-            List<Guid> existsRows = new List<Guid>();
-            foreach (var row in Document.Rows)
-            {
-                if(row.Entity.RashodNakladId is not null)
-                    existsRows.Add(row.Entity.RashodNakladId.Value);
-            }
+            var existsRows = (from row in Document.Rows 
+                where row.Entity.RashodNakladId is not null select row.Entity.RashodNakladId.Value).ToList();
             var ctx = new NomenklReturnSelectWaybillRowsDialog(Document.Kontragent, existsRows);
             var service = this.GetService<IDialogService>("DialogServiceUI");
             if (service.ShowDialog(MessageButton.OKCancel, "Возврат товара от клиента. Выбор номенклатур.", ctx) == MessageResult.Cancel) return;
@@ -464,6 +462,8 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
                 Document.DocDate);
             foreach (var item in ctx.SelectedRows)
             {
+                if (item.WayBillDate < MinDateSaveDoc)
+                    MinDateSaveDoc = item.WayBillDate;
                 if (Document.Rows.Any(_ => _.InvoiceRowId == item.InvoiceRowId)) continue;
                 var newRow = new NomenklReturnOfClientRowViewModel(new NomenklReturnOfClientRow
                 {
@@ -511,6 +511,17 @@ namespace KursAM2.ViewModel.Logistiks.NomenklReturn
 
         public override void SaveData(object data)
         {
+            var res = MessageBox.Show($"Дата документа {Document.DocDate} меньше минимально возможной {MinDateSaveDoc}, установить?", "Запрос",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+            switch (res)
+            {
+                case MessageBoxResult.Yes:
+                    Document.DocDate = MinDateSaveDoc;
+                    break;
+                case MessageBoxResult.No:
+                    return;
+            }
             try
             {
                 if (State == RowStatus.NewRow || Document.DocNum < 0)

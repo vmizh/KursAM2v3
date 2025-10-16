@@ -104,6 +104,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         private DistributeNakladInvoiceViewModel myCurrentNakladInvoice;
         private DistributeNakladRowViewModel myCurrentTovar;
         private DistributeNakladInfoViewModel myCurrentDistributeNaklad;
+        private DistributeNakladTypeEnum myDefaultTypeCalc;
 
         #endregion
 
@@ -130,6 +131,17 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
 
         public override string Description =>
             $"№ {DocNum} от {DocDate.ToShortDateString()} {Currency} {Note} Создатель: {Creator}";
+
+        public DistributeNakladTypeEnum DefaultTypeCalc
+        {
+            get => myDefaultTypeCalc;
+            set
+            {
+                if (Equals(myDefaultTypeCalc, value)) return;
+                myDefaultTypeCalc = value;
+                RaisePropertyChanged();
+            }
+        }
 
         public override Guid Id
         {
@@ -476,6 +488,29 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
         #endregion
 
         #region Commands
+
+        public ICommand SetDefaultTypeCommand
+        {
+            get
+            {
+                return new Command(SetDefaultType, _ => NakladInvoices.Any(x => x.DistributeType != DefaultTypeCalc));
+            }
+        }
+
+        private void SetDefaultType(object obj)
+        {
+            if (Form is DistributedNakladView frm)
+            {
+                foreach (var inv in NakladInvoices.Where(_ => _.DistributeType != DefaultTypeCalc))
+                {
+                    inv.DistributeType = DefaultTypeCalc;
+                    CurrentNakladInvoice = inv;
+                    DistributeTypeChanged(frm.gridNaklad);
+                }
+
+                RecalcAllResult();
+            }
+        }
 
         public override void RefreshData(object obj)
         {

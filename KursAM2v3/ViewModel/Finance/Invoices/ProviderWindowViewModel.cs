@@ -2112,7 +2112,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             var checkDistr = checkLinkForDistributeNaklad();
             if (checkDistr.Item1)
             {
-                myWManager.ShowWinUIMessageBox(checkDistr.Item2, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                myWManager.ShowWinUIMessageBox(checkDistr.Item2, "Предупреждение", MessageBoxButton.OKCancel , MessageBoxImage.Warning);
                 return;
             }
             if (Document.State == RowStatus.NewRow)
