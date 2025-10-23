@@ -10,8 +10,6 @@ using Data;
 using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.Xpf;
-using DevExpress.Xpf.Editors;
-using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using Helper;
 using KursAM2.Managers;
@@ -53,6 +51,16 @@ namespace KursAM2.ViewModel.Management.BreakEven
         private DocumentRow myCurrentDocument;
         private DateTime myEndDate;
         private DateTime myStartDate;
+        private ObservableCollection<DocumentRow> myDocumentGroup;
+        private ObservableCollection<DocumentCrsRow> myDocumentCurrencyGroup = new ObservableCollection<DocumentCrsRow>();
+        private ObservableCollection<BreakEvenNomGroupViewModel> myNomenklGroups;
+        private ObservableCollection<BreakEvenCOrGroupViewModel> myCoGroups;
+        private ObservableCollection<BreakEvenKontrGroupViewModel> myKontrGroups;
+        private ObservableCollection<BreakEvenManagerGroupViewModel> myManagerGroups;
+        private ICommand myCustomNomenklSummaryCommand;
+        private ICommand myCustomKontrSummaryCommand;
+        private ICommand myCustomCoSummaryCommand;
+        private ICommand myCustomManagerSummaryCommand;
 
         public BreakEvenWindowViewModel()
         {
@@ -81,15 +89,71 @@ namespace KursAM2.ViewModel.Management.BreakEven
         public override string WindowName => "Рентабельность";
 
         // ReSharper disable once CollectionNeverQueried.Global
-        public ObservableCollection<DocumentRow> DocumentGroup { set; get; }
+        public ObservableCollection<DocumentRow> DocumentGroup
+        {
+            set
+            {
+                if (Equals(value, myDocumentGroup)) return;
+                myDocumentGroup = value;
+                RaisePropertyChanged();
+            }
+            get => myDocumentGroup;
+        }
 
-        public ObservableCollection<DocumentCrsRow> DocumentCurrencyGroup { set; get; } =
-            new ObservableCollection<DocumentCrsRow>();
+        public ObservableCollection<DocumentCrsRow> DocumentCurrencyGroup
+        {
+            set
+            {
+                if (Equals(value, myDocumentCurrencyGroup)) return;
+                myDocumentCurrencyGroup = value;
+                RaisePropertyChanged();
+            }
+            get => myDocumentCurrencyGroup;
+        }
 
-        public ObservableCollection<BreakEvenNomGroupViewModel> NomenklGroups { set; get; }
-        public ObservableCollection<BreakEvenCOrGroupViewModel> CoGroups { set; get; }
-        public ObservableCollection<BreakEvenKontrGroupViewModel> KontrGroups { set; get; }
-        public ObservableCollection<BreakEvenManagerGroupViewModel> ManagerGroups { set; get; }
+        public ObservableCollection<BreakEvenNomGroupViewModel> NomenklGroups
+        {
+            set
+            {
+                if (Equals(value, myNomenklGroups)) return;
+                myNomenklGroups = value;
+                RaisePropertyChanged();
+            }
+            get => myNomenklGroups;
+        }
+
+        public ObservableCollection<BreakEvenCOrGroupViewModel> CoGroups
+        {
+            set
+            {
+                if (Equals(value, myCoGroups)) return;
+                myCoGroups = value;
+                RaisePropertyChanged();
+            }
+            get => myCoGroups;
+        }
+
+        public ObservableCollection<BreakEvenKontrGroupViewModel> KontrGroups
+        {
+            set
+            {
+                if (Equals(value, myKontrGroups)) return;
+                myKontrGroups = value;
+                RaisePropertyChanged();
+            }
+            get => myKontrGroups;
+        }
+
+        public ObservableCollection<BreakEvenManagerGroupViewModel> ManagerGroups
+        {
+            set
+            {
+                if (Equals(value, myManagerGroups)) return;
+                myManagerGroups = value;
+                RaisePropertyChanged();
+            }
+            get => myManagerGroups;
+        }
 
         public BreakEvenNomGroupViewModel CurrentNomenkl
         {
@@ -504,7 +568,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                             ? Math.Round(d.KontrSumma - d.SummaOperNomenklCrs - d.DilerSumma, 2)
                             : 0,
                     ResultRUB =
-                        d.OperCurrency.Name == "RUB" || d.OperCurrency.Name == "RUR"
+                        d.OperCurrency.Name is "RUB" or "RUR"
                             ? Math.Round(d.KontrSumma - d.SummaOperNomenklCrs - d.DilerSumma, 2)
                             : 0,
                     ResultUSD =
@@ -614,7 +678,6 @@ namespace KursAM2.ViewModel.Management.BreakEven
                             decimal sumInPeriod = 0;
                             decimal summaInStart = 0;
                             decimal sumQuanInPeriod = 0;
-                            decimal sumQuanStart;
                             var td26 = ent.TD_26
                                 .Include(_ => _.SD_26).Where(_ =>
                                     _.SFT_NEMENKL_DC == dc && _.SD_26.SF_POSTAV_DATE < start);
@@ -625,7 +688,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                     _.SFT_NEMENKL_DC == dc && _.SD_84.SF_DATE < start);
                             if (td84.Any())
                                 sumQuanOutStart = (decimal)td84.Sum(_ => _.SFT_KOL);
-                            sumQuanStart = sumQuanInStart - sumQuanOutStart;
+                            var sumQuanStart = sumQuanInStart - sumQuanOutStart;
                             td26 = ent.TD_26
                                 .Include(_ => _.SD_26).Where(_ =>
                                     _.SFT_NEMENKL_DC == dc && _.SD_26.SF_POSTAV_DATE < start);
@@ -677,7 +740,7 @@ namespace KursAM2.ViewModel.Management.BreakEven
                                         IsUsluga = true,
                                         KontrSumma = (decimal)d.SFT_SUMMA_K_OPLATE, //Convert.ToDecimal(d.KontrSumma),
                                         KontrSummaCrs = (decimal)d.SFT_SUMMA_K_OPLATE,
-                                        Manager = otvlico != null ? otvlico : "Менеджер не указан",
+                                        Manager = otvlico ?? "Менеджер не указан",
                                         Naklad = null,
                                         NomenklSumWOReval = 0,
                                         OperCrsName =
@@ -990,7 +1053,6 @@ namespace KursAM2.ViewModel.Management.BreakEven
         {
             var frm = Form as BreakEvenForm2;
             if (frm == null) return;
-            var cols = new List<GridColumn>();
 
             setSums(frm.gridDocument);
             setSums(frm.gridNomenkl);
@@ -1021,10 +1083,49 @@ namespace KursAM2.ViewModel.Management.BreakEven
 
         #region Commands
 
-        public ICommand CustomNomenklSummaryCommand { get; private set; }
-        public ICommand CustomKontrSummaryCommand { get; private set; }
-        public ICommand CustomCOSummaryCommand { get; private set; }
-        public ICommand CustomManagerSummaryCommand { get; private set; }
+        public ICommand CustomNomenklSummaryCommand
+        {
+            get => myCustomNomenklSummaryCommand;
+            private set
+            {
+                if (Equals(value, myCustomNomenklSummaryCommand)) return;
+                myCustomNomenklSummaryCommand = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ICommand CustomKontrSummaryCommand
+        {
+            get => myCustomKontrSummaryCommand;
+            private set
+            {
+                if (Equals(value, myCustomKontrSummaryCommand)) return;
+                myCustomKontrSummaryCommand = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ICommand CustomCOSummaryCommand
+        {
+            get => myCustomCoSummaryCommand;
+            private set
+            {
+                if (Equals(value, myCustomCoSummaryCommand)) return;
+                myCustomCoSummaryCommand = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public ICommand CustomManagerSummaryCommand
+        {
+            get => myCustomManagerSummaryCommand;
+            private set
+            {
+                if (Equals(value, myCustomManagerSummaryCommand)) return;
+                myCustomManagerSummaryCommand = value;
+                RaisePropertyChanged();
+            }
+        }
 
         private void calcSumma(GridControl grid, RowSummaryArgs args)
         {

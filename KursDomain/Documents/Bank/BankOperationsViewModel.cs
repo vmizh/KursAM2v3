@@ -880,7 +880,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
                 $"С/ф №{Entity.SD_26.SF_IN_NUM}/{Entity.SD_26.SF_POSTAV_NUM} от " +
                 $"{Entity.SD_26.SF_POSTAV_DATE} на {Entity.SD_26.SF_CRS_SUMMA} " +
                 // ReSharper disable once PossibleInvalidOperationException
-                $"{GlobalOptions.ReferencesCache.GetBankAccount(Entity.SD_26.SF_CRS_DC) as BankAccount}";
+                $"{GlobalOptions.ReferencesCache.GetCurrency(Entity.SD_26.SF_CRS_DC) as BankAccount}";
         if (Entity.AccuredAmountOfSupplierRow != null)
         {
             var acc = Entity.AccuredAmountOfSupplierRow;
