@@ -231,10 +231,14 @@ public class CrossCurrencyRate : RSViewModelBase
             {
                 Currency = c,
                 CurrencyRUB = 1,
-                CurrencyEUR = rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR)],
-                CurrencyGBP = rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP)],
-                CurrencyUSD = rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD)],
-                CurrencyCNY = rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY)]
+                CurrencyEUR = rates.ContainsKey((References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR))
+                    ? rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.EUR)] : 0,
+                CurrencyGBP = rates.ContainsKey((References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP))
+                    ? rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.GBP)] : 0,
+                CurrencyUSD = rates.ContainsKey((References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD))
+                    ? rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.USD)] : 0,
+                CurrencyCNY = rates.ContainsKey((References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY))
+                    ? rates[(References.Currency)GlobalOptions.ReferencesCache.GetCurrency(CurrencyCode.CNY)] : 0
             });
     }
 }

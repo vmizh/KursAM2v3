@@ -56,7 +56,7 @@ public record CachKey
 public class CacheKeys
 {
     public DateTime LoadMoment { set; get; }
-    public List<CachKey> CachKeys { get; set; } = new();
+    public HashSet<CachKey> CachKeys { get; set; } = new();
 }
 
 [SuppressMessage("ReSharper", "RedundantDictionaryContainsKeyBeforeAdding")]
@@ -949,6 +949,7 @@ public class RedisCacheReferences : IReferencesCache
     {
         if (!cacheKeysDict.ContainsKey("NomenklMain"))
             LoadCacheKeys("NomenklMain");
+
 
         var key = cacheKeysDict["NomenklMain"].CachKeys.SingleOrDefault(_ => _.Id == id);
         NomenklMain itemNew;
@@ -2755,7 +2756,12 @@ public class RedisCacheReferences : IReferencesCache
                 }
             });
 
-            cacheKeysDict[name].CachKeys = new List<CachKey>(resultList);
+           
+            cacheKeysDict[name].CachKeys = [];
+            foreach (var cKey in resultList)
+            {
+                cacheKeysDict[name].CachKeys.AddCacheKey(cKey);
+            }
             cacheKeysDict[name].LoadMoment = DateTime.Now;
             if (name == "Nomenkl")
                 isNomenklCacheLoad = false;
