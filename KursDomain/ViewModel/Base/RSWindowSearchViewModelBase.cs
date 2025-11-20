@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using System.Windows;
 using DevExpress.Xpf.Core;
@@ -19,6 +20,8 @@ namespace Core.ViewModel.Base
         {
             StartDate = DateTime.Today.AddDays(-14);
             EndDate = DateTime.Today;
+            IsShowAll = false;
+            IsShowAllVisibility = Visibility.Collapsed;
         }
 
         public RSWindowSearchViewModelBase(Window form) : base(form)
@@ -85,6 +88,31 @@ namespace Core.ViewModel.Base
                 RaisePropertyChanged(nameof(EndDate));
             }
         }
+
+        [Display(AutoGenerateField = false)]
+        public bool IsShowAll
+        {
+            get;
+            set
+            {
+                if (value == field) return;
+                field = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        [Display(AutoGenerateField = false)]
+        public Visibility IsShowAllVisibility
+        {
+            get;
+            set
+            {
+                if (value == field) return;
+                field = value;
+                RaisePropertyChanged();
+            }
+        }
+        
 
         public virtual string SplashCaption { set; get; } = "Загрузка...";
 
