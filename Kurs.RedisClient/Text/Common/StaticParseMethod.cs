@@ -34,7 +34,7 @@ internal static class ParseMethodUtilities
         }
 
         if (parseDelegate != null)
-            return value => parseDelegate(value.FromCsvField());
+            return value => parseDelegate(value.FromCsvField().ToString());
 
         return null;
     }
@@ -68,7 +68,7 @@ internal static class ParseMethodUtilities
         }
 
         if (parseDelegate != null)
-            return value => parseDelegate(value.ToString().FromCsvField().AsSpan());
+            return value => parseDelegate(value.ToString().FromCsvField().ToString().AsSpan());
 
         return null;
     }
