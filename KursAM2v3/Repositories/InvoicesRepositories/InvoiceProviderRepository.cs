@@ -32,6 +32,8 @@ namespace KursAM2.Repositories.InvoicesRepositories
         List<IInvoiceProvider> GetByDocCodes(List<decimal> dcs);
         List<IInvoiceProvider> GetAllByDates(DateTime dateStart, DateTime dateEnd, decimal? crsDC = null);
 
+        List<decimal> GetDocCodesForExcludePays();
+
         List<InvoiceProviderShort> GetAllForNakladDistribute(Currency crs, DateTime? dateStart,
             DateTime? dateEnd);
 
@@ -63,6 +65,12 @@ namespace KursAM2.Repositories.InvoicesRepositories
         {
         }
 
+        public List<decimal> GetDocCodesForExcludePays()
+        {
+            var res = Context.SD_26.AsNoTracking().Where(_ => _.IsExcludeFromPays == true).Select(x => x.DOC_CODE)
+                .ToList();
+            return res;
+        }
         public InvoiceProvider GetByGuidId(Guid id)
         {
             return new InvoiceProvider(Context.SD_26

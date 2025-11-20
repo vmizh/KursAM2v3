@@ -61,6 +61,7 @@ public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
 
     public InvoiceClientSearchViewModel(Window form) : base(form)
     {
+        IsShowAllVisibility = Visibility.Visible;
         try
         {
             redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
@@ -595,6 +596,7 @@ public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
 
     public override void RefreshData(object data)
     {
+        List<decimal> excludes = [];
         InvoiceClientRepository =
             new InvoiceClientRepository(
                 new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString)));
@@ -606,6 +608,8 @@ public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
         {
             frm?.Dispatcher.Invoke(() => { frm.loadingIndicator.Visibility = Visibility.Visible; });
             var result = InvoiceClientRepository.GetAllByDates(StartDate, EndDate);
+            if (!IsShowAll)
+                excludes = InvoiceClientRepository.GetDocCodesForExcludeFromPays(); 
             if (result.Count > 0)
             {
                 var lasts = lastDocumentRopository.GetLastChanges(result.Select(_ => _.DocCode).Distinct());
@@ -638,6 +642,7 @@ public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
                 frm.loadingIndicator.Visibility = Visibility.Hidden;
                 foreach (var d in result)
                 {
+                    if(excludes.Contains(d.DocCode)) continue;
                     ((InvoiceClientBase)d).RaisePropertyAllChanged();
                     Documents.Add(d);
                 }

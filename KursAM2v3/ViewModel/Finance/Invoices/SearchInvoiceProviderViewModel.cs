@@ -71,6 +71,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             GenericProviderRepository = new GenericKursDBRepository<SD_26>(UnitOfWork);
             InvoiceProviderRepository = new InvoiceProviderRepository(UnitOfWork);
 
+            IsShowAllVisibility = Visibility.Visible;
+
             try
             {
                 redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
@@ -182,6 +184,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         public override void RefreshData(object data)
         {
+            List<decimal> excludes = [];
             var frm = Form as StandartSearchView;
             var lastDocumentRopository = new DocHistoryRepository(GlobalOptions.GetEntities());
             InvoiceProviderRepository =
@@ -196,6 +199,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     frm.loadingIndicator.Visibility = Visibility.Visible;
                 });
                 var result = InvoiceProviderRepository.GetAllByDates(StartDate, EndDate);
+                if (!IsShowAll)
+                    excludes = InvoiceProviderRepository.GetDocCodesForExcludePays();
                 if (result.Count > 0)
                 {
                     var lasts = lastDocumentRopository.GetLastChanges(result.Select(_ => _.DocCode).Distinct());
@@ -225,7 +230,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 frm?.Dispatcher.Invoke(() =>
                 {
                     frm.loadingIndicator.Visibility = Visibility.Hidden;
-                    foreach (var d in result) Documents.Add(d);
+                    foreach (var d in result.Where(d => !excludes.Contains(d.DocCode)))
+                    {
+                        Documents.Add(d);
+                    }
                     if (frm.DataContext is SearchInvoiceProviderViewModel dtx) dtx.IsCanRefresh = true;
                 });
                 GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;

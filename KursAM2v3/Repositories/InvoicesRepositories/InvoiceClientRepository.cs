@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
+using DevExpress.Mvvm.Native;
 
 namespace KursAM2.Repositories.InvoicesRepositories;
 
@@ -23,6 +24,7 @@ public interface IInvoiceClientRepository
     InvoiceClientViewModel GetFullCopy(decimal dc);
     InvoiceClientViewModel GetRequisiteCopy(decimal dc);
     void Delete(SD_84 entity);
+    List<decimal> GetDocCodesForExcludeFromPays();
     List<IInvoiceClient> GetAllByDates(DateTime dateStart, DateTime dateEnd);
     List<IInvoiceClient> GetByDocCodes(List<decimal> dcs);
 
@@ -52,6 +54,11 @@ public class InvoiceClientRepository : GenericKursDBRepository<InvoiceClientView
     public InvoiceClientViewModel GetById(Guid id)
     {
         throw new NotImplementedException();
+    }
+
+    public List<decimal> GetDocCodesForExcludeFromPays()
+    {
+        return Context.SD_84.AsNoTracking().Where(_ => _.IsExcludeFromPays == true).Select(x => x.DOC_CODE).ToList();
     }
 
     public InvoiceClientViewModel GetByDocCode(decimal dc)

@@ -45,6 +45,17 @@
                     </dxe:TextEdit>
                 </StackPanel>
             </DockPanel>
+            <StackPanel DockPanel.Dock="Top">
+                    <DockPanel LastChildFill="False">
+                        <StackPanel DockPanel.Dock="Right">
+                            <dxe:CheckEdit 
+                                Margin="0 2 7 0"
+                                Content="Показать все"
+                                Visibility="{Binding IsShowAllVisibility}"
+                                EditValue="{Binding IsShowAll}"></dxe:CheckEdit>
+                        </StackPanel>
+                    </DockPanel>
+                </StackPanel>
             <dxg:GridControl
                 Style="{StaticResource GridControl.Search}"
                 Name="gridDocuments"
