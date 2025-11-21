@@ -50,9 +50,9 @@
                         <StackPanel DockPanel.Dock="Right">
                             <dxe:CheckEdit 
                                 Margin="0 2 7 0"
-                                Content="Показать все"
-                                Visibility="{Binding IsShowAllVisibility}"
-                                EditValue="{Binding IsShowAll}"></dxe:CheckEdit>
+                                Content="Показать только исключенные"
+                                Visibility="{Binding IsShowExcludeVisibility}"
+                                EditValue="{Binding IsShowExclude}"></dxe:CheckEdit>
                         </StackPanel>
                     </DockPanel>
                 </StackPanel>

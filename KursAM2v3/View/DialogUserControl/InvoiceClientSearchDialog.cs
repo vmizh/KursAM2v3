@@ -641,23 +641,26 @@ public sealed class InvoiceAllSearchDialog : RSWindowViewModelBase, IDataUserCon
     public override void Search(object obj)
     {
         try
-        {
+        {   var providerRepository = new InvoiceProviderRepository(GlobalOptions.GetEntities());
+            var excludes = providerRepository.GetDocCodesForExcludePays();
             ProviderItemsCollection.Clear();
             if (kontragentDC > 0)
             {
                 foreach (var d in InvoicesManager.GetInvoicesProvider(DateTime.Today.AddDays(-365), DateTime.Today,
                              true,
-                             kontragentDC, isAccepted))
+                             kontragentDC, isAccepted).Where(d => !excludes.Contains(d.DocCode)))
+                {
                     ProviderItemsCollection.Add(d);
+                }
             }
             else
             {
-                var providerRepository = new InvoiceProviderRepository(GlobalOptions.GetEntities());
                 foreach (var inv in providerRepository.GetAllByDates(new DateTime(2000,1,1), DateTime.Today)
                              .Where(_ => (_.IsExcludeFromPays ?? false) == false)
                              .Where(inv => !isUsePayment || inv.Summa > inv.PaySumma)
                              .Where(inv => !isAccepted || inv.IsAccepted))
                 {
+                    if (excludes.Contains(inv.DocCode)) continue;
                     if (myCurrency == null)
                     {
                         ProviderItemsCollection.Add(inv);
@@ -668,21 +671,25 @@ public sealed class InvoiceAllSearchDialog : RSWindowViewModelBase, IDataUserCon
                         ProviderItemsCollection.Add(inv);
                 }
             }
-
+            var clientRepository = new InvoiceClientRepository(GlobalOptions.GetEntities());
+            var clientExcludes = clientRepository.GetDocCodesForExcludeFromPays();
             ClientItemsCollection.Clear();
             if (kontragentDC > 0)
             {
-                foreach (var d in InvoicesManager.GetInvoicesClient(new DateTime(2000,1,1), DateTime.Today,
-                             isUsePayment, kontragentDC, isAccepted))
+                foreach (var d in InvoicesManager.GetInvoicesClient(new DateTime(2000, 1, 1), DateTime.Today,
+                             isUsePayment, kontragentDC, isAccepted).Where(d => !clientExcludes.Contains(d.DocCode)))
+                {
                     ClientItemsCollection.Add(d);
+                }
             }
             else
             {
-                var clientRepository = new InvoiceClientRepository(GlobalOptions.GetEntities());
+                
                 foreach (var inv in clientRepository.GetAllByDates(DateTime.Today.AddDays(-365), DateTime.Today)
                              .Where(inv => !isUsePayment || inv.Summa > inv.PaySumma)
                              .Where(inv => !isAccepted || inv.IsAccepted))
                 {
+                    if (clientExcludes.Contains(inv.DocCode)) continue;
                     if (myCurrency == null)
                     {
                         ClientItemsCollection.Add(inv);

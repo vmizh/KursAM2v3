@@ -71,7 +71,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             GenericProviderRepository = new GenericKursDBRepository<SD_26>(UnitOfWork);
             InvoiceProviderRepository = new InvoiceProviderRepository(UnitOfWork);
 
-            IsShowAllVisibility = Visibility.Visible;
+            IsShowExcludeVisibility = Visibility.Visible;
 
             try
             {
@@ -199,7 +199,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     frm.loadingIndicator.Visibility = Visibility.Visible;
                 });
                 var result = InvoiceProviderRepository.GetAllByDates(StartDate, EndDate);
-                if (!IsShowAll)
+                if (IsShowExclude)
                     excludes = InvoiceProviderRepository.GetDocCodesForExcludePays();
                 if (result.Count > 0)
                 {
@@ -230,10 +230,21 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 frm?.Dispatcher.Invoke(() =>
                 {
                     frm.loadingIndicator.Visibility = Visibility.Hidden;
-                    foreach (var d in result.Where(d => !excludes.Contains(d.DocCode)))
+                    if (IsShowExclude)
                     {
-                        Documents.Add(d);
+                        foreach (var d in result.Where(d => excludes.Contains(d.DocCode)))
+                        {
+                            Documents.Add(d);
+                        }
                     }
+                    else
+                    {
+                        foreach (var d in result)
+                        {
+                            Documents.Add(d);
+                        }
+                    }
+
                     if (frm.DataContext is SearchInvoiceProviderViewModel dtx) dtx.IsCanRefresh = true;
                 });
                 GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;

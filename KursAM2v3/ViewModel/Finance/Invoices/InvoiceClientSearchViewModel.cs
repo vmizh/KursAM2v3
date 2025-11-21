@@ -61,7 +61,7 @@ public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
 
     public InvoiceClientSearchViewModel(Window form) : base(form)
     {
-        IsShowAllVisibility = Visibility.Visible;
+        IsShowExcludeVisibility = Visibility.Visible;
         try
         {
             redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
@@ -608,7 +608,7 @@ public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
         {
             frm?.Dispatcher.Invoke(() => { frm.loadingIndicator.Visibility = Visibility.Visible; });
             var result = InvoiceClientRepository.GetAllByDates(StartDate, EndDate);
-            if (!IsShowAll)
+            if (IsShowExclude)
                 excludes = InvoiceClientRepository.GetDocCodesForExcludeFromPays(); 
             if (result.Count > 0)
             {
@@ -640,11 +640,24 @@ public sealed class InvoiceClientSearchViewModel : RSWindowSearchViewModelBase
             {
                 frm.gridDocuments.RefreshData();
                 frm.loadingIndicator.Visibility = Visibility.Hidden;
-                foreach (var d in result)
+                if (IsShowExclude)
                 {
-                    if(excludes.Contains(d.DocCode)) continue;
-                    ((InvoiceClientBase)d).RaisePropertyAllChanged();
-                    Documents.Add(d);
+                    foreach (var d in result)
+                    {
+                        if (excludes.Contains(d.DocCode))
+                        {
+                            ((InvoiceClientBase)d).RaisePropertyAllChanged();
+                            Documents.Add(d);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var d in result)
+                    {
+                        ((InvoiceClientBase)d).RaisePropertyAllChanged();
+                        Documents.Add(d);
+                    }
                 }
             });
             GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;

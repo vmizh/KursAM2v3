@@ -20,8 +20,8 @@ namespace Core.ViewModel.Base
         {
             StartDate = DateTime.Today.AddDays(-14);
             EndDate = DateTime.Today;
-            IsShowAll = false;
-            IsShowAllVisibility = Visibility.Collapsed;
+            IsShowExclude = false;
+            IsShowExcludeVisibility = Visibility.Collapsed;
         }
 
         public RSWindowSearchViewModelBase(Window form) : base(form)
@@ -90,7 +90,7 @@ namespace Core.ViewModel.Base
         }
 
         [Display(AutoGenerateField = false)]
-        public bool IsShowAll
+        public bool IsShowExclude
         {
             get;
             set
@@ -102,7 +102,7 @@ namespace Core.ViewModel.Base
         }
 
         [Display(AutoGenerateField = false)]
-        public Visibility IsShowAllVisibility
+        public Visibility IsShowExcludeVisibility
         {
             get;
             set

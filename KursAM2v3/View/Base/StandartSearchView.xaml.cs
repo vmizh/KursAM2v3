@@ -1,6 +1,5 @@
 ﻿using DevExpress.Xpf.Grid;
 using DevExpress.XtraGrid;
-using Helper;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 namespace KursAM2.View.Base
