@@ -185,8 +185,8 @@ namespace KursAM2.View.Logistiks.UC
         public void SearchNomenkl(object obj)
         {
             NomenklItem.Clear();
-            while (((RedisCacheReferences)GlobalOptions.ReferencesCache).isNomenklCacheLoad)
-                Thread.Sleep(new TimeSpan(0, 0, 5));
+            //while (((RedisCacheReferences)GlobalOptions.ReferencesCache).isNomenklCacheLoad)
+            //    Thread.Sleep(new TimeSpan(0, 0, 5));
             foreach (var n in nomenklRepository.FindByName(SearchText))
                 switch (IsNotUsluga)
                 {

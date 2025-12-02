@@ -144,8 +144,8 @@ namespace KursAM2.View.DialogUserControl
                         includeDCs.AddRange(ctx.SD_26.AsNoTracking().Select(_ => _.SF_POST_DC).Distinct().ToList());
                 }
 
-            while (((RedisCacheReferences)GlobalOptions.ReferencesCache).isNomenklCacheLoad)
-                Thread.Sleep(new TimeSpan(0, 0, 5));
+            //while (((RedisCacheReferences)GlobalOptions.ReferencesCache).isNomenklCacheLoad)
+            //    Thread.Sleep(new TimeSpan(0, 0, 5));
             var KontrList = new List<Kontragent>();
             try
             {

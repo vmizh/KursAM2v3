@@ -40,7 +40,7 @@ namespace Data
         public Nullable<int> NOM_ACC { get; set; }
         public Nullable<int> NOM_SUBACC { get; set; }
         public Nullable<int> NOM_MBP { get; set; }
-        public Nullable<decimal> NOM_PRODUCT_DC { get; set; }
+        public decimal NOM_PRODUCT_DC { get; set; }
         public string NOM_OKP { get; set; }
         public Nullable<decimal> NOM_PRODUCTOR_DC { get; set; }
         public Nullable<decimal> NOM_PROIZVODSTVO { get; set; }

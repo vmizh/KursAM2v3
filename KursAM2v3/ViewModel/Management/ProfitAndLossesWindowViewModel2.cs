@@ -1895,7 +1895,6 @@ namespace KursAM2.ViewModel.Management
                 Manager.CalcCurrencyChange();
                 Manager.CalcZarplata();
                 Manager.CalcZarplataNach();
-                Manager.CalcCashPercent();
                 Manager.CalcNomenklCurrencyChanged();
                 Manager.CalcAccruedAmmount();
                 Manager.CalcStockHolders();

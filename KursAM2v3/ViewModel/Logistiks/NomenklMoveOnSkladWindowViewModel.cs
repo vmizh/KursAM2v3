@@ -1260,8 +1260,8 @@ namespace KursAM2.ViewModel.Logistiks
 
         private void LoadForCurrentSklad4()
         {
-            while (((RedisCacheReferences)GlobalOptions.ReferencesCache).isNomenklCacheLoad)
-                Thread.Sleep(new TimeSpan(0, 0, 5));
+            //while (((RedisCacheReferences)GlobalOptions.ReferencesCache).isNomenklCacheLoad)
+            //    Thread.Sleep(new TimeSpan(0, 0, 5));
             var qdata = nomenklManager.GetNomenklStoreQuantity(CurrentSklad.DocCode, new DateTime(2000, 1, 1),
                 EndDate);
             var q = qdata.Where(_ => _.Prihod > _.Rashod).Select(_ => _.NomDC).ToHashSet();
