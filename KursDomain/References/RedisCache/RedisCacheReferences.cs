@@ -683,7 +683,7 @@ public class RedisCacheReferences : IReferencesCache
                 ? BankAccounts.Values.Cast<ICache>().Max(_ => _.UpdateDate)
                 : DateTime.MinValue;
             if (ctx.SD_114.All(_ => _.UpdateDate <= mDate))
-                if (!ctx.SD_114.Any(_ => _.UpdateDate > BankAccounts.Values.Cast<BankAccount>().Max(x => x.UpdateDate)))
+                if (!ctx.SD_114.Any(_ => _.UpdateDate > mDate))
                     return BankAccounts.Values.ToList();
             {
                 var d = ctx.SD_114.AsNoTracking().Where(_ =>
@@ -756,7 +756,7 @@ public class RedisCacheReferences : IReferencesCache
                 : DateTime.MinValue;
             if (ctx.UD_43.All(_ => _.UpdateDate <= mDate))
                 if (!ctx.UD_43.Any(_ =>
-                        _.UpdateDate > KontragentGroups.Values.Cast<KontragentGroup>().Max(x => x.UpdateDate)))
+                        _.UpdateDate > mDate))
                     return KontragentGroups.Values.ToList();
             {
                 var d = ctx.UD_43.AsNoTracking().Where(_ =>
