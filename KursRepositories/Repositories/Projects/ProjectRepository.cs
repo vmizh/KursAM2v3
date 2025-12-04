@@ -2374,15 +2374,26 @@ namespace KursRepositories.Repositories.Projects
                 }
 
             foreach (var p in data)
-                if (Context.Projects.Any(_ => _.Id == p.Id))
+            {
+                var old = Context.Projects.FirstOrDefault(_ => _.Id == p.Id);
+                if (old != null)
                 {
-                    Context.Projects.Attach(p);
-                    //Context.Entry(p).State = EntityState.Modified;
+                    old.DateEnd = p.DateEnd;
+                    old.DateStart = p.DateStart;
+                    old.IsClosed = p.IsClosed;
+                    old.IsDeleted = p.IsDeleted;
+                    old.IsExcludeFromProfitAndLoss = p.IsExcludeFromProfitAndLoss;
+                    old.ManagerDC = p.ManagerDC;
+                    old.Note = p.Note;
+                    old.ParentId = p.ParentId;
+                    old.UpdateDate = DateTime.Now;
+                    old.Name = p.Name;
                 }
                 else
                 {
                     Context.Projects.Add(p);
                 }
+            }
 
             return new BoolResult { Result = true };
         }
