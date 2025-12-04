@@ -1246,16 +1246,37 @@ public class BankOperationsManager
                     SummaOut = 0,
                     Currency = GlobalOptions.ReferencesCache.GetBankAccount(bankDC).Currency as Currency
                 };
-            return new ReminderDatePeriod
+            ReminderDatePeriod ret = new ReminderDatePeriod();
+            if (endDate < DateStart && data.First(_ => _.Date == endDate).End == 0)
             {
-                DateEnd = DateEnd,
-                DateStart = DateStart,
-                SummaStart = data.First(_ => _.Date == startDate).Start,
-                SummaEnd = data.First(_ => _.Date == endDate).End,
-                SummaIn = data.Where(_ => _.Date >= DateStart && _.Date <= DateEnd).Sum(_ => _.SummaIn),
-                SummaOut = data.Where(_ => _.Date >= DateStart && _.Date <= DateEnd).Sum(_ => _.SummaOut),
-                Currency = GlobalOptions.ReferencesCache.GetBankAccount(bankDC).Currency as Currency
-            };
+                ret = new ReminderDatePeriod
+                {
+                    DateEnd = DateEnd,
+                    DateStart = DateStart,
+                    SummaStart = 0,
+                    SummaEnd = 0,
+                    SummaIn = 0,
+                    SummaOut = 0,
+                    Currency = GlobalOptions.ReferencesCache.GetBankAccount(bankDC).Currency as Currency
+                };
+            }
+            else
+            {
+                ret = new ReminderDatePeriod
+                {
+                    DateEnd = DateEnd,
+                    DateStart = DateStart,
+                    SummaStart = data.First(_ => _.Date == startDate).Start,
+                    SummaEnd = data.First(_ => _.Date == endDate).End,
+                    SummaIn = data.Where(_ => _.Date >= DateStart && _.Date <= DateEnd).Sum(_ => _.SummaIn),
+                    SummaOut = data.Where(_ => _.Date >= DateStart && _.Date <= DateEnd).Sum(_ => _.SummaOut),
+                    Currency = GlobalOptions.ReferencesCache.GetBankAccount(bankDC).Currency as Currency
+                };
+            }
+
+            ;
+            
+            return ret;
         }
     }
 
