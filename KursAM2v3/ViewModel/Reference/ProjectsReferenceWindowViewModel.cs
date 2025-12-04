@@ -6,13 +6,13 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core.ViewModel.Base;
-using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Data;
 using DevExpress.Mvvm;
 using DevExpress.Mvvm.POCO;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
+using DevExpress.Xpf.Grid.TreeList;
 using KursAM2.Dialogs;
 using KursAM2.View.KursReferences;
 using KursAM2.ViewModel.Reference.Dialogs;
@@ -20,6 +20,7 @@ using KursDomain;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.WindowsManager.WindowsManager;
 using KursRepositories.Repositories.Base;
 using KursRepositories.Repositories.Projects;
 
@@ -61,28 +62,21 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
     public override string LayoutName => "ProjectReferenceWindowViewModel2";
     public override string WindowName => "Справочник проектов";
 
-    public ObservableCollection<ProjectViewModel> Projects { set; get; } =
-        new ObservableCollection<ProjectViewModel>();
+    public ObservableCollection<ProjectViewModel> Projects { set; get; } = [];
 
-    public ObservableCollection<ProjectViewModel> SelectedProjects { set; get; } =
-        new ObservableCollection<ProjectViewModel>();
+    public ObservableCollection<ProjectViewModel> SelectedProjects { set; get; } = [];
 
-    public ObservableCollection<ProjectViewModel> DeletedProjects { set; get; } =
-        new ObservableCollection<ProjectViewModel>();
+    public ObservableCollection<ProjectViewModel> DeletedProjects { set; get; } = [];
 
-    public ObservableCollection<ProjectGroupViewModel> GroupProjects { set; get; } =
-        new ObservableCollection<ProjectGroupViewModel>();
+    public ObservableCollection<ProjectGroupViewModel> GroupProjects { set; get; } = [];
 
-    public ObservableCollection<ProjectGroupViewModel> SelectedGroupProjects { set; get; } =
-        new ObservableCollection<ProjectGroupViewModel>();
+    public ObservableCollection<ProjectGroupViewModel> SelectedGroupProjects { set; get; } = [];
 
-    public ObservableCollection<ProjectGroupViewModel> DeletedGroupProjects { set; get; } =
-        new ObservableCollection<ProjectGroupViewModel>();
+    public ObservableCollection<ProjectGroupViewModel> DeletedGroupProjects { set; get; } = [];
 
-    public ObservableCollection<ProjectViewModel> LinkGroupProjects { set; get; } =
-        new ObservableCollection<ProjectViewModel>();
+    public ObservableCollection<ProjectViewModel> LinkGroupProjects { set; get; } = [];
 
-    public List<Guid> GroupProjLinkDeleted { get; } = new List<Guid>();
+    public List<Guid> GroupProjLinkDeleted { get; } = [];
 
     public ProjectViewModel CurrentProject
     {
@@ -149,6 +143,28 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
 
     #region Commands
 
+    public ICommand ProjectValueChangingCommand
+    {
+        get { return new Command(ProjectValueChanging, _ => true); }
+    }
+
+    private void ProjectValueChanging(object obj)
+    {
+        if (obj is not TreeListCellValueChangedEventArgs args) return;
+        switch (args.Column.FieldName)
+        {
+            case "IsClosed":
+            {
+                foreach (var p in Projects.Where(_ => _.ParentId == CurrentProject.Id))
+                {
+                    p.IsClosed = (bool)args.Value;
+                }
+
+                break;
+            }
+        }
+    }
+
     public ICommand ExcludeFromProfitLossCommand
     {
         get { return new Command(ExcludeFromProfitLoss, _ => CurrentProject?.IsExcludeFromProfitAndLoss == false); }
@@ -173,7 +189,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
     }
 
     private void IncludeInProfitLoss(object obj)
-    { 
+    {
         CurrentProject.IsExcludeFromProfitAndLoss = false;
         myPojectRepository.IncludeInProfitLoss(CurrentProject.Id);
         CurrentProject.myState = RowStatus.NotEdited;
@@ -210,10 +226,9 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
             {
                 if (Projects.All(_ => _.ParentId != p.Id)) continue;
                 foreach (var pd in Projects.Where(_ => _.ParentId == p.Id))
-                {
                     p.LinkDocumentsCount += pd.Entity.ProjectDocuments.Count;
-                }
             }
+
             foreach (var grp in myPojectRepository.LoadGroups())
                 GroupProjects.Add(new ProjectGroupViewModel(grp) { myState = RowStatus.NotEdited });
         }
@@ -305,7 +320,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
     {
         var WinManager = new WindowManager();
         if (CurrentProject.State != RowStatus.NewRow)
-           DeletedProjects.Add(CurrentProject);
+            DeletedProjects.Add(CurrentProject);
         Projects.Remove(CurrentProject);
     }
 

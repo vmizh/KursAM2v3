@@ -4,6 +4,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:dxg="http://schemas.devexpress.com/winfx/2008/xaml/grid"
+    xmlns:dxmvvm="http://schemas.devexpress.com/winfx/2008/xaml/mvvm"
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core"
     xmlns:control="clr-namespace:KursDomain.Control;assembly=KursDomain"
     xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol"
@@ -42,6 +43,11 @@
                                               EnableImmediatePosting="True"
                                               KeyFieldName="Id"
                                               ParentFieldName="ParentId">
+                                <dxmvvm:Interaction.Behaviors>
+                                    <dxmvvm:EventToCommand EventName="CellValueChanging"
+                                                           Command="{Binding ProjectValueChangingCommand}" 
+                                                           PassEventArgsToCommand="True"/>
+                                </dxmvvm:Interaction.Behaviors>
                                 <dxg:TreeListView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Добавить проект" Command="{Binding AddProjectCommand}">
