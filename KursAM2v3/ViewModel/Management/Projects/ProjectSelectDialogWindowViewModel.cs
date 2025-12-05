@@ -105,7 +105,7 @@ public sealed class ProjectSelectDialogWindowViewModel : RSWindowViewModelBase
     {
         AllProjects.Clear();
         var oldPrjs = myRepository.GetDocumentsProjects(DocumentType, DocumentDC, IsCurrencyConvert);
-        foreach (var prj in GlobalOptions.ReferencesCache.GetProjectsAll().Cast<Project>())
+        foreach (var prj in GlobalOptions.ReferencesCache.GetProjectsAll().Where(_ => !_.IsClosed).Cast<Project>())
         {
             var newItem = new ProjectLinkItem
             {

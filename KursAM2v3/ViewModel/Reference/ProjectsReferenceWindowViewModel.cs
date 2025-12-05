@@ -145,7 +145,7 @@ public sealed class ProjectReferenceWindowViewModel : RSWindowViewModelBase
 
     public ICommand ProjectValueChangingCommand
     {
-        get { return new Command(ProjectValueChanging, _ => true); }
+        get { return new Command(ProjectValueChanging, _ => CurrentProject != null); }
     }
 
     private void ProjectValueChanging(object obj)

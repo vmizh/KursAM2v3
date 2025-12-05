@@ -210,7 +210,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
     public ICommand AddDocumentCommand
     {
-        get { return new Command(AddDocument, _ => CurrentProject is not null); }
+        get { return new Command(AddDocument, _ => CurrentProject is not null && !CurrentProject.IsClosed); }
     }
 
     private void AddDocument(object obj)
@@ -249,7 +249,11 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
     public ICommand DeleteDocumentCommand
     {
-        get { return new Command(DeleteDocument, _ => CurrentDocument is not null); }
+        get
+        {
+            return new Command(DeleteDocument,
+                _ => CurrentProject is not null && CurrentDocument is not null && !CurrentProject.IsClosed);
+        }
     }
 
     private void DeleteDocument(object obj)
