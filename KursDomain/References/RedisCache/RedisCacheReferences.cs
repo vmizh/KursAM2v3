@@ -1510,36 +1510,11 @@ public class RedisCacheReferences : IReferencesCache
         if (dc is null) return null;
         if (Employees.Count == 0)
             GetEmployees();
-        //if (!cacheKeysDict.ContainsKey("Employee"))
-        //    LoadCacheKeys("Employee");
-
-        //var key = cacheKeysDict["Employee"].CachKeys.SingleOrDefault(_ => _.DocCode == dc.Value);
-        //Employee itemNew;
-        //if (key is not null)
-        //{
-        //    if (Employees.TryGetValue(dc.Value, out var Employee))
-        //        return Employee;
-        //    itemNew = GetItem<Employee>(key.Key);
-        //    if (itemNew is null) return null;
-        //    itemNew.LoadFromCache();
-        //}
-        //else
-        //{
-        //    using (var ctx = GlobalOptions.GetEntities())
-        //    {
-        //        var ent = ctx.SD_2.FirstOrDefault(_ => _.DOC_CODE == dc.Value);
-        //        if (ent is null) return null;
-        //        var newItem = new Employee();
-        //        newItem.LoadFromEntity(ent, this);
-        //        UpdateList2(new List<Employee>(new[] { newItem }));
-        //        Employees.AddOrUpdate(dc.Value, newItem);
-        //        return Employees[dc.Value];
-        //    }
-        //}
-
+        
         if (Employees.ContainsKey(dc.Value))
             return Employees[dc.Value];
-        return null;
+        var ret = Employees.Values.Cast<Employee>().FirstOrDefault(_ => _.DocCode == dc.Value);
+        return ret ?? null;
     }
 
     public IEmployee GetEmployee(Guid? id)
