@@ -679,12 +679,23 @@ public class RedisCacheReferences : IReferencesCache
     {
         using (var ctx = GlobalOptions.GetEntities())
         {
+            if (BankAccounts.Count != ctx.SD_114.Count())
+            {
+                var d = ctx.SD_114.AsNoTracking().ToList();
+                foreach (var item in d)
+                {
+                    var newItem = new BankAccount();
+                    newItem.LoadFromEntity(item, this);
+                    BankAccounts.AddOrUpdate(newItem.DocCode, newItem);
+                }
+                return BankAccounts.Values.ToList();
+            }
             var mDate = BankAccounts.Any()
                 ? BankAccounts.Values.Cast<ICache>().Max(_ => _.UpdateDate)
                 : DateTime.MinValue;
             if (ctx.SD_114.All(_ => _.UpdateDate <= mDate))
-                if (!ctx.SD_114.Any(_ => _.UpdateDate > mDate))
-                    return BankAccounts.Values.ToList();
+                return BankAccounts.Values.ToList();
+            if (!ctx.SD_114.Any(_ => _.UpdateDate > mDate))
             {
                 var d = ctx.SD_114.AsNoTracking().Where(_ =>
                     _.UpdateDate > mDate).ToList();
@@ -1571,23 +1582,43 @@ public class RedisCacheReferences : IReferencesCache
         throw new NotImplementedException();
     }
 
+    #region TimeOut
+
+    private const int secondForCheckUpdate = 300;
+
+    private DateTime checkSDRSchetUpdate = DateTime.MinValue;
+
+    #endregion
+
+
     public IEnumerable<ISDRSchet> GetSDRSchetAll()
     {
+        DateTime mDate = DateTime.MinValue;
         using (var ctx = GlobalOptions.GetEntities())
         {
-            var mDate = SDRSchets.Any() ? SDRSchets.Values.Cast<ICache>().Max(_ => _.UpdateDate) : DateTime.MinValue;
-            if (ctx.SD_303.All(_ => _.UpdateDate <= mDate))
-                if (!ctx.SD_303.Any(_ => _.UpdateDate > mDate))
-                    return SDRSchets.Values.ToList();
+            if (checkSDRSchetUpdate < DateTime.Now.AddSeconds(-secondForCheckUpdate))
             {
-                var d = ctx.SD_303.AsNoTracking().Where(_ =>
-                    _.UpdateDate > mDate).ToList();
-                foreach (var item in d)
-                {
-                    var newItem = new SDRSchet();
-                    newItem.LoadFromEntity(item, this);
-                    SDRSchets.AddOrUpdate(newItem.DocCode, newItem);
-                }
+                checkSDRSchetUpdate = DateTime.Now;
+                mDate = SDRSchets.Any()
+                    ? SDRSchets.Values.Cast<ICache>().Max(_ => _.UpdateDate)
+                    : DateTime.MinValue;
+                if (ctx.SD_303.All(_ => _.UpdateDate <= mDate))
+                    return SDRSchets.Values.ToList();
+            }
+            else
+            {
+                return SDRSchets.Values.ToList();
+            }
+
+            if (ctx.SD_303.Any(_ => _.UpdateDate > mDate)) return SDRSchets.Values.ToList();
+
+            var d = ctx.SD_303.AsNoTracking().Where(_ =>
+                _.UpdateDate > mDate).ToList();
+            foreach (var item in d)
+            {
+                var newItem = new SDRSchet();
+                newItem.LoadFromEntity(item, this);
+                SDRSchets.AddOrUpdate(newItem.DocCode, newItem);
             }
         }
 

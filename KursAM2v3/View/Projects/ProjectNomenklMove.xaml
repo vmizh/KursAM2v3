@@ -55,8 +55,8 @@
                                               Name="tableViewPtojects"
                                               ParentFieldName="ParentId"
                                               KeyFieldName="Id"
-                                              ShowAutoFilterRow="False"
-                                              AllowEditing="False">
+                                              ShowAutoFilterRow="True"
+                                              AllowEditing="False" ShowCriteriaInAutoFilterRow="True">
                                 <dxg:TreeListView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть справочник проектов"

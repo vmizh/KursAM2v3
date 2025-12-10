@@ -58,7 +58,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
             DOC_CODE = -1,
             SD_101 = new SD_101()
         };
-        SHPZList = GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList();
+        //SHPZList = GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList();
         updateReferences();
         RaisePropertyChanged(nameof(SHPZList));
         RaisePropertyChanged(nameof(IsNotCurrencyChange));
@@ -1073,8 +1073,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
     public List<References.Currency> CurrencysCompendium =>
         GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<References.Currency>().ToList();
 
-    public List<SDRSchet> SHPZList { set; get; } =
-        GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList();
+    public List<SDRSchet> SHPZList { set; get; } 
 
     #endregion
 }

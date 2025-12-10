@@ -27,7 +27,6 @@ using KursAM2.ReportManagers.SFClientAndWayBill;
 using KursAM2.Repositories.InvoicesRepositories;
 using KursAM2.Repositories.RedisRepository;
 using KursAM2.View.DialogUserControl;
-using KursAM2.View.DialogUserControl.Invoices.ViewModels;
 using KursAM2.View.DialogUserControl.Standart;
 using KursAM2.View.Finance.Invoices;
 using KursAM2.View.Helper;
@@ -57,21 +56,20 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
     #region Fields
 
     private InvoicePaymentDocument myCurrentPaymentDoc;
-    private readonly NomenklManager2 nomenklManager = new NomenklManager2(GlobalOptions.GetEntities());
+    private readonly NomenklManager2 nomenklManager = new(GlobalOptions.GetEntities());
 
     // ReSharper disable once InconsistentNaming
     private InvoiceClientRowViewModel _myCurrentRow;
-    private ShipmentRowViewModel myCurrentShipmentRow;
     private InvoiceClientViewModel myDocument;
     private decimal myOtgruzheno;
     private RSWindowViewModelBase myParentForm;
 
     public readonly UnitOfWork<ALFAMEDIAEntities> UnitOfWork =
-        new UnitOfWork<ALFAMEDIAEntities>(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
+        new(new ALFAMEDIAEntities(GlobalOptions.SqlConnectionString));
 
     public readonly GenericKursDBRepository<SD_84> GenericClientRepository;
     public readonly IInvoiceClientRepository InvoiceClientRepository;
-    private readonly List<decimal> myUsedNomenklsDC = new List<decimal>();
+    private readonly List<decimal> myUsedNomenklsDC = new();
 
     // ReSharper disable once NotAccessedField.Local
     public bool IsLoadPay = true;
@@ -81,7 +79,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
     #endregion
 
     #region Constructors
-    
+
     public ClientWindowViewModel()
     {
         try
@@ -112,12 +110,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
                     });
                 mySubscriber.Subscribe(
                     new RedisChannel(RedisMessageChannels.ReferenceUpdate, RedisChannel.PatternMode.Auto),
-                    (_, message) =>
-                    {
-
-                        Form.Dispatcher.Invoke(() => UpdateReferences(message));
-
-                    });
+                    (_, message) => { Form.Dispatcher.Invoke(() => UpdateReferences(message)); });
                 mySubscriber.Subscribe(
                     new RedisChannel(RedisMessageChannels.Bank, RedisChannel.PatternMode.Auto),
                     (_, message) =>
@@ -307,16 +300,15 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         }
     }
 
-    public ObservableCollection<ShipmentRowViewModel> SelectedShipmnetRows { set; get; }
-        = new ObservableCollection<ShipmentRowViewModel>();
+    public ObservableCollection<ShipmentRowViewModel> SelectedShipmnetRows { set; get; } = new();
 
     public ShipmentRowViewModel CurrentShipmentRow
     {
-        get => myCurrentShipmentRow;
+        get;
         set
         {
-            if (Equals(myCurrentShipmentRow, value)) return;
-            myCurrentShipmentRow = value;
+            if (Equals(field, value)) return;
+            field = value;
             RaisePropertyChanged();
         }
     }
@@ -877,7 +869,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         if (service.ShowDialog(MessageButton.OKCancel, "Выбор номенклатур", dtx) == MessageResult.OK
             || dtx.DialogResult)
         {
-            var newCode = UnitOfWork.Context.TD_84.Any() ?  UnitOfWork.Context.TD_84.Max(_ => _.CODE) + 1 : 1;
+            var newCode = UnitOfWork.Context.TD_84.Any() ? UnitOfWork.Context.TD_84.Max(_ => _.CODE) + 1 : 1;
             foreach (var item in dtx.SelectedItems)
             {
                 if (Document != null && Document.Rows.Cast<InvoiceClientRowViewModel>()
@@ -1005,37 +997,38 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         {
             EmployeeList = GlobalOptions.ReferencesCache.GetEmployees().Cast<Employee>()
                 .OrderBy(_ => _.Name).ToList();
-            Document.PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(Document.PersonaResponsible.DocCode) as Employee;
+            Document.PersonaResponsible =
+                GlobalOptions.ReferencesCache.GetEmployee(Document.PersonaResponsible.DocCode) as Employee;
         }
+
         if ((string)message.ExternalValues["Type"] == "PayCondition")
         {
             PayConditions = GlobalOptions.ReferencesCache.GetPayConditionAll()
                 .Cast<PayCondition>()
                 .OrderBy(_ => _.Name).ToList();
             RaisePropertyChanged(nameof(PayConditions));
-            Document.PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(Document.PayCondition?.DocCode) as PayCondition;
+            Document.PayCondition =
+                GlobalOptions.ReferencesCache.GetPayCondition(Document.PayCondition?.DocCode) as PayCondition;
         }
+
         if ((string)message.ExternalValues["Type"] == "CentrResponsibility")
         {
-             COList = GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
+            COList = GlobalOptions.ReferencesCache.GetCentrResponsibilitiesAll()
                 .Cast<PayCondition>()
                 .OrderBy(_ => _.Name).Cast<CentrResponsibility>().ToList();
             RaisePropertyChanged(nameof(COList));
-            Document.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(Document.CO?.DocCode) as CentrResponsibility;
+            Document.CO =
+                GlobalOptions.ReferencesCache.GetCentrResponsibility(Document.CO?.DocCode) as CentrResponsibility;
         }
 
         if ((string)message.ExternalValues["Type"] == "Kontragent")
-        {
             Document.Client = GlobalOptions.ReferencesCache.GetKontragent(Document.Client?.DocCode) as Kontragent;
-        }
         if ((string)message.ExternalValues["Type"] == "Nomenkl")
-        {
             foreach (var row in Document.Rows)
             {
                 row.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.Nomenkl.DocCode) as Nomenkl;
                 ((InvoiceClientRowViewModel)row).RaisePropertyAllChanged();
             }
-        }
 
         if ((string)message.ExternalValues["Type"] == "SDRSchet")
         {
@@ -1046,11 +1039,9 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
             }
 
             if (Form is InvoiceClientView frm)
-            {
                 frm.SDRSchetList.ItemsSource = GlobalOptions.ReferencesCache.GetSDRSchetAll().ToList();
-            }
-
         }
+
         Document.myState = state;
         RaisePropertyChanged(nameof(Document));
     }
@@ -1382,9 +1373,10 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         var d = UnitOfWork.Context.TD_84.FirstOrDefault(_ => _.CODE == CurrentRow.Code);
         if (d is not null)
         {
-            UnitOfWork.Context.TD_84.Remove(d); 
+            UnitOfWork.Context.TD_84.Remove(d);
             UnitOfWork.Context.TD_84.Remove(CurrentRow.Entity);
         }
+
         UpdateVisualData(null);
     }
 
@@ -1488,18 +1480,19 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         if (Document == null) return;
         var ctx = new ClientWindowViewModel
         {
-            IsLoadPay = false,
+            IsLoadPay = false
         };
         ctx.Document = ctx.InvoiceClientRepository.GetFullCopy(Document.DocCode);
         ctx.Document.Rows.Clear();
         ctx.Document.Entity.TD_84.Clear();
         ctx.Document.Summa = 0;
         ctx.UnitOfWork.Context.SD_84.Add(ctx.Document.Entity);
-        foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
+        foreach (var ent in ctx.UnitOfWork.Context.ChangeTracker.Entries())
         {
             if (ent.Entity is SD_84 or TD_84) continue;
             ent.State = EntityState.Unchanged;
         }
+
         var frm = new InvoiceClientView
         {
             Owner = Application.Current.MainWindow,
@@ -1514,15 +1507,16 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         if (Document == null) return;
         var ctx = new ClientWindowViewModel
         {
-            IsLoadPay = false,
+            IsLoadPay = false
         };
         ctx.Document = ctx.InvoiceClientRepository.GetFullCopy(Document.DocCode);
         ctx.UnitOfWork.Context.SD_84.Add(ctx.Document.Entity);
-        foreach (var ent in  ctx.UnitOfWork.Context.ChangeTracker.Entries())
+        foreach (var ent in ctx.UnitOfWork.Context.ChangeTracker.Entries())
         {
             if (ent.Entity is SD_84 or TD_84) continue;
             ent.State = EntityState.Unchanged;
         }
+
         var frm = new InvoiceClientView
         {
             Owner = Application.Current.MainWindow,
@@ -1610,7 +1604,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         var k = StandartDialogs.SelectNomenkls(Document?.Currency, true);
         if (k != null)
         {
-            var newCode = UnitOfWork.Context.TD_84.Any() ?  UnitOfWork.Context.TD_84.Max(_ => _.CODE) + 1 : 1;
+            var newCode = UnitOfWork.Context.TD_84.Any() ? UnitOfWork.Context.TD_84.Max(_ => _.CODE) + 1 : 1;
             foreach (var item in k)
             {
                 if (Document != null && Document.Rows.Cast<InvoiceClientRowViewModel>()

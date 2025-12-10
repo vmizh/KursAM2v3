@@ -457,6 +457,9 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
             "ClientQuantity", "ProviderShippedQuantity", "ClientShippedQuantity"
         ];
         if (Form is not ProjectNomenklMove frm) return;
+
+        frm.tableViewPtojects.ShowAutoFilterRow = true;
+
         frm.gridNomenklRows.TotalSummary.Clear();
         frm.gridDocumentsRows.TotalSummary.Clear();
         foreach (var col in frm.gridDocumentsRows.Columns)

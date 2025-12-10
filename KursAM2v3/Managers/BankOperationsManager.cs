@@ -92,8 +92,14 @@ public class BankOperationsManager
                     .Where(_ => _.SD_101.VV_ACC_DC == docCode && _.SD_101.VV_START_DATE >= dateStart
                                                               && _.SD_101.VV_START_DATE <= dateEnd).AsNoTracking()
                     .ToList();
+                var shpzList = GlobalOptions.ReferencesCache.GetSDRSchetAll().Cast<SDRSchet>().ToList();
                 foreach (var item in data)
-                    result.Add(new BankOperationsViewModel(item));
+                {
+                    result.Add(new BankOperationsViewModel(item)
+                    {
+                        SHPZList = shpzList
+                    });
+                }
             }
         }
         catch (Exception e)
