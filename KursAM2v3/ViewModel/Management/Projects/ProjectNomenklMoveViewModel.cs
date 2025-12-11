@@ -18,7 +18,6 @@ using KursAM2.ViewModel.Reference;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Projects;
-using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.WindowsManager.WindowsManager;
@@ -88,7 +87,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
         [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Результат (сумма)")]
         [DisplayFormat(DataFormatString = "n2")]
-        public decimal DocSummaResult =>  DocSummaOut - DocSummaIn;
+        public decimal DocSummaResult => DocSummaOut - DocSummaIn;
 
         #endregion
 
@@ -106,7 +105,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         [DisplayFormat(DataFormatString = "n2")]
         public decimal FactSummaIn { get; set; }
 
-        [Display(AutoGenerateField = true,GroupName = "Фактические", Name = "Сумма(расход)")]
+        [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Сумма(расход)")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal FactSummaOut { get; set; }
 
@@ -141,7 +140,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         #endregion
 
         #region Сводные результаты
-        
+
         [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Цена закупки")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal ResultPriceIn { get; set; }
@@ -153,7 +152,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Цена продажи")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal ResultPriceOut { get; set; }
-        
+
         [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Продано (кол-во)")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal ResultQuantityOut { get; set; }
@@ -177,10 +176,11 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Предполагаемый доход")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal ExpectedIncomeSumma { get; set; }
+
         [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Предполагаемая маржа")]
         [DisplayFormat(DataFormatString = "n2")]
         public decimal ExpectedIncomeProfit { get; set; }
-
+        
         #endregion
     }
 
@@ -200,15 +200,13 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
     }
 
 
-    
-
     public ICommand IncludeInProfitLossCommand
     {
         get { return new Command(IncludeInProfitLoss, _ => CurrentProject?.IsExcludeFromProfitAndLoss == true); }
     }
 
     private void IncludeInProfitLoss(object obj)
-    { 
+    {
         CurrentProject.IsExcludeFromProfitAndLoss = false;
         myProjectRepository.IncludeInProfitLoss(CurrentProject.Id);
     }
@@ -252,7 +250,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
     public ICommand IncludeIntoProjectCommand
     {
-        get { return new Command(IncludeIntoProject, _ => (CurrentDocument?.IsInclude ?? false) == false); }
+        get { return new Command(IncludeIntoProject, _ => !(CurrentDocument?.IsInclude ?? false)); }
     }
 
     private void IncludeIntoProject(object obj)
@@ -448,8 +446,8 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
             "DocQuantityResult", "DocSummaResult", "FactQuantityResult", "FactSummaResult", "FactQuantityIn",
             "FactQuantityOut",
             "FactSummaIn", "FactSummaOut", "NakladSumma", "DilerSumma",
-            "ResultSummaIn","ResultQuantityIn","ResultQuantityOut","ResultSummaOut","Result","ResultOstatok",
-            "ResultOstatokSumma","ExpectedIncomeSumma","ExpectedIncomeProfit"
+            "ResultSummaIn", "ResultQuantityIn", "ResultQuantityOut", "ResultSummaOut", "Result", "ResultOstatok",
+            "ResultOstatokSumma", "ExpectedIncomeSumma", "ExpectedIncomeProfit"
         ];
         HashSet<string> colDocSumNames =
         [
@@ -580,14 +578,17 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
                 NomId = n.NomId ?? Guid.Empty,
                 NomName = n.NomName,
                 NomNomenkl = n.NomNomenkl,
-                HasExcluded = n.HasExcluded ?? false,
-
+                HasExcluded = n.HasExcluded ?? false
             };
-            newItem.ResultPriceIn = Math.Round(newItem.FactSummaIn == 0 ? 0 : (newItem.FactSummaIn + newItem.NakladSumma) / newItem.FactQuantityIn,2);
+            newItem.ResultPriceIn =
+                Math.Round(
+                    newItem.FactSummaIn == 0 ? 0 : (newItem.FactSummaIn + newItem.NakladSumma) / newItem.FactQuantityIn,
+                    2);
             newItem.ResultSummaIn = newItem.ResultPriceIn * newItem.FactQuantityOut + newItem.ServiceProviderSumma;
             newItem.ResultQuantityOut = newItem.FactQuantityOut;
             newItem.ResultSummaOut = (decimal)(n.FactSummaOut - n.DilerSumma + (newItem.IsService ? n.DocSummaOut : 0));
-            newItem.ResultPriceOut = Math.Round(newItem.ResultQuantityOut == 0 ? 0 : newItem.ResultSummaOut / newItem.ResultQuantityOut,2);
+            newItem.ResultPriceOut =
+                Math.Round(newItem.ResultQuantityOut == 0 ? 0 : newItem.ResultSummaOut / newItem.ResultQuantityOut, 2);
             newItem.Result = newItem.ResultSummaOut - newItem.ResultSummaIn;
             newItem.ResultOstatok = newItem.FactQuantityIn - newItem.FactQuantityOut;
             newItem.ResultOstatokSumma = newItem.ResultPriceIn * newItem.ResultOstatok;

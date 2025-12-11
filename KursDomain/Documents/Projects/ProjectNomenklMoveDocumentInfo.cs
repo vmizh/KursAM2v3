@@ -78,4 +78,9 @@ public class ProjectNomenklMoveDocumentInfo
 
     [Display(AutoGenerateField = true)] public bool IsInclude { set; get; } = false;
 
+    [Display(AutoGenerateField = true, Name = "С/ф №")]
+    public string SFNumber { set; get; }
+    [Display(AutoGenerateField = true, Name = "С/ф дата")]
+    public DateTime SFDate { set; get; }
+
 }

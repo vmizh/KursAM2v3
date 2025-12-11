@@ -2693,7 +2693,9 @@ namespace KursRepositories.Repositories.Projects
                         ProviderQuantity = doc.ProviderInvoicePay.Sum(_ => _.Summa),
                         ProviderShipped = shipped,
                         ProviderSumma = doc.TD_26.Sum(_ => _.SFT_SUMMA_K_OPLATE_KONTR_CRS) ?? 0,
-                        ProviderShippedQuantity = shippedRow?.DDT_KOL_PRIHOD ?? 0
+                        ProviderShippedQuantity = shippedRow?.DDT_KOL_PRIHOD ?? 0,
+                        SFDate = doc.SF_POSTAV_DATE,
+                        SFNumber = $"{doc.SF_IN_NUM}/{doc.SF_POSTAV_NUM}"
                     }
                 );
             }
@@ -2726,7 +2728,9 @@ namespace KursRepositories.Repositories.Projects
                         Warehouse = shippedRow.Any()
                             ? (Warehouse)GlobalOptions.ReferencesCache.GetWarehouse(shippedRow.First().SD_24
                                 .DD_SKLAD_OTPR_DC)
-                            : null
+                            : null,
+                        SFDate = doc.SF_DATE,
+                        SFNumber = $"{doc.SF_IN_NUM}/{doc.SF_OUT_NUM}"
                     }
                 );
             }
@@ -2758,7 +2762,9 @@ namespace KursRepositories.Repositories.Projects
                             ProviderQuantity = crsConv.Quantity,
                             ProviderShippedQuantity = crsConv.Quantity,
                             ProviderShipped = crsConv.Summa,
-                            ProviderSumma = crsConv.Summa
+                            ProviderSumma = crsConv.Summa,
+                            SFDate = doc.SF_POSTAV_DATE,
+                            SFNumber = $"{doc.SF_IN_NUM}/{doc.SF_POSTAV_NUM}"
                         }
                     );
             }
@@ -2840,7 +2846,9 @@ namespace KursRepositories.Repositories.Projects
                             ProviderQuantity = doc.ProviderInvoicePay.Sum(_ => _.Summa),
                             ProviderShipped = shipped,
                             ProviderSumma = doc.TD_26.Sum(_ => _.SFT_SUMMA_K_OPLATE_KONTR_CRS) ?? 0,
-                            ProviderShippedQuantity = shippedRow?.DDT_KOL_PRIHOD ?? 0
+                            ProviderShippedQuantity = shippedRow?.DDT_KOL_PRIHOD ?? 0,
+                            SFDate = doc.SF_POSTAV_DATE,
+                            SFNumber = $"{doc.SF_IN_NUM}/{doc.SF_POSTAV_NUM}"
                         }
                     );
                 }
@@ -2880,7 +2888,9 @@ namespace KursRepositories.Repositories.Projects
                         ClientShippedQuantity = shippedRow?.DDT_KOL_RASHOD ?? 0,
                         Warehouse = shippedRow != null
                             ? (Warehouse)GlobalOptions.ReferencesCache.GetWarehouse(shippedRow.SD_24.DD_SKLAD_OTPR_DC)
-                            : null
+                            : null,
+                        SFNumber = $"{doc.SF_IN_NUM}/{doc.SF_OUT_NUM}",
+                        SFDate = doc.SF_DATE
                     }
                 );
             }
@@ -2913,7 +2923,9 @@ namespace KursRepositories.Repositories.Projects
                             ProviderQuantity = crsConv.Quantity,
                             ProviderShippedQuantity = crsConv.Quantity,
                             ProviderShipped = crsConv.Summa,
-                            ProviderSumma = crsConv.Summa
+                            ProviderSumma = crsConv.Summa,
+                            SFDate = doc.SF_POSTAV_DATE,
+                            SFNumber = $"{doc.SF_IN_NUM}/{doc.SF_POSTAV_NUM}"
                         }
                     );
             }
