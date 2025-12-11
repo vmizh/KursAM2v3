@@ -145,15 +145,15 @@ public class NomenklMain : IDocGuid, IName, INomenklMain, IEquatable<NomenklMain
     {
         if (GlobalOptions.ReferencesCache is not RedisCacheReferences cache) return;
         if (UnitDC is not null)
-            Unit = cache.GetItem<Unit>(UnitDC.Value);
+            Unit = cache.GetUnit(UnitDC.Value);
         if (CategoryDC is not null)
-            Category = cache.GetItem<NomenklGroup>(CategoryDC.Value);
+            Category = cache.GetNomenklGroup(CategoryDC.Value);
         if (NomenklTypeDC is not null)
-            NomenklType = cache.GetItem<NomenklType>(NomenklTypeDC.Value);
+            NomenklType = cache.GetNomenklType(NomenklTypeDC.Value);
         if (ProductTypeDC is not null)
-            ProductType = cache.GetItem<ProductType>(ProductTypeDC.Value);
+            ProductType = cache.GetProductType(ProductTypeDC.Value);
         if (CountryId is not null)
-            Country = cache.GetItemGuid<Country>(CountryId.Value);
+            Country = cache.GetCountry(CountryId.Value);
         
     }
     [Display(AutoGenerateField = false, Name = "Посл.обновление")]

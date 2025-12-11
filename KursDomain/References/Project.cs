@@ -236,6 +236,11 @@ public class ProjectViewModel : RSViewModelBase, IEntity<Projects>
         set
         {
             if (Entity.IsClosed == value) return;
+            if (Entity.IsClosed)
+            {
+                if(Entity.DateEnd == null)
+                    DateEnd = DateTime.Today;
+            }
             Entity.IsClosed = value;
             RaisePropertyChanged();
         }
