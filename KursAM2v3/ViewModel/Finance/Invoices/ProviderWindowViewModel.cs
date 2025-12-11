@@ -1988,6 +1988,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 }
 
                 UnitOfWork.Save();
+                //UnitOfWork.Commit();
+                UnitOfWork.Context.Database.ExecuteSqlCommand(
+                    $"EXEC dbo.GenerateSFProviderCash {CustomFormat.DecimalToSqlDecimal(Document.DocCode)}");
                 UnitOfWork.Commit();
                 DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceProvider), null,
                     Document.DocCode, null, (string)Document.ToJson());
@@ -2007,47 +2010,52 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 // ReSharper disable once UseNameofExpression
                 Document.RaisePropertyChanged("State");
                 RaisePropertyChanged(nameof(WindowName));
-                LastDocumentManager.SaveLastOpenInfo(DocumentType.InvoiceProvider, null, Document.DocCode,
-                    Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
                 DeletedStoreLink.Clear();
                 Document.DeletedRows.Clear();
-                if (mySubscriber != null && mySubscriber.IsConnected())
-                {
-                    var str = Document.State == RowStatus.NewRow ? "создал" : "сохранил";
-                    var message = new RedisMessage
-                    {
-                        DocumentType = DocumentType.InvoiceProvider,
-                        DocCode = Document.DocCode,
-                        DocDate = Document.DocDate,
-                        IsDocument = true,
-                        OperationType = Document.myState == RowStatus.NewRow
-                            ? RedisMessageDocumentOperationTypeEnum.Create
-                            : RedisMessageDocumentOperationTypeEnum.Update,
-                        Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} счет {Document.Description}"
-                    };
-                    message.ExternalValues.Add("KontragentDC", Document.Kontragent.DocCode);
-                    var jsonSerializerSettings = new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.All
-                    };
-                    var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
-                    mySubscriber.Publish(
-                        new RedisChannel(RedisMessageChannels.InvoiceProvider, RedisChannel.PatternMode.Auto), json);
-                }
-
-                MainWindowViewModel.EventAggregator.GetEvent<AFterSaveInvoiceProvideEvent>()
-                    .Publish(new AFterSaveInvoiceProvideEventArgs
-                    {
-                        Id = Document.Id,
-                        DocCode = Document.DocCode,
-                        Invoice = Document
-                    });
+                redisEventChangedDocument();
             }
             catch (Exception ex)
             {
                 UnitOfWork.Rollback();
                 WindowManager.ShowError(ex);
             }
+        }
+
+        private void redisEventChangedDocument()
+        {
+            LastDocumentManager.SaveLastOpenInfo(DocumentType.InvoiceProvider, null, Document.DocCode,
+                Document.CREATOR, GlobalOptions.UserInfo.NickName, Document.Description);
+            if (mySubscriber != null && mySubscriber.IsConnected())
+            {
+                var str = Document.State == RowStatus.NewRow ? "создал" : "сохранил";
+                var message = new RedisMessage
+                {
+                    DocumentType = DocumentType.InvoiceProvider,
+                    DocCode = Document.DocCode,
+                    DocDate = Document.DocDate,
+                    IsDocument = true,
+                    OperationType = Document.myState == RowStatus.NewRow
+                        ? RedisMessageDocumentOperationTypeEnum.Create
+                        : RedisMessageDocumentOperationTypeEnum.Update,
+                    Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} счет {Document.Description}"
+                };
+                message.ExternalValues.Add("KontragentDC", Document.Kontragent.DocCode);
+                var jsonSerializerSettings = new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.All
+                };
+                var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+                mySubscriber.Publish(
+                    new RedisChannel(RedisMessageChannels.InvoiceProvider, RedisChannel.PatternMode.Auto), json);
+            }
+
+            MainWindowViewModel.EventAggregator.GetEvent<AFterSaveInvoiceProvideEvent>()
+                .Publish(new AFterSaveInvoiceProvideEventArgs
+                {
+                    Id = Document.Id,
+                    DocCode = Document.DocCode,
+                    Invoice = Document
+                });
         }
 
         private void RaiseAll()
@@ -2325,11 +2333,10 @@ namespace KursAM2.ViewModel.Finance.Invoices
             UnitOfWork.Context.ProviderInvoicePay.Remove(CurrentPaymentDoc.Entity);
             Document.PaymentDocs.Remove(CurrentPaymentDoc);
             SaveData(null);
-            UnitOfWork.Context.Database.ExecuteSqlCommand(
-                $"EXEC dbo.GenerateSFProviderCash {CustomFormat.DecimalToSqlDecimal(Document.DocCode)}");
             // ReSharper disable once StringLiteralTypo
             // ReSharper disable once NotResolvedInText
             Document.RaisePropertyChanged("PaySumma");
+            redisEventChangedDocument();
         }
 
         public ICommand AddPaymentFromBankCommand
@@ -2376,6 +2383,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     ctx.SaveChanges();
                 }
 
+                redisEventChangedDocument();
                 // ReSharper disable once NotResolvedInText
                 Document.RaisePropertyChanged("PaySumma");
                 if (Document.State != RowStatus.NewRow)
@@ -2439,6 +2447,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         Document.State = RowStatus.Edited;
                     // ReSharper disable once NotResolvedInText
                     Document.RaisePropertyChanged("PaySumma");
+                    redisEventChangedDocument();
                 }
                 catch (Exception ex)
                 {
@@ -2486,6 +2495,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     Document.State = RowStatus.Edited;
                 // ReSharper disable once NotResolvedInText
                 Document.RaisePropertyChanged("PaySumma");
+                redisEventChangedDocument();
             }
         }
 

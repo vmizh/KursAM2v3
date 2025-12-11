@@ -1218,31 +1218,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
 
             UnitOfWork.Save();
             UnitOfWork.Commit();
-            DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
-                Document.DocCode, null, (string)Document.ToJson());
-            if (mySubscriber != null && mySubscriber.IsConnected())
-            {
-                var str = Document.State == RowStatus.NewRow ? "создал" : "сохранил";
-                var message = new RedisMessage
-                {
-                    DocumentType = DocumentType.InvoiceClient,
-                    DocCode = Document.DocCode,
-                    DocDate = Document.DocDate,
-                    IsDocument = true,
-                    OperationType = Document.myState == RowStatus.NewRow
-                        ? RedisMessageDocumentOperationTypeEnum.Create
-                        : RedisMessageDocumentOperationTypeEnum.Update,
-                    Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} счет {Document.Description}"
-                };
-                message.ExternalValues.Add("KontragentDC", Document.Client.DocCode);
-                var jsonSerializerSettings = new JsonSerializerSettings
-                {
-                    TypeNameHandling = TypeNameHandling.All
-                };
-                var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
-                mySubscriber.Publish(
-                    new RedisChannel(RedisMessageChannels.InvoiceClient, RedisChannel.PatternMode.Auto), json);
-            }
+            redisEventChangedDocument();
 
             RecalcKontragentBalans.CalcBalans(Document.Client.DocCode, Document.DocDate);
             nomenklManager.RecalcPrice(myUsedNomenklsDC);
@@ -1266,6 +1242,35 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         {
             UnitOfWork.Rollback();
             WindowManager.ShowError(ex);
+        }
+    }
+
+    private void redisEventChangedDocument()
+    {
+        DocumentHistoryHelper.SaveHistory(CustomFormat.GetEnumName(DocumentType.InvoiceClient), null,
+            Document.DocCode, null, (string)Document.ToJson());
+        if (mySubscriber != null && mySubscriber.IsConnected())
+        {
+            var str = Document.State == RowStatus.NewRow ? "создал" : "сохранил";
+            var message = new RedisMessage
+            {
+                DocumentType = DocumentType.InvoiceClient,
+                DocCode = Document.DocCode,
+                DocDate = Document.DocDate,
+                IsDocument = true,
+                OperationType = Document.myState == RowStatus.NewRow
+                    ? RedisMessageDocumentOperationTypeEnum.Create
+                    : RedisMessageDocumentOperationTypeEnum.Update,
+                Message = $"Пользователь '{GlobalOptions.UserInfo.Name}' {str} счет {Document.Description}"
+            };
+            message.ExternalValues.Add("KontragentDC", Document.Client.DocCode);
+            var jsonSerializerSettings = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+            var json = JsonConvert.SerializeObject(message, jsonSerializerSettings);
+            mySubscriber.Publish(
+                new RedisChannel(RedisMessageChannels.InvoiceClient, RedisChannel.PatternMode.Auto), json);
         }
     }
 
@@ -1312,12 +1317,11 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
                         ctx.TD_110.Remove(m);
                         break;
                 }
-
+                ctx.SaveChanges();
                 ctx.Database.ExecuteSqlCommand(
                     $"EXEC [dbo].[GenerateSFClientCash] @SFDocDC = {CustomFormat.DecimalToSqlDecimal(Document.DocCode)}");
-
-                ctx.SaveChanges();
                 Document.PaymentDocs.Remove(CurrentPaymentDoc);
+                redisEventChangedDocument();
             }
             catch (Exception ex)
             {
@@ -1827,6 +1831,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
 
             ctx.SaveChanges();
             UpdatePayDocuments(ctx);
+            redisEventChangedDocument();
         }
     }
 
@@ -1855,6 +1860,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
 
             ctx.SaveChanges();
             UpdatePayDocuments(ctx);
+            redisEventChangedDocument();
         }
     }
 
@@ -1877,6 +1883,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
             if (old != null) old.VZT_SFACT_DC = Document.DocCode;
             ctx.SaveChanges();
             UpdatePayDocuments(ctx);
+            redisEventChangedDocument();
         }
     }
 
