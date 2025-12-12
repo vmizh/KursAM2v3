@@ -1,5 +1,6 @@
 ﻿using System;
 using Core.ViewModel.Base;
+using JetBrains.Annotations;
 
 namespace KursAM2.ViewModel.Logistiks
 {
@@ -17,8 +18,10 @@ namespace KursAM2.ViewModel.Logistiks
         private decimal mySummaOut;
         private string myTo;
         private decimal myNakopit;
+        private string mySFDocumentNum;
+        private DateTime? mySFDocumentDate;
 
-        public string DocumentName
+        public string DocumentName    
         {
             get => myDocumentName;
             set
@@ -47,6 +50,29 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 if (myDocumentDate == value) return;
                 myDocumentDate = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        [CanBeNull]
+        public string SFDocumentNum
+        {
+            get => mySFDocumentNum;
+            set
+            {
+                if (mySFDocumentNum == value) return;
+                mySFDocumentNum = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public DateTime? SFDocumentDate
+        {
+            get => mySFDocumentDate;
+            set
+            {
+                if (mySFDocumentDate == value) return;
+                mySFDocumentDate = value;
                 RaisePropertyChanged();
             }
         }

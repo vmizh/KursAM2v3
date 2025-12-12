@@ -409,8 +409,11 @@ namespace KursAM2.ViewModel.Logistiks
                 foreach (var doc in docs)
                 {
                     if (MustExclude(exclude, doc)) continue;
+                    var sf = doc.TD_26?.SD_26;
                     var newItem = new NomPriceDocumentViewModel
                     {
+                        SFDocumentDate = sf?.SF_POSTAV_DATE,
+                        SFDocumentNum = $"{sf?.SF_IN_NUM}/{sf?.SF_POSTAV_NUM}",
                         DocCode = doc.DOC_CODE,
                         DocumentName = doc.SD_24.SD_201.D_NAME,
                         DocumentNum = doc.SD_24.DD_IN_NUM + "/" + doc.SD_24.DD_EXT_NUM,
@@ -465,8 +468,11 @@ namespace KursAM2.ViewModel.Logistiks
                 foreach (var doc in docs)
                 {
                     if (MustExclude(exclude, doc)) continue;
+                    var sf = doc.TD_84?.SD_84;
                     DocumentList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocumentDate = sf?.SF_DATE,
+                        SFDocumentNum = $"{sf?.SF_IN_NUM}/{sf?.SF_OUT_NUM}",
                         DocCode = doc.DOC_CODE,
                         DocumentName = doc.SD_24.SD_201.D_NAME,
                         DocumentNum = doc.SD_24.DD_IN_NUM + "/" + doc.SD_24.DD_EXT_NUM,
@@ -499,8 +505,11 @@ namespace KursAM2.ViewModel.Logistiks
                 foreach (var doc in docs)
                 {
                     if (MustExclude(exclude, doc)) continue;
+                    var sf = doc.TD_84?.SD_84;
                     DocumentList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocumentDate = sf?.SF_DATE,
+                        SFDocumentNum = $"{sf?.SF_IN_NUM}/{sf?.SF_OUT_NUM}",
                         DocCode = doc.DOC_CODE,
                         DocumentName = doc.SD_24.SD_201.D_NAME +
                                        (doc.TD_84 == null ? "  (внутреннее перемещение)" : " (отгрузка)"),
@@ -579,8 +588,11 @@ namespace KursAM2.ViewModel.Logistiks
                                                        && cc.Date >= StartDate && cc.Date <= EndDate
                     select cc;
                 foreach (var doc in docs3.ToList())
-                    DocumentList.Add(new NomPriceDocumentViewModel
+                {
+                                        DocumentList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocumentDate = doc.TD_26.SD_26.SF_POSTAV_DATE,
+                        SFDocumentNum = $"{doc.TD_26.SD_26.SF_IN_NUM}/{doc.TD_26.SD_26.SF_POSTAV_NUM}",
                         Id = doc.TD_26.SD_26.Id,
                         DocCode = doc.TD_26.DOC_CODE,
                         DocumentName = "Акт валютной конвертации (по счету)",
@@ -598,6 +610,7 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = doc.Price * doc.Quantity,
                         Note = doc.TD_26?.SD_26.SF_NOTES + "/" + doc.Note
                     });
+                }
 
                 var docs4 = from cc in ctx.TD_26_CurrencyConvert
                     // ReSharper disable once AccessToDisposedClosure
@@ -619,6 +632,8 @@ namespace KursAM2.ViewModel.Logistiks
                         prc = last.Last().PRICE_WO_NAKLAD;
                     DocumentList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocumentDate = doc.TD_26.SD_26.SF_POSTAV_DATE,
+                        SFDocumentNum = $"{doc.TD_26.SD_26.SF_IN_NUM}/{doc.TD_26.SD_26.SF_POSTAV_NUM}",
                         Id = doc.TD_26.SD_26.Id,
                         DocCode = doc.TD_26.DOC_CODE,
                         DocumentName = "Акт валютной конвертации (по счету)",
@@ -856,8 +871,11 @@ namespace KursAM2.ViewModel.Logistiks
                 foreach (var doc in docs)
                 {
                     if (MustExclude(exclude, doc)) continue;
+                    var sf = doc.TD_26?.SD_26;
                     var newItem = new NomPriceDocumentViewModel
                     {
+                        SFDocumentDate = sf?.SF_POSTAV_DATE,
+                        SFDocumentNum = $"{sf?.SF_IN_NUM}/{sf?.SF_POSTAV_NUM}",
                         DocCode = doc.DOC_CODE,
                         DocumentName = doc.SD_24.SD_201.D_NAME,
                         DocumentNum = doc.SD_24.DD_IN_NUM + "/" + doc.SD_24.DD_EXT_NUM,
@@ -915,8 +933,12 @@ namespace KursAM2.ViewModel.Logistiks
                             && (_.SD_24.DD_SKLAD_POL_DC == storeDC || _.SD_24.DD_SKLAD_OTPR_DC == storeDC))
                     .ToList();
                 foreach (var doc in docs)
+                {
+                    var sf = doc.TD_84?.SD_84;
                     tempList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocumentDate = sf?.SF_DATE,
+                        SFDocumentNum = $"{sf?.SF_IN_NUM}/{sf?.SF_OUT_NUM}",
                         DocCode = doc.DOC_CODE,
                         DocumentName = doc.SD_24.SD_201.D_NAME,
                         DocumentNum = doc.SD_24.DD_IN_NUM + "/" + doc.SD_24.DD_EXT_NUM,
@@ -934,6 +956,7 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = -doc.DDT_KOL_RASHOD * CurrentNomenklMoveItem.PriceEnd,
                         Note = doc.SD_24.DD_NOTES + " / " + doc.TD_84?.SD_84.SF_NOTE
                     });
+                }
 
                 docs = ctx.TD_24
                     .Include(_ => _.SD_24)
@@ -950,8 +973,11 @@ namespace KursAM2.ViewModel.Logistiks
                 foreach (var doc in docs)
                 {
                     if (MustExclude(exclude, doc)) continue;
+                    var sf = doc.TD_84?.SD_84;
                     tempList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocumentDate = sf?.SF_DATE,
+                        SFDocumentNum = $"{sf?.SF_IN_NUM}/{sf?.SF_OUT_NUM}",
                         DocCode = doc.DOC_CODE,
                         DocumentName = doc.SD_24.SD_201.D_NAME +
                                        (doc.TD_84 == null ? "  (внутреннее перемещение)" : " (отгрузка)"),
@@ -1037,8 +1063,11 @@ namespace KursAM2.ViewModel.Logistiks
                                                        && cc.StoreDC == storeDC
                     select cc;
                 foreach (var doc in docs3.ToList())
+                {
                     tempList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocumentDate = doc.TD_26.SD_26.SF_POSTAV_DATE,
+                        SFDocumentNum = $"{doc.TD_26.SD_26.SF_IN_NUM}/{doc.TD_26.SD_26.SF_POSTAV_NUM}",
                         Id = doc.TD_26.SD_26.Id,
                         DocCode = doc.TD_26.DOC_CODE,
                         DocumentName = "Акт валютной конвертации (по счету)",
@@ -1056,6 +1085,7 @@ namespace KursAM2.ViewModel.Logistiks
                         SummaDelta = doc.Price * doc.Quantity,
                         Note = doc.TD_26.SD_26.SF_NOTES + "/" + doc.Note
                     });
+                }
 
                 var docs4 = from cc in ctx.TD_26_CurrencyConvert
                     // ReSharper disable once AccessToDisposedClosure
@@ -1078,6 +1108,8 @@ namespace KursAM2.ViewModel.Logistiks
                         prc = last.Last().PRICE_WO_NAKLAD;
                     tempList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocumentDate = doc.TD_26.SD_26.SF_POSTAV_DATE,
+                        SFDocumentNum = $"{doc.TD_26.SD_26.SF_IN_NUM}/{doc.TD_26.SD_26.SF_POSTAV_NUM}",
                         Id = doc.TD_26.SD_26.Id,
                         DocCode = doc.TD_26.DOC_CODE,
                         DocumentName = "Акт валютной конвертации (по счету)",

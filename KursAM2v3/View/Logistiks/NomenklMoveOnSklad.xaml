@@ -322,7 +322,9 @@
                         <dxg:GridControl.Columns>
                             <dxg:GridColumn Header="Дата" FieldName="DocumentDate" ReadOnly="True" />
                             <dxg:GridColumn Header="№" FieldName="DocumentNum" ReadOnly="True" />
-                           <dxg:GridColumn Header="Документ" FieldName="DocumentName" ReadOnly="True" />
+                            <dxg:GridColumn Header="С/ф дата" FieldName="SFDocumentDate" ReadOnly="True" />
+                            <dxg:GridColumn Header="С/ф №" FieldName="SFDocumentNum" ReadOnly="True" />
+                                <dxg:GridColumn Header="Документ" FieldName="DocumentName" ReadOnly="True" />
                             <dxg:GridColumn Header="От кого" FieldName="From" ReadOnly="True" />
                             <dxg:GridColumn Header="Кому" FieldName="To" ReadOnly="True" />
                              <dxg:GridColumn Header="Приход (кол-во)" FieldName="QuantityIn" ReadOnly="True">
