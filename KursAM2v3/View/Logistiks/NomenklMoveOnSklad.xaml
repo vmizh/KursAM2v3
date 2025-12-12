@@ -381,7 +381,8 @@
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
                                         <MenuItem Header="Открыть документ" Command="{Binding DocumentOpenCommand}" />
-                                        <Separator />
+                                        <MenuItem Header="Открыть счет-фактуру" Command="{Binding DocumentSFOpenCommand}" />
+                                            <Separator />
                                         <MenuItem Header="Экспорт"
                                                   Command="{Binding VisualControlExportCommand}"
                                                   CommandParameter="{Binding Path=PlacementTarget, RelativeSource={RelativeSource Mode=FindAncestor,

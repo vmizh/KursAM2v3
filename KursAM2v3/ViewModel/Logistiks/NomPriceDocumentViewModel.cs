@@ -20,6 +20,7 @@ namespace KursAM2.ViewModel.Logistiks
         private decimal myNakopit;
         private string mySFDocumentNum;
         private DateTime? mySFDocumentDate;
+        private decimal? mySFDocCode;
 
         public string DocumentName    
         {
@@ -62,6 +63,17 @@ namespace KursAM2.ViewModel.Logistiks
             {
                 if (mySFDocumentNum == value) return;
                 mySFDocumentNum = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public decimal? SFDocCode
+        {
+            get => mySFDocCode;
+            set
+            {
+                if (mySFDocCode == value) return;
+                mySFDocCode = value;
                 RaisePropertyChanged();
             }
         }

@@ -5,13 +5,11 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data.Entity;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Core.ViewModel.Base;
 using Data;
-using DevExpress.XtraSpreadsheet.Model;
 using KursAM2.Managers;
 using KursAM2.View.Base;
 using KursAM2.View.Logistiks;
@@ -247,6 +245,36 @@ namespace KursAM2.ViewModel.Logistiks
             }
         }
 
+
+        public ICommand DocumentSFOpenCommand
+        {
+            get
+            {
+                return new Command(DocumentSFOpen,
+                    _ => CurrentDocument != null && CurrentDocument.SFDocCode != null);
+            }
+        }
+
+        private void DocumentSFOpen(object obj)
+        {
+            if (CurrentDocument?.SFDocCode == null) return;
+            switch (CurrentDocument.DocumentName)
+            {
+                case "Приходный складской ордер":
+                    DocumentsOpenManager.Open(DocumentType.InvoiceProvider, CurrentDocument.SFDocCode.Value);
+                    break;
+                case "Расходный складской ордер":
+                    DocumentsOpenManager.Open(DocumentType.InvoiceClient, CurrentDocument.SFDocCode.Value);
+                    break;
+                case "Расходная накладная (без требования)":
+                    DocumentsOpenManager.Open(DocumentType.InvoiceClient, CurrentDocument.SFDocCode.Value);
+                    break;
+                case "Акт валютной конвертации (по счету)":
+                    DocumentsOpenManager.Open(DocumentType.InvoiceProvider, CurrentDocument.SFDocCode.Value);
+                    break;
+            }
+        }
+
         public ICommand NomenklCalcOpenCommand
         {
             get { return new Command(NomenklCalcOpen, _ => CurrentNomenklMoveItem != null); }
@@ -412,6 +440,7 @@ namespace KursAM2.ViewModel.Logistiks
                     var sf = doc.TD_26?.SD_26;
                     var newItem = new NomPriceDocumentViewModel
                     {
+                        SFDocCode = sf?.DOC_CODE,
                         SFDocumentDate = sf?.SF_POSTAV_DATE,
                         SFDocumentNum = $"{sf?.SF_IN_NUM}/{sf?.SF_POSTAV_NUM}",
                         DocCode = doc.DOC_CODE,
@@ -471,6 +500,7 @@ namespace KursAM2.ViewModel.Logistiks
                     var sf = doc.TD_84?.SD_84;
                     DocumentList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocCode = sf?.DOC_CODE,
                         SFDocumentDate = sf?.SF_DATE,
                         SFDocumentNum = $"{sf?.SF_IN_NUM}/{sf?.SF_OUT_NUM}",
                         DocCode = doc.DOC_CODE,
@@ -508,6 +538,7 @@ namespace KursAM2.ViewModel.Logistiks
                     var sf = doc.TD_84?.SD_84;
                     DocumentList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocCode = sf?.DOC_CODE,
                         SFDocumentDate = sf?.SF_DATE,
                         SFDocumentNum = $"{sf?.SF_IN_NUM}/{sf?.SF_OUT_NUM}",
                         DocCode = doc.DOC_CODE,
@@ -591,6 +622,7 @@ namespace KursAM2.ViewModel.Logistiks
                 {
                                         DocumentList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocCode = doc.TD_26.SD_26.DOC_CODE,
                         SFDocumentDate = doc.TD_26.SD_26.SF_POSTAV_DATE,
                         SFDocumentNum = $"{doc.TD_26.SD_26.SF_IN_NUM}/{doc.TD_26.SD_26.SF_POSTAV_NUM}",
                         Id = doc.TD_26.SD_26.Id,
@@ -632,6 +664,7 @@ namespace KursAM2.ViewModel.Logistiks
                         prc = last.Last().PRICE_WO_NAKLAD;
                     DocumentList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocCode = doc.TD_26.SD_26.DOC_CODE,
                         SFDocumentDate = doc.TD_26.SD_26.SF_POSTAV_DATE,
                         SFDocumentNum = $"{doc.TD_26.SD_26.SF_IN_NUM}/{doc.TD_26.SD_26.SF_POSTAV_NUM}",
                         Id = doc.TD_26.SD_26.Id,
@@ -874,6 +907,7 @@ namespace KursAM2.ViewModel.Logistiks
                     var sf = doc.TD_26?.SD_26;
                     var newItem = new NomPriceDocumentViewModel
                     {
+                        SFDocCode = sf?.DOC_CODE,
                         SFDocumentDate = sf?.SF_POSTAV_DATE,
                         SFDocumentNum = $"{sf?.SF_IN_NUM}/{sf?.SF_POSTAV_NUM}",
                         DocCode = doc.DOC_CODE,
@@ -937,6 +971,7 @@ namespace KursAM2.ViewModel.Logistiks
                     var sf = doc.TD_84?.SD_84;
                     tempList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocCode = sf?.DOC_CODE,
                         SFDocumentDate = sf?.SF_DATE,
                         SFDocumentNum = $"{sf?.SF_IN_NUM}/{sf?.SF_OUT_NUM}",
                         DocCode = doc.DOC_CODE,
@@ -976,6 +1011,7 @@ namespace KursAM2.ViewModel.Logistiks
                     var sf = doc.TD_84?.SD_84;
                     tempList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocCode = sf?.DOC_CODE,
                         SFDocumentDate = sf?.SF_DATE,
                         SFDocumentNum = $"{sf?.SF_IN_NUM}/{sf?.SF_OUT_NUM}",
                         DocCode = doc.DOC_CODE,
@@ -1066,6 +1102,7 @@ namespace KursAM2.ViewModel.Logistiks
                 {
                     tempList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocCode = doc.TD_26.SD_26.DOC_CODE,
                         SFDocumentDate = doc.TD_26.SD_26.SF_POSTAV_DATE,
                         SFDocumentNum = $"{doc.TD_26.SD_26.SF_IN_NUM}/{doc.TD_26.SD_26.SF_POSTAV_NUM}",
                         Id = doc.TD_26.SD_26.Id,
@@ -1108,6 +1145,7 @@ namespace KursAM2.ViewModel.Logistiks
                         prc = last.Last().PRICE_WO_NAKLAD;
                     tempList.Add(new NomPriceDocumentViewModel
                     {
+                        SFDocCode = doc.TD_26.SD_26.DOC_CODE,
                         SFDocumentDate = doc.TD_26.SD_26.SF_POSTAV_DATE,
                         SFDocumentNum = $"{doc.TD_26.SD_26.SF_IN_NUM}/{doc.TD_26.SD_26.SF_POSTAV_NUM}",
                         Id = doc.TD_26.SD_26.Id,
