@@ -35,9 +35,9 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
     private References.Employee myEmployee;
     private TD_101 myEntity;
     private Kontragent myPayment;
+    private Project myProject;
     private string mySFName;
     private SDRSchet mySHPZ;
-    private Project myProject;
 
     public BankOperationsViewModel()
     {
@@ -71,6 +71,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
                                               BankOperationType == BankOperationType.CashOut;
 
     public bool IsChangeTypeEnable => State == RowStatus.NewRow;
+
     // public bool IsNotCurrencyChange => Entity.IsCurrencyChange == false || BankOperationType == BankOperationType.Employee;
     public bool IsNotCurrencyChange => BankOperationType == BankOperationType.Kontragent;
 
@@ -131,8 +132,6 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
 
     public string BankName => BankAccount?.Name;
 
-
-     
 
     public bool IsCurrencyRateNotCanSet => Equals(BankAccount.Currency, GlobalOptions.SystemProfile.NationalCurrency);
 
@@ -214,7 +213,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
         get => myProject;
         set
         {
-            if (Equals(myProject,value)) return;
+            if (Equals(myProject, value)) return;
             myProject = value;
             Entity.ProjectId = myProject?.Id;
             RaisePropertyChanged();
@@ -895,16 +894,16 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
         }
 
         if (Entity.EmployeeDC is not null)
-        {
             Employee = GlobalOptions.ReferencesCache.GetEmployee(Entity.EmployeeDC) as References.Employee;
-        }
 
         if (Entity.ProjectId is not null)
-        {
             Project = GlobalOptions.ReferencesCache.GetProject(Entity.ProjectId) as Project;
-        }
 
         updateBankInfo();
+        if (Entity.ProviderInvoicePay != null)
+        {
+            CurrencyRateForReference = Entity.ProviderInvoicePay.Sum(_ => _.Rate);
+        }
         BankOperationType = Kontragent != null ? BankOperationType.Kontragent :
             CashIn != null ? BankOperationType.CashIn :
             CashOut != null ? BankOperationType.CashOut :
@@ -1073,7 +1072,7 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
     public List<References.Currency> CurrencysCompendium =>
         GlobalOptions.ReferencesCache.GetCurrenciesAll().Cast<References.Currency>().ToList();
 
-    public List<SDRSchet> SHPZList { set; get; } 
+    public List<SDRSchet> SHPZList { set; get; }
 
     #endregion
 }

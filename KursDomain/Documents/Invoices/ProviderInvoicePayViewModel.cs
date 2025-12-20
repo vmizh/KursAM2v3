@@ -82,7 +82,6 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
             ;
             if (TD_110 != null) return $"{TD_110.VZT_DOC_NOTES}";
             if (SD_34 != null) return $"Касса {((IName)GlobalOptions.ReferencesCache.GetCashBox(SD_34.CA_DC)).Name}";
-            ;
             return null;
         }
     }

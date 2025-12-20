@@ -88,6 +88,7 @@ public class BankOperationsManager
                     .Include(_ => _.SD_33.SD_22)
                     .Include(_ => _.SD_26)
                     .Include(_ => _.SD_84)
+                    .Include(_ => _.ProviderInvoicePay)
                     .Include(_ => _.AccuredAmountOfSupplierRow)
                     .Where(_ => _.SD_101.VV_ACC_DC == docCode && _.SD_101.VV_START_DATE >= dateStart
                                                               && _.SD_101.VV_START_DATE <= dateEnd).AsNoTracking()
