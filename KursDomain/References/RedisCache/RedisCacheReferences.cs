@@ -1596,6 +1596,18 @@ public class RedisCacheReferences : IReferencesCache
         DateTime mDate = DateTime.MinValue;
         using (var ctx = GlobalOptions.GetEntities())
         {
+            if (ctx.SD_303.Count() != SDRSchets.Count)
+            {
+                var dd = ctx.SD_303.AsNoTracking().Where(_ =>
+                    _.UpdateDate > mDate).ToList();
+                foreach (var item in dd)
+                {
+                    var newItem = new SDRSchet();
+                    newItem.LoadFromEntity(item, this);
+                    SDRSchets.AddOrUpdate(newItem.DocCode, newItem);
+                }
+                return SDRSchets.Values.ToList();
+            }
             if (checkSDRSchetUpdate < DateTime.Now.AddSeconds(-secondForCheckUpdate))
             {
                 checkSDRSchetUpdate = DateTime.Now;
