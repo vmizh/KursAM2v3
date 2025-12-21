@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using Core.ViewModel.Base;
+﻿using Core.ViewModel.Base;
 using Data;
 using DevExpress.Data;
+using DevExpress.Data.Filtering;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
@@ -22,6 +15,13 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.WindowsManager.WindowsManager;
 using KursRepositories.Repositories.Projects;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace KursAM2.ViewModel.Management.Projects;
 
@@ -41,152 +41,73 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
     #endregion
 
-    #region Вспомогательные классы
+    #region Commands
 
-    public class ProjectNomenklMoveInfo
+    public ICommand ManualQuantityChangedCommand
     {
-        [Display(AutoGenerateField = false)] public Guid NomId { get; set; }
-
-        [Display(AutoGenerateField = false)] public decimal NomDC { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Основные", Name = "Ном.№")]
-        public string NomNomenkl { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Основные", Name = "Номенклатура")]
-        public string NomName { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Основные", Name = "Услуга")]
-        public bool IsService { get; set; }
-
-
-        [Display(AutoGenerateField = true, Name = "Есть исключенные")]
-        public bool HasExcluded { set; get; }
-
-        #region Документы
-
-        [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Кол-во(приход)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal DocQuantityIn { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Сумма(приход)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal DocSummaIn { get; set; }
-
-
-        [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Кол-во(расход)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal DocQuantityOut { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Сумма(расход)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal DocSummaOut { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Результат (кол-во")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal DocQuantityResult => DocQuantityIn - DocQuantityOut;
-
-        [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Результат (сумма)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal DocSummaResult => DocSummaOut - DocSummaIn;
-
-        #endregion
-
-        #region Фактически
-
-        [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Кол-во(приход)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactQuantityIn { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Кол-во(расход)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactQuantityOut { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Сумма(приход)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactSummaIn { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Сумма(расход)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactSummaOut { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Результат (кол-во)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactQuantityResult => FactQuantityIn - FactQuantityOut;
-
-        [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Результат (сумма)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal FactSummaResult => FactSummaOut - FactSummaIn;
-
-        #endregion
-
-        #region Услуги и прочее
-
-        [Display(AutoGenerateField = true, GroupName = "Услуги и затраты", Name = "Сумма дилер")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal DilerSumma { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Услуги и затраты", Name = "Сумма накл.")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal NakladSumma { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Услуги и затраты", Name = "Услуги поставщиков")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal ServiceProviderSumma { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Услуги и затраты", Name = "Услуги клиентам")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal ServiceClientSumma { get; set; }
-
-        #endregion
-
-        #region Сводные результаты
-
-        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Цена закупки")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal ResultPriceIn { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Сумма закупки")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal ResultSummaIn { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Цена продажи")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal ResultPriceOut { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Продано (кол-во)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal ResultQuantityOut { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Сумма продажи")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal ResultSummaOut { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Результат")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal Result { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Остаток не реализованных")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal ResultOstatok { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Остаток (сумма)")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal ResultOstatokSumma { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Предполагаемый доход")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal ExpectedIncomeSumma { get; set; }
-
-        [Display(AutoGenerateField = true, GroupName = "Сводные результаты", Name = "Предполагаемая маржа")]
-        [DisplayFormat(DataFormatString = "n2")]
-        public decimal ExpectedIncomeProfit { get; set; }
-        
-        #endregion
+        get { return new Command(ManualQuantityChanged, _ => CurrentDocument != null); }
     }
 
-    #endregion
+    private void ManualQuantityChanged(object obj)
+    {
+        if (obj is not CellValueChangedEventArgs param) return;
+        switch (param.Column.FieldName)
+        {
+            case nameof(ProjectNomenklMoveDocumentInfo.ManualClientQuantity):
+                if ((decimal)param.Value < 0 || (decimal)param.Value > CurrentDocument.ClientQuantity)
+                {
+                    NotifyColor = Brushes.Red;
+                    CurrentDocument.ManualClientQuantity = CurrentDocument.ClientQuantity;
+                    NotifyInfo = $"Кол-во не может быть меньше 0 и больше, чем в счете {CurrentDocument.ClientQuantity}";
+                    var notification = KursNotyficationService.CreateCustomNotification(this);
+                    notification.ShowAsync();
+                    return;
+                }
 
-    #region Commands
+                break;
+            case nameof(ProjectNomenklMoveDocumentInfo.ManualProviderQuantity):
+                if ((decimal)param.Value < 0 || (decimal)param.Value > CurrentDocument.ProviderQuantity)
+                {
+                    NotifyColor = Brushes.Red;
+                    CurrentDocument.ManualProviderQuantity = CurrentDocument.ProviderQuantity;
+                    NotifyInfo = $"Кол-во не может быть меньше 0 и больше, чем в счете {CurrentDocument.ProviderQuantity}";
+                    var notification = KursNotyficationService.CreateCustomNotification(this);
+                    notification.ShowAsync();
+                    return;
+                }
+                break;
+        }
+        var p = new ProjectManualParameter
+                {
+                    Quantity = (decimal)param.Value,
+                    ProjectId = CurrentProject.Id,
+                    NomDC = CurrentNomenkl.NomDC,
+                    DocType = CurrentDocument.DocumentType,
+                    DocDC = CurrentDocument.DocCode
+                };
+                myProjectRepository.UpdateManualQuantity(p);
+
+        switch (CurrentDocument.DocumentType)
+        {
+            case DocumentType.InvoiceClient:
+                CurrentDocument.ManualClientSumma = CurrentDocument.ManualClientQuantity * CurrentDocument.ClientSumma /
+                                                    CurrentDocument.ClientQuantity;
+                CurrentNomenkl.DocQuantityOut = DocumentRows.Sum(_ => _.ManualClientQuantity);
+                CurrentNomenkl.DocSummaOut = DocumentRows.Sum(_ => _.ManualClientSumma);
+                break;
+            case DocumentType.InvoiceProvider:
+            case DocumentType.NomenklCurrencyConverterProvider:
+                CurrentDocument.ManualProviderSumma = CurrentDocument.ManualProviderQuantity *
+                    CurrentDocument.ProviderSumma / CurrentDocument.ProviderQuantity;
+                CurrentNomenkl.DocQuantityIn = DocumentRows.Sum(_ => _.ManualProviderQuantity);
+                CurrentNomenkl.DocSummaIn = DocumentRows.Sum(_ => _.ManualProviderSumma);
+                break;
+        }
+
+        if (Form is ProjectNomenklMove frm) frm.gridNomenklRows.RefreshData();
+    }
+
+    public string NotifyInfo { get; set; }
 
     public ICommand ExcludeFromProfitLossCommand
     {
@@ -330,6 +251,31 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
     private ProjectNomenklMoveDocumentInfo myCurrentDocument;
     private bool myIsShowExcluded;
 
+    private readonly HashSet<string> manualColNames =
+    [
+        "ManualProviderSumma", "ManualClientSumma",
+        "ManualProviderQuantity", "ManualClientQuantity"
+    ];
+
+    private readonly HashSet<string> colSumNames =
+    [
+        "NomName", "DocQuantityIn", "DocSummaIn", "DocQuantityOut", "DocSummaOut",
+        "DocQuantityResult", "DocSummaResult", "FactQuantityResult", "FactSummaResult", "FactQuantityIn",
+        "FactQuantityOut",
+        "FactSummaIn", "FactSummaOut", "NakladSumma", "DilerSumma",
+        "ResultSummaIn", "ResultQuantityIn", "ResultQuantityOut", "ResultSummaOut", "Result", "ResultOstatok",
+        "ResultOstatokSumma", "ExpectedIncomeSumma", "ExpectedIncomeProfit"
+    ];
+
+    private readonly HashSet<string> colDocSumNames =
+    [
+        "DocumentType", "ProviderSumma", "ClientSumma", "ProviderShipped", "ClientShipped", "ProviderQuantity",
+        "ClientQuantity", "ProviderShippedQuantity", "ClientShippedQuantity",
+        "ManualProviderSumma", "ManualClientSumma", "ManualProviderShipped",
+        "ManualClientShipped", "ManualProviderQuantity", "ManualClientQuantity", "ManualProviderShippedQuantity",
+        "ManualClientShippedQuantity"
+    ];
+
     #endregion
 
     #region Properties
@@ -440,20 +386,6 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
     public override void UpdateVisualObjects()
     {
-        HashSet<string> colSumNames =
-        [
-            "NomName", "DocQuantityIn", "DocSummaIn", "DocQuantityOut", "DocSummaOut",
-            "DocQuantityResult", "DocSummaResult", "FactQuantityResult", "FactSummaResult", "FactQuantityIn",
-            "FactQuantityOut",
-            "FactSummaIn", "FactSummaOut", "NakladSumma", "DilerSumma",
-            "ResultSummaIn", "ResultQuantityIn", "ResultQuantityOut", "ResultSummaOut", "Result", "ResultOstatok",
-            "ResultOstatokSumma", "ExpectedIncomeSumma", "ExpectedIncomeProfit"
-        ];
-        HashSet<string> colDocSumNames =
-        [
-            "DocumentType", "ProviderSumma", "ClientSumma", "ProviderShipped", "ClientShipped", "ProviderQuantity",
-            "ClientQuantity", "ProviderShippedQuantity", "ClientShippedQuantity"
-        ];
         if (Form is not ProjectNomenklMove frm) return;
 
         frm.tableViewPtojects.ShowAutoFilterRow = true;
@@ -531,6 +463,20 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         frm.tableViewDocuemts.FormatConditions.Add(showRowForExcluded);
         frm.tableViewDocumentRows.FormatConditions.Add(showRowForExcluded2);
         frm.tableViewPtojects.FormatConditions.Add(notProfitLossCondition);
+
+        var manualChangedCondition = new FormatCondition
+        {
+            FieldName = "IsManualChanged",
+            ApplyToRow = true,
+            Format = new Format
+            {
+                Foreground = Brushes.Green
+            },
+            ValueRule = ConditionRule.Equal,
+            Value1 = true
+        };
+        
+        frm.tableViewDocumentRows.FormatConditions.Add(manualChangedCondition);
     }
 
     private void LoadDocuments()
@@ -545,18 +491,16 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
         foreach (var doc in myProjectRepository.GetDocumentsForNomenkl(ProjIds, CurrentNomenkl.NomDC, IsShowExcluded))
             DocumentRows.Add(doc);
+        if (Form is ProjectNomenklMove frm)
+        {
+        }
     }
-
 
     private void LoadNomenkls()
     {
         NomenklRows.Clear();
         DocumentRows.Clear();
         if (CurrentProject is null) return;
-        //var excl = myProjectRepository.GetDocumentsRowExclude(IsRecursive
-        //    ? myProjectRepository.GetChilds(CurrentProject.Id)
-        //    : [CurrentProject.Id]).ToList();
-
         foreach (var n in myProjectRepository.GetNomenklMoveForProject(CurrentProject.Id, IsRecursive, IsShowExcluded))
         {
             var newItem = new ProjectNomenklMoveInfo

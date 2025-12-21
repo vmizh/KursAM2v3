@@ -88,14 +88,6 @@ public class ProjectNomenklMoveDocumentInfo
     [DisplayFormat(DataFormatString = "n2")]
     public decimal ManualClientSumma { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Отгружено (поставщик)", GroupName = "Учтено в проекте", Order = 20)]
-    [DisplayFormat(DataFormatString = "n2")]
-    public decimal ManualProviderShipped { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Отгружено (клиент)", GroupName = "Учтено в проекте", Order = 21)]
-    [DisplayFormat(DataFormatString = "n2")]
-    public decimal ManualClientShipped { set; get; }
-
     [Display(AutoGenerateField = true, Name = "Кол-во (поставщик)", GroupName = "Учтено в проекте", Order = 22)]
     [DisplayFormat(DataFormatString = "n2")]
     public decimal ManualProviderQuantity { set; get; }
@@ -104,13 +96,9 @@ public class ProjectNomenklMoveDocumentInfo
     [DisplayFormat(DataFormatString = "n2")]
     public decimal ManualClientQuantity { set; get; }
 
-    [Display(AutoGenerateField = true, Name = "Кол-во отгр. (поставщик)", GroupName = "Учтено в проекте", Order = 24)]
-    [DisplayFormat(DataFormatString = "n2")]
-    public decimal ManualProviderShippedQuantity { set; get; }
-
-    [Display(AutoGenerateField = true, Name = "Кол-во отгр. (клиент)", GroupName = "Учтено в проекте", Order = 25)]
-    [DisplayFormat(DataFormatString = "n2")]
-    public decimal ManualClientShippedQuantity { set; get; }
+    [Display(AutoGenerateField = true)]
+    public bool IsManualChanged =>
+        (ClientQuantity - ManualClientQuantity) + (ProviderQuantity - ManualProviderQuantity) > 0;
 
     #endregion
 }

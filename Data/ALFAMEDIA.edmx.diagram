@@ -2199,6 +2199,9 @@
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectRowExclude_NomCurrencyConvertRowId" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectRowExclude_NomenklDC" />
         <AssociationConnector Association="ALFAMEDIA.FK_ProjectRowExclude_ProjectId" />
+        <EntityTypeShape EntityType="ALFAMEDIA.ProjectInvoiceQuantityChanged" Width="1.5" PointX="55.25" PointY="678.625" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectInvoiceQuantityChanged_ProjectId" />
+        <AssociationConnector Association="ALFAMEDIA.FK_ProjectInvoiceQuantityChanged_ProviderCurrencyConvertRowId" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

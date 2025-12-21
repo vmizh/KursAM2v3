@@ -34,6 +34,7 @@ namespace Data
             this.SD_84 = new HashSet<SD_84>();
             this.ProjectDocuments = new HashSet<ProjectDocuments>();
             this.ProjectRowExclude = new HashSet<ProjectRowExclude>();
+            this.ProjectInvoiceQuantityChanged = new HashSet<ProjectInvoiceQuantityChanged>();
         }
     
         public System.Guid Id { get; set; }
@@ -83,5 +84,7 @@ namespace Data
         public virtual ICollection<ProjectDocuments> ProjectDocuments { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ProjectRowExclude> ProjectRowExclude { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ProjectInvoiceQuantityChanged> ProjectInvoiceQuantityChanged { get; set; }
     }
 }

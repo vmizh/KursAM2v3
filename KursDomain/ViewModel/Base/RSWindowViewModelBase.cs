@@ -62,6 +62,7 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     {
         myWindowName = "Без имени";
         myIsCanRefresh = true;
+        NotifyColor = Brushes.Green;
     }
 
     public RSWindowViewModelBase(Window form)
@@ -107,6 +108,17 @@ public abstract class RSWindowViewModelBase : RSViewModelBase, ISupportLogicalLa
     [Display(AutoGenerateField = false)]
     protected INavigationService NavigationService => this.GetRequiredService<INavigationService>();
 
+    [Display(AutoGenerateField = false)]
+    public Brush NotifyColor
+    {
+        set
+        {
+            if (Equals(value, field)) return;
+            field = value;
+            RaisePropertyChanged();
+        }
+        get;
+    }
 
     [Display(AutoGenerateField = false)]
     public bool IsLoading

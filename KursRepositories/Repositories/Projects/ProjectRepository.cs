@@ -2561,6 +2561,11 @@ namespace KursRepositories.Repositories.Projects
                         var prc = r.DocSummaIn / r.DocQuantityIn;
                         r.DocQuantityIn -= dInvoiceIn.Sum(_ => _.DeltaQuantity);
                         r.DocSummaIn = prc * r.DocQuantityIn;
+                        if (r.FactQuantityIn > r.DocQuantityIn)
+                        {
+                            r.FactQuantityIn = r.DocQuantityIn;
+                            r.FactSummaIn = r.DocSummaIn;
+                        }
                     }
                     var dInvoiceOut = manual.Where(_ => _.NomDC == r.NomDC && _.DocType == 0).ToList();
                     if (dInvoiceOut.Count > 0)
@@ -2568,6 +2573,11 @@ namespace KursRepositories.Repositories.Projects
                         var prc = r.DocSummaOut / r.DocQuantityOut;
                         r.DocQuantityOut -= dInvoiceOut.Sum(_ => _.DeltaQuantity);
                         r.DocSummaOut = prc * r.DocQuantityOut;
+                        if (r.FactQuantityOut > r.DocQuantityOut)
+                        {
+                            r.FactQuantityOut = r.DocQuantityOut;
+                            r.FactSummaOut = r.DocSummaOut;
+                        }
                     }
                 }
             }
@@ -2721,13 +2731,16 @@ namespace KursRepositories.Repositories.Projects
                     ProviderSumma = doc.TD_26.Sum(_ => _.SFT_SUMMA_K_OPLATE_KONTR_CRS) ?? 0,
                     ProviderShippedQuantity = shippedRow?.DDT_KOL_PRIHOD ?? 0,
                     ManualProviderQuantity = manualQuantity ?? doc.TD_26.Sum(_ => _.SFT_KOL),
-                    ManualProviderShipped = doc.TD_26.Sum(_ => _.SFT_SUMMA_K_OPLATE_KONTR_CRS)
-                        * ((shippedRow?.DDT_KOL_PRIHOD ?? 0) / manualQuantity ?? doc.TD_26.Sum(_ => _.SFT_KOL)) ?? 0,
-                    ManualProviderShippedQuantity = shippedRow?.DDT_KOL_PRIHOD ?? 0,
                     ManualProviderSumma = (decimal)((manualQuantity ?? doc.TD_26.Sum(_ => _.SFT_KOL))
                                                     * (doc.TD_26.Sum(_ => _.SFT_SUMMA_K_OPLATE_KONTR_CRS) /
                                                        doc.TD_26.Sum(_ => _.SFT_KOL)))
                 };
+                if (newItem.ProviderShippedQuantity > newItem.ManualProviderQuantity)
+                {
+                    newItem.ProviderShippedQuantity = newItem.ManualProviderQuantity;
+                    newItem.ProviderShipped = newItem.ProviderShippedQuantity * newItem.ProviderSumma /
+                                              newItem.ProviderQuantity;
+                }
                 ret.Add(newItem);
             }
 
@@ -2735,38 +2748,42 @@ namespace KursRepositories.Repositories.Projects
             foreach (var row in doc.TD_84.Where(_ => _.SFT_NEMENKL_DC == nomDC))
             {
                 decimal? manualQuantity = manualRows.FirstOrDefault(_ => _.ClientRowId == row.Id)?.Quantity;
-                    var shippedRow = Context.TD_24.Include(_ => _.SD_24)
+                var shippedRow = Context.TD_24.Include(_ => _.SD_24)
                     .Where(_ => row.DOC_CODE == _.DDT_SFACT_DC && row.CODE == _.DDT_SFACT_ROW_CODE).ToList();
-
-                ret.Add(
-                    new ProjectNomenklMoveDocumentInfo
-                    {
-                        Id = row.Id,
-                        IsInclude = !exludedId.Contains(row.Id),
-                        DocCode = row.DOC_CODE,
-                        Kontragent =
-                            GlobalOptions.ReferencesCache.GetKontragent(doc.SF_CLIENT_DC)
-                                as Kontragent,
-                        DocDate = doc.SF_DATE,
-                        DocumentType = DocumentType.InvoiceClient,
-                        Note = doc.SF_NOTE,
-                        ExtNumber = doc.SF_OUT_NUM,
-                        InnerNumber = doc.SF_IN_NUM,
-                        Creator = doc.CREATOR,
-                        ClientSumma = row.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0,
-                        ClientQuantity = (decimal)row.SFT_KOL,
-                        ClientShipped = shippedRow.Sum(_ => _.DDT_KOL_RASHOD * row.SFT_SUMMA_K_OPLATE_KONTR_CRS / (decimal?)row.SFT_KOL ?? 0),
-                        ClientShippedQuantity = shippedRow.Sum(_ => _.DDT_KOL_RASHOD),
-                        Warehouse = shippedRow.Any()
-                            ? (Warehouse)GlobalOptions.ReferencesCache.GetWarehouse(shippedRow.First().SD_24
-                                .DD_SKLAD_OTPR_DC)
-                            : null,
-                        ManualClientQuantity = manualQuantity ?? (decimal)row.SFT_KOL,
-                        ManualClientSumma = (manualQuantity ?? (decimal)row.SFT_KOL)* (row.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0)/ (decimal)row.SFT_KOL,
-                        ManualClientShipped = shippedRow.Sum(_ => _.DDT_KOL_RASHOD * row.SFT_SUMMA_K_OPLATE_KONTR_CRS / (decimal?)row.SFT_KOL ?? 0),
-                        ManualClientShippedQuantity = shippedRow.Sum(_ => _.DDT_KOL_RASHOD),
-                    }
-                );
+                var newItem = new ProjectNomenklMoveDocumentInfo
+                {
+                    Id = row.Id,
+                    IsInclude = !exludedId.Contains(row.Id),
+                    DocCode = row.DOC_CODE,
+                    Kontragent =
+                        GlobalOptions.ReferencesCache.GetKontragent(doc.SF_CLIENT_DC)
+                            as Kontragent,
+                    DocDate = doc.SF_DATE,
+                    DocumentType = DocumentType.InvoiceClient,
+                    Note = doc.SF_NOTE,
+                    ExtNumber = doc.SF_OUT_NUM,
+                    InnerNumber = doc.SF_IN_NUM,
+                    Creator = doc.CREATOR,
+                    ClientSumma = row.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0,
+                    ClientQuantity = (decimal)row.SFT_KOL,
+                    ClientShipped = shippedRow.Sum(_ =>
+                        _.DDT_KOL_RASHOD * row.SFT_SUMMA_K_OPLATE_KONTR_CRS / (decimal?)row.SFT_KOL ?? 0),
+                    ClientShippedQuantity = shippedRow.Sum(_ => _.DDT_KOL_RASHOD),
+                    Warehouse = shippedRow.Any()
+                        ? (Warehouse)GlobalOptions.ReferencesCache.GetWarehouse(shippedRow.First().SD_24
+                            .DD_SKLAD_OTPR_DC)
+                        : null,
+                    ManualClientQuantity = manualQuantity ?? (decimal)row.SFT_KOL,
+                    ManualClientSumma = (manualQuantity ?? (decimal)row.SFT_KOL) *
+                        (row.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) / (decimal)row.SFT_KOL
+                };
+                if (newItem.ClientShippedQuantity > newItem.ManualClientQuantity)
+                {
+                    newItem.ClientShippedQuantity = newItem.ManualClientQuantity;
+                    newItem.ClientShipped = newItem.ClientShippedQuantity * newItem.ClientSumma /
+                                              newItem.ClientQuantity;
+                }
+                ret.Add(newItem);
             }
 
             var nomId = Context.SD_83.Single(_ => _.DOC_CODE == nomDC).Id;
@@ -2778,34 +2795,41 @@ namespace KursRepositories.Repositories.Projects
                 if (crsConv != null)
                     manualQuantity = manualRows.FirstOrDefault(_ => _.ProviderCurrencyConvertRowId == crsConv.Id)?.Quantity;
                 if (crsConv is not null)
-                    ret.Add(
-                        new ProjectNomenklMoveDocumentInfo
-                        {
-                            Id = crsConv.Id,
-                            IsInclude = !exludedId.Contains(crsConv.Id),
-                            DocCode = doc.DOC_CODE,
-                            Kontragent =
-                                GlobalOptions.ReferencesCache.GetKontragent(doc.SF_POST_DC)
-                                    as Kontragent,
-                            DocDate = doc.SF_POSTAV_DATE,
-                            DocumentType = DocumentType.NomenklCurrencyConverterProvider,
-                            Note = doc.SF_NOTES,
-                            ExtNumber = doc.SF_POSTAV_NUM,
-                            InnerNumber = doc.SF_IN_NUM,
-                            Warehouse =
-                                GlobalOptions.ReferencesCache.GetWarehouse(crsConv.StoreDC)
-                                    as Warehouse,
-                            Creator = doc.CREATOR,
-                            ProviderQuantity = crsConv.Quantity,
-                            ProviderShippedQuantity = crsConv.Quantity,
-                            ProviderShipped = crsConv.Summa,
-                            ProviderSumma = crsConv.Summa,
-                            ManualProviderShipped = crsConv.Summa,
-                            ManualProviderSumma = manualQuantity == null ? crsConv.Summa : crsConv.Summa * manualQuantity.Value/crsConv.Quantity,
-                            ManualProviderQuantity = manualQuantity ?? crsConv.Quantity,
-                            ManualProviderShippedQuantity = crsConv.Quantity
-                        }
-                    );
+                {
+                    var newItem = new ProjectNomenklMoveDocumentInfo
+                    {
+                        Id = crsConv.Id,
+                        IsInclude = !exludedId.Contains(crsConv.Id),
+                        DocCode = doc.DOC_CODE,
+                        Kontragent =
+                            GlobalOptions.ReferencesCache.GetKontragent(doc.SF_POST_DC)
+                                as Kontragent,
+                        DocDate = doc.SF_POSTAV_DATE,
+                        DocumentType = DocumentType.NomenklCurrencyConverterProvider,
+                        Note = doc.SF_NOTES,
+                        ExtNumber = doc.SF_POSTAV_NUM,
+                        InnerNumber = doc.SF_IN_NUM,
+                        Warehouse =
+                            GlobalOptions.ReferencesCache.GetWarehouse(crsConv.StoreDC)
+                                as Warehouse,
+                        Creator = doc.CREATOR,
+                        ProviderQuantity = crsConv.Quantity,
+                        ProviderShippedQuantity = crsConv.Quantity,
+                        ProviderShipped = crsConv.Summa,
+                        ProviderSumma = crsConv.Summa,
+                        ManualProviderSumma = manualQuantity == null
+                            ? crsConv.Summa
+                            : crsConv.Summa * manualQuantity.Value / crsConv.Quantity,
+                        ManualProviderQuantity = manualQuantity ?? crsConv.Quantity,
+                    };
+                    if (newItem.ProviderShippedQuantity > newItem.ManualProviderQuantity)
+                    {
+                        newItem.ProviderShippedQuantity = newItem.ManualProviderQuantity;
+                        newItem.ProviderShipped = newItem.ProviderShippedQuantity * newItem.ProviderSumma /
+                                                  newItem.ProviderQuantity;
+                    }
+                    ret.Add(newItem);
+                }
             }
 
             return ret;
@@ -3223,59 +3247,6 @@ namespace KursRepositories.Repositories.Projects
         {
             switch (param.DocType)
             {
-                case DocumentType.Waybill:
-                    List<TD_24> nRow = null;
-                    TD_84 cnRow = null;
-                    if (param.DocId != null)
-                    {
-                        cnRow = Context.TD_84.FirstOrDefault(_ =>
-                            _.SFT_NEMENKL_DC == param.NomDC && _.DocId == param.DocId.Value);
-                    }
-                    if (param.DocDC != null)
-                    {
-                        cnRow = Context.TD_84.FirstOrDefault(_ =>
-                            _.SFT_NEMENKL_DC == param.NomDC && _.DOC_CODE == param.DocDC.Value);
-                    }
-                    if (cnRow == null) return;
-                    nRow = Context.TD_24.AsNoTracking().Where(_ =>
-                        _.DDT_SFACT_DC == cnRow.DOC_CODE && _.DDT_SFACT_ROW_CODE == cnRow.CODE).ToList();
-                    if (nRow.Count == 0) return;
-                    if (nRow.Count > 1)
-                    {
-
-                    }
-                    else
-                    {
-                        var old4 = Context.ProjectInvoiceQuantityChanged.FirstOrDefault(_ =>
-                            _.ProjectId == param.ProjectId && _.RashodRowId == nRow.First().Id);
-                        if (old4 != null)
-                        {
-                            if (param.Quantity == nRow.First().DDT_KOL_RASHOD)
-                            {
-                                Context.ProjectInvoiceQuantityChanged.Remove(old4);
-                            }
-                            else
-                            {
-                                old4.Quantity = param.Quantity;
-                            }
-                            Context.SaveChanges();
-                        }
-                        if (param.Quantity != nRow.First().DDT_KOL_RASHOD)
-                        {
-                            var newItem = new ProjectInvoiceQuantityChanged
-                            {
-                                Id = Guid.NewGuid(),
-                                ProjectId = param.ProjectId,
-                                RashodRowId = nRow.First().Id,
-                                Quantity = param.Quantity > nRow.First().DDT_KOL_RASHOD
-                                    ? nRow.First().DDT_KOL_RASHOD
-                                    : param.Quantity,
-                            };
-                            Context.ProjectInvoiceQuantityChanged.Add(newItem);
-                            Context.SaveChanges();
-                        }
-                    }
-                    break;
                 case DocumentType.InvoiceClient:
                     TD_84 cRow = null;
                     if (param.DocId != null)
@@ -3283,11 +3254,13 @@ namespace KursRepositories.Repositories.Projects
                         cRow = Context.TD_84.FirstOrDefault(_ =>
                             _.SFT_NEMENKL_DC == param.NomDC && _.DocId == param.DocId.Value);
                     }
+
                     if (param.DocDC != null)
                     {
                         cRow = Context.TD_84.FirstOrDefault(_ =>
                             _.SFT_NEMENKL_DC == param.NomDC && _.DOC_CODE == param.DocDC.Value);
                     }
+
                     if (cRow == null) return;
                     var old = Context.ProjectInvoiceQuantityChanged.FirstOrDefault(_ =>
                         _.ProjectId == param.ProjectId && _.ClientRowId == cRow.Id);
@@ -3301,6 +3274,7 @@ namespace KursRepositories.Repositories.Projects
                         {
                             old.Quantity = param.Quantity;
                         }
+
                         Context.SaveChanges();
                     }
                     else
@@ -3320,6 +3294,7 @@ namespace KursRepositories.Repositories.Projects
                             Context.SaveChanges();
                         }
                     }
+
                     break;
                 case DocumentType.InvoiceProvider:
                     TD_26 pRow = null;
@@ -3348,6 +3323,7 @@ namespace KursRepositories.Repositories.Projects
                         {
                             old2.Quantity = param.Quantity;
                         }
+
                         Context.SaveChanges();
                     }
                     else
@@ -3358,7 +3334,7 @@ namespace KursRepositories.Repositories.Projects
                             {
                                 Id = Guid.NewGuid(),
                                 ProjectId = param.ProjectId,
-                                PrihodRowId = pRow.Id,
+                                ProviderRowId = pRow.Id,
                                 Quantity = param.Quantity > pRow.SFT_KOL
                                     ? pRow.SFT_KOL
                                     : param.Quantity,
@@ -3367,7 +3343,7 @@ namespace KursRepositories.Repositories.Projects
                             Context.SaveChanges();
                         }
                     }
-                    
+
                     break;
                 case DocumentType.NomenklCurrencyConverterProvider:
                     TD_26_CurrencyConvert cpRow = null;
@@ -3380,7 +3356,7 @@ namespace KursRepositories.Repositories.Projects
 
                     if (cpRow == null) return;
                     var old3 = Context.ProjectInvoiceQuantityChanged.FirstOrDefault(_ =>
-                        _.ProjectId == param.ProjectId && _.ProviderRowId == cpRow.Id);
+                        _.ProjectId == param.ProjectId && _.ProviderCurrencyConvertRowId == cpRow.Id);
                     if (old3 != null)
                     {
                         if (param.Quantity == cpRow.Quantity)
@@ -3391,6 +3367,7 @@ namespace KursRepositories.Repositories.Projects
                         {
                             old3.Quantity = param.Quantity;
                         }
+
                         Context.SaveChanges();
                     }
                     else
@@ -3422,34 +3399,11 @@ namespace KursRepositories.Repositories.Projects
                                 cast(tab.DeltaQuantity AS NUMERIC(18, 4)) as DeltaQuantity,
                                 cast(tab.DocType AS int)   as DocType
                     FROM (SELECT
-                                cast(t.DDT_NOMENKL_DC AS numeric(18,0))       AS NomDC,
-                    ProjectId,
-                    cast(t.DDT_KOL_RASHOD - piqc.Quantity AS numeric(18,4)) AS DeltaQuantity,
-                       cast(3 AS INT) as DocType
-                FROM
-                        ProjectInvoiceQuantityChanged piqc
-                    INNER JOIN
-                      TD_24 t
-                        ON piqc.RashodRowId = t.Id
-                UNION
-                SELECT
-                        t.DDT_NOMENKL_DC,
-                        piqc.ProjectId,
-                        t.DDT_KOL_PRIHOD - piqc.Quantity,
-                        2
-                FROM
-                        ProjectInvoiceQuantityChanged piqc
-                    INNER JOIN
-                      TD_24 t
-                        ON piqc.PrihodRowId = t.Id
-
-                UNION
-                SELECT
-                        t.SFT_NEMENKL_DC,
-                        piqc.ProjectId,
-                        t.SFT_KOL - piqc.Quantity,
-                        1
-                FROM
+                        t.SFT_NEMENKL_DC as NomDC,
+                        piqc.ProjectId as ProjectId,
+                        t.SFT_KOL - piqc.Quantity as DeltaQuantity,
+                        1 as DocType
+                    FROM
                         ProjectInvoiceQuantityChanged piqc
                     INNER JOIN
                       TD_26 t

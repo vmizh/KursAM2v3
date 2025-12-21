@@ -7,7 +7,7 @@
                     xmlns:dxlcs="clr-namespace:DevExpress.Xpf.LayoutControl.Serialization;assembly=DevExpress.Xpf.LayoutControl.v23.2"
                     xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors"
                     xmlns:dxci="http://schemas.devexpress.com/winfx/2008/xaml/core/internal">
-    <Style x:Key="GridControl.Base" TargetType="dxg:GridControl">
+    <Style x:Key="GridControl.Base" TargetType="dxg:GridControl" >
         <Setter Property="ShowBorder" Value="False" />
         <Setter Property="EnableSmartColumnsGeneration" Value="True" />
         <Setter Property="AutoGenerateColumns" Value="AddNew" />
@@ -469,6 +469,22 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Border Background="#FF3D3D3D" CornerRadius="10,0,0,10">
+                <Image Stretch="Fill" Width="100" Height="100" Source="/Images/Box_Green.png" />
+            </Border>
+            <Border Grid.Column="1" CornerRadius="0,10,10,0" Background="{Binding Background}">
+                <TextBox  Text="{Binding NotifyInfo,Mode=OneWay}" 
+                          TextWrapping="WrapWithOverflow"
+                          IsReadOnly="True" />
+            </Border>
+        </Grid>
+    </DataTemplate>
+    <DataTemplate x:Key="CustomNotificationTemplateBase">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Border Background="{Binding NotifyColor}" CornerRadius="10,0,0,10">
                 <Image Stretch="Fill" Width="100" Height="100" Source="/Images/Box_Green.png" />
             </Border>
             <Border Grid.Column="1" CornerRadius="0,10,10,0" Background="{Binding Background}">
