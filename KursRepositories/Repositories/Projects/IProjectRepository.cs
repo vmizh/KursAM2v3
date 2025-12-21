@@ -9,8 +9,20 @@ using KursDomain.Result;
 
 namespace KursRepositories.Repositories.Projects
 {
+    public record ProjectManualParameter
+    {
+        public DocumentType DocType { set; get; } 
+        public Guid ProjectId { set; get; }
+        public Guid? DocId { set; get; }
+        public decimal? DocDC { set; get; }
+        public decimal NomDC { set; get; }
+        public decimal Quantity { set; get; }
+    }
+
     public interface IProjectRepository
     {
+        void UpdateManualQuantity(ProjectManualParameter param);
+
         IBoolResult SaveReference(
             IEnumerable<Data.Projects> data,
             IEnumerable<Guid> deleteIds = null
@@ -250,6 +262,8 @@ namespace KursRepositories.Repositories.Projects
 
         List<Guid> GetAllTreeProjectIds(Guid id);
         List<Guid> GetChilds(List<Data.Projects> list, Guid id);
+
+        List<ManualQuantity> GetManualQuantity(Guid projectId);
 
         List<GetNomenklMoveForProject_Result1> GetNomenklMoveForProject(
             Guid projectId,
