@@ -265,7 +265,7 @@ namespace KursRepositories.Repositories.Projects
 
         List<ManualQuantity> GetManualQuantity(Guid projectId);
 
-        List<GetNomenklMoveForProject_Result1> GetNomenklMoveForProject(
+        List<NomenklMoveForProject_Result> GetNomenklMoveForProject(
             Guid projectId,
             bool isRecursive,
             bool isExcludeShow

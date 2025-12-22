@@ -2539,47 +2539,71 @@ namespace KursRepositories.Repositories.Projects
             return ret;
         }
 
-        public List<GetNomenklMoveForProject_Result1> GetNomenklMoveForProject(
+        public List<NomenklMoveForProject_Result> GetNomenklMoveForProject(
             Guid projectId,
             bool isRecursive,
             bool isExcludeShow
         )
         {
-            var ret = Context
-                .GetNomenklMoveForProject(projectId, (byte?)(isRecursive ? 1 : 0), (byte?)(isExcludeShow ? 1 : 0))
-                .ToList();
+            var ret = new List<NomenklMoveForProject_Result>();
+            var data = Context
+                .GetNomenklMoveForProject(projectId, (byte?)(isRecursive ? 1 : 0), (byte?)(isExcludeShow ? 1 : 0)).ToList();
 
             var manual = GetManualQuantity(projectId);
             
-            foreach (var r in ret)
+            foreach (var r in data)
             {
-                if (manual.Any(_ => _.NomDC == r.NomDC))
+                var newItem = new NomenklMoveForProject_Result
                 {
-                    var dInvoiceIn = manual.Where(_ => _.NomDC == r.NomDC && _.DocType is 1 or 4 ).ToList();
+                    DocQuantityIn = r.DocQuantityIn,
+                    NomDC = r.NomDC,
+                    DocSummaIn = r.DocSummaIn,
+                    FactQuantityIn = r.FactQuantityIn,
+                    DocQuantityOut = r.DocQuantityOut,
+                    DocSummaOut = r.DocSummaOut,
+                    FactQuantityOut = r.FactQuantityOut,
+                    FactSummaIn = r.FactSummaIn,
+                    DilerSumma = r.DilerSumma,
+                    FactSummaOut = r.FactSummaOut,
+                    HasExcluded = r.HasExcluded,
+                    IsService = r.IsService,
+                    NakladSumma = r.NakladSumma,
+                    NomId = r.NomId,
+                    NomName = r.NomName,
+                    NomNomenkl = r.NomNomenkl,
+                };
+                if (manual.Any(_ => _.NomDC == newItem.NomDC))
+                {
+                    var dInvoiceIn = manual.Where(_ => _.NomDC == newItem.NomDC && _.DocType is 1 or 4 ).ToList();
                     if (dInvoiceIn.Count > 0)
                     {
-                        var prc = r.DocSummaIn / r.DocQuantityIn;
-                        r.DocQuantityIn -= dInvoiceIn.Sum(_ => _.DeltaQuantity);
-                        r.DocSummaIn = prc * r.DocQuantityIn;
-                        if (r.FactQuantityIn > r.DocQuantityIn)
+                        var prc = newItem.DocSummaIn / newItem.DocQuantityIn;
+                        newItem.DocQuantityIn -= dInvoiceIn.Sum(_ => _.DeltaQuantity);
+                        newItem.DocSummaIn = prc * newItem.DocQuantityIn;
+                        if (newItem.FactQuantityIn > newItem.DocQuantityIn)
                         {
-                            r.FactQuantityIn = r.DocQuantityIn;
-                            r.FactSummaIn = r.DocSummaIn;
+                            newItem.FactQuantityIn = newItem.DocQuantityIn;
+                            newItem.FactSummaIn = newItem.DocSummaIn;
                         }
+
+                        newItem.IsManualChanged = true;
                     }
-                    var dInvoiceOut = manual.Where(_ => _.NomDC == r.NomDC && _.DocType == 0).ToList();
+                    var dInvoiceOut = manual.Where(_ => _.NomDC == newItem.NomDC && _.DocType == 0).ToList();
                     if (dInvoiceOut.Count > 0)
                     {
-                        var prc = r.DocSummaOut / r.DocQuantityOut;
-                        r.DocQuantityOut -= dInvoiceOut.Sum(_ => _.DeltaQuantity);
-                        r.DocSummaOut = prc * r.DocQuantityOut;
-                        if (r.FactQuantityOut > r.DocQuantityOut)
+                        var prc = newItem.DocSummaOut / newItem.DocQuantityOut;
+                        newItem.DocQuantityOut -= dInvoiceOut.Sum(_ => _.DeltaQuantity);
+                        newItem.DocSummaOut = prc * newItem.DocQuantityOut;
+                        if (newItem.FactQuantityOut > newItem.DocQuantityOut)
                         {
-                            r.FactQuantityOut = r.DocQuantityOut;
-                            r.FactSummaOut = r.DocSummaOut;
+                            newItem.FactQuantityOut = newItem.DocQuantityOut;
+                            newItem.FactSummaOut = newItem.DocSummaOut;
                         }
+
+                        newItem.IsManualChanged = true;
                     }
                 }
+                ret.Add(newItem);
             }
             return ret;
         }
@@ -3479,4 +3503,10 @@ namespace KursRepositories.Repositories.Projects
         /// </summary>
         public int DocType { set; get; }
     }
+}
+
+public class NomenklMoveForProject_Result : GetNomenklMoveForProject_Result1
+{
+    //[Display(AutoGenerateField = true, GroupName = "Документы", Name = "Сумма(приход)")]
+    public bool IsManualChanged { set; get; }
 }

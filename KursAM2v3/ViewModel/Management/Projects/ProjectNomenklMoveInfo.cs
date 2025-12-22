@@ -21,6 +21,8 @@ public class ProjectNomenklMoveInfo
 
     [Display(AutoGenerateField = true, Name = "Есть исключенные")]
     public bool HasExcluded { set; get; }
+    [Display(AutoGenerateField = true, Name = "Руч. кор-ка")]
+    public bool HasManualChanged { set; get; }
 
     #region Документы
 
@@ -47,7 +49,7 @@ public class ProjectNomenklMoveInfo
 
     [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Результат (сумма)")]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal DocSummaResult => DocSummaOut - DocSummaIn;
+    public decimal DocSummaResult => DocQuantityIn > 0 ? DocSummaOut - DocSummaIn * DocQuantityOut / DocQuantityIn : 0;
 
     #endregion
 
@@ -75,7 +77,7 @@ public class ProjectNomenklMoveInfo
 
     [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Результат (сумма)")]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal FactSummaResult => FactSummaOut - FactSummaIn;
+    public decimal FactSummaResult => FactQuantityIn > 0 ? FactSummaOut - FactSummaIn*FactQuantityOut/FactQuantityIn : 0;
 
     #endregion
 

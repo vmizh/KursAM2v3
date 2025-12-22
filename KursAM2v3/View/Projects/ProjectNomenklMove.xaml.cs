@@ -40,7 +40,7 @@ public partial class ProjectNomenklMove : ThemedWindow
                     TargetType = typeof(LightweightCellEditor)
                 };
                 newStyle.Setters.Add(
-                    new Setter(LightweightCellEditor.BackgroundProperty, Brushes.Transparent));
+                    new Setter(FontWeightProperty, FontWeights.Normal));
                 cell.Style = newStyle;
 
             }
@@ -114,12 +114,12 @@ public partial class ProjectNomenklMove : ThemedWindow
     {
         e.Column.Name = e.Column.FieldName;
         e.Column.ReadOnly = true;
-        switch (e.Column.FieldName)
-        {
-            case "IsManualChanged":
-                e.Column.Visible = false;
-                break;
-        }
+        //switch (e.Column.FieldName)
+        //{
+        //    case "IsManualChanged":
+        //        e.Column.Visible = false;
+        //        break;
+        //}
         
     }
 

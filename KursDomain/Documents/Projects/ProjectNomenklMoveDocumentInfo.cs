@@ -96,7 +96,7 @@ public class ProjectNomenklMoveDocumentInfo
     [DisplayFormat(DataFormatString = "n2")]
     public decimal ManualClientQuantity { set; get; }
 
-    [Display(AutoGenerateField = true)]
+    [Display(AutoGenerateField = true,Name = "Руч. кор-ка")]
     public bool IsManualChanged =>
         (ClientQuantity - ManualClientQuantity) + (ProviderQuantity - ManualProviderQuantity) > 0;
 
