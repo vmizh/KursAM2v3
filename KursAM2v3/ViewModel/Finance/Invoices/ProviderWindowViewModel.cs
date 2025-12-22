@@ -1987,6 +1987,16 @@ namespace KursAM2.ViewModel.Finance.Invoices
                         UnitOfWork.Context.TD_24.Remove(d);
                 }
 
+                foreach (var pay in Document.PaymentDocs)
+                {
+                    var old = UnitOfWork.Context.TD_101.FirstOrDefault(_ =>
+                        _.CODE == pay.BankCode);
+                    if (old != null && old.CurrencyRateForReference != pay.Rate)
+                    {
+                        old.CurrencyRateForReference = pay.Rate;    
+                    }
+                }
+
                 UnitOfWork.Save();
                 //UnitOfWork.Commit();
                 UnitOfWork.Context.Database.ExecuteSqlCommand(

@@ -1,13 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using Core.Helper;
+﻿using Core.Helper;
 using Core.ViewModel.Base;
 using Data;
 using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.ICommon;
 using KursDomain.References;
+using KursDomain.WindowsManager.WindowsManager;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace KursDomain.Documents.Invoices;
 
@@ -26,11 +28,27 @@ public sealed class ProviderInvoicePayViewModel : RSViewModelBase, IEntity<Provi
     public ProviderInvoicePayViewModel(ProviderInvoicePay entity)
     {
         Entity = entity ?? DefaultValue();
+        LoadReferences();
     }
 
     private void LoadReferences()
     {
-       
+        if (Entity.TD_101 == null || (Entity.TD_101.CurrencyRateForReference ?? 0) == Entity.Rate) return;
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            try
+            {
+                var old = ctx.ProviderInvoicePay.FirstOrDefault(_ => _.Id == Entity.Id);
+                if (old == null) return;
+                old.Rate = (Entity.TD_101.CurrencyRateForReference ?? 0);
+                ctx.SaveChanges();
+                Rate = (Entity.TD_101.CurrencyRateForReference ?? 0);
+            }
+            catch (Exception ex)
+            {
+                WindowManager.ShowError(ex); 
+            }
+        }
     }
 
     [Display(AutoGenerateField = false)]

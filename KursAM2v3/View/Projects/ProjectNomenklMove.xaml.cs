@@ -4,10 +4,11 @@ using KursAM2.ViewModel.Management.Projects;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Projects;
 using System;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
+using Brushes = System.Windows.Media.Brushes;
 
 namespace KursAM2.View.Projects;
 
@@ -83,7 +84,8 @@ public partial class ProjectNomenklMove : ThemedWindow
                 TargetType = typeof(LightweightCellEditor)
             };
             newStyle.Setters.Add(
-                new Setter(LightweightCellEditor.BackgroundProperty, Brushes.DarkGray));
+                new Setter(FontWeightProperty, FontWeights.Black));
+                
             cell.Style = newStyle;
         }
     }
