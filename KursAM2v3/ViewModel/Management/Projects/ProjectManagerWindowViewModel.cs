@@ -497,6 +497,15 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         set
         {
             if (value == myIsShowExcluded) return;
+            var frm = Form as ProjectManager;
+            ProjectDocumentInfo oldCurrent = null;
+            int currentRow = -1;
+            if (frm != null)
+            {
+                oldCurrent = frm.gridDocuments.CurrentItem as ProjectDocumentInfo;
+                currentRow = frm.tableViewDocuemts.FocusedRowHandle;
+            }
+            
             myIsShowExcluded = value;
             if (myCurrentProject != null)
             {
@@ -504,6 +513,12 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 SetCrsColumnsVisible();
             }
             InvoiceNomenklRows.Clear();
+            if (oldCurrent != null)
+            {
+                CurrentDocument = oldCurrent;
+                frm.tableViewDocuemts.FocusedRowHandle = currentRow;
+            }
+
             RaisePropertyChanged();
         }
         get => myIsShowExcluded;

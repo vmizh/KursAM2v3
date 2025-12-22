@@ -1,7 +1,13 @@
-﻿using Core.ViewModel.Base;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Windows;
+using System.Windows.Input;
+using System.Windows.Media;
+using Core.ViewModel.Base;
 using Data;
 using DevExpress.Data;
-using DevExpress.Data.Filtering;
 using DevExpress.Xpf.Core.ConditionalFormatting;
 using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
@@ -15,13 +21,6 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.WindowsManager.WindowsManager;
 using KursRepositories.Repositories.Projects;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
 
 namespace KursAM2.ViewModel.Management.Projects;
 
@@ -58,7 +57,8 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
                 {
                     NotifyColor = Brushes.Red;
                     CurrentDocument.ManualClientQuantity = CurrentDocument.ClientQuantity;
-                    NotifyInfo = $"Кол-во не может быть меньше 0 и больше, чем в счете {CurrentDocument.ClientQuantity}";
+                    NotifyInfo =
+                        $"Кол-во не может быть меньше 0 и больше, чем в счете {CurrentDocument.ClientQuantity}";
                     var notification = KursNotyficationService.CreateCustomNotification(this);
                     notification.ShowAsync();
                     return;
@@ -70,22 +70,25 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
                 {
                     NotifyColor = Brushes.Red;
                     CurrentDocument.ManualProviderQuantity = CurrentDocument.ProviderQuantity;
-                    NotifyInfo = $"Кол-во не может быть меньше 0 и больше, чем в счете {CurrentDocument.ProviderQuantity}";
+                    NotifyInfo =
+                        $"Кол-во не может быть меньше 0 и больше, чем в счете {CurrentDocument.ProviderQuantity}";
                     var notification = KursNotyficationService.CreateCustomNotification(this);
                     notification.ShowAsync();
                     return;
                 }
+
                 break;
         }
+
         var p = new ProjectManualParameter
-                {
-                    Quantity = (decimal)param.Value,
-                    ProjectId = CurrentProject.Id,
-                    NomDC = CurrentNomenkl.NomDC,
-                    DocType = CurrentDocument.DocumentType,
-                    DocDC = CurrentDocument.DocCode
-                };
-                myProjectRepository.UpdateManualQuantity(p);
+        {
+            Quantity = (decimal)param.Value,
+            ProjectId = CurrentProject.Id,
+            NomDC = CurrentNomenkl.NomDC,
+            DocType = CurrentDocument.DocumentType,
+            DocDC = CurrentDocument.DocCode
+        };
+        myProjectRepository.UpdateManualQuantity(p);
 
         switch (CurrentDocument.DocumentType)
         {
@@ -104,7 +107,11 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
                 break;
         }
 
-        if (Form is ProjectNomenklMove frm) frm.gridNomenklRows.RefreshData();
+        if (Form is ProjectNomenklMove frm)
+        {
+            CurrentNomenkl.HasManualChanged = DocumentRows.Any(_ => _.IsManualChanged);
+            frm.gridNomenklRows.RefreshData();
+        }
     }
 
     public string NotifyInfo { get; set; }
@@ -475,7 +482,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
             ValueRule = ConditionRule.Equal,
             Value1 = true
         };
-        
+
         frm.tableViewDocumentRows.FormatConditions.Add(manualChangedCondition);
     }
 
@@ -522,7 +529,8 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
                 NomId = n.NomId ?? Guid.Empty,
                 NomName = n.NomName,
                 NomNomenkl = n.NomNomenkl,
-                HasExcluded = n.HasExcluded ?? false
+                HasExcluded = n.HasExcluded ?? false,
+                HasManualChanged = n.IsManualChanged
             };
             newItem.ResultPriceIn =
                 Math.Round(
