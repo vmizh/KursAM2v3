@@ -2863,7 +2863,7 @@ namespace KursRepositories.Repositories.Projects
                                                   newItem.ProviderQuantity;
                     }
 
-                    var pId = Context.ProjectDocuments.FirstOrDefault(_ => _.CurrencyConvertId == crsConv.Id 
+                    var pId = Context.ProjectDocuments.FirstOrDefault(_ => _.InvoiceProviderId == doc.Id 
                                                                            && projectIds.Contains(_.ProjectId))?.ProjectId;
                     if (pId != null)
                         newItem.ProjectId = pId.Value;
