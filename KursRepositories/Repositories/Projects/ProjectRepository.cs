@@ -232,10 +232,22 @@ namespace KursRepositories.Repositories.Projects
             );
         }
 
-        public List<TD_84> GetInvoiceClientRows(Guid id)
+        public List<TD_84> GetInvoiceClientRows(Guid id, Guid? projectId = null)
         {
-            return Context.TD_84.Include(_ => _.SD_83).Include(_ => _.TD_24)
+            var data = Context.TD_84.AsNoTracking().Include(_ => _.SD_83).Include(_ => _.TD_24)
                 .Include(_ => _.SD_83.SD_175).Where(_ => _.DocId == id).ToList();
+            if (projectId == null) return data;
+
+            var prjs = Context.ProjectInvoiceQuantityChanged.Where(_ =>
+                _.ProjectId == projectId && _.ClientRowId != null);
+            foreach (var d in data)
+            {
+                var p = prjs.FirstOrDefault(_ => _.ClientRowId == d.Id);
+                if (p == null) continue;
+                d.SFT_SUMMA_K_OPLATE_KONTR_CRS = p.Quantity * d.SFT_SUMMA_K_OPLATE_KONTR_CRS / (decimal?)d.SFT_KOL;
+                d.SFT_KOL = (double)p.Quantity;
+            }
+            return data;
         }
 
         #endregion
@@ -501,21 +513,74 @@ namespace KursRepositories.Repositories.Projects
             return LoadProjectDocuments(prj, isShowAll);
         }
 
+        private record ManualExt 
+        {
+            public ProjectInvoiceQuantityChanged BaseRow { set; get; }
+            public Guid? ClientId { set; get; }
+            public Guid? ProviderId { set; get; }
+        }
+
         public IEnumerable<ProjectDocumentInfo> LoadProjectDocuments2(Guid projectId, bool isShowAll)
         {
             var ret = new List<ProjectDocumentInfo>();
             var project = Context.Projects.Include(_ => _.ProjectDocuments).AsNoTracking()
                 .FirstOrDefault(_ => _.Id == projectId);
+            var manual = Context.ProjectInvoiceQuantityChanged.Where(_ => _.ProjectId == projectId).ToList();
+            var manul = new List<ManualExt>();
+            foreach (var r in manual)
+            {
+                var newItem = new ManualExt()
+                {
+                    BaseRow = r,
+
+                };
+                if (r.ProviderRowId != null)
+                    newItem.ProviderId = Context.TD_26.FirstOrDefault(_ => _.Id == r.ProviderRowId)?.DocId;
+                if (r.ClientRowId != null)
+                    newItem.ClientId = Context.TD_84.FirstOrDefault(_ => _.Id == r.ClientRowId)?.DocId;
+                if (r.ProviderCurrencyConvertRowId != null)
+                    newItem.ProviderId = Context.TD_26_CurrencyConvert.Include(_ => _.TD_26)
+                        .FirstOrDefault(_ => _.Id == r.ProviderCurrencyConvertRowId)?.TD_26?.DocId;
+                manul.Add(newItem);
+            }
+
             if (project is null) return new List<ProjectDocumentInfo>();
             var exclInvoices = Context.ProjectRowExclude.Include(_ => _.TD_26_CurrencyConvert)
                 .AsNoTracking().Where(_ => _.ProjectId == projectId).ToList();
             if (project.ProjectDocuments.Any(_ => _.InvoiceProviderId != null))
-                ret.AddRange(GetInvoiceProviders(
+            {
+                var providerInvoices = GetInvoiceProviders(
                     project.ProjectDocuments.Where(_ => _.InvoiceProviderId != null).ToList(), isShowAll,
-                    exclInvoices));
+                    exclInvoices).ToList();
+                if (manul.Any(_ => _.ProviderId != null))
+                {
+                    foreach (var p in providerInvoices)
+                    {
+                        if (manul.Any(_ => _.ProviderId == p.InvoiceProviderId))
+                            p.IsManualChanged = true;
+                    }
+                }
+                ret.AddRange(providerInvoices);
+            }
+
             if (project.ProjectDocuments.Any(_ => _.InvoiceClientId != null))
-                ret.AddRange(GetInvoiceClients(project.ProjectDocuments.Where(_ => _.InvoiceClientId != null).ToList(),
-                    isShowAll, exclInvoices));
+            {
+                var clientInvoices = GetInvoiceClients(
+                    project.ProjectDocuments.Where(_ => _.InvoiceClientId != null).ToList(),
+                    isShowAll, exclInvoices).ToList();
+                if (manul.Any(_ => _.ClientId != null))
+                {
+                    foreach (var c in clientInvoices)
+                    {
+                        if (manul.Any(_ => _.ClientId == c.InvoiceClientId))
+                        {
+                            c.IsManualChanged = true;
+                        }
+                    }
+                }
+                ret.AddRange(clientInvoices);
+            }
+
             if (project.ProjectDocuments.Any(_ => _.BankCode != null))
                 ret.AddRange(GetBanksForProject(project.ProjectDocuments.Where(_ => _.BankCode != null).ToList(),
                     isShowAll, exclInvoices));
@@ -1004,13 +1069,22 @@ namespace KursRepositories.Repositories.Projects
             List<ProjectRowExclude> exclInvoices)
         {
             var ret = new List<ProjectDocumentInfo>();
-            var invoices = docs.Select(_ => _.InvoiceClientId)
-                .Select(id => Context.SD_84.Include(_ => _.TD_84)
+            var invoices = new List<InvoiceClientBase>();
+            foreach (var d in docs.Where(_ => _.InvoiceClientId != null))
+            {
+                var item =Context.SD_84.Include(_ => _.TD_84)
                     .Include("TD_84.TD_24")
-                    .FirstOrDefault(_ => _.Id == id))
-                .Where(item => item != null)
-                .Select(inv => new InvoiceClientBase(inv))
-                .ToList();
+                    .FirstOrDefault(_ => _.Id == d.InvoiceClientId);
+                if(item == null) continue;
+                var newItem = InvoiceClientBase.GetInvoiceForProject(item, d.ProjectId);
+                invoices.Add(newItem);
+
+            }
+            //var invoices = docs.Select(_ => _.InvoiceClientId)
+            //    .Select(id => 
+            //    .Where(item => item != null)
+            //    .Select(inv => new InvoiceClientBase(inv))
+            //    .ToList();
 
             foreach (var p in docs)
             {
@@ -1058,6 +1132,7 @@ namespace KursRepositories.Repositories.Projects
                 );
                 newItem.Creator = inv.CREATOR;
                 newItem.ProductTypeName = inv.VzaimoraschetType?.Name;
+                
 
                 if (isShowAll || inv.Rows.Any(_ => !exIds.Contains(_.Id)))
                     ret.Add(newItem);

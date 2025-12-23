@@ -551,31 +551,39 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 GridInfoVisibility = Visibility.Hidden;
                 IsNotInfoVisibility = Visibility.Hidden;
                 GridInvoiceInfoVisibility = Visibility.Visible;
-                var rows = myProjectRepository.GetInvoiceClientRows(id.Value);
+                var rows = myProjectRepository.GetInvoiceClientRows(id.Value,CurrentProject.Id);
                 foreach (var r in rows)
                 {
                     if (!IsShowExcluded && exclude.Select(_ => _.SFClientRowId).Contains(r.Id)) continue;
-                    InvoiceNomenklRows.Add(new ProjectInvoiceNomenklInfo()
+                    var newInv = new ProjectInvoiceNomenklInfo()
                     {
                         Note = r.SFT_TEXT,
                         // ReSharper disable once PossibleInvalidOperationException
                         Summa = r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0,
                         NomenklName = r.SD_83.NOM_NAME,
                         NomenklNumber = r.SD_83.NOM_NOMENKL,
-                        Quantity = (decimal) r.SFT_KOL,
+                        Quantity = (decimal)r.SFT_KOL,
                         Unit = r.SD_83.SD_175.ED_IZM_NAME,
                         // ReSharper disable once PossibleInvalidOperationException
                         UnitPrice = (decimal)r.SFT_ED_CENA,
-                        Shipped = r.SD_83.NOM_0MATER_1USLUGA == 1 ?
-                            1 : r.TD_24?.Sum(_ => _.DDT_KOL_RASHOD) ?? 0,
-                        ShippedSumma =  r.SD_83.NOM_0MATER_1USLUGA == 1 ?
-                            r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0 :
-                            (r.TD_24?.Sum(_ => _.DDT_KOL_RASHOD) ?? 0)*r.SFT_SUMMA_K_OPLATE_KONTR_CRS/(decimal?)r.SFT_KOL ?? 0,
+                        Shipped = (r.TD_24?.Sum(_ => _.DDT_KOL_RASHOD) ?? 0) > (decimal)r.SFT_KOL ?
+                            (decimal)r.SFT_KOL : r.SD_83.NOM_0MATER_1USLUGA == 1 ? 1 : r.TD_24?.Sum(_ => _.DDT_KOL_RASHOD) ?? 0,
+                        ShippedSumma = (decimal?)r.SFT_KOL == 0 ? 0 :
+                            r.SD_83.NOM_0MATER_1USLUGA == 1 ? r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0 :
+                            (r.TD_24?.Sum(_ => _.DDT_KOL_RASHOD) ?? 0) * r.SFT_SUMMA_K_OPLATE_KONTR_CRS /
+                            (decimal?)r.SFT_KOL ?? 0,
                         IsUsluga = r.SD_83.NOM_0MATER_1USLUGA == 1,
                         DocumentType = DocumentType.InvoiceClient,
                         IsExclude = exclude.Select(_ => _.SFClientRowId).Contains(r.Id),
-                        Id = r.Id
-                    });
+                        Id = r.Id,
+                    };
+                    if (newInv.Summa == 0 || newInv.Summa != newInv.UnitPrice * newInv.Quantity)
+                    {
+                        newInv.IsManualChanged = true;
+                    }
+
+                    InvoiceNomenklRows.Add(newInv);
+
                 }
                 break;
             case DocumentType.InvoiceProvider:

@@ -11,6 +11,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using DevExpress.Xpf.Data.Native;
 
 namespace KursDomain.Documents.Base;
 
@@ -23,6 +24,78 @@ public sealed class InvoiceClientBase : RSViewModelBase, IInvoiceClient
     private NomenklProductType myVzaimoraschetType;
     private PayForm myFormRaschet;
     private References.Employee myPersonaResponsible;
+
+    public static InvoiceClientBase GetInvoiceForProject(SD_84 doc, Guid projectId)
+    {
+        if (doc == null)
+            throw new ArgumentNullException(nameof(doc));
+        var ret = new InvoiceClientBase();
+        ret.DocCode = doc.DOC_CODE;
+        ret.Id = doc.Id;
+        ret.DocDate = doc.SF_DATE;
+        ret.InnerNumber = doc.SF_IN_NUM;
+        ret.OuterNumber = doc.SF_OUT_NUM;
+
+        ret.Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.SF_CRS_DC) as References.Currency;
+        ret.Client = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_CLIENT_DC) as Kontragent;
+        ret.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(doc.SF_CENTR_OTV_DC) as CentrResponsibility;
+        ret.Receiver = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_RECEIVER_KONTR_DC) as Kontragent;
+        ret.FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(doc.SF_FORM_RASCH_DC) as PayForm;
+        ret.PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(doc.SD_179?.DOC_CODE) as PayCondition;
+        ret.VzaimoraschetType =
+            GlobalOptions.ReferencesCache.GetNomenklProductType(doc.SD_77?.DOC_CODE) as NomenklProductType;
+        ret.PersonaResponsible =
+            GlobalOptions.ReferencesCache.GetEmployee(doc.PersonalResponsibleDC) as References.Employee;
+
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            
+            ret.Note = doc.SF_NOTE;
+            //Diler = GlobalOptions.ReferencesCache.GetKontragent(doc.DilerDC) as Kontragent;
+            ret.IsAccepted = doc.SF_ACCEPTED == 1;
+            ret.Summa = 0;
+            foreach (var r in doc.TD_84)
+            {
+                var prj = ctx.ProjectInvoiceQuantityChanged.FirstOrDefault(_ => _.ClientRowId == r.Id && _.ProjectId == projectId);
+                if (prj != null)
+                {
+                    ret.Summa += prj.Quantity * (r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0)/(decimal)r.SFT_KOL;
+                }
+                else
+                {
+                    ret.Summa += r.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0;
+                } 
+            }
+
+            ret.CREATOR = doc.CREATOR;
+            ret.IsNDSIncludeInPrice = doc.SF_NDS_1INCLUD_0NO == 1;
+            decimal pSum = 0;
+
+            pSum = ctx.SD_33.Where(_ => _.SFACT_DC == ret.DocCode).Sum(_ => _.CRS_SUMMA) ?? 0;
+            pSum += ctx.TD_101.Include(_ => _.SD_101)
+                .Include(_ => _.SD_101.SD_114)
+                .Where(_ => _.VVT_SFACT_CLIENT_DC == ret.DocCode).Sum(_ => _.VVT_VAL_PRIHOD) ?? 0;
+
+            ret.PaySumma = pSum > ret.Summa ? ret.Summa : Math.Round(pSum, 2);
+
+            ret.Rows = new ObservableCollection<IInvoiceClientRow>();
+            foreach (var r in doc.TD_84) ret.Rows.Add(new InvoiceClientRowBase(r));
+            foreach (var t84 in doc.TD_84)
+            {
+                var q = t84.TD_24.Sum(t24 => t24.DDT_KOL_RASHOD);
+                if (q > 0)
+                    ret.SummaOtgruz += (t84.SFT_SUMMA_K_OPLATE_KONTR_CRS ?? 0) * (decimal)t84.SFT_KOL / q;
+            }
+            ret.SummaOtgruz = ret.SummaOtgruz > ret.Summa ? ret.Summa : ret.SummaOtgruz;
+        }
+
+        return ret;
+    }
+
+    public InvoiceClientBase()
+    {
+        
+    }
 
     public InvoiceClientBase(SD_84 doc)
     {

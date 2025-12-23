@@ -67,6 +67,9 @@ public class ProjectInvoiceNomenklInfo
     [Display(AutoGenerateField = false, Name = "Исключен",Order = 10)]
     public bool IsExclude { set; get; }
 
+    [Display(AutoGenerateField = true, Name = "Ручн. кор-ка", Order = 5)]
+    public bool IsManualChanged { set; get; }
+
     [Display(AutoGenerateField = false, Name = "Id",Order = 8)]
     public Guid Id { set; get; }
 

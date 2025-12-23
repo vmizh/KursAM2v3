@@ -381,6 +381,19 @@ public class ProjectDocumentInfo : ProjectDocumentInfoBase, IMultyWithDilerCurre
 
     #endregion
 
+    [Display(AutoGenerateField = true, Name = "Руч. кор-ка")]
+    public bool IsManualChanged
+    {
+        set
+        {
+            if (value == field) return;
+            field = value;
+            RaisePropertyChanged();
+        }
+        get;
+    }
+
+
     #region Methods
 
     private void SetCurrencyToZero()
