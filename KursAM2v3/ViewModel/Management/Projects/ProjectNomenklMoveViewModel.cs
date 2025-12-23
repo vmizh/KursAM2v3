@@ -374,7 +374,6 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
             RaisePropertyChanged();
         }
     }
-
     public bool IsRecursive
     {
         get => myIsRecursive;

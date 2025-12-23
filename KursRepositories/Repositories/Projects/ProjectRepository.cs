@@ -2591,9 +2591,10 @@ namespace KursRepositories.Repositories.Projects
                     var dInvoiceOut = manual.Where(_ => _.NomDC == newItem.NomDC && _.DocType == 0).ToList();
                     if (dInvoiceOut.Count > 0)
                     {
-                        var prc = newItem.DocSummaOut / newItem.DocQuantityOut;
+                        var s = dInvoiceOut.Sum(_ => _.Price * _.DeltaQuantity);
                         newItem.DocQuantityOut -= dInvoiceOut.Sum(_ => _.DeltaQuantity);
-                        newItem.DocSummaOut = prc * newItem.DocQuantityOut;
+                        newItem.DocSummaOut= (newItem.DocSummaOut-s);
+                        
                         if (newItem.FactQuantityOut > newItem.DocQuantityOut)
                         {
                             newItem.FactQuantityOut = newItem.DocQuantityOut;
@@ -3418,49 +3419,58 @@ namespace KursRepositories.Repositories.Projects
 
         public List<ManualQuantity> GetManualQuantity(Guid projectId)
         {
-            var sql = @$"SELECT cast(tab.NomDC AS NUMERIC(18,0)) as NomDC,
-                                tab.ProjectId as ProjectId,
-                                cast(tab.DeltaQuantity AS NUMERIC(18, 4)) as DeltaQuantity,
-                                cast(tab.DocType AS int)   as DocType
-                    FROM (SELECT
-                        t.SFT_NEMENKL_DC as NomDC,
-                        piqc.ProjectId as ProjectId,
-                        t.SFT_KOL - piqc.Quantity as DeltaQuantity,
-                        1 as DocType
-                    FROM
-                        ProjectInvoiceQuantityChanged piqc
-                    INNER JOIN
-                      TD_26 t
-                        ON piqc.ProviderRowId = t.Id
+            var sql = @$"SELECT
+        CAST(tab.NomDC AS NUMERIC(18, 0))         AS NomDC,
+        tab.ProjectId                             AS ProjectId,
+        CAST(tab.DeltaQuantity AS NUMERIC(18, 4)) AS DeltaQuantity,
+        CAST(tab.DocType AS INT)                  AS DocType,
+        cast(tab.Price AS numeric(18,4))          AS Price
+FROM
+        (   SELECT
+                    t.SFT_NEMENKL_DC AS NomDC,
+                    piqc.ProjectId AS ProjectId,
+                    t.SFT_KOL - piqc.Quantity AS DeltaQuantity,
+                    1 AS DocType,
+                    t.SFT_SUMMA_K_OPLATE_KONTR_CRS/t.SFT_KOL AS Price
+            FROM
+                    ProjectInvoiceQuantityChanged piqc
+                INNER JOIN
+                  TD_26 t
+                      ON piqc.ProviderRowId = t.Id
 
-                UNION
-                SELECT
-                        t.SFT_NEMENKL_DC,
-                        piqc.ProjectId,
-                        t.SFT_KOL - piqc.Quantity,
-                        0
-                FROM
-                        ProjectInvoiceQuantityChanged piqc
-                    INNER JOIN
-                      TD_84 t
-                        ON piqc.ClientRowId = t.Id
+            UNION
+            SELECT
+                    t.SFT_NEMENKL_DC,
+                    piqc.ProjectId,
+                    t.SFT_KOL - piqc.Quantity,
+                    0,
+                    t.SFT_SUMMA_K_OPLATE_KONTR_CRS/t.SFT_KOL
+            FROM
+                    ProjectInvoiceQuantityChanged piqc
+                INNER JOIN
+                  TD_84 t
+                      ON piqc.ClientRowId = t.Id
 
-                UNION
-                SELECT
-                        s83.DOC_CODE,
-                        piqc.ProjectId,
-                        tcc.Quantity - piqc.Quantity,
-                        4
-                FROM
-                        ProjectInvoiceQuantityChanged piqc
-                    INNER JOIN
-                      TD_26_CurrencyConvert tcc
-                        ON piqc.ProviderCurrencyConvertRowId = tcc.Id
-                    INNER JOIN SD_83 s83 ON s83.id = tcc.NomenklId
-                    INNER JOIN
-                      TD_26 t
-                        ON tcc.DOC_CODE = t.DOC_CODE
-                          AND tcc.CODE = t.CODE) tab where ProjectId = '{CustomFormat.GuidToSqlString(projectId)}'";
+            UNION
+            SELECT
+                    s83.DOC_CODE,
+                    piqc.ProjectId,
+                    tcc.Quantity - piqc.Quantity,
+                    4,
+                    tcc.Price
+            FROM
+                    ProjectInvoiceQuantityChanged piqc
+                INNER JOIN
+                  TD_26_CurrencyConvert tcc
+                      ON piqc.ProviderCurrencyConvertRowId = tcc.Id
+                INNER JOIN
+                  SD_83 s83
+                      ON s83.id = tcc.NomenklId
+                INNER JOIN
+                  TD_26 t
+                      ON tcc.DOC_CODE = t.DOC_CODE
+                      AND tcc.CODE = t.CODE) tab
+            WHERE  ProjectId = '{CustomFormat.GuidToSqlString(projectId)}'";
             var data = Context.Database.SqlQuery<ManualQuantity>(sql);
             return data.ToList();
         }
@@ -3502,6 +3512,8 @@ namespace KursRepositories.Repositories.Projects
         /// 4 - валютная конвертация
         /// </summary>
         public int DocType { set; get; }
+
+        public decimal Price { set; get; }
     }
 }
 
