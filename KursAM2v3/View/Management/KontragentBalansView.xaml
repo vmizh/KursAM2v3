@@ -201,6 +201,9 @@
                                             <MenuItem Header="Отвязать от проекта"
                                                       Command="{Binding DocumentUnLinkProjectCommand}" />
                                             <Separator />
+                                            <MenuItem Header="Открыть связанный счет"
+                                                      Command="{Binding DocumentLinkSFOpenCommand}" />
+                                            <Separator />
                                             <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                                       CommandParameter="{Binding Path=PlacementTarget, 
                            RelativeSource={RelativeSource Mode=FindAncestor,

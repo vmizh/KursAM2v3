@@ -433,9 +433,11 @@ public class KontragentBalansWindowViewModel : RSWindowViewModelBase
                           "cast(UCH_CRS_RATE as numeric(18,4)) as CrsUchRate, " +
                           "KONTR_DC as DocCode, " +
                           "CASE WHEN DOC_TYPE_CODE = 101 THEN '' ELSE DOC_EXT_NUM END as DocExtNum, " +
-                          "ISNULL(sd_24.DD_NOTES, ISNULL(Sd_26.SF_NOTES, ISNULL(SD_33.NOTES_ORD, " +
-                          "ISNULL(SD_34.NOTES_ORD, ISNULL(sd_84.SF_NOTE, ISNULL(td_101.VVT_DOC_NUM, " +
-                          "ISNULL(td_110.VZT_DOC_NOTES, ISNULL(sd_430.ASV_NOTES,'')))))))) AS Notes " +
+                          " ISNULL(sd_24.DD_NOTES,'') + ISNULL(Sd_26.SF_NOTES,'') + ISNULL(SD_33.NOTES_ORD,'') + ISNULL(SD_34.NOTES_ORD,'') + " +
+                          "ISNULL(sd_84.SF_NOTE,'') + ISNULL(td_101.VVT_DOC_NUM,'') + ISNULL(td_110.VZT_DOC_NOTES,'') + " +
+                          "ISNULL(sd_430.ASV_NOTES, '') +" +
+                          "CASE WHEN s26.DOC_CODE IS NOT NULL THEN 'С/ф поставщика №' + convert(varchar,s26.SF_IN_NUM) + ' от ' + convert(varchar,s26.SF_POSTAV_DATE,110) ELSE '' end +" +
+                          "CASE WHEN s84.DOC_CODE IS NOT NULL THEN 'С/ф клиенту №' + convert(varchar,s84.SF_IN_NUM) + ' от ' + convert(varchar,s84.SF_DATE,110) ELSE '' end AS Notes " +
                           "FROM dbo.KONTR_BALANS_OPER_ARC kboa " +
                           "LEFT OUTER JOIN sd_24 ON DOC_DC = sd_24.DOC_CODE " +
                           "LEFT OUTER JOIN sd_26 ON DOC_DC = sd_26.DOC_CODE " +
@@ -444,6 +446,8 @@ public class KontragentBalansWindowViewModel : RSWindowViewModelBase
                           "LEFT OUTER JOIN SD_84 ON DOC_DC = sd_84.DOC_CODE " +
                           "LEFT OUTER JOIN td_101 ON DOC_ROW_CODE = td_101.code " +
                           "LEFT OUTER JOIN td_110 ON DOC_DC = td_110.DOC_CODE AND kboa.DOC_ROW_CODE = td_110.code " +
+                          "LEFT OUTER JOIN sd_26 s26 ON td_110.VZT_SPOST_DC = s26.DOC_CODE " +
+                          "LEFT OUTER JOIN sd_84 s84 ON td_110.VZT_SFACT_DC = s84.DOC_CODE " +
                           "LEFT OUTER JOIN sd_430 ON doc_dc = sd_430.DOC_CODE " +
                           $"WHERE KONTR_DC = {CustomFormat.DecimalToSqlDecimal(dc)} " +
                           "ORDER BY kboa.DOC_DATE;";
@@ -513,6 +517,45 @@ public class KontragentBalansWindowViewModel : RSWindowViewModelBase
     }
 
     #region Command
+
+    public ICommand DocumentLinkSFOpenCommand
+    {
+        get { return new Command(DocumentLinkSFOpen, _ => CurrentDocument != null && CurrentDocument.Notes.Contains("С/ф")); }
+    }
+    
+    private void DocumentLinkSFOpen(object obj)
+    {
+        decimal? dc = null;
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            switch (CurrentDocument.DocTypeCode)
+            {
+                case DocumentType.Bank:
+                    
+                    if (CurrentDocument.CrsKontrIn > 0)
+                    {
+                        dc = ctx.TD_101.FirstOrDefault(_ => _.CODE == CurrentDocument.DocRowCode)?.VVT_SFACT_CLIENT_DC;
+                        if (dc != null) DocumentsOpenManager.Open(DocumentType.InvoiceClient, dc.Value);
+                    }
+                    if (CurrentDocument.CrsKontrOut > 0)
+                    {
+                        dc = ctx.TD_101.FirstOrDefault(_ => _.CODE == CurrentDocument.DocRowCode)?.VVT_SFACT_POSTAV_DC;
+                        if(dc != null) DocumentsOpenManager.Open(DocumentType.InvoiceProvider,dc.Value);
+                    }
+                    break;
+                case DocumentType.MutualAccounting: 
+                case DocumentType.CurrencyConvertAccounting:
+                    var row = ctx.TD_110.FirstOrDefault(_ =>
+                        _.DOC_CODE == CurrentDocument.DocDC && _.CODE == CurrentDocument.DocRowCode);
+                    if (row == null) return;
+                    if(row.VZT_SFACT_DC != null)
+                        DocumentsOpenManager.Open(DocumentType.InvoiceClient, row.VZT_SFACT_DC.Value);
+                    if (row.VZT_SPOST_DC != null)
+                        DocumentsOpenManager.Open(DocumentType.InvoiceProvider, row.VZT_SPOST_DC.Value);
+                    break;
+            }
+        }
+    }
 
     public ICommand DocumentLinkToProjectCommand
     {
