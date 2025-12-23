@@ -18,6 +18,9 @@ public class ProjectNomenklMoveDocumentInfo
     public Guid Id { set; get; }
 
     [Display(AutoGenerateField = false)]
+    public Guid ProjectId { set; get; }
+
+    [Display(AutoGenerateField = false)]
     public DocumentType DocumentType { set; get; }
     [Display(AutoGenerateField = true, Name = "Тип док-та", GroupName = "Основные данные", Order = 1)]
     public string DocType => DocumentType.GetDisplayAttributesFrom(DocumentType.GetType()).Name;

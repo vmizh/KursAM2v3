@@ -2545,11 +2545,12 @@ namespace KursRepositories.Repositories.Projects
             bool isExcludeShow
         )
         {
+            var prjList = GetChilds(projectId);
             var ret = new List<NomenklMoveForProject_Result>();
             var data = Context
                 .GetNomenklMoveForProject(projectId, (byte?)(isRecursive ? 1 : 0), (byte?)(isExcludeShow ? 1 : 0)).ToList();
 
-            var manual = GetManualQuantity(projectId);
+            var manual = GetManualQuantity(prjList);
             
             foreach (var r in data)
             {
@@ -2766,6 +2767,10 @@ namespace KursRepositories.Repositories.Projects
                     newItem.ProviderShipped = newItem.ProviderShippedQuantity * newItem.ProviderSumma /
                                               newItem.ProviderQuantity;
                 }
+
+                var pId = Context.ProjectDocuments.FirstOrDefault(_ => _.InvoiceProviderId == row.DocId  && projectIds.Contains(_.ProjectId))?.ProjectId;
+                if(pId != null)
+                    newItem.ProjectId = pId.Value;
                 ret.Add(newItem);
             }
 
@@ -2808,6 +2813,10 @@ namespace KursRepositories.Repositories.Projects
                     newItem.ClientShipped = newItem.ClientShippedQuantity * newItem.ClientSumma /
                                               newItem.ClientQuantity;
                 }
+                var pId = Context.ProjectDocuments.FirstOrDefault(_ => _.InvoiceClientId == row.DocId && projectIds.Contains(_.ProjectId))?.ProjectId;
+                if (pId != null)
+                    newItem.ProjectId = pId.Value;
+
                 ret.Add(newItem);
             }
 
@@ -2853,6 +2862,12 @@ namespace KursRepositories.Repositories.Projects
                         newItem.ProviderShipped = newItem.ProviderShippedQuantity * newItem.ProviderSumma /
                                                   newItem.ProviderQuantity;
                     }
+
+                    var pId = Context.ProjectDocuments.FirstOrDefault(_ => _.CurrencyConvertId == crsConv.Id 
+                                                                           && projectIds.Contains(_.ProjectId))?.ProjectId;
+                    if (pId != null)
+                        newItem.ProjectId = pId.Value;
+
                     ret.Add(newItem);
                 }
             }
@@ -3417,8 +3432,16 @@ namespace KursRepositories.Repositories.Projects
             }
         }
 
-        public List<ManualQuantity> GetManualQuantity(Guid projectId)
+        public List<ManualQuantity> GetManualQuantity(List<Guid> projectId)
         {
+            StringBuilder inclPrIds = new StringBuilder("(");
+            foreach (var id in projectId)
+            {
+                inclPrIds.Append($"'{CustomFormat.GuidToSqlString(id)}',");
+            }
+
+            inclPrIds.Remove(inclPrIds.Length-1, 1);
+            inclPrIds.Append(")");
             var sql = @$"SELECT
         CAST(tab.NomDC AS NUMERIC(18, 0))         AS NomDC,
         tab.ProjectId                             AS ProjectId,
@@ -3470,7 +3493,7 @@ FROM
                   TD_26 t
                       ON tcc.DOC_CODE = t.DOC_CODE
                       AND tcc.CODE = t.CODE) tab
-            WHERE  ProjectId = '{CustomFormat.GuidToSqlString(projectId)}'";
+            WHERE  ProjectId in {inclPrIds.ToString()};";
             var data = Context.Database.SqlQuery<ManualQuantity>(sql);
             return data.ToList();
         }

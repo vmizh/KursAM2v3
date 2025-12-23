@@ -83,7 +83,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         var p = new ProjectManualParameter
         {
             Quantity = (decimal)param.Value,
-            ProjectId = CurrentProject.Id,
+            ProjectId = CurrentDocument.ProjectId,
             NomDC = CurrentNomenkl.NomDC,
             DocType = CurrentDocument.DocumentType,
             DocDC = CurrentDocument.DocCode
@@ -374,6 +374,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
             RaisePropertyChanged();
         }
     }
+
     public bool IsRecursive
     {
         get => myIsRecursive;

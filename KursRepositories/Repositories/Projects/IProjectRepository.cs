@@ -21,6 +21,7 @@ namespace KursRepositories.Repositories.Projects
 
     public interface IProjectRepository
     {
+        
         void UpdateManualQuantity(ProjectManualParameter param);
 
         IBoolResult SaveReference(
@@ -263,7 +264,7 @@ namespace KursRepositories.Repositories.Projects
         List<Guid> GetAllTreeProjectIds(Guid id);
         List<Guid> GetChilds(List<Data.Projects> list, Guid id);
 
-        List<ManualQuantity> GetManualQuantity(Guid projectId);
+        List<ManualQuantity> GetManualQuantity(List<Guid> projectId);
 
         List<NomenklMoveForProject_Result> GetNomenklMoveForProject(
             Guid projectId,
