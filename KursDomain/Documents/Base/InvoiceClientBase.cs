@@ -29,31 +29,30 @@ public sealed class InvoiceClientBase : RSViewModelBase, IInvoiceClient
     {
         if (doc == null)
             throw new ArgumentNullException(nameof(doc));
-        var ret = new InvoiceClientBase();
-        ret.DocCode = doc.DOC_CODE;
-        ret.Id = doc.Id;
-        ret.DocDate = doc.SF_DATE;
-        ret.InnerNumber = doc.SF_IN_NUM;
-        ret.OuterNumber = doc.SF_OUT_NUM;
-
-        ret.Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.SF_CRS_DC) as References.Currency;
-        ret.Client = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_CLIENT_DC) as Kontragent;
-        ret.CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(doc.SF_CENTR_OTV_DC) as CentrResponsibility;
-        ret.Receiver = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_RECEIVER_KONTR_DC) as Kontragent;
-        ret.FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(doc.SF_FORM_RASCH_DC) as PayForm;
-        ret.PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(doc.SD_179?.DOC_CODE) as PayCondition;
-        ret.VzaimoraschetType =
-            GlobalOptions.ReferencesCache.GetNomenklProductType(doc.SD_77?.DOC_CODE) as NomenklProductType;
-        ret.PersonaResponsible =
-            GlobalOptions.ReferencesCache.GetEmployee(doc.PersonalResponsibleDC) as References.Employee;
+        var ret = new InvoiceClientBase
+        {
+            DocCode = doc.DOC_CODE,
+            Id = doc.Id,
+            DocDate = doc.SF_DATE,
+            InnerNumber = doc.SF_IN_NUM,
+            OuterNumber = doc.SF_OUT_NUM,
+            Note = doc.SF_NOTE,
+            //Diler = GlobalOptions.ReferencesCache.GetKontragent(doc.DilerDC) as Kontragent;
+            IsAccepted = doc.SF_ACCEPTED == 1,
+            Summa = 0,
+            Currency = GlobalOptions.ReferencesCache.GetCurrency(doc.SF_CRS_DC) as References.Currency,
+            Client = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_CLIENT_DC) as Kontragent,
+            CO = GlobalOptions.ReferencesCache.GetCentrResponsibility(doc.SF_CENTR_OTV_DC) as CentrResponsibility,
+            Receiver = GlobalOptions.ReferencesCache.GetKontragent(doc.SF_RECEIVER_KONTR_DC) as Kontragent,
+            FormRaschet = GlobalOptions.ReferencesCache.GetPayForm(doc.SF_FORM_RASCH_DC) as PayForm,
+            PayCondition = GlobalOptions.ReferencesCache.GetPayCondition(doc.SD_179?.DOC_CODE) as PayCondition,
+            VzaimoraschetType = GlobalOptions.ReferencesCache.GetNomenklProductType(doc.SD_77?.DOC_CODE) as NomenklProductType,
+            PersonaResponsible = GlobalOptions.ReferencesCache.GetEmployee(doc.PersonalResponsibleDC) as References.Employee
+        };
 
         using (var ctx = GlobalOptions.GetEntities())
         {
             
-            ret.Note = doc.SF_NOTE;
-            //Diler = GlobalOptions.ReferencesCache.GetKontragent(doc.DilerDC) as Kontragent;
-            ret.IsAccepted = doc.SF_ACCEPTED == 1;
-            ret.Summa = 0;
             foreach (var r in doc.TD_84)
             {
                 var prj = ctx.ProjectInvoiceQuantityChanged.FirstOrDefault(_ => _.ClientRowId == r.Id && _.ProjectId == projectId);

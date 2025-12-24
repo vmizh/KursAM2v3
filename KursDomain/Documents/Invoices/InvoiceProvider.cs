@@ -148,6 +148,26 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
         Rows.CollectionChanged += (o, args) => State = RowStatus.NotEdited;
     }
 
+    public static InvoiceProvider GetInvoiceProviderForProject(SD_26 entity, Guid projectId)
+    {
+        var ret = new InvoiceProvider(entity);
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            foreach (var row in ret.Rows)
+            {
+                var inv = ctx.ProjectInvoiceQuantityChanged.FirstOrDefault(_ => _.ProviderRowId == row.Id && _.ProjectId == projectId);
+                var convIds = ctx.TD_26_CurrencyConvert.Where(_ => _.DOC_CODE == row.DocCode && _.CODE == row.Code).Select(_ => _.Id)
+                    .ToList();
+                var conv = ctx.ProjectInvoiceQuantityChanged.Where(_ => _.ProviderCurrencyConvertRowId != null &&
+                                                                        convIds.Contains(_.ProviderCurrencyConvertRowId.Value) && _.ProjectId == projectId).ToList();
+                if (inv == null && convIds.Count == 0) continue;
+                row.Quantity = (inv?.Quantity ?? 0) + conv.Count > 0 ? conv.Sum(_ => _.Quantity) : 0;
+            }
+
+        }
+        return ret;
+    }
+
     public InvoiceProvider(SD_26 entity)
     {
         Entity = entity ?? DefaultValue();
