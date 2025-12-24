@@ -13,6 +13,7 @@ using KursDomain.References;
 using KursDomain.Result;
 using KursRepositories.Repositories.Base;
 using Newtonsoft.Json;
+using ServiceStack.Text;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -992,13 +993,17 @@ namespace KursRepositories.Repositories.Projects
             List<ProjectRowExclude> exclInvoices)
         {
             var ret = new List<ProjectDocumentInfo>();
-            var invoices = docs.Select(_ => _.InvoiceProviderId)
-                .Select(id => Context.SD_26.Include(_ => _.TD_26)
-                    .Include("TD_26.TD_24")
-                    .FirstOrDefault(_ => _.Id == id))
-                .Where(item => item != null)
-                .Select(inv => new InvoiceProvider(inv))
-                .ToList();
+            var invoices = new List<InvoiceProvider>();
+            var ids = docs.Where(_ => _.InvoiceProviderId != null).Select(_ => _.InvoiceProviderId).ToList();
+            var data = Context.SD_26.Include(_ => _.TD_26).Include("TD_26.TD_24").Where(_ => ids.Contains(_.Id));
+            foreach (var d in docs.Where(_ => _.InvoiceProviderId != null))
+            {
+                var item = data.FirstOrDefault(_ => _.Id == d.InvoiceProviderId);
+                if (item == null) continue;
+                var newItem = InvoiceProvider.GetInvoiceProviderForProject(item, d.ProjectId);
+                invoices.Add(newItem);
+            }
+            
             foreach (var p in docs)
             {
                 var newItem = new ProjectDocumentInfo(p);
@@ -1070,12 +1075,13 @@ namespace KursRepositories.Repositories.Projects
         {
             var ret = new List<ProjectDocumentInfo>();
             var invoices = new List<InvoiceClientBase>();
+            var ids = docs.Where(_ => _.InvoiceClientId != null).Select(_ => _.InvoiceClientId).ToList();
+            var data = Context.SD_84.Include(_ => _.TD_84).Include("TD_84.TD_24").Where(_ => ids.Contains(_.Id))
+                .ToList();
             foreach (var d in docs.Where(_ => _.InvoiceClientId != null))
             {
-                var item =Context.SD_84.Include(_ => _.TD_84)
-                    .Include("TD_84.TD_24")
-                    .FirstOrDefault(_ => _.Id == d.InvoiceClientId);
-                if(item == null) continue;
+                var item = data.FirstOrDefault(_ => _.Id == d.InvoiceClientId);
+                if (item == null) continue;
                 var newItem = InvoiceClientBase.GetInvoiceForProject(item, d.ProjectId);
                 invoices.Add(newItem);
 

@@ -296,7 +296,20 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         {
             if (value == myIsShowExcluded) return;
             myIsShowExcluded = value;
+            var frm = Form as ProjectNomenklMove;
+            ProjectNomenklMoveInfo oldCurrent = null;
+            int currentRow = -1;
+            if (frm != null)
+            {
+                oldCurrent = frm.gridNomenklRows.CurrentItem as ProjectNomenklMoveInfo;
+                currentRow = frm.tableViewDocuemts.FocusedRowHandle;
+            }
             LoadNomenkls();
+            if (oldCurrent != null)
+            {
+                CurrentNomenkl = oldCurrent;
+                frm.tableViewDocuemts.FocusedRowHandle = currentRow;
+            }
             RaisePropertyChanged();
         }
         get => myIsShowExcluded;
