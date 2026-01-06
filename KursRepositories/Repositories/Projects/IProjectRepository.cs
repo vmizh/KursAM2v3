@@ -21,7 +21,13 @@ namespace KursRepositories.Repositories.Projects
 
     public interface IProjectRepository
     {
-        
+        List<Guid> GetProjetFromDocument(Guid id);
+
+        void ExcludeInvoiceClientFromProject(Guid invoiceId, Guid projectId);
+        void ExcludeInvoiceProviderFromProject(Guid invoiceId, Guid projectId);
+
+        List<ProjectManagerDocumentInfo> GetDocumentsIncludesInProjects(DateTime dateStart, DateTime dateEnd);
+
         void UpdateManualQuantity(ProjectManualParameter param);
 
         IBoolResult SaveReference(

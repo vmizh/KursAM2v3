@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
@@ -47,7 +47,7 @@
     <NoWarn>0436;</NoWarn>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
-    <LangVersion>default</LangVersion>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -59,7 +59,7 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
     <NoWarn>0436</NoWarn>
-    <LangVersion>default</LangVersion>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>kurs11.ico</ApplicationIcon>
@@ -163,6 +163,9 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
     <Reference Include="System.Printing" />
     <Reference Include="System.Runtime" />
     <Reference Include="System.Runtime.InteropServices" />
@@ -172,6 +175,7 @@
     </Reference>
     <Reference Include="System.Threading.Thread" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
@@ -259,6 +263,9 @@
     <Compile Include="Repositories\NomenklReturn\INomenklReturnToProviderRepository.cs" />
     <Compile Include="Repositories\NomenklReturn\NomenklReturnOfClientRepository.cs" />
     <Compile Include="Repositories\NomenklReturn\NomenklReturnToProviderRepository.cs" />
+    <Compile Include="Repositories\ProfitAndLossRepository\IProfitAndLossRepositoryAsync.cs" />
+    <Compile Include="Repositories\ProfitAndLossRepository\ProfitAndLossRepository.cs" />
+    <Compile Include="Repositories\ProfitAndLossRepository\ProfitLossRepositoryResult.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\IRefundFromClientRepository.cs" />
     <Compile Include="Repositories\Refund\RefundFromClient\RefundFromClientRepository.cs" />
     <Compile Include="Repositories\SD_24Repository.cs" />
@@ -371,10 +378,12 @@
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorClientViewModel.cs" />
     <Compile Include="ViewModel\Management\Dogovors\SearchDogovorProviderViewModel.cs" />
     <Compile Include="ViewModel\Management\ProfitAndLossCommonRow.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectNomenklMoveInfo.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectDocSelectDialog.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectLinkItem.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectManagerWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectNomenklMoveViewModel.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectProfitAndLossWindow.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectSelectDialogWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\VzaimozachetRow.cs" />
     <Compile Include="ViewModel\MenuSearchWindowViewModel.cs" />
@@ -1073,6 +1082,9 @@
     </Compile>
     <Compile Include="View\Projects\ProjectNomenklMove.xaml.cs">
       <DependentUpon>ProjectNomenklMove.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Projects\ProjectProfitAndLossView.xaml.cs">
+      <DependentUpon>ProjectProfitAndLossView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\Projects\SelectProjectDialogView.xaml.cs">
       <DependentUpon>SelectProjectDialogView.xaml</DependentUpon>
@@ -1975,6 +1987,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Projects\ProjectNomenklMove.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Projects\ProjectProfitAndLossView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

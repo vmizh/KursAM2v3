@@ -24,7 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>default</LangVersion>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,7 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <LangVersion>default</LangVersion>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
@@ -113,8 +113,8 @@
     </Reference>
     <Reference Include="System.Net" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    <Reference Include="System.Numerics.Vectors, Version=4.1.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
@@ -251,7 +251,7 @@
     <Compile Include="IDocuments\NomenklReturn\INomenklReturnOfClientRow.cs" />
     <Compile Include="IDocuments\NomenklReturn\INomenklReturnToProvider.cs" />
     <Compile Include="IReferences\IProjectGroup.cs" />
-    <Compile Include="Managers\DocumentsOpenManager.cs" />
+    <Compile Include="Managers\LastDocumentManager.cs" />
     <Compile Include="Managers\NomenklManager2.cs" />
     <Compile Include="Menu\MenuGeneratorItemVisibleEnum.cs" />
     <Compile Include="RedisRepositories\Base\IRedisGeneric.cs" />
@@ -265,7 +265,6 @@
     <Compile Include="References\RedisCache\IDCGuidRelations.cs" />
     <Compile Include="References\RedisCache\InvoicePaymentShipment.cs" />
     <Compile Include="References\RedisCache\PaymentShipmentInvoiceTypeEnum.cs" />
-    <Compile Include="References\RedisCache\RedisCacheExtensions.cs" />
     <Compile Include="References\RedisCache\RedisCacheReferences.cs" />
     <Compile Include="References\ResponsibleRightObjectTypeEnum.cs" />
     <Compile Include="RepositoryHelper\NomenklStoreRemainItem.cs" />

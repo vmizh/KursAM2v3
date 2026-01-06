@@ -309,7 +309,7 @@
                         </dxg:GridControl.View>
                     </dxg:GridControl>
                 </dxlc:LayoutGroup>
-                <dxlc:LayoutGroup Name="remainsTabs" View="Group" Header="Денежные остатки">
+                <dxlc:LayoutGroup Name="remainsTabs" View="Group" Header="Денежные остатки" Margin="0,3,0,-3">
                     <dxg:GridControl x:Name="gridRemainsRows"
                                      MaxHeight="10000"
                                      MaxWidth="10000"

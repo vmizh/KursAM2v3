@@ -928,16 +928,16 @@ namespace KursAM2.View
                         ctxProjectNomenkl.Form = form;
                         form.Show();
                         break;
-                    //case "Прибыли и убытки по проектам":
-                    //    var ctxProjectProfitAndLoss = new ProjectProfitAndLossesWindowViewModelOld();
-                    //    form = new ProjectProfitAndLossView
-                    //    {
-                    //        Owner = Application.Current.MainWindow,
-                    //        DataContext = ctxProjectProfitAndLoss
-                    //    };
-                    //    ctxProjectProfitAndLoss.Form = form;
-                    //    form.Show();
-                    //    break;
+                    case "Прибыли и убытки по проектам":
+                        var ctxProjectProfitAndLoss = new ProjectProfitAndLossWindow();
+                        form = new ProjectProfitAndLossView
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = ctxProjectProfitAndLoss
+                        };
+                        ctxProjectProfitAndLoss.Form = form;
+                        form.Show();
+                        break;
                     case "Кассовая книга":
                         var ctxCash = new CashBookWindowViewModel();
                         form = new CashBookView
