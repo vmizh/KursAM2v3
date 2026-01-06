@@ -1222,6 +1222,10 @@ public class BankOperationsManager
                 SummaOut = 0,
                 Currency = GlobalOptions.ReferencesCache.GetBankAccount(bankDC).Currency as Currency
             };
+        if (bankDC == 11140000032)
+        {
+            var i = 1;
+        }
         using (var ctx = GlobalOptions.GetEntities())
         {
             var sql = "SELECT  AccountDC ,Date ,Start ," +
@@ -1273,7 +1277,7 @@ public class BankOperationsManager
                 {
                     DateEnd = DateEnd,
                     DateStart = DateStart,
-                    SummaStart = data.First(_ => _.Date == startDate).Start,
+                    SummaStart = startDate < DateStart ? data.First(_ => _.Date == startDate).End : data.First(_ => _.Date == startDate).Start,
                     SummaEnd = data.First(_ => _.Date == endDate).End,
                     SummaIn = data.Where(_ => _.Date >= DateStart && _.Date <= DateEnd).Sum(_ => _.SummaIn),
                     SummaOut = data.Where(_ => _.Date >= DateStart && _.Date <= DateEnd).Sum(_ => _.SummaOut),

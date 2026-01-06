@@ -8,6 +8,7 @@ using DevExpress.Xpf.Grid;
 using KursAM2.Managers;
 using KursAM2.View.KursReferences;
 using KursAM2.View.Projects;
+using KursAM2.ViewModel.Finance.Invoices;
 using KursAM2.ViewModel.Reference;
 using KursDomain;
 using KursDomain.Documents.CommonReferences;
@@ -22,6 +23,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -39,12 +41,92 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
         myContext = GlobalOptions.GetEntities();
         myProjectRepository = new ProjectRepository(myContext);
+        DocDateEnd = DateTime.Today;
+        var d = DocDateEnd.AddMonths(-3);
+        DocDateStart = new DateTime(d.Year, d.Month, 1);
         RefreshData(null);
     }
 
     #endregion
 
     #region Commands
+
+    public ICommand ExcludeDocumentFromAllProjectOpenCommand
+    {
+        get { return new Command(ExcludeDocumentFromAllProjectOpen, _ => DocCurrentDocument is not null); }
+    }
+
+    private void ExcludeDocumentFromAllProjectOpen(object obj)
+    {
+        var winManager = new WindowManager();
+        if (winManager.ShowWinUIMessageBox("Вы уверены, что хотите исключить документ из всех проектов?", "Запрос",
+                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+            return;
+        foreach (var p in DocProjects)
+        {
+            switch (DocCurrentDocument.DocType)
+            {
+                case DocumentType.InvoiceClient:
+                    myProjectRepository.ExcludeInvoiceClientFromProject(DocCurrentDocument.Id, p.Id);
+                    break;
+                case DocumentType.InvoiceProvider:
+                    myProjectRepository.ExcludeInvoiceProviderFromProject(DocCurrentDocument.Id, p.Id);
+                    break;
+            }
+        }
+        DocDocuments.Remove(DocCurrentDocument);
+        DocProjects.Clear();
+    }
+
+    public ICommand DocProjectRemoveCommand
+    {
+        get { return new Command(DocProjectRemove, _ => DocCurrentProject is not null); }
+    }
+
+    private void DocProjectRemove(object obj)
+    {
+        switch (DocCurrentDocument.DocType)
+        {
+            case DocumentType.InvoiceClient:
+                myProjectRepository.ExcludeInvoiceClientFromProject(DocCurrentDocument.Id, DocCurrentProject.Id);
+                break;
+            case DocumentType.InvoiceProvider:
+                myProjectRepository.ExcludeInvoiceProviderFromProject(DocCurrentDocument.Id, DocCurrentProject.Id);
+                break;
+        }
+
+        DocProjects.Remove(DocCurrentProject);
+        if (DocProjects.Count == 0)
+            DocDocuments.Remove(DocCurrentDocument);
+    }
+
+
+    public ICommand ProjectDocumentOpenCommand
+    {
+        get { return new Command(ProjectDocumentOpen, _ => DocCurrentDocument is not null); }
+    }
+
+    private void ProjectDocumentOpen(object obj)
+    {
+        DocumentsOpenManager.Open(DocCurrentDocument.DocType, DocCurrentDocument.DocCode);
+    }
+
+
+    public ICommand DocInvoicesLoadCommand
+    {
+        get { return new Command(DocInvoicesLoad, _ => true); }
+    }
+
+    private void DocInvoicesLoad(object obj)
+    {
+        DocDocuments.Clear();
+        foreach (var item in myProjectRepository.GetDocumentsIncludesInProjects(DocDateStart, DocDateEnd))
+        {
+            DocDocuments.Add(item);
+        }
+    }
+
+
     public ICommand ExcludeFromProfitLossCommand
     {
         get { return new Command(ExcludeFromProfitLoss, _ => CurrentProject?.IsExcludeFromProfitAndLoss == false); }
@@ -125,6 +207,11 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             if (colNameNotVisible.Contains(col.FieldName)) col.Visible = false;
         }
 
+        foreach (var col in frm.gridDocDocuments.Columns)
+        {
+            col.ReadOnly = true;
+        }
+
         foreach (var s in frm.gridDocuments.TotalSummary) sumNames.Add(s.FieldName);
 
         if (!sumNames.Contains("DocumentType"))
@@ -192,6 +279,9 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
 
     public override void RefreshData(object obj)
     {
+        var currentProjectId = CurrentProject?.Id;
+        var currendDocumentId = CurrentDocument?.Id;
+
         try
         {
             Projects.Clear();
@@ -201,6 +291,21 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
                 newItem.LoadFromEntity(prj, GlobalOptions.ReferencesCache);
                 Projects.Add(newItem);
             }
+
+            if (currentProjectId is null) return;
+            if (Form is not ProjectManager frm) return;
+
+            var cProj = Projects.FirstOrDefault(_ => _.Id == currentProjectId);
+            if (cProj == null) return;
+            if (cProj.Id != CurrentProject.Id)
+            {
+                CurrentProject = cProj;
+                frm.gridProjects.SelectedItem = cProj;
+            }
+            if (currendDocumentId is null) return;
+            var cDoc = Documents.FirstOrDefault(_ => _.Id == currendDocumentId);
+            if (cDoc is null) return;
+            CurrentDocument = cDoc;
         }
         catch (Exception ex)
         {
@@ -371,10 +476,32 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     private Visibility myGridInvoiceInfoVisibility = Visibility.Hidden;
     private ProjectInvoiceNomenklInfo myCurrentInvoiceNomenklRow;
     private bool myIsShowExcluded;
+    private ProjectManagerDocumentInfo myDocCurrentDocument;
 
     #endregion
 
     #region Properties
+
+    public DateTime DocDateStart
+    {
+        get;
+        set
+        {
+            if (value.Equals(field)) return;
+            field = value;
+            RaisePropertyChanged();
+        }
+    }
+    public DateTime DocDateEnd
+    {
+        get;
+        set
+        {
+            if (value.Equals(field)) return;
+            field = value;
+            RaisePropertyChanged();
+        }
+    }
 
     public Visibility IsNotInfoVisibility
     {
@@ -426,6 +553,69 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
     public ObservableCollection<ProjectDocumentInfo> SelectedDocuments { set; get; } =
         [];
 
+    public ObservableCollection<ProjectManagerDocumentInfo> DocDocuments { set; get; } = [];
+
+    public ObservableCollection<ProjectsForDocumentInfo> DocProjects { set; get; } = [];
+
+    public ProjectManagerDocumentInfo DocCurrentDocument
+    {
+        get => myDocCurrentDocument;
+        set
+        {
+            if (Equals(value, myDocCurrentDocument)) return;
+            myDocCurrentDocument = value;
+            LoadProjectsForDocument(myDocCurrentDocument.Id);
+            RaisePropertyChanged();
+        }
+    }
+
+    private void LoadProjectsForDocument(Guid id)
+    {
+        DocProjects.Clear();
+        foreach (var pId in myProjectRepository.GetProjetFromDocument(DocCurrentDocument.Id))
+        {
+            var item = GetProjectFullName(Projects,pId);
+            DocProjects.Add(new ProjectsForDocumentInfo()
+            {
+                Id = pId,
+                Name = item.Item1,
+                Name2 = item.Item2,
+                Name3 = item.Item3
+            });
+        }
+    }
+
+    private Tuple<string, string, string> GetProjectFullName(IEnumerable<Project> projects, Guid projectId)
+    {
+        var ret = new Tuple<string, string, string>(string.Empty, string.Empty, string.Empty);
+        if (projects is null) return ret;
+        var pp = projects.ToList();
+        var p = pp.FirstOrDefault(_ => _.Id == projectId);
+        if (p is null) return ret;
+        if (p.ParentId is null)
+        {
+
+            return new Tuple<string, string, string>(p.Name, string.Empty, string.Empty);
+        }
+
+        var par1 = pp.FirstOrDefault(_ => _.Id == p.ParentId);
+        if (par1.ParentId is null)
+            return new Tuple<string, string, string>(par1?.Name, p.Name, string.Empty);
+        var par2 = pp.FirstOrDefault(_ => _.Id == par1.ParentId);
+        return new Tuple<string, string, string>(par2?.Name, par1.Name, p.Name);
+    }
+
+    public ProjectsForDocumentInfo DocCurrentProject
+    {
+        get;
+        set
+        {
+            if (Equals(value, field)) return;
+            field = value;
+            RaisePropertyChanged();
+        }
+    }
+
     public ProjectNomenklInfo CurrentNomenklRow
     {
         get => myCurrentNomenklRow;
@@ -455,6 +645,11 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         {
             if (Equals(value?.Id, myCurrentDocument?.Id)) return;
             myCurrentDocument = value;
+            if (myCurrentDocument == null)
+            {
+                InvoiceNomenklRows.Clear();
+                return;
+            }
             if (myCurrentDocument is not null)
             {
                 if(myCurrentDocument.WaybillDC != null || myCurrentDocument.WarehouseOrderInDC != null
@@ -485,7 +680,29 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             IsNotInfoVisibility = Visibility.Visible;
             GridInfoVisibility = Visibility.Hidden;
             GridInvoiceInfoVisibility = Visibility.Hidden;
-            LoadDocuments(myCurrentProject?.Id);
+            var frm = Form as ProjectManager;
+            if (myCurrentProject != null)
+            {
+                Task.Run(async () =>
+                {
+                    frm?.Dispatcher.Invoke(() => { frm.loadingIndicator.Visibility = Visibility.Visible; });
+                    //var data = LoadDocuments(myCurrentProject?.Id).ToList();
+                    var data = await ((ProjectRepository)myProjectRepository).LoadProjectDocuments2Async(myCurrentProject.Id, IsShowExcluded);
+                    frm?.Dispatcher.Invoke(() =>
+                    {
+                        Documents.Clear();
+                        foreach (var d in data.ToList())
+                        {  d.myState = RowStatus.NotEdited;
+                            d.SetCurrency();
+                            Documents.Add(d);
+                        }
+
+                        frm.loadingIndicator.Visibility = Visibility.Hidden;
+                    });
+
+                });
+            }
+
             SetCrsColumnsVisible();
             RaisePropertyChanged();
         }
@@ -515,6 +732,7 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
             InvoiceNomenklRows.Clear();
             if (oldCurrent != null)
             {
+                CurrentDocument = null;
                 CurrentDocument = oldCurrent;
                 frm.tableViewDocuemts.FocusedRowHandle = currentRow;
             }
@@ -703,18 +921,20 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         }
     }
 
-    private void LoadDocuments(Guid? currentProjectId)
+    private List<ProjectDocumentInfo> LoadDocuments(Guid? currentProjectId)
     {
-        Documents.Clear();
-        if (currentProjectId is null) return; 
-        foreach (var prj in myProjectRepository.LoadProjectDocuments2(currentProjectId.Value, IsShowExcluded))
+        var ret = new List<ProjectDocumentInfo>();  
+        if (currentProjectId is null) return ret;
+        var data = myProjectRepository.LoadProjectDocuments2(currentProjectId.Value, IsShowExcluded).ToList();
+        foreach (var doc in data)
         {
-            prj.myState = RowStatus.NotEdited;
-            prj.SetCurrency();
-            Documents.Add(prj);
+            doc.myState = RowStatus.NotEdited;
+            doc.SetCurrency();
+            ret.Add(doc);
         }
 
-        SetCrsColumnsVisible();
+        return ret;
+
     }
 
     private void SetCrsBandNotVisible(GridControl grid)

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Windows;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
 using Core.ViewModel.Base;
@@ -21,6 +21,7 @@ using KursDomain.Menu;
 using KursDomain.References;
 using KursDomain.WindowsManager.WindowsManager;
 using KursRepositories.Repositories.Projects;
+using Application = System.Windows.Application;
 
 namespace KursAM2.ViewModel.Management.Projects;
 
@@ -296,21 +297,18 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         {
             if (value == myIsShowExcluded) return;
             myIsShowExcluded = value;
-            var frm = Form as ProjectNomenklMove;
-            ProjectNomenklMoveInfo oldCurrent = null;
-            int currentRow = -1;
-            if (frm != null)
-            {
-                oldCurrent = frm.gridNomenklRows.CurrentItem as ProjectNomenklMoveInfo;
-                currentRow = frm.tableViewDocuemts.FocusedRowHandle;
-            }
-            LoadNomenkls();
-            if (oldCurrent != null)
-            {
-                CurrentNomenkl = oldCurrent;
-                frm.tableViewDocuemts.FocusedRowHandle = currentRow;
-            }
             RaisePropertyChanged();
+
+            Task.Run(() =>
+            {
+                var frm = Form as ProjectNomenklMove;
+                var data = LoadDocuments(CurrentNomenkl);
+                frm?.Dispatcher.Invoke(() =>
+                {
+                    DocumentRows.Clear();
+                    foreach (var d in data) DocumentRows.Add(d);
+                });
+            });
         }
         get => myIsShowExcluded;
     }
@@ -497,6 +495,17 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         };
 
         frm.tableViewDocumentRows.FormatConditions.Add(manualChangedCondition);
+    }
+
+    private List<ProjectNomenklMoveDocumentInfo> LoadDocuments(ProjectNomenklMoveInfo nom)
+    {
+        var ProjIds = new List<Guid>();
+        if (IsRecursive)
+            ProjIds.AddRange(myProjectRepository.GetChilds(CurrentProject.Id));
+        else
+            ProjIds.Add(CurrentProject.Id);
+
+        return myProjectRepository.GetDocumentsForNomenkl(ProjIds, nom.NomDC, IsShowExcluded).ToList();
     }
 
     private void LoadDocuments()
