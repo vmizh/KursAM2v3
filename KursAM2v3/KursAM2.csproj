@@ -374,6 +374,7 @@
     <Compile Include="ViewModel\Management\Projects\ProjectDocSelectDialog.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectLinkItem.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectManagerWindowViewModel.cs" />
+    <Compile Include="ViewModel\Management\Projects\ProjectNomenklMoveInfo.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectNomenklMoveViewModel.cs" />
     <Compile Include="ViewModel\Management\Projects\ProjectSelectDialogWindowViewModel.cs" />
     <Compile Include="ViewModel\Management\VzaimozachetRow.cs" />

@@ -165,7 +165,7 @@ public abstract class RedisObject
         if (typeof(byte[]) == typeof(T)) return (T)Convert.ChangeType(value, typeof(T));
         if (typeof(RedisValue) == typeof(T)) return (T)Convert.ChangeType(value, typeof(T));
         if (typeof(IConvertible).IsAssignableFrom(typeof(T))) return (T)ConvertFromRedisValue(typeof(T), value);
-        return JsonSerializer.Deserialize<T>(value);
+        return JsonSerializer.Deserialize<T>(value.ToString());
     }
 
     public static object ToElement(Type type, RedisValue value)
@@ -174,7 +174,7 @@ public abstract class RedisObject
         if (typeof(byte[]) == type) return Convert.ChangeType(value, type);
         if (typeof(RedisValue) == type) return Convert.ChangeType(value, type);
         if (typeof(IConvertible).IsAssignableFrom(type)) return ConvertFromRedisValue(type, value);
-        return JsonSerializer.Deserialize(value, type);
+        return JsonSerializer.Deserialize(value.ToString(), type);
     }
 
     private static object ConvertFromRedisValue(Type t, RedisValue value)
