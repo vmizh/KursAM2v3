@@ -407,7 +407,9 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
         if (Form is not ProjectNomenklMove frm) return;
 
         frm.tableViewPtojects.ShowAutoFilterRow = true;
-
+        frm.tableViewPtojects.AllowFixedColumnMenu = true;
+        frm.tableViewDocumentRows.AllowFixedColumnMenu = true;
+        frm.tableViewDocuemts.AllowFixedColumnMenu = true;
         frm.gridNomenklRows.TotalSummary.Clear();
         frm.gridDocumentsRows.TotalSummary.Clear();
         foreach (var col in frm.gridDocumentsRows.Columns)
