@@ -195,6 +195,12 @@ public sealed class ProjectManagerWindowViewModel : RSWindowViewModelBase
         var colNameNotVisible = new List<string>([nameof(ProjectDocumentInfo.DocInfo),nameof(ProjectDocumentInfo.HasExcludeRow)]);
         base.UpdateVisualObjects();
         if (Form is not ProjectManager frm) return;
+        frm.tableViewDocumentRows.AllowFixedColumnMenu = true;
+        frm.tableViewDocDocumentss.AllowFixedColumnMenu = true;
+        frm.tableViewDocProjects.AllowFixedColumnMenu= true;
+        frm.tableViewDocuemts.AllowFixedColumnMenu = true;
+        frm.tableViewInvoiceRows.AllowFixedColumnMenu = true;
+        frm.tableViewPtojects.AllowFixedColumnMenu = true;
         var sumNames = new List<string>();
         foreach (var col in frm.gridDocuments.Columns)
         {
