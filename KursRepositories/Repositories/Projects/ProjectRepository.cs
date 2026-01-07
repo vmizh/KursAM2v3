@@ -3642,7 +3642,7 @@ FROM
                 INNER JOIN
                   TD_26_CurrencyConvert tcc
                       ON piqc.ProviderCurrencyConvertRowId = tcc.Id
-                INNER JOING
+                INNER JOIN
                   SD_83 s83
                       ON s83.id = tcc.NomenklId
                 INNER JOIN
