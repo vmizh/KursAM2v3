@@ -64,7 +64,8 @@
                                                           ParentFieldName="ParentId"
                                                           KeyFieldName="Id"
                                                           ShowAutoFilterRow="False"
-                                                          AllowEditing="False">
+                                                          AllowEditing="False"
+                                                          AllowFixedColumnMenu="True">
                                             <dxg:TreeListView.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Header="Открыть справочник проектов"
@@ -131,7 +132,8 @@
                                         <dxg:GridControl.View>
                                             <dxg:TableView ShowTotalSummary="True"
                                                            Name="tableViewDocuemts"
-                                                           ShowAutoFilterRow="True">
+                                                           ShowAutoFilterRow="True"
+                                                           AllowFixedColumnMenu="False">
                                                 <dxg:TableView.ContextMenu>
                                                     <ContextMenu>
                                                         <MenuItem Header="Добавить связь с документом"
@@ -156,6 +158,30 @@
                                                                         Foreground="Blue" />
                                                             </MenuItem.Icon>
                                                         </MenuItem>
+                                                        <Separator />
+                                                        <MenuItem Header="Фиксировать группу">
+                                                            <MenuItem Header="Слева" Click="DocumentBandLeftFixedClick">
+                                                                <MenuItem.Icon>
+                                                                    <materialDesign:PackIcon Kind="ArrowLeft"
+                                                                            Foreground="Blue" />
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+                                                            <MenuItem Header="Справа"
+                                                                      Click="DocumentBandRightFixedClick">
+                                                                <MenuItem.Icon>
+                                                                    <materialDesign:PackIcon Kind="ArrowRight"
+                                                                            Foreground="Blue" />
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+                                                            <MenuItem Header="Отменить"
+                                                                      Click="DocumentBandNoneFixedClick">
+                                                                <MenuItem.Icon>
+                                                                    <materialDesign:PackIcon Kind="None"
+                                                                            Foreground="Blue" />
+                                                                </MenuItem.Icon>
+                                                            </MenuItem>
+                                                        </MenuItem>
+
                                                         <Separator />
                                                         <MenuItem Header="Экспорт"
                                                                   Command="{Binding VisualControlExportCommand}"
@@ -236,7 +262,8 @@ RelativeSource={RelativeSource Mode=FindAncestor,
                                         <dxg:GridControl.View>
                                             <dxg:TableView ShowTotalSummary="True"
                                                            Name="tableViewInvoiceRows"
-                                                           ShowAutoFilterRow="True">
+                                                           ShowAutoFilterRow="True"
+                                                           AllowFixedColumnMenu="True">
                                                 <dxg:TableView.ContextMenu>
                                                     <ContextMenu>
                                                         <MenuItem Header="Исключить из проекта"
@@ -311,7 +338,8 @@ RelativeSource={RelativeSource Mode=FindAncestor,
                                     <dxg:GridControl.View>
                                         <dxg:TableView ShowTotalSummary="True"
                                                        Name="tableViewDocDocumentss"
-                                                       ShowAutoFilterRow="True">
+                                                       ShowAutoFilterRow="True"
+                                                       AllowFixedColumnMenu="True">
                                             <dxg:TableView.ContextMenu>
                                                 <ContextMenu>
                                                     <MenuItem Header="Открыть документ"
@@ -367,6 +395,7 @@ RelativeSource={RelativeSource Mode=FindAncestor,
                                 <dxg:GridControl.View>
                                     <dxg:TableView ShowTotalSummary="True"
                                                    Name="tableViewDocProjects"
+                                                   AllowFixedColumnMenu="True"
                                                    ShowAutoFilterRow="True">
                                         <dxg:TableView.ContextMenu>
                                             <ContextMenu>

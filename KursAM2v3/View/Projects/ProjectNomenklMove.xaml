@@ -67,6 +67,7 @@
                                               Name="tableViewPtojects"
                                               ParentFieldName="ParentId"
                                               KeyFieldName="Id"
+                                              AllowFixedColumnMenu="True"
                                               ShowAutoFilterRow="True"
                                               AllowEditing="False" ShowCriteriaInAutoFilterRow="True">
                                 <dxg:TreeListView.ContextMenu>
@@ -136,6 +137,29 @@ RelativeSource={RelativeSource Mode=FindAncestor,
                                            ShowAutoFilterRow="True">
                                 <dxg:TableView.ContextMenu>
                                     <ContextMenu>
+                                        <MenuItem Header="Фиксировать группу">
+                                                <MenuItem Header="Слева" Click="NomenklRowsBandLeftFixedClick">
+                                                <MenuItem.Icon>
+                                                    <materialDesign:PackIcon Kind="ArrowLeft"
+                                                                             Foreground="Blue" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Справа"
+                                                      Click="NomenklRowsBandRightFixedClick">
+                                                <MenuItem.Icon>
+                                                    <materialDesign:PackIcon Kind="ArrowRight"
+                                                                             Foreground="Blue" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="Отменить"
+                                                      Click="NomenklRowsNoneFixedClick">
+                                                <MenuItem.Icon>
+                                                    <materialDesign:PackIcon Kind="None"
+                                                                             Foreground="Blue" />
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </MenuItem>
+                                        <Separator/>
                                         <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                                   CommandParameter="{Binding Path=PlacementTarget, 
         RelativeSource={RelativeSource Mode=FindAncestor,
@@ -202,6 +226,29 @@ RelativeSource={RelativeSource Mode=FindAncestor,
                                                 </MenuItem.Icon>
                                             </MenuItem>
                                             <Separator />
+                                            <MenuItem Header="Фиксировать группу">
+                                                <MenuItem Header="Слева" Click="DocumentRowsBandLeftFixedClick">
+                                                    <MenuItem.Icon>
+                                                        <materialDesign:PackIcon Kind="ArrowLeft"
+                                                                Foreground="Blue" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem Header="Справа"
+                                                          Click="DocumentRowsBandRightFixedClick">
+                                                    <MenuItem.Icon>
+                                                        <materialDesign:PackIcon Kind="ArrowRight"
+                                                                Foreground="Blue" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem Header="Отменить"
+                                                          Click="DocumentRowsNoneFixedClick">
+                                                    <MenuItem.Icon>
+                                                        <materialDesign:PackIcon Kind="None"
+                                                                Foreground="Blue" />
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                            </MenuItem>
+                                            <Separator/>
                                             <MenuItem Header="Экспорт" Command="{Binding VisualControlExportCommand}"
                                                       CommandParameter="{Binding Path=PlacementTarget, 
 RelativeSource={RelativeSource Mode=FindAncestor,
