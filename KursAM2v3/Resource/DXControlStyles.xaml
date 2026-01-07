@@ -72,6 +72,7 @@
         <Setter Property="EnableImmediatePosting" Value="True" />
         <Setter Property="ShowCriteriaInAutoFilterRow" Value="True" />
         <Setter Property="ShowGroupPanel" Value="True" />
+        <Setter Property="AllowFixedColumnMenu" Value="True" />
         <Setter Property="ContextMenu">
             <Setter.Value>
                 <ContextMenu Name="DocumentMenu">
@@ -142,6 +143,7 @@
         <Setter Property="ShowAutoFilterRow" Value="True" />
         <Setter Property="EnableImmediatePosting" Value="True" />
         <Setter Property="ShowGroupPanel" Value="True" />
+        <Setter Property="AllowFixedColumnMenu" Value="True" />
         <Setter Property="ContextMenu">
             <Setter.Value>
                 <ContextMenu>
@@ -182,6 +184,7 @@
         <Setter Property="ShowAutoFilterRow" Value="True" />
         <Setter Property="EnableImmediatePosting" Value="True" />
         <Setter Property="ShowGroupPanel" Value="True" />
+        <Setter Property="AllowFixedColumnMenu" Value="True" />
         <Setter Property="dxmvvm:Interaction.BehaviorsTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -210,6 +213,7 @@
         <Setter Property="EnableImmediatePosting" Value="True" />
         <Setter Property="EditFormPostMode" Value="Immediate" />
         <Setter Property="ShowCriteriaInAutoFilterRow" Value="True" />
+        <Setter Property="AllowFixedColumnMenu" Value="True" />
         <Setter Property="CellTemplate">
             <Setter.Value>
                 <DataTemplate>
@@ -236,6 +240,7 @@
         <Setter Property="ParentFieldName" Value="ParentId" />
         <Setter Property="AllowSorting" Value="False" />
         <Setter Property="NavigationStyle" Value="Row" />
+        <Setter Property="AllowFixedColumnMenu" Value="True" />
         <Setter Property="ContextMenu">
             <Setter.Value>
                 <ContextMenu>
@@ -258,6 +263,7 @@
         <Setter Property="EnableImmediatePosting" Value="True" />
         <Setter Property="EditFormPostMode" Value="Immediate" />
         <Setter Property="ShowCriteriaInAutoFilterRow" Value="True" />
+        <Setter Property="AllowFixedColumnMenu" Value="True" />
         <Setter Property="CellTemplate">
             <Setter.Value>
                 <DataTemplate>

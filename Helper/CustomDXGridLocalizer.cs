@@ -34,6 +34,10 @@ namespace Helper
             AddString(GridControlStringId.MenuFooterMax, "Максимум");
             AddString(GridControlStringId.MenuFooterMin, "Минимум");
             AddString(GridControlStringId.MenuFooterSum, "Сумма");
+            AddString(GridControlStringId.MenuColumnFixedStyle, "Фиксировать колонку");
+            AddString(GridControlStringId.MenuColumnFixedLeft, "Слева");
+            AddString(GridControlStringId.MenuColumnFixedRight, "Справа");
+            AddString(GridControlStringId.MenuColumnFixedNone, "Отменить фиксацию");
         }
     }
 
