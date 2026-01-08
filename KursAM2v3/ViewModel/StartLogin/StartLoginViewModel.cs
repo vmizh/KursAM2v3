@@ -642,7 +642,7 @@ namespace KursAM2.ViewModel.StartLogin
                     InitialCatalog = "KursSystem",
                     UserID = "KursUser",
                     Password = "KursUser",
-                    ConnectTimeout = 0,
+                    ConnectTimeout = 30,
                     ApplicationName = "KursAM"
                 }.ToString());
                 GlobalOptions.KursSystemDBUnitOfWork =

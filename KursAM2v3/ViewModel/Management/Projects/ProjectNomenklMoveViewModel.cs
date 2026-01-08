@@ -198,6 +198,9 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
     {
         try
         {
+            var focusProjectId = CurrentProject?.Id;
+            var focusNomenklId = CurrentNomenkl?.NomId;
+            var frm = Form as ProjectNomenklMove;
             Projects.Clear();
             var counts = myProjectRepository.GetCountDocumentsForProjects();
             foreach (var prj in myProjectRepository.LoadReference().OrderBy(_ => _.Name))
@@ -227,7 +230,25 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
                     Projects.Add(newItem);
                 }
             }
-        }
+
+            if (focusProjectId is not null)
+            {
+                var p = Projects.FirstOrDefault(_ => _.Id == focusProjectId);
+                if (p != null)
+                {
+                    CurrentProject = p;
+                    frm?.gridProjects.SelectedItem = p;
+                }
+            }
+
+
+            if (focusNomenklId != null)
+            {
+                var n = NomenklRows.FirstOrDefault(_ => _.NomId == focusNomenklId);
+                if (n != null)
+                    CurrentNomenkl = n;
+            }
+         }
         catch (Exception ex)
         {
             WindowManager.ShowError(ex);
@@ -501,13 +522,15 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
 
     private List<ProjectNomenklMoveDocumentInfo> LoadDocuments(ProjectNomenklMoveInfo nom)
     {
+        if (CurrentProject is null) return new List<ProjectNomenklMoveDocumentInfo>();
         var ProjIds = new List<Guid>();
         if (IsRecursive)
             ProjIds.AddRange(myProjectRepository.GetChilds(CurrentProject.Id));
         else
             ProjIds.Add(CurrentProject.Id);
-
-        return myProjectRepository.GetDocumentsForNomenkl(ProjIds, nom.NomDC, IsShowExcluded).ToList();
+        return nom != null
+            ? myProjectRepository.GetDocumentsForNomenkl(ProjIds, nom.NomDC, IsShowExcluded).ToList()
+            : new List<ProjectNomenklMoveDocumentInfo>();
     }
 
     private void LoadDocuments()
