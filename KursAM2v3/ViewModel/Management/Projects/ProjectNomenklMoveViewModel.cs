@@ -248,7 +248,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
                 if (n != null)
                     CurrentNomenkl = n;
             }
-         }
+        }
         catch (Exception ex)
         {
             WindowManager.ShowError(ex);
@@ -289,7 +289,7 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
     private readonly HashSet<string> colSumNames =
     [
         "NomName", "DocQuantityIn", "DocSummaIn", "DocQuantityOut", "DocSummaOut",
-        "DocQuantityResult", "DocSummaResult", "FactQuantityResult", "FactSummaResult", "FactQuantityIn",
+        "DocQuantityRemain", "DocSummaResult", "FactQuantityRemain", "FactSummaResult", "FactQuantityIn",
         "FactQuantityOut",
         "FactSummaIn", "FactSummaOut", "NakladSumma", "DilerSumma",
         "ResultSummaIn", "ResultQuantityIn", "ResultQuantityOut", "ResultSummaOut", "Result", "ResultOstatok",

@@ -43,9 +43,13 @@ public class ProjectNomenklMoveInfo
     [DisplayFormat(DataFormatString = "n2")]
     public decimal DocSummaOut { get; set; }
 
-    [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Результат (кол-во)")]
+    [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Остаток (кол-во)")]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal DocQuantityResult => DocQuantityIn - DocQuantityOut;
+    public decimal DocQuantityRemain => DocQuantityIn - DocQuantityOut;
+
+    [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Остаток (сумма)")]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal DocSummaRemain => (DocQuantityIn - DocQuantityOut)* DocSummaIn/ DocQuantityIn;
 
     [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Результат (сумма)")]
     [DisplayFormat(DataFormatString = "n2")]
@@ -71,9 +75,13 @@ public class ProjectNomenklMoveInfo
     [DisplayFormat(DataFormatString = "n2")]
     public decimal FactSummaOut { get; set; }
 
-    [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Результат (кол-во)")]
+    [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Остаток (кол-во)")]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal FactQuantityResult => FactQuantityIn - FactQuantityOut;
+    public decimal FactQuantityRemain => FactQuantityIn - FactQuantityOut;
+
+    [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Остаток (сумма)")]
+    [DisplayFormat(DataFormatString = "n2")]
+    public decimal FactSummaRemain => (FactQuantityIn - FactQuantityOut)*FactSummaIn/FactQuantityIn;
 
     [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Результат (сумма)")]
     [DisplayFormat(DataFormatString = "n2")]
