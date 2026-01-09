@@ -49,7 +49,7 @@ public class ProjectNomenklMoveInfo
 
     [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Остаток (сумма)")]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal DocSummaRemain => (DocQuantityIn - DocQuantityOut)* DocSummaIn/ DocQuantityIn;
+    public decimal DocSummaRemain => DocQuantityIn > 0 ? (DocQuantityIn - DocQuantityOut)* DocSummaIn/ DocQuantityIn : 0;
 
     [Display(AutoGenerateField = true, GroupName = "Документы", Name = "Результат (сумма)")]
     [DisplayFormat(DataFormatString = "n2")]
@@ -81,7 +81,7 @@ public class ProjectNomenklMoveInfo
 
     [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Остаток (сумма)")]
     [DisplayFormat(DataFormatString = "n2")]
-    public decimal FactSummaRemain => (FactQuantityIn - FactQuantityOut)*FactSummaIn/FactQuantityIn;
+    public decimal FactSummaRemain => DocQuantityIn > 0 ? (FactQuantityIn - FactQuantityOut)*FactSummaIn/DocQuantityIn : 0;
 
     [Display(AutoGenerateField = true, GroupName = "Фактические", Name = "Результат (сумма)")]
     [DisplayFormat(DataFormatString = "n2")]
