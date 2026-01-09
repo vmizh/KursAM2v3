@@ -290,10 +290,10 @@ public sealed class ProjectNomenklMoveViewModel : RSWindowViewModelBase
     [
         "NomName", "DocQuantityIn", "DocSummaIn", "DocQuantityOut", "DocSummaOut",
         "DocQuantityRemain", "DocSummaResult", "FactQuantityRemain", "FactSummaResult", "FactQuantityIn",
-        "FactQuantityOut",
+        "FactQuantityOut","FactSummaRemain",
         "FactSummaIn", "FactSummaOut", "NakladSumma", "DilerSumma",
         "ResultSummaIn", "ResultQuantityIn", "ResultQuantityOut", "ResultSummaOut", "Result", "ResultOstatok",
-        "ResultOstatokSumma", "ExpectedIncomeSumma", "ExpectedIncomeProfit"
+        "ResultOstatokSumma", "ExpectedIncomeSumma", "ExpectedIncomeProfit", "DocSummaRemain"
     ];
 
     private readonly HashSet<string> colDocSumNames =
