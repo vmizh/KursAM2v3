@@ -253,6 +253,14 @@ namespace LayoutManager
                     {
                         ms.Position = 0;
                         grid.RestoreLayoutFromStream(ms);
+                        if (grid.Bands.Count == 0)
+                        {
+                            if (grid.View is TableView view)
+                            {
+                                view.AllowFixedColumnMenu = true;
+                            }
+                        }
+                            
                         isLoad = true;
                     }
 
@@ -260,6 +268,7 @@ namespace LayoutManager
                     {
                         ms.Position = 0;
                         tr.RestoreLayoutFromStream(ms);
+                        tr.View.AllowFixedColumnMenu = true;
                         isLoad = true;
                     }
 
