@@ -150,6 +150,7 @@ public sealed class TransferOutBalansWrapper : BaseWrapper<TransferOutBalans>, I
             foreach (var row in Model.TransferOutBalansRows)
             {
                 var newRow = new TransferOutBalansRowsWrapper(row, EventAggregator,MessageDialogService);
+                newRow.Nomenkl = GlobalOptions.ReferencesCache.GetNomenkl(row.NomenklDC) as References.Nomenkl;
                 newRow.PropertyChanged += (o, e) => { UpdateSummaries(); };
                 Rows.Add(newRow);
             }
