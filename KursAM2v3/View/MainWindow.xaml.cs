@@ -236,6 +236,7 @@ namespace KursAM2.View
                             DataContext = retClient
                         };
                         retClient.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         break;
 
@@ -247,6 +248,7 @@ namespace KursAM2.View
                             DataContext = retProvider
                         };
                         retProvider.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         break;
 
@@ -273,6 +275,7 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow,
                             DataContext = crsref
                         };
+                        formcrs.Topmost = true;
                         formcrs.Show();
                         break;
 
@@ -284,6 +287,7 @@ namespace KursAM2.View
                             DataContext = bankref
                         };
                         bankref.Form = formbank;
+                        formbank.Topmost = true;
                         formbank.Show();
                         break;
 
@@ -296,6 +300,7 @@ namespace KursAM2.View
                             DataContext = shbls
                         };
                         shbls.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         shbls.RefreshData(null);
                         break;
@@ -308,6 +313,7 @@ namespace KursAM2.View
                             DataContext = sholda
                         };
                         sholda.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         break;
 
@@ -320,6 +326,7 @@ namespace KursAM2.View
                             DataContext = sholdat
                         };
                         sholdat.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         break;
 
@@ -332,6 +339,7 @@ namespace KursAM2.View
                             DataContext = shold
                         };
                         shold.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         break;
 
@@ -347,6 +355,7 @@ namespace KursAM2.View
                         };
                         form.DataContext = sign;
                         sign.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         break;
                     // Начисления вынебалансовым Клиентам
@@ -358,6 +367,7 @@ namespace KursAM2.View
                             DataContext = aad
                         };
                         aad.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         break;
 
@@ -369,6 +379,7 @@ namespace KursAM2.View
                             DataContext = aap
                         };
                         aap.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         break;
 
@@ -380,6 +391,7 @@ namespace KursAM2.View
                             DataContext = dop
                         };
                         dop.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         break;
 
@@ -392,6 +404,7 @@ namespace KursAM2.View
                             DataContext = aat
                         };
                         aat.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         break;
 
@@ -404,6 +417,7 @@ namespace KursAM2.View
                         };
                         form.DataContext = actCtx;
                         actCtx.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         break;
                     //Разбор данных для Shop
@@ -415,6 +429,7 @@ namespace KursAM2.View
                         };
                         form.DataContext = shopCTX;
                         shopCTX.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         break;
                     case "Последние документы пользователей":
@@ -425,6 +440,7 @@ namespace KursAM2.View
                         };
                         form.DataContext = ldoc;
                         ldoc.Form = form;
+                        form.Topmost = true;
                         form.Show();
                         break;
                     case "  Дебиторы / Кредиторы":
@@ -928,16 +944,16 @@ namespace KursAM2.View
                         ctxProjectNomenkl.Form = form;
                         form.Show();
                         break;
-                    case "Прибыли и убытки по проектам":
-                        var ctxProjectProfitAndLoss = new ProjectProfitAndLossWindow();
-                        form = new ProjectProfitAndLossView
-                        {
-                            Owner = Application.Current.MainWindow,
-                            DataContext = ctxProjectProfitAndLoss
-                        };
-                        ctxProjectProfitAndLoss.Form = form;
-                        form.Show();
-                        break;
+                    //case "Прибыли и убытки по проектам":
+                    //    var ctxProjectProfitAndLoss = new ProjectProfitAndLossWindow();
+                    //    form = new ProjectProfitAndLossView
+                    //    {
+                    //        Owner = Application.Current.MainWindow,
+                    //        DataContext = ctxProjectProfitAndLoss
+                    //    };
+                    //    ctxProjectProfitAndLoss.Form = form;
+                    //    form.Show();
+                    //    break;
                     case "Кассовая книга":
                         var ctxCash = new CashBookWindowViewModel();
                         form = new CashBookView

@@ -6,6 +6,7 @@ using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Editors.Settings;
 using DevExpress.Xpf.Grid;
 using DevExpress.Xpf.LayoutControl;
+using DevExpress.Xpf.LayoutControl.Serialization;
 using KursDomain;
 using LayoutManager;
 
@@ -21,19 +22,27 @@ namespace KursAM2.View.DialogUserControl
             LayoutName = layoutName;
             InitializeComponent(); 
             
-            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),LayoutName + "." + GetType().Name, mainLayoutControl);
+            LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), LayoutName + "." + GetType().Name, mainLayoutControl);
+            LayoutManagerClient = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),LayoutName + ".gridClient", gridControlClient);
+            LayoutManagerProvider = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(), LayoutName + ".gridProvider", gridControlProvider);
             LayoutControl = mainLayoutControl;
             Loaded += CashSelectDialogUC_Loaded;
             Unloaded += CashSelectDialogUC_Unloaded;
+            LayoutManagerClient.Load();
+            LayoutManagerProvider.Load();
         }
 
         public string LayoutName { set; get; }
         public DependencyObject LayoutControl { get; }
+        public LayoutManager.LayoutManager LayoutManagerClient { get; set; }
+        public LayoutManager.LayoutManager LayoutManagerProvider { get; set; }
         public LayoutManager.LayoutManager LayoutManager { get; set; }
         public string LayoutManagerName { get; set; }
         public void SaveLayout()
         {
             LayoutManager.Save();
+            LayoutManagerClient.Save();
+            LayoutManagerProvider.Save();
         }
 
         public void ResetLayot()
@@ -46,11 +55,15 @@ namespace KursAM2.View.DialogUserControl
             if (string.IsNullOrEmpty(LayoutName))
                 throw new NullReferenceException("LayoutName не может быть пустым");
             LayoutManager.Save();
+            LayoutManagerClient.Save();
+            LayoutManagerProvider.Save();
         }
 
         private void CashSelectDialogUC_Loaded(object sender, RoutedEventArgs e)
         {
             LayoutManager.Load();
+            LayoutManagerClient.Load();
+            LayoutManagerProvider.Load();
             tabsChanged();
 
         }

@@ -55,7 +55,8 @@ namespace KursAM2.View.Helper
             var form = new DocHistoryList
             {
                 Owner = Application.Current.MainWindow,
-                DataContext = new DocHistoryWindowViewModel(hdoclist)
+                DataContext = new DocHistoryWindowViewModel(hdoclist),
+                Topmost = true
             };
             form.Show();
         }
@@ -76,6 +77,7 @@ namespace KursAM2.View.Helper
                 Owner = Application.Current.MainWindow,
                 DataContext = new DocHistoryWindowViewModel(hdoclist)
             };
+            form.Topmost = true;
             form.Show();
         }
 
@@ -95,6 +97,7 @@ namespace KursAM2.View.Helper
                 Owner = Application.Current.MainWindow,
                 DataContext = new DocHistoryWindowViewModel(hdoclist)
             };
+            form.Topmost = true;
             form.Show();
         }
 
@@ -138,6 +141,7 @@ namespace KursAM2.View.Helper
                 Owner = Application.Current.MainWindow,
                 DataContext = new DocHistoryWindowViewModel(hdoclist)
             };
+            form.Topmost = true;
             form.Show();
         }
 
@@ -172,7 +176,7 @@ namespace KursAM2.View.Helper
                 {
                     form.gridControl.ItemsSource = rows.Value;
                 }
-
+                form.Topmost = true;
                 form.Show();
             }
             catch (Exception ex)

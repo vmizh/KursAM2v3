@@ -74,6 +74,7 @@ namespace KursAM2.View.Finance
                 Form = frm
             };
             frm.DataContext = ctxk;
+            frm.Topmost = true;
             frm.Show();
         }
 
