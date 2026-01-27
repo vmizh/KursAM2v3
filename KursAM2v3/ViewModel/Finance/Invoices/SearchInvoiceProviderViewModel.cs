@@ -403,6 +403,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 DataContext = ctx
             };
             ctx.Form = frm;
+            frm.Topmost = true;
             frm.Show();
         }
 
@@ -429,6 +430,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 DataContext = ctx
             };
             ctx.Form = frm;
+            frm.Topmost = true;
             frm.Show();
         }
 

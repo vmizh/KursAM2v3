@@ -46,16 +46,17 @@
                 </StackPanel>
             </DockPanel>
             <StackPanel DockPanel.Dock="Top">
-                    <DockPanel LastChildFill="False">
-                        <StackPanel DockPanel.Dock="Right">
-                            <dxe:CheckEdit 
-                                Margin="0 2 7 0"
-                                Content="Показать только исключенные"
-                                Visibility="{Binding IsShowExcludeVisibility}"
-                                EditValue="{Binding IsShowExclude}"></dxe:CheckEdit>
-                        </StackPanel>
-                    </DockPanel>
-                </StackPanel>
+                <DockPanel LastChildFill="False">
+                    <StackPanel DockPanel.Dock="Right">
+                        <dxe:CheckEdit
+                            Margin="0 2 7 0"
+                            Content="Показать только исключенные"
+                            Visibility="{Binding IsShowExcludeVisibility}"
+                            EditValue="{Binding IsShowExclude}">
+                        </dxe:CheckEdit>
+                    </StackPanel>
+                </DockPanel>
+            </StackPanel>
             <dxg:GridControl
                 Style="{StaticResource GridControl.Search}"
                 Name="gridDocuments"
@@ -71,8 +72,7 @@
                 <dxg:GridControl.View>
                     <dxg:TableView
                         Name="gridDocumentsTableView"
-                        Style="{StaticResource TableView.Search}">
-                    </dxg:TableView>
+                        Style="{StaticResource TableView.Search}" />
                 </dxg:GridControl.View>
             </dxg:GridControl>
         </DockPanel>

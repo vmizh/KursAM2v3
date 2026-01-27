@@ -243,8 +243,10 @@ public class DocumentsOpenManager
             Form = form,
             myState = RowStatus.NotEdited
         };
-        form.DataContext = ctx;
+        form.DataContext = ctx; 
+        form.Topmost = true;
         form.Show();
+       
         return ctx;
     }
 
@@ -265,6 +267,7 @@ public class DocumentsOpenManager
         dsForm.DataContext = dtx;
 
         foreach (var t in dtx.Tovars) t.State = RowStatus.NotEdited;
+        dsForm.Topmost = true;
         dsForm.Show();
         dtx.State = RowStatus.NotEdited;
         return dtx;
@@ -279,6 +282,7 @@ public class DocumentsOpenManager
             DataContext = ctx
         };
         ctx.Form = view;
+        view.Topmost = true;
         view.Show();
         return ctx;
     }
@@ -286,7 +290,10 @@ public class DocumentsOpenManager
     private static PayRollVedomostWindowViewModel OpenPayroll(Guid? id)
     {
         var ctx = new PayRollVedomostWindowViewModel(id.ToString());
-        var form = new PayRollVedomost();
+        var form = new PayRollVedomost
+        {
+            Topmost = true
+        };
         form.Show();
         form.DataContext = ctx;
         ctx.RefreshData(null);
@@ -364,7 +371,8 @@ public class DocumentsOpenManager
         }
 
         form.DataContext = dtx;
-        dtx.Form = form;
+        dtx.Form = form; 
+        form.Topmost = true;
         form.Show();
         for (var i = 0; i < dtx.BankOperationsCollection.Count; i++)
         {
@@ -396,7 +404,9 @@ public class DocumentsOpenManager
 
         form.DataContext = dtx;
         dtx.Form = form;
+        form.Topmost = true;
         form.Show();
+            
         for (var i = 0; i < dtx.BankOperationsCollection.Count; i++)
         {
             if (!(form.GridDocuments.GetRow(i) is BankOperationsViewModel row) || row.Code != dc) continue;
@@ -420,6 +430,7 @@ public class DocumentsOpenManager
         };
         ctx.CreateMenu();
         ctx.Form = form;
+        form.Topmost = true;
         form.Show();
         form.DataContext = ctx;
         return ctx;
@@ -437,6 +448,7 @@ public class DocumentsOpenManager
         ctx.Form = form;
         ctx.CreateMenu();
         ctx.Form = form;
+        form.Topmost = true;
         form.Show();
         form.DataContext = ctx;
     }
@@ -468,6 +480,7 @@ public class DocumentsOpenManager
         };
         var ctx = new NomenklReturnToProviderWindowViewModel(id) { Form = frm };
         frm.DataContext = ctx;
+        frm.Topmost = true;
         frm.Show();
         return ctx;
     }
@@ -480,6 +493,7 @@ public class DocumentsOpenManager
         };
         var ctx = new NomenklReturnOfClientWindowViewModel(id) { Form = frm };
         frm.DataContext = ctx;
+        frm.Topmost = true;
         frm.Show();
         return ctx;
     }
@@ -492,6 +506,7 @@ public class DocumentsOpenManager
         };
         var ctx = new NomenklTransferWindowViewModel(id) { Form = frm };
         frm.DataContext = ctx;
+        frm.Topmost = true;
         frm.Show();
         return ctx;
     }
@@ -505,6 +520,7 @@ public class DocumentsOpenManager
             DataContext = ctx
         };
         ctx.Form = view;
+        view.Topmost = true;
         view.Show();
         return ctx;
     }
@@ -529,6 +545,7 @@ public class DocumentsOpenManager
             DataContext = ctx
         };
         ctx.Form = view;
+        view.Topmost = true;
         view.Show();
         return ctx;
     }
@@ -554,6 +571,7 @@ public class DocumentsOpenManager
             DataContext = ctx
         };
         ctx.Form = view;
+        view.Topmost = true;
         view.Show();
         return ctx;
     }
@@ -567,10 +585,12 @@ public class DocumentsOpenManager
             DataContext = ctx
         };
         ctx.Form = view;
-        var state = ctx.Document.State;
+        var state = ctx.Document.State; 
+        view.Topmost = true;
         view.Show();
         ctx.Document.myState = state;
         ctx.Document.RaisePropertyChanged("State");
+       
         return ctx;
     }
 
@@ -583,8 +603,10 @@ public class DocumentsOpenManager
             DataContext = ctx
         };
         ctx.Form = form;
+        form.Topmost = true;
         form.Show();
         ctx.RefreshData(id);
+        
 
         return ctx;
     }
@@ -600,8 +622,10 @@ public class DocumentsOpenManager
         {
             Form = form
         };
-        form.DataContext = ctx;
+        form.DataContext = ctx; 
+        form.Topmost = true;
         form.Show();
+       
         return ctx;
     }
 
@@ -638,6 +662,7 @@ public class DocumentsOpenManager
         };
         if (ctx.Document == null) return null;
         ctx.CreateMenu();
+        frm.Topmost = true;
         frm.Show();
         frm.DataContext = ctx;
         var dtx = (MutualAcountingWindowViewModel)frm.DataContext;
@@ -655,7 +680,9 @@ public class DocumentsOpenManager
         {
             Form = form
         };
+        form.Topmost = true;
         form.Show();
+        
     }
 
     private static CashOutWindowViewModel OpenCashOut(decimal dc, Window parent)
@@ -672,8 +699,10 @@ public class DocumentsOpenManager
         ctx.Form = form;
         ctx.CreateMenu();
         ctx.RefreshData(null);
+        form.Topmost = true;
         form.Show();
         form.DataContext = ctx;
+        
         return ctx;
     }
 
@@ -704,6 +733,7 @@ public class DocumentsOpenManager
         };
         ctx.Form = form;
         ctx.CreateMenu();
+        form.Topmost = true;
         form.Show();
         return ctx;
         //form.DataContext = ctx;
@@ -719,8 +749,10 @@ public class DocumentsOpenManager
             DataContext = ctx
         };
         ctx.Form = form;
-        ctx.CreateMenu();
+        ctx.CreateMenu(); 
+        form.Topmost = true;
         form.Show();
+       
     }
 
     /// <summary>
@@ -736,7 +768,9 @@ public class DocumentsOpenManager
             DataContext = ctx
         };
         ctx.Form = form;
+        form.Topmost = true;
         form.Show();
+        
         return ctx;
     }
 
@@ -770,6 +804,7 @@ public class DocumentsOpenManager
         };
         var ctx = new WaybillWindowViewModel2(dc) { Form = form };
         form.DataContext = ctx;
+        form.Topmost = true;
         form.Show();
         return ctx;
     }
@@ -795,6 +830,7 @@ public class DocumentsOpenManager
             DataContext = ctx
         };
         ctx.Form = view;
+        view.Topmost = true;
         view.Show();
         return ctx;
     }

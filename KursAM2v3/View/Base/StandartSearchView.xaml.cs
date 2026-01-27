@@ -12,10 +12,9 @@ namespace KursAM2.View.Base
         public StandartSearchView()
         {
             InitializeComponent();
-            
         }
 
-
+       
         private void GridDocuments_OnAutoGeneratingColumn(object sender, AutoGeneratingColumnEventArgs e)
         {
             e.Column.Name = e.Column.FieldName;

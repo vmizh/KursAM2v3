@@ -2094,7 +2094,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 DataContext = ctx
             };
             ctx.Form = frm;
+            frm.Topmost = true;
             frm.Show();
+            
         }
 
         public override void DocNewCopyRequisite(object form)
@@ -2121,6 +2123,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 DataContext = ctx
             };
             ctx.Form = frm;
+            frm.Topmost = true;
             frm.Show();
         }
 
@@ -2293,7 +2296,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
                 DataContext = ctx
             };
             ctx.Document.IsNDSInPrice = true;
-            ctx.Form = view;
+            ctx.Form = view; 
+            view.Topmost = true;
             view.Show();
         }
 
