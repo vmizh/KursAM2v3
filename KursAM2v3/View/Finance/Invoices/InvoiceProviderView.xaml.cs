@@ -25,17 +25,17 @@ public partial class InvoiceProviderView
 {
     private readonly Dictionary<string, SummaryItemType> listSummaryFields = new();
 
-    private readonly WindowManager myWManager = new();
+  // private readonly WindowManager myWManager = new();
 
 
     public PopupCalcEdit PaySummaEditor;
 
     public ComboBoxEditSettings SDRSchetList;
 
-    static InvoiceProviderView()
-    {
-        GridControlLocalizer.Active = new CustomDXGridLocalizer();
-    }
+    //static InvoiceProviderView()
+    //{
+    //    GridControlLocalizer.Active = new CustomDXGridLocalizer();
+    //}
 
     public InvoiceProviderView()
     {
@@ -288,6 +288,7 @@ public partial class InvoiceProviderView
         if (e.Column.FieldName == "Summa")
             if ((decimal)e.Value < 0 || (decimal)e.Value > dtx.CurrentPaymentDoc.DocSumma)
             {
+                WindowManager myWManager = new();
                 myWManager.ShowWinUIMessageBox("Сумма не может быть меньше 0 и больше суммы документа",
                     "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 dtx.CurrentPaymentDoc.Summa = dtx.CurrentPaymentDoc.DocSumma;
