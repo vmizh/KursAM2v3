@@ -238,6 +238,7 @@ namespace KursAM2.View
                         retClient.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
 
                     case "Возвра товара поставщику":
@@ -250,6 +251,7 @@ namespace KursAM2.View
                         retProvider.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
 
                     case "Перевод за баланс":
@@ -277,6 +279,7 @@ namespace KursAM2.View
                         };
                         formcrs.Topmost = true;
                         formcrs.Show();
+                        formcrs.Topmost = false;
                         break;
 
                     case "Справочник банков":
@@ -289,6 +292,7 @@ namespace KursAM2.View
                         bankref.Form = formbank;
                         formbank.Topmost = true;
                         formbank.Show();
+                        formbank.Topmost = false;
                         break;
 
                     //Лицевые счета акционеров
@@ -302,6 +306,7 @@ namespace KursAM2.View
                         shbls.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         shbls.RefreshData(null);
                         break;
                     //Ведомости наяислений акционерам
@@ -315,6 +320,7 @@ namespace KursAM2.View
                         sholda.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
 
                     //Типы начислений акционерам
@@ -328,6 +334,7 @@ namespace KursAM2.View
                         sholdat.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
 
                     //Реестр акционеров
@@ -341,6 +348,7 @@ namespace KursAM2.View
                         shold.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
 
                     //Настройка подписей
@@ -357,6 +365,7 @@ namespace KursAM2.View
                         sign.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     // Начисления вынебалансовым Клиентам
                     case "Прямые услуги для клиентов":
@@ -369,6 +378,7 @@ namespace KursAM2.View
                         aad.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
 
                     case @"Реестр прямых затрат":
@@ -381,6 +391,7 @@ namespace KursAM2.View
                         aap.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
 
                     case "Договора от поставщиков":
@@ -393,6 +404,7 @@ namespace KursAM2.View
                         dop.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
 
                     // Типы начислений для внебалансовых контрагентов
@@ -406,6 +418,7 @@ namespace KursAM2.View
                         aat.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
 
                     // Акт списания материалов
@@ -419,6 +432,7 @@ namespace KursAM2.View
                         actCtx.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     //Разбор данных для Shop
                     case "Разбор данных для Shop":
@@ -431,6 +445,7 @@ namespace KursAM2.View
                         shopCTX.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Последние документы пользователей":
                         var ldoc = new LastUsersDocumentWindowViewModel();
@@ -442,6 +457,7 @@ namespace KursAM2.View
                         ldoc.Form = form;
                         form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "  Дебиторы / Кредиторы":
                         var dbctx = new DebitorCreditorWindowViewModel();
@@ -944,16 +960,16 @@ namespace KursAM2.View
                         ctxProjectNomenkl.Form = form;
                         form.Show();
                         break;
-                    //case "Прибыли и убытки по проектам":
-                    //    var ctxProjectProfitAndLoss = new ProjectProfitAndLossWindow();
-                    //    form = new ProjectProfitAndLossView
-                    //    {
-                    //        Owner = Application.Current.MainWindow,
-                    //        DataContext = ctxProjectProfitAndLoss
-                    //    };
-                    //    ctxProjectProfitAndLoss.Form = form;
-                    //    form.Show();
-                    //    break;
+                    case "Прибыли и убытки по проектам":
+                        var ctxProjectProfitAndLoss = new ProjectProfitAndLossWindow();
+                        form = new ProjectProfitAndLossView
+                        {
+                            Owner = Application.Current.MainWindow,
+                            DataContext = ctxProjectProfitAndLoss
+                        };
+                        ctxProjectProfitAndLoss.Form = form;
+                        form.Show();
+                        break;
                     case "Кассовая книга":
                         var ctxCash = new CashBookWindowViewModel();
                         form = new CashBookView

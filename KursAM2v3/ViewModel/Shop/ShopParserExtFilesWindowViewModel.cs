@@ -191,6 +191,7 @@ namespace KursAM2.ViewModel.Shop
                 //invoice.Document.Summa = (decimal) invoice.Document.Rows.Sum(_ => _.SFT_SUMMA_K_OPLATE);
                 frm.Topmost = true;
                 frm.Show();
+                frm.Topmost = false;
                 frm.DataContext = invoice;
                 
             }

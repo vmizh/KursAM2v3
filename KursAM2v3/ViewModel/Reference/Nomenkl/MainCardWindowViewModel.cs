@@ -39,6 +39,7 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             redis = ConnectionMultiplexer.Connect(ConfigurationManager.AppSettings["redis.connection"]);
             mySubscriber = redis.GetSubscriber();
             LoadReferences();
+            
         }
 
         public MainCardWindowViewModel(Guid id, NomenklGroupViewModel grp) : this()
@@ -90,11 +91,18 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public ObservableCollection<Unit> UnitCollection { set; get; } = new ObservableCollection<Unit>();
 
-        public override bool IsCanSaveData => NomenklMain != null && NomenklMain.State != RowStatus.NotEdited &&
-                                              NomenklMain.Unit != null && NomenklMain.ProductType != null &&
-                                              NomenklMain.NomenklType != null
-                                              && NomenklMain.NomenklCategory != null &&
-                                              !string.IsNullOrEmpty(NomenklMain.Name);
+        public override bool IsCanSaveData => isCanSave();
+
+
+        private bool isCanSave()
+        {
+            if (NomenklMain?.Unit == null) return false;
+            if (NomenklMain.ProductType == null) return false;
+            if (NomenklMain.NomenklType == null) return false;
+            if (NomenklMain.NomenklCategory == null) return false;
+            if (string.IsNullOrEmpty(NomenklMain.Name)) return false;
+            return NomenklMain.State != RowStatus.NotEdited;
+        }
 
         //private NomenklProductViewModel myNomenklProduct;
         public ProductType NomenklProduct

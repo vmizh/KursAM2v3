@@ -108,21 +108,12 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                             IsCanChangeCurrency = true;
                             using (var ctx = GlobalOptions.GetEntities())
                             {
-                                if (ctx.TD_24.Any(_ => _.DDT_NOMENKL_DC == myCurrentNomenkl.DocCode))
+                                if (ctx.TD_24.Any(_ => _.DDT_NOMENKL_DC == myCurrentNomenkl.DocCode) ||
+                                    ctx.TD_26.Any(_ => _.SFT_NEMENKL_DC == myCurrentNomenkl.DocCode) ||
+                                    ctx.TD_84.Any(_ => _.SFT_NEMENKL_DC == myCurrentNomenkl.DocCode))
                                 {
                                     IsCanChangeCurrency = false;
-                                }
-                                else
-                                {
-                                    if (ctx.TD_26.Any(_ => _.SFT_NEMENKL_DC == myCurrentNomenkl.DocCode))
-                                    {
-                                        IsCanChangeCurrency = false;
-                                    }
-                                    else
-                                    {
-                                        if (ctx.TD_84.Any(_ => _.SFT_NEMENKL_DC == myCurrentNomenkl.DocCode))
-                                            IsCanChangeCurrency = false;
-                                    }
+                                    myCurrentNomenkl.myState = RowStatus.NotEdited;
                                 }
                             }
                         }
@@ -148,7 +139,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
                 if (myCurrentNomenklMain != null)
                     foreach (var n in myCurrentNomenklMain.NomenklCollection)
                         n.State = RowStatus.NotEdited;
-
+                myCurrentNomenklMain?.myState = RowStatus.NotEdited;
+                myCurrentNomenklMain?.RaisePropertyAllChanged();
                 RaisePropertyChanged();
             }
         }
@@ -763,6 +755,8 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
 
         public void NomenklMainEdit(object obj)
         {
+            CurrentNomenklMain.State = RowStatus.NotEdited;
+            CurrentNomenklMain.RaisePropertyAllChanged();
             var ctx = new MainCardWindowViewModel
             {
                 ParentReference = this,
@@ -770,8 +764,12 @@ namespace KursAM2.ViewModel.Reference.Nomenkl
             };
             // ReSharper disable once UseObjectOrCollectionInitializer
             var form = new NomenklMainCardView { Owner = Application.Current.MainWindow };
-            form.Show();
             form.DataContext = ctx;
+            form.Show();
+            ctx.NomenklMain.State = RowStatus.NotEdited;
+            ctx.RaisePropertyAllChanged();
+            ctx.NomenklMain.RaisePropertyAllChanged();
+
         }
 
         public ICommand NomenklMainCopyCommand
