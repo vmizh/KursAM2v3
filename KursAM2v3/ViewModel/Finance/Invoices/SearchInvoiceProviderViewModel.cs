@@ -405,6 +405,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ctx.Form = frm;
             frm.Topmost = true;
             frm.Show();
+            frm.Topmost = false;
         }
 
         public override void DocNewCopyRequisite(object form)
@@ -432,6 +433,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ctx.Form = frm;
             frm.Topmost = true;
             frm.Show();
+            frm.Topmost = false;
         }
 
         public override void UpdateVisualObjects()

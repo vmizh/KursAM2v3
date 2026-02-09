@@ -930,7 +930,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
                     "Предупреждение", MessageBoxImage.Information);
                 return;
             }
-
+            
             var kontr = StandartDialogs.SelectKontragent(new KontragentSelectDialogOptions
                 { Currency = Document.Currency });
             if (kontr == null) return;
@@ -2096,7 +2096,8 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ctx.Form = frm;
             frm.Topmost = true;
             frm.Show();
-            
+            frm.Topmost = false;
+
         }
 
         public override void DocNewCopyRequisite(object form)
@@ -2125,6 +2126,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ctx.Form = frm;
             frm.Topmost = true;
             frm.Show();
+            frm.Topmost = false;
         }
 
         public override void DocDelete(object form)
@@ -2299,6 +2301,7 @@ namespace KursAM2.ViewModel.Finance.Invoices
             ctx.Form = view; 
             view.Topmost = true;
             view.Show();
+            view.Topmost = false;
         }
 
         // ReSharper disable once UnusedMember.Global

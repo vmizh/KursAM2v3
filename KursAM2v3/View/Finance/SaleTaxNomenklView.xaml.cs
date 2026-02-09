@@ -1,17 +1,20 @@
-﻿using System;
+﻿using DevExpress.Xpf.Core;
+using KursAM2.View.Management;
+using KursAM2.ViewModel.Finance;
+using KursAM2.ViewModel.Management;
+using KursDomain;
+using KursDomain.WindowsManager.WindowsManager;
+using LayoutManager;
+using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Forms;
 using System.Windows.Markup;
-using KursDomain.WindowsManager.WindowsManager;
-using DevExpress.Xpf.Core;
-using KursAM2.View.Management;
-using KursAM2.ViewModel.Finance;
-using KursAM2.ViewModel.Management;
-using KursDomain;
-using LayoutManager;
+using Application = System.Windows.Application;
+using MessageBoxOptions = System.Windows.MessageBoxOptions;
 
 namespace KursAM2.View.Finance
 {
@@ -76,6 +79,7 @@ namespace KursAM2.View.Finance
             frm.DataContext = ctxk;
             frm.Topmost = true;
             frm.Show();
+            frm.Topmost = false;
         }
 
         private void MenuOpenPurchaseDocument_Click(object sender, RoutedEventArgs e)

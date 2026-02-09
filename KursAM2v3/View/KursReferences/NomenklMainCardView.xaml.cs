@@ -19,9 +19,8 @@ namespace KursAM2.View.KursReferences
             InitializeComponent();
             
             LayoutManager = new LayoutManager.LayoutManager(GlobalOptions.KursSystem(),GetType().Name, this, mainLayoutControl);
-            Loaded += NomenklMainCardView_Loaded;
-            Closing += NomenklMainCardView_Closing;
-            DataContextChanged += NomenklMainCardView_DataContextChanged;
+            //Loaded += NomenklMainCardView_Loaded;
+            //Closing += NomenklMainCardView_Closing;
         }
 
         public LayoutManager.LayoutManager LayoutManager { get; set; }
@@ -32,16 +31,7 @@ namespace KursAM2.View.KursReferences
             LayoutManager.Save();
         }
 
-        private void NomenklMainCardView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            //var ctx = DataContext as MainCardWindowViewModel;
-            //if (ctx?.NomenklCategoryDC != null)
-            //{
-            //    ctx.NomenklGroup =
-            //        ctx.NomenklCategoryCollection.Single(_ => _.DocCode == ctx.NomenklCategoryDC);
-            //}
-        }
-
+        
         private void NomenklMainCardView_Closing(object sender, CancelEventArgs e)
         {
             LayoutManager.Save();

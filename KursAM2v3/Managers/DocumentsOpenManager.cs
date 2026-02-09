@@ -1,8 +1,4 @@
-﻿using System;
-using System.Data.Entity;
-using System.Linq;
-using System.Windows;
-using Core;
+﻿using Core;
 using Core.ViewModel.Base;
 using Data;
 using KursAM2.Managers.Base;
@@ -34,12 +30,19 @@ using KursAM2.ViewModel.Personal;
 using KursAM2.ViewModel.Reference;
 using KursAM2.ViewModel.StockHolder;
 using KursDomain;
+using KursDomain.Base;
 using KursDomain.Documents.Bank;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Repository;
 using KursDomain.Services;
 using KursDomain.WindowsManager.WindowsManager;
+using System;
+using System.Data.Entity;
+using System.Linq;
+using System.Windows;
+using System.Windows.Forms;
+using Application = System.Windows.Application;
 
 namespace KursAM2.Managers;
 
@@ -246,7 +249,8 @@ public class DocumentsOpenManager
         form.DataContext = ctx; 
         form.Topmost = true;
         form.Show();
-       
+        form.Topmost = false;
+
         return ctx;
     }
 
@@ -269,6 +273,7 @@ public class DocumentsOpenManager
         foreach (var t in dtx.Tovars) t.State = RowStatus.NotEdited;
         dsForm.Topmost = true;
         dsForm.Show();
+        dsForm.Topmost = false;
         dtx.State = RowStatus.NotEdited;
         return dtx;
     }
@@ -374,6 +379,7 @@ public class DocumentsOpenManager
         dtx.Form = form; 
         form.Topmost = true;
         form.Show();
+        form.Topmost = false;
         for (var i = 0; i < dtx.BankOperationsCollection.Count; i++)
         {
             if (!(form.GridDocuments.GetRow(i) is BankOperationsViewModel row) || row.Code != vm.Code) continue;
@@ -406,7 +412,8 @@ public class DocumentsOpenManager
         dtx.Form = form;
         form.Topmost = true;
         form.Show();
-            
+        form.Topmost = false;
+
         for (var i = 0; i < dtx.BankOperationsCollection.Count; i++)
         {
             if (!(form.GridDocuments.GetRow(i) is BankOperationsViewModel row) || row.Code != dc) continue;
@@ -432,6 +439,7 @@ public class DocumentsOpenManager
         ctx.Form = form;
         form.Topmost = true;
         form.Show();
+        form.Topmost = false;
         form.DataContext = ctx;
         return ctx;
     }
@@ -450,6 +458,7 @@ public class DocumentsOpenManager
         ctx.Form = form;
         form.Topmost = true;
         form.Show();
+        form.Topmost = false;
         form.DataContext = ctx;
     }
 
@@ -482,6 +491,7 @@ public class DocumentsOpenManager
         frm.DataContext = ctx;
         frm.Topmost = true;
         frm.Show();
+        frm.Topmost = false;
         return ctx;
     }
 
@@ -495,6 +505,7 @@ public class DocumentsOpenManager
         frm.DataContext = ctx;
         frm.Topmost = true;
         frm.Show();
+        frm.Topmost = false;
         return ctx;
     }
 
@@ -508,6 +519,7 @@ public class DocumentsOpenManager
         frm.DataContext = ctx;
         frm.Topmost = true;
         frm.Show();
+        frm.Topmost = false;
         return ctx;
     }
 
@@ -522,6 +534,7 @@ public class DocumentsOpenManager
         ctx.Form = view;
         view.Topmost = true;
         view.Show();
+        view.Topmost = false;
         return ctx;
     }
 
@@ -547,6 +560,7 @@ public class DocumentsOpenManager
         ctx.Form = view;
         view.Topmost = true;
         view.Show();
+        view.Topmost = false;
         return ctx;
     }
 
@@ -573,6 +587,7 @@ public class DocumentsOpenManager
         ctx.Form = view;
         view.Topmost = true;
         view.Show();
+        view.Topmost = false;
         return ctx;
     }
 
@@ -588,6 +603,7 @@ public class DocumentsOpenManager
         var state = ctx.Document.State; 
         view.Topmost = true;
         view.Show();
+        view.Topmost = false;
         ctx.Document.myState = state;
         ctx.Document.RaisePropertyChanged("State");
        
@@ -605,6 +621,7 @@ public class DocumentsOpenManager
         ctx.Form = form;
         form.Topmost = true;
         form.Show();
+        form.Topmost = false;
         ctx.RefreshData(id);
         
 
@@ -625,7 +642,8 @@ public class DocumentsOpenManager
         form.DataContext = ctx; 
         form.Topmost = true;
         form.Show();
-       
+        form.Topmost = false;
+
         return ctx;
     }
 
@@ -664,6 +682,7 @@ public class DocumentsOpenManager
         ctx.CreateMenu();
         frm.Topmost = true;
         frm.Show();
+        frm.Topmost = false;
         frm.DataContext = ctx;
         var dtx = (MutualAcountingWindowViewModel)frm.DataContext;
         dtx.Document.State = RowStatus.NotEdited;
@@ -682,7 +701,8 @@ public class DocumentsOpenManager
         };
         form.Topmost = true;
         form.Show();
-        
+        form.Topmost = false;
+
     }
 
     private static CashOutWindowViewModel OpenCashOut(decimal dc, Window parent)
@@ -701,6 +721,7 @@ public class DocumentsOpenManager
         ctx.RefreshData(null);
         form.Topmost = true;
         form.Show();
+        form.Topmost = false;
         form.DataContext = ctx;
         
         return ctx;
@@ -735,6 +756,7 @@ public class DocumentsOpenManager
         ctx.CreateMenu();
         form.Topmost = true;
         form.Show();
+        form.Topmost = false;
         return ctx;
         //form.DataContext = ctx;
     }
@@ -752,7 +774,8 @@ public class DocumentsOpenManager
         ctx.CreateMenu(); 
         form.Topmost = true;
         form.Show();
-       
+        form.Topmost = false;
+
     }
 
     /// <summary>
@@ -770,7 +793,8 @@ public class DocumentsOpenManager
         ctx.Form = form;
         form.Topmost = true;
         form.Show();
-        
+        form.Topmost = false;
+
         return ctx;
     }
 
@@ -805,7 +829,7 @@ public class DocumentsOpenManager
         var ctx = new WaybillWindowViewModel2(dc) { Form = form };
         form.DataContext = ctx;
         form.Topmost = true;
-        form.Show();
+        form.Topmost = false;
         return ctx;
     }
 
@@ -832,6 +856,7 @@ public class DocumentsOpenManager
         ctx.Form = view;
         view.Topmost = true;
         view.Show();
+        view.Topmost = false;
         return ctx;
     }
 }

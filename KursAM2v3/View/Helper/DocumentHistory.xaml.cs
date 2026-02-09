@@ -79,6 +79,7 @@ namespace KursAM2.View.Helper
             };
             form.Topmost = true;
             form.Show();
+            form.Topmost = false;
         }
 
         public static void LoadHistory(decimal dc, int code)
@@ -99,6 +100,7 @@ namespace KursAM2.View.Helper
             };
             form.Topmost = true;
             form.Show();
+            form.Topmost = false;
         }
 
         public static void LoadHistory(DocumentType type, Guid? id = null, decimal? dc = null, int? code = null)
@@ -143,6 +145,7 @@ namespace KursAM2.View.Helper
             };
             form.Topmost = true;
             form.Show();
+            form.Topmost = false;
         }
 
         public static void ShowDocument(string json)
@@ -178,6 +181,7 @@ namespace KursAM2.View.Helper
                 }
                 form.Topmost = true;
                 form.Show();
+                form.Topmost = false;
             }
             catch (Exception ex)
             {
