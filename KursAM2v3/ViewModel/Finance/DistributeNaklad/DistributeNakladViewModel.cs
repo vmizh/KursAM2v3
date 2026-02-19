@@ -127,11 +127,12 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
             ? "Новый документ"
             : $"№ {DocNum} от {DocDate.ToShortDateString()} {Currency}";
 
+        [Display(AutoGenerateField = false)]
         public override string WindowName => $"Распределение накладных расходов №{DocNum} от {DocDate}";
 
         public override string Description =>
             $"№ {DocNum} от {DocDate.ToShortDateString()} {Currency} {Note} Создатель: {Creator}";
-
+        [Display(AutoGenerateField = false)]
         public DistributeNakladTypeEnum DefaultTypeCalc
         {
             get => myDefaultTypeCalc;
@@ -142,7 +143,7 @@ namespace KursAM2.ViewModel.Finance.DistributeNaklad
                 RaisePropertyChanged();
             }
         }
-
+        [Display(AutoGenerateField = false)]
         public override Guid Id
         {
             get => Entity.Id;

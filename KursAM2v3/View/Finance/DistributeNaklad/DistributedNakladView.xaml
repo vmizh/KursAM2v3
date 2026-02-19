@@ -128,9 +128,9 @@
                                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="0 -3 0 10">
                                     <materialDesign:Badged Margin="0 12 28 4" x:Name="RecalcButton" 
                                                            BadgeColorZoneMode="Light" VerticalAlignment="Center">
-                                        <Button Content="Пересчитать" 
+                                        <!--<Button Content="Пересчитать" 
                                                 Style="{StaticResource MaterialDesignRaisedLightButton}"
-                                                Command="{Binding RecalcAllCommand}" VerticalAlignment="Center"/>
+                                                Command="{Binding RecalcAllCommand}" VerticalAlignment="Center"/>-->
                                     </materialDesign:Badged>
                                     <Label Content="Тип расч." 
                                            FontSize="14" 
