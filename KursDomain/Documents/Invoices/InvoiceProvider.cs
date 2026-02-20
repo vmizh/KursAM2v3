@@ -868,7 +868,7 @@ public class InvoiceProvider : RSViewModelBase, IEntity<SD_26>, IDataErrorInfo, 
             RaisePropertyChanged();
             foreach (var r in Rows.Cast<InvoiceProviderRow>())
             {
-                r.IsIncludeInPrice = Entity.SF_NDS_VKL_V_CENU == 0 ? false : true;
+                r.IsIncludeInPrice = Entity.SF_NDS_VKL_V_CENU != 0;
                 r.CalcRow();
             }
         }

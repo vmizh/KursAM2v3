@@ -736,6 +736,9 @@ namespace KursAM2.ViewModel.Finance.Invoices
 
         #region Commands
 
+        public override bool IsDocNewCopyAllow => Document?.State == RowStatus.NotEdited;
+        public override bool IsDocNewCopyRequisiteAllow => Document?.State == RowStatus.NotEdited;
+
         public override bool CanCreateLinkDocument => Document.State == RowStatus.NotEdited &&
                                                       Document.Summa - Document.Rows.Where(_ => _.IsUsluga)
                                                           .Sum(s => s.Summa)

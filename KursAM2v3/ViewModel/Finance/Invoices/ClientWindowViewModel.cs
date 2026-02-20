@@ -725,7 +725,7 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
 
     #region Command
 
-    public override bool CanCreateLinkDocument => Document.State == RowStatus.NotEdited &&
+     public override bool CanCreateLinkDocument => Document.State == RowStatus.NotEdited &&
                                                   Document.Summa - Document.Rows.Where(_ => _.IsUsluga)
                                                       .Sum(s => s.Summa)
                                                   > Document.SummaOtgruz;
@@ -1476,8 +1476,8 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
         frm.DataContext = ctx;
     }
 
-    public override bool IsDocNewCopyAllow => Document != null && Document.State != RowStatus.NewRow;
-    public override bool IsDocNewCopyRequisiteAllow => Document != null && Document.State != RowStatus.NewRow;
+    public override bool IsDocNewCopyAllow => Document != null && Document.State == RowStatus.NotEdited;
+    public override bool IsDocNewCopyRequisiteAllow => Document != null && Document.State == RowStatus.NotEdited;
 
     public override void DocNewCopyRequisite(object obj)
     {
