@@ -170,7 +170,7 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 CREATOR = GlobalOptions.UserInfo.Name,
                 myState = RowStatus.NewRow,
                 IsAccepted = false,
-                IsNDSInPrice = true,
+                IsNDSInPrice = (doc.SF_NDS_VKL_V_CENU ?? 0) == 1,
                 NakladDistributedSumma = 0,
             };
             ret.Facts.Clear();
@@ -191,12 +191,19 @@ namespace KursAM2.Repositories.InvoicesRepositories
                 row.Note = null;
                 row.myState = RowStatus.NewRow;
                 newCode++;
+
             }
 
             foreach (var t in ret.Entity.TD_26)
             {
                 t.TD_24.Clear();
             }
+
+            foreach (var row in ret.Rows.Cast<InvoiceProviderRow>())
+            {
+                row.CalcRow();
+            }
+
             Context.Configuration.ProxyCreationEnabled = prxContext;
             return ret;
         }
