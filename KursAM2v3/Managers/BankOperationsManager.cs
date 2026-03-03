@@ -1222,10 +1222,6 @@ public class BankOperationsManager
                 SummaOut = 0,
                 Currency = GlobalOptions.ReferencesCache.GetBankAccount(bankDC).Currency as Currency
             };
-        if (bankDC == 11140000032)
-        {
-            var i = 1;
-        }
         using (var ctx = GlobalOptions.GetEntities())
         {
             var sql = "SELECT  AccountDC ,Date ,Start ," +

@@ -4,9 +4,7 @@ using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
 using System.Windows;
-using System.Windows.Forms;
 using Core.ViewModel.Base;
-using KursDomain.WindowsManager.WindowsManager;
 using Data;
 using DevExpress.Mvvm;
 using DevExpress.Xpf.Bars;
@@ -21,540 +19,524 @@ using KursDomain;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursDomain.WindowsManager.WindowsManager;
 using ColumnFilterMode = DevExpress.Xpf.Grid.ColumnFilterMode;
 
 // ReSharper disable CollectionNeverQueried.Global
-namespace KursAM2.ViewModel.Management.DebitorCreditor
+namespace KursAM2.ViewModel.Management.DebitorCreditor;
+
+public class DebitorCreditorWindowViewModel : RSWindowViewModelBase
 {
-    public class DebitorCreditorWindowViewModel : RSWindowViewModelBase
+    private DebitorCreditorRow myCurrentCreditor;
+    private DebitorCreditorRow myCurrentDebitor;
+    private DebitorCreditorRow myCurrentDebitorCreditor;
+    private KontragentBalansRowViewModel myCurrentOperation;
+    private DateTime myEnd;
+    private DateTime myStart;
+
+    public DebitorCreditorWindowViewModel()
     {
-        private DebitorCreditorRow myCurrentCreditor;
-        private DebitorCreditorRow myCurrentDebitor;
-        private DebitorCreditorRow myCurrentDebitorCreditor;
-        private KontragentBalansRowViewModel myCurrentOperation;
-        private DateTime myEnd;
-        private DateTime myStart;
-
-        public DebitorCreditorWindowViewModel()
+        DebitorCreditorAll = new ObservableCollection<DebitorCreditorRow>();
+        Debitors = new GalleryCollection<DebitorCreditorRow>();
+        Creditors = new ObservableCollection<DebitorCreditorRow>();
+        Operations = new ObservableCollection<KontragentBalansRowViewModel>();
+        LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
         {
-            DebitorCreditorAll = new ObservableCollection<DebitorCreditorRow>();
-            Debitors = new GalleryCollection<DebitorCreditorRow>();
-            Creditors = new ObservableCollection<DebitorCreditorRow>();
-            Operations = new ObservableCollection<KontragentBalansRowViewModel>();
-            LeftMenuBar = MenuGenerator.BaseLeftBar(this, new Dictionary<MenuGeneratorItemVisibleEnum, bool>
-            {
-                [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
-            });
-            RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+            [MenuGeneratorItemVisibleEnum.AddSearchlist] = true
+        });
+        RightMenuBar = MenuGenerator.StandartInfoRightBar(this);
+    }
+
+    public ObservableCollection<DebitorCreditorRow> DebitorCreditorAll { set; get; }
+    public ObservableCollection<DebitorCreditorRow> Debitors { set; get; }
+    public ObservableCollection<DebitorCreditorRow> Creditors { set; get; }
+    public ObservableCollection<KontragentBalansRowViewModel> Operations { set; get; }
+
+
+    public DebitorCreditorRow CurrentDebitorCreditor
+    {
+        get => myCurrentDebitorCreditor;
+        set
+        {
+            // ReSharper disable once PossibleUnintendedReferenceComparison
+            if (myCurrentDebitorCreditor == value) return;
+            myCurrentDebitorCreditor = value;
+            if (myCurrentDebitorCreditor != null)
+                LoadKontragentOperation(myCurrentDebitorCreditor.KontrInfo.DocCode);
+            else
+                Operations.Clear();
+            RaisePropertyChanged();
+            RaisePropertyChanged(nameof(Operations));
         }
+    }
 
-        public ObservableCollection<DebitorCreditorRow> DebitorCreditorAll { set; get; }
-        public ObservableCollection<DebitorCreditorRow> Debitors { set; get; }
-        public ObservableCollection<DebitorCreditorRow> Creditors { set; get; }
-        public ObservableCollection<KontragentBalansRowViewModel> Operations { set; get; }
-
-        public override void AddSearchList(object obj)
+    public DebitorCreditorRow CurrentDebitor
+    {
+        get => myCurrentDebitor;
+        set
         {
-            var dbctx = new DebitorCreditorWindowViewModel();
-            var form = new DebitorCreditorView { Owner = System.Windows.Application.Current.MainWindow };
-            dbctx.Form = form;
-            form.DataContext = dbctx;
-            form.Show();
+            // ReSharper disable once PossibleUnintendedReferenceComparison
+            if (myCurrentDebitor == value) return;
+            myCurrentDebitor = value;
+            if (myCurrentDebitor != null)
+                LoadKontragentOperation(myCurrentDebitor.KontrInfo.DocCode);
+            else
+                Operations.Clear();
+            RaisePropertyChanged();
+            RaisePropertyChanged(nameof(Operations));
         }
+    }
 
-        
-        public DebitorCreditorRow CurrentDebitorCreditor
+    public override string WindowName => "Дебиторы /  кредиторы";
+    public override string LayoutName => "DebitorCreditorWindowViewModel";
+
+    public decimal DebitorSumma
+    {
+        get { return DebitorCreditorAll.Where(_ => _.IsBalans && _.KontrEnd >= 0).Sum(_ => _.UchetEnd); }
+    }
+
+    public decimal CreditorSumma
+    {
+        get { return DebitorCreditorAll.Where(_ => _.IsBalans && _.KontrEnd < 0).Sum(_ => _.UchetEnd); }
+    }
+
+    public DateTime End
+    {
+        get
         {
-            get => myCurrentDebitorCreditor;
-            set
+            if (myEnd == DateTime.MinValue)
+                End = DateTime.Today;
+            return myEnd;
+        }
+        set
+        {
+            if (myEnd == value) return;
+            myEnd = value;
+            if (myEnd < Start)
+                Start = myEnd;
+            RaisePropertyChanged();
+        }
+    }
+
+    public DateTime Start
+    {
+        get
+        {
+            if (myStart == DateTime.MinValue)
+                Start = new DateTime(DateTime.Today.Year, 1, 1);
+            return myStart;
+        }
+        set
+        {
+            if (myStart == value) return;
+            myStart = value;
+            if (myStart > End)
+                End = myStart;
+            RaisePropertyChanged();
+        }
+    }
+
+    public decimal BalansSumma => DebitorSumma + CreditorSumma;
+
+    public DebitorCreditorRow CurrentCreditor
+    {
+        get => myCurrentCreditor;
+        set
+        {
+            // ReSharper disable once PossibleUnintendedReferenceComparison
+            if (myCurrentCreditor == value) return;
+            myCurrentCreditor = value;
+            if (myCurrentCreditor != null)
+                LoadKontragentOperation(myCurrentCreditor.KontrInfo.DocCode);
+            else
+                Operations.Clear();
+            RaisePropertyChanged();
+            RaisePropertyChanged(nameof(Operations));
+        }
+    }
+
+    public KontragentBalansRowViewModel CurrentOperation
+    {
+        get => myCurrentOperation;
+        set
+        {
+            if (Equals(myCurrentOperation, value)) return;
+            myCurrentOperation = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public override void AddSearchList(object obj)
+    {
+        var dbctx = new DebitorCreditorWindowViewModel();
+        var form = new DebitorCreditorView { Owner = Application.Current.MainWindow };
+        dbctx.Form = form;
+        form.DataContext = dbctx;
+        form.Show();
+    }
+
+    private void LoadKontragentOperation(decimal kontrDC)
+    {
+        var debitorCreditorRow = DebitorCreditorAll.FirstOrDefault(_ => _.KontrInfo.DocCode == kontrDC);
+        if (debitorCreditorRow == null) return;
+        var start = debitorCreditorRow.KontrStart;
+        Operations.Clear(); //= new ObservableCollection<KontragentBalansRowViewModel>();
+        var sql = "SELECT DOC_NAME as DocName, " +
+                  "CASE  WHEN DOC_TYPE_CODE = 101 THEN CONVERT(VARCHAR, td_101.CODE) ELSE DOC_NUM END AS DocNum, " +
+                  "DOC_DATE as DocDate, " +
+                  "cast(CRS_KONTR_IN as numeric(18,4)) as CrsKontrIn, " +
+                  "cast(CRS_KONTR_OUT as numeric(18,4)) as CrsKontrOut, " +
+                  "DOC_DC as DocDC, " +
+                  "DOC_ROW_CODE as DocRowCode, " +
+                  "DOC_TYPE_CODE as DocTypeCode, " +
+                  "cast(CRS_OPER_IN as numeric(18,4)) as CrsOperIn, " +
+                  "cast(CRS_OPER_OUT as numeric(18,4)) as CrsOperOut, " +
+                  "OPER_CRS_DC as CrsOperDC, " +
+                  "cast(OPER_CRS_RATE as numeric(18,4)) as CrsOperRate, " +
+                  "cast(UCH_CRS_RATE as numeric(18,4)) as CrsUchRate, " +
+                  "KONTR_DC as DocCode, " +
+                  "DOC_EXT_NUM as DocExtNum, " +
+                  "ISNULL(sd_24.DD_NOTES, ISNULL(Sd_26.SF_NOTES, ISNULL(SD_33.NOTES_ORD, " +
+                  "ISNULL(SD_34.NOTES_ORD, ISNULL(sd_84.SF_NOTE, ISNULL(CASE WHEN DOC_TYPE_CODE = 101 THEN td_101.VVT_DOC_NUM ELSE NULL END, " +
+                  "ISNULL(td_110.VZT_DOC_NOTES, ISNULL(sd_430.ASV_NOTES,'')))))))) AS Notes " +
+                  "FROM dbo.KONTR_BALANS_OPER_ARC kboa " +
+                  "LEFT OUTER JOIN sd_24 ON DOC_DC = sd_24.DOC_CODE " +
+                  "LEFT OUTER JOIN sd_26 ON DOC_DC = sd_26.DOC_CODE " +
+                  "LEFT OUTER JOIN SD_33 ON DOC_DC = sd_33.DOC_CODE " +
+                  "LEFT OUTER JOIN SD_34 ON DOC_DC = sd_34.DOC_CODE " +
+                  "LEFT OUTER JOIN SD_84 ON DOC_DC = sd_84.DOC_CODE " +
+                  "LEFT OUTER JOIN td_101 ON DOC_ROW_CODE = td_101.code " +
+                  "LEFT OUTER JOIN td_110 ON DOC_DC = td_110.DOC_CODE AND kboa.DOC_ROW_CODE = td_110.code " +
+                  "LEFT OUTER JOIN sd_430 ON doc_dc = sd_430.DOC_CODE " +
+                  $"WHERE KONTR_DC = {CustomFormat.DecimalToSqlDecimal(kontrDC)} " +
+                  $"AND DOC_DATE >= '{CustomFormat.DateToString(Start)}' AND DOC_DATE <= '{CustomFormat.DateToString(End)}' " +
+                  "ORDER BY kboa.KONTR_DC,kboa.DOC_DATE;";
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            var data = ctx.Database.SqlQuery<KontragentBalansRowViewModel>(sql);
+            foreach (var op in data)
             {
-                // ReSharper disable once PossibleUnintendedReferenceComparison
-                if (myCurrentDebitorCreditor == value) return;
-                myCurrentDebitorCreditor = value;
-                if (myCurrentDebitorCreditor != null)
-                    LoadKontragentOperation(myCurrentDebitorCreditor.KontrInfo.DocCode);
-                else
-                    Operations.Clear();
-                RaisePropertyChanged();
-                RaisePropertyChanged(nameof(Operations));
+                start += Convert.ToDecimal(op.CrsKontrOut) - Convert.ToDecimal(op.CrsKontrIn);
+                op.Nakopit = start;
+                Operations.Add(op);
             }
         }
 
-        public DebitorCreditorRow CurrentDebitor
+        RaisePropertyChanged(nameof(Operations));
+    }
+
+    public void ChangedKontr(int i)
+    {
+        Operations.Clear();
+        RaisePropertyChanged(nameof(Operations));
+        switch (i)
         {
-            get => myCurrentDebitor;
-            set
-            {
-                // ReSharper disable once PossibleUnintendedReferenceComparison
-                if (myCurrentDebitor == value) return;
-                myCurrentDebitor = value;
+            case 1:
                 if (myCurrentDebitor != null)
+                {
                     LoadKontragentOperation(myCurrentDebitor.KontrInfo.DocCode);
-                else
-                    Operations.Clear();
-                RaisePropertyChanged();
-                RaisePropertyChanged(nameof(Operations));
-            }
-        }
+                    RaisePropertyChanged(nameof(CurrentDebitor));
+                }
 
-        public override string WindowName => "Дебиторы /  кредиторы";
-        public override string LayoutName => "DebitorCreditorWindowViewModel";
-
-        public decimal DebitorSumma
-        {
-            get { return DebitorCreditorAll.Where(_ => _.IsBalans && _.KontrEnd >= 0).Sum(_ => _.UchetEnd); }
-        }
-
-        public decimal CreditorSumma
-        {
-            get { return DebitorCreditorAll.Where(_ => _.IsBalans && _.KontrEnd < 0).Sum(_ => _.UchetEnd); }
-        }
-
-        public DateTime End
-        {
-            get
-            {
-                if (myEnd == DateTime.MinValue)
-                    End = DateTime.Today;
-                return myEnd;
-            }
-            set
-            {
-                if (myEnd == value) return;
-                myEnd = value;
-                if (myEnd < Start)
-                    Start = myEnd;
-                RaisePropertyChanged();
-            }
-        }
-
-        public DateTime Start
-        {
-            get
-            {
-                if (myStart == DateTime.MinValue)
-                    Start = new DateTime(DateTime.Today.Year,1,1);
-                return myStart;
-            }
-            set
-            {
-                if (myStart == value) return;
-                myStart = value;
-                if (myStart > End)
-                    End = myStart;
-                RaisePropertyChanged();
-            }
-        }
-
-        public decimal BalansSumma => DebitorSumma + CreditorSumma;
-
-        public DebitorCreditorRow CurrentCreditor
-        {
-            get => myCurrentCreditor;
-            set
-            {
-                // ReSharper disable once PossibleUnintendedReferenceComparison
-                if (myCurrentCreditor == value) return;
-                myCurrentCreditor = value;
+                break;
+            case 2:
                 if (myCurrentCreditor != null)
+                {
                     LoadKontragentOperation(myCurrentCreditor.KontrInfo.DocCode);
-                else
-                    Operations.Clear();
-                RaisePropertyChanged();
-                RaisePropertyChanged(nameof(Operations));
-            }
-        }
-
-        public KontragentBalansRowViewModel CurrentOperation
-        {
-            get => myCurrentOperation;
-            set
-            {
-                if (Equals(myCurrentOperation, value)) return;
-                myCurrentOperation = value;
-                RaisePropertyChanged();
-            }
-        }
-
-        private void LoadKontragentOperation(decimal kontrDC)
-        {
-            var debitorCreditorRow = DebitorCreditorAll.FirstOrDefault(_ => _.KontrInfo.DocCode == kontrDC);
-            if (debitorCreditorRow == null) return;
-            var start = debitorCreditorRow.KontrStart;
-            Operations.Clear(); //= new ObservableCollection<KontragentBalansRowViewModel>();
-            var sql = "SELECT DOC_NAME as DocName, " +
-                      "ISNULL(CONVERT(VARCHAR, td_101.CODE), DOC_NUM) AS DocNum, " +
-                      "DOC_DATE as DocDate, " +
-                      "cast(CRS_KONTR_IN as numeric(18,4)) as CrsKontrIn, " +
-                      "cast(CRS_KONTR_OUT as numeric(18,4)) as CrsKontrOut, " +
-                      "DOC_DC as DocDC, " +
-                      "DOC_ROW_CODE as DocRowCode, " +
-                      "DOC_TYPE_CODE as DocTypeCode, " +
-                      "cast(CRS_OPER_IN as numeric(18,4)) as CrsOperIn, " +
-                      "cast(CRS_OPER_OUT as numeric(18,4)) as CrsOperOut, " +
-                      "OPER_CRS_DC as CrsOperDC, " +
-                      "cast(OPER_CRS_RATE as numeric(18,4)) as CrsOperRate, " +
-                      "cast(UCH_CRS_RATE as numeric(18,4)) as CrsUchRate, " +
-                      "KONTR_DC as DocCode, " +
-                      "DOC_EXT_NUM as DocExtNum, " +
-                      "ISNULL(sd_24.DD_NOTES, ISNULL(Sd_26.SF_NOTES, ISNULL(SD_33.NOTES_ORD, " +
-                      "ISNULL(SD_34.NOTES_ORD, ISNULL(sd_84.SF_NOTE, ISNULL(td_101.VVT_DOC_NUM, " +
-                      "ISNULL(td_110.VZT_DOC_NOTES, ISNULL(sd_430.ASV_NOTES,'')))))))) AS Notes " +
-                      "FROM dbo.KONTR_BALANS_OPER_ARC kboa " +
-                      "LEFT OUTER JOIN sd_24 ON DOC_DC = sd_24.DOC_CODE " +
-                      "LEFT OUTER JOIN sd_26 ON DOC_DC = sd_26.DOC_CODE " +
-                      "LEFT OUTER JOIN SD_33 ON DOC_DC = sd_33.DOC_CODE " +
-                      "LEFT OUTER JOIN SD_34 ON DOC_DC = sd_34.DOC_CODE " +
-                      "LEFT OUTER JOIN SD_84 ON DOC_DC = sd_84.DOC_CODE " +
-                      "LEFT OUTER JOIN td_101 ON DOC_ROW_CODE = td_101.code " +
-                      "LEFT OUTER JOIN td_110 ON DOC_DC = td_110.DOC_CODE AND kboa.DOC_ROW_CODE = td_110.code " +
-                      "LEFT OUTER JOIN sd_430 ON doc_dc = sd_430.DOC_CODE " +
-                      $"WHERE KONTR_DC = {CustomFormat.DecimalToSqlDecimal(kontrDC)} " +
-                      $"AND DOC_DATE >= '{CustomFormat.DateToString(Start)}' AND DOC_DATE <= '{CustomFormat.DateToString(End)}' " +
-                      "ORDER BY kboa.KONTR_DC,kboa.DOC_DATE;";
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                var data = ctx.Database.SqlQuery<KontragentBalansRowViewModel>(sql);
-                foreach (var op in data)
-                {
-                    start += Convert.ToDecimal(op.CrsKontrOut) - Convert.ToDecimal(op.CrsKontrIn);
-                    op.Nakopit = start;
-                    Operations.Add(op);
+                    RaisePropertyChanged(nameof(CurrentCreditor));
                 }
-            }
 
-            RaisePropertyChanged(nameof(Operations));
-        }
-
-        public void ChangedKontr(int i)
-        {
-            Operations.Clear();
-            RaisePropertyChanged(nameof(Operations));
-            switch (i)
-            {
-                case 1:
-                    if (myCurrentDebitor != null)
-                    {
-                        LoadKontragentOperation(myCurrentDebitor.KontrInfo.DocCode);
-                        RaisePropertyChanged(nameof(CurrentDebitor));
-                    }
-
-                    break;
-                case 2:
-                    if (myCurrentCreditor != null)
-                    {
-                        LoadKontragentOperation(myCurrentCreditor.KontrInfo.DocCode);
-                        RaisePropertyChanged(nameof(CurrentCreditor));
-                    }
-
-                    break;
-                case 3:
-                    if (myCurrentDebitorCreditor != null)
-                    {
-                        LoadKontragentOperation(myCurrentDebitorCreditor.KontrInfo.DocCode);
-                        RaisePropertyChanged(nameof(CurrentDebitorCreditor));
-                    }
-
-                    break;
-            }
-
-            RaisePropertyChanged(nameof(Operations));
-        }
-
-        public static decimal GetRate(List<CURRENCY_RATES_CB> rates, decimal firstDC, decimal secondDC, DateTime date)
-        {
-            if (firstDC == secondDC) return 1;
-            var d1 = rates.Where(_ => _.RATE_DATE <= date);
-            var date1 = !d1.Any() ? DateTime.Today : rates.Where(_ => _.RATE_DATE <= date).Max(_ => _.RATE_DATE);
-            var f = rates.SingleOrDefault(_ => _.CRS_DC == firstDC && _.RATE_DATE == date1);
-            var s = rates.SingleOrDefault(_ => _.CRS_DC == secondDC && _.RATE_DATE == date1);
-            if (f != null && s != null && s.RATE != 0)
-                return f.RATE / f.NOMINAL / (s.RATE / s.NOMINAL);
-            return -1;
-        }
-
-        public override void RefreshData(object obj)
-        {
-            GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
-            CurrentCreditor = null;
-            CurrentDebitor = null;
-            CurrentDebitorCreditor = null;
-            Operations.Clear();
-            DebitorCreditorAll.Clear();
-            Debitors.Clear();
-            Creditors.Clear();
-            foreach (var d in Load(Start, End))
-            {
-                DebitorCreditorAll.Add(d);
-            }
-
-            foreach (var deb in DebitorCreditorAll.Where(_ => _.KontrEnd > 0))
-            {
-                Debitors.Add(deb);
-            }
-            foreach (var cred in DebitorCreditorAll.Where(_ => _.KontrEnd < 0))
-            {
-                Creditors.Add(cred);
-            }
-            foreach (var kontr in DebitorCreditorAll.Where(_ => _.KontrEnd == 0))
-            {
-                switch (kontr.KontrStart)
+                break;
+            case 3:
+                if (myCurrentDebitorCreditor != null)
                 {
-                    case < 0:
-                        Creditors.Add(kontr);
-                        break;
-                    case > 0:
-                        Debitors.Add(kontr);
-                        break;
+                    LoadKontragentOperation(myCurrentDebitorCreditor.KontrInfo.DocCode);
+                    RaisePropertyChanged(nameof(CurrentDebitorCreditor));
                 }
+
+                break;
+        }
+
+        RaisePropertyChanged(nameof(Operations));
+    }
+
+    public static decimal GetRate(List<CURRENCY_RATES_CB> rates, decimal firstDC, decimal secondDC, DateTime date)
+    {
+        if (firstDC == secondDC) return 1;
+        var d1 = rates.Where(_ => _.RATE_DATE <= date);
+        var date1 = !d1.Any() ? DateTime.Today : rates.Where(_ => _.RATE_DATE <= date).Max(_ => _.RATE_DATE);
+        var f = rates.SingleOrDefault(_ => _.CRS_DC == firstDC && _.RATE_DATE == date1);
+        var s = rates.SingleOrDefault(_ => _.CRS_DC == secondDC && _.RATE_DATE == date1);
+        if (f != null && s != null && s.RATE != 0)
+            return f.RATE / f.NOMINAL / (s.RATE / s.NOMINAL);
+        return -1;
+    }
+
+    public override void RefreshData(object obj)
+    {
+        GlobalOptions.ReferencesCache.IsChangeTrackingOn = false;
+        CurrentCreditor = null;
+        CurrentDebitor = null;
+        CurrentDebitorCreditor = null;
+        Operations.Clear();
+        DebitorCreditorAll.Clear();
+        Debitors.Clear();
+        Creditors.Clear();
+        foreach (var d in Load(Start, End)) DebitorCreditorAll.Add(d);
+
+        foreach (var deb in DebitorCreditorAll.Where(_ => _.KontrEnd > 0)) Debitors.Add(deb);
+        foreach (var cred in DebitorCreditorAll.Where(_ => _.KontrEnd < 0)) Creditors.Add(cred);
+        foreach (var kontr in DebitorCreditorAll.Where(_ => _.KontrEnd == 0))
+            switch (kontr.KontrStart)
+            {
+                case < 0:
+                    Creditors.Add(kontr);
+                    break;
+                case > 0:
+                    Debitors.Add(kontr);
+                    break;
             }
 
+        try
+        {
+            var v =
+                (from d in GlobalOptions.GetEntities().SD_43_USER_BLS_NOT_RIGHTS
+                    select d).ToList();
+            var listDC =
+                (from d in v
+                    where d.USER_NAME.ToUpper() == GlobalOptions.UserInfo.Name.ToUpper()
+                    select d.KONTR_DC)
+                .ToList();
+            foreach (
+                var d in
+                listDC.Select(dd => DebitorCreditorAll.FirstOrDefault(t => t.KontrInfo.DocCode == dd))
+                    .Where(d => d != null))
+                DebitorCreditorAll.Remove(d);
+            RaisePropertyChanged(nameof(DebitorCreditorAll));
+            RaisePropertyChanged(nameof(Debitors));
+            RaisePropertyChanged(nameof(Creditors));
+            RaisePropertyChanged(nameof(CreditorSumma));
+            RaisePropertyChanged(nameof(DebitorSumma));
+            RaisePropertyChanged(nameof(BalansSumma));
+            if (Form is DebitorCreditorView frm)
+            {
+                frm.CreditorGrid.RefreshData();
+                frm.DebitorGrid.RefreshData();
+                frm.DebitorCreditorGrid.RefreshData();
+            }
+        }
+        catch (Exception ex)
+        {
+            WindowManager.ShowError(ex);
+        }
+        finally
+        {
+            GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+        }
+    }
+
+    #region Command
+
+    public List<DebitorCreditorRow> Load(DateTime start, DateTime end)
+    {
+        using (var ent = GlobalOptions.GetEntities())
+        {
+            //var currencies = ent.SD_301.ToList();
+            var kontrs = ent.SD_43.Include(_ => _.SD_301).AsNoTracking().ToList();
+            var rates =
+                ent.CURRENCY_RATES_CB.Where(_ => _.RATE_DATE >= start && _.RATE_DATE <= end)
+                    .ToList();
+            var dt = rates.Select(_ => _.RATE_DATE).Distinct().ToList();
+            var kontrChanged = ent.KONTR_BLS_RECALC.Where(_ => _.UserInsert != "dbo");
+            var dcU = new List<decimal>(kontrChanged.Select(_ => _.KONTR_DC).Distinct());
+            if (dcU.Any())
+            {
+                var vm = new DebitorCreditorCalcKontrSplashViewModel
+                {
+                    MaxProgress = dcU.Count,
+                    Minimum = 0,
+                    Progress = 0,
+                    ExtendExtendedTextVisibility = Visibility.Visible
+                };
+                SplashScreenService.ShowSplashScreen();
+                SplashScreenService.SetSplashScreenState(vm);
+                foreach (var k in dcU)
+                {
+                    var k1 = k;
+                    var dd = kontrChanged.Where(_ => _.KONTR_DC == k1).ToList();
+                    if (!dd.Any()) continue;
+                    var minDate = dd.Min(_ => _.DATE_CHANGED);
+                    var kk = kontrs.SingleOrDefault(_ => _.DOC_CODE == k);
+                    if (kk != null)
+                        vm.ExtendedText = $"Контрагент: '{kk.NAME}' начиная с {minDate.ToShortDateString()}";
+                    RecalcKontragentBalans.CalcBalans(k, new DateTime(minDate.Year, minDate.Month, minDate.Day));
+                    vm.Progress += 100 / vm.MaxProgress;
+                    vm.LabelState = vm.LabelState = $"{vm.Progress}%";
+                }
+
+                SplashScreenService.HideSplashScreen();
+            }
+
+            rates.AddRange(dt.Select(r => new CURRENCY_RATES_CB
+            {
+                CRS_DC = GlobalOptions.SystemProfile.NationalCurrency.DocCode,
+                NOMINAL = 1,
+                RATE = 1,
+                RATE_DATE = r
+            }));
+            string sql = null;
             try
             {
-                var v =
-                    (from d in GlobalOptions.GetEntities().SD_43_USER_BLS_NOT_RIGHTS
-                        select d).ToList();
-                var listDC =
-                    (from d in v
-                        where d.USER_NAME.ToUpper() == GlobalOptions.UserInfo.Name.ToUpper()
-                        select d.KONTR_DC)
-                    .ToList();
-                foreach (
-                    var d in
-                    listDC.Select(dd => DebitorCreditorAll.FirstOrDefault(t => t.KontrInfo.DocCode == dd))
-                        .Where(d => d != null))
-                    DebitorCreditorAll.Remove(d);
-                RaisePropertyChanged(nameof(DebitorCreditorAll));
-                RaisePropertyChanged(nameof(Debitors));
-                RaisePropertyChanged(nameof(Creditors));
-                RaisePropertyChanged(nameof(CreditorSumma));
-                RaisePropertyChanged(nameof(DebitorSumma));
-                RaisePropertyChanged(nameof(BalansSumma));
-                if (Form is DebitorCreditorView frm)
-                {
-                    frm.CreditorGrid.RefreshData();
-                    frm.DebitorGrid.RefreshData();
-                    frm.DebitorCreditorGrid.RefreshData();
-                }
+                sql = "SELECT KONTR_DC as rdr0 " +
+                      ", cast(sum(BLS_START) AS NUMERIC(18, 2)) as rdr1 " +
+                      ", cast(sum(BLS_out) AS NUMERIC(18, 2)) as rdr2 " +
+                      ", cast(sum(BLS_in) AS NUMERIC(18, 2)) as rdr3 " +
+                      ", cast(sum(BLS_START) - sum(BLS_OUT) + sum(BLS_IN)   AS NUMERIC(18, 2)) as rdr4 " +
+                      ", isnull(s.flag_balans,0) as rdr5" +
+                      ", s.VALUTA_DC as rdr6 " + "FROM " +
+                      " (SELECT KONTR_DC KONTR_DC " + ", 0 BLS_START " +
+                      ", SUM(CRS_KONTR_IN ) BLS_IN " +
+                      ", SUM( CRS_KONTR_OUT ) BLS_OUT " + ", 0 BLS_END " +
+                      "FROM " + " KONTR_BALANS_OPER_ARC KBOA " +
+                      " INNER JOIN SD_43 S43 " +
+                      "  ON S43.DOC_CODE = KBOA.KONTR_DC " + "WHERE " +
+                      $" DOC_DATE >= '{CustomFormat.DateToString(start)}' AND DOC_DATE <= '{CustomFormat.DateToString(end)}' " +
+                      "AND DOC_DATE >= S43.START_BALANS " + "GROUP BY kontr_dc " +
+                      " UNION ALL " + "SELECT KONTR_DC " +
+                      "    , sum(CRS_KONTR_IN) - sum(CRS_KONTR_OUT) " + "   , 0 " +
+                      "  , 0 " + " , 0 " + "FROM " +
+                      " KONTR_BALANS_OPER_ARC KBOA " + "INNER JOIN SD_43 S43 " +
+                      " ON S43.DOC_CODE = KBOA.KONTR_DC " + "WHERE " +
+                      $" DOC_DATE < '{CustomFormat.DateToString(start)}'  " +
+                      "AND DOC_DATE >= S43.START_BALANS " + "GROUP BY KONTR_DC " +
+                      "UNION ALL " + "SELECT KONTR_DC " + "    , 0 " + "   , 0 " +
+                      "  , 0 " + " , sum(CRS_KONTR_IN) - sum(CRS_KONTR_OUT) " +
+                      "FROM " + " KONTR_BALANS_OPER_ARC KBOA " +
+                      "INNER JOIN SD_43 S43 " +
+                      "ON S43.DOC_CODE = KBOA.KONTR_DC " + "	WHERE " +
+                      $"	  DOC_DATE <= '{CustomFormat.DateToString(end)}' " +
+                      "	  AND DOC_DATE >= S43.START_BALANS " + "	GROUP BY " +
+                      "	  KONTR_DC) TAB " +
+                      "	 inner join sd_43 s on s.doc_code = tab.kontr_dc and isnull(DELETED,0)=0 " +
+                      "	GROUP BY " + "	  KONTR_DC, s.flag_balans, s.valuta_dc";
+                var data =
+                    ent.Database.SqlQuery<DebCredTemp>(sql)
+                        .ToList();
+                return (from d in data.Where(_ => _.rdr4 != 0 || _.rdr2 != 0 || _.rdr3 != 0 || _.rdr1 != 0)
+                    let rate1 =
+                        GetRate(rates, d.rdr6, GlobalOptions.SystemProfile.MainCurrency.DocCode, start)
+                    let rate2 = GetRate(rates, d.rdr6, GlobalOptions.SystemProfile.MainCurrency.DocCode, end)
+                    let kontrInfo =
+                        new KontragentViewModel(kontrs.SingleOrDefault(_ => _.DOC_CODE == d.rdr0))
+                    select new DebitorCreditorRow
+                    {
+                        Delta = Math.Round(d.rdr4 * rate2 - (d.rdr1 * rate1 + (d.rdr2 * rate2 - d.rdr3 * rate2)),
+                            2),
+                        KontrEnd = -d.rdr4,
+                        KontrIn = d.rdr2,
+                        KontrInfo = kontrInfo,
+                        KontrOut = d.rdr3,
+                        KontrStart = -d.rdr1,
+                        UchetEnd = -Math.Round(d.rdr4 * rate2, 2),
+                        UchetIn = Math.Round(d.rdr2 * rate2, 2),
+                        UchetOut = Math.Round(d.rdr3 * rate2, 2),
+                        UchetStart = -Math.Round(d.rdr1 * rate1, 2),
+                        Kontragent = kontrInfo.Name,
+                        CurrencyName = kontrInfo.BalansCurrency.Name,
+                        ResponsibleName = kontrInfo.OtvetstLico?.Name,
+                        IsBalans = d.rdr5 == 1
+                    }).ToList();
             }
             catch (Exception ex)
             {
-                WindowManager.ShowError(ex);
-            }
-            finally
-            {
-                GlobalOptions.ReferencesCache.IsChangeTrackingOn = true;
+                WindowManager.ShowError(ex, sql);
             }
         }
 
-        #region Command
-
-        public List<DebitorCreditorRow> Load(DateTime start, DateTime end)
-        {
-            using (var ent = GlobalOptions.GetEntities())
-            {
-                //var currencies = ent.SD_301.ToList();
-                var kontrs = ent.SD_43.Include(_ => _.SD_301).AsNoTracking().ToList();
-                var rates =
-                    ent.CURRENCY_RATES_CB.Where(_ => _.RATE_DATE >= start && _.RATE_DATE <= end)
-                        .ToList();
-                var dt = rates.Select(_ => _.RATE_DATE).Distinct().ToList();
-                var kontrChanged = ent.KONTR_BLS_RECALC.Where(_ => _.UserInsert != "dbo");
-                var dcU = new List<decimal>(kontrChanged.Select(_ => _.KONTR_DC).Distinct());
-                if (dcU.Any())
-                {
-                    var vm = new DebitorCreditorCalcKontrSplashViewModel
-                    {
-                        MaxProgress = dcU.Count,
-                        Minimum = 0,
-                        Progress = 0,
-                        ExtendExtendedTextVisibility = Visibility.Visible
-                    };
-                    SplashScreenService.ShowSplashScreen();
-                    SplashScreenService.SetSplashScreenState(vm);
-                    foreach (var k in dcU)
-                    {
-                        var k1 = k;
-                        var dd = kontrChanged.Where(_ => _.KONTR_DC == k1).ToList();
-                        if (!dd.Any()) continue;
-                        var minDate = dd.Min(_ => _.DATE_CHANGED);
-                        var kk = kontrs.SingleOrDefault(_ => _.DOC_CODE == k);
-                        if (kk != null)
-                            vm.ExtendedText = $"Контрагент: '{kk.NAME}' начиная с {minDate.ToShortDateString()}";
-                        RecalcKontragentBalans.CalcBalans(k, new DateTime(minDate.Year, minDate.Month, minDate.Day));
-                        vm.Progress += 100 / vm.MaxProgress;
-                        vm.LabelState = vm.LabelState = $"{vm.Progress}%";
-                    }
-
-                    SplashScreenService.HideSplashScreen();
-                }
-
-                rates.AddRange(dt.Select(r => new CURRENCY_RATES_CB
-                {
-                    CRS_DC = GlobalOptions.SystemProfile.NationalCurrency.DocCode,
-                    NOMINAL = 1,
-                    RATE = 1,
-                    RATE_DATE = r
-                }));
-                string sql = null;
-                try
-                {
-                    sql = "SELECT KONTR_DC as rdr0 " +
-                          ", cast(sum(BLS_START) AS NUMERIC(18, 2)) as rdr1 " +
-                          ", cast(sum(BLS_out) AS NUMERIC(18, 2)) as rdr2 " +
-                          ", cast(sum(BLS_in) AS NUMERIC(18, 2)) as rdr3 " +
-                          ", cast(sum(BLS_START) - sum(BLS_OUT) + sum(BLS_IN)   AS NUMERIC(18, 2)) as rdr4 " +
-                          ", isnull(s.flag_balans,0) as rdr5" +
-                          ", s.VALUTA_DC as rdr6 " + "FROM " +
-                          " (SELECT KONTR_DC KONTR_DC " + ", 0 BLS_START " +
-                          ", SUM(CRS_KONTR_IN ) BLS_IN " +
-                          ", SUM( CRS_KONTR_OUT ) BLS_OUT " + ", 0 BLS_END " +
-                          "FROM " + " KONTR_BALANS_OPER_ARC KBOA " +
-                          " INNER JOIN SD_43 S43 " +
-                          "  ON S43.DOC_CODE = KBOA.KONTR_DC " + "WHERE " +
-                          $" DOC_DATE >= '{CustomFormat.DateToString(start)}' AND DOC_DATE <= '{CustomFormat.DateToString(end)}' " +
-                          "AND DOC_DATE >= S43.START_BALANS " + "GROUP BY kontr_dc " +
-                          " UNION ALL " + "SELECT KONTR_DC " +
-                          "    , sum(CRS_KONTR_IN) - sum(CRS_KONTR_OUT) " + "   , 0 " +
-                          "  , 0 " + " , 0 " + "FROM " +
-                          " KONTR_BALANS_OPER_ARC KBOA " + "INNER JOIN SD_43 S43 " +
-                          " ON S43.DOC_CODE = KBOA.KONTR_DC " + "WHERE " +
-                          $" DOC_DATE < '{CustomFormat.DateToString(start)}'  " +
-                          "AND DOC_DATE >= S43.START_BALANS " + "GROUP BY KONTR_DC " +
-                          "UNION ALL " + "SELECT KONTR_DC " + "    , 0 " + "   , 0 " +
-                          "  , 0 " + " , sum(CRS_KONTR_IN) - sum(CRS_KONTR_OUT) " +
-                          "FROM " + " KONTR_BALANS_OPER_ARC KBOA " +
-                          "INNER JOIN SD_43 S43 " +
-                          "ON S43.DOC_CODE = KBOA.KONTR_DC " + "	WHERE " +
-                          $"	  DOC_DATE <= '{CustomFormat.DateToString(end)}' " +
-                          "	  AND DOC_DATE >= S43.START_BALANS " + "	GROUP BY " +
-                          "	  KONTR_DC) TAB " +
-                          "	 inner join sd_43 s on s.doc_code = tab.kontr_dc and isnull(DELETED,0)=0 " +
-                          "	GROUP BY " + "	  KONTR_DC, s.flag_balans, s.valuta_dc";
-                    var data =
-                        ent.Database.SqlQuery<DebCredTemp>(sql)
-                            .ToList();
-                    return (from d in data.Where(_ => _.rdr4 != 0 || _.rdr2 != 0 || _.rdr3 != 0 || _.rdr1 != 0)
-                        let rate1 =
-                            GetRate(rates, d.rdr6, GlobalOptions.SystemProfile.MainCurrency.DocCode, start)
-                        let rate2 = GetRate(rates, d.rdr6, GlobalOptions.SystemProfile.MainCurrency.DocCode, end)
-                        let kontrInfo =
-                            new KontragentViewModel(kontrs.SingleOrDefault(_ => _.DOC_CODE == d.rdr0))
-                        select new DebitorCreditorRow
-                        {
-                            Delta = Math.Round(d.rdr4 * rate2 - (d.rdr1 * rate1 + (d.rdr2 * rate2 - d.rdr3 * rate2)),
-                                2),
-                            KontrEnd = -d.rdr4,
-                            KontrIn = d.rdr2,
-                            KontrInfo = kontrInfo,
-                            KontrOut = d.rdr3,
-                            KontrStart = -d.rdr1,
-                            UchetEnd = -Math.Round(d.rdr4 * rate2, 2),
-                            UchetIn = Math.Round(d.rdr2 * rate2, 2),
-                            UchetOut = Math.Round(d.rdr3 * rate2, 2),
-                            UchetStart = -Math.Round(d.rdr1 * rate1, 2),
-                            Kontragent = kontrInfo.Name,
-                            CurrencyName = kontrInfo.BalansCurrency.Name,
-                            ResponsibleName = kontrInfo.OtvetstLico?.Name,
-                            IsBalans = d.rdr5 == 1
-                        }).ToList();
-                }
-                catch (Exception ex)
-                {
-                    WindowManager.ShowError(ex, sql);
-                }
-            }
-
-            return null;
-        }
-
-        public override bool IsDocumentOpenAllow =>
-            CurrentOperation != null && DocumentsOpenManager.IsDocumentOpen(CurrentOperation.DocTypeCode);
-
-        protected override void OnWindowLoaded(object obj)
-        {
-            base.OnWindowLoaded(obj);
-            List<GridSummaryItem> cols = new List<GridSummaryItem>();
-            if (Form is not DebitorCreditorView frm) return;
-            foreach (var csum in frm.KontrOperGrid.TotalSummary)
-            {
-                if (csum.FieldName == "Nakopit" || csum.FieldName.Contains("Rate"))
-                    cols.Add(csum);
-            }
-
-            foreach (var c in cols)
-            {
-                frm.KontrOperGrid.TotalSummary.Remove(c);
-            }
-
-            foreach (var col in frm.DebitorCreditorGrid.Columns)
-            {
-                col.SortMode = ColumnSortMode.Value;
-                col.ColumnFilterMode = ColumnFilterMode.Value;
-            }
-
-            foreach (var col in frm.DebitorGrid.Columns)
-            {
-                col.SortMode = ColumnSortMode.Value;
-                col.ColumnFilterMode = ColumnFilterMode.Value;
-            }
-
-            foreach (var col in frm.CreditorGrid.Columns)
-            {
-               col.SortMode = ColumnSortMode.Value;
-               col.ColumnFilterMode = ColumnFilterMode.Value;
-            }
-        }
-
-        protected override void DocumentOpen(object obj)
-        {
-            var WinManager = new WindowManager();
-            using (var ctx = GlobalOptions.GetEntities())
-            {
-                switch (CurrentOperation.DocTypeCode)
-                {
-                    case DocumentType.Bank:
-                        DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, CurrentOperation.DocRowCode);
-                        return;
-                    case DocumentType.AccruedAmountForClient:
-                    case DocumentType.AccruedAmountOfSupplier:
-                    {
-                        //var id = Guid.Parse(CurrentOperation.StringId);
-                        var s = CurrentOperation.DocNum.Split('/');
-                        var num = Convert.ToInt32(s[0]);
-                        if (CurrentOperation.DocTypeCode == DocumentType.AccruedAmountForClient)
-                        {
-                            var doc = ctx.AccruedAmountForClient.FirstOrDefault(_ => _.DocInNum == num);
-                            if (doc != null)
-                                DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, 0, doc.Id);
-                            else
-                                WinManager.ShowWinUIMessageBox("Документ не найден.", "Сообщение");
-                        }
-
-                        if (CurrentOperation.DocTypeCode == DocumentType.AccruedAmountOfSupplier)
-                        {
-                            var doc = ctx.AccruedAmountOfSupplier.FirstOrDefault(_ => _.DocInNum == num);
-                            if (doc != null)
-                                DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, 0, doc.Id);
-                            else
-                                WinManager.ShowWinUIMessageBox("Документ не найден.", "Сообщение");
-                        }
-
-                        return;
-                    }
-                    case DocumentType.PayRollVedomost:
-                        DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, 0,
-                            Guid.Parse(CurrentOperation.StringId));
-                        return;
-                    default:
-                        DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, CurrentOperation.DocCode);
-                        break;
-                }
-            }
-
-            //DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, CurrentOperation.DocDC);
-        }
-
-        #endregion
+        return null;
     }
+
+    public override bool IsDocumentOpenAllow =>
+        CurrentOperation != null && DocumentsOpenManager.IsDocumentOpen(CurrentOperation.DocTypeCode);
+
+    protected override void OnWindowLoaded(object obj)
+    {
+        base.OnWindowLoaded(obj);
+        var cols = new List<GridSummaryItem>();
+        if (Form is not DebitorCreditorView frm) return;
+        foreach (var csum in frm.KontrOperGrid.TotalSummary)
+            if (csum.FieldName == "Nakopit" || csum.FieldName.Contains("Rate"))
+                cols.Add(csum);
+
+        foreach (var c in cols) frm.KontrOperGrid.TotalSummary.Remove(c);
+
+        foreach (var col in frm.DebitorCreditorGrid.Columns)
+        {
+            col.SortMode = ColumnSortMode.Value;
+            col.ColumnFilterMode = ColumnFilterMode.Value;
+        }
+
+        foreach (var col in frm.DebitorGrid.Columns)
+        {
+            col.SortMode = ColumnSortMode.Value;
+            col.ColumnFilterMode = ColumnFilterMode.Value;
+        }
+
+        foreach (var col in frm.CreditorGrid.Columns)
+        {
+            col.SortMode = ColumnSortMode.Value;
+            col.ColumnFilterMode = ColumnFilterMode.Value;
+        }
+    }
+
+    protected override void DocumentOpen(object obj)
+    {
+        var WinManager = new WindowManager();
+        using (var ctx = GlobalOptions.GetEntities())
+        {
+            switch (CurrentOperation.DocTypeCode)
+            {
+                case DocumentType.Bank:
+                    DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, CurrentOperation.DocRowCode);
+                    return;
+                case DocumentType.AccruedAmountForClient:
+                case DocumentType.AccruedAmountOfSupplier:
+                {
+                    //var id = Guid.Parse(CurrentOperation.StringId);
+                    var s = CurrentOperation.DocNum.Split('/');
+                    var num = Convert.ToInt32(s[0]);
+                    if (CurrentOperation.DocTypeCode == DocumentType.AccruedAmountForClient)
+                    {
+                        var doc = ctx.AccruedAmountForClient.FirstOrDefault(_ => _.DocInNum == num);
+                        if (doc != null)
+                            DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, 0, doc.Id);
+                        else
+                            WinManager.ShowWinUIMessageBox("Документ не найден.", "Сообщение");
+                    }
+
+                    if (CurrentOperation.DocTypeCode == DocumentType.AccruedAmountOfSupplier)
+                    {
+                        var doc = ctx.AccruedAmountOfSupplier.FirstOrDefault(_ => _.DocInNum == num);
+                        if (doc != null)
+                            DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, 0, doc.Id);
+                        else
+                            WinManager.ShowWinUIMessageBox("Документ не найден.", "Сообщение");
+                    }
+
+                    return;
+                }
+                case DocumentType.PayRollVedomost:
+                    DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, 0,
+                        Guid.Parse(CurrentOperation.StringId));
+                    return;
+                default:
+                    DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, CurrentOperation.DocCode);
+                    break;
+            }
+        }
+
+        //DocumentsOpenManager.Open(CurrentOperation.DocTypeCode, CurrentOperation.DocDC);
+    }
+
+    #endregion
 }
