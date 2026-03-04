@@ -829,6 +829,7 @@ public class DocumentsOpenManager
         var ctx = new WaybillWindowViewModel2(dc) { Form = form };
         form.DataContext = ctx;
         form.Topmost = true;
+        form.Show();
         form.Topmost = false;
         return ctx;
     }
