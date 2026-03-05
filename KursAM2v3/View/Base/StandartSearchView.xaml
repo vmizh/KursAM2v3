@@ -76,7 +76,7 @@
                 </dxg:GridControl.View>
             </dxg:GridControl>
         </DockPanel>
-        <base:LoadingIndicator x:Name="loadingIndicator" Visibility="Hidden" VerticalAlignment="Center"
+        <base:WaitDots x:Name="loadingIndicator" Visibility="Hidden" VerticalAlignment="Center"
                                HorizontalAlignment="Center"
                                Width="100"
                                Height="100"

@@ -464,13 +464,17 @@ namespace KursAM2.View
                         form = new DebitorCreditorView { Owner = Application.Current.MainWindow };
                         dbctx.Form = form;
                         form.DataContext = dbctx;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Контрагенты для документов":
                         form = new KontragentRefOutView { Owner = Application.Current.MainWindow };
                         var kdocCtx = new KontragentReferenceOutWindowViewModel(form);
                         form.DataContext = kdocCtx;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Договора для клиентов":
                         var ctxdog = new DogovorClientSearchViewModel
@@ -481,7 +485,9 @@ namespace KursAM2.View
                             }
                         };
                         ctxdog.Form.DataContext = ctxdog;
+                        ctxdog.Form.Topmost = true;
                         ctxdog.Form.Show();
+                        ctxdog.Form.Topmost = false;
                         break;
                     case "Лицевые счета контрагентов":
                         form = new KontragentBalansView
@@ -493,7 +499,9 @@ namespace KursAM2.View
                             Form = form
                         };
                         form.DataContext = ctxk;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "  Рентабельность":
                         var renCtx = new BreakEvenWindowViewModel();
@@ -503,7 +511,9 @@ namespace KursAM2.View
                             DataContext = renCtx
                         };
                         renCtx.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Лицевые счета сотрудников":
                         var psCtx = new EmployeePayWindowViewModel();
@@ -516,11 +526,15 @@ namespace KursAM2.View
                         var zpCtx = new PayrollTypeWindowViewModel();
                         form = new PayRollTypeReference { Owner = Application.Current.MainWindow, DataContext = zpCtx };
                         zpCtx.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Права доступа к лицевым счетам сотрудников":
                         form = new UsersRightToPayRoll { Owner = Application.Current.MainWindow };
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Ведомости начислений з/платы":
                         var vedCtx = new PayrollSearchWindowViewModel();
@@ -531,7 +545,9 @@ namespace KursAM2.View
                         vedCtx.Form = form; 
                         form.DataContext = vedCtx;
                         vedCtx.RefreshData(null);
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Управленческий баланс":
                         var ctx1 = new ManagementBalansWindowViewModel { CurrentDate = DateTime.Today };
@@ -542,7 +558,9 @@ namespace KursAM2.View
                         };
                         form.DataContext = ctx1;
                         ctx1.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Прибыли и убытки 2":
                         var ctxpb2 = new ProfitAndLossesWindowViewModel2();
@@ -553,7 +571,10 @@ namespace KursAM2.View
                         };
                         ctxpb2.Form = form;
                         ctxpb2.RaisePropertyAllChanged();
+
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
 
                         break;
                     case "Грузовые реквизиты контрагентов":
@@ -565,19 +586,25 @@ namespace KursAM2.View
                             DataContext = ctx3
                         };
                         ctx3.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Счета-Фактуры клиентам":
                         form = new StandartSearchView { Owner = Application.Current.MainWindow };
                         var ctxsf = new InvoiceClientSearchViewModel(form);
                         form.DataContext = ctxsf;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Счета-фактуры поставщиков":
                         form = new StandartSearchView { Owner = Application.Current.MainWindow };
                         var dtx = new SearchInvoiceProviderViewModel(form);
                         form.DataContext = dtx;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Расходные накладные для клиентов":
                         form = new StandartSearchView
@@ -589,18 +616,24 @@ namespace KursAM2.View
                             Form = form
                         };
                         form.DataContext = ctxNaklad;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник сотрудников":
                         form = new PersonaReference { Owner = Application.Current.MainWindow };
                         var ctxPers = new PersonaReferenceWindowViewModel();
                         ctxPers.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         form.DataContext = ctxPers;
                         break;
                     case "  Доступ к сч. контр-тов":
                         form = new KontragentRightsControl { Owner = Application.Current.MainWindow };
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник контрагентов":
                         form = new KontragentReference2View { Owner = Application.Current.MainWindow };
@@ -609,8 +642,9 @@ namespace KursAM2.View
                             Form = form
                         };
                         form.DataContext = ctxRef;
+                        form.Topmost = true;
                         form.Show();
-
+                        form.Topmost = false;
                         break;
                     case "Справочник складов":
                         var frm = new TreeListFormBaseView2
@@ -622,7 +656,9 @@ namespace KursAM2.View
                         ctxRef1.Form = frm;
                         ctxRef1.RefreshData(null);
                         frm.DataContext = ctxRef1;
+                        frm.Topmost = true;
                         frm.Show();
+                        frm.Topmost = false;
                         break;
                     case "Справочник регионов":
                         var frm1 = new TreeListFormBaseView
@@ -634,7 +670,9 @@ namespace KursAM2.View
                         ctxRef2.Form = frm1;
                         ctxRef2.RefreshData(null);
                         frm1.DataContext = ctxRef2;
+                        frm1.Topmost = true;
                         frm1.Show();
+                        frm1.Topmost = false;
                         break;
                     case "Закрытие периодов":
                         var ctx = new PeriodGroupsReferenceViewModel();
@@ -644,7 +682,9 @@ namespace KursAM2.View
                             DataContext = ctx
                         };
                         ctx.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Приходный складской ордер":
                         var ctxq = new WarehouseOrderInSearchViewModel();
@@ -654,7 +694,9 @@ namespace KursAM2.View
                             DataContext = ctxq
                         };
                         ctxq.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Расходный складской ордер":
                         var ctxr = new WarehouseOrderOutSearchViewModel();
@@ -664,13 +706,17 @@ namespace KursAM2.View
                             DataContext = ctxr
                         };
                         ctxr.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case " Акты сверки":
                         var aorCtx = new AOFViewModel();
                         form = new ActOfReconciliation { Owner = Application.Current.MainWindow, DataContext = aorCtx };
                         aorCtx.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case " Рентабельность ШОП":
                         var shopCtx = new ShopRentabelnostViewModel();
@@ -680,7 +726,9 @@ namespace KursAM2.View
                             DataContext = shopCtx
                         };
                         shopCtx.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Остатки товаров на складах":
                         var ctxost = new SkladOstatkiWindowViewModel();
@@ -691,7 +739,9 @@ namespace KursAM2.View
                         };
                         ctxost.Form = form;
                         //ctxost.RefreshData(null);
-                        form.Show(); 
+                        form.Topmost = true;
+                        form.Show();
+                        form.Topmost = false;
                         break;
                     case "Калькуляция себестоимости":
                         var ctxost1 = new NomenklCostCalculatorWindowViewModel(null);
@@ -702,7 +752,9 @@ namespace KursAM2.View
                         };
                         ctxost1.Form = form;
                         ctxost1.RefreshData(null);
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Внутреннее перемещение товаров":
                         var ctxost2 = new NomenklInnerMoveWindowViewModel();
@@ -713,7 +765,9 @@ namespace KursAM2.View
                         };
                         ctxost2.Form = form;
                         ctxost2.RefreshData(null);
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Переоценка товара":
                         var ctxost3 = new NomenklCostResetWindowViewModel();
@@ -724,7 +778,9 @@ namespace KursAM2.View
                         };
                         ctxost3.Form = form;
                         ctxost3.RefreshData(null);
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Права доступа для пользователей":
 
@@ -736,7 +792,9 @@ namespace KursAM2.View
                         };
                         ctxost4.Form = form;
                         ctxost4.RefreshData(null);
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Таксировка валюты товаров":
                         form = new SaleTaxNomenklView
@@ -744,7 +802,9 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow
                         };
                         form.DataContext = new SaleTaxNomenklWindowViewModel(form);
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Движение денежных средств":
                         form = new MoneyPeriodMove
@@ -754,7 +814,9 @@ namespace KursAM2.View
                         var dv = new MoneyPeriodWindowViewModel(form);
                         dv.RefreshData(null);
                         form.DataContext = dv;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Движение товаров":
                         var form1 = new NomenklMoveOnSklad
@@ -763,7 +825,9 @@ namespace KursAM2.View
                         };
                         var ctxNomMove = new NomenklMoveOnSkladWindowViewModel(form1);
                         form1.DataContext = ctxNomMove;
+                        form1.Topmost = true;
                         form1.Show();
+                        form1.Topmost = false;
                         break;
                     case "Номенклатурный справочник":
                         var nCtx = new ReferenceWindowViewModel();
@@ -773,7 +837,9 @@ namespace KursAM2.View
                             DataContext = nCtx
                         };
                         nCtx.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Акт валютной таксировки номенклатур":
                         try
@@ -785,7 +851,9 @@ namespace KursAM2.View
                                 DataContext = taxCtx
                             };
                             taxCtx.Form = form;
+                            form.Topmost = true;
                             form.Show();
+                            form.Topmost = false;
                         }
                         catch (Exception ex)
                         {
@@ -801,7 +869,9 @@ namespace KursAM2.View
                             DataContext = prjCtx
                         };
                         prjCtx.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник центров ответственности":
                         var centerCtx = new ReferenceOfResponsibilityCentersWindowViewModel();
@@ -811,7 +881,9 @@ namespace KursAM2.View
                             DataContext = centerCtx
                         };
                         centerCtx.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник стран":
                         var countryCtx = new CountriesRefWindowViewModel();
@@ -821,7 +893,9 @@ namespace KursAM2.View
                             DataContext = countryCtx
                         };
                         countryCtx.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Инвентаризационные ведомости":
                         var invCtx = new InventorySheetSearchWindowViewModel();
@@ -831,7 +905,9 @@ namespace KursAM2.View
                             DataContext = invCtx
                         };
                         invCtx.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Распределение накладных расходов":
                         var dnakForm = new KursBaseSearchWindow
@@ -842,7 +918,9 @@ namespace KursAM2.View
                         dnakForm.modelViewControl.Content = v;
                         ((KursBaseControlViewModel)v.DataContext).Form = dnakForm;
                         dnakForm.DataContext = v.DataContext;
+                        dnakForm.Topmost = true;
                         dnakForm.Show();
+                        dnakForm.Topmost = false;
                         break;
 
                     case "Сравнение балансов":
@@ -851,7 +929,9 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow
                         };
                         form.DataContext = new ManagementBalansCompareWindowViewModel(form);
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Типы актов взаимозачета":
                         form = new MUtualAccountingTypeRefView
@@ -861,7 +941,9 @@ namespace KursAM2.View
                         var mutCtx = new MutualAcountingRefWindowViewModel();
                         mutCtx.Form = form;
                         form.DataContext = mutCtx;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Акты взаимозачетов":
                         form = new StandartSearchView
@@ -874,7 +956,9 @@ namespace KursAM2.View
                             Form = form
                         };
                         form.DataContext = mutCtx2;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Акты валютной конвертации":
                         form = new StandartSearchView
@@ -887,7 +971,9 @@ namespace KursAM2.View
                             Form = form
                         };
                         form.DataContext = mutCtx3;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Проекты":
                         var pctx = new ProjectManagerWindowViewModel();
@@ -897,7 +983,9 @@ namespace KursAM2.View
                             DataContext = pctx
                         };
                         pctx.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник касс и банковских счетов":
                         var rcbctx = new BankAndCashReferenceViewModel();
@@ -907,7 +995,9 @@ namespace KursAM2.View
                             DataContext = rcbctx
                         };
                         rcbctx.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Банковские операции":
                         form = new BankOperationsView2
@@ -915,7 +1005,9 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow
                         };
                         form.DataContext = new BankOperationsWindowViewModel2(form);
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Приходный кассовый ордер":
                         form = new CashInSearchView
@@ -926,7 +1018,9 @@ namespace KursAM2.View
                         {
                             Form = form
                         };
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Расходный кассовый ордер":
                         form = new CashOutSearchView
@@ -937,7 +1031,9 @@ namespace KursAM2.View
                         {
                             Form = form
                         };
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Настройка прав доступа":
                         var ctxAccessRight = new UsersManagerViewModel();
@@ -947,7 +1043,9 @@ namespace KursAM2.View
                             DataContext = ctxAccessRight
                         };
                         ctxAccessRight.Form = form2;
+                        form2.Topmost = true;
                         form2.Show();
+                        form2.Topmost = false;
                         break;
 
                     case "Движение товара по проектам":
@@ -958,7 +1056,9 @@ namespace KursAM2.View
                             DataContext = ctxProjectNomenkl
                         };
                         ctxProjectNomenkl.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Прибыли и убытки по проектам":
                         var ctxProjectProfitAndLoss = new ProjectProfitAndLossWindow();
@@ -968,7 +1068,9 @@ namespace KursAM2.View
                             DataContext = ctxProjectProfitAndLoss
                         };
                         ctxProjectProfitAndLoss.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Кассовая книга":
                         var ctxCash = new CashBookWindowViewModel();
@@ -978,7 +1080,9 @@ namespace KursAM2.View
                             DataContext = ctxCash
                         };
                         ctxCash.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник единиц измерения":
                         var ctxUnit = new UnitReferenceWindowViewModel();
@@ -989,7 +1093,9 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow
                         };
                         ctxUnit.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник условий оплаты":
                         var ctxUsuagePay = new UsagePayReferenceWindowViewModel();
@@ -1000,7 +1106,9 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow
                         };
                         ctxUsuagePay.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник форм оплаты":
                         var ctxFormPay = new FormPayReferenceWindowViewModel();
@@ -1011,7 +1119,9 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow
                         };
                         ctxFormPay.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник категорий клиентов":
                         var ctxKontrCat = new KontragentCategoryRefWindowViewModel();
@@ -1021,7 +1131,9 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow
                         };
                         ctxKontrCat.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник видов продукции":
                         var ctxvidprod = new NomenklKindReferenceWindowViewModel();
@@ -1033,7 +1145,9 @@ namespace KursAM2.View
                         };
                         ctxvidprod.Form = form;
                         ctxvidprod.RefreshData(null);
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник типов номенклатур":
                         var ctxtypeprod = new ProductTypeReferenceWindowViewModel();
@@ -1044,7 +1158,9 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow
                         };
                         ctxtypeprod.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник типов продукции":
                         var ctxtypeprod1 = new TypeOfProductReferenceWindowViewModel();
@@ -1055,7 +1171,9 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow
                         };
                         ctxtypeprod1.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник категорий товара":
                         var ctxcatprod = new CategoryReferenceWindowViewModel();
@@ -1067,7 +1185,9 @@ namespace KursAM2.View
                         };
                         ctxcatprod.Form = form;
                         ctxcatprod.RefreshData(null);
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     case "Справочник счетов доходов/расходов":
                         var sdrCtx = new SDRReferenceWindowViewModel();
@@ -1077,7 +1197,9 @@ namespace KursAM2.View
                             Owner = Application.Current.MainWindow
                         };
                         sdrCtx.Form = form;
+                        form.Topmost = true;
                         form.Show();
+                        form.Topmost = false;
                         break;
                     default:
                         MessageBox.Show("Не реализован");
