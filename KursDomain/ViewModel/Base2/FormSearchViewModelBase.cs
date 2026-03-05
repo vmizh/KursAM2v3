@@ -252,7 +252,9 @@ public abstract class FormSearchViewModelBase<T> : ViewModelBase, IFormSearchCom
         {
             DataContext = this
         };
+        Form.Topmost = true;
         Form.Show();
+        Form.Topmost = false;
     }
 
     public void Close()

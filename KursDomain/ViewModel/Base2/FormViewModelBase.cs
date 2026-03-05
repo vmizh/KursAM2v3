@@ -111,7 +111,9 @@ public abstract class FormViewModelBase<T, I> : ViewModelBase, IForm, ILayout
         {
             DataContext = this
         };
+        win.Topmost = true;
         win.Show();
+        win.Topmost = false;
         Form = win;
     }
 
