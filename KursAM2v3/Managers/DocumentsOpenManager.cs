@@ -1,7 +1,6 @@
 ﻿using Core;
 using Core.ViewModel.Base;
 using Data;
-using KursAM2.Managers.Base;
 using KursAM2.View.Dogovors;
 using KursAM2.View.Finance;
 using KursAM2.View.Finance.AccruedAmount;
@@ -289,6 +288,7 @@ public class DocumentsOpenManager
         ctx.Form = view;
         view.Topmost = true;
         view.Show();
+        view.Topmost = false;
         return ctx;
     }
 
@@ -297,9 +297,11 @@ public class DocumentsOpenManager
         var ctx = new PayRollVedomostWindowViewModel(id.ToString());
         var form = new PayRollVedomost
         {
-            Topmost = true
+            Owner = Application.Current.MainWindow,
         };
+        form.Topmost = true;
         form.Show();
+        form.Topmost = false;
         form.DataContext = ctx;
         ctx.RefreshData(null);
         return ctx;
