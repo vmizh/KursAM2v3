@@ -164,6 +164,7 @@ public static class MenuGenerator
         {
             new MenuButtonInfo
             {
+                Name="Refresh",
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuRefresh"] as ControlTemplate,
@@ -173,6 +174,7 @@ public static class MenuGenerator
             docNew,
             new MenuButtonInfo
             {
+                Name="Save",
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuSave"] as ControlTemplate,
@@ -183,6 +185,7 @@ public static class MenuGenerator
             prn,
             new MenuButtonInfo
             {
+                Name="Exit",
                 Alignment = Dock.Right,
                 HAlignment = HorizontalAlignment.Right,
                 Content = Application.Current.Resources["menuExit"] as ControlTemplate,

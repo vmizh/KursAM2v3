@@ -148,6 +148,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Base\AttributeHelper.cs" />
     <Compile Include="Base\CurrencyValue.cs" />
     <Compile Include="Base\GridControlStartEditingService.cs" />
     <Compile Include="Base\IdItem.cs" />
@@ -568,6 +569,9 @@
     <Compile Include="View\Base\LoadingIndicator.xaml.cs">
       <DependentUpon>LoadingIndicator.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Base\WaitDots.xaml.cs">
+      <DependentUpon>WaitDots.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\WarehouseRemainsView.xaml.cs">
       <DependentUpon>WarehouseRemainsView.xaml</DependentUpon>
     </Compile>
@@ -654,6 +658,10 @@
     <Page Include="View\Base\LoadingIndicator.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\Base\WaitDots.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\WarehouseRemainsView.xaml">
       <Generator>MSBuild:Compile</Generator>
