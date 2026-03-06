@@ -1803,6 +1803,9 @@ namespace KursAM2.ViewModel.Logistiks
         {
             switch (CurrentDocument.DocumentName)
             {
+                case "Инвентаризационная ведомость":
+                    DocumentsOpenManager.Open(DocumentType.InventoryList, CurrentDocument.DocCode);
+                    break;
                 case "Приходный складской ордер":
                 case "Приходный складской ордер (Внутреннее перемещение)":
                 case "Приходный складской ордер(неоттаксированный приход)":
