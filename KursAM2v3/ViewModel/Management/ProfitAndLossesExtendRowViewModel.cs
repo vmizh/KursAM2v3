@@ -6,6 +6,7 @@ using Core.ViewModel.Base;
 using DevExpress.Mvvm.DataAnnotations;
 using FinanceAnalitic;
 using KursAM2.Managers.Base;
+using KursDomain.Base;
 using KursDomain.Documents.CommonReferences;
 using KursDomain.Documents.Management;
 using KursDomain.References;

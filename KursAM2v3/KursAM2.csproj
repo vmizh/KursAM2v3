@@ -210,7 +210,6 @@
     <Compile Include="DragAndDrop\ExternalDragDropViewInfo.cs" />
     <Compile Include="DragAndDrop\IDragRowVisibilitySupport.cs" />
     <Compile Include="Managers\BankOperationsManager.cs" />
-    <Compile Include="Managers\Base\AttributeHelper.cs" />
     <Compile Include="Managers\Base\BaseItemManager.cs" />
     <Compile Include="Managers\Base\DocumentCopyType.cs" />
     <Compile Include="Managers\Base\DocumentManager.cs" />

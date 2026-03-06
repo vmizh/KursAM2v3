@@ -1813,7 +1813,7 @@ namespace KursAM2.ViewModel.Logistiks
                     break;
                 case "Расходный складской ордер":
                 case "Расходный складской ордер  (внутреннее перемещение)":
-                    DocumentsOpenManager.Open(DocumentType.StoreOrderIn, CurrentDocument.DocCode);
+                    DocumentsOpenManager.Open(DocumentType.StoreOrderOut, CurrentDocument.DocCode);
                     break;
                 case "Акт валютной конвертации товара":
                     DocumentsOpenManager.Open(DocumentType.NomenklTransfer, CurrentDocument.DocCode,
