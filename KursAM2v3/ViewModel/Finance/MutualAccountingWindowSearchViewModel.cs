@@ -103,12 +103,16 @@ public sealed class MutualAccountingWindowSearchViewModel : RSWindowSearchViewMo
     //    }
     //}
 
-    public override bool IsDocNewCopyAllow => CurrentDocument is not null;
-    public override bool IsDocNewCopyRequisiteAllow => CurrentDocument is not null;
+    // public override bool IsDocNewCopyAllow => CurrentDocument is not null;
+    // public override bool IsDocNewCopyRequisiteAllow => CurrentDocument is not null;
 
+    public override bool IsDocNewCopyAllow => false ;
+    public override bool IsDocNewCopyRequisiteAllow => false;
 
     public override string WindowName => IsConvert ? "Поиск валютной конвертации" : "Поиск актов взаимозачета";
     public override string LayoutName => "MutualAccountingWindowSearchViewModel";
+
+
 
     public bool IsConvert
     {
@@ -493,9 +497,11 @@ public sealed class MutualAccountingConvertWindowSearchViewModel : RSWindowSearc
         }
     }
 
-    public override bool IsDocNewCopyAllow => CurrentDocument is not null;
-    public override bool IsDocNewCopyRequisiteAllow => CurrentDocument is not null;
+    // public override bool IsDocNewCopyAllow => CurrentDocument is not null;
+    // public override bool IsDocNewCopyRequisiteAllow => CurrentDocument is not null;
 
+    public override bool IsDocNewCopyAllow =>  false ;
+    public override bool IsDocNewCopyRequisiteAllow => false;
 
     public override string WindowName => IsConvert ? "Поиск валютной конвертации" : "Поиск актов взаимозачета";
     public override string LayoutName => "MutualAccountingWindowSearchViewModel";
@@ -737,6 +743,8 @@ public sealed class MutualAccountingConvertWindowSearchViewModel : RSWindowSearc
         frm.Show();
         frm.DataContext = ctx;
     }
+
+    
 
 
     private bool summaryExists(string fieldName)

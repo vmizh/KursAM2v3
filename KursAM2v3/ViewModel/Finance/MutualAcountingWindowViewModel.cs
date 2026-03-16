@@ -54,7 +54,7 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
         myMutAccRepository = new MutualAccountingRepository(GlobalOptions.GetEntities());
         // ReSharper disable once VirtualMemberCallInConstructor
         IsDocNewCopyAllow = true;
-        IsDocNewCopyRequisiteAllow = true;
+        IsDocNewCopyRequisiteAllow = false;
         DebitorCollection.CollectionChanged += DebitorCollection_CollectionChanged;
         CreditorCollection.CollectionChanged += CreditorCollection_CollectionChanged;
         try
