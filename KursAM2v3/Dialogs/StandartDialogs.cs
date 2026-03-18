@@ -45,6 +45,7 @@ public static class StandartDialogs
     // ReSharper disable once InvalidXmlDocComment
     public static Kontragent SelectKontragent(KontragentSelectDialogOptions options = null)
     {
+
         //MainReferences.CheckUpdateKontragentAndLoad();
         var ctx = new KontragentSelectDialog(options);
         var dlg = new SelectDialogView

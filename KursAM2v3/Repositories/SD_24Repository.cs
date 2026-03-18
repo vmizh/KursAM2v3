@@ -8,6 +8,7 @@ using Core.EntityViewModel.Base;
 using Data;
 using KursDomain;
 using KursDomain.Repository;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace KursAM2.Repositories
 {
@@ -69,7 +70,7 @@ namespace KursAM2.Repositories
 
         public SD_24 CreateCopy(SD_24 ent)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<SD_24, SD_24>());
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<SD_24, SD_24>(), new NullLoggerFactory());
             var mapper = new Mapper(config);
             var ret = mapper.Map<SD_24>(ent);
             ret.DOC_CODE = -1;

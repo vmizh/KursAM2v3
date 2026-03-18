@@ -1,4 +1,4 @@
-﻿namespace FinanceAnalitic
+﻿namespace KursRepositories.Repositories.ProfitAndLoss
 {
     public interface IProfitCurrencyList
     {

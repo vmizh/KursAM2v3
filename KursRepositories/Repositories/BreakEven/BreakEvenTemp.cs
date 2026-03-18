@@ -1,6 +1,6 @@
 using System;
 
-namespace KursAM2.View.Management
+namespace KursRepositories.Repositories.BreakEven
 {
     public class BreakEvenTemp
     {

@@ -2,7 +2,7 @@
 using KursDomain.Documents.Management;
 using KursDomain.References;
 
-namespace FinanceAnalitic
+namespace KursRepositories.Repositories.ProfitAndLoss
 {
     public interface IProfitAndLossesBase : IProfitCurrencyList
     {

@@ -20,6 +20,7 @@ using KursDomain.Documents.CommonReferences;
 using KursDomain.ICommon;
 using KursDomain.Menu;
 using KursDomain.References;
+using KursRepositories.Repositories.BreakEven;
 using Application = System.Windows.Application;
 
 // ReSharper disable CollectionNeverQueried.Global

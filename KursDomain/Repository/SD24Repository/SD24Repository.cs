@@ -8,6 +8,7 @@ using Data;
 using KursDomain.IDocuments;
 using KursDomain.Repository.Base;
 using KursDomain.Documents.NomenklManagement;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace KursDomain.Repository.SD24Repository;
 
@@ -304,7 +305,7 @@ public class SD24Repository : KursGenericRepository<SD_24, ALFAMEDIAEntities, de
 
     public SD_24 CreateCopy(SD_24 ent)
     {
-        var config = new MapperConfiguration(cfg => cfg.CreateMap<SD_24, SD_24>());
+        var config = new MapperConfiguration(cfg => cfg.CreateMap<SD_24, SD_24>(), new NullLoggerFactory());
         var mapper = new Mapper(config);
         var ret = mapper.Map<SD_24>(ent);
         ret.DOC_CODE = -1;

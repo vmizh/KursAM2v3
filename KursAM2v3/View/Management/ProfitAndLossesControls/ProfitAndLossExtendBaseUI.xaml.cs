@@ -5,6 +5,7 @@ using DevExpress.Xpf.Grid;
 using KursAM2.View.Helper;
 using KursAM2.ViewModel.Management;
 using KursDomain;
+using KursRepositories.Repositories.ProfitAndLoss;
 using LayoutManager;
 
 namespace KursAM2.View.Management.ProfitAndLossesControls

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace FinanceAnalitic
+namespace KursRepositories.Repositories.ProfitAndLoss
 {
     /// <summary>
     ///     Расчет позиции счета прибылей и убытков

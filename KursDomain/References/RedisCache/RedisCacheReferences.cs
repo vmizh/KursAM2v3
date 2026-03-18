@@ -2789,23 +2789,8 @@ public class RedisCacheReferences : IReferencesCache
                 DropAll<ProductType>();
                 UpdateList(ProductTypes.Values.Cast<ProductType>(), now);
                 GetProductTypeAll();
-
-                //foreach (var item in Context.SD_2.AsNoTracking().ToList())
-                //{
-                //    var newItem = new Employee();
-                //    newItem.LoadFromEntity(item, this);
-                //    if (!Employees.ContainsKey(newItem.DocCode))
-                //        Employees.Add(newItem.DocCode, newItem);
-                //    else Employees[newItem.DocCode] = newItem;
-                //}
-
-                //foreach (var item in Employees.Values.Cast<Employee>())
-                //    item.CurrencyDC = ((IDocCode)item.Currency)?.DocCode;
-                //DropAll<Employee>();
-                //UpdateList2(Employees.Values.Cast<Employee>(), now);
                 GetEmployees();
-
-
+                
                 foreach (var item in Context.SD_27.AsNoTracking().ToList())
                 {
                     var newItem = new Warehouse();
@@ -2982,7 +2967,7 @@ public class RedisCacheReferences : IReferencesCache
                         ProductTypeDC = entity.ProductDC,
                         Nomenkls = new List<decimal>(entity.SD_83.Select(_ => _.DOC_CODE))
                     };
-                    //item.LoadFromEntity(entity,this);
+                    item.LoadFromEntity(entity,this);
                     NomenklMains.AddOrUpdate(item.Id, item);
                 }
 
@@ -3024,6 +3009,7 @@ public class RedisCacheReferences : IReferencesCache
                         CurrencyDC = entity.NOM_SALE_CRS_DC,
                         GroupDC = entity.NOM_CATEG_DC
                     };
+                    item.LoadFromEntity(entity,this);
                     Nomenkls.Add(item.DocCode, item);
                 }
 

@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using DevExpress.Xpf.Core;
 using DevExpress.Xpf.Grid;
 using KursAM2.ViewModel.Management;
+using KursRepositories.Repositories.ProfitAndLoss;
 
 namespace KursAM2.View.Management.Controls
 {

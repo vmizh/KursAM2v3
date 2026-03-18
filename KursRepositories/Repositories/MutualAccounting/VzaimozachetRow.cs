@@ -3,7 +3,7 @@ using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.References;
 using System.ComponentModel.DataAnnotations;
 
-namespace KursAM2.ViewModel.Management
+namespace KursRepositories.Repositories.MutualAccounting
 {
      public class DataAnnotationVzaimozachetRow : DataAnnotationForFluentApiBase,
         IMetadataProvider<VzaimozachetRow>

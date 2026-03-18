@@ -7,7 +7,7 @@ using DevExpress.Mvvm.DataAnnotations;
 using KursDomain.Documents.Management;
 using KursDomain.References;
 
-namespace KursAM2.ViewModel.Management
+namespace KursRepositories.Repositories.ProfitAndLoss 
 {
     public class DataAnnotationProfitAndLossesMainRowViewModel : DataAnnotationForFluentApiBase,
         IMetadataProvider<ProfitAndLossesMainRowViewModel>

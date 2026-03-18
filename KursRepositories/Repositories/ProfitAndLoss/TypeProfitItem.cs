@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace FinanceAnalitic
+namespace KursRepositories.Repositories.ProfitAndLoss
 {
     public class TypeProfitItem
     {

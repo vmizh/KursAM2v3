@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Data;
 using KursDomain.IDocuments.NomenklReturn;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace KursAM2
 {
@@ -17,7 +18,7 @@ namespace KursAM2
                 cfg.CreateMap<NomenklReturnOfClient, INomenklReturnOfClient>();
                 cfg.CreateMap<NomenklReturnOfClient,INomenklReturnOfClientRow>();
 
-            });
+            }, new NullLoggerFactory());
             //Create an Instance of Mapper and return that Instance
             var mapper = new Mapper(config);
             return mapper;
