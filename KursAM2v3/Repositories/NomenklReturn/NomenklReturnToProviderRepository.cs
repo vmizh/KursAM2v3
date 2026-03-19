@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Data;
+using Helper.Extensions;
 using KursAM2.ViewModel.Logistiks.NomenklReturn.Helper;
 using KursDomain;
 using KursDomain.Documents.NomenklReturn;
@@ -16,10 +17,7 @@ namespace KursAM2.Repositories.NomenklReturn
         private readonly ALFAMEDIAEntities Context;
         private DbContextTransaction transaction;
 
-        public NomenklReturnToProviderRepository(ALFAMEDIAEntities context)
-        {
-            Context = context;
-        }
+        public NomenklReturnToProviderRepository(ALFAMEDIAEntities context) => Context = context;
 
         public void AddOrUpdate(INomenklReturnToProvider entity, List<Guid> deletedIds)
         {
@@ -34,7 +32,7 @@ namespace KursAM2.Repositories.NomenklReturn
             var old = Context.NomenklReturnToProvider.FirstOrDefault(_ => _.Id == entity.Id);
             if (old != null)
                 // ReSharper disable once RedundantAssignment
-                old = App.Mapper.Map<NomenklReturnToProvider>(entity.Entity);
+                old = CopyHelper.CreateDeepCopy(entity.Entity);
             else
                 Context.NomenklReturnToProvider.Add(entity.Entity);
 

@@ -1,6 +1,7 @@
 ﻿using System;
-using AutoMapper;
 using Data;
+using DevExpress.Entity.Model.Metadata;
+using Helper.Extensions;
 using KursDomain.IDocuments;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -40,9 +41,7 @@ public class SD24CreateService : BaseCreateService, ICreateNewDocument<SD_24>
 
     public SD_24 NewCopyDocument(SD_24 oldDocument)
     {
-        var config = new MapperConfiguration(cfg => cfg.CreateMap<SD_24, SD_24>(), new NullLoggerFactory());
-        var mapper = new Mapper(config);
-        var model = mapper.Map<SD_24>(oldDocument);
+        var model = CopyHelper.CreateDeepCopy(oldDocument);
         var id = Guid.NewGuid();
         model.DOC_CODE = -1;
         model.Id = id;
@@ -67,9 +66,7 @@ public class SD24CreateService : BaseCreateService, ICreateNewDocument<SD_24>
 
     public SD_24 NewRequisiteDocument(SD_24 oldDocument)
     {
-        var config = new MapperConfiguration(cfg => cfg.CreateMap<SD_24, SD_24>(), new NullLoggerFactory());
-        var mapper = new Mapper(config);
-        var model = mapper.Map<SD_24>(oldDocument);
+        var model = CopyHelper.CreateDeepCopy(oldDocument);
         var id = Guid.NewGuid();
         model.DOC_CODE = -1;
         model.Id = id;

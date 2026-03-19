@@ -1,5 +1,4 @@
 ﻿using System;
-using AutoMapper;
 using Data;
 using KursDomain.ICommon;
 using KursDomain.IDocuments;

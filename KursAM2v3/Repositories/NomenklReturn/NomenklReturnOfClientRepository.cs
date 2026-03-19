@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using Data;
+using Helper.Extensions;
 using KursAM2.ViewModel.Logistiks.NomenklReturn.Helper;
 using KursDomain;
 using KursDomain.Documents.NomenklReturn;
@@ -38,7 +39,7 @@ namespace KursAM2.Repositories.NomenklReturn
             var old = Context.NomenklReturnOfClient.FirstOrDefault(_ => _.Id == entity.Id);
             if (old != null)
                 // ReSharper disable once RedundantAssignment
-                old = App.Mapper.Map<NomenklReturnOfClient>(entity);
+                old = CopyHelper.CreateDeepCopy((NomenklReturnOfClient)entity);
             else
                 Context.NomenklReturnOfClient.Add(entity.Entity);
 

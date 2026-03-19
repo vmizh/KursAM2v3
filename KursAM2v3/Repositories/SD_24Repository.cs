@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Linq;
-using AutoMapper;
 using Core.EntityViewModel.Base;
 using Data;
+using Helper.Extensions;
 using KursDomain;
 using KursDomain.Repository;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -70,9 +70,7 @@ namespace KursAM2.Repositories
 
         public SD_24 CreateCopy(SD_24 ent)
         {
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<SD_24, SD_24>(), new NullLoggerFactory());
-            var mapper = new Mapper(config);
-            var ret = mapper.Map<SD_24>(ent);
+            var ret =CopyHelper.CreateDeepCopy(ent);
             ret.DOC_CODE = -1;
             ret.DD_DATE = DateTime.Today;
             ret.CREATOR = GlobalOptions.UserInfo.NickName;
