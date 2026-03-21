@@ -529,7 +529,7 @@ namespace KursAM2.ViewModel.Personal
             foreach (
                 var nach in
                 Documents.Where(
-                    nach => tempMain.All(t => t.Employee.DocCode != nach.Employee.DocCode)))
+                    nach => tempMain.All(t => t.Employee != null && t.Employee?.DocCode != nach.Employee?.DocCode)))
                 tempMain.Add(new EmployeePayMainViewModel
                 {
                     Employee = nach.Employee,
@@ -542,7 +542,7 @@ namespace KursAM2.ViewModel.Personal
             {
                 var emp1 = emp;
                 var s =
-                    Documents.Where(t => t.Employee.DocCode == emp1.Employee.DocCode);
+                    Documents.Where(t => t.Employee != null && t.Employee?.DocCode == emp1.Employee?.DocCode);
                 foreach (var nach in s)
                 {
                     if (nach.DocDate > emp.DateLastOper)
@@ -550,7 +550,7 @@ namespace KursAM2.ViewModel.Personal
                     emp.SummaNach += CurrencyRate.GetSummaRate(nach.Crs.DocCode,
                         ((IDocCode)emp.Employee.Currency).DocCode,
                         nach.DocDate,
-                        nach.Summa);
+                        nach.Summa); 
                     emp.PlatSumma += nach.PlatSummaEmp;
                     emp.DolgSumma = emp.SummaNach - emp.PlatSumma;
                 }
