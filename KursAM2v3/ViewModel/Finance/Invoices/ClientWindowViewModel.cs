@@ -1372,14 +1372,13 @@ public sealed class ClientWindowViewModel : RSWindowViewModelBase, IDataErrorInf
             if (Document.myState != RowStatus.NewRow)
                 Document.myState = RowStatus.Edited;
         }
-
-        Document.Rows.Remove(CurrentRow);
         var d = UnitOfWork.Context.TD_84.FirstOrDefault(_ => _.CODE == CurrentRow.Code);
         if (d is not null)
         {
             UnitOfWork.Context.TD_84.Remove(d);
             UnitOfWork.Context.TD_84.Remove(CurrentRow.Entity);
         }
+        Document.Rows.Remove(CurrentRow);
 
         UpdateVisualData(null);
     }
