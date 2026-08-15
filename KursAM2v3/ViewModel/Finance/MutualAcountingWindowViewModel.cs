@@ -53,8 +53,8 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
     {
         myMutAccRepository = new MutualAccountingRepository(GlobalOptions.GetEntities());
         // ReSharper disable once VirtualMemberCallInConstructor
-        IsDocNewCopyAllow = true;
-        IsDocNewCopyRequisiteAllow = false;
+        //IsDocNewCopyAllow = true;
+        //IsDocNewCopyRequisiteAllow = false;
         DebitorCollection.CollectionChanged += DebitorCollection_CollectionChanged;
         CreditorCollection.CollectionChanged += CreditorCollection_CollectionChanged;
         try
@@ -93,6 +93,8 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
 
     public bool IsTypeVzaimEnabled => !IsCurrencyConvert;
 
+    public override bool IsDocNewCopyRequisiteAllow => false;
+
     public decimal CurrencyConvertRate
     {
         get
@@ -118,6 +120,10 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
     public bool IsCanCreditorCrsChanged => IsCurrencyConvert && CreditorCollection.Count == 0;
 
     public string NotifyInfo { get; set; }
+   //public override bool IsDocNewCopyAllow => DebitorCollection.Where(_ => _.SFProvider != null).Count() == 0 && CreditorCollection.Where(_ => _.SfClient != null).Count() == 0;
+   public override bool IsDocNewCopyAllow => DebitorCollection.All(_ => _.SfClient == null) &&
+                                             CreditorCollection.All(_ => _.SFProvider == null);
+
 
     public CrossCurrencyRate CurrentCurrencyRate
     {
@@ -927,6 +933,7 @@ public sealed class MutualAcountingWindowViewModel : RSWindowViewModelBase
         frm.Show();
         frm.DataContext = ctx;
     }
+
 
     public override void DocNewCopy(object form)
     {

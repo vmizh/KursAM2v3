@@ -46,7 +46,8 @@ public sealed class BankOperationsViewModel : RSViewModelBase, IEntity<TD_101>
             DOC_CODE = -1,
             SD_101 = new SD_101()
         };
-        BankOperationType = BankOperationType.NotChoice;
+        // BankOperationType = BankOperationType.NotChoice;
+         BankOperationType = BankOperationType.Kontragent;
 
         RaisePropertyChanged(nameof(SHPZList));
     }
